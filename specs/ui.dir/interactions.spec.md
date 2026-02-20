@@ -1,0 +1,135 @@
+# speclang-header lines:10
+id: "@speclang/ui.interactions"
+parent: @ref:specs/ui
+part: 11/14
+siblings:
+  prev: @ref:specs/ui.dir/components/log-viewer
+  next: @ref:specs/ui.dir/state-management
+short: User interactions and control flows
+---
+
+## Interactions
+
+### @ui/interactions-cascade-control
+
+```speclang
+# @block:ui/interactions-cascade-control @kind:operation
+cascade_control_interactions():
+  
+  trigger_cascade:
+    trigger: button click or shortcut
+    action: speclang_insert_command(action: "trigger", target_file: current_file)
+    feedback: toast notification "Cascade triggered"
+
+  pause_resume:
+    toggle button
+    action: speclang_insert_command(action: "pause"/"resume")
+    visual: button changes icon and color
+
+  finalize:
+    button with confirmation
+    action: speclang_insert_command(action: "finalize")
+    result: runs pipeline, commits changes
+
+  step_mode:
+    advanced control: execute one cascade step
+    action: speclang_insert_command(action: "step")
+    updates UI after each step
+
+  abort_cascade:
+    emergency stop with rollback
+    confirmation required
+    action: speclang_insert_command(action: "abort")
+```
+
+### @ui/interactions-spec-editing
+
+```speclang
+# @block:ui/interactions-spec-editing @kind:operation
+spec_editing_workflow():
+  
+  create_new_spec:
+    via: "New Spec" button or right-click in file tree
+    dialog: asks for id, layer, tags
+    template: generates header with required fields
+    opens: in editor for further editing
+
+  edit_existing_spec:
+    double-click in file tree or search results
+    editor opens with syntax highlighting
+    auto-save: optional, with manual save button
+    validation: real-time, errors prevent save
+
+  add_block:
+    button: "Add Block" or shortcut
+    form: block id, kind, attributes
+    inserts: template block at cursor
+
+  add_ref:
+    autocomplete: typing @ref: shows search results
+    click: inserts full ref
+    validation: checks ref exists in database
+
+  preview_changes:
+    split view: edit | preview
+    preview updates on pause typing
+    shows rendered blocks
+```
+
+### @ui/interactions-real-time-updates
+
+```speclang
+# @block:ui/interactions-real-time-updates @kind:operation
+real_time_update_handling():
+  
+  sse_connection:
+    establish: connect to MCP server /events endpoint
+    events:
+      - file.changed: update file tree, cascade visualization
+      - agent.spawned: update agent monitor
+      - agent.completed: update agent card, timeline
+      - cascade.converged: show notification, update dashboard
+      - command.executed: update command history
+
+  optimistic_updates:
+    when user triggers action, show immediate UI change
+    if action fails, rollback with error message
+
+  debounced_updates:
+    rapid events (like file changes during cascade) batched
+    visual indicators show "updating..." state
+
+  offline_support:
+    queue actions when disconnected
+    sync when reconnected
+    show connection status indicator
+```
+
+### @ui/interactions-git-integration
+
+```speclang
+# @block:ui/interactions-git-integration @kind:operation
+git_integration():
+  
+  commit_view:
+    shows: git status of spec files only
+    staging: checkboxes per file
+    commit_message: prefilled with "speclang: " prefix
+    commit: via speclang_insert_command(action: "git_commit")
+
+  history_view:
+    git log visualization
+    filter by speclang commits only
+    click commit: show diff of spec files
+    revert: option to revert specific commit
+
+  branch_management:
+    create branch from current state
+    switch branches (warns about uncommitted changes)
+    merge visualization
+
+  conflict_resolution:
+    when git pull causes conflicts
+    visual diff tool for spec files
+    merge assistance with block-level resolution
+```
