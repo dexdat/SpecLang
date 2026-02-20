@@ -128,10 +128,12 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
+import { randomUUID } from "crypto";
 
 class SpeclangMCPServer {
   private db: Database;
   private mode: 'stdio' | 'http' | 'socket';
+  private transports = new Map<string, SSEServerTransport>();
   
   async start(args: string[]) {
     // Detect mode from args
@@ -165,32 +167,56 @@ class SpeclangMCPServer {
     this.mode = 'http';
     const port = this.getArg(args, '--port', '3000');
     const authType = this.getArg(args, '--auth', 'none');
-    
+
     const app = express();
-    
+
     // Auth middleware
     if (authType === 'basic') {
       app.use(this.basicAuthMiddleware(args));
     } else if (authType === 'token') {
       app.use(this.tokenAuthMiddleware(args));
     }
-    
+
     // SSE endpoint
     app.get('/mcp', (req, res) => {
+      const clientId = randomUUID();
       const transport = new SSEServerTransport('/mcp/message', res);
+      this.transports.set(clientId, transport);
       const server = new Server({ name: "speclang", version: "1.0.0" });
       this.registerTools(server);
       server.connect(transport);
+
+      // Clean up on disconnect
+      res.on('close', () => {
+        this.transports.delete(clientId);
+      });
+
+      // Send client ID to client (optional)
+      res.write(`data: ${JSON.stringify({ clientId })}\n\n`);
     });
 
     // Message endpoint for SSE transport
     app.post('/mcp/message', express.json(), (req, res) => {
-      // TODO: Forward messages to appropriate transport
-      // The SSEServerTransport expects messages via this endpoint
-      console.log('Received message:', req.body);
-      res.status(501).json({ error: 'Message endpoint not implemented' });
+      const clientId = req.headers['x-client-id'] || req.body.clientId;
+      if (!clientId || typeof clientId !== 'string') {
+        res.status(400).json({ error: 'Missing client ID' });
+        return;
+      }
+      const transport = this.transports.get(clientId);
+      if (!transport) {
+        res.status(404).json({ error: 'Client not found' });
+        return;
+      }
+      try {
+        // Forward message to transport
+        transport.handleMessage(req.body);
+        res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('Error handling message:', err);
+        res.status(500).json({ error: 'Failed to process message' });
+      }
     });
-    
+
     app.listen(port, () => {
       console.error(`Speclang MCP server on port ${port}`);
     });
@@ -306,7 +332,7 @@ MCP_TOOLS:
       SELECT 
         (SELECT COUNT(*) FROM sessions WHERE status IN ('active', 'idle')) as active_sessions,
         (SELECT COUNT(*) FROM commands WHERE status = 'pending') as queue_depth,
-        (SELECT COUNT(*) = 0 FROM events WHERE processed = 0) as converged,
+        (SELECT (SELECT COUNT(*) FROM sessions WHERE status IN ('active', 'idle')) = 0 AND (SELECT COUNT(*) FROM commands WHERE status = 'pending') = 0 AND (SELECT COUNT(*) FROM events WHERE processed = 0) = 0) as converged,
         (SELECT MAX(depth) FROM cascades WHERE status = 'active') as cascade_depth
     
   speclang_query_commands:
@@ -325,6 +351,7 @@ MCP_TOOLS:
   speclang_insert_command:
     description: Add command to queue
     params:
+      cascade_id: string (optional)
       action: string
       target_file: string (optional)
       session_id: string (optional)
@@ -333,8 +360,8 @@ MCP_TOOLS:
     returns:
       command_id: string
     sql: |
-      INSERT INTO commands (command_id, action, target_file, session_id, payload, priority, status)
-      VALUES (?, ?, ?, ?, ?, ?, 'pending')
+      INSERT INTO commands (command_id, cascade_id, action, target_file, session_id, payload, priority, status)
+      VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')
       RETURNING command_id
     
   speclang_claim_event:
