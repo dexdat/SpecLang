@@ -79,6 +79,92 @@ IntegrationSteps:
      - Deploy as part of build
 ```
 
+## Integration Modes
+
+### @speclang/mcp/openapi-generation/integration-modes
+
+```speclang
+# @block:speclang/mcp/openapi-generation/integration-modes @kind:entity
+IntegrationModes:
+
+  register_tools:
+    description: Dynamically register generated tools with SpecLang's MCP server
+    process:
+      - Generate tools from OpenAPI spec
+      - Register each tool with existing MCP server instance
+      - Tools appear as native SpecLang tools
+    advantages:
+      - Single MCP server process
+      - Unified authentication and logging
+      - Lower resource usage
+    limitations:
+      - Requires tool registration API
+      - May conflict with existing tool names
+
+  separate_server:
+    description: Run generated MCP server as separate process
+    process:
+      - Generate standalone TypeScript MCP server
+      - Start as child process or external service
+      - Connect via stdio, web, or streamable-http transport
+    advantages:
+      - Isolation from SpecLang process
+      - Can be deployed independently
+      - Easier debugging
+    limitations:
+      - Additional resource overhead
+      - Requires inter-process communication
+
+  dry_run_option:
+    description: Validate OpenAPI spec and generate configuration without writing files
+    usage: speclang mcp generate-openapi --dry-run
+    outputs:
+      - Validation report
+      - List of tools that would be generated
+      - Estimated file structure
+    purpose:
+      - Preview before actual generation
+      - Catch errors early
+```
+
+## OpenAPI Spec Validation
+
+### @speclang/mcp/openapi-generation/spec-validation
+
+```speclang
+# @block:speclang/mcp/openapi-generation/spec-validation @kind:entity
+OpenAPISpecValidation:
+
+  validation_steps:
+    1. Schema validation:
+       - Use OpenAPI validator (e.g., swagger-parser)
+       - Ensure spec conforms to OpenAPI 3.0/3.1
+       - Check for circular references, unresolvable references
+    2. Security validation:
+       - Detect potentially malicious specs (e.g., excessive recursion, large payloads)
+       - Limit operation count, parameter size
+       - Validate external URLs (allowlist)
+    3. Content validation:
+       - Ensure required fields present
+       - Validate example values match schema
+       - Check for duplicate operation IDs
+
+  tools:
+    - swagger-parser (Node.js)
+    - openapi-validator (Python)
+    - Custom validation in speclang
+
+  integration:
+    - Run validation before generation
+    - Fail fast with descriptive errors
+    - Provide suggestions for fixes
+
+  prevention:
+    - Never execute arbitrary code from spec
+    - Sanitize strings used in file paths
+    - Limit resource usage during validation
+```
+
 ## CLI Commands
 
 ### @speclang/mcp/openapi-generation/cli-commands
@@ -288,19 +374,23 @@ PipelineIntegration:
 Dependencies:
   
   required:
-    - openapi-mcp-generator (npm package)
-    - @modelcontextprotocol/sdk
-    - axios
-    - zod
+    - openapi-mcp-generator (npm package) >= 0.1.0
+    - @modelcontextprotocol/sdk >= 0.5.0
+    - axios >= 1.0.0
+    - zod >= 3.0.0
     
   optional:
-    - hono (for web transport)
-    - express (alternative)
+    - hono (for web transport) >= 4.0.0
+    - express (alternative) >= 4.0.0
     
   dev:
-    - typescript
-    - ts-node
-    - @types/node
+    - typescript >= 5.0.0
+    - ts-node >= 10.0.0
+    - @types/node >= 20.0.0
+    
+  version_pinning:
+    description: Use package.json with exact versions for production
+    recommendation: "Use npm shrinkwrap or package-lock.json"
 ```
 
 ## Security Considerations
@@ -323,6 +413,10 @@ SecurityConsiderations:
     description: Sensitive credentials stored in environment variables
     pattern: API_KEY_<SCHEME_NAME>, BEARER_TOKEN_<SCHEME_NAME>, etc.
     security: Never commit .env files; use .env.example
+    secret_management:
+      - use vault or secret manager for production
+      - rotate keys periodically
+      - audit access logs
     
   input_validation:
     description: Generated Zod schemas validate input before proxying
@@ -333,7 +427,25 @@ SecurityConsiderations:
     methods:
       - MCP server authentication (basic, token)
       - IP whitelisting for web transports
-      - Rate limiting per client
+      - Rate limiting per client (max requests per minute)
+      - Authentication required for web transport (API key or JWT)
+      - TLS enforcement for web transport (HTTPS only)
+    
+  tls_enforcement:
+    description: Ensure all web transport uses TLS
+    requirements:
+      - HTTPS required for web and streamable-http transports
+      - Redirect HTTP to HTTPS
+      - HSTS headers
+      - Valid certificates (Let's Encrypt or enterprise CA)
+    
+  rate_limiting:
+    description: Prevent abuse of generated MCP tools
+    implementation:
+      - token bucket algorithm per client IP
+      - configurable limits per tool
+      - headers: X-RateLimit-Limit, X-RateLimit-Remaining
+      - HTTP 429 Too Many Requests response
     
   security_scheme_mapping:
     description: Map OpenAPI security schemes to MCP tool authentication
