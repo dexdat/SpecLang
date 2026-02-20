@@ -29,3 +29,18 @@ npm-debug.log*
 # Test coverage
 coverage/
 .nyc_output/
+
+# Speclang simulator state
+.speclang/
+.speclang_depth
+.speclang_last_change
+.speclang_last_check
+
+# Backup files
+.backup_spec_files/
+*.backup
+
+# Temporary files
+temp_*.md
+__pycache__/
+*.pyc

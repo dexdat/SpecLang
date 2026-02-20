@@ -50,7 +50,7 @@ flowchart TD
 
 ## Integration Steps
 
-### @openapi-mcp/integration-steps
+### @speclang/mcp/openapi-generation/integration-steps
 
 ```speclang
 # @block:openapi-mcp/integration-steps @kind:entity
@@ -81,7 +81,7 @@ IntegrationSteps:
 
 ## CLI Commands
 
-### @openapi-mcp/cli-commands
+### @speclang/mcp/openapi-generation/cli-commands
 
 ```speclang
 # @block:openapi-mcp/cli-commands @kind:entity
@@ -128,7 +128,7 @@ CLICommands:
 
 ## Programmatic API
 
-### @openapi-mcp/programmatic-api
+### @speclang/mcp/openapi-generation/programmatic-api
 
 ```speclang
 # @block:openapi-mcp/programmatic-api @kind:code
@@ -181,7 +181,7 @@ export async function generateAndRegisterOpenApiTools(
 
 ## Example Workflow
 
-### @openapi-mcp/example-workflow
+### @speclang/mcp/openapi-generation/example-workflow
 
 ```speclang
 # @block:openapi-mcp/example-workflow @kind:entity
@@ -205,7 +205,7 @@ ExampleWorkflow:
 
 ## Configuration
 
-### @openapi-mcp/config
+### @speclang/mcp/openapi-generation/config
 
 ```speclang
 # @block:openapi-mcp/config @kind:entity
@@ -248,7 +248,7 @@ Configuration:
 
 ## Pipeline Integration
 
-### @openapi-mcp/pipeline
+### @speclang/mcp/openapi-generation/pipeline
 
 ```speclang
 # @block:openapi-mcp/pipeline @kind:entity
@@ -281,7 +281,7 @@ PipelineIntegration:
 
 ## Dependencies
 
-### @openapi-mcp/dependencies
+### @speclang/mcp/openapi-generation/dependencies
 
 ```speclang
 # @block:openapi-mcp/dependencies @kind:entity
@@ -305,7 +305,7 @@ Dependencies:
 
 ## Security Considerations
 
-### @openapi-mcp/security
+### @speclang/mcp/openapi-generation/security
 
 ```speclang
 # @block:openapi-mcp/security @kind:entity
@@ -345,7 +345,7 @@ SecurityConsiderations:
 
 ## Error Handling
 
-### @openapi-mcp/error-handling
+### @speclang/mcp/openapi-generation/error-handling
 
 ```speclang
 # @block:openapi-mcp/error-handling @kind:entity
