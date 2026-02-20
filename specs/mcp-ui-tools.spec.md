@@ -1,9 +1,10 @@
-# speclang-header lines:8
+# speclang-header lines:9
 id: "@speclang/mcp-ui-tools"
 version: 0.1.0
 layer: 3
 imports: ["@speclang/mcp", "@speclang/sqlite", "@speclang/cascade", "@speclang/agent-protocol"]
 tags: [mcp, tools, ui, dashboard, monitoring]
+status: draft
 short: Additional MCP tools for system dashboard monitoring
 ---
 
