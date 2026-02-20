@@ -1,5 +1,5 @@
 # speclang-header lines:12
-id: "@speclang/ui"
+id: @speclang/ui
 version: 0.2.0
 layer: 2
 tags: [dashboard, monitoring, system, mcp, web]
