@@ -1,5 +1,5 @@
 # speclang-header lines:12
-id: @speclang/mcp-openapi-generation
+id: @speclang/mcp/openapi-generation
 version: 0.1.0
 layer: 2
 imports: [@speclang/mcp, @speclang/cli, @speclang/tools]
