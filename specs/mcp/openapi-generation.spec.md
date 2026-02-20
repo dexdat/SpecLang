@@ -303,6 +303,17 @@ Dependencies:
     - @types/node
 ```
 
+## Future Enhancements
+
+```speclang
+# @block:openapi-mcp/future @kind:note
+Potential future enhancements:
+- Auto-detection of OpenAPI spec changes via file watching
+- Integration with Swagger UI for generated MCP servers
+- Support for multiple OpenAPI versions
+- Plugin system for custom generators
+```
+
 ## References
 
 - @ref:speclang/mcp
