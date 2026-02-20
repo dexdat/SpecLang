@@ -1,0 +1,29 @@
+{
+  "todos": [
+    {
+      "id": "todo-005",
+      "description": "Write code generation specs (.go.spec, .ts.spec)",
+      "depends_on": [
+        "todo-002",
+        "todo-003",
+        "todo-004"
+      ],
+      "estimated_complexity": "high",
+      "priority": 5,
+      "category": "codegen"
+    },
+    {
+      "id": "todo-007",
+      "description": "Write Ralph Loop implementation spec",
+      "depends_on": [
+        "todo-001"
+      ],
+      "estimated_complexity": "high",
+      "priority": 7,
+      "category": "implementation"
+    }
+  ],
+  "generated_from": "_index.json",
+  "total_specs": 63,
+  "ralph_phase": "phase_1_manual_emulation"
+}

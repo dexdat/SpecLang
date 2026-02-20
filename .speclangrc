@@ -1,0 +1,16 @@
+name: speclang
+version: 0.1.0
+language: typescript
+
+output:
+  dir: ./generated
+  clean: true
+  sourcemaps: true
+
+compiler:
+  strict: true
+  plugins: []
+
+runtime:
+  port: 3000
+  host: localhost
