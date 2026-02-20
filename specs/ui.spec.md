@@ -1,144 +1,154 @@
-# speclang-header
+# speclang-header lines:8
 id: "@speclang/ui"
-version: 0.1.0
+version: 0.2.0
 layer: 2
-tags: [ui, frontend, react, typescript, mcp, realtime]
-imports: ["@speclang/cascade", "@speclang/mcp", "@speclang/daemon", "@speclang/agent-protocol", "@speclang/sqlite"]
+tags: [dashboard, monitoring, system, mcp, web]
+imports: ["@speclang/cascade", "@speclang/mcp", "@speclang/agent-protocol", "@speclang/sqlite", "@speclang/mcp-ui-tools"]
 status: draft
-short: Comprehensive UI specification for SpecLang system
+short: System monitoring dashboard for SpecLang cascade and agent health
 ---
 
-# UI Specification
+# System Dashboard Specification
 
-User interface for visualizing and controlling the SpecLang reactive cascade.
+Web-based monitoring and control interface for the SpecLang reactive cascade.
 
 ## Overview
 
 ```speclang
-# @block:ui/overview @kind:note
-The UI provides real-time visibility into the SpecLang cascade, allowing developers to:
-- Monitor agent activity and file changes
-- Visualize dependency graphs and cascade depth
-- Edit specs with syntax highlighting and validation
+# @block:dashboard/overview @kind:note
+The dashboard provides real-time visibility into the SpecLang cascade, allowing system operators to:
+- Monitor agent health and activity
+- Visualize cascade depth and convergence status
+- View queue depth and pending commands
 - Trigger manual cascades and control convergence
-- Search and navigate the spec database
+- Inspect system logs and error reports
 
-Primary users: developers writing specs, reviewing generated code, debugging cascade behavior.
+Primary users: system administrators, remote teams, developers monitoring cascade health.
+Complementary to OpenCode: OpenCode for editing, Dashboard for monitoring.
 ```
 
-### @ui/architecture-overview
+### @dashboard/architecture-overview
 
 ```speclang
-# @block:ui/architecture-overview @kind:diagram
+# @block:dashboard/architecture-overview @kind:diagram
 ```mermaid
 flowchart TD
-    subgraph Backend["Backend Services"]
+    subgraph Backend["MCP Server"]
         MCP[MCP Server]
         DB[(SQLite)]
-        D[Daemon]
-        A[Agents]
+        SSE[SSE Stream]
     end
 
-    subgraph Frontend["UI Components"]
-        Dashboard[Project Dashboard]
-        SpecEditor[Spec Editor]
-        CascadeViz[Cascade Visualization]
-        AgentMonitor[Agent Monitor]
-        Settings[Settings]
+    subgraph Frontend["Dashboard UI"]
+        Dashboard[System Dashboard]
+        CascadeViz[Cascade Monitor]
+        AgentMonitor[Agent Health]
+        QueueStatus[Queue Status]
+        SystemLogs[System Logs]
     end
 
-    subgraph Communication["Communication Layer"]
-        WS[WebSocket/SSE]
+    subgraph Communication["Communication"]
         HTTP[REST API]
+        SSE_Client[SSE Client]
         MCP_Tools[MCP Tools]
     end
 
     Frontend --> Communication
     Communication --> Backend
     Backend --> Communication
+    
+    subgraph Users["User Types"]
+        Admin[System Admin]
+        Remote[Remote Team]
+        Monitor[Monitor Only]
+    end
+    
+    Users --> Frontend
 ```
 ```
 
 ## Architecture
 
-### @ui/architecture
+### @dashboard/architecture
 
 ```speclang
-# @block:ui/architecture @kind:entity
-UIArchitecture:
+# @block:dashboard/architecture @kind:entity
+DashboardArchitecture:
   stack:
-    - framework: React 18+ with TypeScript
+    - framework: React 18+ with TypeScript (or lightweight alternative)
     - state_management: Zustand (lightweight)
-    - routing: React Router
+    - routing: React Router (optional)
     - styling: Tailwind CSS + shadcn/ui components
-    - realtime: WebSocket client / EventSource (SSE)
-    - spec_parsing: Monaco Editor with custom language support
+    - realtime: EventSource (SSE) for live updates
+    - charts: Recharts or similar for metrics
 
   communication:
-    primary: MCP tools via HTTP/SSE (remote mode)
-    fallback: Direct SQLite access (local mode)
-    realtime: SSE stream from MCP server for file changes, agent events
+    primary: MCP tools via HTTP (remote mode)
+    realtime: SSE stream from MCP server for events
+    polling: Periodic status updates (optional)
 
   deployment:
-    - standalone: Electron app for desktop
-    - web: Progressive Web App (PWA)
-    - embedded: VS Code extension (future)
+    - web: Static HTML served by MCP server (embedded)
+    - standalone: Electron app for desktop (optional)
+    - remote: Accessible via browser to remote MCP server
 ```
 
-### @ui/data-flow
+### @dashboard/data-flow
 
 ```speclang
-# @block:ui/data-flow @kind:diagram
+# @block:dashboard/data-flow @kind:diagram
 ```mermaid
 sequenceDiagram
-    participant UI as UI Component
+    participant Dashboard as Dashboard UI
     participant MCP as MCP Server
     participant DB as SQLite
     participant Daemon as speclangd
 
-    UI->>MCP: speclang_search(query)
-    MCP->>DB: FTS query
-    DB-->>MCP: results
-    MCP-->>UI: search results
+    Dashboard->>MCP: speclang_get_status()
+    MCP->>DB: Query status
+    DB-->>MCP: status data
+    MCP-->>Dashboard: cascade status, queue depth
+
+    Dashboard->>MCP: speclang_query_events(limit: 20)
+    MCP->>DB: Query recent events
+    DB-->>MCP: events
+    MCP-->>Dashboard: recent events timeline
+
+    Dashboard->>MCP: speclang_get_agent_statuses()
+    MCP->>DB: Query agent sessions
+    DB-->>MCP: agent statuses
+    MCP-->>Dashboard: agent health cards
 
     Daemon->>MCP: file.changed event
-    MCP->>UI: SSE event stream
-    UI->>UI: Update cascade visualization
+    MCP->>Dashboard: SSE event stream
+    Dashboard->>Dashboard: Update real-time views
 
-    UI->>MCP: speclang_insert_command(action)
+    Dashboard->>MCP: speclang_insert_command(action: "trigger")
     MCP->>DB: Insert command
     Daemon->>DB: Poll for commands
-    Daemon->>UI: command.executed event
+    Daemon->>Dashboard: command.executed event
 ```
 ```
 
 ## Core Views
 
-### @ui/views
+### @dashboard/views
 
 ```speclang
-# @block:ui/views @kind:entity
-CoreViews:
+# @block:dashboard/views @kind:entity
+DashboardViews:
   
-  project_dashboard:
-    purpose: Overview of project health and status
+  system_dashboard:
+    purpose: Overview of system health and cascade status
     components:
       - Cascade status (active/converged)
-      - Recent file changes timeline
-      - Agent activity heatmap
-      - Quick stats (specs count, generated files, tests)
+      - Recent events timeline
+      - Agent health status cards
+      - Queue depth and pending commands
+      - System metrics (CPU, memory, disk)
       - Action buttons (trigger cascade, finalize, pause)
 
-  spec_browser:
-    purpose: Navigate and edit spec files
-    components:
-      - File tree sidebar (specs/, generated/, tests/)
-      - Spec editor with syntax highlighting
-      - Preview pane (rendered spec blocks)
-      - Dependency graph for current spec
-      - Validation errors panel
-
-  cascade_visualization:
+  cascade_monitor:
     purpose: Real-time visualization of cascade flow
     components:
       - Graph of file dependencies (D3.js)
@@ -146,7 +156,7 @@ CoreViews:
       - Depth meter and convergence indicator
       - Agent activity logs with filtering
 
-  agent_monitor:
+  agent_health:
     purpose: Monitor agent health and activity
     components:
       - Agent status cards (idle, active, error)
@@ -154,20 +164,28 @@ CoreViews:
       - Performance metrics (processing time)
       - Manual agent controls (restart, pause)
 
-  settings_configuration:
-    purpose: System configuration and preferences
+  queue_status:
+    purpose: View pending commands and event queue
     components:
-      - MCP connection settings
-      - Daemon control (start/stop/restart)
-      - UI theme and layout preferences
-      - Notification preferences
+      - Pending commands list with priorities
+      - Event queue depth visualization
+      - Processing rate metrics
+      - Manual queue control (pause, resume, clear)
+
+  system_logs:
+    purpose: Inspect system logs and error reports
+    components:
+      - Real-time log viewer with filtering
+      - Error severity indicators
+      - Search across logs
+      - Export logs for debugging
 ```
 
-### @ui/view-project-dashboard
+### @dashboard/view-system-dashboard
 
 ```speclang
-# @block:ui/view-project-dashboard @kind:operation
-render_project_dashboard():
+# @block:dashboard/view-system-dashboard @kind:operation
+render_system_dashboard():
   inputs:
     - cascade_status: from speclang_get_status
     - recent_events: from speclang_query_events(limit: 20)
@@ -179,6 +197,7 @@ render_project_dashboard():
       - project_name: from project.scl
       - cascade_indicator: green/yellow/red
       - convergence_timer: time since last change
+      - queue_depth: pending commands count
 
     main_grid:
       left_column:
@@ -187,130 +206,24 @@ render_project_dashboard():
 
       middle_column:
         - timeline_component: recent events as vertical timeline
-        - heatmap: agent activity over last hour
+        - queue_visualization: pending commands list
 
       right_column:
-        - agent_status: cards for each agent type
+        - agent_health: cards for each agent type
         - system_health: CPU, memory, disk usage
 
   interactions:
-    - click cascade_indicator: navigate to cascade visualization
-    - click timeline_event: open spec editor at that file
-    - click agent_card: navigate to agent monitor
-```
+    - click cascade_indicator: navigate to cascade monitor
+    - click timeline_event: show event details modal
+    - click agent_card: navigate to agent health view
+    - click queue_depth: navigate to queue status view
 
-### @ui/view-spec-editor
 
-```speclang
-# @block:ui/view-spec-editor @kind:operation
-render_spec_editor(file_path: string):
-  load_spec:
-    - call speclang_get_spec(file_path)
-    - parse header and blocks
-    - validate syntax
+## Dashboard Components
 
-  editor_pane:
-    - monaco_editor:
-        language: speclang
-        theme: speclang-dark
-        features:
-          syntax_highlighting: custom language definition
-          auto_completion: based on spec blocks and refs
-          validation: real-time YAML and block validation
-          format_on_save: auto-format spec
 
-  sidebar:
-    - file_tree: navigate specs directory
-    - block_outline: click to jump to block
-    - dependency_list: @ref links with navigation
 
-  preview_pane:
-    - rendered_blocks: visual representation of blocks
-    - dependency_graph: mini-graph of current spec deps
-    - validation_errors: inline error display
 
-  actions:
-    - save: write back via speclang_create_version
-    - validate: run full validation
-    - trigger_cascade: manually trigger cascade from this spec
-```
-
-## UI Components
-
-### @ui/components-navigation
-
-```speclang
-# @block:ui/components-navigation @kind:entity
-NavigationSystem:
-  
-  main_nav:
-    items:
-      - Dashboard: /dashboard
-      - Specs: /specs
-      - Cascade: /cascade
-      - Agents: /agents
-      - Settings: /settings
-
-  sidebar:
-    file_tree:
-      data_source: speclang_get_tree(root: "@speclang")
-      features:
-        - virtual scrolling for large trees
-        - search within tree
-        - filter by tag, layer, status
-        - drag-and-drop reordering (future)
-
-  breadcrumbs:
-    shows: current file path with clickable ancestors
-    dynamic: updates on navigation
-
-  quick_search:
-    shortcut: Cmd+K
-    search_types:
-      - specs: full-text search
-      - commands: recent actions
-      - agents: by name
-      - files: by path
-```
-
-### @ui/components-spec-viewer
-
-```speclang
-# @block:ui/components-spec-viewer @kind:entity
-SpecViewer:
-  
-  syntax_highlighting:
-    token_types:
-      - header: "# speclang-header"
-      - block_id: "@block:path/id"
-      - kind_tag: "@kind:entity"
-      - ref: "@ref:path#block"
-      - yaml_key: "id:", "version:"
-      - yaml_value: string, number, array
-
-  block_rendering:
-    entity:
-      - render as card with fields table
-      - expand/collapse nested structures
-    operation:
-      - render as flowchart with steps
-      - show signature prominently
-    diagram:
-      - render mermaid diagram inline
-    code:
-      - syntax highlight for language
-      - copy button
-
-  ref_navigation:
-    - clickable @ref links
-    - hover preview of referenced block
-    - open in new tab or split view
-
-  validation:
-    - inline squiggles for errors
-    - hover for error details
-    - quick fixes (add missing fields)
-```
 
 ### @ui/components-cascade-visualization
 
