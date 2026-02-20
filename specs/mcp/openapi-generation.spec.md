@@ -303,6 +303,93 @@ Dependencies:
     - @types/node
 ```
 
+## Security Considerations
+
+### @openapi-mcp/security
+
+```speclang
+# @block:openapi-mcp/security @kind:entity
+SecurityConsiderations:
+  
+  authentication_propagation:
+    description: Generated MCP servers proxy authentication from MCP clients to target API
+    methods:
+      - api_key: API key from environment variable
+      - bearer_token: Bearer token from environment variable
+      - basic_auth: Username/password from environment variables
+      - oauth2: Client credentials flow
+    
+  environment_variables:
+    description: Sensitive credentials stored in environment variables
+    pattern: API_KEY_<SCHEME_NAME>, BEARER_TOKEN_<SCHEME_NAME>, etc.
+    security: Never commit .env files; use .env.example
+    
+  input_validation:
+    description: Generated Zod schemas validate input before proxying
+    benefit: Prevents malformed requests reaching target API
+    
+  access_control:
+    description: Limit which MCP clients can access generated tools
+    methods:
+      - MCP server authentication (basic, token)
+      - IP whitelisting for web transports
+      - Rate limiting per client
+    
+  security_scheme_mapping:
+    description: Map OpenAPI security schemes to MCP tool authentication
+    mapping:
+      - apiKey → API key header
+      - http bearer → Authorization header
+      - oauth2 → OAuth2 client credentials flow
+```
+
+## Error Handling
+
+### @openapi-mcp/error-handling
+
+```speclang
+# @block:openapi-mcp/error-handling @kind:entity
+ErrorHandling:
+  
+  generator_failures:
+    description: openapi-mcp-generator CLI may fail
+    scenarios:
+      - invalid OpenAPI spec
+      - missing dependencies
+      - network errors for URL specs
+      - permission issues
+    handling:
+      - validate spec before generation
+      - provide descriptive error messages
+      - exit with appropriate error codes
+  
+  validation_errors:
+    description: Zod schema validation failures
+    handling:
+      - return MCP error with validation details
+      - status code: 400
+  
+  network_errors:
+    description: Target API unreachable
+    handling:
+      - retry with exponential backoff
+      - return MCP error with status code
+      - log for monitoring
+  
+  authentication_errors:
+    description: Invalid credentials for target API
+    handling:
+      - return MCP error "UNAUTHORIZED"
+      - log without exposing secrets
+  
+  recovery:
+    description: Automatic recovery from failures
+    actions:
+      - rollback to previous generated version
+      - notify user via MCP tool
+      - suggest fixes
+```
+
 ## Future Enhancements
 
 ```speclang
