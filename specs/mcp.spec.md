@@ -1,4 +1,4 @@
-# speclang-header lines:21
+# speclang-header lines:22
 id: @speclang/mcp
 version: 0.3.0
 layer: 3
