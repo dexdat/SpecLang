@@ -14,7 +14,7 @@ Integrate SpecLang with [openapi-mcp-generator](https://github.com/harsha-iiiv/o
 ## Overview
 
 ```speclang
-# @block:openapi-mcp/overview @kind:note
+# @block:speclang/mcp/openapi-generation/overview @kind:note
 Goal: Make MCP server generation trivial for SpecLang users.
 
 - Use openapi-mcp-generator CLI to generate TypeScript MCP servers
@@ -28,7 +28,7 @@ Goal: Make MCP server generation trivial for SpecLang users.
 ## Architecture
 
 ```speclang
-# @block:openapi-mcp/architecture @kind:diagram
+# @block:speclang/mcp/openapi-generation/architecture @kind:diagram
 ```mermaid
 flowchart TD
     User[User] -->|writes| OpenAPI[OpenAPI spec.yaml]
@@ -53,7 +53,7 @@ flowchart TD
 ### @speclang/mcp/openapi-generation/integration-steps
 
 ```speclang
-# @block:openapi-mcp/integration-steps @kind:entity
+# @block:speclang/mcp/openapi-generation/integration-steps @kind:entity
 IntegrationSteps:
   1. Install openapi-mcp-generator as a dev dependency:
      ```bash
@@ -84,7 +84,7 @@ IntegrationSteps:
 ### @speclang/mcp/openapi-generation/cli-commands
 
 ```speclang
-# @block:openapi-mcp/cli-commands @kind:entity
+# @block:speclang/mcp/openapi-generation/cli-commands @kind:entity
 CLICommands:
   
   speclang mcp generate-openapi:
@@ -131,7 +131,7 @@ CLICommands:
 ### @speclang/mcp/openapi-generation/programmatic-api
 
 ```speclang
-# @block:openapi-mcp/programmatic-api @kind:code
+# @block:speclang/mcp/openapi-generation/programmatic-api @kind:code
 ```typescript
 import { getToolsFromOpenApi } from 'openapi-mcp-generator';
 import { MCPServer } from './speclang-mcp';
@@ -184,7 +184,7 @@ export async function generateAndRegisterOpenApiTools(
 ### @speclang/mcp/openapi-generation/example-workflow
 
 ```speclang
-# @block:openapi-mcp/example-workflow @kind:entity
+# @block:speclang/mcp/openapi-generation/example-workflow @kind:entity
 ExampleWorkflow:
   
   scenario: User has a REST API with OpenAPI spec
@@ -208,7 +208,7 @@ ExampleWorkflow:
 ### @speclang/mcp/openapi-generation/config
 
 ```speclang
-# @block:openapi-mcp/config @kind:entity
+# @block:speclang/mcp/openapi-generation/config @kind:entity
 Configuration:
   
   spec: .speclang/openapi-mcp.yaml
@@ -251,7 +251,7 @@ Configuration:
 ### @speclang/mcp/openapi-generation/pipeline
 
 ```speclang
-# @block:openapi-mcp/pipeline @kind:entity
+# @block:speclang/mcp/openapi-generation/pipeline @kind:entity
 PipelineIntegration:
   
   build.yaml:
@@ -284,7 +284,7 @@ PipelineIntegration:
 ### @speclang/mcp/openapi-generation/dependencies
 
 ```speclang
-# @block:openapi-mcp/dependencies @kind:entity
+# @block:speclang/mcp/openapi-generation/dependencies @kind:entity
 Dependencies:
   
   required:
@@ -308,7 +308,7 @@ Dependencies:
 ### @speclang/mcp/openapi-generation/security
 
 ```speclang
-# @block:openapi-mcp/security @kind:entity
+# @block:speclang/mcp/openapi-generation/security @kind:entity
 SecurityConsiderations:
   
   authentication_propagation:
@@ -348,7 +348,7 @@ SecurityConsiderations:
 ### @speclang/mcp/openapi-generation/error-handling
 
 ```speclang
-# @block:openapi-mcp/error-handling @kind:entity
+# @block:speclang/mcp/openapi-generation/error-handling @kind:entity
 ErrorHandling:
   
   generator_failures:
@@ -393,7 +393,7 @@ ErrorHandling:
 ## Future Enhancements
 
 ```speclang
-# @block:openapi-mcp/future @kind:note
+# @block:speclang/mcp/openapi-generation/future @kind:note
 Potential future enhancements:
 - Auto-detection of OpenAPI spec changes via file watching
 - Integration with Swagger UI for generated MCP servers
