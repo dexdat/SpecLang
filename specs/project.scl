@@ -2,6 +2,8 @@
 id: "@northstar/speclang"
 version: 0.2.0
 layer: 0
+project_level: Alpha
+agent_support: agent_assisted
 tags: [northstar, intent, top-level]
 status: active
 
@@ -117,6 +119,7 @@ refs:
   - @ref:speclang/deployment
   - @ref:speclang/mcp
   - @ref:speclang/mcp-openapi-generation
+  - @ref:speclang/mcp-openapi-generation-cli
   - @ref:speclang/mcp-daemon
   - @ref:speclang/git-history
   - @ref:speclang/symlinks
@@ -153,7 +156,7 @@ refs:
 | deployment.spec.md | Light vs enterprise modes |
 | mcp.spec.md | Universal MCP server (TypeScript) |
 | mcp/openapi-generation.spec.md | OpenAPI-MCP generator integration |
-| mcp-daemon.spec.md.md | Enterprise daemon (optional) |
+| mcp-daemon.spec.md | Enterprise daemon (optional) |
 | git-history.spec.md | Per-file commits, traceability |
 | symlinks.spec.md | Dual view, specs as source of truth |
 ```
