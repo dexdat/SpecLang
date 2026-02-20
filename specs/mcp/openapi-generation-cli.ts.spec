@@ -182,5 +182,5 @@ Dependencies:
 
 ## References
 
-- @ref:speclang/mcp#cli
+- @ref:speclang/mcp#mcp/cli
 - @ref:speclang/mcp-openapi-generation
