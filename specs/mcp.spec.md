@@ -1,9 +1,10 @@
-# speclang-header lines:12
+# speclang-header lines:21
 id: @speclang/mcp
 version: 0.3.0
 layer: 3
 imports: [@speclang/core, @speclang/sqlite]
 tags: [mcp, typescript, server, implementation]
+status: draft
 children:
   - @ref:specs/mcp.dir/overview
   - @ref:specs/mcp.dir/architecture
