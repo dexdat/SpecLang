@@ -2,7 +2,7 @@
 id: @speclang/mcp-openapi-generation-cli
 version: 0.1.0
 layer: 10
-imports: [@speclang/mcp, @speclang/cli, @speclang/mcp-openapi-generation]
+imports: [@speclang/mcp, @speclang/cli, @speclang/mcp/openapi-generation]
 tags: [mcp, openapi, cli, typescript, implementation]
 short: TypeScript implementation of speclang mcp generate-openapi command
 produces: src/cli/mcp-generate-openapi.ts
