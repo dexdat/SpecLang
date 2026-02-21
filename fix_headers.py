@@ -13,6 +13,29 @@ def quote_at_values(line):
     line = re.sub(r'([\{\[ ])(@[^\s,\]\}]+)(\s*)$', r'\1"\2"\3', line)
     return line
 
+def compute_header_lines(content):
+    """Return (header_start, line_count) for speclang header."""
+    lines = content.splitlines()
+    header_start = -1
+    for i, line in enumerate(lines):
+        if 'speclang-header' in line:
+            header_start = i
+            break
+    if header_start == -1:
+        return None, None
+    
+    # Find terminator '---' after header_start
+    terminator = -1
+    for i in range(header_start, len(lines)):
+        if lines[i].strip() == '---':
+            terminator = i
+            break
+    if terminator == -1:
+        return None, None
+    
+    line_count = terminator - header_start + 1
+    return header_start, line_count
+
 def fix_header(content):
     """Fix speclang header in file content."""
     lines = content.splitlines(keepends=True)
@@ -51,11 +74,18 @@ def fix_header(content):
         if new_line != line:
             lines[header_start + 1 + idx] = new_line
     
-    # Optionally add lines:N to speclang-header line (skip for now)
-    # header_line = lines[header_start]
-    # if 'lines:' not in header_line:
-    #     # Keep simple - don't add lines:N to avoid formatting issues
-    #     pass
+    # Add lines:N to speclang-header line if missing
+    header_line = lines[header_start]
+    if 'lines:' not in header_line:
+        # Compute line count using original content (line count unchanged)
+        _, line_count = compute_header_lines(content)
+        if line_count:
+            # Replace header line with lines:N using regex to preserve formatting
+            # Pattern: speclang-header (maybe with leading # or ---)
+            # Replace with speclang-header lines:N
+            # Match 'speclang-header' and replace with 'speclang-header lines:N'
+            new_header_line = re.sub(r'(speclang-header)', rf'\1 lines:{line_count}', header_line)
+            lines[header_start] = new_header_line
     
     return ''.join(lines)
 

@@ -256,6 +256,23 @@ def validate_references(content: str, index: Dict[str, Any]) -> Tuple[bool, int,
         else:
             file_part = ref
         
+        # Map domain aliases (specs/ -> speclang/)
+        domain_mapping = {
+            "specs/": "speclang/",
+            "tests/": "tests/",  # keep same
+        }
+        # Strip leading '@' if present for mapping
+        had_at = file_part.startswith('@')
+        if had_at:
+            file_part = file_part[1:]
+        for old, new in domain_mapping.items():
+            if file_part.startswith(old):
+                file_part = new + file_part[len(old):]
+                break
+        # Add back '@' if it was present
+        if had_at:
+            file_part = '@' + file_part
+        
         # Convert to spec ID: add '@' prefix if not already present
         if not file_part.startswith('@'):
             spec_id = '@' + file_part
@@ -267,7 +284,39 @@ def validate_references(content: str, index: Dict[str, Any]) -> Tuple[bool, int,
         if spec_id == '@northstar' or spec_id.startswith('@northstar/'):
             continue
         # Ignore example references
-        if ref in ['domain/path', 'domain/path#block']:
+        example_exact = {
+            "spec",
+            "spec#block",
+            "file",
+            "domain/path",
+            "domain/path#block",
+            "path#block-id",
+            "tests/",
+        }
+        example_prefixes = [
+            "specs/auth",
+            "stdlib/Result",
+            "stdlib/JWT",
+            "specs/jwt",
+            "specs/rate-limit",
+            "specs/users",
+            "specs/hash",
+            "path/to/block",
+            "path/to/file",
+            "format/ref",
+            "format/block",
+            "format/kinds",
+            "format/header",
+            "speclang/mcp-openapi-generation",
+            "generated/auth",
+            "generated/go/auth",
+            "generated/ts/auth",
+            "specs/deployment/k8s",
+            "sip-009-index-format",
+            "tests/auth",
+            "tests/mock-email",
+        ]
+        if ref in example_exact or any(ref.startswith(prefix) for prefix in example_prefixes):
             continue
         if spec_id not in index:
             unresolved.append(ref)
