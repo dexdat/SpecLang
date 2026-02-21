@@ -164,9 +164,17 @@ def extract_blocks(content: str) -> List[Dict[str, str]]:
     return blocks
 
 def strip_code_blocks(content: str) -> str:
-    """Remove code blocks (triple backticks) from content."""
-    # Remove ```language ... ```
-    return re.sub(r'```[a-z]*\n.*?\n```', '', content, flags=re.DOTALL)
+    """Remove code blocks (triple backticks) from content, but keep speclang blocks."""
+    # Pattern to match code blocks with language
+    pattern = r'```([a-z]*)\n(.*?)\n```'
+    def repl(match):
+        lang = match.group(1)
+        if lang == 'speclang':
+            # Keep the content inside speclang block
+            return match.group(2)
+        else:
+            return ''
+    return re.sub(pattern, repl, content, flags=re.DOTALL)
 
 def detect_steps(content: str) -> int:
     """Count step-by-step items in content."""
@@ -175,6 +183,8 @@ def detect_steps(content: str) -> int:
     
     # Count numbered lists (1., 2., etc.)
     numbered = re.findall(r'^\s*\d+\.\s+', content, re.MULTILINE)
+    # Count lettered lists (a., b., etc.) and uppercase (A., B., etc.)
+    lettered = re.findall(r'^\s*[a-zA-Z]\.\s+', content, re.MULTILINE)
     # Count bullet lists (-, *, •)
     bulleted = re.findall(r'^\s*[-*•]\s+', content, re.MULTILINE)
     # Count imperative sentences (simple detection: lines starting with action verbs)
@@ -183,7 +193,7 @@ def detect_steps(content: str) -> int:
     imperative_pattern = r'^\s*(' + '|'.join(imperative_verbs) + r')\b'
     imperative = re.findall(imperative_pattern, content, re.MULTILINE | re.IGNORECASE)
     
-    steps = len(numbered) + len(bulleted) + len(imperative)
+    steps = len(numbered) + len(lettered) + len(bulleted) + len(imperative)
     return steps
 
 def validate_step_by_step(blocks: List[Dict]) -> Tuple[bool, float, List[str]]:
@@ -253,6 +263,12 @@ def validate_references(content: str, index: Dict[str, Any]) -> Tuple[bool, int,
             spec_id = file_part
         
         # Check if spec ID exists in index
+        # Special case: @ref:northstar always valid (maps to @northstar/speclang)
+        if spec_id == '@northstar' or spec_id.startswith('@northstar/'):
+            continue
+        # Ignore example references
+        if ref in ['domain/path', 'domain/path#block']:
+            continue
         if spec_id not in index:
             unresolved.append(ref)
     
