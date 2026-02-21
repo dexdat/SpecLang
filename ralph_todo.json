@@ -1,29 +1,61 @@
 {
   "todos": [
     {
-      "id": "todo-005",
-      "description": "Write code generation specs (.go.spec, .ts.spec)",
-      "depends_on": [
-        "todo-002",
-        "todo-003",
-        "todo-004"
-      ],
-      "estimated_complexity": "high",
-      "priority": 5,
-      "category": "codegen"
+      "id": "todo-001",
+      "description": "Create agent behavior matrix spec (Task 3)",
+      "depends_on": [],
+      "estimated_complexity": "medium",
+      "priority": 1,
+      "category": "specs",
+      "status": "completed"
     },
     {
-      "id": "todo-007",
-      "description": "Write Ralph Loop implementation spec",
-      "depends_on": [
-        "todo-001"
-      ],
+      "id": "todo-002",
+      "description": "Create transition workflows spec (Task 4)",
+      "depends_on": ["todo-001"],
+      "estimated_complexity": "medium",
+      "priority": 2,
+      "category": "specs",
+      "status": "completed"
+    },
+    {
+      "id": "todo-003",
+      "description": "Create safety nets spec (Task 5)",
+      "depends_on": ["todo-002"],
+      "estimated_complexity": "medium",
+      "priority": 3,
+      "category": "specs",
+      "status": "completed"
+    },
+    {
+      "id": "todo-004",
+      "description": "Update existing specs for consistency (Task 6)",
+      "depends_on": ["todo-001", "todo-002", "todo-003"],
       "estimated_complexity": "high",
-      "priority": 7,
-      "category": "implementation"
+      "priority": 4,
+      "category": "specs",
+      "status": "completed"
+    },
+    {
+      "id": "todo-005",
+      "description": "Create validation tool implementation (Task 7)",
+      "depends_on": ["todo-003"],
+      "estimated_complexity": "high",
+      "priority": 5,
+      "category": "implementation",
+      "status": "completed"
+    },
+    {
+      "id": "todo-006",
+      "description": "Create agent protocol extensions (Task 8)",
+      "depends_on": ["todo-001"],
+      "estimated_complexity": "medium",
+      "priority": 6,
+      "category": "specs",
+      "status": "completed"
     }
   ],
   "generated_from": "_index.json",
-  "total_specs": 63,
+  "total_specs": 79,
   "ralph_phase": "phase_1_manual_emulation"
 }
