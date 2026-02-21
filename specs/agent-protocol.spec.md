@@ -2,6 +2,8 @@
 id: "@speclang/agent-protocol"
 version: 0.1.0
 layer: 0
+project_level: Alpha
+agent_support: agent_assisted
 tags: [agents, protocol, ownership, sessions]
 imports: ["@speclang/core"]
 status: draft
@@ -375,6 +377,51 @@ AgentError:
     - notify orchestrator if critical
     - retry with backoff for transient errors
     - abort session after max retries
+```
+
+---
+
+## Behavior Based on Metadata
+
+### @protocol/metadata-behavior
+
+```speclang
+# @block:protocol/metadata-behavior @kind:note
+Agent behavior is influenced by spec metadata fields:
+- `project_level`: Determines autonomy level and resource allocation
+- `agent_support`: Determines permissions and human involvement
+- `layer`: Determines appropriate level of detail to add
+
+See @ref:speclang/agent-behavior-matrix for detailed behavior rules.
+
+Key principles:
+1. Lower project_level (POC/MVP) → more human oversight
+2. Higher project_level (Production+) → more autonomy
+3. `human_only` specs → read-only access
+4. `agent_assisted` specs → write with approval
+5. `agent_autonomous` specs → full write/deploy permissions
+
+Agents must check these fields before acting and adjust behavior accordingly.
+```
+
+### @protocol/metadata-routing
+
+```speclang
+# @block:protocol/metadata-routing @kind:entity
+MetadataRouting:
+  
+  session_behavior:
+    - Agents check `project_level` and `agent_support` of target spec
+    - Adjust interaction style based on metadata
+    - Request human approval when required by metadata
+    
+  ownership_transfer:
+    - During maturity transitions, ownership may transfer between agents
+    - Example: `agent_assisted` → `agent_autonomous` may transfer from human to agent
+    
+  resource_allocation:
+    - Higher `project_level` specs get more computational resources
+    - `agent_autonomous` specs get priority in cascade routing
 ```
 
 ---
