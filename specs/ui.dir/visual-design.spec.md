@@ -1,10 +1,10 @@
 # speclang-header lines:10
 id: "@speclang/ui.visual-design"
-parent: @ref:specs/ui
+parent: "@ref:specs/ui"
 part: 2/14
 siblings:
-  prev: @ref:specs/ui.dir/overview
-  next: @ref:specs/ui.dir/components/cascade-status
+  prev: "@ref:specs/ui.dir/overview"
+  next: "@ref:specs/ui.dir/components/cascade-status"
 short: Visual design system, CSS architecture, themes, accessibility
 ---
 

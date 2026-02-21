@@ -1,8 +1,8 @@
 # speclang-header lines:12
-id: @speclang/mcp/openapi-generation
+id: "@speclang/mcp/openapi-generation"
 version: 0.1.0
 layer: 2
-imports: [@speclang/mcp, @speclang/cli, @speclang/tools]
+imports: ["@speclang/mcp", "@speclang/cli", "@speclang/tools"]
 tags: [mcp, openapi, generator, integration, automation]
 short: Integration with openapi-mcp-generator for easy MCP server generation
 status: draft

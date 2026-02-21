@@ -206,6 +206,12 @@ HeaderFields:
     - line_count: N (computed, for validation)
 ```
 
+For detailed semantic definitions of these fields, see:
+- @ref:speclang/layer-definitions (layer)
+- @ref:speclang/project-maturity-levels (project_level)
+- @ref:speclang/agent-support-levels (agent_support)
+- @ref:speclang/autonomous-validation (validation rules)
+
 ---
 
 ## Recommended Fields

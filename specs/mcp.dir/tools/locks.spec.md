@@ -1,9 +1,9 @@
 # speclang-header lines:7
 id: "@speclang/mcp.tools.locks"
-parent: @ref:specs/mcp
+parent: "@ref:specs/mcp"
 part: 7/12
 siblings:
-  next: @ref:specs/mcp.dir/authentication
+  next: "@ref:specs/mcp.dir/authentication"
 short: Lock and event tools: claim event, acquire lock, release lock
 ---
 # MCP Lock and Event Tools

@@ -1,8 +1,8 @@
 # speclang-header lines:12
-id: @speclang/mcp-openapi-generation-tests
+id: "@speclang/mcp-openapi-generation-tests"
 version: 0.1.0
 layer: 5
-imports: [@speclang/mcp/openapi-generation, @speclang/test-specs]
+imports: ["@speclang/mcp/openapi-generation", "@speclang/test-specs"]
 tags: [mcp, openapi, tests, acceptance]
 short: Acceptance tests for OpenAPI-MCP generator integration
 status: draft

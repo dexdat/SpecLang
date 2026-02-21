@@ -1,9 +1,9 @@
 # speclang-header lines:7
 id: "@speclang/mcp.tools.search"
-parent: @ref:specs/mcp
+parent: "@ref:specs/mcp"
 part: 4/12
 siblings:
-  next: @ref:specs/mcp.dir/tools/specs
+  next: "@ref:specs/mcp.dir/tools/specs"
 short: Search tools: speclang_search and speclang_semantic_search
 ---
 # MCP Search Tools

@@ -1,9 +1,9 @@
 # speclang-header lines:7
 id: "@speclang/mcp.error-handling"
-parent: @ref:specs/mcp
+parent: "@ref:specs/mcp"
 part: 9/12
 siblings:
-  next: @ref:specs/mcp.dir/sse-stream
+  next: "@ref:specs/mcp.dir/sse-stream"
 short: Error categories and handling strategies
 ---
 # MCP Error Handling

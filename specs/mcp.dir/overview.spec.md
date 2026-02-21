@@ -1,9 +1,9 @@
 # speclang-header lines:7
 id: "@speclang/mcp.overview"
-parent: @ref:specs/mcp
+parent: "@ref:specs/mcp"
 part: 1/12
 siblings:
-  next: @ref:specs/mcp.dir/architecture
+  next: "@ref:specs/mcp.dir/architecture"
 short: MCP server overview
 ---
 # MCP Server Overview

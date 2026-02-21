@@ -1,9 +1,9 @@
 # speclang-header lines:7
 id: "@speclang/mcp.authentication"
-parent: @ref:specs/mcp
+parent: "@ref:specs/mcp"
 part: 8/12
 siblings:
-  next: @ref:specs/mcp.dir/error-handling
+  next: "@ref:specs/mcp.dir/error-handling"
 short: Authentication methods for remote and server modes
 ---
 # MCP Authentication

@@ -1,10 +1,10 @@
 # speclang-header lines:10
 id: "@speclang/ui.components.agent-health"
-parent: @ref:specs/ui
+parent: "@ref:specs/ui"
 part: 4/14
 siblings:
-  prev: @ref:specs/ui.dir/components/cascade-status
-  next: @ref:specs/ui.dir/components/event-timeline
+  prev: "@ref:specs/ui.dir/components/cascade-status"
+  next: "@ref:specs/ui.dir/components/event-timeline"
 short: Agent health grid component
 ---
 

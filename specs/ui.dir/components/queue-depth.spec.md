@@ -1,10 +1,10 @@
 # speclang-header lines:10
 id: "@speclang/ui.components.queue-depth"
-parent: @ref:specs/ui
+parent: "@ref:specs/ui"
 part: 6/14
 siblings:
-  prev: @ref:specs/ui.dir/components/event-timeline
-  next: @ref:specs/ui.dir/components/system-metrics
+  prev: "@ref:specs/ui.dir/components/event-timeline"
+  next: "@ref:specs/ui.dir/components/system-metrics"
 short: Queue depth meter component
 ---
 

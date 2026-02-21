@@ -1,8 +1,8 @@
 # speclang-header lines:8
-id: @implementation/ralph-loop
+id: "@implementation/ralph-loop"
 version: 0.1.0
 layer: 3
-imports: [@speclang/ralph-loop, @speclang/agent-protocol, @speclang/cascade, @speclang/recovery, @speclang/sqlite]
+imports: ["@speclang/ralph-loop", "@speclang/agent-protocol", "@speclang/cascade", "@speclang/recovery", "@speclang/sqlite"]
 tags: [ralph-loop, implementation, typescript, orchestration, validation]
 short: TypeScript implementation of Ralph Loop dual-agent system with steering packets
 ---

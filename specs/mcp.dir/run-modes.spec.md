@@ -1,9 +1,9 @@
 # speclang-header lines:7
 id: "@speclang/mcp.run-modes"
-parent: @ref:specs/mcp
+parent: "@ref:specs/mcp"
 part: 3/12
 siblings:
-  next: @ref:specs/mcp.dir/tools/search
+  next: "@ref:specs/mcp.dir/tools/search"
 short: Three run modes: editor-initiated, remote, server
 ---
 # MCP Server Run Modes
