@@ -53,6 +53,15 @@
       "priority": 6,
       "category": "specs",
       "status": "completed"
+    },
+    {
+      "id": "todo-007",
+      "description": "Create test suite for Python scripts (generate_index.py, validate_refs.py, validate_autonomous.py)",
+      "depends_on": ["todo-005"],
+      "estimated_complexity": "medium",
+      "priority": 7,
+      "category": "implementation",
+      "status": "completed"
     }
   ],
   "generated_from": "_index.json",
