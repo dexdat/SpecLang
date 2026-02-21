@@ -45,6 +45,13 @@ RunModes:
     | Editor | Editor | stdio | None | Personal |
     | Remote | User | HTTP | Optional | Team |
     | Server | System | Socket | Config | Enterprise |
+
+  client_reconnection:
+    description: Client reconnection logic for remote mode
+    strategy: exponential backoff with jitter
+    max_retries: 10
+    max_delay: 30 seconds
+    on_disconnect: wait for retry, then restart cascade if needed
 ```
 
 ### @mcp/mode-implementation

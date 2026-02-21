@@ -60,6 +60,14 @@ MCP_TOOLS:
     sql: |
       DELETE FROM file_locks 
       WHERE file_path = ? AND lock_token = ?
+
+  speclang_deadlock_prevention:
+    description: Deadlock prevention strategies
+    note: |
+      - All locks have expiration timeouts
+      - Clients implement retry with exponential backoff
+      - Lock ordering: acquire locks in alphabetical file path order
+      - Deadlock detection via timeout; release locks on timeout
 ```
 
 ### @mcp/tool-handler-locks

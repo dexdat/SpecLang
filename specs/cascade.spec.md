@@ -424,6 +424,7 @@ TerminationConditions:
     - quiet_period: no changes for 30s
     - all_agents_idle: no active sessions
     - depth_stable: depth not increasing
+    - no_pending_events: no events with processed=0 and claimed_by IS NULL
     
   forced:
     - /finalize command

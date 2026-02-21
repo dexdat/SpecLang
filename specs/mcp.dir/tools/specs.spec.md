@@ -139,7 +139,8 @@ MCP_TOOLS:
     returns:
       rows: any[]
     implementation: |
-      Executes SQL query with parameters. Only SELECT statements allowed.
+      Validates SQL query starts with "SELECT" (case-insensitive) and contains no semicolons.
+      Uses prepared statements with parameter binding to prevent SQL injection.
       Returns array of rows.
 
   speclang_execute:
