@@ -31,7 +31,7 @@ CREATE TABLE specs (
   short_desc TEXT,
   header_raw TEXT,
   content_raw TEXT,
-  content_embedding BLOB,
+  content_embedding BLOB, -- optional; NULL if embedding generation fails
   parsed_json TEXT,
   part INTEGER DEFAULT 1,
   total_parts INTEGER DEFAULT 1,
@@ -40,32 +40,53 @@ CREATE TABLE specs (
 );
 
 CREATE TABLE sessions (
-  id TEXT PRIMARY KEY,
+  session_id TEXT PRIMARY KEY,
   agent TEXT,
-  owns TEXT,              -- JSON array
   status TEXT,
+  current_file TEXT,
+  created INTEGER,
   last_active INTEGER
 );
 
 CREATE TABLE events (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  event_pk INTEGER PRIMARY KEY,
+  cascade_id TEXT,
+  depth INTEGER,
+  trigger_file TEXT,
+  agent TEXT,
+  output_files TEXT, -- JSON array
   timestamp INTEGER,
-  kind TEXT,
-  path TEXT,
-  session TEXT,
-  cascade_id TEXT,        -- optional, links events to a cascade
-  details TEXT            -- JSON
+  processed BOOLEAN DEFAULT 0,
+  claimed_by TEXT
 );
 
 CREATE TABLE commands (
-  id TEXT PRIMARY KEY,
-  session_id TEXT,
-  cascade_id TEXT,        -- optional, links commands to a cascade
+  command_id TEXT PRIMARY KEY,
+  cascade_id TEXT,
   action TEXT,
-  target TEXT,
-  payload TEXT,           -- JSON
+  target_file TEXT,
+  session_id TEXT,
+  payload TEXT,
+  priority INTEGER DEFAULT 0,
   status TEXT,
   created_at INTEGER
+);
+
+CREATE TABLE cascades (
+  cascade_id TEXT PRIMARY KEY,
+  depth INTEGER DEFAULT 0,
+  status TEXT DEFAULT 'active',
+  started_at INTEGER,
+  converged_at INTEGER,
+  root_trigger_file TEXT
+);
+
+CREATE TABLE file_locks (
+  file_path TEXT PRIMARY KEY,
+  session_id TEXT,
+  lock_token TEXT,
+  acquired_at INTEGER DEFAULT (strftime('%s','now')),
+  expires_at INTEGER
 );
 
 CREATE TABLE recovery (
