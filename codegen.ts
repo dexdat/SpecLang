@@ -59,17 +59,25 @@ export class SpecParser {
     const lines = content.split('\n');
     
     // Parse header
-    if (lines.length < 2 || !lines[1].includes('speclang-header')) {
+    // Find speclang-header line (could be at index 0 or 1)
+    let headerLineIndex = -1;
+    for (let i = 0; i < Math.min(lines.length, 3); i++) {
+      if (lines[i].includes('speclang-header')) {
+        headerLineIndex = i;
+        break;
+      }
+    }
+    if (headerLineIndex === -1) {
       throw new Error('Invalid spec header');
     }
     
-    const headerMatch = lines[1].match(/speclang-header lines:(\d+)/);
+    const headerMatch = lines[headerLineIndex].match(/speclang-header lines:(\d+)/);
     if (!headerMatch) {
       throw new Error('Missing line count in header');
     }
     
     const headerLines = parseInt(headerMatch[1], 10);
-    const headerContent = lines.slice(1, headerLines).join('\n');
+    const headerContent = lines.slice(headerLineIndex, headerLines).join('\n');
     const yamlEnd = headerContent.indexOf('---');
     if (yamlEnd === -1) {
       throw new Error('Missing YAML separator');
@@ -192,11 +200,13 @@ export class PythonCodeGenerator {
 
 export class CodeGenerator {
   static async generateFromSpec(specFilePath: string): Promise<CodeGenResult> {
+    console.log(`Generating from spec: ${specFilePath}`);
     const errors: string[] = [];
     const warnings: string[] = [];
     
     try {
       const spec = await SpecParser.parseSpec(specFilePath);
+      console.log(`Parsed spec: target=${spec.target}, produces=${spec.produces}`);
       
       // Select generator based on target
       let generator: (block: CodeBlock) => string;

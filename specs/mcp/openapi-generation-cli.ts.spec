@@ -1,7 +1,8 @@
-# speclang-header lines:12
+# speclang-header lines:11
 id: @speclang/mcp-openapi-generation-cli
 version: 0.1.0
 layer: 10
+target: typescript
 imports: [@speclang/mcp, @speclang/cli, @speclang/mcp/openapi-generation]
 tags: [mcp, openapi, cli, typescript, implementation]
 short: TypeScript implementation of speclang mcp generate-openapi command
