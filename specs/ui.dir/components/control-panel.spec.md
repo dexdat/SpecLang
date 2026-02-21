@@ -1,10 +1,10 @@
 # speclang-header lines:10
 id: "@speclang/ui.components.control-panel"
-parent: @ref:specs/ui
+parent: "@ref:specs/ui"
 part: 8/14
 siblings:
-  prev: @ref:specs/ui.dir/components/system-metrics
-  next: @ref:specs/ui.dir/components/cascade-graph
+  prev: "@ref:specs/ui.dir/components/system-metrics"
+  next: "@ref:specs/ui.dir/components/cascade-graph"
 short: Control panel component for cascade operations
 ---
 

@@ -1,10 +1,10 @@
 # speclang-header lines:10
 id: "@speclang/ui.components.event-timeline"
-parent: @ref:specs/ui
+parent: "@ref:specs/ui"
 part: 5/14
 siblings:
-  prev: @ref:specs/ui.dir/components/agent-health
-  next: @ref:specs/ui.dir/components/queue-depth
+  prev: "@ref:specs/ui.dir/components/agent-health"
+  next: "@ref:specs/ui.dir/components/queue-depth"
 short: Event timeline component
 ---
 

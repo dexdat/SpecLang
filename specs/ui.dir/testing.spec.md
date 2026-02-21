@@ -1,10 +1,10 @@
 # speclang-header lines:10
 id: "@speclang/ui.testing"
-parent: @ref:specs/ui
+parent: "@ref:specs/ui"
 part: 13/14
 siblings:
-  prev: @ref:specs/ui.dir/state-management
-  next: @ref:specs/mcp-ui-tools
+  prev: "@ref:specs/ui.dir/state-management"
+  next: "@ref:specs/mcp-ui-tools"
 short: Testing strategy and specifications for UI components
 ---
 

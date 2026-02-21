@@ -1,10 +1,10 @@
 # speclang-header lines:10
 id: "@speclang/ui.components.system-metrics"
-parent: @ref:specs/ui
+parent: "@ref:specs/ui"
 part: 7/14
 siblings:
-  prev: @ref:specs/ui.dir/components/queue-depth
-  next: @ref:specs/ui.dir/components/control-panel
+  prev: "@ref:specs/ui.dir/components/queue-depth"
+  next: "@ref:specs/ui.dir/components/control-panel"
 short: System metrics panel component
 ---
 

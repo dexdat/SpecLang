@@ -1,23 +1,23 @@
 # speclang-header lines:22
-id: @speclang/mcp
+id: "@speclang/mcp"
 version: 0.3.0
 layer: 3
-imports: [@speclang/core, @speclang/sqlite]
+imports: ["@speclang/core", "@speclang/sqlite"]
 tags: [mcp, typescript, server, implementation]
 status: draft
 children:
-  - @ref:specs/mcp.dir/overview
-  - @ref:specs/mcp.dir/architecture
-  - @ref:specs/mcp.dir/run-modes
-  - @ref:specs/mcp.dir/tools/search
-  - @ref:specs/mcp.dir/tools/specs
-  - @ref:specs/mcp.dir/tools/commands
-  - @ref:specs/mcp.dir/tools/locks
-  - @ref:specs/mcp.dir/authentication
-  - @ref:specs/mcp.dir/error-handling
-  - @ref:specs/mcp.dir/sse-stream
-  - @ref:specs/mcp.dir/configuration
-  - @ref:specs/mcp.dir/cli
+  - "@ref:specs/mcp.dir/overview"
+  - "@ref:specs/mcp.dir/architecture"
+  - "@ref:specs/mcp.dir/run-modes"
+  - "@ref:specs/mcp.dir/tools/search"
+  - "@ref:specs/mcp.dir/tools/specs"
+  - "@ref:specs/mcp.dir/tools/commands"
+  - "@ref:specs/mcp.dir/tools/locks"
+  - "@ref:specs/mcp.dir/authentication"
+  - "@ref:specs/mcp.dir/error-handling"
+  - "@ref:specs/mcp.dir/sse-stream"
+  - "@ref:specs/mcp.dir/configuration"
+  - "@ref:specs/mcp.dir/cli"
 short: MCP server implementation for universal editor access (split into parts)
 ---
 

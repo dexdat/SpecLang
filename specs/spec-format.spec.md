@@ -1,4 +1,4 @@
-# speclang-header
+# speclang-header lines:10
 id: "@speclang/spec-format"
 version: 0.1.0
 layer: 0
@@ -418,7 +418,13 @@ Hello, speclang.
 | 1 | Feature | Feature breakdown |
 | 2 | Component | Entities, operations |
 | 3 | Detail | Pseudocode, diagrams |
-| 4 | Code | Generated implementation |
+| 4 | Implementation | Language mapping |
+| 5 | Code Spec | Direct code mapping |
+| 6 | Generated Code | Output code |
+| 7 | Test Spec | Natural language test descriptions |
+| 8 | Test Code Spec | Test code mapping |
+| 9 | Generated Test Code | Generated test code |
+| 10 | Deployment/Ops | Infrastructure configuration |
 ```
 
 ## Validation

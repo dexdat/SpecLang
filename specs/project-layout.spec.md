@@ -1,4 +1,4 @@
-# speclang-header
+# speclang-header lines:8
 id: "@speclang/project-layout"
 version: 0.1.0
 layer: 0

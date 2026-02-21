@@ -1,9 +1,9 @@
 # speclang-header lines:7
 id: "@speclang/mcp.tools.specs"
-parent: @ref:specs/mcp
+parent: "@ref:specs/mcp"
 part: 5/12
 siblings:
-  next: @ref:specs/mcp.dir/tools/commands
+  next: "@ref:specs/mcp.dir/tools/commands"
 short: Spec-related tools: get spec, find dependents, get tree, validate, split, query errors, versioning, SQL
 ---
 # MCP Spec Tools

@@ -1,5 +1,5 @@
 # speclang-header lines:9
-id: @speclang/agent-support-levels
+id: "@speclang/agent-support-levels"
 version: 0.1.0
 layer: 1
 project_level: Alpha

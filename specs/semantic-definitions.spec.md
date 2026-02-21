@@ -1,5 +1,5 @@
 # speclang-header lines:9
-id: @speclang/semantic-definitions
+id: "@speclang/semantic-definitions"
 version: 0.1.0
 layer: 1
 project_level: Alpha

@@ -1,4 +1,4 @@
-# speclang-header
+# speclang-header lines:11
 id: "@speclang/agent-protocol"
 version: 0.1.0
 layer: 0

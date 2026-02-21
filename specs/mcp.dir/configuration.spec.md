@@ -1,9 +1,9 @@
 # speclang-header lines:7
 id: "@speclang/mcp.configuration"
-parent: @ref:specs/mcp
+parent: "@ref:specs/mcp"
 part: 11/12
 siblings:
-  next: @ref:specs/mcp.dir/cli
+  next: "@ref:specs/mcp.dir/cli"
 short: Configuration options and schema
 ---
 # MCP Configuration

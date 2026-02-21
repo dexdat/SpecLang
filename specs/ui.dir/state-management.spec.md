@@ -1,10 +1,10 @@
 # speclang-header lines:10
 id: "@speclang/ui.state-management"
-parent: @ref:specs/ui
+parent: "@ref:specs/ui"
 part: 12/14
 siblings:
-  prev: @ref:specs/ui.dir/interactions
-  next: @ref:specs/ui.dir/testing
+  prev: "@ref:specs/ui.dir/interactions"
+  next: "@ref:specs/ui.dir/testing"
 short: State management and implementation notes
 ---
 

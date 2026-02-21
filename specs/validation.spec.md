@@ -133,6 +133,28 @@ BlockValidation:
 
 ---
 
+## Autonomous Validation
+
+### @validation/autonomous
+
+```speclang
+# @block:validation/autonomous @kind:note
+For specs with `agent_support: agent_autonomous`, additional validation
+rules apply. See @ref:speclang/autonomous-validation for complete details.
+
+Key additional checks:
+- Step-by-step descriptions for all operations
+- All references resolve to existing blocks
+- No ambiguous natural language in critical sections
+- Required metadata fields present and valid
+- Completeness for given layer and project_level
+
+Autonomous validation runs after standard validation passes.
+Failure blocks cascade and may trigger downgrade to `agent_assisted`.
+```
+
+---
+
 ## Error Handling
 
 ### @validation/errors

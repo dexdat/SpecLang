@@ -1,9 +1,9 @@
 # speclang-header lines:7
 id: "@speclang/mcp.tools.commands"
-parent: @ref:specs/mcp
+parent: "@ref:specs/mcp"
 part: 6/12
 siblings:
-  next: @ref:specs/mcp.dir/tools/locks
+  next: "@ref:specs/mcp.dir/tools/locks"
 short: Command queue tools: get status, query commands, insert command
 ---
 # MCP Command Tools
