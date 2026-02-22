@@ -3,7 +3,7 @@
 
 
 // Block: implementation/ralph-loop/controller
-import { Database } from 'sqlite3';
+import { Database } from 'better-sqlite3';
 import { open } from 'sqlite';
 import { BuilderAgent } from './builder-agent';
 import { VerifierAgent } from './verifier-agent';
@@ -24,13 +24,18 @@ export class LoopController {
   private verifier: VerifierAgent;
   private isRunning: boolean = false;
 
-  constructor(dbPath: string = '.speclang/speclang.db') {
-    this.db = await open({
+  constructor(db: Database) {
+    this.db = db;
+    this.builder = new BuilderAgent(db);
+    this.verifier = new VerifierAgent(db);
+  }
+
+  static async create(dbPath: string = '.speclang/speclang.db'): Promise<LoopController> {
+    const db = await open({
       filename: dbPath,
-      driver: require('sqlite3').Database
+      driver: require('better-sqlite3').Database
     });
-    this.builder = new BuilderAgent(this.db);
-    this.verifier = new VerifierAgent(this.db);
+    return new LoopController(db);
   }
 
   async start() {
@@ -102,7 +107,7 @@ export class LoopController {
 }
 
 // Block: implementation/ralph-loop/builder-agent
-import { Database } from 'sqlite3';
+import { Database } from 'better-sqlite3';
 import { open } from 'sqlite';
 import { readFile, writeFile } from 'fs/promises';
 import { glob } from 'glob';
@@ -158,7 +163,7 @@ export class BuilderAgent {
 }
 
 // Block: implementation/ralph-loop/verifier-agent
-import { Database } from 'sqlite3';
+import { Database } from 'better-sqlite3';
 import { open } from 'sqlite';
 import { readFile } from 'fs/promises';
 import { exec } from 'child_process';
