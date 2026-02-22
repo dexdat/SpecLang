@@ -1,32 +1,16 @@
-# speclang-header lines:14
+# speclang-header lines:10
 id: "@speclang/daemon"
 version: 0.1.0
-layer: 0
+layer: 5
 project_level: Alpha
-agent_support: agent_assisted
-tags: [daemon, inotify, watcher, rust]
-imports: ["@speclang/core"]
-status: draft
-short: "daemon.spec.md"
-children:
-  - "@ref:specs/daemon.dir/architecture"
-  - "@ref:specs/daemon.dir/events"
-  - "@ref:specs/daemon.dir/routing"
-  - "@ref:specs/daemon.dir/convergence"
----
-# speclangd
-
-The reactive file watcher daemon. Rust binary, ~5MB, cross-platform.
-
-This spec has been split into multiple parts for better organization and autonomous agent operation.
-
-## Parts
-
-- @ref:specs/daemon.dir/architecture - Architecture overview of speclangd
-- @ref:specs/daemon.dir/events - File watching and event handling
-- @ref:specs/daemon.dir/routing - Event routing to agents
-- @ref:specs/daemon.dir/convergence - Convergence detection and finalization
-
+agent_support: agent_autonomous
+tags: [typescript, generated, auto-generated]
+short: "Auto-generated spec for daemon.ts"
+status: generated
 ---
 
-*See individual parts in daemon.dir/*
+## @block:convergencedetector @kind:entity
+```text
+export class ConvergenceDetector extends EventEmitter {
+```
+
