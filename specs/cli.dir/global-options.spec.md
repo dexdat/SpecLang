@@ -1,8 +1,10 @@
-# speclang-header lines:10
+# speclang-header lines:12
 id: "@speclang/cli.dir/global-options"
 version: 0.1.0
 layer: 1
 tags: [cli, options]
+project_level: Alpha
+agent_support: agent_assisted
 parent: "@ref:speclang/cli"
 part: 3/8
 short: CLI global options
