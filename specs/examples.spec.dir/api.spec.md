@@ -7,7 +7,7 @@ agent_support: agent_autonomous
 tags: [examples, api, design, endpoints]
 short: API design example spec
 parent: @ref:speclang/examples
-part: 2/2
+part: 3/3
 ---
 # API Design Example
 
