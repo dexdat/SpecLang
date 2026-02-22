@@ -12,6 +12,7 @@ import { generateCommand, GenerateOptions } from './commands/generate.js';
 import { serverCommand, ServerOptions } from './commands/server.js';
 import { indexCommand, IndexOptions } from './commands/index.js';
 import { cascadeCommand, CascadeOptions } from './commands/cascade.js';
+import { guardCommand, GuardOptions } from './commands/guard.js';
 
 const program = new Command();
 
@@ -162,6 +163,61 @@ cascade
   .option('--json', 'JSON output')
   .action(async (options: CascadeOptions) => {
     await cascadeCommand('abort', undefined, options);
+  });
+
+// ============================================================================
+// GUARD COMMAND
+// ============================================================================
+
+const guard = program
+  .command('guard')
+  .description('Manage file ownership guard');
+
+guard
+  .command('check <filepath>')
+  .description('Check ownership of a file')
+  .option('--agent <agent>', 'Agent to check as', 'north-star')
+  .option('--json', 'JSON output')
+  .action(async (filepath: string, options: GuardOptions & { agent?: string }) => {
+    await guardCommand('check', filepath, options);
+  });
+
+guard
+  .command('rules')
+  .description('List all ownership rules')
+  .option('--agent <agent>', 'Filter by agent')
+  .option('--json', 'JSON output')
+  .action(async (options: GuardOptions & { agent?: string }) => {
+    await guardCommand('rules', undefined, options);
+  });
+
+guard
+  .command('violations')
+  .description('Show violations')
+  .option('--unresolved', 'Show only unresolved')
+  .option('--agent <agent>', 'Filter by agent')
+  .option('--json', 'JSON output')
+  .action(async (options: GuardOptions & { unresolved?: boolean; agent?: string }) => {
+    await guardCommand('violations', undefined, options);
+  });
+
+guard
+  .command('override <filepath>')
+  .description('Override ownership for a file')
+  .option('--agent <agent>', 'Agent to assign ownership to', 'code-gen')
+  .option('--reason <reason>', 'Reason for override')
+  .option('--expires <ms>', 'Expiration in milliseconds', parseInt)
+  .option('--json', 'JSON output')
+  .action(async (filepath: string, options: GuardOptions & { agent: string; reason: string; expires?: number }) => {
+    await guardCommand('override', filepath, options);
+  });
+
+guard
+  .command('stats')
+  .description('Show guard statistics')
+  .option('--json', 'JSON output')
+  .action(async (options: GuardOptions) => {
+    await guardCommand('stats', undefined, options);
   });
 
 // ============================================================================
