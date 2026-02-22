@@ -2,10 +2,10 @@
 id: @speclang/core/agents
 version: 0.1.0
 layer: 2
-project_level: Alpha
-agent_support: agent_autonomous
+project_level: "Alpha"
+agent_support: "agent_autonomous"
 tags: [core]
-short: Agent responsibilities: spec, code, test, backsync
+short: "Agent responsibilities: spec, code, test, backsync"
 parent: "@ref:speclang/core"
 part: 4/6
 ---
