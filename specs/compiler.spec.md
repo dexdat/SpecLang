@@ -325,7 +325,7 @@ Steps:
   4. Write only changed artifacts
 
 Benefits:
-  - fast watch mode
+  - low-latency watch mode
   - efficient CI
 ```
 

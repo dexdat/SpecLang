@@ -311,7 +311,13 @@ generated:
 
 # @block:auth/login @kind:operation
 login(email: String, password: String) -> Result<Token, Error>
-...
+
+Steps:
+1. Validate email format using regex
+2. Look up user by email in database
+3. Verify password hash matches stored hash
+4. Generate JWT token with user claims
+5. Return token wrapped in Result<Token, Error>
 ```
 
 # Alternative without lines count (also valid):

@@ -86,7 +86,7 @@
       "estimated_complexity": "medium",
       "priority": 1,
       "category": "specs",
-      "status": "failed"
+      "status": "completed"
     },
     {
       "id": "todo-009",
@@ -97,7 +97,7 @@
       "estimated_complexity": "medium",
       "priority": 1,
       "category": "specs",
-      "status": "failed"
+      "status": "completed"
     },
     {
       "id": "todo-010",
@@ -141,7 +141,7 @@
       "estimated_complexity": "high",
       "priority": 5,
       "category": "specs",
-      "status": "pending"
+      "status": "completed"
     }
   ],
   "generated_from": "_index.json",
