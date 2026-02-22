@@ -1,8 +1,10 @@
-# speclang-header lines:10
+# speclang-header lines:12
 id: "@speclang/cli.dir/configuration"
 version: 0.1.0
 layer: 1
 tags: [cli, configuration]
+project_level: Alpha
+agent_support: agent_assisted
 parent: "@ref:speclang/cli"
 part: 4/8
 short: CLI configuration
