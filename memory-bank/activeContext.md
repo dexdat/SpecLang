@@ -4,8 +4,11 @@
 Building out the SpecLang system using the Ralph Loop pattern.
 
 ## Recent Changes
+- Verifier Agent validated all todos (001-020) and confirmed completion. Stage 1 spec format validation passes (except backup specs). Stage 2 code compilation passes for core generated files (SQLite schema, Ralph Loop, validation system). Stage 3 test execution passes (18/18). Stage 4 integration testing passes. Created steering packets for validation summary and backup spec issues.
 - Builder Agent fixed SQLite schema loadMigration implementation, updated Ralph Loop and Validation System specs to use better-sqlite3 API, fixed duplicate imports and variable naming, added type assertions, regenerated code with compilation fixes.
 - Builder Agent fixed extraction scripts (generate_validation_system.py, generate_sqlite_schema.py, generate_ralph_loop.py) to handle nested backticks via line-by-line parsing.
+- Builder Agent fixed generic extraction script (generate_from_spec.py) to handle nested backticks via line-by-line parsing, enabling correct extraction of openapi-generation-cli.ts.spec.
+- Builder Agent used validation system to validate all specs and generated improvement report (validation_improvement_report.md).
 - Builder Agent updated SQLite schema spec to use better-sqlite3 directly, removed sqlite wrapper import.
 - Builder Agent updated validation system spec to import from './validation-system' instead of './validation-engine'.
 - Builder Agent updated Ralph Loop spec first block to use better-sqlite3 directly (remaining blocks pending).
