@@ -1,10 +1,13 @@
-# speclang-header lines:12
+# speclang-header lines:14
 id: "@speclang/file-naming"
 version: 0.1.0
-layer: 0
+layer: 1
 tags: [naming, format, files, conventions]
 imports: ["@speclang/core"]
 status: draft
+parts:
+  - "@speclang/file-naming/extensions"
+  - "@speclang/file-naming/patterns"
 
 project_level: Alpha
 agent_support: agent_assisted
@@ -26,6 +29,15 @@ Specs can be expressed in multiple formats:
 
 The format determines how speclangd parses and uses the file.
 ```
+
+## Parts
+
+This spec is split into two sub‑specs:
+
+1. **Extensions** (`@ref:speclang/file-naming/extensions`) – File extensions, direct code mapping, markdown/YAML specs, header requirements.
+2. **Patterns** (`@ref:speclang/file-naming/patterns`) – Layer organization, directory structure, transformation flow, naming conventions.
+
+See the sub‑specs for detailed information.
 
 ---
 
