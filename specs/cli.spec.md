@@ -1,10 +1,13 @@
-# speclang-header lines:8
+# speclang-header lines:11
 id: "@speclang/cli"
 version: 0.1.0
 layer: 0
 tags: [cli, commands, interface]
 imports: ["@speclang/core", "@speclang/stdlib"]
 
+project_level: Alpha
+agent_support: agent_assisted
+short: Speclang CLI
 ---
 
 # Speclang CLI

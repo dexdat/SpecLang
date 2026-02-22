@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:26
 id: "@speclang/ui"
 version: 0.2.0
 layer: 2
@@ -21,6 +21,8 @@ children:
   - "@ref:specs/ui.dir/testing"
   - "@ref:specs/mcp-ui-tools"
 short: System monitoring dashboard for SpecLang cascade and agent health (split into parts)
+project_level: Alpha
+agent_support: agent_assisted
 ---
 
 # System Dashboard Specification

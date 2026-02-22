@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:12
 id: "@speclang/agent-protocol"
 version: 0.1.0
 layer: 0
@@ -8,6 +8,7 @@ tags: [agents, protocol, ownership, sessions]
 imports: ["@speclang/core"]
 status: draft
 
+short: Agent Protocol
 ---
 
 # Agent Protocol

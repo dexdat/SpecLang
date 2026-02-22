@@ -86,7 +86,7 @@
       "estimated_complexity": "medium",
       "priority": 1,
       "category": "specs",
-      "status": "completed"
+      "status": "failed"
     },
     {
       "id": "todo-009",
@@ -97,7 +97,7 @@
       "estimated_complexity": "medium",
       "priority": 1,
       "category": "specs",
-      "status": "completed"
+      "status": "failed"
     },
     {
       "id": "todo-010",
@@ -119,6 +119,28 @@
       "estimated_complexity": "low",
       "priority": 3,
       "category": "implementation",
+      "status": "pending"
+    },
+    {
+      "id": "todo-012",
+      "description": "Add missing metadata fields (project_level, agent_support, short) to all specs",
+      "depends_on": [
+        "todo-004"
+      ],
+      "estimated_complexity": "medium",
+      "priority": 1,
+      "category": "specs",
+      "status": "pending"
+    },
+    {
+      "id": "todo-013",
+      "description": "Fix step-by-step descriptions and ambiguous terms in specs (lower priority)",
+      "depends_on": [
+        "todo-012"
+      ],
+      "estimated_complexity": "high",
+      "priority": 5,
+      "category": "specs",
       "status": "pending"
     }
   ],

@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:14
 id: "@speclang/ui.testing"
 parent: "@ref:specs/ui"
 part: 13/14
@@ -6,6 +6,11 @@ siblings:
   prev: "@ref:specs/ui.dir/state-management"
   next: "@ref:specs/mcp-ui-tools"
 short: Testing strategy and specifications for UI components
+project_level: Alpha
+agent_support: agent_assisted
+tags: [speclang]
+version: 0.1.0
+layer: 0
 ---
 
 ## Testing Strategy

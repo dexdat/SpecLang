@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:14
 id: "@speclang/ui.state-management"
 parent: "@ref:specs/ui"
 part: 12/14
@@ -6,6 +6,11 @@ siblings:
   prev: "@ref:specs/ui.dir/interactions"
   next: "@ref:specs/ui.dir/testing"
 short: State management and implementation notes
+project_level: Alpha
+agent_support: agent_assisted
+tags: [speclang]
+version: 0.1.0
+layer: 0
 ---
 
 ## Implementation Notes

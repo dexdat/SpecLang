@@ -1,10 +1,13 @@
-# speclang-header lines:8
+# speclang-header lines:11
 id: "@speclang/lenses"
 version: 0.1.0
 layer: 0
 tags: [lenses, views, formats, parsers]
 imports: ["@speclang/core"]
 
+project_level: Alpha
+agent_support: agent_assisted
+short: Lenses
 ---
 
 # Lenses

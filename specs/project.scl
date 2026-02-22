@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@northstar/speclang"
 version: 0.2.0
 layer: 0
@@ -7,6 +7,7 @@ agent_support: agent_assisted
 tags: [northstar, intent, top-level]
 status: active
 
+short: North Star: SpecLang
 ---
 
 # North Star: SpecLang

@@ -1,10 +1,13 @@
-# speclang-header lines:8
+# speclang-header lines:11
 id: "@speclang/ralph-loop"
 version: 0.1.0
 layer: 0
 tags: [ralph, loop, agents, coordination, validation]
 imports: ["@speclang/agent-protocol", "@speclang/cascade", "@speclang/recovery"]
 status: draft
+project_level: Alpha
+agent_support: agent_assisted
+short: Ralph Loop System
 ---
 # Ralph Loop System
 

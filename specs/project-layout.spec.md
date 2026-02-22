@@ -1,10 +1,13 @@
-# speclang-header lines:8
+# speclang-header lines:11
 id: "@speclang/project-layout"
 version: 0.1.0
 layer: 0
 tags: [layout, structure, files]
 status: draft
 
+project_level: Alpha
+agent_support: agent_assisted
+short: Project Layout
 ---
 
 # Project Layout

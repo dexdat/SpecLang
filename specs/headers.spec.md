@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/headers"
 version: 0.2.0
 layer: 0
@@ -7,6 +7,7 @@ agent_support: agent_autonomous
 tags: [headers, metadata, parsing, efficiency]
 imports: ["@speclang/core", "@speclang/spec-format"]
 status: draft
+short: Headers
 ---
 
 # Headers

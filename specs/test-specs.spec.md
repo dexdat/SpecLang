@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:12
 id: "@speclang/test-specs"
 version: 0.1.0
 layer: 0
@@ -6,6 +6,9 @@ tags: [tests, bdd, natural-language]
 imports: ["@speclang/core"]
 status: draft
 
+project_level: Alpha
+agent_support: agent_assisted
+short: Test Specs
 ---
 
 # Test Specs

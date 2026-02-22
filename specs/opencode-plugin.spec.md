@@ -1,4 +1,4 @@
-# speclang-header lines:15
+# speclang-header lines:24
 id: "@speclang/opencode-plugin"
 version: 0.2.0
 layer: 3
@@ -19,6 +19,8 @@ children:
   - "@ref:specs/opencode-plugin.dir/error-handling"
   - "@ref:specs/opencode-plugin.dir/checklist"
 short: TypeScript OpenCode plugin for Speclang integration (split into parts)
+project_level: Alpha
+agent_support: agent_assisted
 ---
 # OpenCode Plugin Implementation
 

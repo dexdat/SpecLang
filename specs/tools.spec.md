@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:12
 id: "@speclang/tools"
 version: 0.1.0
 layer: 0
@@ -6,6 +6,9 @@ tags: [tools, functions, agents, api]
 imports: ["@speclang/core", "@speclang/opencode"]
 status: draft
 
+project_level: Alpha
+agent_support: agent_assisted
+short: Agent Tools
 ---
 
 # Agent Tools

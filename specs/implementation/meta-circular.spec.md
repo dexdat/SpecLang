@@ -1,9 +1,12 @@
-# speclang-header lines:7
+# speclang-header lines:10
 id: "@implementation/meta-circular"
 version: 0.1.0
 layer: 0
 tags: [meta, circular, development, bootstrapping]
 status: draft
+project_level: Alpha
+agent_support: agent_assisted
+short: Meta-Circular Development
 ---
 # Meta-Circular Development
 
