@@ -28,6 +28,8 @@ Each block can use any lens.
 AI picks the right one based on @kind marker.
 ```
 
+See sub‑specs for detailed lens formats and Mermaid diagram support.
+
 ---
 
 
