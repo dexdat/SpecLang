@@ -1,6 +1,6 @@
 {
   "version": "0.2.0",
-  "generated": "2026-02-22T00:43:29.609150Z",
+  "generated": "2026-02-22T00:52:49.211046Z",
   "specs": {
     "@speclang/autonomous-validation": {
       "id": "@speclang/autonomous-validation",
@@ -1897,48 +1897,17 @@
         "autonomous"
       ],
       "imports": [],
-      "short": "Consolidated semantic definitions for layer, project_level, and agent_support",
+      "short": "Directory spec for semantic definitions of layer, project_level, and agent_support",
       "refs": [],
       "depends_on": [],
       "children": [],
       "content_refs": [
-        "speclang/layer-definitions",
-        "speclang/project-maturity-levels",
-        "speclang/agent-support-levels",
-        "specs/auth#login",
-        "speclang/layer-definitions",
-        "speclang/project-maturity-levels",
-        "speclang/agent-support-levels",
-        "speclang/autonomous-validation",
-        "speclang/headers",
-        "speclang/validation",
-        "#new-feature/overview",
-        "#auth/user",
-        "#auth/login",
-        "#deployment/k8s"
+        "speclang/semantic-definitions/layer-mapping",
+        "speclang/semantic-definitions/project-levels"
       ],
-      "blocks": [
-        "semantic-definitions/overview",
-        "semantic-definitions/layer-table",
-        "semantic-definitions/project-level-table",
-        "semantic-definitions/agent-support-table",
-        "semantic-definitions/interactions",
-        "semantic-definitions/example-poc",
-        "new-feature/overview",
-        "semantic-definitions/example-mvp",
-        "auth/user",
-        "semantic-definitions/example-production",
-        "auth/login",
-        "semantic-definitions/example-enterprise",
-        "deployment/k8s",
-        "semantic-definitions/validation",
-        "semantic-definitions/behavior-matrix",
-        "semantic-definitions/transitions",
-        "semantic-definitions/implementation",
-        "semantic-definitions/references"
-      ],
-      "lines": 279,
-      "modified": "2026-02-21T18:53:15.055185Z",
+      "blocks": [],
+      "lines": 28,
+      "modified": "2026-02-22T00:47:19.270501Z",
       "header_lines": 9,
       "status": "draft",
       "target": null
@@ -2054,6 +2023,8 @@
       "depends_on": [],
       "children": [],
       "content_refs": [
+        "speclang/safety-nets/analysis",
+        "speclang/safety-nets/fallback",
         "speclang/autonomous-validation",
         "speclang/transition-workflows",
         "speclang/agent-behavior-matrix",
@@ -2061,20 +2032,10 @@
       ],
       "blocks": [
         "safety-nets/overview",
-        "safety-nets/automated-analysis",
-        "safety-nets/peer-review",
-        "safety-nets/confidence-scoring",
-        "safety-nets/fallback",
-        "safety-nets/mislabeling-detection",
-        "safety-nets/cascade-prevention",
-        "safety-nets/monitoring",
-        "safety-nets/implementation",
-        "safety-nets/example-mislabeling",
-        "safety-nets/example-intervention",
         "safety-nets/references"
       ],
-      "lines": 324,
-      "modified": "2026-02-21T18:53:15.055853Z",
+      "lines": 48,
+      "modified": "2026-02-22T00:52:03.844488Z",
       "header_lines": 9,
       "status": "draft",
       "target": null
@@ -2757,6 +2718,76 @@
       "lines": 218,
       "modified": "2026-02-22T00:24:42.387963Z",
       "header_lines": 13,
+      "status": "draft",
+      "target": null
+    },
+    "@speclang/safety-nets/analysis": {
+      "id": "@speclang/safety-nets/analysis",
+      "path": "specs/safety-nets.dir/analysis.spec.md",
+      "version": "0.1.0",
+      "layer": 2,
+      "project_level": "Alpha",
+      "agent_support": "agent_autonomous",
+      "tags": [
+        "safety",
+        "validation",
+        "analysis",
+        "scoring"
+      ],
+      "imports": [],
+      "short": "Automated analysis and confidence scoring for safety nets",
+      "refs": [],
+      "depends_on": [],
+      "children": [],
+      "content_refs": [],
+      "blocks": [
+        "safety-nets/automated-analysis",
+        "safety-nets/confidence-scoring",
+        "safety-nets/mislabeling-detection",
+        "safety-nets/monitoring"
+      ],
+      "lines": 129,
+      "modified": "2026-02-22T00:50:26.557790Z",
+      "header_lines": 12,
+      "status": "draft",
+      "target": null
+    },
+    "@speclang/safety-nets/fallback": {
+      "id": "@speclang/safety-nets/fallback",
+      "path": "specs/safety-nets.dir/fallback.spec.md",
+      "version": "0.1.0",
+      "layer": 2,
+      "project_level": "Alpha",
+      "agent_support": "agent_autonomous",
+      "tags": [
+        "safety",
+        "validation",
+        "fallback",
+        "peer-review"
+      ],
+      "imports": [],
+      "short": "Peer review, fallback protocols, and implementation guidelines",
+      "refs": [],
+      "depends_on": [],
+      "children": [],
+      "content_refs": [
+        "speclang/autonomous-validation",
+        "speclang/transition-workflows",
+        "speclang/agent-behavior-matrix",
+        "speclang/agent-support-levels"
+      ],
+      "blocks": [
+        "safety-nets/peer-review",
+        "safety-nets/fallback",
+        "safety-nets/cascade-prevention",
+        "safety-nets/implementation",
+        "safety-nets/example-mislabeling",
+        "safety-nets/example-intervention",
+        "safety-nets/references"
+      ],
+      "lines": 196,
+      "modified": "2026-02-22T00:50:59.603587Z",
+      "header_lines": 12,
       "status": "draft",
       "target": null
     },
@@ -6639,6 +6670,86 @@
       "status": "draft",
       "target": null
     },
+    "@speclang/semantic-definitions/project-levels": {
+      "id": "@speclang/semantic-definitions/project-levels",
+      "path": "specs/semantic-definitions.dir/project-levels.spec.md",
+      "version": "0.1.0",
+      "layer": 2,
+      "project_level": "Alpha",
+      "agent_support": "agent_autonomous",
+      "tags": [
+        "semantic",
+        "definitions",
+        "project-level",
+        "agent-support",
+        "autonomous"
+      ],
+      "imports": [],
+      "short": "Project level and agent support definitions and interactions",
+      "refs": [],
+      "depends_on": [],
+      "children": [],
+      "content_refs": [
+        "speclang/project-maturity-levels",
+        "speclang/agent-support-levels",
+        "speclang/layer-definitions",
+        "speclang/autonomous-validation"
+      ],
+      "blocks": [
+        "semantic-definitions/project-level-table",
+        "semantic-definitions/agent-support-table",
+        "semantic-definitions/interactions-project-level",
+        "semantic-definitions/validation-project-level",
+        "semantic-definitions/behavior-matrix",
+        "semantic-definitions/transitions-team-growth",
+        "semantic-definitions/implementation-project-level",
+        "semantic-definitions/references-project-level"
+      ],
+      "lines": 121,
+      "modified": "2026-02-22T00:48:50.359253Z",
+      "header_lines": 11,
+      "status": "draft",
+      "target": null
+    },
+    "@speclang/semantic-definitions/layer-mapping": {
+      "id": "@speclang/semantic-definitions/layer-mapping",
+      "path": "specs/semantic-definitions.dir/layer-mapping.spec.md",
+      "version": "0.1.0",
+      "layer": 2,
+      "project_level": "Alpha",
+      "agent_support": "agent_autonomous",
+      "tags": [
+        "semantic",
+        "definitions",
+        "layer",
+        "mapping",
+        "autonomous"
+      ],
+      "imports": [],
+      "short": "Layer mapping definitions and interactions",
+      "refs": [],
+      "depends_on": [],
+      "children": [],
+      "content_refs": [
+        "speclang/layer-definitions",
+        "speclang/project-maturity-levels",
+        "speclang/agent-support-levels",
+        "speclang/autonomous-validation"
+      ],
+      "blocks": [
+        "semantic-definitions/layer-table",
+        "semantic-definitions/interactions-layer",
+        "semantic-definitions/validation-layer",
+        "semantic-definitions/transitions-layer",
+        "semantic-definitions/implementation-layer",
+        "semantic-definitions/references-layer"
+      ],
+      "lines": 103,
+      "modified": "2026-02-22T00:48:48.082800Z",
+      "header_lines": 11,
+      "status": "draft",
+      "target": null
+    },
     "@examples/hello-world": {
       "id": "@examples/hello-world",
       "path": "specs/examples.spec.dir/hello-world.spec.md",
@@ -6979,18 +7090,18 @@
   "graph": {
     "dependencies": {
       "@speclang/headers": [
-        "specs/jwt",
-        "@speclang/core",
         "specs/auth#login",
+        "specs/auth/entities",
+        "@speclang/core",
+        "specs/jwt",
         "specs/rate-limit",
         "@speclang/spec-format",
-        "specs/auth/entities",
         "specs/auth"
       ],
       "@speclang/directory-structure": [
-        "@speclang/project-layout",
         "@speclang/core",
-        "specs/auth"
+        "specs/auth",
+        "@speclang/project-layout"
       ],
       "@speclang/mcp-daemon": [
         "@speclang/core",
@@ -6998,101 +7109,101 @@
         "@speclang/deployment"
       ],
       "@speclang/scripts": [
-        "speclang/scripts.generate-validation-system",
-        "speclang/scripts.validate-refs",
         "speclang/scripts.generate-opencode-plugin",
-        "speclang/scripts.generate-todo",
-        "speclang/scripts.generate-sqlite-schema",
+        "speclang/scripts.generate-validation-system",
         "speclang/scripts.generate-index",
-        "speclang/scripts.validate-autonomous",
-        "speclang/scripts.compute-header-lines",
-        "speclang/scripts.rename-spec-files",
+        "speclang/scripts.generate-sqlite-schema",
+        "speclang/scripts.validate-refs",
         "speclang/scripts.generate-ralph-loop",
+        "speclang/scripts.fix-headers",
+        "speclang/scripts.compute-header-lines",
+        "speclang/scripts.generate-todo",
         "speclang/scripts.add-missing-fields",
+        "speclang/scripts.rename-spec-files",
         "speclang/scripts.generate-mcp-server",
         "speclang/scripts.generate-from-spec",
-        "speclang/scripts.fix-headers"
+        "speclang/scripts.validate-autonomous"
       ],
       "@speclang/project-maturity-levels": [
-        "specs/project-maturity-levels.dir/criteria",
         "specs/project-maturity-levels.dir/levels",
+        "specs/project-maturity-levels.dir/criteria",
         "specs/project-maturity-levels"
       ],
       "@speclang/lenses": [
-        "speclang/lenses/formats",
         "speclang/lenses/mermaid",
-        "@speclang/core"
+        "@speclang/core",
+        "speclang/lenses/formats"
       ],
       "@speclang/opencode-plugin": [
-        "specs/opencode-plugin.dir/error-handling",
-        "specs/opencode-plugin.dir/checklist",
-        "@speclang/core",
-        "specs/opencode-plugin.dir/event-system",
-        "@speclang/mcp",
-        "@speclang/sqlite",
-        "specs/opencode-plugin.dir/configuration",
-        "specs/opencode-plugin.dir/mcp-client",
-        "specs/opencode-plugin.dir/plugin-lifecycle",
-        "specs/opencode-plugin.dir/ownership-guard",
-        "specs/opencode-plugin",
-        "specs/opencode-plugin.dir/architecture",
-        "specs/opencode-plugin.dir/convergence",
         "specs/opencode-plugin.dir/git-integration",
+        "specs/opencode-plugin.dir/error-handling",
+        "@speclang/sqlite",
+        "specs/opencode-plugin",
         "specs/opencode-plugin.dir/overview",
+        "specs/opencode-plugin.dir/mcp-client",
+        "specs/opencode-plugin.dir/ownership-guard",
+        "specs/opencode-plugin.dir/architecture",
+        "@speclang/core",
         "specs/opencode-plugin.dir/session-manager",
+        "specs/opencode-plugin.dir/configuration",
+        "specs/opencode-plugin.dir/checklist",
+        "specs/opencode-plugin.dir/convergence",
+        "@speclang/mcp",
+        "specs/opencode-plugin.dir/tools",
+        "specs/opencode-plugin.dir/plugin-lifecycle",
         "@speclang/agent-protocol",
-        "specs/opencode-plugin.dir/tools"
+        "specs/opencode-plugin.dir/event-system"
       ],
       "@speclang/ralph-loop": [
-        "specs/ralph-loop.dir/state",
+        "@speclang/cascade",
         "@speclang/recovery",
-        "specs/ralph-loop.dir/workflow",
         "specs/ralph-loop",
+        "specs/ralph-loop.dir/workflow",
         "@speclang/agent-protocol",
-        "@speclang/cascade"
+        "specs/ralph-loop.dir/state"
       ],
       "@speclang/layer-definitions": [
+        "specs/deployment/k8s",
+        "specs/auth/login-implementation",
+        "specs/auth/entities",
         "specs/auth/login",
         "specs/auth/login-algorithm",
-        "specs/auth/login-implementation",
-        "specs/auth",
-        "specs/deployment/k8s",
-        "specs/auth/entities"
+        "specs/auth"
       ],
       "@speclang/mcp": [
-        "@speclang/core",
         "specs/mcp.dir/tools/specs",
-        "specs/mcp.dir/authentication",
-        "specs/mcp.dir/tools/search",
-        "specs/mcp.dir/cli",
-        "specs/mcp.dir/tools/commands",
-        "specs/mcp.dir/architecture",
         "@speclang/sqlite",
-        "specs/mcp",
-        "specs/mcp.dir/configuration",
+        "specs/mcp.dir/tools/locks",
         "specs/mcp.dir/overview",
+        "specs/mcp.dir/tools/commands",
+        "specs/mcp.dir/sse-stream",
+        "specs/mcp.dir/architecture",
+        "@speclang/core",
+        "specs/mcp",
         "specs/mcp.dir/run-modes",
         "specs/mcp.dir/error-handling",
-        "specs/mcp.dir/tools/locks",
-        "specs/mcp.dir/sse-stream"
+        "specs/mcp.dir/authentication",
+        "specs/mcp.dir/configuration",
+        "specs/mcp.dir/cli",
+        "specs/mcp.dir/tools/search"
       ],
       "@speclang/implementation": [
-        "speclang/implementation.validation-system",
-        "speclang/implementation.meta-circular"
+        "speclang/implementation.meta-circular",
+        "speclang/implementation.validation-system"
       ],
       "@speclang/compiler": [
         "@speclang/core",
         "speclang/compiler.dir/targets",
-        "speclang/compiler.dir/templates",
-        "speclang/compiler.dir/phases",
+        "@speclang/stdlib",
         "@speclang/spec-format",
-        "@speclang/stdlib"
+        "speclang/compiler.dir/templates",
+        "speclang/compiler.dir/phases"
       ],
       "@speclang/pipeline": [
-        "speclang/pipeline/recovery",
         "@speclang/core",
+        "speclang/pipeline/hooks",
         "speclang/pipeline/build",
-        "speclang/pipeline/hooks"
+        "speclang/pipeline/recovery"
       ],
       "@speclang/examples": [
         "@speclang/core",
@@ -7102,111 +7213,111 @@
         "specs/auth"
       ],
       "@speclang/stdlib": [
-        "specs/stdlib",
-        "specs/stdlib.dir/mapping",
+        "specs/stdlib.dir/types",
         "@speclang/core",
-        "specs/stdlib.dir/types"
+        "specs/stdlib.dir/mapping",
+        "specs/stdlib"
       ],
       "@speclang/skills": [
-        "@speclang/core",
-        "specs/skills"
+        "specs/skills",
+        "@speclang/core"
       ],
       "@speclang/agent-protocol": [
-        "speclang/agent-protocol/sessions",
+        "speclang/agent-protocol/ownership",
         "@speclang/core",
-        "speclang/agent-protocol/ownership"
+        "speclang/agent-protocol/sessions"
       ],
       "@speclang/opencode": [
-        "@speclang/agent-protocol",
         "@speclang/core",
-        "@speclang/daemon"
+        "@speclang/daemon",
+        "@speclang/agent-protocol"
       ],
       "@speclang/mcp-ui-tools": [
-        "specs/sqlite",
-        "specs/cascade",
-        "@speclang/mcp",
+        "@speclang/cascade",
         "@speclang/sqlite",
+        "specs/cascade",
+        "specs/agent-protocol",
+        "@speclang/mcp",
         "specs/mcp",
         "specs/ui",
-        "specs/agent-protocol",
+        "specs/sqlite",
         "specs/mcp#sse",
-        "@speclang/agent-protocol",
-        "@speclang/cascade"
+        "@speclang/agent-protocol"
       ],
       "@speclang/workflow": [
-        "@speclang/skills",
-        "@speclang/core",
         "speclang/workflow/examples",
-        "speclang/workflow/daily-use",
+        "@speclang/cascade",
+        "@speclang/core",
         "speclang/workflow/setup",
-        "@speclang/daemon",
-        "@speclang/cascade"
+        "@speclang/skills",
+        "speclang/workflow/daily-use",
+        "@speclang/daemon"
       ],
       "@speclang/ui": [
-        "specs/ui.dir/components/cascade-graph",
-        "specs/ui.dir/components/cascade-status",
-        "@speclang/mcp-ui-tools",
         "specs/ui.dir/testing",
-        "specs/ui.dir/components/agent-health",
-        "@speclang/sqlite",
-        "specs/ui.dir/overview",
-        "specs/ui.dir/state-management",
-        "specs/ui.dir/interactions",
-        "specs/ui.dir/components/queue-depth",
-        "specs/ui.dir/components/control-panel",
-        "specs/mcp-ui-tools",
-        "specs/ui",
-        "specs/ui.dir/components/system-metrics",
-        "@speclang/agent-protocol",
+        "specs/ui.dir/components/cascade-status",
+        "specs/ui.dir/components/cascade-graph",
         "@speclang/cascade",
-        "specs/ui.dir/components/log-viewer",
+        "specs/mcp-ui-tools",
+        "@speclang/mcp",
         "specs/ui.dir/components/event-timeline",
+        "specs/ui.dir/interactions",
+        "specs/ui.dir/components/agent-health",
+        "specs/ui.dir/overview",
+        "@speclang/mcp-ui-tools",
+        "@speclang/agent-protocol",
+        "@speclang/sqlite",
+        "specs/ui.dir/components/log-viewer",
+        "specs/ui.dir/components/queue-depth",
+        "specs/ui.dir/components/system-metrics",
+        "specs/ui",
         "specs/ui.dir/visual-design",
-        "@speclang/mcp"
+        "specs/ui.dir/state-management",
+        "specs/ui.dir/components/control-panel"
       ],
       "@speclang/sqlite": [
-        "speclang/sqlite/graph",
-        "specs/sqlite",
-        "@speclang/core",
         "speclang/sqlite/schema",
-        "speclang/sqlite/vectors",
+        "@speclang/core",
+        "speclang/sqlite/fts",
         "@speclang/headers",
-        "speclang/sqlite/fts"
+        "speclang/sqlite/vectors",
+        "specs/sqlite",
+        "speclang/sqlite/graph"
       ],
       "@speclang/config": [
         "speclang/config.dir/defaults",
         "speclang/config.dir/schema"
       ],
       "@speclang/cli": [
-        "speclang/cli.dir/commands",
-        "@speclang/core",
-        "speclang/cli.dir/interactive-mode",
-        "speclang/cli.dir/output-formats",
-        "speclang/cli.dir/global-options",
-        "@speclang/stdlib",
-        "speclang/cli.dir/exit-codes",
+        "speclang/cli.dir/configuration",
         "speclang/cli.dir/integration",
+        "speclang/cli.dir/output-formats",
+        "speclang/cli.dir/commands",
         "speclang/cli.dir/installation",
-        "speclang/cli.dir/configuration"
+        "speclang/cli.dir/exit-codes",
+        "@speclang/core",
+        "@speclang/stdlib",
+        "speclang/cli.dir/interactive-mode",
+        "speclang/cli.dir/global-options"
       ],
       "@speclang/file-naming": [
-        "@speclang/core",
-        "specs/auth#login"
+        "specs/auth#login",
+        "@speclang/core"
       ],
       "@speclang/deployment": [
         "specs/deployment",
+        "@speclang/opencode",
         "@speclang/core",
-        "@speclang/daemon",
-        "@speclang/opencode"
+        "@speclang/daemon"
       ],
       "@speclang/cascade-protocol": [
-        "specs/users#profile",
-        "specs/core"
+        "specs/core",
+        "specs/users#profile"
       ],
       "@speclang/dynamic-split": [
         "speclang/dynamic-split/strategy",
-        "@speclang/headers",
         "@speclang/core",
+        "@speclang/headers",
         "speclang/dynamic-split/token-budget"
       ],
       "@speclang/validation": [
@@ -7217,41 +7328,38 @@
         "@speclang/core"
       ],
       "@speclang/symlinks": [
-        "@speclang/core",
-        "@speclang/headers"
+        "@speclang/headers",
+        "@speclang/core"
       ],
       "@speclang/cascade": [
-        "@speclang/agent-protocol",
         "@speclang/core",
-        "@speclang/daemon"
+        "@speclang/daemon",
+        "@speclang/agent-protocol"
       ],
       "@speclang/spec-format": [
-        "specs/auth#login",
         "specs/users#User",
-        "specs/auth"
-      ],
-      "@speclang/semantic-definitions": [
+        "specs/auth",
         "specs/auth#login"
       ],
       "@speclang/daemon": [
         "@speclang/core",
-        "specs/daemon",
-        "specs/daemon.dir/routing",
+        "specs/daemon.dir/architecture",
         "specs/daemon.dir/events",
-        "specs/daemon.dir/architecture"
+        "specs/daemon",
+        "specs/daemon.dir/routing"
       ],
       "@speclang/tools": [
-        "@speclang/core",
-        "@speclang/opencode"
+        "@speclang/opencode",
+        "@speclang/core"
       ],
       "@speclang/test-specs": [
-        "speclang/test-specs/format",
         "@speclang/core",
+        "speclang/test-specs/format",
         "speclang/test-specs/examples"
       ],
       "@speclang/recovery": [
-        "@speclang/core",
         "@speclang/pipeline",
+        "@speclang/core",
         "specs/recovery"
       ],
       "@speclang/ui.overview": [
@@ -7296,8 +7404,8 @@
         "specs/ui"
       ],
       "@speclang/ralph-loop/workflow": [
-        "@speclang/ralph-loop/state",
-        "specs/ralph-loop"
+        "specs/ralph-loop",
+        "@speclang/ralph-loop/state"
       ],
       "@speclang/ralph-loop/state": [
         "specs/ralph-loop"
@@ -7306,21 +7414,21 @@
         "@speclang/core"
       ],
       "@speclang/file-naming/extensions": [
-        "@speclang/core",
-        "specs/auth#login"
+        "specs/auth#login",
+        "@speclang/core"
       ],
       "@speclang/skills/code-gen": [
-        "@speclang/skills",
         "specs/spec-format#format",
-        "specs/skills"
+        "specs/skills",
+        "@speclang/skills"
       ],
       "@speclang/skills/test-writer": [
-        "@speclang/skills",
-        "specs/skills"
+        "specs/skills",
+        "@speclang/skills"
       ],
       "@speclang/skills/spec-writer": [
-        "@speclang/skills",
-        "specs/skills"
+        "specs/skills",
+        "@speclang/skills"
       ],
       "@speclang/sqlite/schema": [
         "@speclang/sqlite"
@@ -7336,18 +7444,18 @@
       ],
       "@speclang/compiler.dir/templates": [
         "@speclang/stdlib",
-        "@speclang/core",
-        "@speclang/spec-format"
+        "@speclang/spec-format",
+        "@speclang/core"
       ],
       "@speclang/compiler.dir/targets": [
         "@speclang/stdlib",
-        "@speclang/core",
-        "@speclang/spec-format"
+        "@speclang/spec-format",
+        "@speclang/core"
       ],
       "@speclang/compiler.dir/phases": [
         "@speclang/stdlib",
-        "@speclang/core",
-        "@speclang/spec-format"
+        "@speclang/spec-format",
+        "@speclang/core"
       ],
       "@speclang/core/file-types": [
         "specs/auth#login"
@@ -7357,13 +7465,13 @@
         "specs/auth#login-handler"
       ],
       "@speclang/deployment/enterprise": [
+        "@speclang/opencode",
         "@speclang/core",
-        "@speclang/daemon",
-        "@speclang/opencode"
+        "@speclang/daemon"
       ],
       "@speclang/deployment/light": [
-        "@speclang/core",
-        "@speclang/opencode"
+        "@speclang/opencode",
+        "@speclang/core"
       ],
       "@speclang/mcp.run-modes": [
         "specs/mcp"
@@ -7403,30 +7511,30 @@
         "@implementation/ui-dashboard"
       ],
       "@speclang/implementation.validation-system": [
-        "@speclang/sqlite",
         "@speclang/validation",
+        "@speclang/core",
         "@speclang/headers",
-        "@speclang/core"
+        "@speclang/sqlite"
       ],
       "@speclang/implementation.ralph-loop": [
-        "@speclang/ralph-loop",
+        "@speclang/cascade",
         "@speclang/sqlite",
         "@speclang/recovery",
-        "@speclang/agent-protocol",
-        "@speclang/cascade"
+        "@speclang/ralph-loop",
+        "@speclang/agent-protocol"
       ],
       "@speclang/implementation.sqlite-schema": [
+        "@speclang/headers",
         "@speclang/sqlite",
-        "@speclang/core",
-        "@speclang/headers"
+        "@speclang/core"
       ],
       "@speclang/implementation.sqlite-db": [
         "@speclang/implementation.sqlite-schema"
       ],
       "@speclang/implementation.parser": [
         "@speclang/headers",
-        "specs/auth#login",
-        "@speclang/spec-format"
+        "@speclang/spec-format",
+        "specs/auth#login"
       ],
       "@speclang/pipeline/build": [
         "@speclang/core"
@@ -7447,23 +7555,23 @@
         "@speclang/core"
       ],
       "@speclang/test-specs/examples": [
-        "@speclang/core",
         "specs/auth#login",
-        "specs/hash#bcrypt",
-        "specs/auth"
+        "specs/auth",
+        "@speclang/core",
+        "specs/hash#bcrypt"
       ],
       "@speclang/mcp/openapi-generation": [
+        "@speclang/mcp",
         "@speclang/cli",
-        "@speclang/tools",
-        "@speclang/mcp"
+        "@speclang/tools"
       ],
       "@speclang/mcp-openapi-generation-tests": [
         "@speclang/test-specs",
         "@speclang/mcp/openapi-generation"
       ],
       "@speclang/dynamic-split/strategy": [
-        "specs/auth/login",
-        "specs/auth"
+        "specs/auth",
+        "specs/auth/login"
       ],
       "@speclang/opencode-plugin.dir/convergence": [
         "@speclang/cascade",
@@ -7483,8 +7591,8 @@
         "@speclang/opencode-plugin.dir/overview"
       ],
       "@speclang/opencode-plugin.dir/mcp-client": [
-        "@speclang/opencode-plugin.dir/architecture",
-        "@speclang/mcp"
+        "@speclang/mcp",
+        "@speclang/opencode-plugin.dir/architecture"
       ],
       "@speclang/opencode-plugin.dir/architecture": [
         "@speclang/opencode-plugin.dir/overview"
@@ -7496,8 +7604,8 @@
         "@speclang/opencode-plugin.dir/architecture"
       ],
       "@speclang/opencode-plugin.dir/event-system": [
-        "@speclang/opencode-plugin.dir/architecture",
-        "@speclang/opencode"
+        "@speclang/opencode",
+        "@speclang/opencode-plugin.dir/architecture"
       ],
       "@speclang/opencode-plugin.dir/plugin-lifecycle": [
         "@speclang/opencode-plugin.dir/overview"
@@ -7506,8 +7614,8 @@
         "@speclang/opencode-plugin.dir/architecture"
       ],
       "@speclang/opencode-plugin.dir/tools": [
-        "@speclang/opencode-plugin.dir/configuration",
-        "@speclang/mcp"
+        "@speclang/mcp",
+        "@speclang/opencode-plugin.dir/configuration"
       ],
       "@speclang/daemon/convergence": [
         "specs/daemon"
@@ -7522,14 +7630,14 @@
         "specs/daemon"
       ],
       "@speclang/cascade/convergence": [
-        "@speclang/agent-protocol",
         "@speclang/core",
-        "@speclang/daemon"
+        "@speclang/daemon",
+        "@speclang/agent-protocol"
       ],
       "@speclang/cascade/triggers": [
-        "@speclang/agent-protocol",
         "@speclang/core",
-        "@speclang/daemon"
+        "@speclang/daemon",
+        "@speclang/agent-protocol"
       ],
       "@speclang/lenses/formats": [
         "@speclang/lenses"
@@ -7552,56 +7660,56 @@
     },
     "dependents": {
       "@speclang/core": [
-        "@speclang/skills",
-        "@speclang/implementation.validation-system",
-        "@speclang/file-naming",
-        "@speclang/file-naming/extensions",
-        "@speclang/pipeline/recovery",
-        "@speclang/test-specs/examples",
-        "@speclang/cli",
-        "@speclang/symlinks",
-        "@speclang/implementation.sqlite-schema",
-        "@speclang/test-specs",
-        "@speclang/recovery",
-        "@speclang/test-specs/format",
-        "@speclang/daemon",
-        "@speclang/compiler.dir/targets",
-        "@speclang/compiler.dir/templates",
-        "@speclang/pipeline",
-        "@speclang/sqlite",
-        "@speclang/mcp-daemon",
-        "@speclang/file-naming/patterns",
-        "@speclang/lenses",
-        "@speclang/tools",
-        "@speclang/compiler",
-        "@speclang/headers",
-        "@speclang/dynamic-split",
-        "@speclang/git-history",
-        "@speclang/opencode-plugin",
-        "@speclang/stdlib",
-        "@speclang/agent-protocol",
-        "@speclang/deployment/enterprise",
-        "@speclang/cascade",
-        "@speclang/compiler.dir/phases",
-        "@speclang/mcp",
-        "@speclang/pipeline/hooks",
-        "@speclang/directory-structure",
-        "@speclang/cascade/convergence",
-        "@speclang/deployment",
         "@speclang/workflow",
-        "@speclang/pipeline/build",
-        "@speclang/opencode",
+        "@speclang/file-naming/patterns",
+        "@speclang/symlinks",
         "@speclang/deployment/light",
+        "@speclang/skills",
         "@speclang/examples",
-        "@speclang/cascade/triggers"
+        "@speclang/implementation.sqlite-schema",
+        "@speclang/deployment/enterprise",
+        "@speclang/pipeline",
+        "@speclang/lenses",
+        "@speclang/cascade",
+        "@speclang/file-naming",
+        "@speclang/test-specs/examples",
+        "@speclang/directory-structure",
+        "@speclang/mcp",
+        "@speclang/compiler",
+        "@speclang/compiler.dir/templates",
+        "@speclang/cascade/triggers",
+        "@speclang/cascade/convergence",
+        "@speclang/tools",
+        "@speclang/test-specs/format",
+        "@speclang/compiler.dir/targets",
+        "@speclang/deployment",
+        "@speclang/file-naming/extensions",
+        "@speclang/cli",
+        "@speclang/recovery",
+        "@speclang/git-history",
+        "@speclang/test-specs",
+        "@speclang/compiler.dir/phases",
+        "@speclang/stdlib",
+        "@speclang/pipeline/hooks",
+        "@speclang/agent-protocol",
+        "@speclang/sqlite",
+        "@speclang/implementation.validation-system",
+        "@speclang/headers",
+        "@speclang/opencode-plugin",
+        "@speclang/mcp-daemon",
+        "@speclang/opencode",
+        "@speclang/pipeline/build",
+        "@speclang/daemon",
+        "@speclang/dynamic-split",
+        "@speclang/pipeline/recovery"
       ],
       "@speclang/spec-format": [
-        "@speclang/compiler.dir/phases",
-        "@speclang/compiler",
         "@speclang/implementation.parser",
+        "@speclang/compiler",
+        "@speclang/compiler.dir/templates",
+        "@speclang/compiler.dir/phases",
         "@speclang/headers",
-        "@speclang/compiler.dir/targets",
-        "@speclang/compiler.dir/templates"
+        "@speclang/compiler.dir/targets"
       ],
       "specs/jwt": [
         "@speclang/headers"
@@ -7610,41 +7718,40 @@
         "@speclang/headers"
       ],
       "specs/auth": [
-        "@speclang/dynamic-split/strategy",
-        "@speclang/project-layout",
-        "@speclang/directory-structure",
         "@speclang/test-specs/examples",
-        "@speclang/layer-definitions",
+        "@speclang/dynamic-split/strategy",
+        "@speclang/directory-structure",
+        "@speclang/project-layout",
+        "@speclang/headers",
         "@speclang/spec-format",
-        "@speclang/headers"
+        "@speclang/layer-definitions"
       ],
       "specs/auth/entities": [
         "@speclang/headers",
         "@speclang/layer-definitions"
       ],
       "specs/auth#login": [
-        "@speclang/core/file-types",
-        "@speclang/file-naming/extensions",
-        "@speclang/file-naming",
         "@speclang/test-specs/examples",
-        "@speclang/semantic-definitions",
-        "@speclang/core/entities",
+        "@speclang/core/file-types",
+        "@speclang/file-naming",
         "@speclang/implementation.parser",
+        "@speclang/core/entities",
+        "@speclang/headers",
         "@speclang/spec-format",
-        "@speclang/headers"
+        "@speclang/file-naming/extensions"
       ],
       "@speclang/project-layout": [
         "@speclang/directory-structure"
       ],
       "@speclang/daemon": [
-        "@speclang/cascade/convergence",
-        "@speclang/mcp-daemon",
-        "@speclang/deployment",
-        "@speclang/workflow",
-        "@speclang/opencode",
-        "@speclang/deployment/enterprise",
         "@speclang/cascade",
-        "@speclang/cascade/triggers"
+        "@speclang/workflow",
+        "@speclang/cascade/triggers",
+        "@speclang/mcp-daemon",
+        "@speclang/cascade/convergence",
+        "@speclang/opencode",
+        "@speclang/deployment",
+        "@speclang/deployment/enterprise"
       ],
       "@speclang/deployment": [
         "@speclang/mcp-daemon"
@@ -7698,9 +7805,9 @@
         "@speclang/project-maturity-levels"
       ],
       "specs/project-maturity-levels": [
-        "@speclang/project-maturity-levels/levels",
         "@speclang/project-maturity-levels/criteria",
-        "@speclang/project-maturity-levels"
+        "@speclang/project-maturity-levels",
+        "@speclang/project-maturity-levels/levels"
       ],
       "speclang/lenses/formats": [
         "@speclang/lenses"
@@ -7748,36 +7855,36 @@
         "@speclang/opencode-plugin"
       ],
       "@speclang/agent-protocol": [
+        "@speclang/cascade",
         "@speclang/mcp-ui-tools",
         "@speclang/ralph-loop",
-        "@speclang/cascade/convergence",
-        "@speclang/implementation.ralph-loop",
         "@speclang/opencode-plugin",
-        "@speclang/ui",
+        "@speclang/implementation.ralph-loop",
+        "@speclang/cascade/convergence",
+        "@speclang/cascade/triggers",
         "@speclang/opencode",
-        "@speclang/cascade",
-        "@speclang/cascade/triggers"
+        "@speclang/ui"
       ],
       "@speclang/sqlite": [
-        "@speclang/mcp-ui-tools",
+        "@speclang/sqlite/graph",
         "@speclang/mcp",
+        "@speclang/mcp-ui-tools",
         "@speclang/implementation.validation-system",
-        "@speclang/implementation.ralph-loop",
         "@speclang/sqlite/schema",
         "@speclang/opencode-plugin",
-        "@speclang/ui",
+        "@speclang/implementation.ralph-loop",
         "@speclang/sqlite/vectors",
-        "@speclang/implementation.sqlite-schema",
-        "@speclang/sqlite/graph",
-        "@speclang/sqlite/fts"
+        "@speclang/sqlite/fts",
+        "@speclang/ui",
+        "@speclang/implementation.sqlite-schema"
       ],
       "@speclang/mcp": [
+        "@speclang/opencode-plugin.dir/mcp-client",
         "@speclang/mcp-ui-tools",
         "@speclang/opencode-plugin.dir/tools",
-        "@speclang/mcp/openapi-generation",
         "@speclang/opencode-plugin",
         "@speclang/ui",
-        "@speclang/opencode-plugin.dir/mcp-client"
+        "@speclang/mcp/openapi-generation"
       ],
       "specs/opencode-plugin": [
         "@speclang/opencode-plugin"
@@ -7789,22 +7896,22 @@
         "@speclang/ralph-loop"
       ],
       "@speclang/cascade": [
-        "@speclang/opencode-plugin.dir/convergence",
         "@speclang/mcp-ui-tools",
+        "@speclang/opencode-plugin.dir/convergence",
+        "@speclang/workflow",
         "@speclang/ralph-loop",
         "@speclang/implementation.ralph-loop",
-        "@speclang/workflow",
         "@speclang/ui"
       ],
       "@speclang/recovery": [
         "@speclang/recovery/rollback",
         "@speclang/implementation.ralph-loop",
-        "@speclang/ralph-loop",
-        "@speclang/recovery/retry"
+        "@speclang/recovery/retry",
+        "@speclang/ralph-loop"
       ],
       "specs/ralph-loop": [
-        "@speclang/ralph-loop/state",
         "@speclang/ralph-loop/workflow",
+        "@speclang/ralph-loop/state",
         "@speclang/ralph-loop"
       ],
       "specs/auth/login-algorithm": [
@@ -7814,8 +7921,8 @@
         "@speclang/layer-definitions"
       ],
       "specs/auth/login": [
-        "@speclang/layer-definitions",
-        "@speclang/dynamic-split/strategy"
+        "@speclang/dynamic-split/strategy",
+        "@speclang/layer-definitions"
       ],
       "specs/deployment/k8s": [
         "@speclang/layer-definitions"
@@ -7857,19 +7964,19 @@
         "@speclang/mcp"
       ],
       "specs/mcp": [
-        "@speclang/mcp-ui-tools",
         "@speclang/mcp.tools.locks",
-        "@speclang/mcp.configuration",
         "@speclang/mcp.error-handling",
-        "@speclang/mcp",
-        "@speclang/mcp.overview",
+        "@speclang/mcp.configuration",
         "@speclang/mcp.authentication",
         "@speclang/mcp.tools.commands",
         "@speclang/mcp.tools.search",
+        "@speclang/mcp-ui-tools",
+        "@speclang/mcp",
+        "@speclang/mcp.overview",
         "@speclang/mcp.sse-stream",
-        "@speclang/mcp.architecture",
         "@speclang/mcp.tools.specs",
-        "@speclang/mcp.run-modes"
+        "@speclang/mcp.run-modes",
+        "@speclang/mcp.architecture"
       ],
       "speclang/implementation.meta-circular": [
         "@speclang/implementation"
@@ -7887,11 +7994,11 @@
         "@speclang/compiler"
       ],
       "@speclang/stdlib": [
-        "@speclang/compiler.dir/phases",
         "@speclang/cli",
         "@speclang/compiler",
-        "@speclang/compiler.dir/targets",
-        "@speclang/compiler.dir/templates"
+        "@speclang/compiler.dir/templates",
+        "@speclang/compiler.dir/phases",
+        "@speclang/compiler.dir/targets"
       ],
       "speclang/pipeline/build": [
         "@speclang/pipeline"
@@ -7942,21 +8049,21 @@
         "@speclang/mcp-ui-tools"
       ],
       "specs/ui": [
-        "@speclang/ui.components.cascade-graph",
-        "@speclang/mcp-ui-tools",
-        "@speclang/ui.components.cascade-status",
+        "@speclang/ui.overview",
         "@speclang/ui.state-management",
         "@speclang/ui.visual-design",
-        "@speclang/ui.components.log-viewer",
-        "@speclang/ui.testing",
         "@speclang/ui.components.system-metrics",
-        "@speclang/ui.components.event-timeline",
-        "@speclang/ui.components.agent-health",
         "@speclang/ui.components.control-panel",
-        "@speclang/ui",
-        "@speclang/ui.interactions",
+        "@speclang/mcp-ui-tools",
+        "@speclang/ui.components.cascade-graph",
         "@speclang/ui.components.queue-depth",
-        "@speclang/ui.overview"
+        "@speclang/ui.testing",
+        "@speclang/ui.interactions",
+        "@speclang/ui.components.log-viewer",
+        "@speclang/ui.components.cascade-status",
+        "@speclang/ui",
+        "@speclang/ui.components.event-timeline",
+        "@speclang/ui.components.agent-health"
       ],
       "speclang/workflow/setup": [
         "@speclang/workflow"
@@ -7968,10 +8075,10 @@
         "@speclang/workflow"
       ],
       "@speclang/skills": [
-        "@speclang/workflow",
         "@speclang/skills/test-writer",
+        "@speclang/skills/spec-writer",
         "@speclang/skills/code-gen",
-        "@speclang/skills/spec-writer"
+        "@speclang/workflow"
       ],
       "specs/ui.dir/overview": [
         "@speclang/ui"
@@ -8013,8 +8120,8 @@
         "@speclang/ui"
       ],
       "specs/mcp-ui-tools": [
-        "@speclang/ui",
-        "@speclang/ui.testing"
+        "@speclang/ui.testing",
+        "@speclang/ui"
       ],
       "@speclang/mcp-ui-tools": [
         "@speclang/ui"
@@ -8032,12 +8139,12 @@
         "@speclang/sqlite"
       ],
       "@speclang/headers": [
-        "@speclang/dynamic-split",
         "@speclang/sqlite",
+        "@speclang/implementation.parser",
         "@speclang/implementation.validation-system",
-        "@speclang/implementation.sqlite-schema",
         "@speclang/symlinks",
-        "@speclang/implementation.parser"
+        "@speclang/implementation.sqlite-schema",
+        "@speclang/dynamic-split"
       ],
       "speclang/config.dir/schema": [
         "@speclang/config"
@@ -8070,12 +8177,12 @@
         "@speclang/cli"
       ],
       "@speclang/opencode": [
-        "@speclang/opencode-plugin.dir/overview",
-        "@speclang/deployment",
+        "@speclang/opencode-plugin.dir/event-system",
         "@speclang/tools",
-        "@speclang/deployment/enterprise",
         "@speclang/deployment/light",
-        "@speclang/opencode-plugin.dir/event-system"
+        "@speclang/deployment",
+        "@speclang/opencode-plugin.dir/overview",
+        "@speclang/deployment/enterprise"
       ],
       "specs/deployment": [
         "@speclang/deployment"
@@ -8112,10 +8219,10 @@
       ],
       "specs/daemon": [
         "@speclang/daemon/convergence",
+        "@speclang/daemon/routing",
         "@speclang/daemon/architecture",
         "@speclang/daemon/events",
-        "@speclang/daemon",
-        "@speclang/daemon/routing"
+        "@speclang/daemon"
       ],
       "speclang/test-specs/format": [
         "@speclang/test-specs"
@@ -8172,21 +8279,21 @@
         "@speclang/mcp-openapi-generation-tests"
       ],
       "@speclang/opencode-plugin.dir/architecture": [
-        "@speclang/opencode-plugin.dir/convergence",
-        "@speclang/opencode-plugin.dir/session-manager",
-        "@speclang/opencode-plugin.dir/git-integration",
         "@speclang/opencode-plugin.dir/error-handling",
         "@speclang/opencode-plugin.dir/mcp-client",
+        "@speclang/opencode-plugin.dir/event-system",
+        "@speclang/opencode-plugin.dir/convergence",
+        "@speclang/opencode-plugin.dir/git-integration",
         "@speclang/opencode-plugin.dir/configuration",
-        "@speclang/opencode-plugin.dir/event-system"
+        "@speclang/opencode-plugin.dir/session-manager"
       ],
       "@speclang/opencode-plugin": [
         "@speclang/opencode-plugin.dir/overview"
       ],
       "@speclang/opencode-plugin.dir/overview": [
         "@speclang/opencode-plugin.dir/plugin-lifecycle",
-        "@speclang/opencode-plugin.dir/checklist",
-        "@speclang/opencode-plugin.dir/architecture"
+        "@speclang/opencode-plugin.dir/architecture",
+        "@speclang/opencode-plugin.dir/checklist"
       ],
       "@speclang/opencode-plugin.dir/session-manager": [
         "@speclang/opencode-plugin.dir/ownership-guard"
@@ -8195,81 +8302,86 @@
         "@speclang/opencode-plugin.dir/tools"
       ],
       "@speclang/lenses": [
-        "@speclang/lenses/formats",
-        "@speclang/lenses/mermaid"
+        "@speclang/lenses/mermaid",
+        "@speclang/lenses/formats"
       ]
     }
   },
   "orphans": [
-    "@unknown/core.spec.md",
-    "@speclang/agent-protocol/ownership",
-    "@speclang/core/skills",
+    "@speclang/safety-nets/fallback",
+    "@speclang/cli.dir/output-formats",
+    "@speclang/scripts.generate-from-spec.py",
     "@speclang/autonomous-validation",
-    "@speclang/scripts.generate-sqlite-schema",
     "@speclang/core/agents",
     "@speclang/core/concurrency",
-    "@speclang/mcp-openapi-generation-cli",
-    "@speclang/cli.dir/installation",
-    "@speclang/opencode/events",
-    "@speclang/config.dir/schema",
-    "@speclang/mcp.cli",
-    "@speclang/scripts.fix-headers.py",
-    "@speclang/cli.dir/interactive-mode",
-    "@speclang/cli.dir/global-options",
-    "@speclang/scripts.generate-ralph-loop.py",
-    "@speclang/validation/rules",
-    "@speclang/agent-behavior-matrix/transitions",
-    "@speclang/bootstrap",
-    "@speclang/scripts.generate-mcp-server.py",
-    "@speclang/scripts.generate-opencode-plugin",
-    "@speclang/validation/tool",
-    "@speclang/workflow/examples",
-    "@speclang/scripts.add-missing-fields",
-    "@speclang/workflow/setup",
-    "@speclang/scripts.generate-validation-system.py",
-    "@speclang/transition-workflows",
-    "@speclang/agent-behavior-matrix/matrix",
-    "@speclang/safety-nets",
-    "@speclang/implementation.meta-circular",
-    "@speclang/scripts.generate-index.py",
-    "@speclang/scripts.generate-from-spec",
-    "@speclang/scripts.rename-spec-files.py",
-    "@speclang/scripts.rename-spec-files",
-    "@speclang/scripts.compute-header-lines.py",
-    "@speclang/scripts.generate-opencode-plugin.py",
-    "@speclang/workflow/daily-use",
-    "@speclang/core/cascade",
-    "@speclang/agent-support-levels",
-    "@speclang/cli.dir/integration",
-    "@speclang/dynamic-split/token-budget",
-    "@speclang/scripts.validate-refs.py",
-    "@speclang/cli.dir/commands",
-    "@speclang/config.dir/defaults",
-    "@speclang/opencode/integration",
-    "@speclang/scripts.generate-validation-system",
-    "@speclang/scripts.validate-autonomous",
-    "@speclang/scripts.generate-todo",
-    "@examples/hello-world",
-    "@speclang/scripts.generate-sqlite-schema.py",
-    "@speclang/scripts.generate-ralph-loop",
-    "@speclang/cli.dir/exit-codes",
     "@speclang/validation-tool",
-    "@speclang/agent-behavior-matrix",
-    "@speclang/cli.dir/configuration",
-    "@speclang/scripts.generate-from-spec.py",
-    "@speclang/scripts.compute-header-lines",
+    "@speclang/scripts.generate-index.py",
+    "@speclang/validation/tool",
+    "@speclang/scripts.rename-spec-files.py",
+    "@unknown/core.spec.md",
+    "@speclang/scripts.fix-headers.py",
+    "@speclang/scripts.validate-autonomous",
+    "@speclang/cli.dir/global-options",
+    "@speclang/opencode/events",
+    "@speclang/scripts.validate-refs.py",
     "@codegen/go",
-    "@speclang/scripts.add-missing-fields.py",
-    "@codegen/typescript",
-    "@speclang/scripts.generate-index",
-    "@northstar/speclang",
+    "@speclang/config.dir/schema",
+    "@speclang/workflow/setup",
+    "@speclang/config.dir/defaults",
+    "@speclang/semantic-definitions",
+    "@speclang/scripts.generate-validation-system.py",
+    "@speclang/dynamic-split/token-budget",
+    "@speclang/scripts.generate-opencode-plugin",
     "@speclang/scripts.generate-mcp-server",
-    "@speclang/scripts.fix-headers",
-    "@speclang/cli.dir/output-formats",
+    "@speclang/cli.dir/interactive-mode",
     "@speclang/agent-protocol/sessions",
-    "@speclang/scripts.validate-autonomous.py",
+    "@speclang/cli.dir/installation",
+    "@speclang/scripts.generate-index",
+    "@speclang/transition-workflows",
+    "@speclang/workflow/daily-use",
+    "@speclang/scripts.fix-headers",
+    "@codegen/typescript",
+    "@speclang/agent-behavior-matrix",
+    "@speclang/scripts.generate-sqlite-schema.py",
+    "@speclang/agent-support-levels",
+    "@speclang/mcp.cli",
+    "@speclang/core/cascade",
+    "@speclang/agent-protocol/ownership",
+    "@examples/hello-world",
+    "@speclang/scripts.generate-validation-system",
+    "@speclang/scripts.generate-ralph-loop.py",
+    "@speclang/scripts.rename-spec-files",
+    "@speclang/agent-behavior-matrix/transitions",
+    "@speclang/semantic-definitions/layer-mapping",
+    "@speclang/mcp-openapi-generation-cli",
+    "@speclang/scripts.generate-ralph-loop",
+    "@speclang/safety-nets/analysis",
+    "@northstar/speclang",
+    "@speclang/safety-nets",
+    "@speclang/scripts.generate-mcp-server.py",
+    "@speclang/scripts.generate-from-spec",
+    "@speclang/cli.dir/exit-codes",
+    "@speclang/cli.dir/configuration",
+    "@speclang/semantic-definitions/project-levels",
+    "@speclang/scripts.generate-sqlite-schema",
+    "@speclang/validation/rules",
+    "@speclang/opencode/integration",
+    "@speclang/agent-behavior-matrix/matrix",
+    "@speclang/scripts.validate-refs",
+    "@speclang/scripts.generate-todo",
+    "@speclang/scripts.add-missing-fields",
+    "@speclang/bootstrap",
+    "@speclang/scripts.generate-opencode-plugin.py",
+    "@speclang/cli.dir/integration",
+    "@speclang/workflow/examples",
+    "@speclang/scripts.add-missing-fields.py",
+    "@speclang/scripts.compute-header-lines.py",
     "@speclang/scripts.generate-todo.py",
-    "@speclang/scripts.validate-refs"
+    "@speclang/scripts.compute-header-lines",
+    "@speclang/cli.dir/commands",
+    "@speclang/core/skills",
+    "@speclang/implementation.meta-circular",
+    "@speclang/scripts.validate-autonomous.py"
   ],
   "cycles": [],
   "validation": {
@@ -8554,20 +8666,15 @@
       "@speclang/cascade -> @speclang/agent-protocol",
       "@speclang/cascade -> speclang/cascade/triggers (content)",
       "@speclang/cascade -> speclang/cascade/convergence (content)",
-      "@speclang/semantic-definitions -> speclang/layer-definitions (content)",
-      "@speclang/semantic-definitions -> speclang/project-maturity-levels (content)",
-      "@speclang/semantic-definitions -> speclang/agent-support-levels (content)",
-      "@speclang/semantic-definitions -> speclang/layer-definitions (content)",
-      "@speclang/semantic-definitions -> speclang/project-maturity-levels (content)",
-      "@speclang/semantic-definitions -> speclang/agent-support-levels (content)",
-      "@speclang/semantic-definitions -> speclang/autonomous-validation (content)",
-      "@speclang/semantic-definitions -> speclang/headers (content)",
-      "@speclang/semantic-definitions -> speclang/validation (content)",
+      "@speclang/semantic-definitions -> speclang/semantic-definitions/layer-mapping (content)",
+      "@speclang/semantic-definitions -> speclang/semantic-definitions/project-levels (content)",
       "@speclang/validation-tool -> speclang/autonomous-validation (content)",
       "@speclang/validation-tool -> speclang/autonomous-validation (content)",
       "@speclang/validation-tool -> speclang/safety-nets (content)",
       "@speclang/validation-tool -> speclang/validation (content)",
       "@speclang/validation-tool -> speclang/headers (content)",
+      "@speclang/safety-nets -> speclang/safety-nets/analysis (content)",
+      "@speclang/safety-nets -> speclang/safety-nets/fallback (content)",
       "@speclang/safety-nets -> speclang/autonomous-validation (content)",
       "@speclang/safety-nets -> speclang/transition-workflows (content)",
       "@speclang/safety-nets -> speclang/agent-behavior-matrix (content)",
@@ -8581,6 +8688,10 @@
       "@speclang/test-specs -> speclang/test-specs/examples (content)",
       "@speclang/recovery -> @speclang/pipeline",
       "@speclang/ralph-loop/workflow -> @speclang/ralph-loop/state",
+      "@speclang/safety-nets/fallback -> speclang/autonomous-validation (content)",
+      "@speclang/safety-nets/fallback -> speclang/transition-workflows (content)",
+      "@speclang/safety-nets/fallback -> speclang/agent-behavior-matrix (content)",
+      "@speclang/safety-nets/fallback -> speclang/agent-support-levels (content)",
       "@speclang/validation/rules -> speclang/autonomous-validation (content)",
       "@speclang/file-naming/patterns -> speclang/file-naming (content)",
       "@speclang/file-naming/extensions -> speclang/file-naming (content)",
@@ -8759,6 +8870,14 @@
       "@speclang/cli.dir/installation -> speclang/cli (content)",
       "@speclang/cli.dir/exit-codes -> speclang/cli (content)",
       "@speclang/cli.dir/configuration -> speclang/cli (content)",
+      "@speclang/semantic-definitions/project-levels -> speclang/project-maturity-levels (content)",
+      "@speclang/semantic-definitions/project-levels -> speclang/agent-support-levels (content)",
+      "@speclang/semantic-definitions/project-levels -> speclang/layer-definitions (content)",
+      "@speclang/semantic-definitions/project-levels -> speclang/autonomous-validation (content)",
+      "@speclang/semantic-definitions/layer-mapping -> speclang/layer-definitions (content)",
+      "@speclang/semantic-definitions/layer-mapping -> speclang/project-maturity-levels (content)",
+      "@speclang/semantic-definitions/layer-mapping -> speclang/agent-support-levels (content)",
+      "@speclang/semantic-definitions/layer-mapping -> speclang/autonomous-validation (content)",
       "@speclang/lenses/formats -> @speclang/lenses",
       "@speclang/lenses/mermaid -> @speclang/lenses",
       "@speclang/lenses/mermaid -> speclang/lenses (content)",
@@ -8770,8 +8889,8 @@
       "@speclang/agent-protocol/sessions -> speclang/agent-behavior-matrix (content)",
       "@speclang/agent-protocol/ownership -> speclang/agent-protocol (content)"
     ],
-    "total_specs": 192,
-    "total_refs": 403,
+    "total_specs": 196,
+    "total_refs": 410,
     "missing_ref_count": 90
   }
 }
