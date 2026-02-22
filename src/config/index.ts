@@ -1,8 +1,8 @@
 /**
  * SPECLANG-GENERATED - Do not edit directly
  * 
- * Source: specs/config.spec.md
- * Blocks: @block:pipelineconfigmanager
+ * Source: specs/config.dir/schema.spec.md
+ * Blocks: @block:config/structure, @block:config/watcher, @block:config/split, @block:config/embeddings, @block:config/database, @block:config/cascade, @block:config/agents
  * Generated: 2026-02-22
  * 
  * Edit the spec, not this file.
