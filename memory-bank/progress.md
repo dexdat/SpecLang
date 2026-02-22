@@ -16,21 +16,21 @@
 - Plugin functionality
 
 ## Current Status
-- Phase: Phase 4 Self-Hosting (code generation issues resolved)
+- Phase: Phase 4 Self-Hosting (code generation issues partially fixed)
 - Spec format validation: Stage 1 passed (all non-backup specs have required metadata fields, example references ignored)
-- Code compilation validation: Stage 2 passed (TypeScript dependencies installed, compilation passes)
+- Code compilation validation: Stage 2 partial (SQLite schema compiles, Ralph Loop and validation system still have import issues)
 - Test validation: Stage 3 passed (all 18 tests pass)
 - Validation tool implementation: Complete and functional
-- Code generation: SQLite schema, Ralph Loop, validation system, code generation tools generated and issues resolved (duplication fixed, dependency mismatch fixed, constructor async fixed)
-- Updated todo statuses: todo-010 through todo-020 completed.
+- Code generation: SQLite schema generated and compiles; Ralph Loop and validation system generated but need import fixes; code generation tools pending.
+- Updated todo statuses: todo-010, todo-011, todo-012, todo-020 completed; todo-016 completed; todos 017-018 in progress; todo-019 pending.
 ## Known Issues
 1. ~~Many spec files missing required metadata fields (project_level, agent_support, short) - 10 specs remaining~~ FIXED
-2. TypeScript compilation passes (dependencies installed)
+2. TypeScript compilation fails in generated code due to duplicate blocks and missing imports (extraction script fixed for nested backticks).
 3. ~~Validation tool incorrectly required agent_support == agent_autonomous for all specs~~ FIXED
 4. ~~Test suite for generate_index.py and validate_refs.py exists but tests fail (tuple mismatch, cwd issue)~~ FIXED
 5. ~~Some specs missing step-by-step descriptions and contain ambiguous terms (todo-013)~~ FIXED
 6. Backup spec files cause header parse failures (low priority)
-7. ~~Generated TypeScript code has duplication errors due to extraction script bug - error reports created and todo statuses updated.~~ FIXED
+7. Extraction script cannot handle nested backticks inside code blocks, causing truncation of validation engine block.
 8. ~~Dependency mismatch: spec imports sqlite3 but package.json uses better-sqlite3 - need to update spec or dependencies.~~ FIXED
 ## Evolution
 - Started with complex ralph_loop.py

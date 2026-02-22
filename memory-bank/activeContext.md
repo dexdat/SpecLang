@@ -4,6 +4,15 @@
 Building out the SpecLang system using the Ralph Loop pattern.
 
 ## Recent Changes
+- Builder Agent fixed extraction scripts (generate_validation_system.py, generate_sqlite_schema.py, generate_ralph_loop.py) to handle nested backticks via line-by-line parsing.
+- Builder Agent updated SQLite schema spec to use better-sqlite3 directly, removed sqlite wrapper import.
+- Builder Agent updated validation system spec to import from './validation-system' instead of './validation-engine'.
+- Builder Agent updated Ralph Loop spec first block to use better-sqlite3 directly (remaining blocks pending).
+- Regenerated SQLite schema implementation (todo-016) - compilation passes for src/db/speclang-db.ts.
+- Regenerated Ralph Loop implementation (todo-017) - still has duplicate imports due to remaining blocks.
+- Regenerated validation system implementation (todo-018) - still has duplicate imports and missing modules.
+- Updated ralph_todo.json: todo-016 marked completed, todo-017/018 in progress.
+- Verifier Agent validated todos 016-020: Found compilation errors in generated code, marked todos 016-019 as failed, created steering packets with fix suggestions.
 - Verifier Agent validated todo-010: TypeScript dependencies installed, compilation passes (success).
 - Verifier Agent validated todo-011: Test suite created but tests fail (get_spec_files tuple mismatch, integration test cwd issue). **FIXED** by Verifier Agent: updated tests to handle tuples and correct cwd.
 - Verifier Agent validated todo-012: All specs now have required metadata fields (project_level, agent_support, short). Validation passes for non-backup specs.
@@ -21,23 +30,25 @@ Building out the SpecLang system using the Ralph Loop pattern.
 - Builder Agent generated code generation tools (todo-019): created Python scripts for extracting code blocks from specs.
 - Builder Agent fixed extraction script duplication, regenerated SQLite schema, Ralph Loop, validation system, and updated spec dependencies (sqlite3 → better-sqlite3). Fixed LoopController constructor async issue.
 - Updated ralph_todo.json: marked todos 016-020 as completed, phase changed to phase_4_self_hosting.
-## Verifier Agent Validation Results
+## Verifier Agent Validation Results (Updated 2026-02-21)
 
-- **Stage 1 (Spec Format)**: PASSED - All non-backup specs have required metadata fields, references valid.
-- **Stage 2 (Code Compilation)**: PASSED - TypeScript compilation passes (dependencies installed).
-- **Stage 3 (Test Execution)**: PASSED - All 18 Python tests pass.
-- **Stage 4 (Integration Testing)**: PASSED - All generated code issues resolved:
-  1. SQL schema duplication fixed (regenerated)
-  2. TypeScript duplication fixed (regenerated)
-  3. LoopController constructor async issue fixed (static create method)
-  4. Validation system block syntax validation present
-  5. Dependency mismatch resolved (updated specs to use better-sqlite3)
-- Updated todo statuses to 'completed'.
+- **Stage 1 (Spec Format)**: PASSED - All non-backup specs have required metadata fields, references valid. Validation script passes.
+- **Stage 2 (Code Compilation)**: PARTIAL - TypeScript compilation errors reduced but still present:
+   1. src/db/speclang-db.ts: compilation passes (fixed).
+   2. src/ralph-loop.ts: duplicate imports, missing builder-agent/verifier-agent modules, sqlite import issues (partially fixed).
+   3. src/validation-system.ts: duplicate imports, missing sqlite module, missing glob/writeFile/unlink imports.
+- **Stage 3 (Test Execution)**: PASSED - All 18 Python tests pass (generate_index.py, validate_refs.py, validate_autonomous.py).
+- **Stage 4 (Integration Testing)**: BLOCKED - Cannot run integration tests due to compilation failures. Generated code not yet functional.
+- Updated todo statuses: todos 016-019 marked 'failed' due to compilation errors. Steering packets created with detailed fix suggestions.
 
 ## Next Steps
-1. Proceed with Phase 4: Self-Hosting (use generated Speclang to improve itself)
-2. Implement OpenCode plugin functionality
-3. Test runtime functionality of generated code
+1. Fix remaining Ralph Loop spec imports (builder-agent, verifier-agent blocks) to use better-sqlite3 directly.
+2. Fix validation system spec imports (replace sqlite with better-sqlite3, add missing imports).
+3. Regenerate Ralph Loop and validation system with corrected extraction and deduplicate imports.
+4. Verify TypeScript compilation passes for all generated files.
+5. Proceed with Phase 4: Self-Hosting (use generated Speclang to improve itself).
+6. Implement OpenCode plugin functionality.
+7. Test runtime functionality of generated code.
 ## Active Decisions
 - Using opencode run with --agent flag
 - State stored in .ralph/loop-state.json
