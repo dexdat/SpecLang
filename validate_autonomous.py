@@ -374,8 +374,8 @@ def validate_metadata(metadata: Dict) -> Tuple[bool, List[str]]:
             value = metadata[field]
             if field == 'id' and not str(value).startswith('@'):
                 missing.append(f"id format invalid: {value}")
-            elif field == 'agent_support' and value != 'agent_autonomous':
-                missing.append(f"agent_support must be 'agent_autonomous', got {value}")
+            elif field == 'agent_support' and value not in ['human_only', 'agent_assisted', 'agent_autonomous']:
+                missing.append(f"agent_support must be one of human_only, agent_assisted, agent_autonomous, got {value}")
             elif field == 'tags' and (not isinstance(value, list) or len(value) == 0):
                 missing.append("tags must be non-empty array")
             elif field == 'layer' and (not isinstance(value, int) or value < 0 or value > 10):

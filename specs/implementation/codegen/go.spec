@@ -1,7 +1,9 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: @codegen/go
 version: 0.1.0
 layer: 3
+project_level: Alpha
+agent_support: agent_assisted
 imports: [@speclang/core, @speclang/spec-format]
 tags: [codegen, go, templates, generation]
 short: Go code generation templates for Speclang

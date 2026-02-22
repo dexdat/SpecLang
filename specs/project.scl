@@ -7,7 +7,7 @@ agent_support: agent_assisted
 tags: [northstar, intent, top-level]
 status: active
 
-short: North Star: SpecLang
+short: "North Star: SpecLang"
 ---
 
 # North Star: SpecLang

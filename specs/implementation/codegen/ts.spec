@@ -1,7 +1,9 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: @codegen/typescript
 version: 0.1.0
 layer: 3
+project_level: Alpha
+agent_support: agent_assisted
 imports: [@speclang/core, @speclang/spec-format]
 tags: [codegen, typescript, templates, generation]
 short: TypeScript code generation templates for Speclang
