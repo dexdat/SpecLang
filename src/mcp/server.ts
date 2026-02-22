@@ -5,24 +5,37 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
-import express from "express";
+import express, { Request, Response } from "express";
 import { randomUUID } from "crypto";
-import Database = require('better-sqlite3');
+import Database from 'better-sqlite3';
 import * as path from 'path';
 import * as fs from 'fs';
 
 // Global database instance (provided by runtime)
-declare const db: Database;
+declare const db: Database.Database;
 
 // Block: mcp/mode-implementation from run-modes.spec.md
 // Mode detection and startup
 
 class SpeclangMCPServer {
-  private db: Database;
+  private db: Database.Database;
   private mode: 'stdio' | 'http' | 'socket';
   private transports = new Map<string, SSEServerTransport>();
   private users: Map<string, string> = new Map();
   private tokens: Set<string> = new Set();
+  
+  constructor() {
+    this.mode = 'stdio';
+  }
+  
+  // Helper method to get arg from args array
+  private getArg(args: string[], name: string, defaultValue: string = ''): string {
+    const idx = args.indexOf(name);
+    if (idx >= 0 && idx + 1 < args.length) {
+      return args[idx + 1];
+    }
+    return defaultValue;
+  }
   
   async start(args: string[]) {
     // Detect mode from args
@@ -66,9 +79,52 @@ class SpeclangMCPServer {
     }
   }
   
+  // Register tools with the server
+  private registerTools(server: Server): void {
+    // Tools will be registered here based on spec
+  }
+  
+  // Basic auth middleware factory
+  private basicAuthMiddleware(args: string[]): (req: Request, res: Response, next: any) => void {
+    const user = this.getArg(args, '--user');
+    const pass = this.getArg(args, '--pass');
+    const expected = 'Basic ' + Buffer.from(`${user}:${pass}`).toString('base64');
+    
+    return (req: Request, res: Response, next: any) => {
+      const auth = req.headers.authorization;
+      if (auth !== expected) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+      next();
+    };
+  }
+  
+  // Token auth middleware factory
+  private tokenAuthMiddleware(args: string[]): (req: Request, res: Response, next: any) => void {
+    const token = this.getArg(args, '--token');
+    this.tokens.add(token);
+    
+    return (req: Request, res: Response, next: any) => {
+      const auth = req.headers.authorization;
+      if (!auth?.startsWith('Bearer ')) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+      
+      const provided = auth.slice(7);
+      if (!this.tokens.has(provided)) {
+        res.status(401).json({ error: 'Invalid token' });
+        return;
+      }
+      
+      next();
+    };
+  }
+  
   async startHTTP(args: string[]) {
     this.mode = 'http';
-    const port = this.getArg(args, '--port', '3000');
+    const port = parseInt(this.getArg(args, '--port', '3000'));
     const authType = this.getArg(args, '--auth', 'none');
 
     const app = express();
@@ -81,7 +137,7 @@ class SpeclangMCPServer {
     }
 
     // SSE endpoint
-    app.get('/mcp', (req, res) => {
+    app.get('/mcp', (req: Request, res: Response) => {
       const clientId = randomUUID();
       const transport = new SSEServerTransport('/mcp/message', res);
       this.transports.set(clientId, transport);
@@ -99,7 +155,7 @@ class SpeclangMCPServer {
     });
 
     // Message endpoint for SSE transport
-    app.post('/mcp/message', express.json(), (req, res) => {
+    app.post('/mcp/message', express.json(), (req: Request, res: Response) => {
       const clientId = req.headers['x-client-id'] || req.body.clientId;
       if (!clientId || typeof clientId !== 'string') {
         res.status(400).json({ error: 'Missing client ID' });
@@ -112,7 +168,7 @@ class SpeclangMCPServer {
       }
       try {
         // Forward message to transport
-        transport.handleMessage(req.body);
+        (transport as any).handleMessage(req.body);
         res.status(200).json({ ok: true });
       } catch (err) {
         console.error('Error handling message:', err);
@@ -230,12 +286,21 @@ class AuthMiddleware {
   private users: Map<string, string> = new Map();
   private tokens: Set<string> = new Set();
   
-  basicAuth(args: string[]): (req, res, next) => void {
+  // Helper method to get arg from args array
+  private getArg(args: string[], name: string, defaultValue: string = ''): string {
+    const idx = args.indexOf(name);
+    if (idx >= 0 && idx + 1 < args.length) {
+      return args[idx + 1];
+    }
+    return defaultValue;
+  }
+  
+  basicAuth(args: string[]): (req: any, res: any, next: any) => void {
     const user = this.getArg(args, '--user');
     const pass = this.getArg(args, '--pass');
     const expected = 'Basic ' + Buffer.from(`${user}:${pass}`).toString('base64');
     
-    return (req, res, next) => {
+    return (req: any, res: any, next: any) => {
       const auth = req.headers.authorization;
       if (auth !== expected) {
         res.status(401).json({ error: 'Unauthorized' });
@@ -245,11 +310,11 @@ class AuthMiddleware {
     };
   }
   
-  tokenAuth(args: string[]): (req, res, next) => void {
+  tokenAuth(args: string[]): (req: any, res: any, next: any) => void {
     const token = this.getArg(args, '--token');
     this.tokens.add(token);
     
-    return (req, res, next) => {
+    return (req: any, res: any, next: any) => {
       const auth = req.headers.authorization;
       if (!auth?.startsWith('Bearer ')) {
         res.status(401).json({ error: 'Unauthorized' });
@@ -269,8 +334,8 @@ class AuthMiddleware {
 
 // Block: mcp/sse-impl from sse-stream.spec.md
 class SSEManager {
-  private clients: Map<string, Response> = new Map();
-  private db: Database;
+  private clients: Map<string, any> = new Map();
+  private db: any;
   private lastPollTime = Date.now();
   
   start() {
@@ -316,7 +381,7 @@ class SSEManager {
   private async pollChanges() {
     const now = Date.now();
     // Query new events
-    const newEvents = db.prepare(
+    const newEvents: any[] = db.prepare(
       `SELECT * FROM events WHERE timestamp > ? AND processed = 0`
     ).all(Math.floor(this.lastPollTime / 1000));
     for (const event of newEvents) {
@@ -326,7 +391,7 @@ class SSEManager {
       });
     }
     // Query new commands
-    const newCommands = db.prepare(
+    const newCommands: any[] = db.prepare(
       `SELECT * FROM commands WHERE created_at > ?`
     ).all(Math.floor(this.lastPollTime / 1000));
     for (const cmd of newCommands) {
@@ -337,7 +402,7 @@ class SSEManager {
       });
     }
     // Query session changes
-    const newSessions = db.prepare(
+    const newSessions: any[] = db.prepare(
       `SELECT * FROM sessions WHERE last_active > ?`
     ).all(Math.floor(this.lastPollTime / 1000));
     for (const session of newSessions) {
@@ -356,7 +421,7 @@ class SSEManager {
       }
     }
     // Query cascade converged
-    const convergedCascades = db.prepare(
+    const convergedCascades: any[] = db.prepare(
       `SELECT * FROM cascades WHERE converged_at > ?`
     ).all(Math.floor(this.lastPollTime / 1000));
     for (const cascade of convergedCascades) {

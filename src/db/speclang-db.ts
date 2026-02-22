@@ -1,4 +1,4 @@
-import Database = require('better-sqlite3');
+import Database from 'better-sqlite3';
 import { readFile } from 'fs/promises';
 import * as path from 'path';
 
@@ -30,7 +30,7 @@ export interface SessionRow {
 }
 
 export class SpeclangDatabase {
-  private db!: InstanceType<typeof Database>;
+  private db!: Database.Database;
 
   async initialize(path: string = '.speclang/speclang.db'): Promise<void> {
     this.db = new Database(path);
