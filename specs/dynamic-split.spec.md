@@ -1,5 +1,5 @@
 # speclang-header lines:12
-id: @speclang/dynamic-split
+id: "@speclang/dynamic-split"
 version: 0.1.0
 layer: 0
 tags: [splitting, sizing, tokens, limits]
@@ -7,9 +7,7 @@ imports: ["@speclang/core", "@speclang/headers"]
 status: draft
 project_level: Alpha
 agent_support: agent_assisted
-children:
-  - @ref:speclang/dynamic-split/strategy
-  - @ref:speclang/dynamic-split/token-budget
+children: ["@speclang/dynamic-split/strategy", "@speclang/dynamic-split/token-budget"]
 short: Dynamic Splitting (split into 2 sub-specs)
 ---
 
