@@ -11,23 +11,60 @@ from pathlib import Path
 
 def extract_code_blocks(content, language):
     """Extract code blocks of specific language from spec content.
-    Returns unique blocks, preferring those inside speclang blocks.
+    Returns list of (block_id, code) tuples.
+    Uses line-by-line parsing to avoid premature closing due to backticks in comments.
     """
+    lines = content.split('\n')
+    i = 0
     blocks = []
-    # Pattern for speclang code block with @kind:code
-    # Matches ```speclang\n# @block:... @kind:code\n```language\n...```
-    pattern = rf'```speclang\n# @block:[^ ]+ @kind:code\n```{language}\n(.*?)```'
-    for match in re.finditer(pattern, content, re.DOTALL):
-        block = match.group(1).strip()
-        if block not in blocks:
-            blocks.append(block)
-    # If no speclang blocks found, fall back to plain language blocks
-    if not blocks:
-        pattern2 = rf'```{language}\n(.*?)```'
-        for match in re.finditer(pattern2, content, re.DOTALL):
-            block = match.group(1).strip()
-            if block not in blocks:
-                blocks.append(block)
+    
+    while i < len(lines):
+        line = lines[i]
+        # Look for start of speclang block with @kind:code
+        if line.strip() == '```speclang':
+            block_start = i
+            i += 1
+            if i >= len(lines):
+                break
+            # Next line should be # @block:... @kind:code
+            if lines[i].startswith('# @block:') and '@kind:code' in lines[i]:
+                # Extract block id
+                parts = lines[i].split()
+                block_part = parts[1]  # '@block:ID'
+                block_id = block_part.split(':', 1)[1]  # 'ID'
+                i += 1
+                # Look for ```{language} line
+                if i < len(lines) and lines[i].strip() == f'```{language}':
+                    i += 1
+                    code_lines = []
+                    # Collect until we find closing backticks at start of line
+                    while i < len(lines) and not (lines[i].strip().startswith('```') and len(lines[i].strip()) == 3):
+                        code_lines.append(lines[i])
+                        i += 1
+                    if i < len(lines) and lines[i].strip() == '```':
+                        i += 1  # consume closing backticks
+                        code = '\n'.join(code_lines)
+                        blocks.append((block_id, code))
+                        continue
+            # If we didn't find the pattern, reset to block_start+1 and continue
+            i = block_start + 1
+            continue
+        
+        # Look for plain language block
+        if line.strip() == f'```{language}':
+            i += 1
+            code_lines = []
+            while i < len(lines) and not (lines[i].strip().startswith('```') and len(lines[i].strip()) == 3):
+                code_lines.append(lines[i])
+                i += 1
+            if i < len(lines) and lines[i].strip() == '```':
+                i += 1
+                code = '\n'.join(code_lines)
+                blocks.append((None, code))
+                continue
+        
+        i += 1
+    
     return blocks
 
 def read_spec(path):
@@ -45,16 +82,28 @@ def main():
     content = read_spec(spec_path)
     
     # Extract SQL blocks
-    sql_blocks = extract_code_blocks(content, 'sql')
+    sql_items = extract_code_blocks(content, 'sql')
+    sql_blocks = []
+    for block_id, code in sql_items:
+        if block_id == 'implementation/sqlite/schema-ddl':
+            sql_blocks.append(code)
     if sql_blocks:
         sql_content = '\n\n'.join(sql_blocks)
         write_file('migrations/001-initial.sql', sql_content)
+    else:
+        print("Warning: No SQL schema block found.")
     
     # Extract TypeScript blocks
-    ts_blocks = extract_code_blocks(content, 'typescript')
+    ts_items = extract_code_blocks(content, 'typescript')
+    ts_blocks = []
+    for block_id, code in ts_items:
+        if block_id == 'implementation/sqlite/typescript-client':
+            ts_blocks.append(code)
     if ts_blocks:
         ts_content = '\n\n'.join(ts_blocks)
         write_file('src/db/speclang-db.ts', ts_content)
+    else:
+        print("Warning: No TypeScript client block found.")
     
     print("SQLite schema generation complete.")
 

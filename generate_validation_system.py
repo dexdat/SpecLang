@@ -13,30 +13,59 @@ def extract_code_blocks(content):
     """Extract TypeScript code blocks from spec content.
     Handles both ```typescript and ```speclang ... @kind:code ... ```typescript patterns.
     Returns list of (block_id, code) tuples.
+    Uses line-by-line parsing to avoid premature closing due to backticks in comments.
     """
+    lines = content.split('\n')
+    i = 0
     blocks = []
     
-    # Pattern for speclang code block with @kind:code
-    # Matches ```speclang\n# @block:... @kind:code\n```typescript\n...```
-    pattern = r'```speclang\n# @block:([^ ]+) @kind:code\n```typescript\n(.*?)```'
-    for match in re.finditer(pattern, content, re.DOTALL):
-        block_id = match.group(1)
-        code = match.group(2).strip()
-        blocks.append((block_id, code))
-    
-    # Also catch plain ```typescript blocks (fallback)
-    pattern2 = r'```typescript\n(.*?)```'
-    for match in re.finditer(pattern2, content, re.DOTALL):
-        # Skip if already captured by first pattern (overlap)
-        start, end = match.span()
-        overlapping = False
-        for match2 in re.finditer(pattern, content, re.DOTALL):
-            s, e = match2.span()
-            if s <= start and e >= end:
-                overlapping = True
+    while i < len(lines):
+        line = lines[i]
+        # Look for start of speclang block with @kind:code
+        if line.strip() == '```speclang':
+            block_start = i
+            i += 1
+            if i >= len(lines):
                 break
-        if not overlapping:
-            blocks.append(('plain', match.group(1).strip()))
+            # Next line should be # @block:... @kind:code
+            if lines[i].startswith('# @block:') and '@kind:code' in lines[i]:
+                # Extract block id
+                # line format: # @block:ID @kind:code
+                parts = lines[i].split()
+                block_part = parts[1]  # '@block:ID'
+                block_id = block_part.split(':', 1)[1]  # 'ID'
+                i += 1
+                # Look for ```typescript line
+                if i < len(lines) and lines[i].strip() == '```typescript':
+                    i += 1
+                    code_lines = []
+                    # Collect until we find closing backticks at start of line
+                    while i < len(lines) and not (lines[i].strip().startswith('```') and len(lines[i].strip()) == 3):
+                        code_lines.append(lines[i])
+                        i += 1
+                    if i < len(lines) and lines[i].strip() == '```':
+                        i += 1  # consume closing backticks
+                        code = '\n'.join(code_lines)
+                        blocks.append((block_id, code))
+                        continue
+            # If we didn't find the pattern, reset to block_start+1 and continue
+            i = block_start + 1
+            continue
+        
+        # Look for plain typescript block
+        if line.strip() == '```typescript':
+            i += 1
+            code_lines = []
+            while i < len(lines) and not (lines[i].strip().startswith('```') and len(lines[i].strip()) == 3):
+                code_lines.append(lines[i])
+                i += 1
+            if i < len(lines) and lines[i].strip() == '```':
+                i += 1
+                code = '\n'.join(code_lines)
+                blocks.append(('plain', code))
+                continue
+        
+        i += 1
     
     return blocks
 

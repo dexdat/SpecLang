@@ -48,8 +48,7 @@ Flow:
 ```speclang
 # @block:implementation/ralph-loop/controller @kind:code
 ```typescript
-import { Database } from 'better-sqlite3';
-import { open } from 'sqlite';
+import Database from 'better-sqlite3';
 import { BuilderAgent } from './builder-agent';
 import { VerifierAgent } from './verifier-agent';
 
@@ -76,10 +75,7 @@ export class LoopController {
   }
 
   static async create(dbPath: string = '.speclang/speclang.db'): Promise<LoopController> {
-    const db = await open({
-      filename: dbPath,
-      driver: require('better-sqlite3').Database
-    });
+    const db = new Database(dbPath);
     return new LoopController(db);
   }
 

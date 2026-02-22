@@ -409,7 +409,7 @@ export class ValidationEngine {
   private validateBlockSyntax(content: string): ValidationError[] {
     const errors: ValidationError[] = [];
     
-    // Check for block syntax: ```speclang followed by # @block:
+    // Check for block syntax: '''speclang followed by # @block:
     const blockRegex = /```speclang\n# @block:([^\s]+) @kind:([^\s]+)/g;
     const matches = content.matchAll(blockRegex);
     
@@ -449,7 +449,7 @@ export class ValidationEngine {
 ```speclang
 # @block:implementation/validation/cli @kind:code
 ```typescript
-import { ValidationEngine } from './validation-engine';
+import { ValidationEngine } from './validation-system';
 import { open } from 'sqlite';
 import { glob } from 'glob';
 
@@ -503,7 +503,7 @@ export async function validateCommand(args: string[]) {
 # @block:implementation/validation/opencode-integration @kind:code
 ```typescript
 // Integration with OpenCode plugin guard system
-import { ValidationEngine } from './validation-engine';
+import { ValidationEngine } from './validation-system';
 
 export class ValidationGuard {
   private engine: ValidationEngine;
