@@ -1,9 +1,12 @@
-# speclang-header lines:11
+# speclang-header lines:14
 id: "@speclang/ralph-loop"
 version: 0.1.0
 layer: 0
 tags: [ralph, loop, agents, coordination, validation]
 imports: ["@speclang/agent-protocol", "@speclang/cascade", "@speclang/recovery"]
+children:
+  - "@ref:specs/ralph-loop.dir/workflow"
+  - "@ref:specs/ralph-loop.dir/state"
 status: draft
 project_level: Alpha
 agent_support: agent_assisted
@@ -12,6 +15,33 @@ short: Ralph Loop System
 # Ralph Loop System
 
 Dual-agent Ralph Loop with steering packets for building Speclang using Speclang.
+
+## Overview
+
+```speclang
+# @block:ralph/overview @kind:note
+Ralph Loop pattern applied to Speclang development:
+
+1. Allocate array with complete backing specifications
+2. Goal: Build complete Speclang system
+3. Loop with two agents:
+   - Builder Agent: Writes implementation specs and code
+   - Verifier Agent: Validates output, creates steering packets
+4. Watch loop for failure domains
+5. Engineer solutions for failures
+6. Repeat until goal achieved
+
+This implements meta-circular development.
+```
+
+## Parts
+
+This specification has been split into multiple parts for better organization and autonomous agent operation.
+
+- @ref:specs/ralph-loop.dir/workflow – Operational processes, control flow, and integration
+- @ref:specs/ralph-loop.dir/state – Entity definitions, data schemas, and state management
+
+*See individual parts in ralph-loop.dir/*
 
 ## Overview
 
