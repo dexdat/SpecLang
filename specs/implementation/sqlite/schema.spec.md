@@ -164,7 +164,9 @@ PRAGMA foreign_keys = ON;
 ```speclang
 # @block:implementation/sqlite/typescript-client @kind:code
 ```typescript
-import Database from 'better-sqlite3';
+import Database = require('better-sqlite3');
+import { readFile } from 'fs/promises';
+import * as path from 'path';
 
 export interface SpecRow {
   file_path: string;
@@ -194,7 +196,7 @@ export interface SessionRow {
 }
 
 export class SpeclangDatabase {
-  private db: Database;
+  private db!: InstanceType<typeof Database>;
 
   async initialize(path: string = '.speclang/speclang.db'): Promise<void> {
     this.db = new Database(path);
@@ -208,7 +210,8 @@ export class SpeclangDatabase {
 
   private async loadMigration(name: string): Promise<string> {
     // Load migration SQL from filesystem
-    return '';
+    const migrationPath = path.join(process.cwd(), 'migrations', `${name}.sql`);
+    return await readFile(migrationPath, 'utf-8');
   }
 }
 ```

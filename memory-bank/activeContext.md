@@ -30,16 +30,16 @@ Building out the SpecLang system using the Ralph Loop pattern.
 - Builder Agent generated code generation tools (todo-019): created Python scripts for extracting code blocks from specs.
 - Builder Agent fixed extraction script duplication, regenerated SQLite schema, Ralph Loop, validation system, and updated spec dependencies (sqlite3 → better-sqlite3). Fixed LoopController constructor async issue.
 - Updated ralph_todo.json: marked todos 016-020 as completed, phase changed to phase_4_self_hosting.
-## Verifier Agent Validation Results (Updated 2026-02-21)
+## Verifier Agent Validation Results (Updated 2026-02-22)
 
 - **Stage 1 (Spec Format)**: PASSED - All non-backup specs have required metadata fields, references valid. Validation script passes.
-- **Stage 2 (Code Compilation)**: PARTIAL - TypeScript compilation errors reduced but still present:
-   1. src/db/speclang-db.ts: compilation passes (fixed).
-   2. src/ralph-loop.ts: duplicate imports, missing builder-agent/verifier-agent modules, sqlite import issues (partially fixed).
-   3. src/validation-system.ts: duplicate imports, missing sqlite module, missing glob/writeFile/unlink imports.
+- **Stage 2 (Code Compilation)**: PARTIAL - TypeScript compilation errors persist:
+   1. src/db/speclang-db.ts: compilation passes (loadMigration placeholder incomplete).
+   2. src/ralph-loop.ts: duplicate imports, missing builder-agent/verifier-agent modules, sqlite import issues.
+   3. src/validation-system.ts: duplicate imports, missing sqlite module, missing writeFile/unlink imports.
 - **Stage 3 (Test Execution)**: PASSED - All 18 Python tests pass (generate_index.py, validate_refs.py, validate_autonomous.py).
 - **Stage 4 (Integration Testing)**: BLOCKED - Cannot run integration tests due to compilation failures. Generated code not yet functional.
-- Updated todo statuses: todos 016-019 marked 'failed' due to compilation errors. Steering packets created with detailed fix suggestions.
+- Updated todo statuses: todo-016 marked pending (loadMigration incomplete), todos 017-019 pending after steering packets created with fix suggestions. Added summary steering packet sp-{timestamp}-summary with consolidated fixes.
 
 ## Next Steps
 1. Fix remaining Ralph Loop spec imports (builder-agent, verifier-agent blocks) to use better-sqlite3 directly.

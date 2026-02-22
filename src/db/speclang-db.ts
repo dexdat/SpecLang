@@ -1,4 +1,6 @@
 import Database = require('better-sqlite3');
+import { readFile } from 'fs/promises';
+import * as path from 'path';
 
 export interface SpecRow {
   file_path: string;
@@ -42,6 +44,7 @@ export class SpeclangDatabase {
 
   private async loadMigration(name: string): Promise<string> {
     // Load migration SQL from filesystem
-    return '';
+    const migrationPath = path.join(process.cwd(), 'migrations', `${name}.sql`);
+    return await readFile(migrationPath, 'utf-8');
   }
 }

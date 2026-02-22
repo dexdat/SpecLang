@@ -3,8 +3,7 @@
 
 
 // Block: implementation/validation/engine
-import { Database } from 'better-sqlite3';
-import { open } from 'sqlite';
+import Database = require('better-sqlite3');
 import { readFile } from 'fs/promises';
 import { parse } from 'yaml';
 import * as path from 'path';
@@ -24,9 +23,9 @@ export interface ValidationResult {
 }
 
 export class ValidationEngine {
-  private db: Database;
+  private db!: InstanceType<typeof Database>;
 
-  constructor(db: Database) {
+  constructor(db: InstanceType<typeof Database>) {
     this.db = db;
   }
 
@@ -77,7 +76,7 @@ export class ValidationEngine {
     } catch (error) {
       errors.push({
         code: 'READ_ERROR',
-        message: `Failed to read file: ${error.message}`,
+        message: `Failed to read file: ${(error as Error).message}`,
         filePath
       });
     }
@@ -279,10 +278,8 @@ export class ValidationEngine {
 
       // Check if referenced spec exists in SQLite
       const refPath = ref.substring(5); // Remove '@ref:'
-      const exists = await this.db.get(
-        `SELECT COUNT(*) as count FROM specs WHERE id = ? OR file_path LIKE ?`,
-        [refPath, `%${refPath}%`]
-      );
+      const stmtCheckRef = this.db.prepare(`SELECT COUNT(*) as count FROM specs WHERE id = ? OR file_path LIKE ?`);
+      const exists = stmtCheckRef.get(refPath, `%${refPath}%`) as { count: number };
       
       if (exists.count === 0) {
         errors.push({
@@ -314,10 +311,8 @@ export class ValidationEngine {
       }
 
       // Check if imported spec exists
-      const exists = await this.db.get(
-        `SELECT COUNT(*) as count FROM specs WHERE id = ?`,
-        [imp]
-      );
+      const stmtCheckImport = this.db.prepare(`SELECT COUNT(*) as count FROM specs WHERE id = ?`);
+      const exists = stmtCheckImport.get(imp) as { count: number };
       
       if (exists.count === 0) {
         errors.push({
@@ -363,23 +358,46 @@ export class ValidationEngine {
   private validateBlockSyntax(content: string): ValidationError[] {
     const errors: ValidationError[] = [];
     
-    // Check for block syntax:
+    // Check for block syntax: '''speclang followed by # @block:
+    const blockRegex = /```speclang\n# @block:([^\s]+) @kind:([^\s]+)/g;
+    const matches = content.matchAll(blockRegex);
+    
+    for (const match of matches) {
+      const blockId = match[1];
+      const kind = match[2];
+      
+      if (!blockId.match(/^[a-z0-9-]+\/[a-z0-9-]+$/)) {
+        errors.push({
+          code: 'BLOCK_ID_FORMAT',
+          message: `Block ID must follow domain/name format: ${blockId}`,
+          filePath: '' // will be filled by caller
+        });
+      }
+
+      const validKinds = ['note', 'code', 'entity', 'diagram', 'schema', 'api'];
+      if (!validKinds.includes(kind)) {
+        errors.push({
+          code: 'BLOCK_KIND',
+          message: `Block kind must be one of: ${validKinds.join(', ')}`,
+          filePath: ''
+        });
+      }
+    }
+
+    return errors;
+  }
+}
 
 // Block: implementation/validation/cli
-import { ValidationEngine } from './validation-engine';
-import { open } from 'sqlite';
 import { glob } from 'glob';
 
 export async function validateCommand(args: string[]) {
-  const db = await open({
-    filename: '.speclang/speclang.db',
-    driver: require('better-sqlite3').Database
-  });
+  const db = new Database('.speclang/speclang.db');
 
   const engine = new ValidationEngine(db);
 
   const patterns = args.length > 0 ? args : ['specs/**/*.spec.md'];
-  const files = await glob(patterns, { ignore: '**/.backup_spec_files/**' });
+  const files = (await glob(patterns as string[], { ignore: '**/.backup_spec_files/**' })) as string[];
 
   let totalErrors = 0;
   let totalFiles = 0;
@@ -411,7 +429,7 @@ export async function validateCommand(args: string[]) {
 
 // Block: implementation/validation/opencode-integration
 // Integration with OpenCode plugin guard system
-import { ValidationEngine } from './validation-engine';
+import { writeFile, unlink } from 'fs/promises';
 
 export class ValidationGuard {
   private engine: ValidationEngine;
