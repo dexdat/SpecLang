@@ -13,19 +13,7 @@ short: Test Spec Format
 
 Part 1 of 2: Format and structure definitions. See also @ref:speclang/test-specs/examples for concrete examples.
 
-## Philosophy
 
-```speclang
-# @block:tests/philosophy @kind:note
-Tests are specs. Specs are tests.
-
-- Test specs describe expected behavior
-- TestWriter agent converts to executable tests
-- Results flow back to test specs
-- Tests and code stay in sync automatically
-```
-
----
 
 ## Test Spec Format
 
