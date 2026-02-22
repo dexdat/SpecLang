@@ -4,16 +4,20 @@
 Building out the SpecLang system using the Ralph Loop pattern.
 
 ## Recent Changes
-- Builder Agent completed todo-012: Added missing metadata fields (project_level, agent_support, short, version, layer) to all specs (59 specs updated)
-- Builder Agent completed todo-010: Installed TypeScript dependencies (@modelcontextprotocol/sdk, better-sqlite3, express) and fixed compilation error (speclang-mcp.ts)
-- Builder Agent completed todo-011: Created test suite for generate_index.py and validate_refs.py (basic unit tests)
-- Updated spec index and committed changes
+- Verifier Agent validated todo-010: TypeScript dependencies installed, compilation passes (success).
+- Verifier Agent validated todo-011: Test suite created but tests fail (get_spec_files tuple mismatch, integration test cwd issue).
+- Verifier Agent validated todo-012: Most specs updated, but 10 specs still missing project_level and agent_support fields (code generation specs).
+- Updated steering packets and todo statuses accordingly.
 - Validation tool still has bug requiring agent_support == agent_autonomous for all specs (todo-005)
+- Builder Agent fixed validation tool bug: now allows human_only, agent_assisted, agent_autonomous values.
+- Builder Agent added missing metadata fields (project_level, agent_support, short) to all remaining specs (codegen/go, codegen/ts, ui-dashboard, mcp openapi cli, project.scl).
+- Builder Agent fixed header parsing for mcp.dir/tools/* specs by quoting short fields with colons.
+- Updated ralph_todo.json: todo-012 marked completed.
 ## Next Steps
-1. Update validation tool to fail specs missing required metadata fields (todo-005)
-2. Fix step-by-step descriptions and ambiguous terms in specs (todo-013)
-3. Fix remaining spec header parse errors (mcp.dir/tools/*)
-4. Run full validation and cascade simulation
+1. Fix step-by-step descriptions and ambiguous terms in specs (todo-013)
+2. Run full validation and cascade simulation
+3. Fix remaining spec header parse errors (backup_specs/*) - low priority
+4. Update validation tool to ignore example references (todo-008/009)
 ## Active Decisions
 - Using opencode run with --agent flag
 - State stored in .ralph/loop-state.json
