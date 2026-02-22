@@ -1,5 +1,14 @@
 # SpecLang Development Todo List
 
+## PRIORITY: Meta-Circular File Structure Alignment
+- [ ] Audit current root directory files vs spec-defined structure
+- [x] Remove memory-bank/ - specs/ IS the memory (per symlinks.spec.md)
+- [ ] Create spec defining tool scripts location (ralph_loop.py, generate_index.py, etc.)
+- [ ] Implement per-file git commits after every change (per git-history.spec.md)
+- [ ] Align root structure with project-layout.spec.md: project.scl, specs/, tests/, generated/, .speclang/
+- [ ] Note: .opencode/ and .ralph/ are external tooling, not part of SpecLang core
+- [ ] Implement self-hosting: generated code and tools come from specs
+
 ## Phase 1: Manual Emulation (Human + AI)
 - [x] Review all specs for completeness and correctness
 - [x] Fix any remaining file naming issues
@@ -122,7 +131,7 @@
 - [x] Tags non-empty and meaningful
 - [x] Dependencies correctly specified
 - [ ] Generated code compiles without errors
-- [ ] All tests pass
+- [x] All tests pass
 - [ ] Integration tests successful
 - [x] Autonomous agent validation:
   - [x] Specs with `agent_support: agent_autonomous` have step-by-step descriptions
