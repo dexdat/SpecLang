@@ -29,6 +29,12 @@ OpenCode provides the ideal foundation for Speclang's reactive cascade system:
 
 This high‑level spec is expanded into two detailed sub‑specs:
 
+```speclang
+# @block:opencode/subspecs @kind:refs
+@ref:speclang/opencode/events
+@ref:speclang/opencode/integration
+```
+
 ### 1. Events & Convergence (`@speclang/opencode/events`)
 - File watching strategies (native vs custom)
 - Session events (`file.edited`, `agent.finished`, etc.)
