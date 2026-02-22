@@ -75,6 +75,8 @@ class SpeclangMCPServer {
   private db: Database;
   private mode: 'stdio' | 'http' | 'socket';
   private transports = new Map<string, SSEServerTransport>();
+  private users: Map<string, string> = new Map();
+  private tokens: Set<string> = new Set();
   
   async start(args: string[]) {
     // Detect mode from args
@@ -93,8 +95,17 @@ class SpeclangMCPServer {
       name: "speclang",
       version: "1.0.0"
     }, {
-      capabilities: { tools: {  }
-
+      capabilities: { tools: {} }
+    });
+    
+    this.registerTools(server);
+    
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+    
+    console.error("Speclang MCP server running on stdio");
+  }
+  
   loadFromConfig(configPath: string): void {
     const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
     if (config.auth?.users) {
@@ -107,16 +118,6 @@ class SpeclangMCPServer {
         this.tokens.add(token);
       }
     }
-  }
-}
-    });
-    
-    this.registerTools(server);
-    
-    const transport = new StdioServerTransport();
-    await server.connect(transport);
-    
-    console.error("Speclang MCP server running on stdio");
   }
   
   async startHTTP(args: string[]) {
