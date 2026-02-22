@@ -349,6 +349,13 @@ Reference:
 # @block:auth/login @kind:operation
 refs: [@ref:northstar#auth, @ref:stdlib/Result, @ref:specs/users#User]
 
+Steps:
+1. Validate email format using regex
+2. Look up user by email in database
+3. Verify password hash matches stored hash
+4. Generate JWT token with user claims
+5. Return token wrapped in Result<Token, Error>
+
 login uses User from @ref:specs/users#User.
 Returns Result from @ref:stdlib/Result.
 Part of auth feature from @ref:northstar#auth.

@@ -225,6 +225,9 @@ steps:
   7. write .speclangrc with defaults
   8. write .gitignore
   9. init git repo if not in one
+  10. create initial spec file for north star
+  11. run validation to ensure project structure is correct
+  12. output success message with next steps
 
 refs: [@ref:speclang/cli#new]
 ```

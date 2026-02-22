@@ -220,38 +220,19 @@ TodoList:
 ```speclang
 # @block:ralph/control @kind:operation
 ralph_loop_control():
-  
-  initialize:
-    1. Load complete backing specifications
-    2. Generate todo list
-    3. Spawn Builder and Verifier agents
-    
-  loop:
-    while todo_list.has_pending():
-      
-      # Builder phase
-      task = todo_list.get_next()
-      builder.assign(task)
-      output = builder.execute()
-      
-      # Verifier phase  
-      verifier.validate(output)
-      result = verifier.get_result()
-      
-      if result.success:
-        todo_list.mark_done(task)
-        if result.has_next_recommendation:
-          todo_list.add(result.next_recommendation)
-      else:
-        steering_packet = verifier.create_steering_packet(result)
-        builder.receive(steering_packet)
-        todo_list.retry(task)
-        
-  completion:
-    when todo_list.all_done():
-      - System verification
-      - Final validation
-      - Success report
+
+steps:
+  1. Load complete backing specifications
+  2. Generate todo list
+  3. Spawn Builder and Verifier agents
+  4. While todo list has pending tasks:
+     a. Get next task
+     b. Assign task to Builder
+     c. Builder executes task
+     d. Verifier validates output
+     e. If validation succeeds, mark task done and add any recommendations
+     f. If validation fails, create steering packet, send to Builder, retry task
+  5. When all tasks done, run system verification, final validation, and success report
 ```
 
 ## SQLite Schema Extensions

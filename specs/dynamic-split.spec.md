@@ -125,14 +125,21 @@ checkAndSplit(spec: Spec) -> Spec[]:
 
 steps:
   1. Count tokens/lines/chars in content
-  2. If under user_limit: return as-is
-  3. If over user_limit (but under budget_limit):
+  2. Determine user_limit (10000 tokens) and budget_limit (10500 tokens)
+  3. If token count <= user_limit: return spec as-is
+  4. If token count > user_limit and <= budget_limit:
      a. Create parent.spec.dir/ folder
      b. Extract blocks/sections
      c. Create child specs in folder
      d. Update parent as index file
      e. Add bidirectional refs
-  4. Return parent + children
+  5. If token count > budget_limit:
+     a. Determine optimal split points based on block boundaries
+     b. Create parent.spec.dir/ folder
+     c. Split content across child specs
+     d. Update parent as index file
+     e. Add bidirectional refs
+  6. Return parent + children
 
 budget_calculation:
   user_limit: 10000 tokens

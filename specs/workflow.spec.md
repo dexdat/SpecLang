@@ -41,18 +41,17 @@ Everything else is automatic.
 # @block:workflow/install @kind:operation
 Install Steps:
 
-1. Download speclangd binary:
-   curl -sSL https://speclang.dev/install | sh
-   
-2. Download skills pack:
-   speclang skills download
-   
-3. Point AI editor to skills:
-   OpenCode: cp -r ~/.speclang/skills/* ~/.opencode/skills/
-   Cursor: cp -r ~/.speclang/skills/* ~/.cursor/skills/
-   Claude Code: cp -r ~/.speclang/skills/* ~/.claude/skills/
-   
-4. Done. No config needed.
+1. Check system architecture and OS compatibility
+2. Download speclangd binary using curl command
+3. Verify binary integrity and permissions
+4. Download skills pack using speclang skills download
+5. Verify skills pack integrity
+6. Copy skills to OpenCode directory
+7. Copy skills to Cursor directory
+8. Copy skills to Claude Code directory
+9. Verify installation with speclang --version
+10. Verify skills list with speclang skills list
+11. Done. No config needed.
 ```
 
 ### @workflow/install-detail
@@ -90,20 +89,19 @@ InstallArtifacts:
 # @block:workflow/start @kind:operation
 Start Steps:
 
-1. Create project directory:
-   mkdir my-app && cd my-app
-   
-2. Initialize speclang:
-   speclang init
-   
-3. Start daemon:
-   speclangd start
-   
-4. Open AI editor with skills loaded
-
-5. Say: "Build [description] using Speclang"
-
-Done. Watch it build itself.
+1. Create project directory
+2. Change to project directory
+3. Initialize speclang with speclang init
+4. Validate initialization success
+5. Start daemon with speclangd start
+6. Check daemon logs for errors
+7. Verify daemon is running with speclang status
+8. Open AI editor with skills loaded
+9. Verify skills are loaded in editor
+10. Provide build command: "Build [description] using Speclang"
+11. Monitor build progress
+12. Watch system build itself.
+13. Done.
 ```
 
 ### @workflow/init-creates

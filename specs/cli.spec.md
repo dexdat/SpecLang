@@ -70,7 +70,7 @@ Options:
   --target     Output language: ts, go, rust, py
   --watch      Rebuild on changes
   --parallel   Build concurrently (default: true)
-  --dry-run    Show what would generate
+  --dry-run    Show what will be generated
 
 Steps:
   - load all specs
@@ -120,7 +120,7 @@ Sync generated code back to specs.
 
 Options:
   --yes        Accept all changes
-  --dry-run    Show what would change
+  --dry-run    Show what will change
 
 Steps:
   - scan generated files for changes
@@ -146,7 +146,7 @@ Arguments:
   block        Block ID to expand
 
 Options:
-  --depth      How many layers (default: 1)
+  --depth      Number of layers (default: 1)
   --ai         Use AI to generate (default: true)
 
 Steps:

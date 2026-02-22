@@ -297,6 +297,13 @@ A block can have multiple lenses:
 # @block:user/login @kind:operation
 login(email, password) -> Token
 
+Steps:
+1. Validate email format using regex
+2. Look up user by email in database
+3. Verify password hash matches stored hash
+4. Generate JWT token with user claims
+5. Return token
+
 # visual flow
 ```mermaid
 ...diagram...

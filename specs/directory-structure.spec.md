@@ -190,6 +190,15 @@ FlatteningStrategy:
 # @block:dir/creation @kind:operation
 createSpec(parent: Path, name: String, kind: SpecKind) -> Path:
 
+steps:
+  1. Determine parent type (file or directory)
+  2. If parent is a file, create corresponding .dir/ directory if not exists
+  3. Determine appropriate file extension based on kind
+  4. Create spec file at appropriate path
+  5. If spec requires sub-directory, create .dir/ subdirectory
+  6. Create sub-spec files within subdirectory
+  7. Return path to created spec file
+
 rules:
   - If parent is file (auth.spec.md):
     - Create auth.dir/ if not exists
