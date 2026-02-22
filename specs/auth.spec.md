@@ -2,8 +2,8 @@
 id: "@speclang/auth"
 version: 0.1.0
 layer: 2
-project_level: Alpha
-agent_support: agent_autonomous
+project_level: "Alpha"
+agent_support: "agent_autonomous"
 tags: [auth, mcp, typescript, component]
 short: "Authentication component for MCP server"
 children: ["@speclang/auth/entities", "@speclang/auth/flows"]
