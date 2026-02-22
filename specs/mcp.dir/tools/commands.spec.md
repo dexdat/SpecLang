@@ -1,11 +1,11 @@
-# speclang-header lines:12
+# speclang-header lines:13
 id: "@speclang/mcp.tools.commands"
 version: 0.1.0
 layer: 3
 project_level: Alpha
 agent_support: agent_assisted
 tags: [mcp, tools, commands]
-parent: "@ref:specs/mcp"
+parent: "@ref:speclang/mcp"
 part: 6/12
 siblings:
   next: "@ref:specs/mcp.dir/tools/locks"
