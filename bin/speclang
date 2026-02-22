@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+/**
+ * SPECLANG-GENERATED: CLI executable
+ * Source: @speclang/mcp.cli
+ */
+
+// Import and run CLI
+import './cli/index.js';
