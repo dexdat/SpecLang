@@ -2,18 +2,17 @@
 id: "@speclang/daemon"
 version: 0.1.0
 layer: 0
+project_level: Alpha
+agent_support: agent_assisted
 tags: [daemon, inotify, watcher, rust]
 imports: ["@speclang/core"]
 status: draft
+short: "daemon.spec.md"
 children:
   - "@ref:specs/daemon.dir/architecture"
   - "@ref:specs/daemon.dir/events"
   - "@ref:specs/daemon.dir/routing"
   - "@ref:specs/daemon.dir/convergence"
-
-project_level: Alpha
-agent_support: agent_assisted
-short: speclangd
 ---
 # speclangd
 

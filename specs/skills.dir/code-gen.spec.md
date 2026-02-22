@@ -53,7 +53,7 @@ Default: TypeScript
 ## Code Generation Rules
 
 1. Every generated file must have SPECLANG markers:
-   // SPECLANG-ID: @ref:specs/file#block
+   // SPECLANG-ID: @ref:specs/spec-format#format/block
    // SPECLANG-NORTHSTAR: @ref:northstar#feature
    // SPECLANG-VERSION: 1.0.0
    // SPECLANG-GENERATED: DO NOT EDIT

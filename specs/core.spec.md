@@ -58,7 +58,7 @@ See @ref:speclang/core/concurrency for concurrency model.
 
 ## Project Layout
 
-See @ref:speclang/core/layout (TODO: create layout sub-spec if needed).
+Project layout is defined in @ref:speclang/directory-structure and @ref:speclang/project-layout.
 
 ## See Also
 
