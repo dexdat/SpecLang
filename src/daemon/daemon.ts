@@ -20,6 +20,7 @@ import {
   DaemonStatus,
   DaemonStatusKind,
   AgentTask,
+  ConvergenceResult,
 } from './types';
 
 export class Daemon extends EventEmitter {
@@ -64,11 +65,14 @@ export class Daemon extends EventEmitter {
       }
     });
 
-    // Handle convergence
-    this.convergence.on('converged', (result) => {
+    // Handle convergence - trigger pipeline execution
+    this.convergence.on('converged', async (result) => {
       console.log('[Daemon] Cascade converged!', result);
       this.state.setStatus(DaemonStatusKind.Converged);
       this.emit('converged', result);
+
+      // Execute pipeline on convergence
+      await this.executePipeline(result);
     });
 
     // Start watching
@@ -238,6 +242,33 @@ export class Daemon extends EventEmitter {
    */
   getConfig(): Config {
     return this.config;
+  }
+
+  /**
+   * Execute pipeline on convergence
+   */
+  private async executePipeline(convergenceResult: ConvergenceResult): Promise<void> {
+    try {
+      // Dynamic import to avoid circular dependencies
+      const { PipelineExecutor } = await import('../pipeline/executor');
+      
+      console.log('[Daemon] Executing pipeline...');
+      const executor = new PipelineExecutor({ verbose: true });
+      
+      const result = await executor.execute(convergenceResult);
+      
+      if (result.success) {
+        console.log('[Daemon] Pipeline succeeded!');
+        this.emit('pipeline_success', result);
+      } else {
+        console.error('[Daemon] Pipeline failed:', result.error);
+        this.emit('pipeline_failed', result.error);
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error('[Daemon] Pipeline execution error:', errorMessage);
+      this.emit('pipeline_failed', errorMessage);
+    }
   }
 }
 
