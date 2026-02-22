@@ -63,15 +63,60 @@ def parse_header(filepath):
     
     return header_lines, metadata
 
-def extract_code_blocks(content):
-    """Extract code blocks from spec content."""
-    # Find all ```language ... ``` blocks, handling nested blocks poorly
-    pattern = r'```([a-z]*)\n(.*?)\n```'
-    matches = re.findall(pattern, content, re.DOTALL)
-    blocks = []
-    for lang, code in matches:
-        blocks.append((lang, code))
-    return blocks
+def extract_code_blocks(content, target_language):
+    """Extract code blocks from spec content using line-by-line parsing.
+    Returns list of code strings (no language tags).
+    Handles nested blocks: ```speclang ... ```target ... ```.
+    """
+    lines = content.split('\n')
+    i = 0
+    code_blocks = []
+    
+    while i < len(lines):
+        line = lines[i]
+        stripped = line.strip()
+        
+        # Look for start of speclang block
+        if stripped == '```speclang':
+            i += 1
+            # Skip lines until we find closing backticks or nested target block
+            while i < len(lines) and not (lines[i].strip().startswith('```') and len(lines[i].strip()) == 3):
+                # Check if this line starts a nested target block
+                if lines[i].strip() == f'```{target_language}':
+                    i += 1
+                    code_lines = []
+                    # Collect until closing backticks (must be at start of line, exactly three backticks)
+                    while i < len(lines) and not (lines[i].strip().startswith('```') and len(lines[i].strip()) == 3):
+                        code_lines.append(lines[i])
+                        i += 1
+                    if i < len(lines) and lines[i].strip() == '```':
+                        i += 1  # consume closing backticks
+                        code = '\n'.join(code_lines)
+                        code_blocks.append(code)
+                        # Continue processing the speclang block (still inside)
+                        continue
+                i += 1
+            # Skip the closing backticks of speclang block if present
+            if i < len(lines) and lines[i].strip() == '```':
+                i += 1
+            continue
+        
+        # Look for plain target language block (not nested)
+        if stripped == f'```{target_language}':
+            i += 1
+            code_lines = []
+            while i < len(lines) and not (lines[i].strip().startswith('```') and len(lines[i].strip()) == 3):
+                code_lines.append(lines[i])
+                i += 1
+            if i < len(lines) and lines[i].strip() == '```':
+                i += 1
+                code = '\n'.join(code_lines)
+                code_blocks.append(code)
+            continue
+        
+        i += 1
+    
+    return code_blocks
 
 def main():
     if len(sys.argv) < 2:
@@ -99,18 +144,8 @@ def main():
     
     print(f"Generating {target} code to {produces}")
     
-    # Extract code blocks
-    blocks = extract_code_blocks(content)
-    # Filter for code blocks with language matching target (typescript)
-    code_blocks = []
-    for lang, code in blocks:
-        if lang == target:
-            code_blocks.append(code)
-        elif lang == 'speclang':
-            # Inside speclang blocks, there may be nested code blocks.
-            # Extract nested ```typescript blocks
-            nested = re.findall(r'```typescript\n(.*?)\n```', code, re.DOTALL)
-            code_blocks.extend(nested)
+    # Extract code blocks using line-by-line parser
+    code_blocks = extract_code_blocks(content, target)
     
     if not code_blocks:
         print("No code blocks found")
