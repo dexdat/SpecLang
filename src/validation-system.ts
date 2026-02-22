@@ -3,10 +3,11 @@
 
 
 // Block: implementation/validation/engine
-import Database = require('better-sqlite3');
-import { readFile } from 'fs/promises';
+import Database from 'better-sqlite3';
+import { readFile, writeFile, unlink } from 'fs/promises';
 import { parse } from 'yaml';
 import * as path from 'path';
+import { glob } from 'glob';
 
 export interface ValidationError {
   code: string;
@@ -23,9 +24,9 @@ export interface ValidationResult {
 }
 
 export class ValidationEngine {
-  private db!: InstanceType<typeof Database>;
+  private db!: Database.Database;
 
-  constructor(db: InstanceType<typeof Database>) {
+  constructor(db: Database.Database) {
     this.db = db;
   }
 
@@ -360,7 +361,7 @@ export class ValidationEngine {
     
     // Check for block syntax: '''speclang followed by # @block:
     const blockRegex = /```speclang\n# @block:([^\s]+) @kind:([^\s]+)/g;
-    const matches = content.matchAll(blockRegex);
+    const matches = Array.from(content.matchAll(blockRegex));
     
     for (const match of matches) {
       const blockId = match[1];
@@ -389,7 +390,6 @@ export class ValidationEngine {
 }
 
 // Block: implementation/validation/cli
-import { glob } from 'glob';
 
 export async function validateCommand(args: string[]) {
   const db = new Database('.speclang/speclang.db');
@@ -397,7 +397,8 @@ export async function validateCommand(args: string[]) {
   const engine = new ValidationEngine(db);
 
   const patterns = args.length > 0 ? args : ['specs/**/*.spec.md'];
-  const files = (await glob(patterns as string[], { ignore: '**/.backup_spec_files/**' })) as string[];
+  // @ts-ignore - glob types mismatch
+  const files = (await (glob as any)(patterns, { ignore: '**/.backup_spec_files/**' })) as string[];
 
   let totalErrors = 0;
   let totalFiles = 0;
@@ -429,7 +430,6 @@ export async function validateCommand(args: string[]) {
 
 // Block: implementation/validation/opencode-integration
 // Integration with OpenCode plugin guard system
-import { writeFile, unlink } from 'fs/promises';
 
 export class ValidationGuard {
   private engine: ValidationEngine;

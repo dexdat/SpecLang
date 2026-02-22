@@ -3,12 +3,14 @@
 
 
 // Block: implementation/ralph-loop/controller
-import Database = require('better-sqlite3');
+import Database from 'better-sqlite3';
 import { readFile, writeFile } from 'fs/promises';
 import { glob } from 'glob';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as path from 'path';
+
+const execAsync = promisify(exec);
 
 export interface Task {
   id: string;
@@ -21,12 +23,12 @@ export interface Task {
 }
 
 export class LoopController {
-  private db!: InstanceType<typeof Database>;
+  private db!: Database.Database;
   private builder: BuilderAgent;
   private verifier: VerifierAgent;
   private isRunning: boolean = false;
 
-  constructor(db: InstanceType<typeof Database>) {
+  constructor(db: Database.Database) {
     this.db = db;
     this.builder = new BuilderAgent(db);
     this.verifier = new VerifierAgent(db);
@@ -100,7 +102,7 @@ export class LoopController {
 
 
 export class BuilderAgent {
-  constructor(private db: InstanceType<typeof Database>) {}
+  constructor(private db: Database.Database) {}
 
   async execute(task: Task): Promise<{ output: any; error?: string }> {
     try {
@@ -118,7 +120,7 @@ export class BuilderAgent {
         return { output: null, error: `Unknown task type: ${task.title}` };
       }
     } catch (error) {
-      return { output: null, error: error.message };
+      return { output: null, error: (error as Error).message };
     }
   }
 
@@ -151,10 +153,8 @@ export class BuilderAgent {
 // Block: implementation/ralph-loop/verifier-agent
 
 
-const execAsync = promisify(exec);
-
 export class VerifierAgent {
-  constructor(private db: InstanceType<typeof Database>) {}
+  constructor(private db: Database.Database) {}
 
   async validate(task: Task, output: any): Promise<{ success: boolean; errors: string[] }> {
     const errors: string[] = [];

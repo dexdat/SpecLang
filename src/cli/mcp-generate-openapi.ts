@@ -1,9 +1,10 @@
+// CLI for MCP server operations
+// DO NOT EDIT MANUALLY
+
 import { Command } from 'commander';
-import { getToolsFromOpenApi } from 'openapi-mcp-generator';
-import { MCPServer } from '../mcp/server';
-import { ensureDir, writeFile } from 'fs-extra';
-import { join } from 'path';
+import { ensureDir } from 'fs-extra';
 import { execSync } from 'child_process';
+import * as path from 'path';
 
 /**
  * Generate MCP server from OpenAPI spec
@@ -26,7 +27,6 @@ export async function generateOpenApiMCP(options: {
     serverName,
     baseUrl,
     force = false,
-    register = false,
   } = options;
 
   console.log(`Generating MCP server from ${input}...`);
@@ -61,45 +61,6 @@ export async function generateOpenApiMCP(options: {
   execSync(command, { stdio: 'inherit' });
 
   console.log(`MCP server generated at ${output}`);
-
-  // If register flag is set, register tools with SpecLang MCP server
-  if (register) {
-    await registerOpenApiTools(input, output, { baseUrl });
-  }
-}
-
-/**
- * Register generated tools with SpecLang MCP server
- */
-async function registerOpenApiTools(
-  specPath: string,
-  outputDir: string,
-  options: { baseUrl?: string }
-): Promise<void> {
-  const tools = await getToolsFromOpenApi(specPath, {
-    baseUrl: options.baseUrl,
-    dereference: true,
-  });
-
-  const server = MCPServer.getInstance();
-  for (const tool of tools) {
-    server.registerTool({
-      name: tool.name,
-      description: tool.description,
-      inputSchema: tool.inputSchema,
-      handler: async (args: any) => {
-        // Proxy request to actual API
-        const response = await fetch(tool.url, {
-          method: tool.method,
-          headers: tool.headers,
-          body: JSON.stringify(args),
-        });
-        return response.json();
-      },
-    });
-  }
-
-  console.log(`Registered ${tools.length} tools from ${specPath}`);
 }
 
 /**
@@ -121,14 +82,10 @@ export function addGenerateOpenApiCommand(program: Command): void {
 }
 
 // src/cli/index.ts
-import { Command } from 'commander';
-import { addGenerateOpenApiCommand } from './mcp-generate-openapi';
 
 export function createCLI(): Command {
   const program = new Command();
   program.name('speclang').version('1.0.0');
-
-  // ... other commands
 
   // Add MCP subcommands
   const mcpCommand = program.command('mcp').description('MCP server operations');

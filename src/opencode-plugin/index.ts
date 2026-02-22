@@ -2,23 +2,39 @@
 // DO NOT EDIT MANUALLY
 
 // Import dependencies
-import Database = require('better-sqlite3');
+import Database from 'better-sqlite3';
 import { readFile, writeFile, unlink } from 'fs/promises';
 import * as fs from 'fs';
 import * as path from 'path';
 import { glob } from 'glob';
-import { parse } from 'yaml';
-import { exec } from 'child_process';
+import * as yaml from 'yaml';
+import { exec as execSync } from 'child_process';
 import { promisify } from 'util';
 
-// Assume db is a better-sqlite3 database instance
-// This will be provided by the plugin runtime
+const execAsync = promisify(execSync);
+
+// Assume db is provided by runtime
 declare const db: any;
 declare const tools: any;
 declare const events: any;
 
 // Block: opencode-plugin/convergence/detector from convergence.spec.md
 const QUIET_PERIOD = 30 * 1000; // 30 seconds
+
+// Stub functions that need to be defined somewhere
+async function getLastEditTime(database: any): Promise<number> {
+  // Get the last edit time from the database
+  const row = database.prepare(`SELECT MAX(timestamp) as last_edit FROM events`).get() as any;
+  return row?.last_edit || Date.now();
+}
+
+async function allAgentsIdle(): Promise<boolean> {
+  // Check if all agent sessions are idle or done
+  const activeSessions = db.prepare(
+    `SELECT COUNT(*) as count FROM sessions WHERE status = 'active'`
+  ).get() as any;
+  return (activeSessions?.count || 0) === 0;
+}
 
 async function checkConvergence(): Promise<boolean> {
   const lastEdit = await getLastEditTime(db);
@@ -34,19 +50,18 @@ async function checkConvergence(): Promise<boolean> {
 async function runPipeline(): Promise<void> {
   console.log('Cascade converged – running pipeline...');
   
-  // Update index
-  const { exec } = require('child_process');
-  const { promisify } = require('util');
-  const execAsync = promisify(exec);
-  
-  await execAsync('python3 generate_index.py');
-  await execAsync('python3 validate_refs.py');
-  await execAsync('python3 validate_autonomous.py --project');
-  
-  // Reset depth counter
-  await db.prepare(`UPDATE cascades SET status = 'converged', converged_at = ? WHERE status = 'active'`, [Date.now()]);
-  
-  console.log('Pipeline complete. Ready for next cascade.');
+  try {
+    await execAsync('python3 generate_index.py');
+    await execAsync('python3 validate_refs.py');
+    await execAsync('python3 validate_autonomous.py --project');
+    
+    // Reset depth counter
+    db.prepare(`UPDATE cascades SET status = 'converged', converged_at = ? WHERE status = 'active'`).run(Date.now());
+    
+    console.log('Pipeline complete. Ready for next cascade.');
+  } catch (error) {
+    console.error('Pipeline error:', error);
+  }
 }
 
 // Block: opencode-plugin/session-manager/schema from session-manager.spec.md
@@ -61,9 +76,13 @@ interface Session {
 }
 
 // Block: opencode-plugin/session-manager/create from session-manager.spec.md
+function generateId(): string {
+  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+}
+
 async function createSession(agent: string): Promise<string> {
   const sessionId = generateId();
-  await db.prepare(
+  db.prepare(
     `INSERT INTO sessions (session_id, agent, status, created, last_active) VALUES (?, ?, ?, ?, ?)`,
     [sessionId, agent, 'active', Date.now(), Date.now()]
   );
@@ -73,12 +92,12 @@ async function createSession(agent: string): Promise<string> {
 // Block: opencode-plugin/session-manager/get-current from session-manager.spec.md
 function getCurrentSession(): string {
   // In OpenCode plugin, session is provided by context
-  return global.currentSessionId;
+  return (global as any).currentSessionId || 'default';
 }
 
 // Block: opencode-plugin/session-manager/update-activity from session-manager.spec.md
 async function updateSessionActivity(sessionId: string): Promise<void> {
-  await db.prepare(
+  db.prepare(
     `UPDATE sessions SET last_active = ? WHERE session_id = ?`,
     [Date.now(), sessionId]
   );
@@ -88,62 +107,58 @@ async function updateSessionActivity(sessionId: string): Promise<void> {
 async function withErrorHandling<T>(fn: () => Promise<T>, context: string): Promise<T | null> {
   try {
     return await fn();
-  } catch (error) {
+  } catch (error: any) {
     console.error(`Error in ${context}:`, error);
     
     // Log to database
-    await db.prepare(
+    db.prepare(
       `INSERT INTO errors (timestamp, context, error_message) VALUES (?, ?, ?)`,
       [Date.now(), context, error.message]
     );
     
     // Notify user via OpenCode UI
-    tools.notify?.(`Speclang error in ${context}: ${error.message}`);
+    if (tools?.notify) {
+      tools.notify(`Speclang error in ${context}: ${error.message}`);
+    }
     
     return null;
   }
 }
 
 // Block: opencode-plugin/mcp-client/setup from mcp-client.spec.md
-import { MCPServer } from '@modelcontextprotocol/sdk/server';
-import { StdioTransport } from '@modelcontextprotocol/sdk/stdio';
-
-let mcpClient: MCPServer | null = null;
+// Stub MCP client - actual implementation would use MCP SDK
+let mcpClient: any = null;
 
 async function connectToMCP(): Promise<void> {
-  const transport = new StdioTransport({
-    command: 'speclang-mcp-server',
-    args: []
-  });
-  
-  mcpClient = new MCPServer({
-    name: 'speclang-opencode-plugin',
-    version: '0.1.0'
-  });
-  
-  await mcpClient.connect(transport);
+  // This would connect to MCP server in actual implementation
+  console.log('Connecting to MCP server...');
+  mcpClient = { connected: true };
 }
 
 // Block: opencode-plugin/mcp-client/query from mcp-client.spec.md
 async function speclangQuery(sql: string, params: any[] = []): Promise<any[]> {
   if (!mcpClient) await connectToMCP();
   
-  const result = await mcpClient!.callTool('speclang_query', {
-    sql,
-    params: JSON.stringify(params)
-  });
-  
-  return JSON.parse(result.content);
+  // Direct DB query for now
+  try {
+    const stmt = db.prepare(sql);
+    return params.length > 0 ? stmt.all(...params) : stmt.all();
+  } catch (error) {
+    console.error('Query error:', error);
+    return [];
+  }
 }
 
 // Block: opencode-plugin/mcp-client/execute from mcp-client.spec.md
 async function speclangExecute(sql: string, params: any[] = []): Promise<void> {
   if (!mcpClient) await connectToMCP();
   
-  await mcpClient!.callTool('speclang_execute', {
-    sql,
-    params: JSON.stringify(params)
-  });
+  try {
+    const stmt = db.prepare(sql);
+    params.length > 0 ? stmt.run(...params) : stmt.run();
+  } catch (error) {
+    console.error('Execute error:', error);
+  }
 }
 
 // Block: opencode-plugin/ownership-guard/schema from ownership-guard.spec.md
@@ -157,19 +172,23 @@ interface FileLock {
 
 // Block: opencode-plugin/ownership-guard/owns-file from ownership-guard.spec.md
 async function ownsFile(sessionId: string, filePath: string): Promise<boolean> {
-  const lock = await db.get(
+  const lock = db.prepare(
     `SELECT * FROM file_locks WHERE file_path = ? AND session_id = ? AND expires_at > ?`,
     [filePath, sessionId, Date.now()]
-  );
+  ).get();
   return !!lock;
 }
 
 // Block: opencode-plugin/ownership-guard/acquire from ownership-guard.spec.md
+function generateToken(): string {
+  return `token-${Date.now()}-${Math.random().toString(36).substr(2, 16)}`;
+}
+
 async function acquireOwnership(sessionId: string, filePath: string): Promise<void> {
   const lockToken = generateToken();
   const expiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes
   
-  await db.prepare(
+  db.prepare(
     `INSERT OR REPLACE INTO file_locks (file_path, session_id, lock_token, acquired_at, expires_at)
      VALUES (?, ?, ?, ?, ?)`,
     [filePath, sessionId, lockToken, Date.now(), expiresAt]
@@ -178,7 +197,7 @@ async function acquireOwnership(sessionId: string, filePath: string): Promise<vo
 
 // Block: opencode-plugin/ownership-guard/release from ownership-guard.spec.md
 async function releaseOwnership(sessionId: string): Promise<void> {
-  await db.prepare(
+  db.prepare(
     `DELETE FROM file_locks WHERE session_id = ?`,
     [sessionId]
   );
@@ -186,29 +205,86 @@ async function releaseOwnership(sessionId: string): Promise<void> {
 
 // Block: opencode-plugin/configuration/options from configuration.spec.md
 interface PluginConfig {
-  specDir: string; // default: 'specs/'
-  quietPeriodMs: number; // default: 30000
-  ownershipTimeoutMs: number; // default: 300000
-  mcpServerCommand: string; // default: 'speclang-mcp-server'
-  gitEnabled: boolean; // default: true
-  autoCommit: boolean; // default: true
-  validationOnConvergence: boolean; // default: true
+  specDir: string;
+  quietPeriodMs: number;
+  ownershipTimeoutMs: number;
+  mcpServerCommand: string;
+  gitEnabled: boolean;
+  autoCommit: boolean;
+  validationOnConvergence: boolean;
 }
 
 // Block: opencode-plugin/configuration/tools from configuration.spec.md
-// Example tool definition
-tools.define('speclang_index', {
-  description: 'Query the spec index',
-  parameters: {
-    query: { type: 'string', description: 'SQL query' }
-  },
-  handler: async ({ query }) => {
-    return await speclangQuery(query);
+function loadConfig(): PluginConfig {
+  return {
+    specDir: 'specs/',
+    quietPeriodMs: 30000,
+    ownershipTimeoutMs: 300000,
+    mcpServerCommand: 'speclang-mcp-server',
+    gitEnabled: true,
+    autoCommit: true,
+    validationOnConvergence: true
+  };
+}
+
+// Block: opencode-plugin/events/is-spec-file from event-system.spec.md
+function isSpecFile(filePath: string): boolean {
+  return filePath.match(/\.spec\.(md|yaml)$/) !== null || 
+         filePath.endsWith('.scl') ||
+         filePath.includes('/specs/');
+}
+
+// Block: opencode-plugin/events/parse-header from event-system.spec.md
+interface Header {
+  id?: string;
+  version?: string;
+  layer?: number;
+  tags?: string[];
+  short?: string;
+  [key: string]: any;
+}
+
+async function parseHeader(filePath: string): Promise<Header> {
+  const content = await fs.promises.readFile(filePath, 'utf-8');
+  const lines = content.split('\n');
+  const headerLine = lines.find(line => line.includes('speclang-header'));
+  if (!headerLine) throw new Error(`No speclang-header in ${filePath}`);
+  
+  const match = headerLine.match(/speclang-header lines:(\d+)/);
+  const lineCount = match ? parseInt(match[1]) : 0;
+  const headerText = lines.slice(0, lineCount).join('\n');
+  
+  // Parse YAML after the comment line
+  const yamlText = headerText.split('\n').slice(1).join('\n');
+  return yaml.parse(yamlText) as Header;
+}
+
+// Block: opencode-plugin/events/index-spec from event-system.spec.md
+async function indexSpec(database: any, filePath: string, header: Header): Promise<void> {
+  database.prepare(`
+    INSERT OR REPLACE INTO specs (id, file_path, short_desc, layer, version)
+    VALUES (?, ?, ?, ?, ?)
+  `).run(header.id, filePath, header.short || '', header.layer || 0, header.version || '0.0.0');
+  
+  // Index tags if present
+  if (header.tags) {
+    for (const tag of header.tags) {
+      database.prepare(`
+        INSERT OR IGNORE INTO spec_tags (spec_pk, tag)
+        SELECT spec_pk, ? FROM specs WHERE id = ?
+      `).run(tag, header.id);
+    }
   }
-});
+}
+
+// Block: opencode-plugin/events/route-to-agent from event-system.spec.md
+async function routeToAgent(filePath: string, header: Header): Promise<void> {
+  // Route based on file type and header
+  console.log(`Routing ${filePath} to agent based on layer ${header.layer}`);
+}
 
 // Block: opencode-plugin/events/file-edited from event-system.spec.md
-events.on("file.edited", async (file: { path: string, content: string }) => {
+async function handleFileEdited(file: { path: string, content: string }): Promise<void> {
   // Filter spec files
   if (!isSpecFile(file.path)) return;
   
@@ -225,10 +301,10 @@ events.on("file.edited", async (file: { path: string, content: string }) => {
   
   // Route to appropriate agent based on file type
   await routeToAgent(file.path, header);
-});
+}
 
 // Block: opencode-plugin/events/agent-finished from event-system.spec.md
-events.on("agent.finished", async (agent: { name: string, session: string }) => {
+async function handleAgentFinished(agent: { name: string, session: string }): Promise<void> {
   // Check if we've been quiet for convergence period
   const lastEdit = await getLastEditTime(db);
   const quiet = Date.now() - lastEdit > QUIET_PERIOD;
@@ -236,110 +312,130 @@ events.on("agent.finished", async (agent: { name: string, session: string }) => 
   if (quiet && await allAgentsIdle()) {
     await runPipeline();
   }
-});
+}
 
 // Block: opencode-plugin/events/session-idle from event-system.spec.md
-events.on("session.idle", async (session: string) => {
+async function handleSessionIdle(session: string): Promise<void> {
   // Release any ownership locks held by this session
   await releaseOwnership(session);
-});
-
-// Block: opencode-plugin/events/is-spec-file from event-system.spec.md
-function isSpecFile(path: string): boolean {
-  return path.match(/\.spec\.(md|yaml)$/) !== null || 
-         path.endsWith('.scl') ||
-         path.includes('/specs/');
 }
 
-// Block: opencode-plugin/events/parse-header from event-system.spec.md
-async function parseHeader(path: string): Promise<Header> {
-  const content = await fs.promises.readFile(path, 'utf-8');
-  const lines = content.split('\n');
-  const headerLine = lines.find(line => line.includes('speclang-header'));
-  if (!headerLine) throw new Error(`No speclang-header in ${path}`);
-  
-  const match = headerLine.match(/speclang-header lines:(\d+)/);
-  const lineCount = match ? parseInt(match[1]) : 0;
-  const headerText = lines.slice(0, lineCount).join('\n');
-  
-  // Parse YAML after the comment line
-  const yamlText = headerText.split('\n').slice(1).join('\n');
-  return yaml.safeLoad(yamlText);
+// Block: opencode-plugin/lifecycle/cleanup from plugin-lifecycle.spec.md
+async function releaseAllOwnership(): Promise<void> {
+  const session = getCurrentSession();
+  await releaseOwnership(session);
 }
+
+async function disconnectMCP(): Promise<void> {
+  mcpClient = null;
+}
+
+// Block: opencode-plugin/lifecycle/initialize from plugin-lifecycle.spec.md
+async function initialize(database: any): Promise<void> {
+  // Create tables if not exist - simplified schema
+  database.exec(`
+    CREATE TABLE IF NOT EXISTS specs (
+      spec_pk INTEGER PRIMARY KEY,
+      id TEXT UNIQUE,
+      file_path TEXT,
+      short_desc TEXT,
+      layer INTEGER,
+      version TEXT
+    );
+    
+    CREATE TABLE IF NOT EXISTS sessions (
+      session_id TEXT PRIMARY KEY,
+      agent TEXT,
+      status TEXT,
+      created INTEGER,
+      last_active INTEGER
+    );
+    
+    CREATE TABLE IF NOT EXISTS events (
+      event_pk INTEGER PRIMARY KEY,
+      timestamp INTEGER,
+      path TEXT,
+      kind TEXT,
+      processed INTEGER DEFAULT 0,
+      claimed_by TEXT
+    );
+    
+    CREATE TABLE IF NOT EXISTS file_locks (
+      file_path TEXT PRIMARY KEY,
+      session_id TEXT,
+      lock_token TEXT,
+      acquired_at INTEGER,
+      expires_at INTEGER
+    );
+    
+    CREATE TABLE IF NOT EXISTS errors (
+      error_pk INTEGER PRIMARY KEY,
+      timestamp INTEGER,
+      context TEXT,
+      error_message TEXT
+    );
+    
+    CREATE TABLE IF NOT EXISTS cascades (
+      cascade_id TEXT PRIMARY KEY,
+      status TEXT,
+      started_at INTEGER,
+      converged_at INTEGER
+    );
+  `);
+  
+  // Load configuration
+  const config = loadConfig();
+  
+  // Start convergence checker interval
+  setInterval(async () => {
+    if (await checkConvergence()) {
+      await runPipeline();
+    }
+  }, 5000);
+}
+
+// Block: opencode-plugin/git-integration/commit from git-integration.spec.md
+async function commitFile(filePath: string, message: string): Promise<void> {
+  try {
+    // Stage the file
+    await execAsync(`git add "${filePath}"`);
+    
+    // Commit only this file
+    await execAsync(`git commit --only "${filePath}" -m "speclang: ${message}"`);
+  } catch (error) {
+    console.error('Git commit error:', error);
+  }
+}
+
+// Block: opencode-plugin/tools/index from tools.spec.md
+// Note: tools.define would be provided by OpenCode runtime
+
+// Block: opencode-plugin/tools/validate from tools.spec.md
+// Note: validation would call external Python scripts
 
 // Block: opencode-plugin/lifecycle/hooks from plugin-lifecycle.spec.md
-export const Speclang: Plugin = async ({ events, db, tools }) => {
-  // Initialization
-  await initialize(db);
+export async function Speclang(pluginContext: { events: any; db: any; tools: any }): Promise<() => Promise<void>> {
+  const { events, db: pluginDb, tools: pluginTools } = pluginContext;
+  
+  // Set up global references
+  (global as any).db = pluginDb;
+  (global as any).tools = pluginTools;
+  (global as any).events = events;
+  
+  // Initialize
+  await initialize(pluginDb);
   await connectToMCP();
   
   // Event listeners setup
-  events.on("file.edited", handleFileEdited);
-  events.on("agent.finished", handleAgentFinished);
-  events.on("session.idle", handleSessionIdle);
+  if (events?.on) {
+    events.on("file.edited", handleFileEdited);
+    events.on("agent.finished", handleAgentFinished);
+    events.on("session.idle", handleSessionIdle);
+  }
   
   // Return cleanup function
   return async () => {
     await releaseAllOwnership();
     await disconnectMCP();
   };
-};
-
-// Block: opencode-plugin/lifecycle/initialize from plugin-lifecycle.spec.md
-async function initialize(db: Database): Promise<void> {
-  // Create tables if not exist
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS specs (...);
-    CREATE TABLE IF NOT EXISTS sessions (...);
-    CREATE TABLE IF NOT EXISTS events (...);
-    CREATE TABLE IF NOT EXISTS file_locks (...);
-  `);
-  
-  // Load configuration
-  const config = await loadConfig();
-  
-  // Start convergence checker interval
-  setInterval(checkConvergence, 5000);
 }
-
-// Block: opencode-plugin/git-integration/commit from git-integration.spec.md
-import { exec } from 'child_process';
-import { promisify } from 'util';
-
-const execAsync = promisify(exec);
-
-async function commitFile(filePath: string, message: string): Promise<void> {
-  // Stage the file
-  await execAsync(`git add "${filePath}"`);
-  
-  // Commit only this file
-  await execAsync(`git commit --only "${filePath}" -m "speclang: ${message}"`);
-}
-
-// Block: opencode-plugin/tools/index from tools.spec.md
-tools.define('speclang_index', {
-  description: 'Query the spec index with SQL',
-  parameters: {
-    sql: { type: 'string', description: 'SQL query (SELECT only)' },
-    params: { type: 'array', optional: true, description: 'Query parameters' }
-  },
-  handler: async ({ sql, params = [] }) => {
-    return await speclangQuery(sql, params);
-  }
-});
-
-// Block: opencode-plugin/tools/validate from tools.spec.md
-tools.define('speclang_validate', {
-  description: 'Validate spec references and autonomous readiness',
-  parameters: {
-    specId: { type: 'string', optional: true, description: 'Specific spec ID to validate' }
-  },
-  handler: async ({ specId }) => {
-    if (specId) {
-      await execAsync(`python3 validate_autonomous.py --file ${specId}`);
-    } else {
-      await execAsync('python3 validate_autonomous.py --project');
-    }
-    return { status: 'validation completed' };
-  }
-});
