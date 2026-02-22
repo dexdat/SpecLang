@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "A reactive multi-agent system where specs self-assemble into code.",
   "main": "index.js",
+  "bin": {
+    "speclang": "./bin/speclang"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "speclang": "node --loader ts-node/esm bin/speclang"
   },
   "repository": {
     "type": "git",
