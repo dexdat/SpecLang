@@ -1,10 +1,11 @@
-# speclang-header lines:13
+# speclang-header lines:14
 id: "@speclang/examples"
 version: 0.1.0
 layer: 1
 tags: [examples]
 imports: ["@speclang/core"]
 children:
+  - @ref:specs/examples.spec.dir/hello-world
   - @ref:specs/examples.spec.dir/auth
   - @ref:specs/examples.spec.dir/api
 status: draft
