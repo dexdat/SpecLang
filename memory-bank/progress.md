@@ -21,18 +21,18 @@
 - Code compilation validation: Stage 2 partial (SQLite schema compiles but loadMigration placeholder incomplete; Ralph Loop and validation system have import issues)
 - Test validation: Stage 3 passed (all 18 tests pass)
 - Validation tool implementation: Complete and functional
-- Code generation: SQLite schema generated and compiles; Ralph Loop and validation system generated but need import fixes; code generation tools pending (extraction script needs improvement).
+- Code generation: SQLite schema generated and compiles; Ralph Loop generated and compiles; validation system generated with minor glob type errors; code generation tools completed.
 - Updated todo statuses: todo-010, todo-011, todo-012, todo-020 completed; todo-016 pending (loadMigration incomplete); todos 017-019 pending after steering packets created.
 ## Known Issues
 1. ~~Many spec files missing required metadata fields (project_level, agent_support, short) - 10 specs remaining~~ FIXED
-2. TypeScript compilation fails in generated code due to duplicate imports, missing modules (sqlite), and inconsistent imports between blocks. Extraction script needs deduplication and import normalization.
+2. TypeScript compilation passes for SQLite schema and Ralph Loop; validation system has minor glob type errors (downlevel iteration, glob argument types).
 3. ~~Validation tool incorrectly required agent_support == agent_autonomous for all specs~~ FIXED
 4. ~~Test suite for generate_index.py and validate_refs.py exists but tests fail (tuple mismatch, cwd issue)~~ FIXED
 5. ~~Some specs missing step-by-step descriptions and contain ambiguous terms (todo-013)~~ FIXED
 6. Backup spec files cause header parse failures (low priority)
 7. Extraction script cannot handle nested backticks inside code blocks, causing truncation of validation engine block.
 8. ~~Dependency mismatch: spec imports sqlite3 but package.json uses better-sqlite3 - need to update spec or dependencies.~~ FIXED
-9. SQLite schema loadMigration method returns empty string placeholder; needs to read migration files from filesystem.
+9. ~~SQLite schema loadMigration method returns empty string placeholder; needs to read migration files from filesystem.~~ FIXED
 ## Evolution
 - Started with complex ralph_loop.py
 - Simplified to cleaner pattern from Hivemind project
