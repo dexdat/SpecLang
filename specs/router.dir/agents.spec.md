@@ -1,7 +1,9 @@
-# speclang-header lines:11
+# speclang-header lines:13
 id: "@speclang/router/agents"
 parent: "@ref:specs/router"
 part: 2/2
+siblings:
+  prev: "@ref:specs/router.dir/routing"
 short: Agent sessions and registration
 project_level: Alpha
 agent_support: agent_assisted
