@@ -53,8 +53,13 @@ export function parseHeader(content: string): {
     headerLineCount = parseInt(headerLineMatch[1], 10);
     // Start from line after header declaration (startIndex + 1)
     // Read exactly headerLineCount - 1 more lines (we're already on line 1)
-    // But exclude the trailing "---" from YAML
+    // And exclude the trailing "---" from YAML by taking headerLineCount - 2
     yamlLines = lines.slice(startIndex + 1, startIndex + headerLineCount - 1);
+    // But remove the trailing "---" if present
+    const lastYamlLine = yamlLines[yamlLines.length - 1];
+    if (lastYamlLine && FRONTMATTER_END.test(lastYamlLine.trim())) {
+      yamlLines = yamlLines.slice(0, -1);
+    }
   } else {
     // Flexible format: scan for terminator
     yamlLines = [];
