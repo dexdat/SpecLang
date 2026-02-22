@@ -8,26 +8,26 @@
 - TODO.md tracking
 
 ## What's Left to Build
-- Validation tool CLI implementation
-- Test suite for Python scripts (generate_index.py, validate_refs.py)
-- TypeScript compilation setup and verification
-- Complete all spec files (check headers)
+- ~~Validation tool CLI implementation~~ DONE
+- ~~Test suite for Python scripts (generate_index.py, validate_refs.py)~~ DONE
+- ~~TypeScript compilation setup and verification~~ DONE
+- Complete all spec files (check headers) - DONE except backup specs
 - Code generation from specs (Phase 3)
 - Plugin functionality
 
 ## Current Status
-- Phase: Active development (Ralph Loop iteration 5, phase: verify)
-- Spec format validation: Stage 1 partial pass (10 specs missing project_level/agent_support fields)
+- Phase: Active development (Ralph Loop iteration 6, phase: verify)
+- Spec format validation: Stage 1 passed (all non-backup specs have required metadata fields, example references ignored)
 - Code compilation validation: Stage 2 passed (TypeScript dependencies installed, compilation passes)
-- Test validation: Stage 3 partial pass (validate_autonomous tests pass, but generate_index tests fail)
-- Validation tool implementation: Complete but bug (passes missing metadata fields)
-- Updated todo statuses: todo-010 completed, todo-011 failed, todo-012 failed.
+- Test validation: Stage 3 passed (all tests pass after fixes)
+- Validation tool implementation: Complete and functional
+- Updated todo statuses: todo-010 completed, todo-011 completed, todo-012 completed, todo-008/009 completed, todo-013 completed.
 ## Known Issues
 1. ~~Many spec files missing required metadata fields (project_level, agent_support, short) - 10 specs remaining~~ FIXED
 2. TypeScript compilation passes (dependencies installed)
-3. Validation tool incorrectly required agent_support == agent_autonomous for all specs - FIXED
-4. Test suite for generate_index.py and validate_refs.py exists but tests fail (tuple mismatch, cwd issue)
-5. Some specs missing step-by-step descriptions and contain ambiguous terms (todo-013)
+3. ~~Validation tool incorrectly required agent_support == agent_autonomous for all specs~~ FIXED
+4. ~~Test suite for generate_index.py and validate_refs.py exists but tests fail (tuple mismatch, cwd issue)~~ FIXED
+5. ~~Some specs missing step-by-step descriptions and contain ambiguous terms (todo-013)~~ FIXED
 6. Backup spec files cause header parse failures (low priority)
 ## Evolution
 - Started with complex ralph_loop.py
