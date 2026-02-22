@@ -161,9 +161,9 @@
         "todo-014"
       ],
       "estimated_complexity": "high",
-      "priority": 2,
+      "priority": 1,
       "category": "codegen",
-      "status": "pending"
+      "status": "completed"
     },
     {
       "id": "todo-016",
