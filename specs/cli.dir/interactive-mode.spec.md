@@ -1,8 +1,10 @@
-# speclang-header lines:10
+# speclang-header lines:12
 id: "@speclang/cli.dir/interactive-mode"
 version: 0.1.0
 layer: 1
 tags: [cli, interactive]
+project_level: Alpha
+agent_support: agent_assisted
 parent: "@ref:speclang/cli"
 part: 7/8
 short: CLI interactive mode
