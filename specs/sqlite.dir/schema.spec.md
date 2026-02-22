@@ -1,7 +1,9 @@
-# speclang-header lines:12
+# speclang-header lines:14
 id: "@speclang/sqlite/schema"
 version: 0.1.0
 layer: 2
+part: 1
+total_parts: 4
 tags: [sqlite, schema, database]
 imports: ["@speclang/sqlite"]
 status: draft
