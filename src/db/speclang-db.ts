@@ -1,5 +1,4 @@
-import { Database } from 'better-sqlite3';
-import { open } from 'sqlite';
+import Database = require('better-sqlite3');
 
 export interface SpecRow {
   file_path: string;
@@ -29,13 +28,10 @@ export interface SessionRow {
 }
 
 export class SpeclangDatabase {
-  private db: Database;
+  private db!: InstanceType<typeof Database>;
 
   async initialize(path: string = '.speclang/speclang.db'): Promise<void> {
-    this.db = await open({
-      filename: path,
-      driver: require('better-sqlite3').Database
-    });
+    this.db = new Database(path);
     
     // Run migrations
     await this.db.exec(await this.loadMigration('001-initial'));
@@ -49,21 +45,3 @@ export class SpeclangDatabase {
     return '';
   }
 }
-
-// Example: Initialize database and insert a spec
-import { SpeclangDatabase } from './speclang-db';
-
-const db = new SpeclangDatabase();
-await db.initialize();
-
-// Insert a spec
-await db.db.run(
-  `INSERT INTO specs (file_path, id, short_desc, tags) VALUES (?, ?, ?, ?)`,
-  ['specs/auth.spec.md', '@specs/auth', 'Authentication spec', '["auth", "security"]']
-);
-
-// Search using FTS
-const results = await db.db.all(
-  `SELECT file_path, id, short_desc FROM specs_fts WHERE specs_fts MATCH ?`,
-  ['authentication']
-);

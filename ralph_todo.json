@@ -185,7 +185,7 @@
       "estimated_complexity": "medium",
       "priority": 4,
       "category": "codegen",
-      "status": "completed"
+      "status": "failed"
     },
     {
       "id": "todo-018",
@@ -196,7 +196,7 @@
       "estimated_complexity": "medium",
       "priority": 5,
       "category": "codegen",
-      "status": "completed"
+      "status": "failed"
     },
     {
       "id": "todo-019",
@@ -207,7 +207,7 @@
       "estimated_complexity": "high",
       "priority": 6,
       "category": "codegen",
-      "status": "completed"
+      "status": "failed"
     },
     {
       "id": "todo-020",
