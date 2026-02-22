@@ -18,4 +18,3 @@ Spec validation rules. Checked on every write.
 
 - @ref:speclang/validation/rules – Core validation rules
 - @ref:speclang/validation/tool – Validation tool and flow
-```
