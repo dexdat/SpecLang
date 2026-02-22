@@ -3,10 +3,12 @@
 
 
 // Block: implementation/ralph-loop/controller
-import { Database } from 'better-sqlite3';
-import { open } from 'sqlite';
-import { BuilderAgent } from './builder-agent';
-import { VerifierAgent } from './verifier-agent';
+import Database = require('better-sqlite3');
+import { readFile, writeFile } from 'fs/promises';
+import { glob } from 'glob';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import * as path from 'path';
 
 export interface Task {
   id: string;
@@ -19,22 +21,19 @@ export interface Task {
 }
 
 export class LoopController {
-  private db: Database;
+  private db!: InstanceType<typeof Database>;
   private builder: BuilderAgent;
   private verifier: VerifierAgent;
   private isRunning: boolean = false;
 
-  constructor(db: Database) {
+  constructor(db: InstanceType<typeof Database>) {
     this.db = db;
     this.builder = new BuilderAgent(db);
     this.verifier = new VerifierAgent(db);
   }
 
   static async create(dbPath: string = '.speclang/speclang.db'): Promise<LoopController> {
-    const db = await open({
-      filename: dbPath,
-      driver: require('better-sqlite3').Database
-    });
+    const db = new Database(dbPath);
     return new LoopController(db);
   }
 
@@ -53,18 +52,15 @@ export class LoopController {
   }
 
   private async getNextTask(): Promise<Task | null> {
-    const task = await this.db.get(
-      `SELECT * FROM tasks WHERE status = 'pending' ORDER BY created_at LIMIT 1`
-    );
+    const stmtGetTask = this.db.prepare(`SELECT * FROM tasks WHERE status = 'pending' ORDER BY created_at LIMIT 1`);
+    const task = stmtGetTask.get() as Task | null;
     return task || null;
   }
 
   private async processTask(task: Task) {
     // Update status
-    await this.db.run(
-      `UPDATE tasks SET status = 'in_progress', assigned_to = 'builder' WHERE id = ?`,
-      task.id
-    );
+    const stmtUpdateProgress = this.db.prepare(`UPDATE tasks SET status = 'in_progress', assigned_to = 'builder' WHERE id = ?`);
+    stmtUpdateProgress.run(task.id);
 
     // Builder phase
     const builderResult = await this.builder.execute(task);
@@ -81,24 +77,18 @@ export class LoopController {
     }
 
     // Success
-    await this.db.run(
-      `UPDATE tasks SET status = 'done', assigned_to = NULL WHERE id = ?`,
-      task.id
-    );
+    const stmtUpdateDone = this.db.prepare(`UPDATE tasks SET status = 'done', assigned_to = NULL WHERE id = ?`);
+    stmtUpdateDone.run(task.id);
   }
 
   private async handleFailure(task: Task, error: any) {
     // Create steering packet
-    await this.db.run(
-      `INSERT INTO steering_packets (task_id, type, payload, created_at) VALUES (?, ?, ?, ?)`,
-      [task.id, 'error_report', JSON.stringify({ error }), Date.now()]
-    );
+    const stmtInsertSteering = this.db.prepare(`INSERT INTO steering_packets (task_id, type, payload, created_at) VALUES (?, ?, ?, ?)`);
+    stmtInsertSteering.run(task.id, 'error_report', JSON.stringify({ error }), Date.now());
 
     // Reset task status for retry
-    await this.db.run(
-      `UPDATE tasks SET status = 'pending', assigned_to = NULL WHERE id = ?`,
-      task.id
-    );
+    const stmt2 = this.db.prepare(`UPDATE tasks SET status = 'pending', assigned_to = NULL WHERE id = ?`);
+    stmt2.run(task.id);
   }
 
   private sleep(ms: number): Promise<void> {
@@ -107,13 +97,10 @@ export class LoopController {
 }
 
 // Block: implementation/ralph-loop/builder-agent
-import { Database } from 'better-sqlite3';
-import { open } from 'sqlite';
-import { readFile, writeFile } from 'fs/promises';
-import { glob } from 'glob';
+
 
 export class BuilderAgent {
-  constructor(private db: Database) {}
+  constructor(private db: InstanceType<typeof Database>) {}
 
   async execute(task: Task): Promise<{ output: any; error?: string }> {
     try {
@@ -128,15 +115,16 @@ export class BuilderAgent {
         const codeFiles = await this.generateCode(task);
         return { output: { codeFiles } };
       } else {
-        return { error: `Unknown task type: ${task.title}` };
+        return { output: null, error: `Unknown task type: ${task.title}` };
       }
     } catch (error) {
-      return { error: error.message };
+      return { output: null, error: error.message };
     }
   }
 
   private async loadSpecs(): Promise<any[]> {
-    const rows = await this.db.all(`SELECT * FROM specs WHERE layer >= 3`);
+    const stmtSelectSpecs = this.db.prepare(`SELECT * FROM specs WHERE layer >= 3`);
+    const rows = stmtSelectSpecs.all();
     return rows;
   }
 
@@ -148,10 +136,8 @@ export class BuilderAgent {
     await writeFile(specPath, specContent);
     
     // Update SQLite
-    await this.db.run(
-      `INSERT INTO specs (file_path, id, short_desc) VALUES (?, ?, ?)`,
-      [specPath, `@implementation/${task.id}`, task.description]
-    );
+    const stmtInsertSpec = this.db.prepare(`INSERT INTO specs (file_path, id, short_desc) VALUES (?, ?, ?)`);
+    stmtInsertSpec.run(specPath, `@implementation/${task.id}`, task.description);
     
     return specPath;
   }
@@ -163,16 +149,12 @@ export class BuilderAgent {
 }
 
 // Block: implementation/ralph-loop/verifier-agent
-import { Database } from 'better-sqlite3';
-import { open } from 'sqlite';
-import { readFile } from 'fs/promises';
-import { exec } from 'child_process';
-import { promisify } from 'util';
+
 
 const execAsync = promisify(exec);
 
 export class VerifierAgent {
-  constructor(private db: Database) {}
+  constructor(private db: InstanceType<typeof Database>) {}
 
   async validate(task: Task, output: any): Promise<{ success: boolean; errors: string[] }> {
     const errors: string[] = [];
@@ -231,14 +213,14 @@ export class VerifierAgent {
         try {
           await execAsync(`npx tsc --noEmit ${file}`);
         } catch (error) {
-          errors.push(`TypeScript compilation failed for ${file}: ${error.stderr}`);
+          errors.push(`TypeScript compilation failed for ${file}: ${(error as any).stderr}`);
         }
       } else if (file.endsWith('.go')) {
         // Go build check
         try {
           await execAsync(`go build ${file}`);
         } catch (error) {
-          errors.push(`Go compilation failed for ${file}: ${error.stderr}`);
+          errors.push(`Go compilation failed for ${file}: ${(error as any).stderr}`);
         }
       }
     }
@@ -249,7 +231,8 @@ export class VerifierAgent {
   private async validateReferences(): Promise<string[]> {
     const errors: string[] = [];
     // Check that all @ref:... point to existing IDs in SQLite
-    const refs = await this.db.all(`SELECT refs FROM specs WHERE refs IS NOT NULL`);
+    const stmtSelectRefs = this.db.prepare(`SELECT refs FROM specs WHERE refs IS NOT NULL`);
+    const refs = stmtSelectRefs.all();
     // Implementation omitted for brevity
     return errors;
   }

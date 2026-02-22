@@ -74,38 +74,3 @@ CREATE TABLE recovery (
   state TEXT,             -- JSON
   recovered BOOLEAN DEFAULT 0
 );
-
--- Full-text search virtual table
-CREATE VIRTUAL TABLE specs_fts USING fts5(
-  id, short_desc, header_raw, content_raw,
-  content='specs',
-  content_rowid='rowid'
-);
-
--- Triggers to keep FTS in sync with specs table
-CREATE TRIGGER specs_ai AFTER INSERT ON specs BEGIN
-  INSERT INTO specs_fts(rowid, id, short_desc, header_raw, content_raw)
-  VALUES (new.rowid, new.id, new.short_desc, new.header_raw, new.content_raw);
-END;
-
-CREATE TRIGGER specs_ad AFTER DELETE ON specs BEGIN
-  DELETE FROM specs_fts WHERE rowid = old.rowid;
-END;
-
-CREATE TRIGGER specs_au AFTER UPDATE ON specs BEGIN
-  DELETE FROM specs_fts WHERE rowid = old.rowid;
-  INSERT INTO specs_fts(rowid, id, short_desc, header_raw, content_raw)
-  VALUES (new.rowid, new.id, new.short_desc, new.header_raw, new.content_raw);
-END;
-
--- Migration 001: Initial schema
--- Applied on database creation
--- No downgrade needed (initial)
-
-PRAGMA journal_mode = WAL;
-PRAGMA synchronous = NORMAL;
-PRAGMA cache_size = 10000;
-PRAGMA temp_store = MEMORY;
-PRAGMA foreign_keys = ON;
-
--- Tables created above

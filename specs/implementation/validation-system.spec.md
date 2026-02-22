@@ -49,8 +49,7 @@ Invalid specs block cascades and notify the agent.
 ```speclang
 # @block:implementation/validation/engine @kind:code
 ```typescript
-import { Database } from 'better-sqlite3';
-import { open } from 'sqlite';
+import Database = require('better-sqlite3');
 import { readFile } from 'fs/promises';
 import { parse } from 'yaml';
 import * as path from 'path';
@@ -70,9 +69,9 @@ export interface ValidationResult {
 }
 
 export class ValidationEngine {
-  private db: Database;
+  private db!: InstanceType<typeof Database>;
 
-  constructor(db: Database) {
+  constructor(db: InstanceType<typeof Database>) {
     this.db = db;
   }
 
@@ -123,7 +122,7 @@ export class ValidationEngine {
     } catch (error) {
       errors.push({
         code: 'READ_ERROR',
-        message: `Failed to read file: ${error.message}`,
+        message: `Failed to read file: ${(error as Error).message}`,
         filePath
       });
     }
@@ -325,10 +324,8 @@ export class ValidationEngine {
 
       // Check if referenced spec exists in SQLite
       const refPath = ref.substring(5); // Remove '@ref:'
-      const exists = await this.db.get(
-        `SELECT COUNT(*) as count FROM specs WHERE id = ? OR file_path LIKE ?`,
-        [refPath, `%${refPath}%`]
-      );
+      const stmtCheckRef = this.db.prepare(`SELECT COUNT(*) as count FROM specs WHERE id = ? OR file_path LIKE ?`);
+      const exists = stmtCheckRef.get(refPath, `%${refPath}%`) as { count: number };
       
       if (exists.count === 0) {
         errors.push({
@@ -360,10 +357,8 @@ export class ValidationEngine {
       }
 
       // Check if imported spec exists
-      const exists = await this.db.get(
-        `SELECT COUNT(*) as count FROM specs WHERE id = ?`,
-        [imp]
-      );
+      const stmtCheckImport = this.db.prepare(`SELECT COUNT(*) as count FROM specs WHERE id = ?`);
+      const exists = stmtCheckImport.get(imp) as { count: number };
       
       if (exists.count === 0) {
         errors.push({
@@ -449,20 +444,15 @@ export class ValidationEngine {
 ```speclang
 # @block:implementation/validation/cli @kind:code
 ```typescript
-import { ValidationEngine } from './validation-system';
-import { open } from 'sqlite';
 import { glob } from 'glob';
 
 export async function validateCommand(args: string[]) {
-  const db = await open({
-    filename: '.speclang/speclang.db',
-    driver: require('better-sqlite3').Database
-  });
+  const db = new Database('.speclang/speclang.db');
 
   const engine = new ValidationEngine(db);
 
   const patterns = args.length > 0 ? args : ['specs/**/*.spec.md'];
-  const files = await glob(patterns, { ignore: '**/.backup_spec_files/**' });
+  const files = (await glob(patterns as string[], { ignore: '**/.backup_spec_files/**' })) as string[];
 
   let totalErrors = 0;
   let totalFiles = 0;
@@ -503,7 +493,7 @@ export async function validateCommand(args: string[]) {
 # @block:implementation/validation/opencode-integration @kind:code
 ```typescript
 // Integration with OpenCode plugin guard system
-import { ValidationEngine } from './validation-system';
+import { writeFile, unlink } from 'fs/promises';
 
 export class ValidationGuard {
   private engine: ValidationEngine;
