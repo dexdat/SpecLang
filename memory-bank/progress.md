@@ -13,6 +13,7 @@
 - ~~TypeScript compilation setup and verification~~ DONE
 - Complete all spec files (check headers) - DONE except backup specs
 - ~~Code generation from specs (Phase 3)~~ DONE
+- ~~MCP server TypeScript code generation~~ DONE
 - Plugin functionality
 
 ## Current Status
@@ -20,12 +21,13 @@
 - Spec format validation: Stage 1 passed (all non-backup specs have required metadata fields, example references ignored)
 - Code compilation validation: Stage 2 passed (all generated TypeScript files compile)
 - Test validation: Stage 3 passed (all 18 tests pass)
+- Integration validation: Stage 4 passed (basic integration tests pass)
 - Validation tool implementation: Complete and functional
 - Code generation: SQLite schema generated and compiles; Ralph Loop generated and compiles; validation system generated and compiles; code generation tools completed.
 - Updated todo statuses: todo-010, todo-011, todo-012, todo-016, todo-017, todo-018, todo-019, todo-020 completed.
 ## Known Issues
 1. ~~Many spec files missing required metadata fields (project_level, agent_support, short) - 10 specs remaining~~ FIXED
-2. TypeScript compilation passes for all generated files (SQLite schema, Ralph Loop, validation system).
+2. TypeScript compilation passes for all generated files; OpenCode plugin compilation fails due to missing dependencies (expected for Alpha).
 3. ~~Validation tool incorrectly required agent_support == agent_autonomous for all specs~~ FIXED
 4. ~~Test suite for generate_index.py and validate_refs.py exists but tests fail (tuple mismatch, cwd issue)~~ FIXED
 5. ~~Some specs missing step-by-step descriptions and contain ambiguous terms (todo-013)~~ FIXED
