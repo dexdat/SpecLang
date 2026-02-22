@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:11
 id: @speclang/registry
 version: 0.1.0
 layer: 5
@@ -7,9 +7,7 @@ agent_support: agent_autonomous
 tags: [typescript, generated, auto-generated]
 short: "Auto-generated spec for registry.ts"
 status: generated
-children:
-  - @speclang/registry/storage
-  - @speclang/registry/lookup
+children: ["@speclang/registry/storage", "@speclang/registry/lookup"]
 ---
 ## @block:agentregistry @kind:entity
 ```text
