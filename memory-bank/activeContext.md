@@ -14,11 +14,17 @@ Building out the SpecLang system using the Ralph Loop pattern.
 - Builder Agent fixed header parsing for mcp.dir/tools/* specs by quoting short fields with colons.
 - Updated ralph_todo.json: todo-011, todo-008, todo-009 marked completed; todo-012 already completed.
 - Builder Agent fixed step-by-step descriptions and ambiguous terms in specs (todo-013): added steps to operation blocks in headers, spec-format, stdlib, ui.interactions, directory-structure, dynamic-split, project-layout, ralph-loop, workflow; fixed ambiguous terms in compiler and cli.
+- Builder Agent created missing spec parts for opencode-plugin.dir (overview, architecture, event-system, session-manager, ownership-guard, mcp-client, git-integration, convergence, configuration, plugin-lifecycle, tools, error-handling, checklist).
+- Builder Agent generated SQLite schema implementation (todo-016): created migrations/001-initial.sql and src/db/speclang-db.ts.
+- Builder Agent generated Ralph Loop implementation (todo-017): created src/ralph-loop.ts.
+- Builder Agent generated validation system (todo-018): created src/validation-system.ts.
+- Builder Agent generated code generation tools (todo-019): created Python scripts for extracting code blocks from specs.
+- Updated ralph_todo.json: marked todos 016-019 as completed, phase changed to phase_3_code_generation.
 ## Next Steps
-1. Run full validation and cascade simulation
+1. Run full validation and cascade simulation with generated code
 2. Fix remaining spec header parse errors (backup_specs/*) - low priority
 3. Update validation tool to handle edge cases (optional)
-4. Proceed to Phase 3: Code Generation
+4. Proceed to Phase 4: Self-Hosting (use generated Speclang to improve itself)
 ## Active Decisions
 - Using opencode run with --agent flag
 - State stored in .ralph/loop-state.json
