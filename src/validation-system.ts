@@ -3,7 +3,7 @@
 
 
 // Block: implementation/validation/engine
-import { Database } from 'sqlite3';
+import { Database } from 'better-sqlite3';
 import { open } from 'sqlite';
 import { readFile } from 'fs/promises';
 import { parse } from 'yaml';
@@ -373,7 +373,7 @@ import { glob } from 'glob';
 export async function validateCommand(args: string[]) {
   const db = await open({
     filename: '.speclang/speclang.db',
-    driver: require('sqlite3').Database
+    driver: require('better-sqlite3').Database
   });
 
   const engine = new ValidationEngine(db);

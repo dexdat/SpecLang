@@ -164,7 +164,7 @@ PRAGMA foreign_keys = ON;
 ```speclang
 # @block:implementation/sqlite/typescript-client @kind:code
 ```typescript
-import { Database } from 'sqlite3';
+import { Database } from 'better-sqlite3';
 import { open } from 'sqlite';
 
 export interface SpecRow {
@@ -200,7 +200,7 @@ export class SpeclangDatabase {
   async initialize(path: string = '.speclang/speclang.db'): Promise<void> {
     this.db = await open({
       filename: path,
-      driver: require('sqlite3').Database
+      driver: require('better-sqlite3').Database
     });
     
     // Run migrations
