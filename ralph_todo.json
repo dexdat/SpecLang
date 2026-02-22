@@ -12,9 +12,7 @@
     {
       "id": "todo-002",
       "description": "Create transition workflows spec (Task 4)",
-      "depends_on": [
-        "todo-001"
-      ],
+      "depends_on": ["todo-001"],
       "estimated_complexity": "medium",
       "priority": 2,
       "category": "specs",
@@ -23,9 +21,7 @@
     {
       "id": "todo-003",
       "description": "Create safety nets spec (Task 5)",
-      "depends_on": [
-        "todo-002"
-      ],
+      "depends_on": ["todo-002"],
       "estimated_complexity": "medium",
       "priority": 3,
       "category": "specs",
@@ -34,11 +30,7 @@
     {
       "id": "todo-004",
       "description": "Update existing specs for consistency (Task 6)",
-      "depends_on": [
-        "todo-001",
-        "todo-002",
-        "todo-003"
-      ],
+      "depends_on": ["todo-001", "todo-002", "todo-003"],
       "estimated_complexity": "high",
       "priority": 4,
       "category": "specs",
@@ -47,9 +39,7 @@
     {
       "id": "todo-005",
       "description": "Create validation tool implementation (Task 7)",
-      "depends_on": [
-        "todo-003"
-      ],
+      "depends_on": ["todo-003"],
       "estimated_complexity": "high",
       "priority": 5,
       "category": "implementation",
@@ -58,9 +48,7 @@
     {
       "id": "todo-006",
       "description": "Create agent protocol extensions (Task 8)",
-      "depends_on": [
-        "todo-001"
-      ],
+      "depends_on": ["todo-001"],
       "estimated_complexity": "medium",
       "priority": 6,
       "category": "specs",
@@ -69,9 +57,7 @@
     {
       "id": "todo-007",
       "description": "Create test suite for Python scripts (generate_index.py, validate_refs.py, validate_autonomous.py)",
-      "depends_on": [
-        "todo-005"
-      ],
+      "depends_on": ["todo-005"],
       "estimated_complexity": "medium",
       "priority": 7,
       "category": "implementation",
@@ -80,9 +66,7 @@
     {
       "id": "todo-008",
       "description": "Fix spec header format (lines:N, metadata fields) and update validation tool to ignore example references",
-      "depends_on": [
-        "todo-004"
-      ],
+      "depends_on": ["todo-004"],
       "estimated_complexity": "medium",
       "priority": 1,
       "category": "specs",
@@ -91,9 +75,7 @@
     {
       "id": "todo-009",
       "description": "Fix spec header format (lines:N, metadata fields) and update validation tool to ignore example references",
-      "depends_on": [
-        "todo-004"
-      ],
+      "depends_on": ["todo-004"],
       "estimated_complexity": "medium",
       "priority": 1,
       "category": "specs",
@@ -102,9 +84,7 @@
     {
       "id": "todo-010",
       "description": "Install TypeScript dependencies and verify compilation passes",
-      "depends_on": [
-        "todo-005"
-      ],
+      "depends_on": ["todo-005"],
       "estimated_complexity": "low",
       "priority": 2,
       "category": "implementation",
@@ -113,9 +93,7 @@
     {
       "id": "todo-011",
       "description": "Create test suite for generate_index.py and validate_refs.py",
-      "depends_on": [
-        "todo-007"
-      ],
+      "depends_on": ["todo-007"],
       "estimated_complexity": "low",
       "priority": 3,
       "category": "implementation",
@@ -124,9 +102,7 @@
     {
       "id": "todo-012",
       "description": "Add missing metadata fields (project_level, agent_support, short) to all specs",
-      "depends_on": [
-        "todo-004"
-      ],
+      "depends_on": ["todo-004"],
       "estimated_complexity": "medium",
       "priority": 1,
       "category": "specs",
@@ -135,16 +111,68 @@
     {
       "id": "todo-013",
       "description": "Fix step-by-step descriptions and ambiguous terms in specs (lower priority)",
-      "depends_on": [
-        "todo-012"
-      ],
+      "depends_on": ["todo-012"],
       "estimated_complexity": "high",
       "priority": 5,
       "category": "specs",
       "status": "completed"
+    },
+    {
+      "id": "todo-014",
+      "description": "Generate OpenCode plugin TypeScript code from specs",
+      "depends_on": ["todo-013"],
+      "estimated_complexity": "high",
+      "priority": 1,
+      "category": "codegen",
+      "status": "pending"
+    },
+    {
+      "id": "todo-015",
+      "description": "Generate MCP server TypeScript code from specs",
+      "depends_on": ["todo-014"],
+      "estimated_complexity": "high",
+      "priority": 2,
+      "category": "codegen",
+      "status": "pending"
+    },
+    {
+      "id": "todo-016",
+      "description": "Generate SQLite schema implementation",
+      "depends_on": ["todo-014"],
+      "estimated_complexity": "medium",
+      "priority": 3,
+      "category": "codegen",
+      "status": "completed"
+    },
+    {
+      "id": "todo-017",
+      "description": "Generate Ralph Loop implementation",
+      "depends_on": ["todo-014"],
+      "estimated_complexity": "medium",
+      "priority": 4,
+      "category": "codegen",
+      "status": "completed"
+    },
+    {
+      "id": "todo-018",
+      "description": "Generate validation system",
+      "depends_on": ["todo-014"],
+      "estimated_complexity": "medium",
+      "priority": 5,
+      "category": "codegen",
+      "status": "completed"
+    },
+    {
+      "id": "todo-019",
+      "description": "Generate code generation tools",
+      "depends_on": ["todo-014"],
+      "estimated_complexity": "high",
+      "priority": 6,
+      "category": "codegen",
+      "status": "completed"
     }
   ],
   "generated_from": "_index.json",
-  "total_specs": 79,
-  "ralph_phase": "phase_1_manual_emulation"
+  "total_specs": 151,
+  "ralph_phase": "phase_3_code_generation"
 }
