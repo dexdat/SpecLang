@@ -1,8 +1,10 @@
-# speclang-header lines:10
+# speclang-header lines:12
 id: "@speclang/cli.dir/integration"
 version: 0.1.0
 layer: 1
 tags: [cli, integration]
+project_level: Alpha
+agent_support: agent_assisted
 parent: "@ref:speclang/cli"
 part: 8/8
 short: CLI integration
