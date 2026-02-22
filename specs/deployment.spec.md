@@ -38,6 +38,17 @@ Same codebase, different scale.
 
 ---
 
+## Sub‑Specifications
+
+This specification is split into two detailed sub‑specs:
+
+- **@ref:specs/deployment.dir/light.spec.md** – Light mode details
+- **@ref:specs/deployment.dir/enterprise.spec.md** – Enterprise mode details
+
+Each sub‑spec contains architecture, configuration, and performance details for its respective mode.
+
+---
+
 ## Mode Selection
 
 ### @deploy/selection
@@ -75,113 +86,6 @@ ModeSelection:
 | Team size | Solo/small | Multiple teams |
 | Compliance | No | Yes |
 | Setup complexity | Low | Medium |
-```
-
----
-
-## Light Mode
-
-### @deploy/light
-
-```speclang
-# @block:deploy/light @kind:entity
-LightMode:
-  start: speclang init --mode=light
-  
-  components:
-    - OpenCode server (opencode serve --mode=build)
-    - Speclang plugin (hooks into OpenCode events)
-    
-  file_watching:
-    provider: OpenCode native
-    events: file.edited, agent.finished, session.idle
-    latency: ~100ms
-    
-  features:
-    - cascade triggering
-    - convergence detection
-    - per-file commits
-    - basic pipeline
-    
-  limitations:
-    - no queue visibility
-    - no worktree isolation
-    - no agent control commands
-```
-
-### @deploy/light-arch
-
-```speclang
-# @block:deploy/light-arch @kind:diagram
-```mermaid
-flowchart LR
-    U[User] --> O[OpenCode<br/>serve --mode=build]
-    O --> P[Speclang Plugin]
-    P --> E[OpenCode Events<br/>file.edited, session.idle]
-    E --> S[SQLite + Vector]
-    S --> A[Agents via Skills]
-    A --> F[File Writes]
-    F --> G[Git Commit]
-    G --> |30s quiet| PIPE[Pipeline]
-```
-```
-
----
-
-## Enterprise Mode
-
-### @deploy/enterprise
-
-```speclang
-# @block:deploy/enterprise @kind:entity
-EnterpriseMode:
-  start: speclang init --mode=enterprise
-  
-  components:
-    - OpenCode server (opencode serve --mode=build)
-    - Speclang plugin
-    - speclangd MCP daemon
-    
-  file_watching:
-    provider: speclangd (inotify)
-    events: HTTP/SSE stream
-    latency: ~10ms
-    
-  extra_features:
-    - queue visibility (how many files pending)
-    - worktree isolation (test while building)
-    - agent control (pause/resume/priority)
-    - compliance logging
-    - team coordination
-```
-
-### @deploy/enterprise-arch
-
-```speclang
-# @block:deploy/enterprise-arch @kind:diagram
-```mermaid
-flowchart TD
-    U[User] --> O[OpenCode Server]
-    O --> P[Speclang Plugin]
-    
-    subgraph Daemon[speclangd MCP Daemon]
-        W[inotify Watcher]
-        Q[Event Queue]
-        HTTP[HTTP/SSE Server]
-        MCP[MCP Tools]
-    end
-    
-    P <-->|HTTP/SSE| HTTP
-    W --> Q --> HTTP
-    
-    Q --> S[SQLite + Vector]
-    S --> A[Agents]
-    A --> F[Files]
-    F --> G[Git Commit]
-    
-    HTTP --> |queue status| U
-    HTTP --> |worktree control| WT[Worktrees]
-```
 ```
 
 ---
