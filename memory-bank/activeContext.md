@@ -4,6 +4,7 @@
 Building out the SpecLang system using the Ralph Loop pattern.
 
 ## Recent Changes
+- Builder Agent fixed SQLite schema loadMigration implementation, updated Ralph Loop and Validation System specs to use better-sqlite3 API, fixed duplicate imports and variable naming, added type assertions, regenerated code with compilation fixes.
 - Builder Agent fixed extraction scripts (generate_validation_system.py, generate_sqlite_schema.py, generate_ralph_loop.py) to handle nested backticks via line-by-line parsing.
 - Builder Agent updated SQLite schema spec to use better-sqlite3 directly, removed sqlite wrapper import.
 - Builder Agent updated validation system spec to import from './validation-system' instead of './validation-engine'.
@@ -42,13 +43,11 @@ Building out the SpecLang system using the Ralph Loop pattern.
 - Updated todo statuses: todo-016 marked pending (loadMigration incomplete), todos 017-019 pending after steering packets created with fix suggestions. Added summary steering packet sp-{timestamp}-summary with consolidated fixes.
 
 ## Next Steps
-1. Fix remaining Ralph Loop spec imports (builder-agent, verifier-agent blocks) to use better-sqlite3 directly.
-2. Fix validation system spec imports (replace sqlite with better-sqlite3, add missing imports).
-3. Regenerate Ralph Loop and validation system with corrected extraction and deduplicate imports.
-4. Verify TypeScript compilation passes for all generated files.
-5. Proceed with Phase 4: Self-Hosting (use generated Speclang to improve itself).
-6. Implement OpenCode plugin functionality.
-7. Test runtime functionality of generated code.
+1. Verify TypeScript compilation passes for all generated files (SQLite schema passes, Ralph Loop passes, validation system has minor glob type errors).
+2. Fix validation system glob type errors (install correct types or adjust imports).
+3. Proceed with Phase 4: Self-Hosting (use generated Speclang to improve itself).
+4. Implement OpenCode plugin functionality.
+5. Test runtime functionality of generated code.
 ## Active Decisions
 - Using opencode run with --agent flag
 - State stored in .ralph/loop-state.json
