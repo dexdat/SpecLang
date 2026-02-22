@@ -8,8 +8,8 @@ tags: [typescript, generated, auto-generated]
 short: "Auto-generated spec for registry.ts"
 status: generated
 children:
-  - @ref:specs/registry/storage
-  - @ref:specs/registry/lookup
+  - @speclang/registry/storage
+  - @speclang/registry/lookup
 ---
 ## @block:agentregistry @kind:entity
 ```text
