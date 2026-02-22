@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:12
 id: "@speclang/symlinks"
 version: 0.1.0
 layer: 0
@@ -6,6 +6,9 @@ tags: [symlinks, dual-view, source-of-truth, portable]
 imports: ["@speclang/core", "@speclang/headers"]
 status: draft
 
+project_level: Alpha
+agent_support: agent_assisted
+short: Symlinks
 ---
 
 # Symlinks

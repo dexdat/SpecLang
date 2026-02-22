@@ -1,4 +1,4 @@
-# speclang-header lines:22
+# speclang-header lines:24
 id: "@speclang/mcp"
 version: 0.3.0
 layer: 3
@@ -19,6 +19,8 @@ children:
   - "@ref:specs/mcp.dir/configuration"
   - "@ref:specs/mcp.dir/cli"
 short: MCP server implementation for universal editor access (split into parts)
+project_level: Alpha
+agent_support: agent_assisted
 ---
 
 # MCP Server Implementation

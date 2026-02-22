@@ -1,10 +1,13 @@
-# speclang-header lines:8
+# speclang-header lines:11
 id: "@speclang/compiler"
 version: 0.1.0
 layer: 0
 tags: [compiler, codegen, transform]
 imports: ["@speclang/core", "@speclang/stdlib", "@speclang/spec-format"]
 
+project_level: Alpha
+agent_support: agent_assisted
+short: Speclang Compiler
 ---
 
 # Speclang Compiler

@@ -1,9 +1,12 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: "@speclang/validation"
 version: 0.1.0
 layer: 0
 tags: [validation, schema, errors]
 status: draft
+project_level: Alpha
+agent_support: agent_autonomous
+short: Validation
 ---
 
 # Validation

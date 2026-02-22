@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:12
 id: "@speclang/workflow"
 version: 0.1.0
 layer: 0
@@ -6,6 +6,9 @@ tags: [workflow, user, guide, setup]
 imports: ["@speclang/core", "@speclang/daemon", "@speclang/skills", "@speclang/cascade"]
 status: draft
 
+project_level: Alpha
+agent_support: agent_assisted
+short: User Workflow
 ---
 
 # User Workflow

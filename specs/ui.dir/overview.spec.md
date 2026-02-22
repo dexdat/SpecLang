@@ -1,10 +1,15 @@
-# speclang-header lines:10
+# speclang-header lines:13
 id: "@speclang/ui.overview"
 parent: "@ref:specs/ui"
 part: 1/14
 siblings:
   next: "@ref:specs/ui.dir/visual-design"
 short: Dashboard overview, architecture, and core views
+project_level: Alpha
+agent_support: agent_assisted
+tags: [speclang]
+version: 0.1.0
+layer: 0
 ---
 
 # System Dashboard Specification

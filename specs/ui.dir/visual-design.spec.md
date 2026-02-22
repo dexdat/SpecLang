@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:14
 id: "@speclang/ui.visual-design"
 parent: "@ref:specs/ui"
 part: 2/14
@@ -6,6 +6,11 @@ siblings:
   prev: "@ref:specs/ui.dir/overview"
   next: "@ref:specs/ui.dir/components/cascade-status"
 short: Visual design system, CSS architecture, themes, accessibility
+project_level: Alpha
+agent_support: agent_assisted
+tags: [speclang]
+version: 0.1.0
+layer: 0
 ---
 
 ## Visual Design System

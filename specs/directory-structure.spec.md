@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:12
 id: "@speclang/directory-structure"
 version: 0.1.0
 layer: 0
@@ -6,6 +6,9 @@ tags: [directory, structure, hierarchy, dir]
 imports: ["@speclang/core", "@speclang/project-layout"]
 status: draft
 
+project_level: Alpha
+agent_support: agent_assisted
+short: Directory Structure
 ---
 
 # Directory Structure

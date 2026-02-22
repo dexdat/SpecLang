@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/spec-format"
 version: 0.1.0
 layer: 0
@@ -7,6 +7,7 @@ agent_support: agent_autonomous
 tags: [format, syntax, self-describing]
 status: draft
 
+short: Spec Format
 ---
 
 # Spec Format
