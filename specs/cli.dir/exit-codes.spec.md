@@ -1,8 +1,10 @@
-# speclang-header lines:10
+# speclang-header lines:12
 id: "@speclang/cli.dir/exit-codes"
 version: 0.1.0
 layer: 1
 tags: [cli, exit-codes]
+project_level: Alpha
+agent_support: agent_assisted
 parent: "@ref:speclang/cli"
 part: 5/8
 short: CLI exit codes
