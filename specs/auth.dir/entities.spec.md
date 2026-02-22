@@ -5,7 +5,7 @@ layer: 2
 project_level: "Alpha"
 agent_support: "agent_autonomous"
 tags: [auth, entities, mcp, typescript]
-short: Authentication entities: MCPAuth class and configuration
+short: "Authentication entities: MCPAuth class and configuration"
 parent: "@ref:speclang/auth"
 part: "1/2"
 ---
