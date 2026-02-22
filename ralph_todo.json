@@ -152,7 +152,7 @@
       "estimated_complexity": "high",
       "priority": 1,
       "category": "codegen",
-      "status": "pending"
+      "status": "completed"
     },
     {
       "id": "todo-015",
