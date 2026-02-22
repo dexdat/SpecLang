@@ -1,7 +1,9 @@
-# speclang-header lines:12
+# speclang-header lines:14
 id: @implementation/ui-dashboard
 version: 0.1.0
 layer: 3
+project_level: Alpha
+agent_support: agent_assisted
 imports: [@speclang/ui, @speclang/mcp-ui-tools, @speclang/cascade]
 tags: [ui, dashboard, typescript, react, implementation]
 short: TypeScript React implementation of SpecLang system monitoring dashboard
