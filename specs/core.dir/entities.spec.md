@@ -2,10 +2,10 @@
 id: @speclang/core/entities
 version: 0.1.0
 layer: 2
-project_level: Alpha
-agent_support: agent_autonomous
+project_level: "Alpha"
+agent_support: "agent_autonomous"
 tags: [core]
-short: Core entities: daemon, agent, northstar, pointer-graph, autonomous-readiness
+short: "Core entities: daemon, agent, northstar, pointer-graph, autonomous-readiness"
 parent: "@ref:speclang/core"
 part: 1/6
 ---
