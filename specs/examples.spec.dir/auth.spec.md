@@ -7,7 +7,7 @@ agent_support: agent_autonomous
 tags: [examples, auth, security, entities]
 short: Authentication example spec
 parent: @ref:speclang/examples
-part: 1/2
+part: 2/3
 ---
 # Authentication Example
 
