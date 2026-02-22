@@ -12,6 +12,28 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
+ * Install artifacts information
+ * 
+ * @block:workflow/install-detail @kind:entity
+ */
+export interface InstallArtifacts {
+  binary: {
+    path: string;
+    size: string;
+    platforms: string[];
+  };
+  skills: {
+    path: string;
+    contents: string[];
+    size: string;
+  };
+  config: {
+    path: string;
+    defaults: string;
+  };
+}
+
+/**
  * Skills download options
  */
 export interface SkillsOptions {
