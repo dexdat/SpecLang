@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:13
 id: "@speclang/test-specs"
 version: 0.1.0
 layer: 0
@@ -9,6 +9,7 @@ status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Test Specs
+children: ["@ref:speclang/test-specs/format", "@ref:speclang/test-specs/examples"]
 ---
 
 # Test Specs
