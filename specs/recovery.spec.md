@@ -63,43 +63,7 @@ FailureType:
 
 ## Rollback
 
-### @recovery/rollback
-
-```speclang
-# @block:recovery/rollback @kind:entity
-Rollback:
-  description: "Revert to last known good state"
-  
-  what_gets_rolled_back:
-    - spec file changes
-    - generated code changes
-    - git commits (if made)
-    
-  what_stays:
-    - north star file (user's intent)
-    - logs and error reports
-    
-  trigger:
-    - test failure
-    - build failure
-    - explicit user command
-```
-
-### @recovery/rollback-flow
-
-```speclang
-# @block:recovery/rollback-flow @kind:diagram
-```mermaid
-flowchart TD
-  A[Failure Detected] --> B{Can Rollback?}
-  B -->|Yes| C[Find Last Good Spec]
-  C --> D[Revert Spec Files]
-  D --> E[Regenerate Code]
-  E --> F[Notify North Star]
-  B -->|No| G[Notify User]
-  G --> H[Wait for Manual Fix]
-```
-```
+See @ref:specs/recovery.dir/rollback.spec.md for details.
 
 ---
 
@@ -159,43 +123,7 @@ notification:
 
 ## Retry Strategies
 
-### @recovery/retry
-
-```speclang
-# @block:recovery/retry @kind:entity
-RetryStrategy:
-  description: "Try again before giving up"
-  
-  types:
-    immediate: retry right away
-    backoff: wait with exponential delay
-    scheduled: retry at specific time
-    
-  limits:
-    max_attempts: 3
-    backoff_base: 1s
-    backoff_max: 30s
-```
-
-### @recovery/retry-flow
-
-```speclang
-# @block:recovery/retry-flow @kind:code
-```yaml
-retry:
-  max_attempts: 3
-  backoff: exponential
-  base_delay: 1s
-  max_delay: 30s
-  
-on_transient_error:
-  1st attempt: immediate
-  2nd attempt: wait 1s
-  3rd attempt: wait 2s
-  4th attempt: wait 4s (if under max)
-  after max: give up, rollback
-```
-```
+See @ref:specs/recovery.dir/retry.spec.md for details.
 
 ---
 
