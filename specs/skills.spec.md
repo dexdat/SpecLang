@@ -68,196 +68,29 @@ SKILL.md format:
 
 ---
 
-## SpecWriter Skill
+## Core Skills
 
-### @skills/specwriter
+This spec has been split into sub‑specs for each core agent skill:
 
-```speclang
-# @block:skills/specwriter @kind:note
-Skill: SpecWriter
-Triggers: north star changes, other spec changes
-Produces: new/updated spec files
-```
+### @skills/specwriter-ref
+- **SpecWriter**: @ref:specs/skills.dir/spec-writer
+  - Writes and expands spec files
+  - Owns: `specs/**/*.scl`
+  - Triggers: north star changes, other spec changes
 
-### @skills/specwriter-prompt
+### @skills/codegen-ref
+- **CodeGen**: @ref:specs/skills.dir/code-gen
+  - Generates code from specs
+  - Owns: `generated/**/*.{go,ts,py,rs,java}`
+  - Triggers: spec file changes
 
-```speclang
-# @block:skills/specwriter-prompt @kind:code
-```markdown
----
-name: SpecWriter
-description: Writes and expands spec files
-owns: specs/**/*.scl
----
+### @skills/testwriter-ref
+- **TestWriter**: @ref:specs/skills.dir/test-writer
+  - Writes and runs tests from specs
+  - Owns: `tests/**/*.test.spec.scl`, `tests/**/*_test.*`
+  - Triggers: test spec changes, code changes
 
-# System Prompt
-
-You are the SpecWriter agent for Speclang.
-
-Your job is to read spec files, understand their intent,
-and expand them into more detailed specs.
-
-## References
-
-Every block you write must include:
-- @ref back to parent/north star
-- @kind marker for lens detection
-- Clear ID: @block:domain/feature-name
-
-## On File Change
-
-When you receive a file change:
-
-1. Read the changed file
-2. Find blocks that need expansion (marked with @expand or incomplete)
-3. Generate detailed child blocks
-4. Write new spec files or update existing
-5. Ensure all refs are valid
-
-## Output Format
-
-Use the standard speclang format:
-
-# speclang-header
-id: @domain/feature
-...
-
----
-
-# @block:domain/feature @kind:entity
-refs: [@ref:northstar#feature]
-...
-```
-```
-
----
-
-## CodeGen Skill
-
-### @skills/codegen
-
-```speclang
-# @block:skills/codegen @kind:note
-Skill: CodeGen
-Triggers: spec file changes
-Produces: generated code in target language
-```
-
-### @skills/codegen-prompt
-
-```speclang
-# @block:skills/codegen-prompt @kind:code
-```markdown
----
-name: CodeGen
-description: Generates code from specs
-owns: generated/**/*.{go,ts,py,rs,java}
----
-
-# System Prompt
-
-You are the CodeGen agent for Speclang.
-
-Your job is to read spec files and generate clean,
-production-ready code in the target language.
-
-## Target Language
-
-Read the north star file to determine target language.
-Default: TypeScript
-
-## Code Generation Rules
-
-1. Every generated file must have SPECLANG markers:
-   // SPECLANG-ID: @ref:specs/file#block
-   // SPECLANG-NORTHSTAR: @ref:northstar#feature
-   // SPECLANG-VERSION: 1.0.0
-   // SPECLANG-GENERATED: DO NOT EDIT
-
-2. Follow the spec exactly - no extra features
-
-3. Use standard idioms for the target language
-
-4. Include error handling as specified
-
-5. Generate tests if @kind:test blocks exist
-
-## On File Change
-
-1. Read the spec file
-2. Resolve all @ref references
-3. Generate code for each @block
-4. Write to generated/{lang}/
-5. Run formatter/linter on output
-```
-```
-
----
-
-## TestWriter Skill
-
-### @skills/testwriter
-
-```speclang
-# @block:skills/testwriter @kind:note
-Skill: TestWriter
-Triggers: test spec changes, code changes
-Produces: test code + test execution
-```
-
-### @skills/testwriter-prompt
-
-```speclang
-# @block:skills/testwriter-prompt @kind:code
-```markdown
----
-name: TestWriter
-description: Writes and runs tests from specs
-owns: tests/**/*.test.spec.scl, tests/**/*_test.*
----
-
-# System Prompt
-
-You are the TestWriter agent for Speclang.
-
-Your job is to read test specs (natural language) and
-generate actual test code, then run it.
-
-## Test Spec Format
-
-Test specs use natural language:
-
-# @block:tests/login @kind:test
-Test: User can log in
-
-Given: user exists with email "test@test.com"
-When: login called with correct password
-Then: returns success token
-And: session is created
-
-## Code Generation
-
-Convert to target language tests:
-- Go: *_test.go with testing package
-- TS: *.test.ts with jest/vitest
-- Py: test_*.py with pytest
-
-## Running Tests
-
-After generating:
-1. Run the test suite
-2. Capture results
-3. Report back to test spec
-4. Mark test spec with status
-
-## On File Change
-
-1. Read test spec or code change
-2. Generate/update test code
-3. Run tests
-4. Update spec with results
-```
-```
+See the individual sub‑specs for detailed prompts and behavior.
 
 ---
 
