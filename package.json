@@ -1,0 +1,41 @@
+{
+  "name": "speclang",
+  "version": "1.0.0",
+  "description": "A reactive multi-agent system where specs self-assemble into code.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dexdat/SpecLang.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/dexdat/SpecLang/issues"
+  },
+  "homepage": "https://github.com/dexdat/SpecLang#readme",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "@types/commander": "^2.12.0",
+    "@types/fs-extra": "^11.0.4",
+    "better-sqlite3": "^12.6.2",
+    "commander": "^14.0.3",
+    "express": "^5.2.1",
+    "fs-extra": "^11.3.3",
+    "glob": "^13.0.6",
+    "openapi-mcp-generator": "^3.2.0",
+    "yaml": "^2.8.2"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/express": "^5.0.6",
+    "@types/glob": "^8.1.0",
+    "@types/node": "^25.3.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
