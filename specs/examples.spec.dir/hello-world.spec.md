@@ -1,5 +1,5 @@
-# speclang-header lines:11
-id: "@examples/hello-world"
+# speclang-header lines:13
+id: "@speclang/examples/hello-world"
 version: 1.0.0
 layer: 10
 tags: [example, hello-world, tutorial]
@@ -7,6 +7,8 @@ status: draft
 project_level: POC
 agent_support: agent_autonomous
 short: Hello World Example
+parent: @ref:speclang/examples
+part: 1/3
 ---
 
 # Hello World Example
@@ -27,7 +29,7 @@ This spec demonstrates:
 ```typescript
 /**
  * Hello World function
- * Generated from @examples/hello-world
+ * Generated from @speclang/examples/hello-world
  */
 export function helloWorld(name: string): string {
   return `Hello, ${name}!`;
