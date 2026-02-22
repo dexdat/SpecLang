@@ -219,6 +219,28 @@
       "priority": 2,
       "category": "implementation",
       "status": "completed"
+    },
+    {
+      "id": "todo-021",
+      "description": "Fix extraction script to handle nested backticks inside code blocks",
+      "depends_on": [
+        "todo-019"
+      ],
+      "estimated_complexity": "medium",
+      "priority": 1,
+      "category": "codegen",
+      "status": "completed"
+    },
+    {
+      "id": "todo-022",
+      "description": "Use generated validation system to validate all specs and generate improvement report",
+      "depends_on": [
+        "todo-021"
+      ],
+      "estimated_complexity": "medium",
+      "priority": 2,
+      "category": "self_hosting",
+      "status": "completed"
     }
   ],
   "generated_from": "_index.json",
