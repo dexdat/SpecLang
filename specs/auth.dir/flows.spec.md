@@ -2,8 +2,8 @@
 id: @speclang/auth/flows
 version: 0.1.0
 layer: 2
-project_level: Alpha
-agent_support: agent_autonomous
+project_level: "Alpha"
+agent_support: "agent_autonomous"
 tags: [auth, flows, mcp, typescript]
 short: Authentication flows: factory function and middleware usage
 parent: @ref:speclang/auth
