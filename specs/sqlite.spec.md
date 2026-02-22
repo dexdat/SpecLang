@@ -1,14 +1,14 @@
-# speclang-header lines:12
+# speclang-header lines:15
 id: "@speclang/sqlite"
 version: 0.1.0
 layer: 0
 tags: [sqlite, vector, fts, search, database]
 imports: ["@speclang/core", "@speclang/headers"]
 status: draft
-
 project_level: Alpha
 agent_support: agent_assisted
 short: SQLite + Vector DB
+children: ["@speclang/sqlite/schema", "@speclang/sqlite/fts", "@speclang/sqlite/vectors", "@speclang/sqlite/graph"]
 ---
 
 # SQLite + Vector DB
@@ -29,6 +29,218 @@ Features:
 
 Result: impossible to lose anything.
 Even with 5000+ specs, any agent finds what it needs in <50ms.
+```
+
+---
+
+## Database Mode
+
+### @sqlite/wal
+
+```speclang
+# @block:sqlite/wal @kind:entity
+WALMode:
+  enabled: true
+  reason: durability + concurrent reads during writes
+  
+  benefits:
+    - survives crashes without corruption
+    - readers don't block writers
+    - automatic recovery on startup
+    - better performance for our workload
+    
+  recovery:
+    on_startup: check for uncommitted WAL
+    action: replay WAL to recover state
+    result: resume from last committed state
+    
+  config:
+    PRAGMA journal_mode = WAL
+    PRAGMA synchronous = NORMAL
+    PRAGMA cache_size = 10000
+    PRAGMA temp_store = MEMORY
+```
+
+---
+
+## Sub‑Specifications
+
+This spec is split into focused sub‑specs:
+
+- **Schema**: `@ref:specs/sqlite.dir/schema` – database tables and SQL
+- **Full‑Text Search**: `@ref:specs/sqlite.dir/fts` – FTS configuration and queries
+- **Vector Search**: `@ref:specs/sqlite.dir/vectors` – embeddings and semantic search
+- **Graph Queries**: `@ref:specs/sqlite.dir/graph` – dependency graph queries
+
+Each sub‑spec can be developed and reviewed independently.
+
+---
+
+## JSON Queries
+
+### @sqlite/json
+
+```speclang
+# @block:sqlite/json @kind:entity
+JSONQueries:
+  description: "Query parsed spec structure"
+  
+  what_is_stored:
+    - parsed_json: full spec parsed as JSON
+    - depends_on: JSON array
+    - tags: JSON array
+    - children: JSON array
+    
+  benefits:
+    - Query specific fields
+    - Filter by domain, target, etc.
+    - Extract structured data
+```
+
+### @sqlite/json-queries
+
+```speclang
+# @block:sqlite/json-queries @kind:code
+```sql
+-- Find specs with specific tag
+SELECT file_path, id
+FROM specs
+WHERE tags LIKE '%"auth"%';
+
+-- Find specs targeting Go
+SELECT file_path, id
+FROM specs
+WHERE json_extract(parsed_json, '$.target') = 'go';
+
+-- Find specs by domain
+SELECT file_path, id, short_desc
+FROM specs
+WHERE json_extract(parsed_json, '$.domain') = 'authentication';
+
+-- Count specs by level
+SELECT 
+  json_extract(parsed_json, '$.level') as level,
+  COUNT(*) as count
+FROM specs
+GROUP BY level;
+```
+```
+
+---
+
+## Indexing
+
+### @sqlite/indexing
+
+```speclang
+# @block:sqlite/indexing @kind:entity
+Indexing:
+  when: on every file write
+  
+  steps:
+    1. Parse header
+    2. Extract all fields
+    3. Read full content
+    4. Generate embedding (if vector enabled)
+    5. Update SQLite
+    6. Update FTS index
+    
+  performance:
+    - <10ms for header-only
+    - <100ms with embedding
+    - Async embedding possible
+```
+
+---
+
+## Tools for Agents
+
+### @sqlite/tools
+
+```speclang
+# @block:sqlite/tools @kind:entity
+DatabaseTools:
+  
+  speclang_search:
+    params: { query, limit?, tags? }
+    returns: matching specs with scores
+    uses: FTS + optional tag filter
+    
+  speclang_semantic_search:
+    params: { query, limit? }
+    returns: semantically similar specs
+    uses: vector embeddings
+    
+  speclang_find_dependents:
+    params: { id }
+    returns: all specs depending on this
+    uses: graph query
+    
+  speclang_get_tree:
+    params: { path, depth? }
+    returns: parent + children tree
+    uses: recursive query
+    
+  speclang_find_by_field:
+    params: { field, value }
+    returns: specs matching field
+    uses: JSON query
+```
+
+---
+
+## Vector Embeddings
+
+### @sqlite/embeddings
+
+```speclang
+# @block:sqlite/embeddings @kind:entity
+EmbeddingGeneration:
+  when: on spec write (async option)
+  
+  model:
+    - openai text-embedding-3-small
+    - or local model (sentence-transformers)
+    - configurable in .speclangrc
+    
+  dimensions: 1536 (or configurable)
+  
+  caching:
+    - only regenerate if content changed
+    - hash comparison before embedding
+    
+  config:
+    embeddings:
+      enabled: true
+      model: openai/text-embedding-3-small
+      dimensions: 1536
+      batch_size: 100
+```
+
+---
+
+## Performance
+
+### @sqlite/performance
+
+```speclang
+# @block:sqlite/performance @kind:entity
+Performance:
+  database_size:
+    - ~1KB per spec (without embedding)
+    - ~7KB per spec (with embedding)
+    - 10k specs ≈ 70MB
+    
+  query_speed:
+    - FTS search: <10ms
+    - Vector search: <50ms
+    - Graph query: <20ms
+    
+  optimization:
+    - Index on id, parent_id
+    - FTS virtual table
+    - Vector index (if extension)
+    - Connection pooling
 ```
 
 ---
