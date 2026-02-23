@@ -132,7 +132,6 @@ describe('GoGenerator', () => {
       expect(result).toContain('GUEST');
     });
   });
-  });
 
   describe('formatImports', () => {
     it('should group stdlib and third-party imports', () => {
