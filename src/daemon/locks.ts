@@ -9,7 +9,7 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as crypto from 'crypto';
-import { Lock, AgentId } from './types';
+import { Lock, AgentId, FileEvent } from './types';
 
 export class LockManager {
   private locksDir: string;
@@ -213,5 +213,88 @@ export class LockManager {
 
   getTimeout(): number {
     return this.timeout;
+  }
+
+  async claimEvent(workerId: AgentId): Promise<FileEvent | null> {
+    const eventsDir = path.join(this.locksDir, 'events');
+    await fs.ensureDir(eventsDir);
+
+    try {
+      const files = await fs.readdir(eventsDir);
+      const pendingFiles = files.filter(f => f.endsWith('.event'));
+
+      for (const file of pendingFiles.sort()) {
+        const eventPath = path.join(eventsDir, file);
+        const content = await fs.readFile(eventPath, 'utf-8');
+        const event: FileEvent & { claimedBy?: string } = JSON.parse(content);
+
+        if (event.claimedBy) {
+          continue;
+        }
+
+        event.claimedBy = workerId;
+        await fs.writeFile(eventPath, JSON.stringify(event, null, 2));
+
+        console.log(`[LockManager] Claimed event ${file} for ${workerId}`);
+        return event;
+      }
+
+      return null;
+    } catch (error) {
+      console.error(`[LockManager] Failed to claim event:`, error);
+      return null;
+    }
+  }
+
+  async releaseEvent(eventPath: string, workerId: AgentId): Promise<boolean> {
+    const eventsDir = path.join(this.locksDir, 'events');
+
+    try {
+      const fullPath = path.join(eventsDir, `${eventPath}.event`);
+      
+      if (!(await fs.pathExists(fullPath))) {
+        return false;
+      }
+
+      const content = await fs.readFile(fullPath, 'utf-8');
+      const event: FileEvent & { claimedBy?: string } = JSON.parse(content);
+
+      if (event.claimedBy !== workerId) {
+        console.error(`[LockManager] Cannot release event claimed by ${event.claimedBy}`);
+        return false;
+      }
+
+      await fs.remove(fullPath);
+      console.log(`[LockManager] Released event ${eventPath}`);
+      return true;
+    } catch (error) {
+      console.error(`[LockManager] Failed to release event:`, error);
+      return false;
+    }
+  }
+
+  async getClaimedEvents(workerId?: AgentId): Promise<FileEvent[]> {
+    const eventsDir = path.join(this.locksDir, 'events');
+    const events: FileEvent[] = [];
+
+    try {
+      const files = await fs.readdir(eventsDir);
+      
+      for (const file of files) {
+        if (file.endsWith('.event')) {
+          const eventPath = path.join(eventsDir, file);
+          const content = await fs.readFile(eventPath, 'utf-8');
+          const event: FileEvent & { claimedBy?: string } = JSON.parse(content);
+
+          if (!workerId || event.claimedBy === workerId) {
+            events.push(event);
+          }
+        }
+      }
+    } catch {
+      // Directory doesn't exist
+    }
+
+    return events;
   }
 }
