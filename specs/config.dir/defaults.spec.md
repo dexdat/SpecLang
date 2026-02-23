@@ -83,6 +83,14 @@ config:
     max_depth: 50
     max_files: 1000
   
+  # Continuous improvement loop
+  continuous_improvement:
+    enabled: true
+    max_iterations: 0
+    max_time_since_human_update: 86400
+    escalation_threshold: 5
+    auto_resolve_confidence_threshold: 0.8
+  
   # Agent overrides
   agents:
     spec-writer:
