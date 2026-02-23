@@ -1,5 +1,103 @@
 # Progress
 
+## P1-007: Daemon Convergence Detection
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/daemon.spec.dir/convergence.spec.md`
+- **Files Modified**: 1 file (src/opencode/convergence.ts)
+- **Tests**: Build passes, 910 tests pass (4 pre-existing failures)
+
+### Components Implemented
+
+1. **CascadeStatus Interface** (`src/opencode/convergence.ts`)
+   - Status: 'cascading' | 'converged' | 'finalizing'
+   - Tracks started/ended timestamps, filesChanged, testResults, commitHash
+
+2. **TestResults Interface** - passed/failed/duration tracking
+
+3. **Cascade Status Persistence** - NEW `cascade_status` table in SQLite
+   - Tracks cascade lifecycle across restarts
+   - File change count per cascade
+
+4. **Finalize Method** (`finalize()`) - NEW
+   - User-triggered convergence signal (user_finalize from spec)
+   - Runs full on_converge workflow:
+     1. waitForInflightEvents()
+     2. verifyAgentsIdle()
+     3. runTests()
+     4. commitChanges()
+     5. notifyUser()
+     6. startNewCascade()
+
+5. **Commit Changes** (`commitChanges()`) - NEW
+   - Stages all changes with `git add -A`
+   - Creates commit with file count message
+   - Returns commit hash
+
+6. **User Notification** - Added `onNotify` callback
+   - Notifies user when cascade converges
+   - Logs test results and readiness for next input
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 910 passed (4 pre-existing failures unrelated to convergence)
+
+### Notes
+
+- Implements all three convergence signals per spec: quiet_period, all_agents_done, user_finalize
+- Auto-commits changes when cascade converges (can be triggered by quiet period or /finalize)
+- Follows spec pseudocode for check_convergence() logic
+
+---
+
+## P1-006: Daemon Events and Watcher
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/daemon.spec.dir/events.spec.md`
+- **Files Created**: 2 new files (debounce.ts, gitignore.ts)
+- **Files Modified**: 1 file (watcher.ts)
+- **Tests**: pass
+
+### Components Build passes, tests Implemented
+
+1. **Gitignore** (`src/daemon/gitignore.ts`) - NEW
+   - Gitignore class for parsing .gitignore files
+   - Pattern matching with glob support (* and **)
+   - Negation pattern support (!prefix)
+   - Directory pattern support (ending with /)
+
+2. **Debouncer** (`src/daemon/debounce.ts`) - NEW
+   - Debouncer class for batching rapid file events
+   - Configurable window (default 100ms per spec)
+   - Maximum batch size (default 50)
+   - Merges duplicate events for same file path
+
+3. **Watcher Integration** (`src/daemon/watcher.ts`)
+   - Added gitignore and debouncer imports
+   - Loads .gitignore on start with spec-specific ignores (.speclang/, *.log, reports/)
+   - Uses shouldWatch() with gitignore patterns
+   - Debounces all emitted events through Debouncer
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ Pass
+
+### Notes
+
+- Implementation follows events.spec.md specification
+- Gitignore parses standard .gitignore format with negation support
+- Debouncer batches rapid changes within 100ms window to prevent overwhelming the system
+
+---
+
 ## P1-005: Autonomous Validation Tool
 
 **Status**: PASSED
