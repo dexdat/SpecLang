@@ -39,6 +39,9 @@ export {
 // State persistence
 export { StateManager, createStateManager } from './state';
 
+// Session Lifecycle
+export { SessionLifecycle } from './lifecycle';
+
 // Interceptor (Write Guard)
 export { 
   WriteInterceptor, 
@@ -75,6 +78,17 @@ export {
   type Violation,
   type ViolationStats,
 } from './violations';
+
+// Session API Server
+export { SessionApiServer, createSessionApiServer } from './session-api';
+
+// Metadata Routing
+export {
+  createMetadataRouting,
+  parseProjectLevel,
+  parseAgentSupport,
+  extractMetadataFromHeader,
+} from './metadata-routing';
 
 // Re-export common types for convenience
 export type {

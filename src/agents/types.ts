@@ -35,6 +35,37 @@ export interface Agent {
 // SESSION TYPES
 // ============================================================================
 
+/** Session status for lifecycle management */
+export type SessionStatus = 
+  | 'created'   // Just spawned
+  | 'idle'      // Registered, waiting
+  | 'active'    // Processing work
+  | 'paused'    // Paused by user
+  | 'done'      // Converged
+  | 'error';    // Failed
+
+/** Agent session interface (for lifecycle management) */
+export interface AgentSession {
+  id: string;
+  agent: AgentRole;
+  owns: string[];
+  created: Date;
+  last_active: Date;
+  status: SessionStatus;
+  cascade_id?: string;
+  current_task?: string;
+  completed_tasks: string[];
+  error?: AgentError;
+}
+
+/** Transition result from lifecycle state machine */
+export interface TransitionResult {
+  success: boolean;
+  previous?: SessionStatus;
+  current?: SessionStatus;
+  error?: string;
+}
+
 /** Session state */
 export interface SessionState {
   workingOn: string | null;  // Current file being processed
@@ -201,3 +232,103 @@ export const AGENT_DESCRIPTIONS: Record<AgentRole, string> = {
   'back-sync': 'Synchronizes code changes back to specs',
   'pipeline': 'Executes build, test, and deployment workflows',
 };
+
+// ============================================================================
+// ERROR TYPES
+// ============================================================================
+
+/** Agent error types */
+export type AgentErrorType = 
+  | 'AccessDenied'      // Tried to write non-owned file
+  | 'LockTimeout'       // Couldn't acquire lock
+  | 'SessionNotFound'   // Invalid session ID
+  | 'AgentTimeout';     // Agent didn't respond
+
+/** Agent error */
+export interface AgentError {
+  type: AgentErrorType;
+  message: string;
+  sessionId?: string;
+  agentId?: string;
+  file?: string;
+  timestamp: Date;
+  recoverable: boolean;
+  retryCount?: number;
+}
+
+/** Error recovery options */
+export interface ErrorRecovery {
+  logError: (error: AgentError) => Promise<void>;
+  notifyOrchestrator: (error: AgentError) => Promise<void>;
+  retryWithBackoff: (error: AgentError, maxRetries: number) => Promise<boolean>;
+  abortSession: (error: AgentError) => Promise<void>;
+}
+
+// ============================================================================
+// CONCURRENCY TYPES
+// ============================================================================
+
+/** Concurrency configuration */
+export interface ConcurrencyConfig {
+  maxConcurrentAgents: number;
+  maxFileChangesPerCascade: number;
+  lockTimeoutMs: number;
+  agentIdleTimeoutMs: number;
+}
+
+/** Default concurrency limits */
+export const DEFAULT_CONCURRENCY_CONFIG: ConcurrencyConfig = {
+  maxConcurrentAgents: 50,
+  maxFileChangesPerCascade: 100,
+  lockTimeoutMs: 5000,
+  agentIdleTimeoutMs: 60000,
+};
+
+// ============================================================================
+// METADATA ROUTING TYPES
+// ============================================================================
+
+/** Project maturity levels */
+export type ProjectLevel = 
+  | 'POC' 
+  | 'MVP' 
+  | 'Alpha' 
+  | 'Beta' 
+  | 'Production' 
+  | 'Startup' 
+  | 'SMB' 
+  | 'MSB' 
+  | 'Enterprise';
+
+/** Agent support levels */
+export type AgentSupportLevel = 
+  | 'human_only' 
+  | 'agent_assisted' 
+  | 'agent_autonomous';
+
+/** Spec metadata for routing */
+export interface SpecMetadata {
+  id: string;
+  project_level: ProjectLevel;
+  agent_support: AgentSupportLevel;
+  layer: number;
+  tags?: string[];
+}
+
+/** Metadata-based routing rules */
+export interface MetadataRouting {
+  checkPermissions: (metadata: SpecMetadata, action: 'read' | 'write' | 'deploy') => boolean;
+  getInteractionStyle: (metadata: SpecMetadata) => 'autonomous' | 'assisted' | 'human_required';
+  shouldRequestApproval: (metadata: SpecMetadata) => boolean;
+  getResourceAllocation: (metadata: SpecMetadata) => number;
+  getPriority: (metadata: SpecMetadata) => 'low' | 'normal' | 'high' | 'urgent';
+}
+
+/** Ownership transfer during maturity transitions */
+export interface OwnershipTransfer {
+  fromAgent: AgentRole;
+  toAgent: AgentRole;
+  files: string[];
+  metadata: SpecMetadata;
+  timestamp: Date;
+}
