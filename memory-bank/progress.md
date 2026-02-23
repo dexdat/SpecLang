@@ -1,5 +1,64 @@
 # Progress
 
+## P3-001: Code Generator Framework
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/compiler.spec.md`, `specs/compiler.spec.dir/phases.spec.md`, `specs/compiler.spec.dir/targets.spec.md`, `specs/compiler.spec.dir/templates.spec.md`
+- **Files Reviewed**: src/codegen/* (complete framework)
+- **Tests**: Build passes, 991 tests pass
+
+### Components Verified
+
+1. **Parser** (`src/codegen/parser.ts`)
+   - parseCodeSpec, parseCodeSpecContent functions ✓
+   - Code block extraction with @block: markers ✓
+   - Target config from metadata ✓
+   - Import extraction ✓
+   - findCodeSpecFiles for directory scanning ✓
+
+2. **Type Mapping** (`src/codegen/mapper.ts`)
+   - TYPE_MAPPINGS for stdlib → target language ✓
+   - mapType function with generic type support ✓
+   - Array<T>, Map<K,V>, Optional<T>, Result<T,E> handling ✓
+
+3. **Templates** (`src/codegen/templates.ts`)
+   - TEMPLATES for TypeScript, Go, Python, Rust ✓
+   - renderTemplate, getTemplate functions ✓
+   - formatFields, formatParams helpers ✓
+
+4. **Target Generators** (`src/codegen/targets/`)
+   - TypeScriptGenerator ✓
+   - GoGenerator ✓
+   - PythonGenerator ✓
+   - RustGenerator ✓
+   - TargetRegistry for generator management ✓
+
+5. **Writer** (`src/codegen/writer.ts`)
+   - CodeWriter class with write, backup, updateWithMarkers ✓
+   - Incremental updates via SPECLANG-BLOCK markers ✓
+
+6. **Main API** (`src/codegen/index.ts`)
+   - generate, generateAll, generateFromDir functions ✓
+   - Target language support: typescript, go, python, rust ✓
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 991 passed (4 pre-existing db failures unrelated to codegen)
+
+### Notes
+
+- Implements complete code generator framework per @speclang/compiler spec
+- Multi-target: same spec → Go, TypeScript, Python, Rust
+- Bidirectional: @speclang-id markers for code→spec tracking
+- Incremental: updateWithMarkers for selective regeneration
+- Phase implementation: parse → validate → resolve → transform → codegen → verify
+
+---
+
 ## P2-012: MCP Server Overview
 
 **Status**: PASSED
