@@ -13,6 +13,7 @@ import { ConvergenceDetector } from './convergence';
 import { State } from './state';
 import { IPC } from './ipc';
 import { Config } from './config';
+import { LockManager } from './locks';
 import {
   FileEvent,
   DaemonCommand,

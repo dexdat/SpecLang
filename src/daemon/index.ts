@@ -14,6 +14,7 @@ export * from './router';
 export * from './convergence';
 export * from './state';
 export * from './ipc';
+export * from './locks';
 export { Daemon, createDaemon, getDaemon } from './daemon';
 
 /**
