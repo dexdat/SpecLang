@@ -251,3 +251,284 @@ Options:
 Example:
   speclang graph --format=mermaid
 ```
+
+### @cli/cascade
+
+```speclang
+# @block:cli/cascade @kind:operation
+speclang cascade [command] [options]
+
+Control the cascade system.
+
+Commands:
+  start         Start cascade processing
+  stop          Stop cascade processing
+  pause         Pause cascade (finish current, don't start new)
+  resume        Resume paused cascade
+  status        Show cascade status
+  depth         Get/set max cascade depth
+  trigger       Manually trigger cascade on specific file
+
+Options:
+  --max-depth   Maximum cascade depth (default: 50)
+  --quiet-period Seconds of no changes before convergence (default: 30)
+  --watch       Watch for file changes (default: true)
+
+Example:
+  speclang cascade start
+  speclang cascade status
+  speclang cascade trigger specs/auth.scl
+  speclang cascade depth --set=20
+```
+
+### @cli/errors
+
+```speclang
+# @block:cli/errors @kind:operation
+speclang errors [command] [options]
+
+View and manage system errors.
+
+Commands:
+  list          List recent errors
+  show <id>     Show error details
+  retry <id>    Retry failed operation
+  clear         Clear resolved errors
+  stats         Show error statistics
+
+Options:
+  --type        Filter by error type
+  --status      Filter by status (new, resolved, etc.)
+  --since       Show errors since timestamp
+  --limit       Maximum errors to show (default: 20)
+
+Example:
+  speclang errors list
+  speclang errors show error-123
+  speclang errors retry error-123 --force
+  speclang errors stats --type=validation
+```
+
+### @cli/rollback
+
+```speclang
+# @block:cli/rollback @kind:operation
+speclang rollback [target] [options]
+
+Rollback to previous state.
+
+Arguments:
+  target        Commit hash, file, or cascade ID
+
+Options:
+  --depth       Number of commits to rollback (default: 1)
+  --strategy    Rollback strategy (revert, reset, selective)
+  --dry-run     Show what will be rolled back
+  --force       Skip confirmation
+
+Steps:
+  1. Identify target commit(s)
+  2. Calculate affected files
+  3. Show diff to user
+  4. Execute rollback
+  5. Verify system state
+
+Example:
+  speclang rollback HEAD~1
+  speclang rollback abc123def
+  speclang rollback --depth=3 --dry-run
+  speclang rollback specs/auth.scl --strategy=selective
+```
+
+### @cli/git-history
+
+```speclang
+# @block:cli/git-history @kind:operation
+speclang git-history [command] [options]
+
+Query git history and causality chains.
+
+Commands:
+  blame <file>  Show who wrote each line
+  log <file>    Show commit history for file
+  chain <hash>  Show causality chain for commit
+  diff <hash>   Show changes in commit
+  stats         Show git statistics
+
+Options:
+  --limit       Maximum entries to show (default: 20)
+  --since       Show since timestamp
+  --format      Output format (text, json, yaml)
+  --follow      Follow causality chains
+
+Example:
+  speclang git-history blame specs/auth.scl
+  speclang git-history log specs/auth.scl --limit=10
+  speclang git-history chain abc123def --follow
+  speclang git-history stats --since="1 week ago"
+```
+
+### @cli/messages
+
+```speclang
+# @block:cli/messages @kind:operation
+speclang messages [command] [options]
+
+Manage MCP messages and continuous improvement loop.
+
+Commands:
+  inbox         Show message inbox
+  show <id>     Show message details
+  respond <id>  Respond to message
+  resolve <id>  Mark message as resolved
+  escalate <id> Escalate message priority
+  stats         Show message statistics
+
+Options:
+  --status      Filter by status (new, in_progress, resolved)
+  --priority    Filter by priority
+  --type        Filter by message type
+  --unread      Show only unread messages
+
+Example:
+  speclang messages inbox
+  speclang messages show msg-123
+  speclang messages respond msg-123 --content="Fixed spec"
+  speclang messages stats --priority=blocking
+```
+
+### @cli/agents
+
+```speclang
+# @block:cli/agents @kind:operation
+speclang agents [command] [options]
+
+Manage autonomous agents.
+
+Commands:
+  list          List all agents
+  status <id>   Show agent status
+  restart <id>  Restart agent
+  logs <id>     Show agent logs
+  health        Show system health
+
+Options:
+  --role        Filter by agent role
+  --since       Show since timestamp
+  --follow      Follow logs in real-time
+  --verbose     Show detailed information
+
+Example:
+  speclang agents list
+  speclang agents status spec-writer
+  speclang agents logs code-gen --follow
+  speclang agents health --verbose
+```
+
+### @cli/monitor
+
+```speclang
+# @block:cli/monitor @kind:operation
+speclang monitor [command] [options]
+
+Monitor system metrics and performance.
+
+Commands:
+  metrics       Show current metrics
+  alerts        Show active alerts
+  logs          Show system logs
+  dashboard     Open web dashboard
+  report        Generate performance report
+
+Options:
+  --interval    Polling interval in seconds
+  --since       Show since timestamp
+  --until       Show until timestamp
+  --format      Output format (text, json, csv)
+
+Example:
+  speclang monitor metrics --interval=5
+  speclang monitor alerts
+  speclang monitor logs --since="1 hour ago"
+  speclang monitor report --format=csv > report.csv
+```
+
+### @cli/validate
+
+```speclang
+# @block:cli/validate @kind:operation
+speclang validate [spec] [options]
+
+Run validation on specs.
+
+Arguments:
+  spec          Specific spec to validate (optional)
+
+Options:
+  --type        Validation type (basic, language-blocks, autonomous)
+  --fix         Auto-fix validation issues
+  --report      Generate validation report
+  --strict      Fail on warnings
+
+Steps:
+  1. Parse spec(s)
+  2. Run selected validators
+  3. Report issues
+  4. Auto-fix if requested
+  5. Generate report
+
+Example:
+  speclang validate
+  speclang validate specs/auth.scl --type=language-blocks
+  speclang validate --fix --report=validation.json
+  speclang validate --strict
+```
+
+### @cli/config
+
+```speclang
+# @block:cli/config @kind:operation
+speclang config [command] [options]
+
+Manage configuration.
+
+Commands:
+  get <key>     Get configuration value
+  set <key> <value> Set configuration value
+  list          List all configuration
+  validate      Validate configuration
+  reset         Reset to defaults
+
+Options:
+  --global      Use global configuration
+  --project     Use project configuration
+  --format      Output format (json, yaml, text)
+
+Example:
+  speclang config get cascade.max_depth
+  speclang config set cascade.quiet_period 60
+  speclang config list --format=json
+  speclang config validate
+```
+
+### @cli/help
+
+```speclang
+# @block:cli/help @kind:operation
+speclang help [command]
+
+Show help information.
+
+Arguments:
+  command       Command to show help for (optional)
+
+Options:
+  --all         Show all commands
+  --markdown    Output in markdown format
+  --json        Output in JSON format
+
+Example:
+  speclang help
+  speclang help cascade
+  speclang help --all --markdown > COMMANDS.md
+```
