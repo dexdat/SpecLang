@@ -250,6 +250,47 @@ export interface CommandEventData {
   target?: string;
 }
 
+/** Command input */
+export interface CommandInput {
+  cascade_id: string;
+  action: string;
+  target_file?: string;
+  session_id?: string;
+  payload?: Record<string, unknown>;
+  priority?: number;
+}
+
+/** Command from queue */
+export interface QueuedCommand {
+  command_id: string;
+  cascade_id: string;
+  action: string;
+  target_file: string | null;
+  session_id: string | null;
+  payload: Record<string, unknown> | null;
+  priority: number;
+  status: string;
+  created_at: number;
+  updated_at: number;
+}
+
+/** Query commands input */
+export interface QueryCommandsInput {
+  status?: string;
+  limit?: number;
+  cascade_id?: string;
+  session_id?: string;
+}
+
+/** Status result */
+export interface StatusResult {
+  active_sessions: number;
+  queue_depth: number;
+  converged: boolean;
+  cascade_depth: number | null;
+  last_build: number | null;
+}
+
 /** Default server configuration */
 export const DEFAULT_MCP_CONFIG: MCPServerConfig = {
   port: 3000,
