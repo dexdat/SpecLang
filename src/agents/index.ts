@@ -32,10 +32,49 @@ export {
   impactAnalysisHandler,
   triggerCascadeHandler,
   cascadeStatusHandler,
+  createSpecFileHandler,
+  commitHandler,
 } from './tools';
 
 // State persistence
 export { StateManager, createStateManager } from './state';
+
+// Interceptor (Write Guard)
+export { 
+  WriteInterceptor, 
+  createWriteInterceptor, 
+  initGuard, 
+  getGuard, 
+  resetGuard,
+  checkOwnership,
+  interceptWrite,
+  getFileOwner,
+  getViolations,
+  getGuardStats,
+  type InterceptorConfig,
+  type WriteAttempt,
+} from './interceptor';
+
+// Rules
+export {
+  DEFAULT_RULES,
+  ORCHESTRATOR_RULE,
+  isExemptFromGuard,
+  getAgentPriority,
+  validateRules,
+  createRule,
+  mergeRules,
+  getRulesForAgent,
+  type ValidationResult,
+} from './rules';
+
+// Violations
+export {
+  ViolationTracker,
+  createViolationTracker,
+  type Violation,
+  type ViolationStats,
+} from './violations';
 
 // Re-export common types for convenience
 export type {
