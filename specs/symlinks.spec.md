@@ -85,13 +85,13 @@ tests/
 This spec has been split into two component‑level sub‑specs:
 
 ### @symlinks/creation-subspec
-- **File**: `symlinks.dir/creation.spec.md`
+- **File**: `symlinks.spec.dir/creation.spec.md`
 - **ID**: `@speclang/symlinks/creation`
 - **Contents**: Header mapping, symlink creation, rebuild, portability, cross‑platform support
-- **Reference**: @ref:specs/symlinks.dir/creation
+- **Reference**: @ref:specs/symlinks.spec.dir/creation
 
 ### @symlinks/verification-subspec
-- **File**: `symlinks.dir/verification.spec.md`
+- **File**: `symlinks.spec.dir/verification.spec.md`
 - **ID**: `@speclang/symlinks/verification`
 - **Contents**: Symlink verification, git handling, tools, layout example
-- **Reference**: @ref:specs/symlinks.dir/verification
+- **Reference**: @ref:specs/symlinks.spec.dir/verification

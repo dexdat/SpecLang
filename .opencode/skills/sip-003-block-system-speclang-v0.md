@@ -419,9 +419,9 @@ Login...
 **With Splitting:**
 ```
 auth.spec.yaml (index)
-  refs: children in auth.spec.dir/
+  refs: children in auth.spec.spec.dir/
 
-auth.spec.dir/
+auth.spec.spec.dir/
   entities.spec.yaml
   operations.spec.yaml
   policies.spec.yaml

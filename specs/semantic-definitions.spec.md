@@ -19,7 +19,7 @@ This spec has been split into sub‑specs for better organization:
 ## Purpose
 
 The semantic definitions spec provides the semantic definitions for three critical metadata fields:
-1. `layer` (0‑10 abstraction depth)
+1. `layer` (depth in dependency tree)
 2. `project_level` (POC → Enterprise maturity)
 3. `agent_support` (human_only → agent_autonomous)
 

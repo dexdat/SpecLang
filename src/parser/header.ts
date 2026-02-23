@@ -82,7 +82,8 @@ export function parseHeader(content: string): {
   let metadata: SpecMetadata;
   
   try {
-    metadata = parseYaml(yamlText) as SpecMetadata;
+    const parsed = parseYaml(yamlText);
+    metadata = (parsed || {}) as SpecMetadata;
   } catch (e) {
     throw new Error(`Failed to parse header YAML: ${e instanceof Error ? e.message : String(e)}`);
   }

@@ -7,8 +7,8 @@ agent_support: agent_autonomous
 tags: [format, syntax, self-describing]
 status: draft
 children:
-  - @ref:specs/spec-format.dir/structure
-  - @ref:specs/spec-format.dir/blocks
+  - "@ref:specs/spec-format.spec.dir/structure"
+  - "@ref:specs/spec-format.spec.dir/blocks"
 
 short: Spec Format (2 parts)
 ---
@@ -17,4 +17,4 @@ short: Spec Format (2 parts)
 
 The format you're reading. Self-describing. Rigid header, flexible body.
 
-This spec has been split into sub-specs. See spec-format.dir/ for details.
+This spec has been split into sub-specs. See spec-format.spec.dir/ for details.

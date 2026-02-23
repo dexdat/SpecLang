@@ -1,24 +1,94 @@
-# speclang-header lines:13
+# speclang-header lines:10
 id: "@speclang/tools"
 version: 0.1.0
-layer: 0
-tags: [tools, functions, agents, api]
-imports: ["@speclang/core", "@speclang/opencode"]
-status: draft
-children: ["@speclang/tools/api", "@speclang/tools/implementations"]
+layer: 5
 project_level: Alpha
-agent_support: agent_assisted
-short: Agent Tools
+agent_support: agent_autonomous
+tags: [typescript, generated, auto-generated]
+short: "Auto-generated spec for tools.ts"
+status: generated
 ---
 
-# Agent Tools
+## @block:simpletoolregistry @kind:entity
+```text
+export class SimpleToolRegistry implements ToolRegistry {
+```
 
-Tools available to Speclang agents via the plugin.
 
-## API Reference
+## @block:readspechandler @kind:code
+```typescript
+export const readSpecHandler: ToolHandler = async (input: { id: string }, context: ToolContext) => {
+```
 
-See @ref:speclang/tools/api for all tool definitions.
 
-## Implementation Details
+## @block:writespechandler @kind:code
+```typescript
+export const writeSpecHandler: ToolHandler = async (input: {
+```
 
-See @ref:speclang/tools/implementations for overview and usage examples.
+
+## @block:searchspecshandler @kind:code
+```typescript
+export const searchSpecsHandler: ToolHandler = async (input: {
+```
+
+
+## @block:readfilehandler @kind:code
+```typescript
+export const readFileHandler: ToolHandler = async (input: { path: string }, context: ToolContext) => {
+```
+
+
+## @block:writefilehandler @kind:code
+```typescript
+export const writeFileHandler: ToolHandler = async (input: {
+```
+
+
+## @block:listfileshandler @kind:code
+```typescript
+export const listFilesHandler: ToolHandler = async (input: {
+```
+
+
+## @block:getdependencieshandler @kind:code
+```typescript
+export const getDependenciesHandler: ToolHandler = async (input: { id: string }, context: ToolContext) => {
+```
+
+
+## @block:getdependentshandler @kind:code
+```typescript
+export const getDependentsHandler: ToolHandler = async (input: { id: string }, context: ToolContext) => {
+```
+
+
+## @block:impactanalysishandler @kind:code
+```typescript
+export const impactAnalysisHandler: ToolHandler = async (input: { id: string }, context: ToolContext) => {
+```
+
+
+## @block:triggercascadehandler @kind:code
+```typescript
+export const triggerCascadeHandler: ToolHandler = async (input: { path?: string }, context: ToolContext) => {
+```
+
+
+## @block:cascadestatushandler @kind:code
+```typescript
+export const cascadeStatusHandler: ToolHandler = async (_input: any, _context: ToolContext) => {
+```
+
+
+## @block:getstandardtools @kind:code
+```typescript
+export function getStandardTools(): Tool[] {
+```
+
+
+## @block:createtoolregistry @kind:code
+```typescript
+export function createToolRegistry(): ToolRegistry {
+```
+

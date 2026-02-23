@@ -38,5 +38,5 @@ Convergence ensures that:
 
 - @ref:speclang/cascade/convergence – cascade‑specific convergence
 - @ref:speclang/daemon/convergence – daemon implementation
-- @ref:speclang/opencode-plugin.dir/convergence – OpenCode plugin integration
+- @ref:speclang/opencode-plugin.spec.dir/convergence – OpenCode plugin integration
 

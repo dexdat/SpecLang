@@ -73,19 +73,19 @@ SKILL.md format:
 This spec has been split into sub‑specs for each core agent skill:
 
 ### @skills/specwriter-ref
-- **SpecWriter**: @ref:specs/skills.dir/spec-writer
+- **SpecWriter**: @ref:specs/skills.spec.dir/spec-writer
   - Writes and expands spec files
   - Owns: `specs/**/*.scl`
   - Triggers: north star changes, other spec changes
 
 ### @skills/codegen-ref
-- **CodeGen**: @ref:specs/skills.dir/code-gen
+- **CodeGen**: @ref:specs/skills.spec.dir/code-gen
   - Generates code from specs
   - Owns: `generated/**/*.{go,ts,py,rs,java}`
   - Triggers: spec file changes
 
 ### @skills/testwriter-ref
-- **TestWriter**: @ref:specs/skills.dir/test-writer
+- **TestWriter**: @ref:specs/skills.spec.dir/test-writer
   - Writes and runs tests from specs
   - Owns: `tests/**/*.test.spec.scl`, `tests/**/*_test.*`
   - Triggers: test spec changes, code changes

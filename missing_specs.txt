@@ -1,0 +1,163 @@
+Missing spec coverage:
+@northstar/speclang (layer 0) - North Star: SpecLang
+@speclang/symlinks (layer 0) - Symlinks
+@speclang/implementation.meta-circular (layer 0) - Meta-Circular Development
+@speclang/ui.visual-design (layer 0) - Visual design system, CSS architecture, themes, accessibility
+@speclang/mcp-daemon (layer 0) - MCP Daemon
+@speclang/scripts (layer 0) - Build and Development Scripts
+@speclang/directory-structure (layer 0) - Directory Structure
+@speclang/ui.overview (layer 0) - Dashboard overview, architecture, and core views
+@speclang/validation (layer 0) - Validation
+@speclang/dynamic-split (layer 0) - Dynamic Splitting (split into 2 sub-specs)
+@speclang/deployment (layer 0) - Deployment Modes
+@speclang/skills (layer 0) - Speclang Skills Pack
+@speclang/ui.interactions (layer 0) - User interactions and control flows
+@speclang/ui.state-management (layer 0) - State management and implementation notes
+@speclang/workflow (layer 0) - User Workflow
+@speclang/opencode (layer 0) - OpenCode Integration
+@unknown/core.spec.md (layer 0) - core.spec.md
+@speclang/ui.testing (layer 0) - Testing strategy and specifications for UI components
+@speclang/cli (layer 0) - Speclang CLI (8 sub-specs)
+@speclang/test-specs (layer 0) - Test Specs
+@speclang/implementation (layer 0) - Implementation Specs
+@speclang/config (layer 0) - Configuration (2 sub-specs)
+@speclang/ralph-loop (layer 0) - Ralph Loop System
+@speclang/cli.dir/exit-codes (layer 1) - CLI exit codes
+@speclang/cli.dir/configuration (layer 1) - CLI configuration
+@speclang/scripts.generate-mcp-server (layer 1) - Generate MCP Server Script
+@speclang/cli.dir/output-formats (layer 1) - CLI output formats
+@speclang/scripts.add-missing-fields (layer 1) - Add Missing Fields Script
+@speclang/project-maturity-levels (layer 1) - Concrete criteria for each project_level value
+@speclang/scripts.generate-todo (layer 1) - Generate Todo Script
+@speclang/scripts.generate-ralph-loop (layer 1) - Generate Ralph Loop Script
+@speclang/scripts.rename-spec-files (layer 1) - Rename Spec Files Script
+@speclang/scripts.generate-index (layer 1) - Generate Index Script
+@speclang/scripts.generate-from-spec (layer 1) - Generate From Spec Script
+@speclang/cli.dir/global-options (layer 1) - CLI global options
+@speclang/scripts.generate-sqlite-schema (layer 1) - Generate SQLite Schema Script
+@speclang/scripts.validate-autonomous (layer 1) - Validate Autonomous Specs Script
+@speclang/cli.dir/installation (layer 1) - CLI installation
+@speclang/agent-support-levels (layer 1) - Behavioral expectations for each agent_support level
+@speclang/cli.dir/interactive-mode (layer 1) - CLI interactive mode
+@speclang/scripts.generate-validation-system (layer 1) - Generate Validation System Script
+@speclang/scripts.generate-opencode-plugin (layer 1) - Generate OpenCode Plugin Script
+@speclang/layer-definitions (layer 1) - Concrete definitions for layer values 0-10
+@speclang/cli.dir/integration (layer 1) - CLI integration
+@speclang/scripts.validate-refs (layer 1) - Validate References Script
+@speclang/cli.dir/commands (layer 1) - CLI commands
+@speclang/cascade-protocol (layer 1) - Explicit Cascade Coordination Protocol
+@speclang/semantic-definitions (layer 1) - Consolidated semantic definitions for layer, project_level, and agent_support
+@speclang/scripts.compute-header-lines (layer 1) - Compute Header Lines Script
+@speclang/scripts.fix-headers (layer 1) - Fix Headers Script
+@speclang/examples (layer 1) - Example specifications
+@speclang/workflow/daily-use (layer 2) - Daily Usage Workflow
+@speclang/compiler.dir/phases (layer 2) - Compiler phases and advanced features
+@speclang/sqlite/graph (layer 2) - SQLite graph queries
+@speclang/pipeline/hooks (layer 2) - Build Pipeline - Hooks
+@speclang/project-maturity-levels/levels (layer 2) - Definitions for each project_level value
+@speclang/skills/code-gen (layer 2) - CodeGen Skill
+@speclang/config.dir/defaults (layer 2) - Configuration defaults and examples
+@speclang/pipeline/recovery (layer 2) - Build Pipeline - Recovery
+@speclang/core/cascade (layer 2) - Reactive loop and convergence detection
+@speclang/lenses/formats (layer 2) - Built-in Lens Formats
+@speclang/skills/spec-writer (layer 2) - SpecWriter Skill
+@speclang/cascade/triggers (layer 2) - Cascade Triggers
+@speclang/mcp/openapi-generation (layer 2) - Integration with openapi-mcp-generator for easy MCP server generation
+@speclang/compiler.dir/targets (layer 2) - Compiler target languages
+@speclang/deployment/light (layer 2) - Light Deployment Mode
+@speclang/cascade/convergence (layer 2) - Cascade Convergence
+@speclang/opencode/integration (layer 2) - OpenCode Integration Details
+@speclang/project-maturity-levels/criteria (layer 2) - Detailed criteria and validation rules for project_level
+@speclang/sqlite/fts (layer 2) - SQLite full-text search
+@speclang/pipeline/build (layer 2) - Build Pipeline - Core Stages
+@speclang/lenses/mermaid (layer 2) - Mermaid Diagram Lens
+@speclang/sqlite/vectors (layer 2) - SQLite vector search
+@speclang/core/concurrency (layer 2) - Concurrency model for agent sessions
+@speclang/stdlib/types (layer 2) - Standard Library Types
+@speclang/test-specs/format (layer 2) - Test Spec Format
+@speclang/workflow/examples (layer 2) - Workflow Examples and Diagrams
+@speclang/validation/tool (layer 2) - Validation tool and flow
+@speclang/test-specs/examples (layer 2) - Test Spec Examples
+@speclang/opencode/events (layer 2) - OpenCode Events & Convergence
+@speclang/dynamic-split/strategy (layer 2) - Dynamic splitting strategy and configuration
+@speclang/file-naming/extensions (layer 2) - File Extensions
+@speclang/compiler.dir/templates (layer 2) - Code generation templates and markers
+@speclang/config.dir/schema (layer 2) - Configuration schema definitions
+@speclang/recovery/rollback (layer 2) - Rollback
+@speclang/agent-behavior-matrix (layer 2) - Behavior rules for each project_level × agent_support combination
+@speclang/agent-protocol/sessions (layer 2) - Agent Sessions and Lifecycle
+@speclang/ui (layer 2) - System monitoring dashboard for SpecLang cascade and agent health (split into parts)
+@speclang/workflow/setup (layer 2) - Setup and Installation Workflow
+@speclang/core/entities (layer 2) - Core entities: daemon, agent, northstar, pointer-graph, autonomous-readiness
+@speclang/dynamic-split/token-budget (layer 2) - Token counting, budget overhead, and limits
+@speclang/core/skills (layer 2) - Skills pack for AI editor integration
+@speclang/safety-nets (layer 2) - Safety nets to detect mislabeled specs and prevent failures
+@speclang/core/agents (layer 2) - Agent responsibilities: spec, code, test, backsync
+@speclang/recovery/retry (layer 2) - Retry
+@speclang/deployment/enterprise (layer 2) - Enterprise Deployment Mode
+@speclang/transition-workflows (layer 2) - Workflows for moving specs between maturity levels
+@speclang/stdlib/mapping (layer 2) - Standard Library Functions & Assertions
+@speclang/skills/test-writer (layer 2) - TestWriter Skill
+@speclang/validation/rules (layer 2) - Validation rules
+@speclang/ralph-loop/state (layer 2) - Ralph Loop state definitions, entities, and data schemas
+@speclang/core/file-types (layer 2) - Spec file types: spec-file, test-spec, generated-file
+@speclang/ralph-loop/workflow (layer 2) - Ralph Loop workflow and operational processes
+@speclang/file-naming/patterns (layer 2) - File Naming Patterns
+@speclang/mcp.tools.specs (layer 3) - Spec-related tools: get spec, find dependents, get tree, validate, split, query errors, versioning, SQL
+@speclang/mcp.authentication (layer 3) - Authentication methods for remote and server modes
+@speclang/mcp.architecture (layer 3) - MCP server architecture diagram and components
+@speclang/ui.components.agent-health (layer 3) - Agent health grid component
+@speclang/ui.components.event-timeline (layer 3) - Event timeline component
+@speclang/ui.components.queue-depth (layer 3) - Queue depth meter component
+@speclang/mcp.overview (layer 3) - MCP server overview
+@speclang/mcp.sse-stream (layer 3) - SSE stream implementation for real-time events
+@speclang/mcp.tools.commands (layer 3) - Command queue tools: get status, query commands, insert command
+@speclang/ui.components.cascade-graph (layer 3) - Cascade graph visualization component
+@speclang/mcp.run-modes (layer 3) - Three run modes: editor-initiated, remote, server
+@speclang/mcp.configuration (layer 3) - Configuration options and schema
+@speclang/mcp-ui-tools (layer 3) - Additional MCP tools for system dashboard monitoring
+@speclang/implementation.sqlite-schema (layer 3) - SQLite database schema definitions and migration scripts for Speclang
+@speclang/ui.components.log-viewer (layer 3) - Log viewer component
+@speclang/ui.components.cascade-status (layer 3) - Cascade status card component
+@speclang/mcp.tools.locks (layer 3) - Lock and event tools: claim event, acquire lock, release lock
+@speclang/ui.components.system-metrics (layer 3) - System metrics panel component
+@implementation/ui-dashboard (layer 3) - ui-dashboard.ts.spec
+@speclang/mcp.tools.search (layer 3) - Search tools: speclang_search and speclang_semantic_search
+@speclang/opencode-plugin (layer 3) - TypeScript OpenCode plugin for Speclang integration (split into parts)
+@tests/ui-dashboard (layer 3) - BDD test specifications for UI dashboard implementation
+@speclang/implementation.ralph-loop (layer 3) - TypeScript implementation of Ralph Loop dual-agent system with steering packets
+@speclang/ui.components.control-panel (layer 3) - Control panel component for cascade operations
+@speclang/mcp.error-handling (layer 3) - Error categories and handling strategies
+@speclang/implementation.validation-system (layer 3) - TypeScript validation system for Speclang spec compliance
+@speclang/opencode-plugin.dir/architecture (layer 4) - Architecture diagram and components for OpenCode Speclang plugin
+@speclang/validation-tool (layer 4) - Implementation spec for autonomous validation tool
+@speclang/opencode-plugin.dir/overview (layer 4) - Overview and plugin lifecycle for OpenCode Speclang plugin
+@speclang/opencode-plugin.dir/session-manager (layer 5) - Session management for OpenCode Speclang plugin
+@speclang/opencode-plugin.dir/checklist (layer 5) - Implementation checklist for OpenCode Speclang plugin
+@speclang/implementation.sqlite-db (layer 5) - Python SQLite database module for Speclang
+@speclang/scripts.generate-ralph-loop.py (layer 5) - Generate Ralph Loop Python Code
+@speclang/scripts.generate-validation-system.py (layer 5) - Generate Validation System Python Code
+@speclang/opencode-plugin.dir/tools (layer 5) - Tools provided by OpenCode Speclang plugin
+@speclang/scripts.add-missing-fields.py (layer 5) - Add Missing Fields Python Code
+@speclang/opencode-plugin.dir/mcp-client (layer 5) - MCP client integration for OpenCode Speclang plugin
+@speclang/opencode-plugin.dir/event-system (layer 5) - Event system integration for OpenCode Speclang plugin
+@speclang/implementation.parser (layer 5) - Python header parser and validator for Speclang specs
+@speclang/scripts.generate-sqlite-schema.py (layer 5) - Generate SQLite Schema Python Code
+@speclang/opencode-plugin.dir/error-handling (layer 5) - Error handling for OpenCode Speclang plugin
+@speclang/scripts.validate-refs.py (layer 5) - Validate References Python Code
+@speclang/opencode-plugin.dir/git-integration (layer 5) - Git integration for OpenCode Speclang plugin
+@speclang/opencode-plugin.dir/plugin-lifecycle (layer 5) - Plugin lifecycle for OpenCode Speclang plugin
+@speclang/scripts.fix-headers.py (layer 5) - Fix Headers Python Code
+@speclang/scripts.generate-from-spec.py (layer 5) - Generate From Spec Python Code
+@speclang/scripts.generate-mcp-server.py (layer 5) - Generate MCP Server Python Code
+@speclang/scripts.generate-todo.py (layer 5) - Generate Todo Python Code
+@speclang/opencode-plugin.dir/convergence (layer 5) - Convergence detection for OpenCode Speclang plugin
+@speclang/opencode-plugin.dir/configuration (layer 5) - Configuration and tools for OpenCode Speclang plugin
+@speclang/scripts.rename-spec-files.py (layer 5) - Rename Spec Files Python Code
+@speclang/opencode-plugin.dir/ownership-guard (layer 5) - Ownership guard for OpenCode Speclang plugin
+@speclang/scripts.validate-autonomous.py (layer 5) - Validate Autonomous Python Code
+@speclang/scripts.generate-opencode-plugin.py (layer 5) - Generate OpenCode Plugin Python Code
+@speclang/scripts.compute-header-lines.py (layer 5) - Compute Header Lines Python Code
+@speclang/mcp-openapi-generation-tests (layer 5) - Acceptance tests for OpenAPI-MCP generator integration
+@speclang/mcp-openapi-generation-cli (layer 10) - openapi-generation-cli.ts.spec
+@examples/hello-world (layer 10) - Hello World Example

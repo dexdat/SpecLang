@@ -1,0 +1,12 @@
+
+pipeline:
+  on_converge:
+    - name: fail-stage
+      run: "exit 1"
+recovery:
+  max_attempts: 1
+  on_fail:
+    - notify:
+        target: log
+        message: "Pipeline failed"
+    

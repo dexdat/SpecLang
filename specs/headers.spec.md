@@ -6,8 +6,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [headers, format, universal, metadata]
 children:
-  - "@ref:specs/spec-format.dir/structure"
-  - "@ref:specs/spec-format.dir/blocks"
+  - "@ref:specs/spec-format.spec.dir/structure"
+  - "@ref:specs/spec-format.spec.dir/blocks"
 short: "Universal Headers - Metadata format for all SpecLang files"
 status: draft
 ---
@@ -69,6 +69,6 @@ Universal headers enable:
 
 ## Implementation
 
-See @ref:specs/spec-format.dir/structure for detailed header structure and parsing rules.
+See @ref:specs/spec-format.spec.dir/structure for detailed header structure and parsing rules.
 
-See @ref:specs/spec-format.dir/blocks for content block formats following the header.
+See @ref:specs/spec-format.spec.dir/blocks for content block formats following the header.

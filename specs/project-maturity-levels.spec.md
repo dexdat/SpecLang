@@ -6,8 +6,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [project, maturity, levels, autonomous]
 children:
-  - "@ref:specs/project-maturity-levels.dir/levels"
-  - "@ref:specs/project-maturity-levels.dir/criteria"
+  - "@ref:specs/project-maturity-levels.spec.dir/levels"
+  - "@ref:specs/project-maturity-levels.spec.dir/criteria"
 short: Concrete criteria for each project_level value
 ---
 # Project Maturity Levels
@@ -18,7 +18,7 @@ This specification has been split into multiple parts for better organization an
 
 ## Parts
 
-- @ref:specs/project-maturity-levels.dir/levels – Definitions for each project_level value
-- @ref:specs/project-maturity-levels.dir/criteria – Detailed criteria and validation rules
+- @ref:specs/project-maturity-levels.spec.dir/levels – Definitions for each project_level value
+- @ref:specs/project-maturity-levels.spec.dir/criteria – Detailed criteria and validation rules
 
-*See individual parts in project-maturity-levels.dir/*
+*See individual parts in project-maturity-levels.spec.dir/*

@@ -125,7 +125,7 @@ Every file references others via `@ref:path#block`. This creates a dependency gr
 
 Specs auto-split when they get too big:
 - User sets limits (tokens, lines, chars)
-- System creates `.dir/` folders
+- System creates `.spec.dir/` folders
 - Parent becomes index, children contain details
 - Budget overhead allows for headers/refs
 
@@ -136,7 +136,7 @@ Before:
 
 After:
   auth.spec.yaml (index, 500 tokens)
-  auth.spec.dir/
+  auth.spec.spec.dir/
     ├── entities.spec.yaml
     ├── operations.spec.yaml
     └── policies.spec.yaml

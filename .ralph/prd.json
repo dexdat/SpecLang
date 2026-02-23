@@ -1,0 +1,2131 @@
+{
+  "project": "SpecLang",
+  "description": "Meta-circular specification language where specs self-assemble into code",
+  "branchName": "speclang-bootstrap",
+  "phases": [
+    {
+      "id": "phase-0",
+      "name": "Foundation",
+      "description": "Core infrastructure: SQLite, parser, indexer, workflow, config, deployment",
+      "stories": [
+        {
+          "id": "P0-001",
+          "title": "Implement SQLite database layer",
+          "spec": "specs/sqlite.spec.md",
+          "prompt": "docs/prompts/phase-0.1-sqlite.md",
+          "outputs": [
+            "src/db/index.ts",
+            "src/db/types.ts",
+            "src/db/migrations.ts",
+            "tests/db.test.ts"
+          ],
+          "priority": 1,
+          "passes": true
+        },
+        {
+          "id": "P0-002",
+          "title": "Implement spec header parser",
+          "spec": "specs/headers.spec.md",
+          "prompt": "docs/prompts/phase-0.2-parser.md",
+          "outputs": [
+            "src/parser/header.ts",
+            "src/parser/validator.ts",
+            "tests/parser.test.ts"
+          ],
+          "priority": 2,
+          "passes": true
+        },
+        {
+          "id": "P0-003",
+          "title": "Implement spec indexer",
+          "spec": "specs/project-layout.spec.md",
+          "prompt": "docs/prompts/phase-0.3-indexer.md",
+          "outputs": [
+            "src/indexer/index.ts",
+            "src/indexer/graph.ts",
+            "_index.json"
+          ],
+          "priority": 3,
+          "passes": true
+        },
+        {
+          "id": "P0-004",
+          "title": "Implement user workflow system",
+          "spec": "specs/workflow.spec.md",
+          "prompt": "docs/prompts/phase-0.4-workflow.md",
+          "outputs": [
+            "src/workflow/cli.ts",
+            "src/workflow/setup.ts",
+            "src/workflow/conversation.ts",
+            "src/workflow/review.ts",
+            "docs/getting-started.md"
+          ],
+          "priority": 4,
+          "passes": true
+        },
+        {
+          "id": "P0-005",
+          "title": "Implement configuration system",
+          "spec": "specs/config.spec.md",
+          "prompt": "docs/prompts/phase-0.5-config.md",
+          "outputs": [
+            "src/config/index.ts",
+            "src/config/schema.ts",
+            "src/config/loader.ts",
+            "src/config/validator.ts",
+            "tests/config.test.ts"
+          ],
+          "priority": 5,
+          "passes": true
+        },
+        {
+          "id": "P0-006",
+          "title": "Implement directory structure system",
+          "spec": "specs/directory-structure.spec.md",
+          "prompt": "docs/prompts/phase-0.6-directory-structure.md",
+          "outputs": [
+            "src/directory/index.ts",
+            "src/directory/structure.ts",
+            "src/directory/creator.ts",
+            "src/directory/scanner.ts",
+            "tests/directory.test.ts"
+          ],
+          "priority": 6,
+          "passes": true
+        },
+        {
+          "id": "P0-007",
+          "title": "Implement deployment modes",
+          "spec": "specs/deployment.spec.md",
+          "prompt": "docs/prompts/phase-0.7-deployment.md",
+          "outputs": [
+            "src/deployment/index.ts",
+            "src/deployment/modes.ts",
+            "src/deployment/switcher.ts",
+            "src/deployment/light.ts",
+            "src/deployment/enterprise.ts",
+            "tests/deployment.test.ts"
+          ],
+          "priority": 7,
+          "passes": false
+        },
+        {
+          "id": "P0-008",
+          "title": "Implement symlinks and dual-view",
+          "spec": "specs/symlinks.spec.md",
+          "prompt": "docs/prompts/phase-0.8-symlinks.md",
+          "outputs": [
+            "src/symlinks/index.ts",
+            "src/symlinks/creator.ts",
+            "src/symlinks/verifier.ts",
+            "src/symlinks/rebuilder.ts",
+            "tests/symlinks.test.ts"
+          ],
+          "priority": 8,
+          "passes": false
+        },
+        {
+          "id": "P0-009",
+          "title": "Implement Ralph Loop system",
+          "spec": "specs/ralph-loop.spec.md",
+          "prompt": "docs/prompts/phase-0.9-ralph-loop.md",
+          "outputs": [
+            "src/ralph/index.ts",
+            "src/ralph/loop.ts",
+            "src/ralph/builder.ts",
+            "src/ralph/verifier.ts",
+            "src/ralph/steering.ts",
+            "src/sqlite/migrations/005_ralph.sql"
+          ],
+          "priority": 9,
+          "passes": false
+        },
+        {
+          "id": "P0-010",
+          "title": "Implement standard library",
+          "spec": "specs/stdlib.spec.md",
+          "prompt": "docs/prompts/phase-0.10-stdlib.md",
+          "outputs": [
+            "src/stdlib/index.ts",
+            "src/stdlib/types.ts",
+            "src/stdlib/primitives.ts",
+            "src/stdlib/composites.ts",
+            "src/stdlib/results.ts",
+            "src/stdlib/functions.ts",
+            "src/stdlib/assertions.ts",
+            "tests/stdlib.test.ts"
+          ],
+          "priority": 10,
+          "passes": false
+        },
+        {
+          "id": "P0-011",
+          "title": "Implement skills pack",
+          "spec": "specs/skills.spec.md",
+          "prompt": "docs/prompts/phase-0.11-skills.md",
+          "outputs": [
+            ".opencode/skills/spec-writer.md",
+            ".opencode/skills/code-gen.md",
+            ".opencode/skills/test-writer.md",
+            ".opencode/skills/back-sync.md",
+            ".opencode/skills/orchestrator.md",
+            "src/skills/index.ts",
+            "src/skills/registry.ts",
+            "tests/skills.test.ts"
+          ],
+          "priority": 11,
+          "passes": false
+        },
+        {
+          "id": "P0-012",
+          "title": "Implement Agent Tools API",
+          "spec": "specs/tools.spec.md",
+          "prompt": "docs/prompts/phase-0.12-tools.md",
+          "outputs": [
+            "src/tools/index.ts",
+            "src/tools/registry.ts",
+            "src/tools/types.ts",
+            "src/tools/file-tools.ts",
+            "src/tools/query-tools.ts",
+            "src/tools/graph-tools.ts",
+            "src/tools/validation-tools.ts",
+            "src/tools/cascade-tools.ts",
+            "src/tools/git-tools.ts",
+            "src/tools/pipeline-tools.ts",
+            "src/tools/session-tools.ts",
+            "tests/tools.test.ts"
+          ],
+          "priority": 12,
+          "passes": false
+        },
+        {
+          "id": "P0-013",
+          "title": "Implement test specs format",
+          "spec": "specs/test-specs.spec.md",
+          "prompt": "docs/prompts/phase-0.13-test-specs.md",
+          "outputs": [
+            "src/test-specs/index.ts",
+            "src/test-specs/parser.ts",
+            "src/test-specs/generator.ts",
+            "src/test-specs/runner.ts",
+            "src/test-specs/reporter.ts",
+            "src/test-specs/sync.ts",
+            "src/test-specs/types.ts",
+            "tests/test-specs.test.ts"
+          ],
+          "priority": 13,
+          "passes": false
+        },
+        {
+          "id": "P0-014",
+          "title": "Implement lens system",
+          "spec": "specs/lenses.spec.md",
+          "prompt": "docs/prompts/phase-0.14-lenses.md",
+          "outputs": [
+            "src/lenses/index.ts",
+            "src/lenses/types.ts",
+            "src/lenses/registry.ts",
+            "src/lenses/prose-lens.ts",
+            "src/lenses/code-lens.ts",
+            "src/lenses/entity-lens.ts",
+            "src/lenses/operation-lens.ts",
+            "src/lenses/math-lens.ts",
+            "src/lenses/acceptance-lens.ts",
+            "src/lenses/diagram-lens.ts",
+            "src/lenses/converter.ts",
+            "tests/lenses.test.ts"
+          ],
+          "priority": 14,
+          "passes": false
+        },
+        {
+          "id": "P0-015",
+          "title": "Implement dynamic spec splitting",
+          "spec": "specs/dynamic-split.spec.md",
+          "prompt": "docs/prompts/phase-0.15-dynamic-split.md",
+          "outputs": [
+            "src/split/tokens.rs",
+            "src/split/checker.rs",
+            "src/split/executor.rs",
+            "src/split/types.rs",
+            "tests/dynamic-split.test.ts"
+          ],
+          "priority": 15,
+          "passes": false
+        },
+        {
+          "id": "P0-016",
+          "title": "Implement project layout and init command",
+          "spec": "specs/project-layout.spec.md",
+          "prompt": "docs/prompts/phase-0.16-project-layout.md",
+          "outputs": [
+            "src/cli/init.rs",
+            "src/cli/validate.rs",
+            "src/templates/project.scl",
+            "src/templates/.gitignore",
+            "src/templates/.speclangrc",
+            "tests/init.test.ts"
+          ],
+          "priority": 16,
+          "passes": false
+        },
+        {
+          "id": "P0-017",
+          "title": "Implement header field definitions",
+          "spec": "specs/headers.spec.md",
+          "prompt": "docs/prompts/phase-0.17-headers-fields.md",
+          "outputs": [
+            "src/parser/fields.ts",
+            "src/parser/field-types.ts",
+            "src/parser/field-validator.ts",
+            "tests/fields.test.ts"
+          ],
+          "priority": 17,
+          "passes": false
+        },
+        {
+          "id": "P0-018",
+          "title": "Implement header validation rules",
+          "spec": "specs/headers.spec.md",
+          "prompt": "docs/prompts/phase-0.18-headers-validation.md",
+          "outputs": [
+            "src/parser/header-validator.ts",
+            "src/parser/validation-messages.ts",
+            "src/parser/validation-recovery.ts",
+            "tests/header-validation.test.ts"
+          ],
+          "priority": 18,
+          "passes": false
+        },
+        {
+          "id": "P0-019",
+          "title": "Implement cascade triggers",
+          "spec": "specs/cascade.dir/triggers.spec.md",
+          "prompt": "docs/prompts/phase-0.19-cascade-triggers.md",
+          "outputs": [
+            "src/cascade/triggers.ts",
+            "src/cascade/file-watcher.ts",
+            "src/cascade/route-matcher.ts",
+            "tests/cascade-triggers.test.ts"
+          ],
+          "priority": 19,
+          "passes": false
+        },
+        {
+          "id": "P0-020",
+          "title": "Implement cascade depth and convergence",
+          "spec": "specs/cascade.dir/convergence.spec.md",
+          "prompt": "docs/prompts/phase-0.20-cascade-depth.md",
+          "outputs": [
+            "src/cascade/convergence.ts",
+            "src/cascade/depth-tracker.ts",
+            "src/cascade/termination.ts",
+            "tests/cascade-depth.test.ts"
+          ],
+          "priority": 20,
+          "passes": false
+        },
+        {
+          "id": "P0-021",
+          "title": "Implement UI interactions",
+          "spec": "specs/ui.dir/interactions.spec.md",
+          "prompt": "docs/prompts/phase-0.21-ui-interactions.md",
+          "outputs": [
+            "src/dashboard/interactions/cascade-control.ts",
+            "src/dashboard/interactions/spec-editing.ts",
+            "src/dashboard/interactions/real-time-updates.ts",
+            "src/dashboard/interactions/git-integration.ts",
+            "tests/ui-interactions.test.ts"
+          ],
+          "priority": 21,
+          "passes": false
+        },
+        {
+          "id": "P0-022",
+          "title": "Implement UI testing",
+          "spec": "specs/ui.dir/testing.spec.md",
+          "prompt": "docs/prompts/phase-0.22-ui-testing.md",
+          "outputs": [
+            "src/dashboard/testing/mock-mcp.ts",
+            "src/dashboard/testing/accessibility.ts",
+            "src/dashboard/testing/performance.ts",
+            "tests/dashboard/testing.test.ts"
+          ],
+          "priority": 22,
+          "passes": false
+        },
+        {
+          "id": "P0-023",
+          "title": "Implement UI visual design system",
+          "spec": "specs/ui.dir/visual-design.spec.md",
+          "prompt": "docs/prompts/phase-0.23-ui-visual.md",
+          "outputs": [
+            "src/dashboard/styles/brutalist.css",
+            "src/dashboard/styles/variables.css",
+            "src/dashboard/styles/themes.ts",
+            "src/dashboard/styles/accessibility.css",
+            "tests/ui-visual.test.ts"
+          ],
+          "priority": 23,
+          "passes": false
+        },
+        {
+          "id": "P0-024",
+          "title": "Implement header validation rules",
+          "spec": "specs/headers.spec.md",
+          "prompt": "docs/prompts/phase-0.24-validation-rules.md",
+          "outputs": [
+            "src/parser/validation-rules.ts",
+            "src/parser/rule-engine.ts",
+            "src/parser/rule-definitions.ts",
+            "tests/validation-rules.test.ts"
+          ],
+          "priority": 24,
+          "passes": false
+        },
+        {
+          "id": "P0-025",
+          "title": "Implement project maturity levels",
+          "spec": "specs/project-maturity.spec.md",
+          "prompt": "docs/prompts/phase-0.25-project-maturity.md",
+          "outputs": [
+            "src/maturity/index.ts",
+            "src/maturity/levels.ts",
+            "src/maturity/validator.ts",
+            "src/maturity/transitions.ts",
+            "tests/maturity.test.ts"
+          ],
+          "priority": 25,
+          "passes": false
+        },
+        {
+          "id": "P0-026",
+          "title": "Implement standard library types",
+          "spec": "specs/stdlib.dir/types.spec.md",
+          "prompt": "docs/prompts/phase-0.26-stdlib-types.md",
+          "outputs": [
+            "src/stdlib/types/index.ts",
+            "src/stdlib/types/primitives.ts",
+            "src/stdlib/types/composites.ts",
+            "src/stdlib/types/results.ts",
+            "src/stdlib/types/common.ts",
+            "src/stdlib/types/predicates.ts",
+            "tests/stdlib/types.test.ts"
+          ],
+          "priority": 26,
+          "passes": false
+        },
+        {
+          "id": "P0-027",
+          "title": "Implement standard library functions",
+          "spec": "specs/stdlib.dir/mapping.spec.md",
+          "prompt": "docs/prompts/phase-0.27-stdlib-functions.md",
+          "outputs": [
+            "src/stdlib/functions/index.ts",
+            "src/stdlib/functions/core.ts",
+            "src/stdlib/functions/string.ts",
+            "src/stdlib/functions/math.ts",
+            "src/stdlib/functions/collection.ts",
+            "src/stdlib/functions/debug.ts",
+            "src/stdlib/assertions/index.ts",
+            "src/stdlib/assertions/core.ts",
+            "src/stdlib/assertions/type.ts",
+            "src/stdlib/assertions/comparison.ts",
+            "tests/stdlib/functions.test.ts"
+          ],
+          "priority": 27,
+          "passes": false
+        },
+        {
+          "id": "P0-028",
+          "title": "Implement Mermaid diagram lens specification",
+          "spec": "specs/lenses.dir/mermaid.spec.md",
+          "prompt": "docs/prompts/phase-0.28-lenses-mermaid.md",
+          "outputs": [
+            "specs/lenses.dir/mermaid.spec.md"
+          ],
+          "priority": 28,
+          "passes": false
+        },
+        {
+          "id": "P0-029",
+          "title": "Implement Code lens specification",
+          "spec": "specs/lenses.dir/code.spec.md",
+          "prompt": "docs/prompts/phase-0.29-lenses-code.md",
+          "outputs": [
+            "specs/lenses.dir/code.spec.md"
+          ],
+          "priority": 29,
+          "passes": false
+        },
+        {
+          "id": "P0-030",
+          "title": "Implement Entity lens specification",
+          "spec": "specs/lenses.dir/entity.spec.md",
+          "prompt": "docs/prompts/phase-0.30-lenses-entity.md",
+          "outputs": [
+            "specs/lenses.dir/entity.spec.md"
+          ],
+          "priority": 30,
+          "passes": false
+        },
+        {
+          "id": "P0-031",
+          "title": "Implement Operation lens specification",
+          "spec": "specs/lenses.dir/operation.spec.md",
+          "prompt": "docs/prompts/phase-0.31-lenses-operation.md",
+          "outputs": [
+            "specs/lenses.dir/operation.spec.md"
+          ],
+          "priority": 31,
+          "passes": false
+        },
+        {
+          "id": "P0-032",
+          "title": "Implement Prose lens specification",
+          "spec": "specs/lenses.dir/prose.spec.md",
+          "prompt": "docs/prompts/phase-0.32-lenses-prose.md",
+          "outputs": [
+            "specs/lenses.dir/prose.spec.md"
+          ],
+          "priority": 32,
+          "passes": false
+        },
+        {
+          "id": "P0-033",
+          "title": "Layer System Overview",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-0.33-layers-overview.md",
+          "outputs": [
+            "src/layers/",
+            "index.ts              # Layer system entry point",
+            "types.ts              # Layer types",
+            "definitions.ts        # Layer 0-10 definitions",
+            "validator.ts          # Layer validation",
+            "interactions.ts       # Cross-field interactions",
+            "transitions.ts        # Layer transition handling",
+            "definitions.test.ts"
+          ],
+          "priority": 33,
+          "passes": false
+        },
+        {
+          "id": "P0-034",
+          "title": "Layer Abstraction Concepts",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-0.34-layers-abstraction.md",
+          "outputs": [
+            "src/layers/",
+            "abstraction.ts         # Abstraction concepts",
+            "agent-guidance.ts      # Agent guidance per layer",
+            "evolution.ts           # Spec evolution through layers",
+            "semantics.ts           # Layer semantic definitions",
+            "cross-field.ts          # Cross-field validation",
+            "abstraction.test.ts",
+            "agent-guidance.test.ts"
+          ],
+          "priority": 34,
+          "passes": false
+        },
+        {
+          "id": "P0-035",
+          "title": "Project Level - POC (Proof of Concept)",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-0.35-project-levels-poc.md",
+          "outputs": [
+            "src/maturity/levels/",
+            "poc.ts                  # POC level definition",
+            "poc-validator.ts        # POC-specific validation",
+            "poc-transitions.ts      # POC transition handling",
+            "poc-behavior.ts         # POC agent behavior",
+            "poc.test.ts",
+            "poc-validator.test.ts"
+          ],
+          "priority": 35,
+          "passes": false
+        },
+        {
+          "id": "P0-036",
+          "title": "Project Level - MVP (Minimum Viable Product)",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-0.36-project-levels-mvp.md",
+          "outputs": [
+            "src/maturity/levels/",
+            "mvp.ts                  # MVP level definition",
+            "mvp-validator.ts        # MVP-specific validation",
+            "mvp-transitions.ts      # MVP transition handling",
+            "mvp-behavior.ts        # MVP agent behavior",
+            "mvp.test.ts",
+            "mvp-validator.test.ts"
+          ],
+          "priority": 36,
+          "passes": false
+        },
+        {
+          "id": "P0-037",
+          "title": "Project Level - Alpha",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-0.37-project-levels-alpha.md",
+          "outputs": [
+            "src/maturity/levels/",
+            "alpha.ts                  # Alpha level definition",
+            "alpha-validator.ts        # Alpha-specific validation",
+            "alpha-transitions.ts      # Alpha transition handling",
+            "alpha-behavior.ts        # Alpha agent behavior",
+            "alpha.test.ts",
+            "alpha-validator.test.ts"
+          ],
+          "priority": 37,
+          "passes": false
+        },
+        {
+          "id": "P0-038",
+          "title": "Beta Maturity Level",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-0.38-project-levels-beta.md",
+          "outputs": [
+            "src/maturity/beta/",
+            "index.ts              # Beta level exports",
+            "criteria.ts           # Beta-specific criteria",
+            "requirements.ts       # Beta requirements checker",
+            "checklist.ts          # Beta transition checklist",
+            "behaviors.ts          # Beta agent behaviors"
+          ],
+          "priority": 38,
+          "passes": false
+        },
+        {
+          "id": "P0-039",
+          "title": "Production Maturity Level",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-0.39-project-levels-production.md",
+          "outputs": [
+            "src/maturity/production/",
+            "index.ts              # Production level exports",
+            "criteria.ts           # Production-specific criteria",
+            "requirements.ts       # Production requirements checker",
+            "slas.ts               # SLA definitions and tracking",
+            "support.ts            # Support tier configuration",
+            "degradation.ts        # Graceful degradation policies",
+            "behaviors.ts          # Production agent behaviors"
+          ],
+          "priority": 39,
+          "passes": false
+        },
+        {
+          "id": "P0-040",
+          "title": "Startup Maturity Level",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-0.40-project-levels-startup.md",
+          "outputs": [
+            "src/maturity/startup/",
+            "index.ts              # Startup level exports",
+            "criteria.ts           # Startup-specific criteria",
+            "requirements.ts       # Startup requirements checker",
+            "rapid-release.ts      # Rapid release configuration",
+            "minimal-process.ts    # Minimal overhead processes",
+            "team-config.ts        # Team configuration",
+            "behaviors.ts          # Startup agent behaviors"
+          ],
+          "priority": 40,
+          "passes": false
+        },
+        {
+          "id": "P0-041",
+          "title": "Enterprise Maturity Level",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-0.41-project-levels-enterprise.md",
+          "outputs": [
+            "src/maturity/enterprise/",
+            "index.ts              # Enterprise level exports",
+            "criteria.ts           # Enterprise-specific criteria",
+            "requirements.ts       # Enterprise requirements checker",
+            "governance.ts         # Governance policies",
+            "compliance.ts         # Compliance framework",
+            "audit.ts              # Audit trail management",
+            "multi-team.ts         # Multi-team coordination"
+          ],
+          "priority": 41,
+          "passes": false
+        }
+      ]
+    },
+    {
+      "id": "phase-1",
+      "name": "Core Runtime",
+      "description": "Daemon and agent session management",
+      "stories": [
+        {
+          "id": "P1-001",
+          "title": "Design speclangd daemon architecture",
+          "spec": "specs/daemon.spec.md",
+          "prompt": "docs/prompts/phase-1.1-daemon.md",
+          "outputs": [
+            "src/daemon/Cargo.toml",
+            "src/daemon/src/main.rs",
+            "src/daemon/src/watcher.rs"
+          ],
+          "priority": 1,
+          "passes": false
+        },
+        {
+          "id": "P1-002",
+          "title": "Implement agent session manager",
+          "spec": "specs/agent-protocol.spec.md",
+          "prompt": "docs/prompts/phase-1.2-agents.md",
+          "outputs": [
+            "src/agents/session.ts",
+            "src/agents/registry.ts",
+            "src/agents/tools.ts"
+          ],
+          "priority": 2,
+          "passes": false
+        },
+        {
+          "id": "P1-003",
+          "title": "Implement OpenCode integration",
+          "spec": "specs/opencode.spec.md",
+          "prompt": "docs/prompts/phase-1.3-opencode.md",
+          "outputs": [
+            "~/.opencode/plugins/speclang.ts",
+            "src/opencode/plugin.ts",
+            "src/opencode/events.ts",
+            "src/opencode/skills.ts",
+            "src/opencode/tools.ts",
+            "src/opencode/convergence.ts"
+          ],
+          "priority": 3,
+          "passes": false
+        },
+        {
+          "id": "P1-004",
+          "title": "Implement cascade coordination protocol",
+          "spec": "specs/cascade-protocol.spec.md",
+          "prompt": "docs/prompts/phase-1.4-cascade-protocol.md",
+          "outputs": [
+            "src/cascade/index.ts",
+            "src/cascade/coordinator.ts",
+            "src/cascade/state.ts",
+            "src/cascade/invocation.ts",
+            "src/cascade/verification.ts",
+            "scripts/validate_refs.py",
+            "scripts/validate_autonomous.py"
+          ],
+          "priority": 4,
+          "passes": false
+        },
+        {
+          "id": "P1-005",
+          "title": "Implement autonomous validation tool",
+          "spec": "specs/validation-tool.spec.md",
+          "prompt": "docs/prompts/phase-1.5-validation-tool.md",
+          "outputs": [
+            "src/validation/index.ts",
+            "src/validation/validator.ts",
+            "src/validation/step-detection.ts",
+            "src/validation/ref-resolution.ts",
+            "src/validation/ambiguity.ts",
+            "src/validation/scorer.ts",
+            "src/validation/reporter.ts",
+            "src/validation/cli.ts",
+            "src/validation/types.ts",
+            "tests/validation.test.ts",
+            "bin/speclang-validate"
+          ],
+          "priority": 5,
+          "passes": false
+        },
+        {
+          "id": "P1-006",
+          "title": "Implement daemon events and watcher",
+          "spec": "specs/daemon.dir/events.spec.md",
+          "prompt": "docs/prompts/phase-1.6-daemon-events.md",
+          "outputs": [
+            "src/daemon/watcher.rs",
+            "src/daemon/gitignore.rs",
+            "src/daemon/debounce.rs",
+            "src/daemon/event_types.rs",
+            "tests/daemon-events.test.ts"
+          ],
+          "priority": 6,
+          "passes": false
+        },
+        {
+          "id": "P1-007",
+          "title": "Implement daemon convergence detection",
+          "spec": "specs/daemon.dir/convergence.spec.md",
+          "prompt": "docs/prompts/phase-1.7-daemon-convergence.md",
+          "outputs": [
+            "src/daemon/convergence.rs",
+            "src/daemon/cascade_status.rs",
+            "src/daemon/finalize.rs",
+            "tests/daemon-convergence.test.ts"
+          ],
+          "priority": 7,
+          "passes": false
+        },
+        {
+          "id": "P1-008",
+          "title": "Implement daemon event routing",
+          "spec": "specs/daemon.dir/routing.spec.md",
+          "prompt": "docs/prompts/phase-1.8-daemon-routing.md",
+          "outputs": [
+            "src/daemon/router.rs",
+            "src/daemon/routes.rs",
+            "src/daemon/priority.rs",
+            "config/routing.yaml",
+            "tests/daemon-routing.test.ts"
+          ],
+          "priority": 8,
+          "passes": false
+        },
+        {
+          "id": "P1-009",
+          "title": "Implement daemon file locking",
+          "spec": "specs/mcp.dir/tools/locks.spec.md",
+          "prompt": "docs/prompts/phase-1.9-daemon-locks.md",
+          "outputs": [
+            "src/daemon/locks.rs",
+            "src/daemon/deadlock.rs",
+            "src/daemon/lock_client.rs",
+            "src/sqlite/migrations/006_locks.sql",
+            "tests/daemon-locks.test.ts"
+          ],
+          "priority": 9,
+          "passes": false
+        },
+        {
+          "id": "P1-010",
+          "title": "Implement agent sessions and lifecycle",
+          "spec": "specs/agent-protocol.dir/sessions.spec.md",
+          "prompt": "docs/prompts/phase-1.10-agent-sessions.md",
+          "outputs": [
+            "src/agents/session-manager.ts",
+            "src/agents/lifecycle.ts",
+            "src/agents/session-state.ts",
+            "tests/agent-sessions.test.ts"
+          ],
+          "priority": 10,
+          "passes": false
+        },
+        {
+          "id": "P1-011",
+          "title": "Implement agent file ownership",
+          "spec": "specs/agent-protocol.dir/ownership.spec.md",
+          "prompt": "docs/prompts/phase-1.11-agent-ownership.md",
+          "outputs": [
+            "src/agents/ownership.ts",
+            "src/agents/guard.ts",
+            "src/agents/violations.ts",
+            "tests/agent-ownership.test.ts"
+          ],
+          "priority": 11,
+          "passes": false
+        },
+        {
+          "id": "P1-012",
+          "title": "Implement agent tools API",
+          "spec": "specs/tools.spec.md",
+          "prompt": "docs/prompts/phase-1.12-agent-tools.md",
+          "outputs": [
+            "src/tools/index.ts",
+            "src/tools/registry.ts",
+            "src/tools/types.ts",
+            "src/tools/context.ts",
+            "src/tools/handlers/spec.ts",
+            "src/tools/handlers/file.ts",
+            "src/tools/handlers/dependency.ts",
+            "src/tools/handlers/cascade.ts",
+            "tests/tools/tools.test.ts"
+          ],
+          "priority": 12,
+          "passes": false
+        },
+        {
+          "id": "P1-013",
+          "title": "Ambiguity Detection",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-1.13-validation-ambiguity.md",
+          "outputs": [
+            "src/validation/",
+            "ambiguity/",
+            "\u2502    index.ts           # Exports",
+            "\u2502    detector.ts        # Main detection logic",
+            "\u2502    patterns.ts        # Ambiguity patterns",
+            "\u2502    context.ts         # Context-aware filtering",
+            "\u2502    scorer.ts          # Ambiguity severity scoring",
+            "\u2502    reporter.ts       # Report generation"
+          ],
+          "priority": 13,
+          "passes": false
+        },
+        {
+          "id": "P1-014",
+          "title": "Validation Completeness Checking",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-1.14-validation-completeness.md",
+          "outputs": [
+            "src/validation/",
+            "completeness/",
+            "\u2502    index.ts           # Exports",
+            "\u2502    checker.ts         # Main completeness checking",
+            "\u2502    metadata.ts       # Metadata validation",
+            "\u2502    blocks.ts         # Block structure validation",
+            "\u2502    references.ts     # Reference validation",
+            "\u2502    scorer.ts          # Completeness scoring"
+          ],
+          "priority": 14,
+          "passes": false
+        },
+        {
+          "id": "P1-015",
+          "title": "Step-by-Step Detection",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-1.15-validation-step-detection.md",
+          "outputs": [
+            "src/validation/",
+            "step-detection/",
+            "\u2502    index.ts           # Exports",
+            "\u2502    detector.ts        # Main step detection",
+            "\u2502    patterns.ts        # Step patterns",
+            "\u2502    analyzer.ts        # Content analysis",
+            "\u2502    scorer.ts          # Coverage scoring",
+            "\u2502    reporter.ts        # Report generation"
+          ],
+          "priority": 15,
+          "passes": false
+        },
+        {
+          "id": "P1-016",
+          "title": "Human-Only Agent Support",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-1.16-agent-support-human.md",
+          "outputs": [
+            "src/agent-support/human-only/",
+            "index.ts              # Human-only exports",
+            "enforcer.ts           # Human-only enforcement",
+            "confirmation.ts        # Confirmation workflows",
+            "approval.ts           # Approval tracking",
+            "oversight.ts           # Human oversight mechanisms",
+            "restrictions.ts        # Agent restrictions"
+          ],
+          "priority": 16,
+          "passes": false
+        },
+        {
+          "id": "P1-017",
+          "title": "Agent-Assisted Support Level",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-1.17-agent-support-assisted.md",
+          "outputs": [
+            "src/agent-support/agent-assisted/",
+            "index.ts              # Agent-assisted exports",
+            "enforcer.ts           # Agent-assisted enforcement",
+            "guidance.ts           # Human guidance integration",
+            "suggestions.ts        # Agent suggestions",
+            "checkpoints.ts        # Checkpoint-based execution",
+            "handover.ts           # Human-agent handover"
+          ],
+          "priority": 17,
+          "passes": false
+        },
+        {
+          "id": "P1-018",
+          "title": "Agent-Autonomous Support Level",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-1.18-agent-support-autonomous.md",
+          "outputs": [
+            "src/agent-support/agent-autonomous/",
+            "index.ts              # Agent-autonomous exports",
+            "enforcer.ts           # Autonomous enforcement",
+            "executor.ts           # Full autonomous executor",
+            "self-validation.ts    # Self-validation during execution",
+            "error-recovery.ts     # Autonomous error recovery",
+            "reporting.ts          # Autonomous reporting",
+            "limits.ts             # Operational limits"
+          ],
+          "priority": 18,
+          "passes": false
+        },
+        {
+          "id": "P1-019",
+          "title": "Agent Behavior Matrix",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-1.19-agent-behavior-matrix.md",
+          "outputs": [
+            "src/agent-behavior/",
+            "index.ts              # Behavior matrix exports",
+            "matrix.ts             # Core behavior matrix",
+            "rules.ts              # Behavior rules engine",
+            "modifiers.ts          # Metadata-based modifiers",
+            "constraints.ts        # Constraint application",
+            "validators.ts         # Behavior validation"
+          ],
+          "priority": 19,
+          "passes": false
+        },
+        {
+          "id": "P1-020",
+          "title": "Transition - Upgrade Workflows",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-1.20-transition-upgrade.md",
+          "outputs": [
+            "src/transition/",
+            "upgrade/",
+            "\u2502    index.ts              # Upgrade exports",
+            "\u2502    planner.ts            # Upgrade planning",
+            "\u2502    checklist.ts          # Upgrade checklist",
+            "\u2502    validator.ts          # Upgrade validation",
+            "\u2502    executor.ts           # Upgrade execution",
+            "\u2502    rollback.ts           # Upgrade rollback"
+          ],
+          "priority": 20,
+          "passes": false
+        },
+        {
+          "id": "P1-021",
+          "title": "Transition - Downgrade Workflows",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-1.21-transition-downgrade.md",
+          "outputs": [
+            "src/transition/",
+            "downgrade/",
+            "\u2502    index.ts              # Downgrade exports",
+            "\u2502    triggers.ts           # Downgrade triggers",
+            "\u2502    planner.ts            # Downgrade planning",
+            "\u2502    executor.ts           # Downgrade execution",
+            "\u2502    notification.ts       # Downgrade notifications",
+            "\u2502    audit.ts              # Downgrade audit trail"
+          ],
+          "priority": 21,
+          "passes": false
+        }
+      ]
+    },
+    {
+      "id": "phase-2",
+      "name": "MCP Interface",
+      "description": "MCP server for universal editor access",
+      "stories": [
+        {
+          "id": "P2-001",
+          "title": "Complete MCP server implementation",
+          "spec": "specs/mcp.spec.md",
+          "prompt": "docs/prompts/phase-2.1-mcp-server.md",
+          "outputs": [
+            "src/mcp/server.ts",
+            "src/mcp/tools/*.ts",
+            "tests/mcp.test.ts"
+          ],
+          "priority": 1,
+          "passes": false
+        },
+        {
+          "id": "P2-002",
+          "title": "Implement MCP CLI",
+          "spec": "specs/mcp.dir/cli.spec.md",
+          "prompt": "docs/prompts/phase-2.2-mcp-cli.md",
+          "outputs": [
+            "src/cli/index.ts",
+            "src/cli/commands/*.ts",
+            "bin/speclang"
+          ],
+          "priority": 2,
+          "passes": false
+        },
+        {
+          "id": "P2-003",
+          "title": "Implement MCP daemon (speclangd Enterprise)",
+          "spec": "specs/mcp-daemon.spec.md",
+          "prompt": "docs/prompts/phase-2.3-mcp-daemon.md",
+          "outputs": [
+            "src/daemon/enterprise/main.go",
+            "src/daemon/enterprise/http.go",
+            "src/daemon/enterprise/sse.go",
+            "src/daemon/enterprise/queue.go",
+            "src/daemon/enterprise/worktree.go",
+            "bin/speclangd"
+          ],
+          "priority": 3,
+          "passes": false
+        },
+        {
+          "id": "P2-004",
+          "title": "Implement MCP UI tools",
+          "spec": "specs/mcp-ui-tools.spec.md",
+          "prompt": "docs/prompts/phase-2.4-mcp-ui-tools.md",
+          "outputs": [
+            "src/mcp/tools/dashboard.ts",
+            "src/mcp/tools/sse.ts",
+            "src/sqlite/migrations/004_dashboard.sql"
+          ],
+          "priority": 4,
+          "passes": false
+        },
+        {
+          "id": "P2-005",
+          "title": "Implement OpenAPI-MCP generator integration",
+          "spec": "specs/mcp/openapi-generation.spec.md",
+          "prompt": "docs/prompts/phase-2.5-mcp-openapi.md",
+          "outputs": [
+            "src/mcp/openapi/index.ts",
+            "src/mcp/openapi/generator.ts",
+            "src/mcp/openapi/validator.ts",
+            "src/mcp/openapi/types.ts",
+            "src/mcp/openapi/registrar.ts",
+            "src/mcp/openapi/config.ts",
+            "src/cli/commands/mcp-generate-openapi.ts",
+            "config/openapi-mcp.yaml",
+            "tests/mcp-openapi.test.ts"
+          ],
+          "priority": 5,
+          "passes": false
+        },
+        {
+          "id": "P2-006",
+          "title": "Implement SSE streaming for MCP",
+          "spec": "specs/mcp.dir/sse-stream.spec.md",
+          "prompt": "docs/prompts/phase-2.6-mcp-sse.md",
+          "outputs": [
+            "src/mcp/sse.ts",
+            "src/mcp/events.ts",
+            "src/mcp/polling.ts",
+            "tests/mcp-sse.test.ts"
+          ],
+          "priority": 6,
+          "passes": false
+        },
+        {
+          "id": "P2-007",
+          "title": "Implement MCP authentication",
+          "spec": "specs/mcp.dir/authentication.spec.md",
+          "prompt": "docs/prompts/phase-2.7-mcp-auth.md",
+          "outputs": [
+            "src/mcp/auth/index.ts",
+            "src/mcp/auth/provider.ts",
+            "src/mcp/auth/token-manager.ts",
+            "src/mcp/auth/middleware.ts",
+            "src/mcp/auth/scopes.ts",
+            "tests/mcp-auth.test.ts"
+          ],
+          "priority": 7,
+          "passes": false
+        },
+        {
+          "id": "P2-008",
+          "title": "Implement MCP error handling",
+          "spec": "specs/mcp.dir/error-handling.spec.md",
+          "prompt": "docs/prompts/phase-2.8-mcp-error.md",
+          "outputs": [
+            "src/mcp/errors/index.ts",
+            "src/mcp/errors/types.ts",
+            "src/mcp/errors/handler.ts",
+            "src/mcp/errors/recovery.ts",
+            "src/mcp/errors/translations.ts",
+            "tests/mcp-errors.test.ts"
+          ],
+          "priority": 8,
+          "passes": false
+        },
+        {
+          "id": "P2-009",
+          "title": "Implement MCP configuration",
+          "spec": "specs/mcp.dir/configuration.spec.md",
+          "prompt": "docs/prompts/phase-2.9-mcp-config.md",
+          "outputs": [
+            "src/mcp/config/index.ts",
+            "src/mcp/config/loader.ts",
+            "src/mcp/config/validator.ts",
+            "src/mcp/config/hot-reload.ts",
+            "config/mcp-defaults.yaml",
+            "tests/mcp-config.test.ts"
+          ],
+          "priority": 9,
+          "passes": false
+        },
+        {
+          "id": "P2-010",
+          "title": "Implement MCP command queue tools",
+          "spec": "specs/mcp.dir/tools/commands.spec.md",
+          "prompt": "docs/prompts/phase-2.10-mcp-commands.md",
+          "outputs": [
+            "src/mcp/tools/commands.ts",
+            "src/mcp/tools/queue-manager.ts",
+            "src/mcp/tools/execution.ts",
+            "src/mcp/tools/status.ts",
+            "src/sqlite/migrations/007_commands.sql",
+            "tests/mcp-commands.test.ts"
+          ],
+          "priority": 10,
+          "passes": false
+        },
+        {
+          "id": "P2-011",
+          "title": "Implement MCP search tools",
+          "spec": "specs/mcp.dir/tools/search.spec.md",
+          "prompt": "docs/prompts/phase-2.11-mcp-search.md",
+          "outputs": [
+            "src/mcp/tools/search.ts",
+            "src/mcp/tools/indexer.ts",
+            "src/mcp/tools/query-parser.ts",
+            "src/mcp/tools/results.ts",
+            "src/sqlite/migrations/008_search.sql",
+            "tests/mcp-search.test.ts"
+          ],
+          "priority": 11,
+          "passes": false
+        },
+        {
+          "id": "P2-012",
+          "title": "Implement MCP server overview and entry point",
+          "spec": "specs/mcp.dir/overview.spec.md",
+          "prompt": "docs/prompts/phase-2.12-mcp-overview.md",
+          "outputs": [
+            "src/mcp/index.ts",
+            "src/mcp/server.ts",
+            "src/mcp/types.ts",
+            "src/mcp/README.md",
+            "tests/mcp/overview.test.ts"
+          ],
+          "priority": 12,
+          "passes": false
+        },
+        {
+          "id": "P2-013",
+          "title": "MCP Lock Management Tools",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-2.13-mcp-locks.md",
+          "outputs": [
+            "src/mcp/",
+            "locks/",
+            "\u2502    index.ts            # Main exports",
+            "\u2502    lock-manager.ts     # Lock management logic",
+            "\u2502    types.ts            # Lock types",
+            "\u2502    tools.ts            # MCP tool definitions"
+          ],
+          "priority": 13,
+          "passes": false
+        },
+        {
+          "id": "P2-014",
+          "title": "MCP SQL Query Tools",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-2.14-mcp-sql.md",
+          "outputs": [
+            "src/mcp/",
+            "sql/",
+            "\u2502    index.ts            # Main exports",
+            "\u2502    query-builder.ts   # Safe query builder",
+            "\u2502    tools.ts            # MCP tool definitions",
+            "\u2502    sanitizer.ts       # SQL sanitization",
+            "\u2502    history.ts         # Query history"
+          ],
+          "priority": 14,
+          "passes": false
+        },
+        {
+          "id": "P2-015",
+          "title": "MCP Architecture Overview",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-2.15-mcp-overview-arch.md",
+          "outputs": [
+            "Implementation files"
+          ],
+          "priority": 15,
+          "passes": false
+        },
+        {
+          "id": "P2-016",
+          "title": "MCP Run Modes",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-2.16-mcp-overview-runmodes.md",
+          "outputs": [
+            "Implementation files"
+          ],
+          "priority": 16,
+          "passes": false
+        },
+        {
+          "id": "P2-017",
+          "title": "MCP Token Authentication",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-2.17-mcp-auth-tokens.md",
+          "outputs": [
+            "Implementation files"
+          ],
+          "priority": 17,
+          "passes": false
+        },
+        {
+          "id": "P2-018",
+          "title": "MCP API Key Authentication",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-2.18-mcp-auth-api-keys.md",
+          "outputs": [
+            "Implementation files"
+          ],
+          "priority": 18,
+          "passes": false
+        },
+        {
+          "id": "P2-019",
+          "title": "MCP Error Codes",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-2.19-mcp-error-codes.md",
+          "outputs": [
+            "Implementation files"
+          ],
+          "priority": 19,
+          "passes": false
+        }
+      ]
+    },
+    {
+      "id": "phase-3",
+      "name": "Code Generation",
+      "description": "Spec-to-code compiler",
+      "stories": [
+        {
+          "id": "P3-001",
+          "title": "Implement code generator framework",
+          "spec": "specs/compiler.spec.md",
+          "prompt": "docs/prompts/phase-3.1-codegen.md",
+          "outputs": [
+            "src/codegen/index.ts",
+            "src/codegen/parser.ts",
+            "src/codegen/targets/*.ts"
+          ],
+          "priority": 1,
+          "passes": false
+        },
+        {
+          "id": "P3-002",
+          "title": "Implement code generation templates",
+          "spec": "specs/compiler.dir/templates.spec.md",
+          "prompt": "docs/prompts/phase-3.2-templates.md",
+          "outputs": [
+            "src/templates/index.ts",
+            "src/templates/engine.ts",
+            "src/templates/markers.ts",
+            "src/templates/registry.ts",
+            "src/templates/languages/typescript.ts",
+            "src/templates/languages/go.ts",
+            "src/templates/languages/python.ts",
+            "src/templates/languages/rust.ts",
+            "src/templates/languages/sql.ts",
+            "tests/templates.test.ts"
+          ],
+          "priority": 2,
+          "passes": false
+        },
+        {
+          "id": "P3-003",
+          "title": "Implement compiler target languages",
+          "spec": "specs/compiler.dir/targets.spec.md",
+          "prompt": "docs/prompts/phase-3.3-targets.md",
+          "outputs": [
+            "src/compiler/targets/index.ts",
+            "src/compiler/targets/types.ts",
+            "src/compiler/targets/registry.ts",
+            "src/compiler/targets/typescript.ts",
+            "src/compiler/targets/go.ts",
+            "src/compiler/targets/rust.ts",
+            "src/compiler/targets/python.ts",
+            "src/compiler/targets/type-mappings.ts",
+            "tests/targets.test.ts"
+          ],
+          "priority": 3,
+          "passes": false
+        },
+        {
+          "id": "P3-004",
+          "title": "Implement compiler phases",
+          "spec": "specs/compiler.dir/phases.spec.md",
+          "prompt": "docs/prompts/phase-3.4-compiler-phases.md",
+          "outputs": [
+            "src/compiler/phases/index.ts",
+            "src/compiler/phases/parse.ts",
+            "src/compiler/phases/validate.ts",
+            "src/compiler/phases/resolve.ts",
+            "src/compiler/phases/transform.ts",
+            "src/compiler/phases/codegen.ts",
+            "src/compiler/sync/detect-drift.ts",
+            "src/compiler/sync/sync-code.ts",
+            "src/compiler/sync/sync-spec.ts",
+            "src/compiler/incremental.ts",
+            "src/compiler/cache.ts",
+            "src/compiler/plugins.ts",
+            "tests/compiler/phases.test.ts"
+          ],
+          "priority": 4,
+          "passes": false
+        },
+        {
+          "id": "P3-005",
+          "title": "Implement Go code generator",
+          "spec": "specs/compiler.dir/go.spec.md",
+          "prompt": "docs/prompts/phase-3.5-go-generator.md",
+          "outputs": [
+            "src/compiler/targets/go.ts",
+            "src/compiler/go/types.ts",
+            "src/compiler/go/templates.ts",
+            "src/compiler/go/builtins.ts",
+            "tests/go-generator.test.ts"
+          ],
+          "priority": 5,
+          "passes": false
+        },
+        {
+          "id": "P3-006",
+          "title": "Implement Python code generator",
+          "spec": "specs/compiler.dir/python.spec.md",
+          "prompt": "docs/prompts/phase-3.6-python-generator.md",
+          "outputs": [
+            "src/compiler/targets/python.ts",
+            "src/compiler/python/types.ts",
+            "src/compiler/python/templates.ts",
+            "src/compiler/python/builtins.ts",
+            "tests/python-generator.test.ts"
+          ],
+          "priority": 6,
+          "passes": false
+        },
+        {
+          "id": "P3-007",
+          "title": "Go Type Mappings",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-3.7-go-types.md",
+          "outputs": [
+            "src/codegen/targets/go/",
+            "types.ts              # Core type mappings",
+            "types_primitives.ts   # Primitive type handling",
+            "types_collections.ts  # Collection type handling",
+            "types_generics.ts     # Generic type handling",
+            "types_special.ts      # Special types (time, uuid, etc.)"
+          ],
+          "priority": 7,
+          "passes": false
+        },
+        {
+          "id": "P3-008",
+          "title": "Python Type Mappings",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-3.8-python-types.md",
+          "outputs": [
+            "src/codegen/targets/python/",
+            "types.ts              # Core type mappings",
+            "types_primitives.ts   # Primitive type handling",
+            "types_collections.ts  # Collection type handling",
+            "types_generics.ts     # Generic type handling",
+            "types_optional.ts     # Optional/nullable handling",
+            "types_special.ts      # Special types (datetime, uuid, etc.)"
+          ],
+          "priority": 8,
+          "passes": false
+        },
+        {
+          "id": "P3-009",
+          "title": "TypeScript Type Mappings",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-3.9-typescript-types.md",
+          "outputs": [
+            "src/codegen/targets/typescript/",
+            "types.ts              # Core type mappings",
+            "types_primitives.ts   # Primitive type handling",
+            "types_collections.ts  # Collection type handling",
+            "types_generics.ts     # Generic type handling",
+            "types_optional.ts     # Optional/null handling",
+            "types_special.ts      # Special types (date, uuid, etc.)"
+          ],
+          "priority": 9,
+          "passes": false
+        },
+        {
+          "id": "P3-010",
+          "title": "Rust Type Mappings",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-3.10-rust-types.md",
+          "outputs": [
+            "src/codegen/targets/rust/",
+            "types.rs              # Core type mappings",
+            "types_primitives.rs   # Primitive type handling",
+            "types_collections.rs  # Collection type handling",
+            "types_generics.rs     # Generic type handling",
+            "types_option.rs       # Option handling",
+            "types_special.rs      # Special types (time, uuid, etc.)"
+          ],
+          "priority": 10,
+          "passes": false
+        }
+      ]
+    },
+    {
+      "id": "phase-4",
+      "name": "Pipeline & Guard",
+      "description": "Build pipeline, file ownership, and recovery",
+      "stories": [
+        {
+          "id": "P4-001",
+          "title": "Implement pipeline executor",
+          "spec": "specs/pipeline.spec.md",
+          "prompt": "docs/prompts/phase-4.1-pipeline.md",
+          "outputs": [
+            "src/pipeline/executor.ts",
+            "src/pipeline/recovery.ts"
+          ],
+          "priority": 1,
+          "passes": false
+        },
+        {
+          "id": "P4-002",
+          "title": "Implement file ownership guard",
+          "spec": "specs/agent-protocol.spec.md",
+          "prompt": "docs/prompts/phase-4.2-guard.md",
+          "outputs": [
+            "src/guard/registry.ts",
+            "src/guard/interceptor.ts"
+          ],
+          "priority": 2,
+          "passes": false
+        },
+        {
+          "id": "P4-003",
+          "title": "Implement recovery system",
+          "spec": "specs/recovery.spec.md",
+          "prompt": "docs/prompts/phase-4.3-recovery.md",
+          "outputs": [
+            "src/recovery/index.ts",
+            "src/recovery/manager.ts",
+            "src/recovery/strategies.ts",
+            "src/recovery/rollback.ts",
+            "src/recovery/notification.ts",
+            "scripts/recover.sh"
+          ],
+          "priority": 3,
+          "passes": false
+        },
+        {
+          "id": "P4-004",
+          "title": "Implement git history integration",
+          "spec": "specs/git-history.spec.md",
+          "prompt": "docs/prompts/phase-4.4-git-history.md",
+          "outputs": [
+            "src/git/index.ts",
+            "src/git/committer.ts",
+            "src/git/history.ts",
+            "src/git/blame.ts",
+            "src/git/cherry-pick.ts",
+            "src/git/rollback.ts",
+            "src/git/audit.ts",
+            "tests/git-history.test.ts"
+          ],
+          "priority": 4,
+          "passes": false
+        },
+        {
+          "id": "P4-005",
+          "title": "Implement pipeline hook system",
+          "spec": "specs/pipeline.dir/hooks.spec.md",
+          "prompt": "docs/prompts/phase-4.5-hooks.md",
+          "outputs": [
+            "src/pipeline/hooks.ts",
+            "src/pipeline/hook-executor.ts",
+            "src/pipeline/built-in-hooks.ts",
+            "tests/pipeline-hooks.test.ts"
+          ],
+          "priority": 5,
+          "passes": false
+        },
+        {
+          "id": "P4-006",
+          "title": "Implement pipeline stage execution",
+          "spec": "specs/pipeline.dir/build.spec.md",
+          "prompt": "docs/prompts/phase-4.6-stages.md",
+          "outputs": [
+            "src/pipeline/stages.ts",
+            "src/pipeline/dependency-resolver.ts",
+            "src/pipeline/stage-executor.ts",
+            "src/pipeline/parallel-executor.ts",
+            "tests/pipeline-stages.test.ts"
+          ],
+          "priority": 6,
+          "passes": false
+        },
+        {
+          "id": "P4-007",
+          "title": "Implement recovery actions",
+          "spec": "specs/recovery.dir/retry.spec.md",
+          "prompt": "docs/prompts/phase-4.7-recovery-actions.md",
+          "outputs": [
+            "src/recovery/actions/index.ts",
+            "src/recovery/actions/retry.ts",
+            "src/recovery/actions/rollback.ts",
+            "src/recovery/actions/escalation.ts",
+            "src/recovery/strategies.ts",
+            "src/recovery/state.ts",
+            "tests/recovery/actions.test.ts"
+          ],
+          "priority": 7,
+          "passes": false
+        },
+        {
+          "id": "P4-008",
+          "title": "Implement pipeline conditions",
+          "spec": "specs/pipeline.spec.md",
+          "prompt": "docs/prompts/phase-4.8-pipeline-conditions.md",
+          "outputs": [
+            "src/pipeline/conditions/index.ts",
+            "src/pipeline/conditions/evaluator.ts",
+            "src/pipeline/conditions/types.ts",
+            "src/pipeline/conditions/builtins.ts",
+            "src/pipeline/conditions/composition.ts",
+            "src/pipeline/conditions/context.ts",
+            "tests/pipeline/conditions.test.ts"
+          ],
+          "priority": 8,
+          "passes": false
+        },
+        {
+          "id": "P4-009",
+          "title": "Recovery Strategies",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-4.9-recovery-strategies.md",
+          "outputs": [
+            "src/recovery/",
+            "strategies/",
+            "\u2502    index.ts          # Strategy exports",
+            "\u2502    context.ts        # Context gathering",
+            "\u2502    decision.ts       # Decision engine",
+            "\u2502    scoring.ts        # Strategy scoring",
+            "\u2502    adaptive.ts       # Adaptive strategies",
+            "intelligence/"
+          ],
+          "priority": 9,
+          "passes": false
+        },
+        {
+          "id": "P4-010",
+          "title": "Pipeline Build Stages",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-4.10-pipeline-build.md",
+          "outputs": [
+            "src/pipeline/stages/",
+            "build/",
+            "\u2502    index.ts           # Build stage exports",
+            "\u2502    types.ts           # Build stage types",
+            "\u2502    compiler.ts        # Compilation stage",
+            "\u2502    bundler.ts         # Bundling stage",
+            "\u2502    linker.ts          # Linking stage",
+            "\u2502    cache.ts           # Build cache"
+          ],
+          "priority": 10,
+          "passes": false
+        },
+        {
+          "id": "P4-011",
+          "title": "Pipeline Test Stages",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-4.11-pipeline-test.md",
+          "outputs": [
+            "src/pipeline/stages/",
+            "test/",
+            "\u2502    index.ts           # Test stage exports",
+            "\u2502    types.ts           # Test stage types",
+            "\u2502    runner.ts         # Test runner",
+            "\u2502    coverage.ts       # Coverage collection",
+            "\u2502    watcher.ts        # Test watcher",
+            "\u2502    reporters.ts      # Test reporters"
+          ],
+          "priority": 11,
+          "passes": false
+        },
+        {
+          "id": "P4-012",
+          "title": "Pipeline Deploy Stages",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-4.12-pipeline-deploy.md",
+          "outputs": [
+            "src/pipeline/stages/",
+            "deploy/",
+            "\u2502    index.ts           # Deploy stage exports",
+            "\u2502    types.ts           # Deploy stage types",
+            "\u2502    publisher.ts       # Package publishing",
+            "\u2502    environments.ts    # Environment deployment",
+            "\u2502    registry.ts        # Registry management",
+            "\u2502    rollback.ts        # Rollback handling"
+          ],
+          "priority": 12,
+          "passes": false
+        },
+        {
+          "id": "P4-013",
+          "title": "Pipeline Lint Stages",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-4.13-pipeline-lint.md",
+          "outputs": [
+            "src/pipeline/stages/",
+            "lint/",
+            "\u2502    index.ts           # Lint stage exports",
+            "\u2502    types.ts           # Lint stage types",
+            "\u2502    runner.ts         # Lint runner",
+            "\u2502    formatters.ts     # Output formatters",
+            "\u2502    fixers.ts         # Auto-fix runners",
+            "\u2502    rules.ts          # Rule definitions"
+          ],
+          "priority": 13,
+          "passes": false
+        },
+        {
+          "id": "P4-014",
+          "title": "Pipeline Format Stages",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-4.14-pipeline-format.md",
+          "outputs": [
+            "src/pipeline/stages/",
+            "format/",
+            "\u2502    index.ts           # Format stage exports",
+            "\u2502    types.ts           # Format stage types",
+            "\u2502    runner.ts         # Format runner",
+            "\u2502    config.ts         # Format configuration",
+            "\u2502    checkers.ts       # Format checkers",
+            "\u2502    languages.ts      # Language-specific formatters"
+          ],
+          "priority": 14,
+          "passes": false
+        }
+      ]
+    },
+    {
+      "id": "phase-5",
+      "name": "Meta-Circular",
+      "description": "Self-specifying specs, autonomous validation, and transition workflows",
+      "stories": [
+        {
+          "id": "P5-001",
+          "title": "Create self-specifying specs",
+          "spec": "specs/bootstrap.spec.md",
+          "prompt": "docs/prompts/phase-5.1-self-specifying.md",
+          "outputs": [
+            "specs/speclang.spec.md",
+            "specs/tutorial.spec.md",
+            "specs/examples/*.spec.md"
+          ],
+          "priority": 1,
+          "passes": false
+        },
+        {
+          "id": "P5-002",
+          "title": "Run autonomous agent test",
+          "spec": "specs/autonomous-validation.spec.md",
+          "prompt": "docs/prompts/phase-5.2-autonomous-test.md",
+          "outputs": [
+            "Test results",
+            "Validation report"
+          ],
+          "priority": 2,
+          "passes": false
+        },
+        {
+          "id": "P5-003",
+          "title": "Implement transition workflows",
+          "spec": "specs/transition-workflows.spec.md",
+          "prompt": "docs/prompts/phase-5.3-transition-workflows.md",
+          "outputs": [
+            "src/transition/index.ts",
+            "src/transition/manager.ts",
+            "src/transition/checklists.ts",
+            "src/transition/validation.ts",
+            "src/transition/approval.ts",
+            "scripts/transition.py"
+          ],
+          "priority": 3,
+          "passes": false
+        },
+        {
+          "id": "P5-004",
+          "title": "Implement safety nets",
+          "spec": "specs/safety-nets.spec.md",
+          "prompt": "docs/prompts/phase-5.4-safety-nets.md",
+          "outputs": [
+            "src/safety/completeness.ts",
+            "src/safety/confidence.ts",
+            "src/safety/mislabeling.ts",
+            "src/safety/fallback.ts",
+            "src/safety/cascade-prevention.ts",
+            "src/safety/monitoring.ts",
+            "tests/safety-nets.test.ts"
+          ],
+          "priority": 4,
+          "passes": false
+        },
+        {
+          "id": "P5-005",
+          "title": "Implement meta-circular bootstrap",
+          "spec": "specs/bootstrap.spec.md",
+          "prompt": "docs/prompts/phase-5.5-meta-circular.md",
+          "outputs": [
+            "src/bootstrap/index.ts",
+            "src/bootstrap/self-host.ts",
+            "src/bootstrap/validation.ts",
+            "tests/meta-circular.test.ts"
+          ],
+          "priority": 5,
+          "passes": false
+        },
+        {
+          "id": "P5-006",
+          "title": "Safety Confidence Scoring",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-5.6-safety-confidence.md",
+          "outputs": [
+            "src/safety/",
+            "index.ts                      # Exports",
+            "confidence.ts                 # Confidence scoring engine",
+            "history.ts                   # Historical reliability tracking",
+            "vector-store.ts              # Similarity scoring for specs"
+          ],
+          "priority": 6,
+          "passes": false
+        },
+        {
+          "id": "P5-007",
+          "title": "Safety Fallback Protocols",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-5.7-safety-fallback.md",
+          "outputs": [
+            "src/safety/",
+            "index.ts                      # Exports (update)",
+            "fallback.ts                   # Fallback protocol engine",
+            "quarantine.ts                 # Quarantine management",
+            "peer-review.ts                # Peer review workflows",
+            "notification.ts               # Notification system"
+          ],
+          "priority": 7,
+          "passes": false
+        },
+        {
+          "id": "P5-008",
+          "title": "Safety Detection Mechanisms",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-5.8-safety-detection.md",
+          "outputs": [
+            "src/safety/",
+            "index.ts                      # Exports (update)",
+            "detection.ts                  # Mislabeling detector",
+            "anomaly.ts                    # Anomaly detection",
+            "monitor.ts                    # Real-time monitoring",
+            "alerts.ts                     # Alert system"
+          ],
+          "priority": 8,
+          "passes": false
+        }
+      ]
+    },
+    {
+      "id": "phase-6",
+      "name": "UI Dashboard",
+      "description": "System monitoring dashboard for real-time visibility",
+      "stories": [
+        {
+          "id": "P6-001",
+          "title": "Implement system monitoring dashboard",
+          "spec": "specs/ui.spec.md",
+          "prompt": "docs/prompts/phase-6.1-ui-dashboard.md",
+          "outputs": [
+            "src/dashboard/index.html",
+            "src/dashboard/app.tsx",
+            "src/dashboard/components/*.tsx",
+            "src/dashboard/hooks/*.ts",
+            "dist/dashboard/"
+          ],
+          "priority": 1,
+          "passes": false
+        },
+        {
+          "id": "P6-002",
+          "title": "Implement UI component library",
+          "spec": "specs/ui.dir/components/cascade-graph.spec.md",
+          "prompt": "docs/prompts/phase-6.2-ui-components.md",
+          "outputs": [
+            "src/dashboard/components/CascadeGraph.tsx",
+            "src/dashboard/components/AgentHealth.tsx",
+            "src/dashboard/components/ControlPanel.tsx",
+            "src/dashboard/components/SystemMetrics.tsx",
+            "src/dashboard/components/QueueDepth.tsx",
+            "src/dashboard/components/EventTimeline.tsx",
+            "src/dashboard/components/LogViewer.tsx",
+            "src/dashboard/components/CascadeStatus.tsx",
+            "src/dashboard/components/shared/useSSE.ts",
+            "src/dashboard/components/shared/useMCPTools.ts",
+            "src/dashboard/components/shared/usePolling.ts",
+            "src/dashboard/components/shared/ErrorBoundary.tsx",
+            "src/dashboard/components/shared/BrutalistTheme.tsx",
+            "tests/dashboard/components.test.tsx"
+          ],
+          "priority": 2,
+          "passes": false
+        },
+        {
+          "id": "P6-003",
+          "title": "Implement UI state management",
+          "spec": "specs/state.spec.md",
+          "prompt": "docs/prompts/phase-6.3-ui-state.md",
+          "outputs": [
+            "src/dashboard/state/StateManager.ts",
+            "src/dashboard/state/sessionToState.ts",
+            "src/dashboard/state/persistence.ts",
+            "tests/dashboard/state.test.ts"
+          ],
+          "priority": 3,
+          "passes": false
+        },
+        {
+          "id": "P6-004",
+          "title": "Implement individual UI components",
+          "spec": "specs/ui.dir/components/cascade-graph.spec.md",
+          "prompt": "docs/prompts/phase-6.4-ui-components-individual.md",
+          "outputs": [
+            "src/ui/components/index.ts",
+            "src/ui/components/agent-health-grid.tsx",
+            "src/ui/components/cascade-graph.tsx",
+            "src/ui/components/control-panel.tsx",
+            "src/ui/components/log-viewer.tsx",
+            "src/ui/components/queue-depth.tsx",
+            "src/ui/components/system-metrics.tsx",
+            "tests/ui/components/components.test.tsx"
+          ],
+          "priority": 4,
+          "passes": false
+        },
+        {
+          "id": "P6-005",
+          "title": "UI Testing Strategy",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-6.5-ui-testing-strategy.md",
+          "outputs": [
+            "ui/",
+            "\u2502    components/",
+            "\u2502   \u2502    components.test.tsx",
+            "\u2502   \u2502    agent-health-grid.test.tsx",
+            "\u2502   \u2502    cascade-graph.test.tsx",
+            "\u2502   \u2502    control-panel.test.tsx",
+            "\u2502   \u2502    log-viewer.test.tsx",
+            "\u2502   \u2502    queue-depth.test.tsx"
+          ],
+          "priority": 5,
+          "passes": false
+        },
+        {
+          "id": "P6-006",
+          "title": "Agent Health Component",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-6.6-ui-components-health.md",
+          "outputs": [
+            "Implementation files"
+          ],
+          "priority": 6,
+          "passes": false
+        },
+        {
+          "id": "P6-007",
+          "title": "Cascade Graph Component",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-6.7-ui-components-cascade.md",
+          "outputs": [
+            "Implementation files"
+          ],
+          "priority": 7,
+          "passes": false
+        },
+        {
+          "id": "P6-008",
+          "title": "Log Viewer Component",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-6.8-ui-components-logs.md",
+          "outputs": [
+            "Implementation files"
+          ],
+          "priority": 8,
+          "passes": false
+        },
+        {
+          "id": "P6-009",
+          "title": "Metrics Components",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-6.9-ui-components-metrics.md",
+          "outputs": [
+            "src/ui/components/",
+            "system-metrics.tsx       # System resource metrics",
+            "queue-depth.tsx          # Queue depth visualization"
+          ],
+          "priority": 9,
+          "passes": false
+        },
+        {
+          "id": "P6-010",
+          "title": "Control Panel Component",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-6.10-ui-components-control.md",
+          "outputs": [
+            "Implementation files"
+          ],
+          "priority": 10,
+          "passes": false
+        }
+      ]
+    },
+    {
+      "id": "phase-7",
+      "name": "Examples & Documentation",
+      "description": "Comprehensive examples demonstrating SpecLang features",
+      "stories": [
+        {
+          "id": "P7-001",
+          "title": "Create example projects",
+          "spec": "specs/examples.spec.md",
+          "prompt": "docs/prompts/phase-7.1-examples.md",
+          "outputs": [
+            "examples/hello-world/hello.spec.md",
+            "examples/hello-world/README.md",
+            "examples/hello-world/expected-output/hello.ts",
+            "examples/hello-world/expected-output/hello.go",
+            "examples/hello-world/expected-output/hello.py",
+            "examples/user-auth/auth.spec.md",
+            "examples/user-auth/user.spec.md",
+            "examples/user-auth/session.spec.md",
+            "examples/user-auth/README.md",
+            "examples/api-server/api.spec.md",
+            "examples/api-server/routes.spec.md",
+            "examples/api-server/middleware.spec.md",
+            "examples/api-server/README.md",
+            "examples/cascade-demo/trigger.spec.md",
+            "examples/cascade-demo/generator.spec.md",
+            "examples/cascade-demo/test.spec.md",
+            "examples/cascade-demo/README.md",
+            "examples/mcp-tools/custom-tools.spec.md",
+            "examples/mcp-tools/openapi.yaml",
+            "examples/mcp-tools/README.md",
+            "examples/full-stack/northstar.spec.md",
+            "examples/full-stack/features/*.spec.md",
+            "examples/full-stack/components/*.spec.md",
+            "examples/full-stack/README.md",
+            "docs/examples/getting-started.md",
+            "docs/examples/patterns.md",
+            "docs/examples/best-practices.md"
+          ],
+          "priority": 1,
+          "passes": false
+        },
+        {
+          "id": "P7-002",
+          "title": "Create hello-world example",
+          "spec": "specs/examples.spec.dir/hello-world.spec.md",
+          "prompt": "docs/prompts/phase-7.2-hello-world.md",
+          "outputs": [
+            "examples/hello-world/hello.spec.md",
+            "examples/hello-world/README.md",
+            "examples/hello-world/expected-output/hello.ts",
+            "examples/hello-world/expected-output/hello.go",
+            "examples/hello-world/expected-output/hello.py",
+            "examples/hello-world/tests/hello.test.ts"
+          ],
+          "priority": 2,
+          "passes": false
+        },
+        {
+          "id": "P7-003",
+          "title": "Auth Example",
+          "spec": "specs/",
+          "prompt": "docs/prompts/phase-7.3-examples-auth.md",
+          "outputs": [
+            "src/examples/",
+            "auth/",
+            "\u2502    index.ts                 # Main exports",
+            "\u2502    entities/",
+            "\u2502   \u2502    user.ts              # User entity",
+            "\u2502   \u2502    login-request.ts      # Login request",
+            "\u2502   \u2502    login-response.ts     # Login response",
+            "\u2502   \u2502    token.ts              # Token entity"
+          ],
+          "priority": 3,
+          "passes": false
+        }
+      ]
+    },
+    {
+      "id": "phase-8",
+      "name": "Tooling Scripts",
+      "description": "Python and shell scripts for SpecLang tooling",
+      "stories": [
+        {
+          "id": "P8-001",
+          "title": "Implement Python tooling scripts",
+          "spec": "specs/tooling.spec.md",
+          "prompt": "docs/prompts/phase-8.1-scripts-python.md",
+          "outputs": [
+            "generate_index.py",
+            "rename_spec_files.py",
+            "validate_specs.py",
+            "scripts/validate_refs.py",
+            "tests/scripts.test.py"
+          ],
+          "priority": 1,
+          "passes": false
+        }
+      ]
+    },
+    {
+      "id": "phase-9",
+      "name": "Testing",
+      "description": "Integration and performance testing",
+      "stories": [
+        {
+          "id": "P9-001",
+          "title": "Implement integration tests",
+          "spec": "specs/testing.dir/integration.spec.md",
+          "prompt": "docs/prompts/phase-9.1-integration-test.md",
+          "outputs": [
+            "tests/integration/index.ts",
+            "tests/integration/daemon.test.ts",
+            "tests/integration/mcp.test.ts",
+            "tests/integration/codegen.test.ts",
+            "tests/integration/cascade.test.ts",
+            "tests/integration/fixtures/",
+            "tests/integration/setup.ts",
+            "tests/integration/teardown.ts"
+          ],
+          "priority": 1,
+          "passes": false
+        },
+        {
+          "id": "P9-002",
+          "title": "Implement performance tests",
+          "spec": "specs/testing.dir/performance.spec.md",
+          "prompt": "docs/prompts/phase-9.2-performance-test.md",
+          "outputs": [
+            "tests/performance/index.ts",
+            "tests/performance/benchmarks.ts",
+            "tests/performance/load-test.ts",
+            "tests/performance/memory-profile.ts",
+            "tests/performance/results/"
+          ],
+          "priority": 2,
+          "passes": false
+        }
+      ]
+    }
+  ],
+  "rules": {
+    "oneStoryPerIteration": true,
+    "mustPassTests": true,
+    "mustFollowSpecs": true,
+    "commitAfterEach": true,
+    "verifyWithAdversary": true
+  },
+  "promptFiles": {
+    "builder": "PROMPT.md",
+    "adversary": "PROMPT-VERIFY.md",
+    "bootstrap": "BOOTSTRAP.md",
+    "ralphLoop": ".ralph/prompt.md"
+  }
+}

@@ -87,4 +87,4 @@ flowchart TD
 - Set model assignments per agent
 - Start the build‑mode server
 
-For full details, see the sub‑specs in `specs/opencode.dir/`.
+For full details, see the sub‑specs in `specs/opencode.spec.dir/`.

@@ -1,5 +1,5 @@
 # speclang-header lines:12
-id: "@speclang/cli.dir/installation"
+id: "@speclang/cli.spec.dir/installation"
 version: 0.1.0
 layer: 1
 tags: [cli, installation]

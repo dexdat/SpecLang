@@ -19,7 +19,7 @@ Each SIP includes a **README section** at the top with:
 | SIP | Title | Status |
 |-----|-------|--------|
 | [SIP 0](sip-000-what-is-speclang-v0.md) | What is Speclang | Draft |
-| [SIP 1](sip-001-how-to-write-sip-v0.md) | How to Write a SIP | Draft |
+| [SIP 1](sip-001-how-to-write-sip-speclang-v0.md) | How to Write a SIP | Draft |
 
 ### Language SIPs
 
@@ -151,7 +151,7 @@ login(email: String, password: String) -> Result<Token, Error>:
 ### Splitting
 ```
 auth.spec.yaml (index)
-auth.spec.dir/
+auth.spec.spec.dir/
   ├── entities.spec.yaml
   ├── operations.spec.yaml
   └── tests.spec.yaml

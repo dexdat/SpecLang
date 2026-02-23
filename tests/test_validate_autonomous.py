@@ -13,7 +13,7 @@ import sys
 # Add parent directory to path to import validate_autonomous
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from validate_autonomous import (
+from scripts.validate_autonomous import (
     parse_header,
     extract_blocks,
     validate_step_by_step,

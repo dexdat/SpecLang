@@ -1,12 +1,12 @@
 ---
-name: sip-009-index-format-speclang-v0
-title: "SIP 9: Index File Format"
+name: sip-034-index-format-speclang-v0
+title: "SIP 34: Index File Format"
 version: 0.1.0
 description: Defines the _index JSON format for aggregating file headers
 category: system
 ---
 
-# SIP 9: Index File Format
+# SIP 34: Index File Format
 
 **Status:** Draft  
 **Version:** 0.1.0  
@@ -226,8 +226,8 @@ The Speclang system uses the index for:
 ### Split File Entry
 ```json
 {
-  "path": "specs/auth.spec.dir/entities.spec.yaml",
-  "id": "@specs/auth.spec.dir/entities",
+  "path": "specs/auth.spec.spec.dir/entities.spec.yaml",
+  "id": "@specs/auth.spec.spec.dir/entities",
   "version": "1.0.0",
   "layer": 2,
   "tags": ["auth", "entities"],

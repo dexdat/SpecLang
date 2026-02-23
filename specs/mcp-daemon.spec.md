@@ -16,4 +16,4 @@ short: MCP Daemon (2 parts)
 
 # MCP Daemon
 
-This spec has been split into sub‑specs. See `mcp‑daemon.dir/` for details.
+This spec has been split into sub‑specs. See `mcp‑daemon.spec.dir/` for details.

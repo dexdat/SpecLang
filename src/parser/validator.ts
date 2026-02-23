@@ -32,7 +32,7 @@ const VALID_AGENT_SUPPORTS: AgentSupport[] = [
   'human_only', 'agent_assisted', 'agent_autonomous'
 ];
 
-const VALID_STATUSES: SpecStatus[] = ['draft', 'stable', 'deprecated'];
+const VALID_STATUSES: SpecStatus[] = ['draft', 'stable', 'deprecated', 'active', 'generated'];
 
 // ============================================================================
 // VALIDATION HELPERS

@@ -22,13 +22,13 @@
 ```
 DIRECTORY NAMING:
   CORRECT: foo.spec.dir/
-  WRONG:   foo.dir/
+  WRONG:   foo.spec.dir/
 
 SPEC IDS:
   CORRECT: @speclang/foo.spec
   CORRECT: @speclang/foo.spec.dir/bar
   WRONG:   @speclang/foo
-  WRONG:   @speclang/foo.dir/bar
+  WRONG:   @speclang/foo.spec.dir/bar
 
 GENERATION FLOW:
   bar.spec.md (intent) → bar.go.spec (code) → bar.go (symlink)
@@ -40,18 +40,18 @@ GENERATION FLOW:
 - `specs/implementation-path.spec.md` - **CRITICAL: Step-by-step build guide**
 - `specs/examples.spec.dir/hello-world-cascade.spec.md` - **CRITICAL: End-to-end demo**
 - `specs/testing-strategy.spec.md` - Comprehensive testing approach
-- `specs/cascade.dir/error-handling.spec.md` - Comprehensive error handling
+- `specs/cascade.spec.dir/error-handling.spec.md` - Comprehensive error handling
 - `specs/api.spec.md` - API overview
 - `specs/api.spec.dir/openapi.spec.md` - OpenAPI requirements
 - `specs/api.spec.dir/_index.md` - API directory index
 
 **Modified:**
 - `specs/git-history.spec.md` - Changed UUID to commit hash
-- `specs/git-history.dir/commits.spec.md` - Updated causality tracking
+- `specs/git-history.spec.dir/commits.spec.md` - Updated causality tracking
 - `specs/headers.spec.md` - Changed @change to @commit
-- `specs/mcp.dir/messages.spec.md` - Added SLA and confidence calculation
-- `specs/validation.dir/language-blocks.spec.md` - Enhanced validators
-- `specs/cli.dir/commands.spec.md` - Added 10 new commands
+- `specs/mcp.spec.dir/messages.spec.md` - Added SLA and confidence calculation
+- `specs/validation.spec.dir/language-blocks.spec.md` - Enhanced validators
+- `specs/cli.spec.dir/commands.spec.md` - Added 10 new commands
 - `specs/cli.spec.md` - Renamed to cli.spec
 - `GETTING-STARTED.md` - Added naming conventions section
 

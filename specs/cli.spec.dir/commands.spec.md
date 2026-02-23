@@ -1,5 +1,5 @@
 # speclang-header lines:12
-id: "@speclang/cli.dir/commands"
+id: "@speclang/cli.spec.dir/commands"
 version: 0.1.0
 layer: 1
 tags: [cli, commands]

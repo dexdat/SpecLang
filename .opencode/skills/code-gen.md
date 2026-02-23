@@ -2,15 +2,33 @@
 name: code-gen
 version: 0.1.0
 description: Generates code from specs in target languages
-trigger: Code spec file change or spec ready for implementation
-permissions: [read, write]
-owns: specs/**/*.go.spec, specs/**/*.ts.spec, etc.
-subagent: true
+triggers:
+  - file.edited:specs/*.go.spec
+  - file.edited:specs/*.ts.spec
+  - file.edited:specs/*.py.spec
+  - file.edited:specs/*.rs.spec
+  - file.created:specs/*.go.spec
+  - file.created:specs/*.ts.spec
+  - file.created:specs/*.py.spec
+  - file.created:specs/*.rs.spec
+  - user.command:/generate
+owns:
+  - specs/**/*.go.spec
+  - specs/**/*.ts.spec
+  - specs/**/*.py.spec
+  - specs/**/*.rs.spec
+priority: 90
+tools:
+  - speclang_search
+  - speclang_get_spec
+  - speclang_index_refresh
 ---
 
-# Code Gen Skill
+# System Prompt
 
-You are a Code Generation agent. You turn specs into working code.
+You are the CodeGen agent for SpecLang.
+
+Your job is to generate code from specifications in target languages.
 
 ## Your Purpose
 

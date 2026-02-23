@@ -222,7 +222,7 @@ func Login(...) {...}
 ```
 specs/
 ├── auth.spec.md              # High-level
-├── auth.spec.dir/            # Split directory
+├── auth.spec.spec.dir/            # Split directory
 │   ├── entities.spec.yaml    # Structured
 │   ├── operations.spec.yaml
 │   └── policies.spec.yaml
@@ -328,7 +328,7 @@ my-project/
 ├── specs/
 │   ├── core.spec.md       # Core system
 │   ├── auth.spec.md       # Auth high-level
-│   ├── auth.spec.dir/     # Auth details
+│   ├── auth.spec.spec.dir/     # Auth details
 │   │   ├── entities.spec.yaml
 │   │   ├── operations.spec.yaml
 │   │   └── tests.spec.yaml
@@ -353,7 +353,7 @@ my-project/
 
 **Split Specs:**
 ```
-{feature}.spec.dir/
+{feature}.spec.spec.dir/
 ├── {part1}.spec.yaml
 ├── {part2}.spec.yaml
 └── {part3}.spec.yaml

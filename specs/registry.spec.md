@@ -33,4 +33,4 @@ This spec has been split into focused sub-specs for better organization:
 - Get, getAll, getByRole, getBySessionId, getByStatus, getActive, has, countByRole, count operations
 - Private emitEvent helper
 
-*See individual parts in `registry.dir/`.*
+*See individual parts in `registry.spec.dir/`.*

@@ -73,7 +73,7 @@ id: "@speclang/api.spec.dir/openapi"  # Child spec in directory
 
 # INCORRECT  
 id: "@speclang/api"                # Missing .spec
-id: "@speclang/api.dir/openapi"    # Directory missing .spec
+id: "@speclang/api.spec.dir/openapi"    # Directory missing .spec
 ```
 
 ## Directory Structure
@@ -111,7 +111,7 @@ If you're an AI agent working with SpecLang:
 When creating new specs, follow these rules:
 
 1. **Parent spec**: `specs/foo.spec.md` with id `@speclang/foo.spec`
-2. **Sub-specs directory**: `specs/foo.spec.dir/` (not `foo.dir/`)
+2. **Sub-specs directory**: `specs/foo.spec.dir/` (not `foo.spec.dir/`)
 3. **Child specs**: `specs/foo.spec.dir/bar.spec.md` with id `@speclang/foo.spec.dir/bar`
 4. **Index file**: `specs/foo.spec.dir/_index.md` with id `@speclang/foo.spec.dir/index`
 

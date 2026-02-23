@@ -6,10 +6,10 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [cascade, reactive, loop, triggers, convergence]
 children:
-  - "@ref:specs/cascade.dir/triggers"
-  - "@ref:specs/cascade.dir/convergence"
-  - "@ref:specs/cascade.dir/continuous-improvement"
-  - "@ref:specs/cascade.dir/error-handling"
+  - "@ref:specs/cascade.spec.dir/triggers"
+  - "@ref:specs/cascade.spec.dir/convergence"
+  - "@ref:specs/cascade.spec.dir/continuous-improvement"
+  - "@ref:specs/cascade.spec.dir/error-handling"
 short: "Cascade - Reactive loop of spec expansion"
 status: draft
 ---
@@ -127,11 +127,11 @@ QueueSystem:
 
 ## Triggers
 
-See @ref:specs/cascade.dir/triggers for how file changes trigger agent reactions, dependency graphs, and concurrency management.
+See @ref:specs/cascade.spec.dir/triggers for how file changes trigger agent reactions, dependency graphs, and concurrency management.
 
 ## Convergence
 
-See @ref:specs/cascade.dir/convergence for quiet period detection, pipeline triggering, and recovery mechanisms.
+See @ref:specs/cascade.spec.dir/convergence for quiet period detection, pipeline triggering, and recovery mechanisms.
 
 ## Failure Handling & Orchestrator
 

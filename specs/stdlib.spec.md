@@ -8,8 +8,8 @@ project_level: Alpha
 agent_support: agent_assisted
 short: Standard Library
 children:
-  - "@ref:specs/stdlib.dir/types"
-  - "@ref:specs/stdlib.dir/mapping"
+  - "@ref:specs/stdlib.spec.dir/types"
+  - "@ref:specs/stdlib.spec.dir/mapping"
 ---
 # Standard Library
 
@@ -19,9 +19,9 @@ This spec has been split into multiple parts for better organization and autonom
 
 ## Parts
 
-- @ref:specs/stdlib.dir/types - Standard Library Types (primitives, composites, results, common types)
-- @ref:specs/stdlib.dir/mapping - Standard Library Functions & Assertions
+- @ref:specs/stdlib.spec.dir/types - Standard Library Types (primitives, composites, results, common types)
+- @ref:specs/stdlib.spec.dir/mapping - Standard Library Functions & Assertions
 
 ---
 
-*See individual parts in stdlib.dir/*
+*See individual parts in stdlib.spec.dir/*
