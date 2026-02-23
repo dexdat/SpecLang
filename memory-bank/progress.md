@@ -1,5 +1,91 @@
 # Progress
 
+## P2-011: MCP Search Tools
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/mcp.spec.dir/tools/search.spec.md`
+- **Files Modified**: 1 file (src/mcp/tools/search.ts)
+- **Tests**: Build passes, 991 tests pass
+
+### Components Implemented
+
+1. **SearchToolHandler** (`src/mcp/tools/search.ts`)
+   - `speclang_search`: Full-text search using FTS5 (already implemented)
+   - `speclang_semantic_search`: Vector similarity search (NEW)
+     - Added `handleSemanticSearch()` method
+     - Queries specs with content_embedding
+     - Computes cosine similarity between query and stored embeddings
+     - Returns top-k results sorted by similarity score
+     - Added `bufferToEmbedding()` helper to convert BLOB to number[]
+     - Added `cosineSimilarity()` helper for vector comparison
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 991 passed (4 pre-existing failures in db.test.ts)
+
+### Notes
+
+- Implements semantic search per spec requirements
+- Uses in-memory cosine similarity calculation (no sqlite-vss needed)
+- Returns similarity as score (1 = identical, 0 = orthogonal)
+
+---
+
+## P2-010: MCP Command Queue Tools
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `docs/prompts/phase-2.10-mcp-commands.md`
+- **Files Created**: 3 new files (src/mcp/tools/commands.ts, src/sqlite/migrations/007_commands.sql, tests/mcp/commands.test.ts)
+- **Files Modified**: 2 files (src/mcp/tools/index.ts, src/mcp/types.ts)
+- **Tests**: Build passes, 9 command tests pass
+
+### Components Implemented
+
+1. **CommandsToolHandler** (`src/mcp/tools/commands.ts`)
+   - `handleGetStatus()` - Get cascade and queue status
+   - `handleQueryCommands()` - Query commands with filters
+   - `handleInsertCommand()` - Insert command into queue
+   - `handleUpdateCommand()` - Update command status
+   - `handleDeleteCommand()` - Delete a command
+   - `handleGetNextCommand()` - Get highest priority pending command
+   - `handleClearCompleted()` - Clear old completed/failed commands
+   - `handleBatchInsert()` - Insert multiple commands
+
+2. **Tool Definitions** (`src/mcp/tools/index.ts`)
+   - speclang_query_commands
+   - speclang_insert_command
+   - speclang_update_command
+   - speclang_delete_command
+   - speclang_get_next_command
+   - speclang_clear_completed
+   - speclang_batch_insert
+
+3. **Types** (`src/mcp/types.ts`)
+   - Added CommandInput, QueryCommandsInput, QueuedCommand, StatusResult interfaces
+
+4. **SQL Migration** (`src/sqlite/migrations/007_commands.sql`)
+   - Commands table with indexes on status, cascade_id, priority, session_id
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 9 command tests pass
+
+### Notes
+
+- Implements command queue per phase-2.10 prompt
+- Commands table supports priority ordering, status transitions
+- Batch operations for bulk inserts
+
+---
+
 ## P2-009: MCP Configuration
 
 **Status**: PASSED
