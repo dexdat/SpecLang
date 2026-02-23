@@ -2,6 +2,17 @@
 // Source: @speclang/test-specs/runner
 // DO NOT EDIT MANUALLY
 
+// speclang-header lines:12
+// id: @speclang/test-specs/runner
+// version: 0.1.0
+// layer: 1
+// tags: [tests, bdd, runner]
+// imports: [@speclang/core]
+// status: draft
+// short: Test Runner
+// @ref: @speclang/test-specs
+// ---
+
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { glob } from 'glob';
