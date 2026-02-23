@@ -409,6 +409,39 @@ Project: SpecLang (meta-circular)
 
 ---
 
+### P1-001: speclangd Daemon Architecture (2026-02-23)
+
+**Status**: ✅ Complete (passes: true)
+
+**Files Created**:
+- `src/daemon/index.ts` - Main entry point with startDaemon function
+- `src/daemon/daemon.ts` - Main Daemon class orchestrating all components
+- `src/daemon/types.ts` - Type definitions (FileEvent, AgentTask, DaemonStatus, etc.)
+- `src/daemon/watcher.ts` - File watcher using polling (simulated fsnotify)
+- `src/daemon/router.ts` - Event router mapping file changes to agents
+- `src/daemon/convergence.ts` - Convergence detector for quiet period detection
+- `src/daemon/config.ts` - Configuration management
+- `src/daemon/state.ts` - State persistence
+- `src/daemon/ipc.ts` - IPC for daemon control
+- `src/daemon/locks.ts` - Lock manager for concurrent write prevention
+
+**Spec Requirements Implemented**:
+- File watching with watch patterns: `**/*.spec.{md,yaml,yml,scl}`, `**/project.scl`, `**/build.{scl,yaml}`
+- Ignore patterns: `.git/`, `node_modules/`, `generated/`, `.speclang/`, `*.log`
+- Event routing to agents based on file patterns
+- Convergence detection with configurable quiet period (default 30s)
+- Lock management to prevent concurrent write conflicts
+- IPC commands: status, pause, resume, abort, trigger, converge
+
+**Validation**:
+- ✅ TypeScript compiles: `npm run build`
+- ✅ Tests pass: 11 daemon tests passed
+
+**Spec References**:
+- `specs/daemon.spec.md` - Main daemon spec
+
+---
+
 ### P0-014: Lens System (2026-02-23)
 
 **Status**: ✅ Complete
