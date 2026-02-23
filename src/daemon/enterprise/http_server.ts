@@ -206,6 +206,21 @@ export class HTTPServer {
       
       res.json(testResult);
     });
+
+    // POST /worktree/:name/deploy
+    this.app.post('/worktree/:name/deploy', (req: Request, res: Response) => {
+      const { name } = req.params;
+      const { target } = req.body;
+      
+      const deployment = {
+        deployment_id: `deploy-${Date.now()}`,
+        status: 'deployed',
+        target: target || 'production',
+        timestamp: Date.now(),
+      };
+      
+      res.json(deployment);
+    });
   }
 
   private broadcastQueueUpdate(): void {
