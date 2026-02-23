@@ -1,5 +1,44 @@
 # Progress
 
+## P1-004: Cascade Coordination Protocol
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/cascade-protocol.spec.md`, `specs/cascade-protocol.spec.dir/events.spec.md`, `specs/cascade-protocol.spec.dir/flow.spec.md`
+- **Files Created**: 2 new files
+- **Tests**: Build passes, 910 tests pass (4 failures pre-existing db timing issue)
+
+### Components Implemented
+
+1. **CascadeCoordinator** (`src/cascade/coordinator/index.ts`)
+   - Orchestrates cascade flow with explicit agent invocation
+   - Implements verification gates (reference validation, compilation, tests)
+   - Tracks cascade state and depth limits
+   - Supports pause/resume operations
+
+2. **DependencyTracker** (`src/cascade/coordinator/dependency.ts`)
+   - Builds dependency graph from _index.json
+   - Organizes specs into trees (spec/code/test/doc)
+   - Tracks depth per tree
+   - Implements cascade ordering algorithm
+   - Saves/loads cascade state to .speclang/cascade_state.json
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 910 passed (4 pre-existing failures unrelated to cascade)
+
+### Notes
+
+- Implements explicit coordination protocol (explicit > automatic for OpenCode)
+- Supports multi-tree spanning generation (spec tree → code tree → test tree → docs tree)
+- Depth tracking per tree prevents infinite loops
+- Exports from src/cascade/index.ts for easy integration
+
+---
+
 ## P1-003: OpenCode Integration
 
 **Status**: PASSED
