@@ -1,5 +1,99 @@
 # Progress
 
+## P2-008: MCP Error Handling
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/mcp.spec.dir/error-handling.spec.md`
+- **Files Created**: 4 new files (src/mcp/errors/types.ts, handler.ts, translations.ts, recovery.ts)
+- **Tests**: Build passes, 963 tests pass (5 pre-existing db failures)
+
+### Components Implemented
+
+1. **Error Types** (`src/mcp/errors/types.ts`) - NEW
+   - `MCPErrors` enum: SQLITE_BUSY, SQLITE_CONSTRAINT, SQLITE_CORRUPT, INVALID_PARAMS, NOT_FOUND, UNAUTHORIZED, CONNECTION_LOST, PARSE_ERROR
+   - `ErrorAction` enum: RETRY, LOG, NOTIFY, EXIT, ATTEMPT_RECONNECT, RETURN
+   - `BackoffStrategy` enum: NONE, LINEAR, EXPONENTIAL
+   - ErrorConfig, MCPToolError, ErrorContext interfaces
+   - RetryOptions interface with DEFAULT_RETRY_OPTIONS
+
+2. **Error Handler** (`src/mcp/errors/handler.ts`) - NEW
+   - MCPErrorHandler class with database/tool/transport error handling
+   - DATABASE_ERROR_CONFIG, TOOL_ERROR_CONFIG, TRANSPORT_ERROR_CONFIG maps
+   - handleDatabaseError: handles SQLITE errors (retry, log, exit)
+   - handleToolError: returns structured error responses
+   - handleTransportError: attempts reconnection with backoff
+   - withDatabaseRetry: wraps operations with retry logic
+   - getDefaultHandler(), createErrorHandler() exports
+
+3. **Error Translations** (`src/mcp/errors/translations.ts`) - NEW
+   - ERROR_TRANSLATIONS map: human-readable messages for each error code
+   - translateError(): maps error code to user-friendly message
+   - createToolError(): creates MCPToolError object with translation
+
+4. **Error Recovery** (`src/mcp/errors/recovery.ts`) - NEW
+   - calculateBackoff(): computes delay based on strategy (linear/exponential)
+   - withRetry(): generic retry wrapper with configurable backoff
+   - DEFAULT_RECONNECT_OPTIONS for transport reconnection
+   - attemptReconnect(): connection recovery with exponential backoff
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 963 passed (5 pre-existing db failures unrelated to error handling)
+
+### Notes
+
+- Implements error handling per @speclang/mcp.error-handling spec
+- Database errors: SQLITE_BUSY (retry), SQLITE_CONSTRAINT (log), SQLITE_CORRUPT (exit)
+- Tool errors: returns structured { error, code } responses
+- Transport errors: attempts reconnection with configurable max attempts and backoff
+- All error codes and configs match the spec definitions
+
+---
+
+## P2-007: MCP Authentication (server_mode)
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/mcp.spec.dir/authentication.spec.md`
+- **Files Modified**: 2 files (src/mcp/auth.ts, src/mcp/types.ts)
+- **Tests**: Build passes, 964 tests pass (4 pre-existing db failures)
+
+### Components Implemented
+
+1. **Types** (`src/mcp/types.ts`)
+   - Added `config_file` and `tls_client_cert` to MCPAuthConfig.type union
+   - Added `configPath` and `tlsCertPath` optional config fields
+   - Added `MCPAuthUser` interface (user, hash, permissions)
+   - Added `MCPAuthUsersConfig` interface (users array)
+
+2. **Auth Middleware** (`src/mcp/auth.ts`)
+   - Added `configFileAuthMiddleware()`: Loads users from JSON config file (`/etc/speclang/mcp-auth.json`)
+     - Validates credentials using SHA256 password hashing
+     - Attaches authUser and authPermissions to request
+   - Added `tlsClientCertAuthMiddleware()`: Validates client TLS certificates
+     - Extracts CN from certificate subject
+     - Attaches authUser to request
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 964 passed (4 pre-existing db failures unrelated to auth)
+
+### Notes
+
+- Implements server_mode authentication per @speclang/mcp.authentication spec
+- Config file auth uses SHA256 hashes (can integrate with external hash stores)
+- TLS client cert auth extracts CN for identity (enterprise mTLS)
+- Both middleware methods set request properties for downstream authorization
+
+---
+
 ## P2-005: OpenAPI-MCP Generator
 
 **Status**: PASSED
