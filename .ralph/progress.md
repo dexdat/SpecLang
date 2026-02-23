@@ -219,6 +219,7 @@ Project: SpecLang (meta-circular)
 
 **Baby Steps Commits**:
 1. `speclang: baby-step: Fix vitest import in test-specs.test.ts`
+2. `speclang: baby-step: Add speclang-headers to test-specs source files`
 
 **Validation**:
 - ✅ TypeScript compiles: `npm run build`
@@ -227,4 +228,31 @@ Project: SpecLang (meta-circular)
 
 **Spec References**:
 - `specs/test-specs.spec.md` - Main spec
+- `specs/test-specs.spec.dir/format.spec.md` - Format sub-spec
+- `specs/test-specs.spec.dir/examples.spec.md` - Examples sub-spec
+
+### P0-014: Lens System (2026-02-23)
+
+**Status**: ✅ Complete
+
+**Files Verified**:
+- `src/lenses/index.ts` - Main entry point exporting all modules
+- `src/lenses/types.ts` - Type definitions (Lens, Block, LensContext, etc.)
+- `src/lenses/registry.ts` - LensRegistry for managing and detecting lenses
+- `src/lenses/converter.ts` - LensConverter for lens-to-lens transformation
+- `src/lenses/prose-lens.ts` - Prose/markdown content handler
+- `src/lenses/code-lens.ts` - Code blocks with language annotation handler
+- `src/lenses/entity-lens.ts` - Entity/struct definitions handler
+- `src/lenses/operation-lens.ts` - Function/operation signatures handler
+- `src/lenses/math-lens.ts` - LaTeX math formula handler
+- `src/lenses/acceptance-lens.ts` - GIVEN/WHEN/THEN criteria handler
+- `src/lenses/diagram-lens.ts` - Mermaid diagram blocks handler
+- `tests/lenses.test.ts` - 27 test cases
+
+**Validation**:
+- ✅ TypeScript compiles: `npm run build`
+- ✅ Tests pass: 27 lens tests passed
+
+**Spec References**:
+- `specs/lenses.spec.md` - Main spec
 
