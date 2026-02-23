@@ -1,4 +1,114 @@
 /**
+ * SPECLANG-GENERATED: MCP subcommands
+ * Source: @speclang/mcp.cli
+ */
+
+import { MCPServer } from '../../mcp/server.js';
+import { getDbPath, ensureSpeclangDir } from '../utils.js';
+import { spawn, execSync } from 'child_process';
+import * as path from 'path';
+import * as fs from 'fs';
+
+export interface McpStartOptions {
+  remote?: boolean;
+  port?: number;
+  auth?: string;
+  user?: string;
+  pass?: string;
+  token?: string;
+  config?: string;
+  json?: boolean;
+}
+
+export interface McpServeOptions {
+  config?: string;
+  json?: boolean;
+}
+
+export interface McpStatusOptions {
+  json?: boolean;
+}
+
+export interface McpStopOptions {
+  json?: boolean;
+}
+
+export interface McpGenerateOpenapiOptions {
+  input?: string;
+  output?: string;
+  transport?: string;
+  port?: number;
+  serverName?: string;
+  baseUrl?: string;
+  force?: boolean;
+  register?: boolean;
+  json?: boolean;
+}
+
+const PID_FILE = '.speclang/mcp.pid';
+const STATUS_FILE = '.speclang/mcp.status';
+
+function getPidPath(): string {
+  return getDbPath().replace('.speclang.db', '') + '/' + PID_FILE;
+}
+
+function getStatusPath(): string {
+  return getDbPath().replace('.speclang.db', '') + '/' + STATUS_FILE;
+}
+
+function readPid(): number | null {
+  try {
+    const fs = require('fs');
+    const pidPath = getPidPath();
+    if (fs.existsSync(pidPath)) {
+      return parseInt(fs.readFileSync(pidPath, 'utf-8').trim(), 10);
+    }
+  } catch {}
+  return null;
+}
+
+function writePid(pid: number): void {
+  const fs = require('fs');
+  const pidPath = getPidPath();
+  const dir = require('path').dirname(pidPath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  fs.writeFileSync(pidPath, pid.toString());
+}
+
+function removePid(): void {
+  try {
+    const fs = require('fs');
+    const pidPath = getPidPath();
+    if (fs.existsSync(pidPath)) {
+      fs.unlinkSync(pidPath);
+    }
+  } catch {}
+}
+
+function writeStatus(status: object): void {
+  const fs = require('fs');
+  const statusPath = getStatusPath();
+  const dir = require('path').dirname(statusPath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  fs.writeFileSync(statusPath, JSON.stringify(status, null, 2));
+}
+
+function readStatus(): object | null {
+  try {
+    const fs = require('fs');
+    const statusPath = getStatusPath();
+    if (fs.existsSync(statusPath)) {
+      return JSON.parse(fs.readFileSync(statusPath, 'utf-8'));
+    }
+  } catch {}
+  return null;
+}
+
+/**
  * MCP start command - start MCP server
  */
 export async function mcpStartCommand(options: McpStartOptions): Promise<void> {
@@ -94,6 +204,94 @@ exec npx speclang-mcp start --http --port 3000 >> "${logFile}" 2>&1
     console.log(`Log file: ${logFile}`);
   } else {
     console.log(JSON.stringify({ success: true, pid: serverPid }));
+  }
+}
+
+/**
+ * MCP status command - show server status
+ */
+export async function mcpStatusCommand(options: McpStatusOptions): Promise<void> {
+  const pid = readPid();
+  const status = readStatus();
+  
+  if (!options.json) {
+    console.log('=== SpecLang MCP Server Status ===\n');
+    
+    if (pid) {
+      try {
+        process.kill(pid, 0);
+        console.log(`Status: Running`);
+        console.log(`PID: ${pid}`);
+      } catch {
+        console.log(`Status: Not running (stale PID file)`);
+        removePid();
+      }
+    } else {
+      console.log('Status: Not running');
+    }
+    
+    if (status) {
+      console.log(`\nDetails:`);
+      console.log(`  Port: ${(status as any).port || 'N/A'}`);
+      console.log(`  Mode: ${(status as any).mode || 'N/A'}`);
+      console.log(`  Started: ${(status as any).started || 'N/A'}`);
+    }
+  } else {
+    console.log(JSON.stringify({
+      running: pid ? true : false,
+      pid: pid,
+      status: status
+    }, null, 2));
+  }
+}
+
+/**
+ * MCP stop command - stop daemon
+ */
+export async function mcpStopCommand(options: McpStopOptions): Promise<void> {
+  const pid = readPid();
+  
+  if (!pid) {
+    if (!options.json) {
+      console.log('No MCP server is running');
+    } else {
+      console.log(JSON.stringify({ success: false, message: 'No server running' }));
+    }
+    return;
+  }
+  
+  try {
+    process.kill(pid, 'SIGTERM');
+    
+    let attempts = 0;
+    while (attempts < 10) {
+      try {
+        process.kill(pid, 0);
+        await new Promise(resolve => setTimeout(resolve, 200));
+        attempts++;
+      } catch {
+        break;
+      }
+    }
+    
+    if (attempts >= 10) {
+      process.kill(pid, 'SIGKILL');
+    }
+    
+    removePid();
+    
+    if (!options.json) {
+      console.log('MCP server stopped');
+    } else {
+      console.log(JSON.stringify({ success: true }));
+    }
+  } catch (error) {
+    if (!options.json) {
+      console.error('Failed to stop server:', error);
+    } else {
+      console.log(JSON.stringify({ success: false, message: error instanceof Error ? error.message : 'Unknown error' }));
+    }
+    process.exit(1);
   }
 }
 
@@ -201,3 +399,11 @@ export async function mcpGenerateOpenapiCommand(options: McpGenerateOpenapiOptio
     process.exit(1);
   }
 }
+
+export default { 
+  mcpStartCommand, 
+  mcpServeCommand, 
+  mcpStatusCommand, 
+  mcpStopCommand,
+  mcpGenerateOpenapiCommand 
+};

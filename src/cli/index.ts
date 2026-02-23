@@ -16,7 +16,7 @@ import { cascadeCommand, CascadeOptions } from './commands/cascade.js';
 import { guardCommand, GuardOptions } from './commands/guard.js';
 import { metaGenerateCommand, metaValidateCommand, metaBootstrapCommand, metaCheckCommand, MetaCLIOptions } from './commands/meta.js';
 import { autonomousTestCommand, autonomousValidateCommand, autonomousReportCommand, autonomousVerifyCommand, AutonomousTestOptions, AutonomousValidateOptions, AutonomousReportOptions, AutonomousVerifyOptions } from './commands/autonomous.js';
-import { mcpStatusCommand, mcpStopCommand, McpStatusOptions, McpStopOptions } from './commands/mcp.js';
+import { mcpStatusCommand, mcpStopCommand, mcpStartCommand, mcpServeCommand, mcpGenerateOpenapiCommand, McpStatusOptions, McpStopOptions, McpStartOptions, McpServeOptions, McpGenerateOpenapiOptions } from './commands/mcp.js';
 
 const program = new Command();
 
@@ -170,7 +170,6 @@ mcp
   .command('start')
   .description('Start MCP server')
   .option('--port <n>', 'Port number', parseInt, 3000)
-  .option('--daemon', 'Run in daemon mode')
   .option('--http', 'Run in HTTP mode')
   .option('--remote', 'HTTP mode (alias for --http)')
   .option('--auth <type>', 'Auth type (none, basic, token)', 'none')
@@ -179,8 +178,18 @@ mcp
   .option('--token <token>', 'Token for token auth')
   .option('--config <path>', 'Config file path')
   .option('--json', 'JSON output')
-  .action(async (options: ServerOptions) => {
-    await serverCommand(options);
+  .action(async (options: McpStartOptions & { http?: boolean; remote?: boolean; auth?: string; user?: string; pass?: string; token?: string; config?: string }) => {
+    const opts: McpStartOptions = {
+      port: options.port,
+      remote: options.remote || options.http,
+      auth: options.auth,
+      user: options.user,
+      pass: options.pass,
+      token: options.token,
+      config: options.config,
+      json: options.json
+    };
+    await mcpStartCommand(opts);
   });
 
 mcp
@@ -188,8 +197,8 @@ mcp
   .description('Start MCP server in daemon mode')
   .option('--config <path>', 'Config file path')
   .option('--json', 'JSON output')
-  .action(async (options: ServerOptions & { config?: string }) => {
-    await serverCommand({ ...options, daemon: true });
+  .action(async (options: McpServeOptions) => {
+    await mcpServeCommand(options);
   });
 
 mcp
@@ -206,6 +215,33 @@ mcp
   .option('--json', 'JSON output')
   .action(async (options: McpStopOptions) => {
     await mcpStopCommand(options);
+  });
+
+mcp
+  .command('generate-openapi')
+  .description('Generate MCP server from OpenAPI spec')
+  .requiredOption('-i, --input <path>', 'Path or URL to OpenAPI spec (YAML/JSON)')
+  .requiredOption('-o, --output <dir>', 'Output directory for generated MCP project')
+  .option('-t, --transport <mode>', 'Transport mode (stdio, web, streamable-http)', 'stdio')
+  .option('-p, --port <n>', 'Port for web-based transports', parseInt, 3000)
+  .option('-n, --server-name <name>', 'Name of MCP server')
+  .option('-b, --base-url <url>', 'Base URL for API requests')
+  .option('--force', 'Overwrite existing files')
+  .option('--register', 'Automatically register with SpecLang MCP server')
+  .option('--json', 'JSON output')
+  .action(async (options: McpGenerateOpenapiOptions & { input: string; output: string; transport?: string; port?: number; serverName?: string; baseUrl?: string; force?: boolean; register?: boolean }) => {
+    const opts: McpGenerateOpenapiOptions = {
+      input: options.input,
+      output: options.output,
+      transport: options.transport,
+      port: options.port,
+      serverName: options.serverName,
+      baseUrl: options.baseUrl,
+      force: options.force,
+      register: options.register,
+      json: options.json
+    };
+    await mcpGenerateOpenapiCommand(opts);
   });
 
 // ============================================================================
