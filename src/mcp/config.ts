@@ -11,6 +11,8 @@ const DEFAULT_CONFIG: MCPServerConfig = {
   port: 3000,
   host: '0.0.0.0',
   database: '.speclang/speclang.db',
+  databaseWalMode: true,
+  serverMode: 'http',
   specsDir: 'specs',
   auth: {
     enabled: false,
@@ -19,6 +21,14 @@ const DEFAULT_CONFIG: MCPServerConfig = {
   sse: {
     enabled: true,
     heartbeatInterval: 30000
+  },
+  logging: {
+    level: 'info'
+  },
+  limits: {
+    maxConnections: 100,
+    queryTimeoutMs: 5000,
+    maxResults: 1000
   }
 };
 
@@ -50,6 +60,27 @@ export function loadConfig(options?: Partial<MCPServerConfig>): MCPServerConfig 
   }
   if (process.env.MCP_SSE_ENABLED === 'false') {
     config.sse.enabled = false;
+  }
+  if (process.env.MCP_LOG_LEVEL) {
+    config.logging = { ...config.logging, level: process.env.MCP_LOG_LEVEL as 'debug' | 'info' | 'warn' | 'error' };
+  }
+  if (process.env.MCP_LOG_FILE) {
+    config.logging = { ...config.logging, file: process.env.MCP_LOG_FILE };
+  }
+  if (process.env.MCP_MAX_CONNECTIONS) {
+    config.limits = { ...config.limits, maxConnections: parseInt(process.env.MCP_MAX_CONNECTIONS, 10) };
+  }
+  if (process.env.MCP_QUERY_TIMEOUT_MS) {
+    config.limits = { ...config.limits, queryTimeoutMs: parseInt(process.env.MCP_QUERY_TIMEOUT_MS, 10) };
+  }
+  if (process.env.MCP_MAX_RESULTS) {
+    config.limits = { ...config.limits, maxResults: parseInt(process.env.MCP_MAX_RESULTS, 10) };
+  }
+  if (process.env.MCP_WAL_MODE) {
+    config.databaseWalMode = process.env.MCP_WAL_MODE === 'true';
+  }
+  if (process.env.MCP_SERVER_MODE) {
+    config.serverMode = process.env.MCP_SERVER_MODE as 'stdio' | 'http' | 'socket';
   }
   
   return config;
@@ -95,6 +126,22 @@ export function validateConfig(config: MCPServerConfig): { valid: boolean; error
   const dbDir = path.dirname(config.database);
   if (!fs.existsSync(dbDir)) {
     errors.push(`Database directory does not exist: ${dbDir}`);
+  }
+  
+  if (config.serverMode === 'http' && (!config.port || config.port < 1 || config.port > 65535)) {
+    errors.push('HTTP mode requires valid port between 1 and 65535');
+  }
+  
+  if (config.limits) {
+    if (config.limits.maxConnections < 1) {
+      errors.push('maxConnections must be at least 1');
+    }
+    if (config.limits.queryTimeoutMs < 100) {
+      errors.push('queryTimeoutMs must be at least 100');
+    }
+    if (config.limits.maxResults < 1) {
+      errors.push('maxResults must be at least 1');
+    }
   }
   
   return { valid: errors.length === 0, errors };

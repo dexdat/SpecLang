@@ -14,9 +14,13 @@ export interface MCPServerConfig {
   port: number;
   host: string;
   database: string;
+  databaseWalMode?: boolean;
+  serverMode?: 'stdio' | 'http' | 'socket';
   specsDir: string;
   auth: MCPAuthConfig;
   sse: MCPSSEConfig;
+  logging?: MCPLoggingConfig;
+  limits?: MCPLimitsConfig;
 }
 
 /** Authentication configuration */
@@ -47,6 +51,19 @@ export interface MCPAuthUsersConfig {
 export interface MCPSSEConfig {
   enabled: boolean;
   heartbeatInterval: number;
+}
+
+/** Logging configuration */
+export interface MCPLoggingConfig {
+  level: 'debug' | 'info' | 'warn' | 'error';
+  file?: string;
+}
+
+/** Limits configuration */
+export interface MCPLimitsConfig {
+  maxConnections: number;
+  queryTimeoutMs: number;
+  maxResults: number;
 }
 
 /** MCP tool definition */
@@ -238,6 +255,8 @@ export const DEFAULT_MCP_CONFIG: MCPServerConfig = {
   port: 3000,
   host: '0.0.0.0',
   database: '.speclang/speclang.db',
+  databaseWalMode: true,
+  serverMode: 'http',
   specsDir: 'specs',
   auth: {
     enabled: false,
@@ -246,5 +265,13 @@ export const DEFAULT_MCP_CONFIG: MCPServerConfig = {
   sse: {
     enabled: true,
     heartbeatInterval: 30000
+  },
+  logging: {
+    level: 'info'
+  },
+  limits: {
+    maxConnections: 100,
+    queryTimeoutMs: 5000,
+    maxResults: 1000
   }
 };
