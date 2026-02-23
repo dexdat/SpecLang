@@ -334,14 +334,27 @@ export { parseSpec };
 
 export { CascadeCoordinator } from './coordinator/index.js';
 export { DependencyTracker } from './coordinator/dependency.js';
-export type { 
+export { 
   CascadeState, 
+  AgentInvocation, 
+  VerificationResult,
+  createInitialState 
+} from './coordinator/state.js';
+export { 
+  AgentInvoker, 
+  getAgentForTrigger 
+} from './coordinator/invocation.js';
+export { 
+  VerificationGates, 
+  createVerificationResult,
+  type GateResult,
+  type VerificationGate
+} from './coordinator/verification.js';
+export type { 
   TreeNode, 
   DependencyGraph 
 } from './coordinator/dependency.js';
 export type {
   CoordinatorOptions,
-  CascadeResult as CoordinatorResult,
-  VerificationGate,
-  GateResult
+  CascadeResult as CoordinatorResult
 } from './coordinator/index.js';
