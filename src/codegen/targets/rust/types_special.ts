@@ -56,6 +56,8 @@ export const SERDE_TYPE_MAPPINGS: Record<string, string> = {
   Float: 'f64',
   Bool: 'bool',
   UUID: 'Uuid',
+  JSON: 'Value',
+  Email: 'String',
 };
 
 export const TOKIO_TYPE_MAPPINGS = {

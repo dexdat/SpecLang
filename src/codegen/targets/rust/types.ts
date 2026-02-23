@@ -112,6 +112,11 @@ export const RUST_TYPE_MAPPINGS: RustTypeMapping[] = [
   // Path types
   { stdlib: 'Path', rust: 'PathBuf', import: 'std::path', default: 'PathBuf::new()' },
   { stdlib: 'Uri', rust: 'Uri', import: 'http', crate: 'http', default: 'Uri::default()' },
+
+  // URL and Email
+  { stdlib: 'URL', rust: 'Url', import: 'url', crate: 'url', default: 'Url::parse("http://example.com").unwrap()' },
+  { stdlib: 'Email', rust: 'String', default: 'String::new()', notes: 'Validate as String' },
+  { stdlib: 'JSON', rust: 'Value', import: 'serde_json', crate: 'serde_json', default: 'Value::Null' },
 ];
 
 function lookupMapping(stdlibType: string): RustTypeMapping | undefined {
