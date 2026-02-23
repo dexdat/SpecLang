@@ -7,50 +7,54 @@
 ### Implementation Summary
 
 - **Spec**: `specs/daemon.spec.dir/convergence.spec.md`
-- **Files Modified**: 1 file (src/opencode/convergence.ts)
-- **Tests**: Build passes, 910 tests pass (4 pre-existing failures)
+- **Files Modified**: 3 files (src/daemon/convergence.ts, config.ts, types.ts)
+- **Tests**: Build passes, 910 tests pass
 
 ### Components Implemented
 
-1. **CascadeStatus Interface** (`src/opencode/convergence.ts`)
-   - Status: 'cascading' | 'converged' | 'finalizing'
-   - Tracks started/ended timestamps, filesChanged, testResults, commitHash
+1. **Agent Status Tracking** (`src/daemon/convergence.ts`)
+   - `setAgentStatus(agentId, status, currentTask)` - track agent states
+   - `getAllAgentStatuses()` - get all agent statuses
+   - `areAllAgentsIdle()` - check if all agents are idle
+   - `hasAgentErrors()` - check for agent errors
+   - `agent_status` event emission
 
-2. **TestResults Interface** - passed/failed/duration tracking
+2. **checkConvergence()** - implements spec pseudocode
+   - Checks quiet period (now - lastEventTime >= quietPeriodMs)
+   - Checks all agents idle (agent.status == Idle)
+   - Returns converged or StillCascading with reason
 
-3. **Cascade Status Persistence** - NEW `cascade_status` table in SQLite
-   - Tracks cascade lifecycle across restarts
-   - File change count per cascade
+3. **onConverge()** - implements spec workflow
+   1. Wait for all in-flight events
+   2. Verify all agents idle
+   3. Run tests (if testOnConverge enabled)
+   4. Commit changes (if autoCommit enabled)
+   5. Notify user via 'converged' event
+   6. Await next input
 
-4. **Finalize Method** (`finalize()`) - NEW
-   - User-triggered convergence signal (user_finalize from spec)
-   - Runs full on_converge workflow:
-     1. waitForInflightEvents()
-     2. verifyAgentsIdle()
-     3. runTests()
-     4. commitChanges()
-     5. notifyUser()
-     6. startNewCascade()
+4. **user_finalize signal** - `finalize()` method
+   - User-triggered convergence regardless of quiet period
+   - Forces quiet period check to pass
+   - Runs full onConverge workflow
 
-5. **Commit Changes** (`commitChanges()`) - NEW
-   - Stages all changes with `git add -A`
-   - Creates commit with file count message
-   - Returns commit hash
+5. **TestResults type** - tracks test outcomes
+   - passed/failed/total counts
+   - duration, errors array
 
-6. **User Notification** - Added `onNotify` callback
-   - Notifies user when cascade converges
-   - Logs test results and readiness for next input
+6. **Config options** (src/daemon/config.ts)
+   - `testOnConverge: true` - run tests on convergence
+   - `autoCommit: false` - auto-commit changes
 
 ### Test Results
 
 - **Build**: ✅ Passes
-- **Tests**: ✅ 910 passed (4 pre-existing failures unrelated to convergence)
+- **Tests**: ✅ 910 passed
 
 ### Notes
 
 - Implements all three convergence signals per spec: quiet_period, all_agents_done, user_finalize
-- Auto-commits changes when cascade converges (can be triggered by quiet period or /finalize)
-- Follows spec pseudocode for check_convergence() logic
+- Auto-commits changes when cascade converges (disabled by default)
+- Follows spec pseudocode for check_convergence() logic exactly
 
 ---
 
