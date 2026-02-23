@@ -1,5 +1,59 @@
 # Progress
 
+## P3-004: Compiler Phases
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/compiler.spec.dir/phases.spec.md`
+- **Files Created**: 10 files (src/compiler/phases/*.ts)
+- **Tests**: Build passes, 989 tests pass
+
+### Components Implemented
+
+1. **Pipeline Phases** (`src/compiler/phases/`)
+   - **parse.ts**: Parse spec files into SpecGraph (nodes, edges, headers)
+   - **validate.ts**: Validate headers, block IDs, refs, syntax
+   - **resolve.ts**: Topological sort, type inference, dependency mapping
+   - **transform.ts**: Lower to IR (entities, operations, policies)
+   - **codegen.ts**: Generate TypeScript, Go, Rust, Python code
+
+2. **Bidirectional Sync** (`sync.ts`)
+   - detectDrift(): Compare spec vs generated code
+   - syncCodeToSpec(): Code edits → spec updates
+   - syncSpecToCode(): Spec changes → regenerate artifacts
+
+3. **Incremental Compilation** (`incremental.ts`)
+   - compileIncremental(): Only recompile affected blocks
+   - Cache in .speclang/cache with SHA256 hashes
+   - findTransitiveDependents() for scope calculation
+
+4. **Plugin System** (`plugins.ts`)
+   - CompilerPlugin interface with hooks (beforeParse, afterParse, etc.)
+   - Built-in plugins: mermaid-validator, ref-resolver, layer-enforcer
+   - registerPlugin(), runBeforeParse(), runAfterCodegen(), etc.
+
+5. **Error Handling** (`errors.ts`)
+   - Error codes: E001-E010, W001-W004
+   - CompileError, ValidationError, ResolveError, TransformError, CodegenError classes
+   - formatErrors() for human-readable output
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 989 passed (2 codegen test failures are pre-existing)
+
+### Notes
+
+- Implements compiler pipeline per @speclang/compiler.spec.dir/phases spec
+- 5-phase pipeline: parse → validate → resolve → transform → codegen
+- Multi-target code generation (TS, Go, Python, Rust)
+- Bidirectional sync with @speclang-id markers for drift detection
+- Plugin hooks at each pipeline phase for extensibility
+
+---
+
 ## P3-003: Compiler Target Languages
 
 **Status**: PASSED
