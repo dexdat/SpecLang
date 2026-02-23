@@ -1,5 +1,68 @@
 # Progress
 
+## P1-010: Agent Sessions and Lifecycle
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/agent-protocol.spec.dir/sessions.spec.md`
+- **Files Created**: 2 new files (session-api.ts, metadata-routing.ts)
+- **Files Modified**: 2 files (types.ts, index.ts)
+- **Tests**: Build passes, 910 tests pass (4 pre-existing db failures)
+
+### Components Implemented
+
+1. **Error Types** (`src/agents/types.ts`)
+   - `AgentErrorType`: AccessDenied, LockTimeout, SessionNotFound, AgentTimeout
+   - `AgentError` interface with recovery support
+   - `ErrorRecovery` interface for error handling strategies
+   - `ConcurrencyConfig` with maxConcurrentAgents (50), maxFileChangesPerCascade (100)
+   - `ProjectLevel` and `AgentSupportLevel` types
+   - `SpecMetadata` for routing decisions
+   - `MetadataRouting` interface for behavior based on metadata
+
+2. **Session API Server** (`src/agents/session-api.ts`) - NEW
+   - Express-based HTTP API server
+   - Endpoints:
+     - POST /session/create - Create new session
+     - GET /session/:id/status - Get session status
+     - POST /session/:id/event - Send event to session
+     - DELETE /session/:id - Delete session
+     - GET /sessions - List all sessions
+     - GET /health - Health check
+
+3. **Metadata Routing** (`src/agents/metadata-routing.ts`) - NEW
+   - `createMetadataRouting()` - returns MetadataRouting implementation
+   - `checkPermissions()` - based on project_level and agent_support
+   - `getInteractionStyle()` - returns autonomous/assisted/human_required
+   - `shouldRequestApproval()` - determines if human approval needed
+   - `getResourceAllocation()` - resource allocation based on maturity
+   - `getPriority()` - task priority based on metadata
+
+4. **Module Exports** (`src/agents/index.ts`)
+   - Added exports for SessionApiServer and metadata routing functions
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 910 passed (4 pre-existing db failures)
+- **Agent Tests**: ✅ 48 tests pass
+
+### Notes
+
+- Implements SessionAPI endpoints per spec (HTTP server on configurable port)
+- Implements AgentError types with recovery mechanisms
+- Implements concurrency limits (50 agents, 100 file changes per cascade)
+- Implements metadata-based routing behavior per spec:
+  - `human_only` specs → read-only access
+  - `agent_assisted` specs → write with approval
+  - `agent_autonomous` specs → full write/deploy permissions (Production+)
+- Lower project_level (POC/MVP) → more human oversight
+- Higher project_level (Production+) → more autonomy
+
+---
+
 ## P1-009: Daemon File Locking
 
 **Status**: PASSED
