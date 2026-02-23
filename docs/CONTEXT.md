@@ -124,10 +124,34 @@ git commit --only <file> -m "speclang: <role> <summary> [parent:<hash>]"
 
 ## Next Steps (If Any)
 
-- [ ] Fix remaining `*.dir` directories to `*.spec.dir`
+- [ ] **Rename all `*.dir` directories to `*.spec.dir`** - There are ~20 directories to rename
 - [ ] Update all spec IDs to include `.spec`
 - [ ] Run full validation on all specs
 - [ ] Generate actual openapi.yaml from openapi.spec.md
+
+## Directories Needing Rename
+
+Currently these directories use old `*.dir` naming:
+- `specs/ui.dir`
+- `specs/opencode.dir`
+- `specs/executor.dir`
+- `specs/ipc.dir`
+- `specs/ralph-loop.dir`
+- `specs/safety-nets.dir`
+- `specs/cascade-protocol.dir`
+- `specs/validation.dir`
+- `specs/file-naming.dir`
+- `specs/workflow.dir`
+- `specs/skills.dir`
+- `specs/directory-structure.dir`
+- `specs/sqlite.dir`
+- `specs/compiler.dir`
+- `specs/core.dir`
+- `specs/deployment.dir`
+- `specs/mcp-ui-tools.dir`
+- `specs/validation-tool.dir`
+- `specs/mcp.dir`
+- `specs/cascade.dir`
 
 ---
 
