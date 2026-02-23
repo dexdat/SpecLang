@@ -19,6 +19,8 @@ import {
   SEMVER_PATTERN,
   REF_PATTERN,
   PART_PATTERN,
+  COMMIT_PATTERN,
+  CASCADE_PATTERN,
   PROJECT_LEVELS,
   AGENT_SUPPORTS,
   SPEC_STATUSES,
@@ -395,6 +397,48 @@ export function validatePartField(metadata: Partial<SpecMetadata>): ValidationMe
 }
 
 /**
+ * Validate ownership fields (caused_by, change_id, part_of)
+ */
+export function validateOwnershipFields(metadata: Partial<SpecMetadata>): ValidationMessage[] {
+  const messages: ValidationMessage[] = [];
+  
+  // caused_by - should match @commit:HASH format
+  if (metadata.caused_by && !COMMIT_PATTERN.test(metadata.caused_by)) {
+    messages.push(
+      createError('E024' as keyof typeof ERROR_CODES, ERROR_CODES.E024, {
+        field: 'caused_by',
+        value: metadata.caused_by,
+        suggestion: 'caused_by should be in format @commit:HASH (e.g., @commit:abc123def)',
+      })
+    );
+  }
+  
+  // change_id - should match @commit:HASH format
+  if (metadata.change_id && !COMMIT_PATTERN.test(metadata.change_id)) {
+    messages.push(
+      createError('E025' as keyof typeof ERROR_CODES, ERROR_CODES.E025, {
+        field: 'change_id',
+        value: metadata.change_id,
+        suggestion: 'change_id should be in format @commit:HASH (e.g., @commit:def456ghi)',
+      })
+    );
+  }
+  
+  // part_of - should match @cascade:DATE-ID format
+  if (metadata.part_of && !CASCADE_PATTERN.test(metadata.part_of)) {
+    messages.push(
+      createError('E026' as keyof typeof ERROR_CODES, ERROR_CODES.E026, {
+        field: 'part_of',
+        value: metadata.part_of,
+        suggestion: 'part_of should be in format @cascade:DATE-ID (e.g., @cascade:20250222-001)',
+      })
+    );
+  }
+  
+  return messages;
+}
+
+/**
  * Validate lines field
  */
 export function validateLinesField(
@@ -451,7 +495,7 @@ export function validateUnknownFields(metadata: Partial<SpecMetadata>): Validati
     'id', 'version', 'layer', 'project_level', 'agent_support',
     'tags', 'short', 'target', 'status', 'depends_on', 'refs',
     'children', 'parent', 'part', 'owned_by', 'session_id', 'lines',
-    'siblings', 'generated', 'session_id',
+    'siblings', 'generated', 'caused_by', 'change_id', 'part_of',
   ]);
   
   for (const key of Object.keys(metadata)) {
@@ -556,6 +600,10 @@ export function validateHeader(
     const partResults = validatePartField(metadata);
     errors.push(...partResults.filter(m => m.severity === 'error'));
     warnings.push(...partResults.filter(m => m.severity === 'warning'));
+    
+    const ownershipResults = validateOwnershipFields(metadata);
+    errors.push(...ownershipResults.filter(m => m.severity === 'error'));
+    warnings.push(...ownershipResults.filter(m => m.severity === 'warning'));
     
     const layerResults = validateLayerField(metadata);
     errors.push(...layerResults.filter(m => m.severity === 'error'));
