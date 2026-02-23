@@ -1141,7 +1141,7 @@
             "tests/mcp-config.test.ts"
           ],
           "priority": 9,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P2-010",
