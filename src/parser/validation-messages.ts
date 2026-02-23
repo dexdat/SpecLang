@@ -30,6 +30,9 @@ export const ERROR_CODES = {
   E017: 'Invalid children (expected @ref: array)',
   E018: 'Invalid parent (expected @ref: string)',
   E019: 'Invalid refs (expected @ref: array)',
+  E024: 'Invalid caused_by (expected @commit:HASH)',
+  E025: 'Invalid change_id (expected @commit:HASH)',
+  E026: 'Invalid part_of (expected @cascade:DATE-ID)',
   
   // Parse errors
   E020: 'Header YAML parse error',
