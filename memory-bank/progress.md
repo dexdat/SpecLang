@@ -1,5 +1,44 @@
 # Progress
 
+## P2-009: MCP Configuration
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/mcp.spec.dir/configuration.spec.md`
+- **Files Modified**: 2 files (src/mcp/config.ts, src/mcp/types.ts)
+- **Tests**: Build passes, 963 tests pass
+
+### Components Implemented
+
+1. **Types** (`src/mcp/types.ts`)
+   - Added `databaseWalMode?: boolean` to MCPServerConfig
+   - Added `serverMode?: 'stdio' | 'http' | 'socket'` to MCPServerConfig
+   - Added `logging?: MCPLoggingConfig` with level and file
+   - Added `limits?: MCPLimitsConfig` with maxConnections, queryTimeoutMs, maxResults
+   - Added `MCPLoggingConfig` interface (level: debug|info|warn|error, file?: string)
+   - Added `MCPLimitsConfig` interface (maxConnections, queryTimeoutMs, maxResults)
+   - Updated DEFAULT_MCP_CONFIG with new fields
+
+2. **Configuration** (`src/mcp/config.ts`)
+   - Added defaults: wal_mode: true, serverMode: 'http', logging.level: 'info', limits defaults
+   - Added environment variables: MCP_WAL_MODE, MCP_SERVER_MODE, MCP_LOG_LEVEL, MCP_LOG_FILE, MCP_MAX_CONNECTIONS, MCP_QUERY_TIMEOUT_MS, MCP_MAX_RESULTS
+   - Added validation for server mode port and limits values
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 963 passed
+
+### Notes
+
+- Implements MCP configuration per @speclang/mcp.configuration spec
+- Matches spec schema: database.wal_mode, server.mode, logging, limits
+- Config file format: .speclang/mcp.json
+
+---
+
 ## P2-008: MCP Error Handling
 
 **Status**: PASSED
