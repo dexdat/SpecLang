@@ -346,6 +346,67 @@ Project: SpecLang (meta-circular)
 
 ---
 
+### P0-019: Cascade Triggers (2026-02-23)
+
+**Status**: ✅ Complete (passes: true)
+
+**Files Verified**:
+- `src/cascade/triggers/index.ts` - Main entry point exporting all modules
+- `src/cascade/triggers/types.ts` - Type definitions (Trigger, TriggerSource, CascadeState, etc.)
+- `src/cascade/triggers/sources.ts` - Trigger source configurations and pattern matching
+- `src/cascade/triggers/watcher.ts` - File watcher with debounce and pattern filtering
+- `src/cascade/triggers/router.ts` - Trigger routing to agents
+- `src/cascade/triggers/handlers.ts` - Trigger handlers (UserEditHandler, AgentWriteHandler, ExternalHandler)
+- `tests/cascade-triggers.test.ts` - 10 test cases
+
+**Spec Requirements Implemented**:
+- Trigger types: user_edit, agent_write, external
+- Cascade depth tracking with max limits (100 depth, 1000 files, 10 minutes)
+- Watch patterns: `**/*.spec.{md,yaml,yml,scl}`, `**/*.{go,ts,js}.spec`, `**/project.scl`, `**/build.{scl,yaml}`
+- Ignore patterns: `*.log`, `reports/**/*`, `.speclang/**/*`, `node_modules/**/*`, `.git/**/*`
+- Priority levels: high, normal, low
+- Concurrent cascade support with in-memory cascade manager
+- Trigger handlers for different source types
+
+**Validation**:
+- ✅ TypeScript compiles: `npm run build`
+- ✅ Tests pass: 10 cascade-triggers tests passed
+
+**Spec References**:
+- `specs/cascade.spec.dir/triggers.spec.md` - Main triggers spec
+
+---
+
+### P0-020: Cascade Depth (2026-02-23)
+
+**Status**: ✅ Complete (passes: true)
+
+**Files Verified**:
+- `src/cascade/depth/index.ts` - Main entry point
+- `src/cascade/depth/types.ts` - Depth tracking types
+- `src/cascade/depth/tracker.ts` - Cascade depth tracking
+- `src/cascade/depth/convergence.ts` - Convergence detection (30s quiet period)
+- `src/cascade/depth/limits.ts` - Depth limits enforcement
+- `src/cascade/depth/cycle-detection.ts` - Circular dependency detection
+- `tests/cascade-depth.test.ts` - Test cases
+
+**Spec Requirements Implemented**:
+- Max depth: 100
+- Max files per cascade: 1000
+- Max duration: 10 minutes
+- Convergence detection: quiet for 30s triggers pipeline
+- Cycle detection to prevent infinite loops
+- Depth tracking with pause on limit reached
+
+**Validation**:
+- ✅ TypeScript compiles: `npm run build`
+- ✅ Tests pass: cascade-depth tests
+
+**Spec References**:
+- Part of `specs/cascade.spec.dir/triggers.spec.md` - Depth tracking section
+
+---
+
 ### P0-014: Lens System (2026-02-23)
 
 **Status**: ✅ Complete
