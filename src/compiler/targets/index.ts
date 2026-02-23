@@ -10,6 +10,8 @@ export interface TargetMapping {
   operation: string;
   policy: string;
   enum: string;
+  option?: string;
+  result?: string;
 }
 
 export interface TargetFeatures {
@@ -81,6 +83,8 @@ export const RustTarget: CompilerTarget = {
     operation: "fn",
     policy: "impl or Result",
     enum: "enum",
+    option: "Option<T>",
+    result: "Result<T,E>",
   },
   features: {
     ownershipAnnotations: true,
