@@ -1,5 +1,45 @@
 # Progress
 
+## P1-005: Autonomous Validation Tool
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/validation-tool.spec.md`, `specs/validation-tool.spec.dir/implementation.spec.md`, `specs/validation-tool.spec.dir/api.spec.md`
+- **Files Created**: 1 new file (src/validation/cli.ts)
+- **Files Modified**: 2 files (bin/speclang, src/validation/index.ts)
+- **Tests**: Build passes, 910 tests pass (4 pre-existing db failures)
+
+### Components Implemented
+
+1. **CLI Module** (`src/validation/cli.ts`) - NEW
+   - validateCommand function for command-line validation
+   - ValidateOptions and ValidateResult interfaces
+   - Support for glob patterns, strict mode, verbose output
+   - Multiple output formats: text, json, minimal
+
+2. **CLI Integration** (`bin/speclang`)
+   - Added `validate` command
+   - Options: -d/--dir, -s/--strict, -v/--verbose, -f/--format
+   - Integrates with ValidationEngine
+
+3. **Module Exports** (`src/validation/index.ts`)
+   - Added CLI exports for public API
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 910 passed (4 pre-existing failures in db tests)
+
+### Notes
+
+- Validation engine and rules were already implemented per existing specs
+- Added CLI command to complete the implementation per validation-tool spec
+- Validation tool scans agent_autonomous specs for completeness and correctness
+
+---
+
 ## P1-004: Cascade Coordination Protocol
 
 **Status**: PASSED
