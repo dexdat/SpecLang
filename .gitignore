@@ -53,5 +53,15 @@ __pycache__/
 ralph_todo.json
 
 # Generated files
-_index.json
+# _index.json - actually keep this, it's needed
 validation_results.json
+
+# Archive (old reports, keep locally but don't track)
+# docs/archive/
+
+# Symlink tracking
+.speclang/symlinks.json
+
+# Ralph loop state (generated)
+.ralph/loop-state.json
+.ralph/logs/
