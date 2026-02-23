@@ -331,3 +331,17 @@ async function runTests(
 }
 
 export { parseSpec };
+
+export { CascadeCoordinator } from './coordinator/index.js';
+export { DependencyTracker } from './coordinator/dependency.js';
+export type { 
+  CascadeState, 
+  TreeNode, 
+  DependencyGraph 
+} from './coordinator/dependency.js';
+export type {
+  CoordinatorOptions,
+  CascadeResult as CoordinatorResult,
+  VerificationGate,
+  GateResult
+} from './coordinator/index.js';
