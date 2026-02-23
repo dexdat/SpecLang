@@ -388,6 +388,7 @@ Project: SpecLang (meta-circular)
 - `src/cascade/depth/convergence.ts` - Convergence detection (30s quiet period)
 - `src/cascade/depth/limits.ts` - Depth limits enforcement
 - `src/cascade/depth/cycle-detection.ts` - Circular dependency detection
+- `src/cascade/depth/termination.ts` - Cascade termination conditions (normal/forced)
 - `tests/cascade-depth.test.ts` - Test cases
 
 **Spec Requirements Implemented**:
@@ -404,6 +405,7 @@ Project: SpecLang (meta-circular)
 
 **Spec References**:
 - Part of `specs/cascade.spec.dir/triggers.spec.md` - Depth tracking section
+- `specs/cascade.spec.dir/convergence.spec.md` - Termination conditions
 
 ---
 
