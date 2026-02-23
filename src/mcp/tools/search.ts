@@ -133,10 +133,69 @@ export class SearchToolHandler {
    */
   async handleSemanticSearch(args: { query_embedding: number[]; limit?: number }): Promise<{ results: SearchResult[] }> {
     const { query_embedding, limit = 5 } = args;
+
+    if (!query_embedding || query_embedding.length === 0) {
+      return { results: [] };
+    }
+
+    const db = this.db.getDatabase();
+
+    try {
+      const rows = db.prepare(`
+        SELECT file_path, id, short_desc, content_embedding
+        FROM specs
+        WHERE content_embedding IS NOT NULL
+      `).all() as Array<{
+        file_path: string;
+        id: string | null;
+        short_desc: string | null;
+        content_embedding: Buffer;
+      }>;
+
+      const results: SearchResult[] = [];
+      
+      for (const row of rows) {
+        const embedding = this.bufferToEmbedding(row.content_embedding);
+        if (embedding && embedding.length === query_embedding.length) {
+          const distance = this.cosineSimilarity(query_embedding, embedding);
+          results.push({
+            id: row.id || '',
+            file: row.file_path,
+            score: distance,
+            snippet: row.short_desc || ''
+          });
+        }
+      }
+
+      results.sort((a, b) => b.score - a.score);
+      return { results: results.slice(0, limit) };
+    } catch (error) {
+      console.error('Semantic search error:', error);
+      return { results: [] };
+    }
+  }
+
+  private bufferToEmbedding(buffer: Buffer): number[] | null {
+    try {
+      const floats = new Float32Array(buffer.buffer, buffer.byteOffset, buffer.length / 4);
+      return Array.from(floats);
+    } catch {
+      return null;
+    }
+  }
+
+  private cosineSimilarity(a: number[], b: number[]): number {
+    let dotProduct = 0;
+    let normA = 0;
+    let normB = 0;
     
-    // This would require sqlite-vss or similar extension
-    // For now, return empty results
-    console.warn('Semantic search requires sqlite-vss extension');
-    return { results: [] };
+    for (let i = 0; i < a.length; i++) {
+      dotProduct += a[i] * b[i];
+      normA += a[i] * a[i];
+      normB += b[i] * b[i];
+    }
+    
+    const denominator = Math.sqrt(normA) * Math.sqrt(normB);
+    return denominator === 0 ? 0 : dotProduct / denominator;
   }
 }
