@@ -29,6 +29,7 @@ Project: SpecLang (meta-circular)
 | P0: Foundation | 4 | ✅ Complete |
 | P1: Core Runtime | 2 | ⬜ Not Started |
 | P0: Test Specs | 1 | ✅ Complete |
+| P0: Dynamic Split | 1 | ✅ Complete |
 
 **Total: 10 stories, 5 complete**
 
@@ -230,6 +231,31 @@ Project: SpecLang (meta-circular)
 - `specs/test-specs.spec.md` - Main spec
 - `specs/test-specs.spec.dir/format.spec.md` - Format sub-spec
 - `specs/test-specs.spec.dir/examples.spec.md` - Examples sub-spec
+
+### P0-015: Dynamic Spec Splitting (2026-02-23)
+
+**Status**: ✅ Complete
+
+**Files Verified**:
+- `src/split/index.ts` - Main entry point
+- `src/split/types.ts` - Type definitions (SplitConfig, SplitStrategy, SplitResult)
+- `src/split/token-counter.ts` - Token counting for spec size
+- `src/split/strategy.ts` - Split strategy implementations
+- `src/split/splitter.ts` - Core splitting logic
+- `src/split/size-checker.ts` - Size checking utilities
+- `src/split/config.ts` - Configuration handling
+- `src/split/index-updater.ts` - Index file updating
+- `src/split/directory-builder.ts` - Directory structure building
+- `tests/split.test.ts` - 24 test cases
+
+**Validation**:
+- ✅ TypeScript compiles: `npm run build`
+- ✅ Tests pass: 24 split tests passed
+
+**Spec References**:
+- `specs/dynamic-split.spec.md` - Main spec
+
+---
 
 ### P0-014: Lens System (2026-02-23)
 
