@@ -15,6 +15,8 @@ export * from './convergence';
 export * from './state';
 export * from './ipc';
 export * from './locks';
+export * from './deadlock';
+export * from './lock_client';
 export { Daemon, createDaemon, getDaemon } from './daemon';
 
 /**
