@@ -14,7 +14,8 @@ export type AgentRole =
   | 'spec-writer'   // Expands specs
   | 'code-gen'      // Generates code
   | 'test-writer'   // Writes tests
-  | 'back-sync';    // Syncs code changes back
+  | 'back-sync'     // Syncs code changes back
+  | 'pipeline';     // Executes build/test/deploy
 
 /** Agent status */
 export type AgentStatus = 'idle' | 'working' | 'waiting' | 'error';
@@ -178,6 +179,7 @@ export const DEFAULT_OWNERSHIP_RULES: OwnershipRule[] = [
   { agent: 'code-gen', patterns: ['src/**/*.{ts,js,go,py,rs,java}'], priority: 40 },
   { agent: 'test-writer', patterns: ['tests/**/*'], priority: 30 },
   { agent: 'back-sync', patterns: ['generated/**/*', 'src/**/*.{ts,js,go,py,rs,java}'], priority: 20 },
+  { agent: 'pipeline', patterns: ['.github/**/*', 'Dockerfile*', '*.yml', '*.yaml'], priority: 10 },
 ];
 
 /** Agent role to display name */
@@ -187,6 +189,7 @@ export const AGENT_DISPLAY_NAMES: Record<AgentRole, string> = {
   'code-gen': 'Code Generator',
   'test-writer': 'Test Writer',
   'back-sync': 'Back Sync',
+  'pipeline': 'Pipeline',
 };
 
 /** Agent role descriptions */
@@ -196,4 +199,5 @@ export const AGENT_DESCRIPTIONS: Record<AgentRole, string> = {
   'code-gen': 'Generates implementation code from specs',
   'test-writer': 'Writes and maintains test specifications',
   'back-sync': 'Synchronizes code changes back to specs',
+  'pipeline': 'Executes build, test, and deployment workflows',
 };

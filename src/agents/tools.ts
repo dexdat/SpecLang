@@ -6,6 +6,8 @@
 
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { execSync } from 'child_process';
+import * as crypto from 'crypto';
 import { Session, Tool, ToolRegistry, ToolHandler, ToolContext } from './types';
 import { OwnershipRegistry } from './ownership';
 
@@ -330,6 +332,110 @@ export const cascadeStatusHandler: ToolHandler = async (_input: any, _context: T
 };
 
 // ============================================================================
+// FILE CREATION TOOL
+// ============================================================================
+
+interface CreateSpecFileInput {
+  file_path: string;
+  headers: {
+    id?: string;
+    version?: string;
+    layer?: number;
+    agent_support?: string;
+    short?: string;
+    [key: string]: any;
+  };
+  content?: string;
+}
+
+export const createSpecFileHandler: ToolHandler = async (input: CreateSpecFileInput, context: ToolContext) => {
+  const { session, ownership } = context;
+  const { file_path, headers, content = '' } = input;
+
+  console.log(`[Tools] create_spec_file: ${file_path}`);
+
+  // Check if file already exists
+  if (await fs.pathExists(file_path)) {
+    throw new Error(`File already exists: ${file_path}`);
+  }
+
+  // Check write permission
+  const canWrite = ownership.canWrite(session.agent.id, session.agent.role, file_path);
+  if (!canWrite.allowed) {
+    throw new Error(`Cannot create file: ${canWrite.reason}`);
+  }
+
+  // Build header YAML
+  const headerLines = [
+    '# speclang-header lines:10',
+    `id: "${headers.id || '@specs/placeholder'}"`,
+    `version: "${headers.version || '0.1.0'}"`,
+    `layer: ${headers.layer || 5}`,
+    `agent_support: "${headers.agent_support || 'agent_autonomous'}"`,
+    `short: "${headers.short || 'Auto-generated spec'}"`,
+    '---',
+    '',
+  ];
+
+  const fullContent = headerLines.join('\n') + (content || '');
+
+  // Ensure directory exists
+  await fs.ensureDir(path.dirname(file_path));
+
+  // Write file
+  try {
+    await fs.writeFile(file_path, fullContent, 'utf-8');
+    console.log(`[Tools] Created: ${file_path}`);
+    return { success: true, path: file_path };
+  } catch (error: any) {
+    throw new Error(`Failed to create file: ${error.message}`);
+  }
+};
+
+// ============================================================================
+// COMMIT PROTOCOL
+// ============================================================================
+
+interface CommitInput {
+  file_path: string;
+  summary: string;
+  change_id?: string;
+  parent_id?: string;
+}
+
+function generateUUID(): string {
+  return crypto.randomUUID();
+}
+
+export const commitHandler: ToolHandler = async (input: CommitInput, context: ToolContext) => {
+  const { file_path, summary, change_id, parent_id } = input;
+
+  console.log(`[Tools] commit: ${file_path}`);
+
+  const uuid = change_id || generateUUID();
+  const parentPart = parent_id ? ` parent:${parent_id}` : '';
+  const commitMsg = `speclang: ${summary} [change_id:${uuid}${parentPart}]`;
+
+  try {
+    // Stage the file
+    execSync(`git add "${file_path}"`, { encoding: 'utf-8' });
+    
+    // Commit with message
+    execSync(`git commit --only "${file_path}" -m "${commitMsg}"`, { encoding: 'utf-8' });
+    
+    console.log(`[Tools] Committed: ${file_path}`);
+    return { 
+      success: true, 
+      path: file_path, 
+      change_id: uuid,
+      commit_message: commitMsg,
+    };
+  } catch (error: any) {
+    throw new Error(`Failed to commit: ${error.message}`);
+  }
+};
+
+// ============================================================================
 // TOOL DEFINITIONS
 // ============================================================================
 
@@ -470,6 +576,45 @@ export function getStandardTools(): Tool[] {
         properties: {},
       },
       handler: cascadeStatusHandler,
+    },
+    {
+      name: 'create_spec_file',
+      description: 'Create new spec file with proper headers',
+      input_schema: {
+        type: 'object',
+        properties: {
+          file_path: { type: 'string', description: 'Full path to new file' },
+          headers: {
+            type: 'object',
+            description: 'YAML header content',
+            properties: {
+              id: { type: 'string', pattern: '^@[a-zA-Z0-9/-]+$' },
+              version: { type: 'string', pattern: '^\\d+\\.\\d+\\.\\d+$' },
+              layer: { type: 'number', minimum: 0, maximum: 100 },
+              agent_support: { type: 'string', enum: ['human_only', 'agent_assisted', 'agent_autonomous'] },
+              short: { type: 'string', maxLength: 100 },
+            },
+          },
+          content: { type: 'string', description: 'Initial file content' },
+        },
+        required: ['file_path', 'headers'],
+      },
+      handler: createSpecFileHandler,
+    },
+    {
+      name: 'commit',
+      description: 'Commit a file with change tracking (per CommitProtocol)',
+      input_schema: {
+        type: 'object',
+        properties: {
+          file_path: { type: 'string', description: 'File to commit' },
+          summary: { type: 'string', description: 'Brief summary of changes' },
+          change_id: { type: 'string', description: 'UUID for this change (auto-generated if not provided)' },
+          parent_id: { type: 'string', description: 'Parent UUID from trigger context' },
+        },
+        required: ['file_path', 'summary'],
+      },
+      handler: commitHandler,
     },
   ];
 }
