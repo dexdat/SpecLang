@@ -107,7 +107,7 @@
             "tests/deployment.test.ts"
           ],
           "priority": 7,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-008",
@@ -122,7 +122,7 @@
             "tests/symlinks.test.ts"
           ],
           "priority": 8,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-009",
@@ -138,7 +138,7 @@
             "src/sqlite/migrations/005_ralph.sql"
           ],
           "priority": 9,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-010",
@@ -156,7 +156,7 @@
             "tests/stdlib.test.ts"
           ],
           "priority": 10,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-011",
@@ -174,7 +174,7 @@
             "tests/skills.test.ts"
           ],
           "priority": 11,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-012",
@@ -196,7 +196,7 @@
             "tests/tools.test.ts"
           ],
           "priority": 12,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-013",

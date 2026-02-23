@@ -124,6 +124,28 @@ Project: SpecLang (meta-circular)
 - `specs/stdlib.spec.dir/types.spec.md` - Types sub-spec
 - `specs/stdlib.spec.dir/mapping.spec.md` - Functions & Assertions sub-spec
 
+### P0-007: Deployment Modes (2026-02-23)
+
+**Status**: ✅ Complete
+
+**Files Created**:
+- `src/deployment/index.ts` - Main entry point
+- `src/deployment/modes.ts` - Mode types, configurations, and constants
+- `src/deployment/switcher.ts` - Mode switching logic
+- `src/deployment/light.ts` - Light mode service implementation
+- `src/deployment/enterprise.ts` - Enterprise mode service implementation
+- `tests/deployment.test.ts` - 14 test cases
+
+**Baby Steps Commits**:
+1. `speclang: baby-step: Verify deployment modes implementation`
+
+**Validation**:
+- ✅ TypeScript compiles: `npm run build`
+- ✅ Tests pass: 14 deployment tests passed
+
+**Spec References**:
+- `specs/deployment.spec.md` - Main spec
+
 ### P0-011: Skills Pack (2026-02-23)
 
 **Status**: ✅ Complete
@@ -148,4 +170,35 @@ Project: SpecLang (meta-circular)
 
 **Spec References**:
 - `specs/skills.spec.md` - Main spec (already existed)
+
+### P0-012: Agent Tools API (2026-02-23)
+
+**Status**: ✅ Complete
+
+**Files Verified**:
+- `src/tools/index.ts` - Main entry point exporting all modules
+- `src/tools/registry.ts` - ToolRegistry for managing tools
+- `src/tools/types.ts` - Type definitions for tools
+- `src/tools/file-tools.ts` - File manipulation tools
+- `src/tools/query-tools.ts` - Query tools for finding specs
+- `src/tools/graph-tools.ts` - Graph analysis tools
+- `src/tools/validation-tools.ts` - Validation tools
+- `src/tools/cascade-tools.ts` - Cascade trigger tools
+- `src/tools/git-tools.ts` - Git operation tools
+- `src/tools/pipeline-tools.ts` - Pipeline execution tools
+- `src/tools/session-tools.ts` - Session management tools
+- `tests/tools.test.ts` - 25 test cases
+
+**Baby Steps Commits**:
+1. `speclang: baby-step: Fix vitest import in tools.test.ts`
+2. `speclang: baby-step: Add speclang-headers with @ref: blocks to tools API files`
+
+**Validation**:
+- ✅ TypeScript compiles: `npm run build`
+- ✅ Tests pass: 25 tools tests passed
+- ✅ Headers correct: Key files have speclang-header with @ref: blocks
+- ✅ Commit format: `speclang: baby-step: ...`
+
+**Spec References**:
+- `specs/tools.spec.md` - Main spec
 
