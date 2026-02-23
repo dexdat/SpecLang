@@ -806,7 +806,7 @@
             "tests/agent-sessions.test.ts"
           ],
           "priority": 10,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P1-011",
