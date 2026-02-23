@@ -15,15 +15,24 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as yaml from 'yaml';
-import { 
-  type OpenCodePluginContext, 
-  type SpecHeader, 
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import {
+  type OpenCodePluginContext,
+  type SpecHeader,
   type FileEditEvent,
   type AgentFinishedEvent,
   type WriteAttemptEvent,
-  type SessionStartedEvent
+  type SessionStartedEvent,
+  type SessionIdleEvent
 } from './types';
 import { loadConfig, getProfile } from './config';
+import { OwnershipGuard } from './ownership';
+import { SessionManager } from './session';
+import { ConvergenceDetector } from './convergence';
+import { GitIntegration } from './git';
+
+const execAsync = promisify(exec);
 
 const SPEC_EXTENSIONS = ['.spec.md', '.spec', '.scl'];
 
@@ -31,32 +40,51 @@ export interface PluginOptions {
   projectDir?: string;
 }
 
+let ownershipGuard: OwnershipGuard | null = null;
+let sessionManager: SessionManager | null = null;
+let convergenceDetector: ConvergenceDetector | null = null;
+let gitIntegration: GitIntegration | null = null;
+
 export async function SpeclangPlugin(
   context: OpenCodePluginContext,
   options: PluginOptions = {}
 ): Promise<void> {
   const config = loadConfig(options.projectDir || context.config.projectDir);
   const profile = getProfile(config.profile);
-  
+
   initializeDatabase(context);
+
+  ownershipGuard = new OwnershipGuard(context.db as unknown as import('./types').OpenCodeDatabase);
+  sessionManager = new SessionManager(context.db as unknown as import('./types').OpenCodeDatabase);
+  convergenceDetector = new ConvergenceDetector(
+    context.db as unknown as import('./types').OpenCodeDatabase,
+    config,
+    sessionManager
+  );
+  gitIntegration = new GitIntegration(config.projectDir);
+
   registerTools(context, config);
-  
+
   context.events.on('file.edited', async (event: FileEditEvent) => {
-    await handleFileEdited(context, event, config);
+    await handleFileEdited(context, event, config, sessionManager!, ownershipGuard!, convergenceDetector!);
   });
-  
+
   context.events.on('agent.finished', async (agent: AgentFinishedEvent) => {
-    await handleAgentFinished(context, agent, config);
+    await handleAgentFinished(context, agent, config, sessionManager!, convergenceDetector!, gitIntegration!);
   });
-  
+
+  context.events.on('session.idle', async (sessionEvent: SessionIdleEvent) => {
+    await handleSessionIdle(sessionEvent, ownershipGuard!, sessionManager!);
+  });
+
   context.events.on('session.started', async (session: SessionStartedEvent) => {
-    await handleSessionStarted(context, session);
+    await handleSessionStarted(context, session, sessionManager!);
   });
-  
+
   context.events.on('write.attempt', async (attempt: WriteAttemptEvent) => {
-    await handleWriteAttempt(context, attempt);
+    await handleWriteAttempt(context, attempt, ownershipGuard!, sessionManager!);
   });
-  
+
   console.log('[Speclang] Plugin initialized with profile:', config.profile);
 }
 
@@ -74,7 +102,7 @@ function initializeDatabase(context: OpenCodePluginContext): void {
       last_modified INTEGER
     )
   `);
-  
+
   context.db.exec(`
     CREATE TABLE IF NOT EXISTS sessions (
       id TEXT PRIMARY KEY,
@@ -84,7 +112,7 @@ function initializeDatabase(context: OpenCodePluginContext): void {
       last_active INTEGER
     )
   `);
-  
+
   context.db.exec(`
     CREATE TABLE IF NOT EXISTS events (
       id INTEGER PRIMARY KEY,
@@ -95,7 +123,7 @@ function initializeDatabase(context: OpenCodePluginContext): void {
       details TEXT
     )
   `);
-  
+
   context.db.exec(`
     CREATE TABLE IF NOT EXISTS cascade_log (
       id TEXT PRIMARY KEY,
@@ -112,19 +140,19 @@ function registerTools(context: OpenCodePluginContext, config: { projectDir: str
   context.tools.register('speclang_create_spec', async (params) => {
     return createSpec(context, params as { path: string; header: string; content: string });
   });
-  
+
   context.tools.register('speclang_read_header', async (params) => {
     return readHeader(params.path as string);
   });
-  
+
   context.tools.register('speclang_find_deps', async (params) => {
     return findDependents(context, params.id as string);
   });
-  
+
   context.tools.register('speclang_find_by_tag', async (params) => {
     return findByTag(context, params.tag as string);
   });
-  
+
   context.tools.register('speclang_get_tree', async (params) => {
     return getSpecTree(context, params.path as string);
   });
@@ -133,85 +161,101 @@ function registerTools(context: OpenCodePluginContext, config: { projectDir: str
 async function handleFileEdited(
   context: OpenCodePluginContext,
   event: FileEditEvent,
-  config: { projectDir: string }
+  config: { projectDir: string },
+  sessions: SessionManager,
+  ownership: OwnershipGuard,
+  convergence: ConvergenceDetector
 ): Promise<void> {
   if (!isSpecFile(event.path)) {
     return;
   }
-  
+
   const header = parseHeader(event.path);
   if (!header) {
     return;
   }
-  
+
   indexSpec(context, event.path, header);
   recordEvent(context, 'file.edited', event.path, event.session);
-  
+
+  convergence.recordFileEdit(event.path);
+
   console.log(`[Speclang] Indexed spec: ${header.id} (${event.path})`);
 }
 
 async function handleAgentFinished(
   context: OpenCodePluginContext,
   agent: AgentFinishedEvent,
-  config: { quietPeriod: number }
+  config: { quietPeriod: number },
+  sessions: SessionManager,
+  convergence: ConvergenceDetector,
+  git: GitIntegration
 ): Promise<void> {
-  const lastEdit = getLastEditTime(context);
-  const quiet = Date.now() - lastEdit > config.quietPeriod * 1000;
-  
-  if (quiet) {
-    const activeSessions = getActiveSessionCount(context);
-    
-    if (activeSessions === 0) {
-      console.log('[Speclang] Convergence detected, running pipeline...');
-      await runPipeline(context);
-      await commitPerFile(context, agent.files_written, agent.summary);
+  sessions.updateStatus(agent.session, 'done');
+
+  const converged = await convergence.checkAndTrigger();
+  if (converged) {
+    const changedFiles = await git.getChangedFiles();
+    for (const file of changedFiles) {
+      if (isSpecFile(file)) {
+        await git.commitFile(file, `updated ${path.basename(file)}`);
+      }
     }
   }
 }
 
+async function handleSessionIdle(
+  sessionEvent: SessionIdleEvent,
+  ownership: OwnershipGuard,
+  sessions: SessionManager
+): Promise<void> {
+  await ownership.releaseAllForSession(sessionEvent.session);
+  sessions.updateStatus(sessionEvent.session, 'idle');
+  console.log(`[Speclang] Session ${sessionEvent.session} is now idle, released locks`);
+}
+
 async function handleSessionStarted(
   context: OpenCodePluginContext,
-  session: SessionStartedEvent
+  session: SessionStartedEvent,
+  sessions: SessionManager
 ): Promise<void> {
+  const sessionId = sessions.createSession(session.agent);
+
   context.db.prepare(`
     INSERT OR REPLACE INTO sessions (id, agent, owns, status, last_active)
     VALUES (?, ?, ?, ?, ?)
-  `).run(session.session, session.agent, JSON.stringify(session.owns), 'active', Date.now());
+  `).run(sessionId, session.agent, JSON.stringify(session.owns), 'active', Date.now());
+
+  sessions.setCurrentSession(sessionId);
 }
 
 async function handleWriteAttempt(
   context: OpenCodePluginContext,
-  attempt: WriteAttemptEvent
+  attempt: WriteAttemptEvent,
+  ownership: OwnershipGuard,
+  sessions: SessionManager
 ): Promise<void> {
-  const session = context.db.get<{ owns: string }>(
-    'SELECT owns FROM sessions WHERE id = ?',
-    [attempt.session]
-  );
-  
-  if (!session) {
-    throw new Error(`Session ${attempt.session} not found`);
-  }
-  
-  const owns: string[] = JSON.parse(session.owns || '[]');
-  const canWrite = owns.some(pattern => matchesPattern(attempt.path, pattern));
-  
-  if (!canWrite) {
-    throw new Error(`Session ${attempt.session} cannot write ${attempt.path}`);
+  const owns = await ownership.ownsFile(attempt.session, attempt.path);
+
+  if (!owns) {
+    const lockToken = await ownership.acquireOwnership(attempt.session, attempt.path);
+    await sessions.addOwnedFile(attempt.session, attempt.path);
+    console.log(`[Speclang] Acquired ownership for ${attempt.path}`);
   }
 }
 
 function isSpecFile(filePath: string): boolean {
-  return SPEC_EXTENSIONS.some(ext => filePath.endsWith(ext));
+  return SPEC_EXTENSIONS.some(ext => filePath.endsWith(ext)) || filePath.includes('/specs/');
 }
 
 function parseHeader(filePath: string): SpecHeader | null {
   try {
     const content = fs.readFileSync(filePath, 'utf-8');
     const lines = content.split('\n');
-    
+
     let headerStart = -1;
     let headerEnd = -1;
-    
+
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
       if (line === '# speclang-header' || line.startsWith('# speclang-header')) {
@@ -222,14 +266,14 @@ function parseHeader(filePath: string): SpecHeader | null {
         break;
       }
     }
-    
+
     if (headerStart < 0 || headerEnd < 0) {
       return null;
     }
-    
+
     const headerText = lines.slice(headerStart, headerEnd).join('\n');
     const parsed = yaml.parse(headerText);
-    
+
     return {
       id: parsed.id || '',
       version: parsed.version || '0.0.0',
@@ -265,27 +309,13 @@ function indexSpec(context: OpenCodePluginContext, filePath: string, header: Spe
 function recordEvent(
   context: OpenCodePluginContext,
   kind: string,
-  path: string,
+  filePath: string,
   session?: string
 ): void {
   context.db.prepare(`
     INSERT INTO events (timestamp, kind, path, session)
     VALUES (?, ?, ?, ?)
-  `).run(Date.now(), kind, path, session || null);
-}
-
-function getLastEditTime(context: OpenCodePluginContext): number {
-  const result = context.db.get<{ max_time: number }>(
-    'SELECT MAX(last_modified) as max_time FROM specs'
-  );
-  return result?.max_time || 0;
-}
-
-function getActiveSessionCount(context: OpenCodePluginContext): number {
-  const result = context.db.get<{ count: number }>(
-    "SELECT COUNT(*) as count FROM sessions WHERE status = 'active'"
-  );
-  return result?.count || 0;
+  `).run(Date.now(), kind, filePath, session || null);
 }
 
 async function createSpec(
@@ -293,14 +323,14 @@ async function createSpec(
   params: { path: string; header: string; content: string }
 ): Promise<{ success: boolean; path: string }> {
   const fullPath = path.join(context.config.projectDir, params.path);
-  
+
   fs.writeFileSync(fullPath, params.header + '\n\n' + params.content);
-  
+
   const header = parseHeader(fullPath);
   if (header) {
     indexSpec(context, fullPath, header);
   }
-  
+
   return { success: true, path: params.path };
 }
 
@@ -338,45 +368,26 @@ async function getSpecTree(
     'SELECT id, parent_id FROM specs WHERE path = ?',
     [filePath]
   );
-  
+
   if (!spec) {
     return { parent: null, children: [] };
   }
-  
+
   const children = context.db.all<{ path: string }>(
     'SELECT path FROM specs WHERE parent_id = ?',
     [spec.id]
   );
-  
+
   return {
     parent: spec.parent_id || null,
     children: children.map(c => c.path)
   };
 }
 
-async function runPipeline(context: OpenCodePluginContext): Promise<void> {
-  console.log('[Speclang] Running pipeline...');
+export function cleanup(): void {
+  ownershipGuard?.destroy();
+  sessionManager?.destroy();
+  convergenceDetector?.destroy();
 }
 
-async function commitPerFile(
-  context: OpenCodePluginContext,
-  files: string[],
-  summary: string
-): Promise<void> {
-  console.log(`[Speclang] Would commit ${files.length} files: ${summary}`);
-}
-
-function matchesPattern(filePath: string, pattern: string): boolean {
-  if (pattern === '*') return true;
-  if (pattern.endsWith('/*')) {
-    const dir = pattern.slice(0, -2);
-    return filePath.startsWith(dir);
-  }
-  if (pattern.includes('*')) {
-    const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$');
-    return regex.test(filePath);
-  }
-  return filePath === pattern || filePath.startsWith(pattern);
-}
-
-export { parseHeader, isSpecFile, matchesPattern };
+export { parseHeader, isSpecFile };

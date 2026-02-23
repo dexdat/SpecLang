@@ -1,6 +1,6 @@
 # speclang-header lines:12
 id: "@speclang/opencode-plugin.spec.dir/checklist"
-version: 0.1.0
+version: 0.2.0
 layer: 5
 imports: ["@speclang/opencode-plugin.spec.dir/overview"]
 tags: [opencode, plugin, checklist, implementation]
@@ -13,14 +13,14 @@ agent_support: agent_assisted
 ## Core Features
 
 - [x] Event listeners for file.edited, agent.finished, session.idle
-- [ ] Ownership guard with lock expiration
-- [ ] Session management with timeout
-- [ ] Spec indexing and SQLite storage
+- [x] Ownership guard with lock expiration
+- [x] Session management with timeout
+- [x] Spec indexing and SQLite storage
 - [ ] MCP client integration
-- [ ] Git integration with per-file commits
-- [ ] Convergence detection and pipeline
-- [ ] Configuration management
-- [ ] Tool definitions for OpenCode
+- [x] Git integration with per-file commits
+- [x] Convergence detection and pipeline
+- [x] Configuration management
+- [x] Tool definitions for OpenCode
 - [ ] Error handling and recovery
 
 ## Database Schema
@@ -30,7 +30,7 @@ agent_support: agent_assisted
 - [x] events table
 - [x] file_locks table
 - [x] FTS virtual table
-- [ ] migrations system
+- [x] migrations system
 
 ## Testing
 
