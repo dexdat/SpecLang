@@ -257,6 +257,31 @@ Project: SpecLang (meta-circular)
 
 ---
 
+### P0-016: Project Layout and Init Command (2026-02-23)
+
+**Status**: ✅ Complete
+
+**Files Created**:
+- `src/cli/commands/init.ts` - CLI init command wrapper
+- `src/templates/project.scl` - Project template
+- `src/templates/.gitignore` - Gitignore template
+- `src/templates/.speclangrc` - Config template
+- `tests/init.test.ts` - 8 test cases
+
+**Baby Steps Commits**:
+1. `speclang: baby-step: Implement init command and templates`
+
+**Validation**:
+- ✅ TypeScript compiles: `npm run build`
+- ✅ Tests pass: 8 init tests passed (db.test.ts failures are pre-existing)
+- ✅ Commit format: `speclang: baby-step: ...`
+
+**Spec References**:
+- `specs/project-layout.spec.md` - Main spec
+- `specs/project-layout.spec.dir/structure.spec.md` - Structure sub-spec
+
+---
+
 ### P0-014: Lens System (2026-02-23)
 
 **Status**: ✅ Complete
@@ -273,6 +298,10 @@ Project: SpecLang (meta-circular)
 - `src/lenses/math-lens.ts` - LaTeX math formula handler
 - `src/lenses/acceptance-lens.ts` - GIVEN/WHEN/THEN criteria handler
 - `src/lenses/diagram-lens.ts` - Mermaid diagram blocks handler
+- `src/lenses/table-lens.ts` - Markdown table format handler
+- `src/lenses/policy-lens.ts` - Policy/rule definitions handler
+- `src/lenses/question-lens.ts` - Open questions handler
+- `src/lenses/decision-lens.ts` - ADR (Architecture Decision Records) handler
 - `tests/lenses.test.ts` - 27 test cases
 
 **Validation**:
@@ -281,4 +310,5 @@ Project: SpecLang (meta-circular)
 
 **Spec References**:
 - `specs/lenses.spec.md` - Main spec
+- `specs/lenses.spec.dir/formats.spec.md` - Built-in lens formats
 

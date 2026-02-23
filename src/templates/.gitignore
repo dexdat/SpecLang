@@ -1,0 +1,24 @@
+# Generated code (can be regenerated)
+generated/
+
+# Speclang internal state
+.speclang/
+
+# Standard ignores
+node_modules/
+.env
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test coverage
+coverage/
+.nyc_output/
