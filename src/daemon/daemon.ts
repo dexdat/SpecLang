@@ -31,6 +31,7 @@ export class Daemon extends EventEmitter {
   private state: State;
   private ipc: IPC;
   private config: Config;
+  private lockManager: LockManager;
   
   private running: boolean;
   private paused: boolean;
@@ -41,6 +42,7 @@ export class Daemon extends EventEmitter {
     this.router = new Router();
     this.state = new State();
     this.ipc = new IPC();
+    this.lockManager = new LockManager();
     this.convergence = null!; // Initialized in start()
     this.running = false;
     this.paused = false;
@@ -54,6 +56,13 @@ export class Daemon extends EventEmitter {
     
     // Load configuration
     await this.config.load();
+    
+    // Initialize lock manager
+    this.lockManager = new LockManager(
+      this.config.get().locks.dir,
+      this.config.get().locks.timeout
+    );
+    await this.lockManager.initialize();
     
     // Initialize components
     this.watcher = new Watcher(this.config.get());
@@ -243,6 +252,13 @@ export class Daemon extends EventEmitter {
    */
   getConfig(): Config {
     return this.config;
+  }
+
+  /**
+   * Get lock manager
+   */
+  getLockManager(): LockManager {
+    return this.lockManager;
   }
 
   /**
