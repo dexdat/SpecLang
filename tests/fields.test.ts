@@ -25,11 +25,15 @@ import {
 // ============================================================================
 
 describe('Field Definitions Registry', () => {
-  it('should have id and version as required fields', () => {
+  it('should have id, version, layer, project_level, agent_support, short as required fields', () => {
     const required = getRequiredFieldNames();
     expect(required).toContain('id');
     expect(required).toContain('version');
-    expect(required).toHaveLength(2);
+    expect(required).toContain('layer');
+    expect(required).toContain('project_level');
+    expect(required).toContain('agent_support');
+    expect(required).toContain('short');
+    expect(required).toHaveLength(6);
   });
 
   it('should know all documented fields', () => {
@@ -158,8 +162,9 @@ describe('validateField: layer', () => {
     expect(validateField('layer', 'five').valid).toBe(false);
   });
 
-  it('should accept undefined (optional field)', () => {
-    expect(validateField('layer', undefined).valid).toBe(true);
+  it('should reject non-integer', () => {
+    expect(validateField('layer', 1.5).valid).toBe(false);
+    expect(validateField('layer', 'five').valid).toBe(false);
   });
 });
 
@@ -335,10 +340,14 @@ describe('validateHeaderFields', () => {
     expect(result.errors).toHaveLength(0);
   });
 
-  it('should pass with only required fields', () => {
+  it('should pass with all required fields', () => {
     const result = validateHeaderFields({
       id: '@specs/minimal',
       version: '0.1.0',
+      layer: 5,
+      project_level: 'Alpha',
+      agent_support: 'agent_autonomous',
+      short: 'Minimal spec',
     });
     expect(result.valid).toBe(true);
     expect(result.errors).toHaveLength(0);
@@ -365,10 +374,14 @@ describe('validateHeaderFields', () => {
     expect(result.errors.length).toBeGreaterThanOrEqual(3);
   });
 
-  it('should warn on unknown fields', () => {
+  it('should warn on unknown fields but have no errors', () => {
     const result = validateHeaderFields({
       id: '@specs/test',
       version: '1.0.0',
+      layer: 5,
+      project_level: 'Alpha',
+      agent_support: 'agent_autonomous',
+      short: 'Test spec',
       custom_field: 'value',
     });
     expect(result.valid).toBe(true);
@@ -380,6 +393,10 @@ describe('validateHeaderFields', () => {
     const result = validateHeaderFields({
       id: '@specs/test',
       version: '1.0.0',
+      layer: 5,
+      project_level: 'Alpha',
+      agent_support: 'agent_autonomous',
+      short: 'Test spec',
       depends_on: ['@ref:specs/auth', '@ref:specs/other#block'],
     });
     expect(result.valid).toBe(true);

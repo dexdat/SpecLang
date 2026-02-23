@@ -60,9 +60,13 @@ status: stable
 login implementation
 `;
 
-const MINIMAL_SPEC = `# speclang-header lines:4
+const MINIMAL_SPEC = `# speclang-header lines:8
 id: "@example/minimal"
 version: 1.0.0
+layer: 5
+project_level: Alpha
+agent_support: agent_autonomous
+short: "Minimal spec"
 ---
 
 # Minimal
@@ -219,6 +223,10 @@ describe('validateRequiredFields', () => {
     const messages = validateRequiredFields({
       id: '@specs/test',
       version: '1.0.0',
+      layer: 5,
+      project_level: 'Alpha',
+      agent_support: 'agent_autonomous',
+      short: 'Test spec',
     });
     
     expect(messages.filter(m => m.severity === 'error')).toHaveLength(0);
@@ -227,6 +235,10 @@ describe('validateRequiredFields', () => {
   it('should fail when id is missing', () => {
     const messages = validateRequiredFields({
       version: '1.0.0',
+      layer: 5,
+      project_level: 'Alpha',
+      agent_support: 'agent_autonomous',
+      short: 'Test spec',
     });
     
     expect(messages.some(m => m.field === 'id')).toBe(true);
@@ -235,9 +247,61 @@ describe('validateRequiredFields', () => {
   it('should fail when version is missing', () => {
     const messages = validateRequiredFields({
       id: '@specs/test',
+      layer: 5,
+      project_level: 'Alpha',
+      agent_support: 'agent_autonomous',
+      short: 'Test spec',
     });
     
     expect(messages.some(m => m.field === 'version')).toBe(true);
+  });
+
+  it('should fail when layer is missing', () => {
+    const messages = validateRequiredFields({
+      id: '@specs/test',
+      version: '1.0.0',
+      project_level: 'Alpha',
+      agent_support: 'agent_autonomous',
+      short: 'Test spec',
+    });
+    
+    expect(messages.some(m => m.field === 'layer')).toBe(true);
+  });
+
+  it('should fail when project_level is missing', () => {
+    const messages = validateRequiredFields({
+      id: '@specs/test',
+      version: '1.0.0',
+      layer: 5,
+      agent_support: 'agent_autonomous',
+      short: 'Test spec',
+    });
+    
+    expect(messages.some(m => m.field === 'project_level')).toBe(true);
+  });
+
+  it('should fail when agent_support is missing', () => {
+    const messages = validateRequiredFields({
+      id: '@specs/test',
+      version: '1.0.0',
+      layer: 5,
+      project_level: 'Alpha',
+      short: 'Test spec',
+    });
+    
+    expect(messages.some(m => m.field === 'agent_support')).toBe(true);
+  });
+
+  it('should fail when short is missing', () => {
+    const messages = validateRequiredFields({
+      id: '@specs/test',
+      version: '1.0.0',
+      layer: 5,
+      project_level: 'Alpha',
+      agent_support: 'agent_autonomous',
+    });
+    
+    expect(messages.some(m => m.field === 'short')).toBe(true);
   });
 });
 
