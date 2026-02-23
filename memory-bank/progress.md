@@ -1,5 +1,55 @@
 # Progress
 
+## P1-009: Daemon File Locking
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/mcp.spec.dir/tools/locks.spec.md`
+- **Files Created**: 2 new files (deadlock.ts, lock_client.ts)
+- **Files Modified**: 1 file (src/daemon/index.ts)
+- **Tests**: Build passes, 910 tests pass (4 pre-existing failures)
+
+### Components Implemented
+
+1. **DeadlockPreventer** (`src/daemon/deadlock.ts`) - NEW
+   - Retry with exponential backoff
+   - Lock ordering (alphabetical file path order)
+   - acquireWithRetry() for single lock with retries
+   - acquireMultiple() for atomic multi-lock acquisition with rollback
+
+2. **DeadlockDetector** (`src/daemon/deadlock.ts`) - NEW
+   - Periodic checking for expired/stuck locks
+   - Auto-release on timeout detection
+   - Event callback for deadlock notifications
+
+3. **LockClient** (`src/daemon/lock_client.ts`) - NEW
+   - Agent-oriented lock interface
+   - LockHandle for RAII-style lock management
+   - generateLockToken() for secure lock tokens
+   - Automatic cleanup on agent exit
+
+4. **Module Exports** (`src/daemon/index.ts`)
+   - Added deadlock and lock_client exports
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 910 passed (4 pre-existing db failures)
+
+### Notes
+
+- Implements deadlock prevention strategies per spec:
+  - All locks have expiration timeouts
+  - Clients implement retry with exponential backoff
+  - Lock ordering: acquire locks in alphabetical file path order
+  - Deadlock detection via timeout; release locks on timeout
+- Integrates with existing LockManager class
+- Follows the SQL pseudocode structure for acquire/release operations
+
+---
+
 ## P1-008: Daemon Event Routing
 
 **Status**: PASSED
