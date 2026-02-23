@@ -31,8 +31,9 @@ Project: SpecLang (meta-circular)
 | P0: Test Specs | 1 | ✅ Complete |
 | P0: Dynamic Split | 1 | ✅ Complete |
 | P0: Project Layout | 1 | ✅ Complete |
+| P0: Header Fields | 1 | ✅ Complete |
 
-**Total: 11 stories, 6 complete**
+**Total: 12 stories, 7 complete**
 
 ---
 
@@ -280,6 +281,31 @@ Project: SpecLang (meta-circular)
 **Spec References**:
 - `specs/project-layout.spec.md` - Main spec
 - `specs/project-layout.spec.dir/structure.spec.md` - Structure sub-spec
+
+---
+
+### P0-017: Header Field Definitions (2026-02-23)
+
+**Status**: ✅ Complete
+
+**Files Modified**:
+- `src/parser/fields.ts` - Added missing field definitions for caused_by, change_id, part_of
+- `src/parser/types.ts` - Added corresponding types to SpecMetadata interface
+- Added COMMIT_PATTERN and CASCADE_PATTERN regex patterns
+- `src/parser/field-types.ts` - Made layer, project_level, agent_support, short required
+- `tests/fields.test.ts` - Updated to test all 6 required fields
+- `tests/header-validation.test.ts` - Updated to include all required fields
+
+**Commit**:
+1. `P0-017: Add missing header fields (caused_by, change_id, part_of)`
+2. `P0-017: Fix tests to match spec - 6 required header fields`
+
+**Validation**:
+- ✅ TypeScript compiles: `npm run build`
+- ✅ Tests pass: 100 tests (fields.test.ts + header-validation.test.ts)
+
+**Spec References**:
+- `specs/headers.spec.md` - Header field definitions
 
 ---
 
