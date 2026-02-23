@@ -1,8 +1,174 @@
 #!/usr/bin/env node
 /**
- * SPECLANG-GENERATED: CLI executable
- * Source: @speclang/mcp.cli
+ * SpecLang CLI - Invisible infrastructure for AI-assisted development
+ * 
+ * Usage:
+ *   speclang start     - Start the daemon (file watcher + MCP server)
+ *   speclang cascade   - Run a single cascade on a spec file
+ *   speclang status    - Show current system status
+ *   speclang stop      - Stop the daemon
  */
 
-// Import and run CLI
-import './cli/index.js';
+const { Command } = require('commander');
+const path = require('path');
+const fs = require('fs');
+
+// Version from package.json
+const packageJson = require('../package.json');
+
+const program = new Command();
+
+program
+  .name('speclang')
+  .description('SpecLang - AI coding assistant that self-corrects until perfect')
+  .version(packageJson.version);
+
+// Start command
+program
+  .command('start')
+  .description('Start the SpecLang daemon (file watcher + MCP server)')
+  .option('-p, --port <port>', 'Dashboard port', '3000')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .option('--no-dashboard', 'Disable web dashboard')
+  .action(async (options) => {
+    console.log('🚀 Starting SpecLang...');
+    console.log(`   Directory: ${path.resolve(options.dir)}`);
+    console.log(`   Dashboard: http://localhost:${options.port}`);
+    
+    try {
+      // Import and start the daemon
+      const { startDaemon } = require('../dist/daemon/index.js');
+      await startDaemon({
+        projectDir: path.resolve(options.dir),
+        port: parseInt(options.port),
+        dashboard: options.dashboard
+      });
+    } catch (err) {
+      // If dist doesn't exist, show helpful message
+      if (err.code === 'MODULE_NOT_FOUND') {
+        console.error('\n❌ SpecLang not built. Run: npm run build');
+        console.error('   Or use: npx ts-node src/cli/index.ts start\n');
+        process.exit(1);
+      }
+      throw err;
+    }
+  });
+
+// Cascade command
+program
+  .command('cascade <spec>')
+  .description('Run a cascade on a spec file')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .option('-v, --verbose', 'Show detailed output')
+  .action(async (spec, options) => {
+    const specPath = path.resolve(options.dir, spec);
+    
+    if (!fs.existsSync(specPath)) {
+      console.error(`❌ Spec file not found: ${specPath}`);
+      process.exit(1);
+    }
+    
+    console.log('🔄 Running cascade...');
+    console.log(`   Spec: ${specPath}`);
+    
+    try {
+      const { runCascade } = require('../dist/cascade/index.js');
+      const result = await runCascade(specPath, {
+        verbose: options.verbose
+      });
+      
+      if (result.success) {
+        console.log('\n✅ Cascade complete');
+        console.log(`   Generated: ${result.filesGenerated.length} files`);
+        console.log(`   Converged: ${result.converged ? 'Yes' : 'No'}`);
+        if (result.filesGenerated.length > 0) {
+          result.filesGenerated.forEach(f => console.log(`   - ${f}`));
+        }
+      } else {
+        console.error('\n❌ Cascade failed:', result.error);
+        process.exit(1);
+      }
+    } catch (err) {
+      if (err.code === 'MODULE_NOT_FOUND') {
+        console.error('\n❌ SpecLang not built. Run: npm run build');
+        console.error('   Or use: npx ts-node src/cli/index.ts cascade <spec>\n');
+        process.exit(1);
+      }
+      throw err;
+    }
+  });
+
+// Status command
+program
+  .command('status')
+  .description('Show current system status')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .action(async (options) => {
+    const projectDir = path.resolve(options.dir);
+    
+    console.log('📊 SpecLang Status');
+    console.log(`   Project: ${projectDir}`);
+    
+    // Check if daemon is running
+    const pidFile = path.join(projectDir, '.speclang', 'daemon.pid');
+    if (fs.existsSync(pidFile)) {
+      const pid = fs.readFileSync(pidFile, 'utf-8').trim();
+      console.log(`   Daemon: Running (PID ${pid})`);
+    } else {
+      console.log('   Daemon: Not running');
+    }
+    
+    // Count specs
+    const specsDir = path.join(projectDir, 'specs');
+    if (fs.existsSync(specsDir)) {
+      const { execSync } = require('child_process');
+      try {
+        const count = parseInt(
+          execSync(`find "${specsDir}" -name "*.spec*" -type f | wc -l`, 
+            { encoding: 'utf-8' }).trim()
+        );
+        console.log(`   Specs: ${count}`);
+      } catch {
+        console.log('   Specs: (unable to count)');
+      }
+    }
+    
+    // Check generated code
+    const generatedDir = path.join(projectDir, 'generated');
+    if (fs.existsSync(generatedDir)) {
+      const files = fs.readdirSync(generatedDir, { recursive: true });
+      console.log(`   Generated files: ${files.length}`);
+    }
+  });
+
+// Stop command
+program
+  .command('stop')
+  .description('Stop the SpecLang daemon')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .action(async (options) => {
+    const projectDir = path.resolve(options.dir);
+    const pidFile = path.join(projectDir, '.speclang', 'daemon.pid');
+    
+    if (!fs.existsSync(pidFile)) {
+      console.log('Daemon not running');
+      return;
+    }
+    
+    const pid = parseInt(fs.readFileSync(pidFile, 'utf-8').trim());
+    
+    try {
+      process.kill(pid, 'SIGTERM');
+      fs.unlinkSync(pidFile);
+      console.log('✅ Daemon stopped');
+    } catch (err) {
+      if (err.code === 'ESRCH') {
+        console.log('Daemon not running (stale PID file removed)');
+        fs.unlinkSync(pidFile);
+      } else {
+        throw err;
+      }
+    }
+  });
+
+program.parse();

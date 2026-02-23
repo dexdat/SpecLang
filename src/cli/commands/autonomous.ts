@@ -12,7 +12,7 @@ import {
   type AutonomousValidateOptions,
   type AutonomousReportOptions,
   type AutonomousVerifyOptions
-} from '../autonomous/index.js';
+} from '../../autonomous/index';
 
 /**
  * Run autonomous tests
@@ -221,4 +221,4 @@ export type {
   AutonomousValidateOptions,
   AutonomousReportOptions,
   AutonomousVerifyOptions
-} from '../autonomous/index.js';
+} from '../../autonomous/index';
