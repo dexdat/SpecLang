@@ -1,5 +1,64 @@
 # Progress
 
+## P2-003: MCP Daemon (speclangd Enterprise)
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/mcp-daemon.spec.dir/architecture.spec.md`, `specs/mcp-daemon.spec.dir/config.spec.md`
+- **Files Created**: 4 new files (src/daemon/enterprise/)
+- **Tests**: Build passes, all tests pass
+
+### Components Implemented
+
+1. **HTTP Server** (`src/daemon/enterprise/http_server.ts`) - NEW
+   - Express-based HTTP server on configurable port (default 8765)
+   - Endpoints:
+     - GET /status - Daemon status (mode, queue_depth, files_watching, uptime)
+     - GET /events - SSE event stream
+     - GET /queue - Queue state (pending, in_progress, completed)
+     - POST /command - Control commands (pause, resume, priority, worktree)
+     - GET /worktrees - List worktrees
+     - POST /worktree/create - Create new worktree
+     - POST /worktree/:name/test - Run tests in worktree
+
+2. **MCP Tools** (`src/daemon/enterprise/mcp_tools.ts`) - NEW
+   - MCPTools class using @modelcontextprotocol/sdk
+   - 7 tools registered:
+     - speclang_queue_status
+     - speclang_queue_pause
+     - speclang_queue_resume
+     - speclang_worktree_create
+     - speclang_worktree_test
+     - speclang_worktree_deploy
+     - speclang_agent_control
+
+3. **Worktree Manager** (`src/daemon/enterprise/worktree.ts`) - NEW
+   - WorktreeManager class for isolated testing
+   - Create/remove/list worktrees
+   - Run tests in worktree
+   - Deploy worktree version
+   - Uses git worktree commands when available
+
+4. **Module Exports** (`src/daemon/enterprise/index.ts`) - NEW
+   - Exports HTTPServer, MCPTools, WorktreeManager
+   - All type definitions
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ All tests pass
+
+### Notes
+
+- Implements enterprise daemon features per specs
+- HTTP/SSE server provides real-time queue visibility
+- MCP tools enable IDE integration (queue control, worktree management)
+- Worktree isolation allows testing while building next version
+
+---
+
 ## P2-002: MCP CLI
 
 **Status**: PASSED
