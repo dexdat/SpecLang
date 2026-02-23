@@ -13,6 +13,7 @@ import { SpecsToolHandler } from './specs.js';
 import { LocksToolHandler } from './locks.js';
 import { CascadeToolHandler } from './cascade.js';
 import { IndexToolHandler } from './index-tools.js';
+import { DashboardToolHandler } from './dashboard.js';
 import type { 
   SearchInput, 
   CreateSpecInput, 
@@ -36,6 +37,7 @@ export class MCPToolRegistry {
   public locks: LocksToolHandler;
   public cascade: CascadeToolHandler;
   public index: IndexToolHandler;
+  public dashboard: DashboardToolHandler;
   
   constructor(db: SpecLangDB, config: MCPServerConfig) {
     this.db = db;
@@ -47,6 +49,7 @@ export class MCPToolRegistry {
     this.locks = new LocksToolHandler(db);
     this.cascade = new CascadeToolHandler(db);
     this.index = new IndexToolHandler(db, config.specsDir);
+    this.dashboard = new DashboardToolHandler(db);
   }
   
   /**
@@ -135,6 +138,23 @@ export class MCPToolRegistry {
           // Status tool
           case 'speclang_get_status':
             result = await this.handleGetStatus();
+            break;
+            
+          // Dashboard/UI tools
+          case 'speclang_query_events':
+            result = await this.dashboard.handleQueryEvents(args as unknown as { limit?: number; cascade_id?: string; agent?: string; file_pattern?: string; since?: string });
+            break;
+          case 'speclang_get_agent_statuses':
+            result = await this.dashboard.handleGetAgentStatuses(args as unknown as { agent_type?: string; status?: string });
+            break;
+          case 'speclang_get_project_stats':
+            result = await this.dashboard.handleGetProjectStats();
+            break;
+          case 'speclang_get_queue_status':
+            result = await this.dashboard.handleGetQueueStatus(args as unknown as { limit?: number });
+            break;
+          case 'speclang_get_system_stats':
+            result = await this.dashboard.handleGetSystemStats();
             break;
             
           default:
@@ -568,6 +588,59 @@ export function getToolDefinitions() {
     {
       name: 'speclang_get_status',
       description: 'Get overall system status',
+      inputSchema: {
+        type: 'object',
+        properties: {}
+      }
+    },
+    
+    // Dashboard/UI tools
+    {
+      name: 'speclang_query_events',
+      description: 'Query recent cascade events with filtering',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          limit: { type: 'number', description: 'Max events to return', default: 20 },
+          cascade_id: { type: 'string', description: 'Filter by cascade ID' },
+          agent: { type: 'string', description: 'Filter by agent' },
+          file_pattern: { type: 'string', description: 'Filter by file pattern' },
+          since: { type: 'string', description: 'Filter events after timestamp (ISO 8601)' }
+        }
+      }
+    },
+    {
+      name: 'speclang_get_agent_statuses',
+      description: 'Get detailed status for all agent sessions',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          agent_type: { type: 'string', description: 'Filter by agent type' },
+          status: { type: 'string', description: 'Filter by status (idle, active, error)' }
+        }
+      }
+    },
+    {
+      name: 'speclang_get_project_stats',
+      description: 'Get project statistics (specs count, generated files, tests)',
+      inputSchema: {
+        type: 'object',
+        properties: {}
+      }
+    },
+    {
+      name: 'speclang_get_queue_status',
+      description: 'Get detailed queue status (pending commands)',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          limit: { type: 'number', description: 'Max commands to return', default: 50 }
+        }
+      }
+    },
+    {
+      name: 'speclang_get_system_stats',
+      description: 'Get system-level statistics (CPU, memory, disk)',
       inputSchema: {
         type: 'object',
         properties: {}
