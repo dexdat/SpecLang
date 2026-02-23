@@ -1,5 +1,50 @@
 # Progress
 
+## P2-002: MCP CLI
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/mcp.spec.dir/cli.spec.md`
+- **Files Created**: 1 new file (src/cli/commands/mcp.ts)
+- **Files Modified**: 2 files (src/cli/commands/server.ts, src/cli/index.ts)
+- **Tests**: Build passes, all tests pass
+
+### Components Implemented
+
+1. **MCP Subcommands** (`src/cli/commands/mcp.ts`) - NEW
+   - `mcp status` - Show MCP server status (running/PID)
+   - `mcp stop` - Stop MCP daemon gracefully
+
+2. **Server Updates** (`src/cli/commands/server.ts`)
+   - Added auth options: --auth, --user, --pass, --token
+   - Added --remote option (alias for --http)
+   - Added --config option for config file path
+   - Added PID file management for daemon mode
+   - Added status file for daemon info
+
+3. **CLI Integration** (`src/cli/index.ts`)
+   - Added `speclang mcp` subcommand group
+   - `speclang mcp start` - Start MCP server
+   - `speclang mcp serve` - Start in daemon mode
+   - `speclang mcp status` - Show status
+   - `speclang mcp stop` - Stop daemon
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ All tests pass
+
+### Notes
+
+- Implements CLI interface per @speclang/mcp.cli spec
+- Kept legacy `speclang server` command for backwards compatibility
+- Daemon mode uses PID file for process tracking
+- Supports authentication: none, basic, token
+
+---
+
 ## P2-001: MCP Server Implementation
 
 **Status**: PASSED
