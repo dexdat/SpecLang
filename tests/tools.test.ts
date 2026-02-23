@@ -1,11 +1,14 @@
 /**
+ * speclang-header lines:10
+ * @ref:specs/tools.spec.md
+ * 
  * SPECLANG-GENERATED: Tools Tests
  * Source: @speclang/tools
  * 
  * Test suite for Agent Tools API
  */
 
-import { describe, test, expect, beforeEach } from 'bun:test';
+import { describe, test, expect, beforeEach } from 'vitest';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { tmpdir } from 'os';

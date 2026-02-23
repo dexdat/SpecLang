@@ -1,4 +1,9 @@
 /**
+ * speclang-header lines:10
+ * @ref:specs/tools.spec.md#simpletoolregistry
+ * @ref:specs/tools.spec.md#createtoolregistry
+ * @ref:specs/tools.spec.md#getstandardtools
+ * 
  * SPECLANG-GENERATED: Tools Index
  * Source: @speclang/tools
  * 
