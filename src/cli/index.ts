@@ -16,6 +16,7 @@ import { cascadeCommand, CascadeOptions } from './commands/cascade.js';
 import { guardCommand, GuardOptions } from './commands/guard.js';
 import { metaGenerateCommand, metaValidateCommand, metaBootstrapCommand, metaCheckCommand, MetaCLIOptions } from './commands/meta.js';
 import { autonomousTestCommand, autonomousValidateCommand, autonomousReportCommand, autonomousVerifyCommand, AutonomousTestOptions, AutonomousValidateOptions, AutonomousReportOptions, AutonomousVerifyOptions } from './commands/autonomous.js';
+import { mcpStatusCommand, mcpStopCommand, McpStatusOptions, McpStopOptions } from './commands/mcp.js';
 
 const program = new Command();
 
@@ -142,13 +143,69 @@ program
 
 program
   .command('server')
+  .description('Start MCP server (legacy command)')
+  .option('--port <n>', 'Port number', parseInt, 3000)
+  .option('--daemon', 'Run in daemon mode')
+  .option('--http', 'Run in HTTP mode')
+  .option('--remote', 'HTTP mode (alias for --http)')
+  .option('--auth <type>', 'Auth type (none, basic, token)', 'none')
+  .option('--user <username>', 'Username for basic auth')
+  .option('--pass <password>', 'Password for basic auth')
+  .option('--token <token>', 'Token for token auth')
+  .option('--config <path>', 'Config file path')
+  .option('--json', 'JSON output')
+  .action(async (options: ServerOptions) => {
+    await serverCommand(options);
+  });
+
+// ============================================================================
+// MCP SUBGROUP
+// ============================================================================
+
+const mcp = program
+  .command('mcp')
+  .description('MCP server operations');
+
+mcp
+  .command('start')
   .description('Start MCP server')
   .option('--port <n>', 'Port number', parseInt, 3000)
   .option('--daemon', 'Run in daemon mode')
   .option('--http', 'Run in HTTP mode')
+  .option('--remote', 'HTTP mode (alias for --http)')
+  .option('--auth <type>', 'Auth type (none, basic, token)', 'none')
+  .option('--user <username>', 'Username for basic auth')
+  .option('--pass <password>', 'Password for basic auth')
+  .option('--token <token>', 'Token for token auth')
+  .option('--config <path>', 'Config file path')
   .option('--json', 'JSON output')
   .action(async (options: ServerOptions) => {
     await serverCommand(options);
+  });
+
+mcp
+  .command('serve')
+  .description('Start MCP server in daemon mode')
+  .option('--config <path>', 'Config file path')
+  .option('--json', 'JSON output')
+  .action(async (options: ServerOptions & { config?: string }) => {
+    await serverCommand({ ...options, daemon: true });
+  });
+
+mcp
+  .command('status')
+  .description('Show MCP server status')
+  .option('--json', 'JSON output')
+  .action(async (options: McpStatusOptions) => {
+    await mcpStatusCommand(options);
+  });
+
+mcp
+  .command('stop')
+  .description('Stop MCP daemon')
+  .option('--json', 'JSON output')
+  .action(async (options: McpStopOptions) => {
+    await mcpStopCommand(options);
   });
 
 // ============================================================================
