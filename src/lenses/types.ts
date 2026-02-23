@@ -29,6 +29,7 @@ export interface LensOptions {
   preserveSource: boolean;
   prettyPrint: boolean;
   indent: number;
+  explicitKind?: string;
 }
 
 export interface Lens<TInput = any, TOutput = Block> {

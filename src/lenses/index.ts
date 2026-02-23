@@ -15,6 +15,10 @@ import { operationLens } from './operation-lens';
 import { mathLens } from './math-lens';
 import { acceptanceLens } from './acceptance-lens';
 import { diagramLens } from './diagram-lens';
+import { tableLens } from './table-lens';
+import { policyLens } from './policy-lens';
+import { questionLens } from './question-lens';
+import { decisionLens } from './decision-lens';
 
 export function initializeLenses(): { registry: LensRegistry; converter: LensConverter } {
   const registry = new LensRegistry();
@@ -26,6 +30,10 @@ export function initializeLenses(): { registry: LensRegistry; converter: LensCon
   registry.register(operationLens);    // 55
   registry.register(codeLens);         // 50
   registry.register(mathLens);         // 45
+  registry.register(tableLens);        // 40
+  registry.register(decisionLens);    // 32
+  registry.register(questionLens);     // 30
+  registry.register(policyLens);       // 35
   registry.register(proseLens);        // 0 (fallback)
   
   const converter = new LensConverter(registry);
@@ -47,6 +55,10 @@ export { operationLens } from './operation-lens';
 export { mathLens } from './math-lens';
 export { acceptanceLens } from './acceptance-lens';
 export { diagramLens, detectDiagramType } from './diagram-lens';
+export { tableLens } from './table-lens';
+export { policyLens } from './policy-lens';
+export { questionLens } from './question-lens';
+export { decisionLens } from './decision-lens';
 
 // Export types
 export type { 
