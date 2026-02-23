@@ -286,7 +286,7 @@ Project: SpecLang (meta-circular)
 
 ### P0-017: Header Field Definitions (2026-02-23)
 
-**Status**: ✅ Complete
+**Status**: ✅ Complete (passes: true)
 
 **Files Modified**:
 - `src/parser/fields.ts` - Added missing field definitions for caused_by, change_id, part_of
@@ -296,9 +296,10 @@ Project: SpecLang (meta-circular)
 - `tests/fields.test.ts` - Updated to test all 6 required fields
 - `tests/header-validation.test.ts` - Updated to include all required fields
 
-**Commit**:
+**Baby Steps Commits**:
 1. `P0-017: Add missing header fields (caused_by, change_id, part_of)`
 2. `P0-017: Fix tests to match spec - 6 required header fields`
+3. `speclang: make layer, project_level, agent_support, short required per spec`
 
 **Validation**:
 - ✅ TypeScript compiles: `npm run build`
