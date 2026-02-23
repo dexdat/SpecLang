@@ -1,5 +1,72 @@
 # Progress
 
+## P3-008: Python Type Mappings
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `docs/prompts/phase-3.8-python-types.md`
+- **Files Modified**: 1 file (src/compiler/python/types.ts)
+- **Tests**: Build passes, 1020 tests pass
+
+### Components Implemented
+
+1. **Extended Type Mappings** (`src/compiler/python/types.ts`)
+   - Added all numeric variants: Int8, Int16, UInt, UInt8, UInt16
+   - Added time types: Time, Duration
+   - Added string variants: Char, Text
+   - Added collection types: Sequence<T>, FrozenSet<T>, Tuple<T...>
+   - Added Optional/Nullable handling with Python 3.10+ union syntax
+   - Added Result<T,E>, Callable<...>, Iterator<T>, Generator<T>, Literal<T>
+   - Added blob/json types: ByteArray, Blob, JSON<T>, Unknown, Object
+
+2. **TypeResolution Interface**
+   - Added TypeResolution interface with isOptional, isCollection properties
+   - Added resolvePythonType() function returning full type resolution
+   - Handles generic type detection flags
+
+3. **Generic Type Handling**
+   - Added resolveGeneric() for List, Array, Sequence, Map, Dict, Set, FrozenSet
+   - Added Tuple, Optional, Nullable, Callable, Iterator, Generator, Result, JSON, Literal types
+   - Maintains proper import tracking for nested generics
+
+4. **Optional Type Utilities**
+   - Added formatOptionalType() with Python version support
+   - Added hasOptionalDefault() for default value detection
+   - Added getOptionalDefault() for inner type defaults
+   - Added parseNullableField() for field annotation parsing
+
+5. **Special Type Mappings**
+   - TIME_TYPE_MAPPINGS: Date, DateTime, Time, Duration with methods
+   - UUID_MAPPING: UUID with uuid import and methods
+   - ID_TYPE_MAPPINGS: ID, UUID, ULID, NanoID, Slug
+   - PYDANTIC_TYPE_MAPPINGS: Pydantic-specific type conversion
+   - toPydanticType() function for Pydantic model generation
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 1020 passed (6 pre-existing db test failures)
+
+### Verification
+
+Type mappings verified working:
+- Primitives: String→str, Int→int, Bool→bool, Float64→float
+- Collections: Array<Int>→list[int], Map<String,Int>→dict[str,int]
+- Optional: Optional<String>→str | None
+- Special: Date→date (imports datetime), UUID→UUID (imports uuid)
+- Pydantic: Array<Int>→List[int]
+
+### Notes
+
+- Implements comprehensive Python type mappings per phase-3.8 spec
+- All test cases from the spec are satisfied
+- Supports Python 3.10+ union syntax (T | None) with fallback
+- Backwards compatible with existing P3-006 implementation
+
+---
+
 ## P3-007: Go Type Mappings
 
 **Status**: PASSED
