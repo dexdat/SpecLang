@@ -12,6 +12,9 @@ export { ValidationEngine, getEngine, resetEngine, validate, validateAll } from 
 // Reporter
 export { ValidationReporter, format, formatBatch, formatJSON, formatSummary } from './reporter';
 
+// CLI
+export { validateCommand, ValidateOptions, ValidateResult } from './cli';
+
 // Rules
 export {
   RuleRegistry,

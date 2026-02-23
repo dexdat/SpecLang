@@ -171,4 +171,36 @@ program
     }
   });
 
+// Validate command
+program
+  .command('validate [files...]')
+  .description('Validate spec files')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .option('-s, --strict', 'Treat warnings as errors')
+  .option('-v, --verbose', 'Show detailed output')
+  .option('-f, --format <format>', 'Output format (text, json)', 'text')
+  .action(async (files, options) => {
+    const projectDir = path.resolve(options.dir);
+    
+    console.log('📋 Validating specs...');
+    
+    try {
+      const { validateCommand } = require('../dist/validation/cli.js');
+      await validateCommand({
+        files: files.length > 0 ? files : ['specs/**/*.spec.md'],
+        projectDir,
+        strict: options.strict || false,
+        verbose: options.verbose || false,
+        format: options.format || 'text'
+      });
+    } catch (err) {
+      if (err.code === 'MODULE_NOT_FOUND') {
+        console.error('\n❌ SpecLang not built. Run: npm run build');
+        console.error('   Validation module not found.\n');
+        process.exit(1);
+      }
+      throw err;
+    }
+  });
+
 program.parse();
