@@ -1465,6 +1465,70 @@ Type mappings verified working:
 
 ---
 
+## P4-001: Build Pipeline
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/pipeline.spec.md` and child specs (`pipeline.spec.dir/build.spec.md`, `pipeline.spec.dir/hooks.spec.md`, `pipeline.spec.dir/recovery.spec.md`)
+- **Files**: Complete implementation in `src/pipeline/`
+- **Tests**: Build passes, all tests pass
+
+### Components Implemented
+
+1. **Pipeline Types** (`src/pipeline/types.ts`)
+   - PipelineConfig, Stage, StageHooks, StageResult
+   - Hook types: Hook, HookContext, HookResult
+   - Recovery types: RecoveryAction, RecoveryContext, RecoveryResult
+   - PipelineResult, ConditionContext, PipelineEvent, ExecutorOptions
+
+2. **Config Manager** (`src/pipeline/config.ts`)
+   - PipelineConfigManager for loading/validating build.yaml
+   - mergeConfig, validate, hasCircularDependency
+   - Singleton pattern with loadPipelineConfig, getPipelineConfig
+
+3. **Stage Executor** (`src/pipeline/stages.ts`)
+   - StageExecutor class with command execution
+   - areDependenciesMet, orderStages (topological sort)
+   - Pre/post hook execution (pre, post, post_success, post_fail)
+
+4. **Hook Executor** (`src/pipeline/hooks.ts`)
+   - HookExecutor for running pre/post scripts
+   - BuiltInHooks: echo, notifyDiscord, notifySlack, logToFile, notifyOrchestrator
+   - createHookContext helper
+
+5. **Recovery Executor** (`src/pipeline/recovery.ts`)
+   - RecoveryExecutor for rollback, notify, retry, pause actions
+   - RecoveryActions factory: rollbackLastSpecChange, notifyOrchestrator, retryPipeline, pauseAndWait
+   - Error logging to .speclang/errors/
+   - Notification system to .speclang/notifications/
+
+6. **Pipeline Executor** (`src/pipeline/executor.ts`)
+   - PipelineExecutor orchestrates full pipeline
+   - execute, executeStage, evaluateCondition
+   - Success action execution (git commit)
+   - Event emission for stage start/complete/fail, recovery, pipeline complete
+
+7. **Module Exports** (`src/pipeline/index.ts`)
+   - All public exports: types, config, stages, hooks, recovery, executor
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ All pass
+
+### Notes
+
+- Pipeline is self-defining via build.yaml spec
+- Stages run with dependency ordering (topological sort)
+- Conditional execution based on file changes
+- Recovery with max 3 attempts by default
+- Rollback to last spec change on failure
+- Notifications written to .speclang/notifications/ for orchestrator
+
+---
+
 ## P1-002: Agent Session Manager
 
 **Status**: PASSED
