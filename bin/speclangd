@@ -1,0 +1,158 @@
+#!/usr/bin/env node
+/**
+ * Speclangd CLI - Reactive file watcher daemon
+ * 
+ * Usage:
+ *   speclangd start     - Start daemon in foreground
+ *   speclangd start -d  - Start daemon in background
+ *   speclangd status    - Check daemon status
+ *   speclangd pause     - Pause cascade
+ *   speclangd resume    - Resume cascade
+ *   speclangd abort     - Abort current cascade
+ *   speclangd trigger <file> - Manually trigger event
+ *   speclangd converge  - Wait for convergence
+ */
+
+const path = require('path');
+const fs = require('fs');
+
+const packageJson = require('../package.json');
+
+async function main() {
+  const args = process.argv.slice(2);
+  const command = args[0] || 'start';
+  
+  const daemon = require('../dist/daemon/daemon.js');
+  const { Daemon, DaemonCommandKind } = daemon;
+  
+  switch (command) {
+    case 'start': {
+      const daemonMode = args.includes('-d') || args.includes('--daemon');
+      const configPath = args.find(a => a.startsWith('--config='))?.split('=')[1] || '.speclangrc';
+      
+      console.log('🚀 Starting Speclangd...');
+      
+      const d = new Daemon(configPath);
+      
+      d.on('started', () => {
+        console.log('[CLI] Daemon started');
+      });
+      
+      d.on('converged', (result) => {
+        console.log('[CLI] Cascade converged:', result);
+      });
+      
+      d.on('task', (task) => {
+        console.log('[CLI] Task generated:', task.kind, task.trigger);
+      });
+      
+      await d.start();
+      
+      if (!daemonMode) {
+        console.log('[CLI] Running in foreground. Press Ctrl+C to stop.');
+        process.on('SIGINT', async () => {
+          console.log('\n[CLI] Shutting down...');
+          await d.stop();
+          process.exit(0);
+        });
+      }
+      break;
+    }
+    
+    case 'status': {
+      const d = new Daemon();
+      await d.start();
+      const status = d.getStatus();
+      console.log(JSON.stringify(status, null, 2));
+      await d.stop();
+      break;
+    }
+    
+    case 'pause': {
+      const d = new Daemon();
+      await d.start();
+      await d.processCommand({ kind: DaemonCommandKind.Pause });
+      console.log('Daemon paused');
+      await d.stop();
+      break;
+    }
+    
+    case 'resume': {
+      const d = new Daemon();
+      await d.start();
+      await d.processCommand({ kind: DaemonCommandKind.Resume });
+      console.log('Daemon resumed');
+      await d.stop();
+      break;
+    }
+    
+    case 'abort': {
+      const d = new Daemon();
+      await d.start();
+      await d.processCommand({ kind: DaemonCommandKind.Abort });
+      console.log('Cascade aborted');
+      await d.stop();
+      break;
+    }
+    
+    case 'trigger': {
+      const file = args[1];
+      if (!file) {
+        console.error('Usage: speclangd trigger <file>');
+        process.exit(1);
+      }
+      const d = new Daemon();
+      await d.start();
+      await d.processCommand({ kind: DaemonCommandKind.Trigger, path: file });
+      console.log(`Triggered: ${file}`);
+      await d.stop();
+      break;
+    }
+    
+    case 'converge': {
+      const timeoutIndex = args.findIndex(a => a === '-t' || a === '--timeout');
+      const timeout = timeoutIndex >= 0 ? parseInt(args[timeoutIndex + 1]) * 1000 : 60000;
+      
+      const d = new Daemon();
+      await d.start();
+      
+      try {
+        const result = await d.getConvergence().waitForConvergence(timeout);
+        console.log('Converged:', result);
+      } catch (error) {
+        console.error('Convergence timeout');
+      }
+      
+      await d.stop();
+      break;
+    }
+    
+    case '--version':
+    case '-v':
+      console.log(`speclangd ${packageJson.version}`);
+      break;
+      
+    default:
+      console.log(`speclangd v${packageJson.version}`);
+      console.log('');
+      console.log('Usage:');
+      console.log('  speclangd start           Start daemon in foreground');
+      console.log('  speclangd start -d        Start daemon in background');
+      console.log('  speclangd status         Check daemon status');
+      console.log('  speclangd pause          Pause cascade');
+      console.log('  speclangd resume         Resume cascade');
+      console.log('  speclangd abort          Abort current cascade');
+      console.log('  speclangd trigger <file> Manually trigger event');
+      console.log('  speclangd converge       Wait for convergence');
+      break;
+  }
+}
+
+main().catch(err => {
+  if (err.code === 'MODULE_NOT_FOUND') {
+    console.error('\n❌ SpecLang not built. Run: npm run build');
+    process.exit(1);
+  }
+  console.error('Error:', err);
+  process.exit(1);
+});
