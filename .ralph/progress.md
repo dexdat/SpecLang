@@ -176,6 +176,27 @@ Project: SpecLang (meta-circular)
 **Spec References**:
 - `specs/skills.spec.md` - Main spec (already existed)
 
+### P1-012: Agent Tools API (2026-02-23)
+
+**Status**: ✅ Complete
+
+**Files Verified**:
+- `src/tools/index.ts` - Main entry point
+- `src/tools/registry.ts` - ToolRegistry implementation  
+- `src/tools/types.ts` - Type definitions
+- `src/tools/file-tools.ts` - File operations
+- `src/tools/query-tools.ts` - Query tools
+- `src/tools/graph-tools.ts` - Graph tools
+- `src/tools/validation-tools.ts` - Validation tools
+- `src/tools/cascade-tools.ts` - Cascade tools
+- `src/tools/git-tools.ts` - Git tools
+- `src/tools/pipeline-tools.ts` - Pipeline tools
+- `src/tools/session-tools.ts` - Session tools
+
+**Validation**:
+- ✅ TypeScript compiles: `npm run build`
+- ✅ Tests pass: `npm test` (25 tool tests)
+
 ### P0-012: Agent Tools API (2026-02-23)
 
 **Status**: ✅ Complete
