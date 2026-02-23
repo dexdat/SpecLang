@@ -1,5 +1,53 @@
 # Progress
 
+## P1-003: OpenCode Integration
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/opencode.spec.md`, `specs/opencode.spec.dir/integration.spec.md`, `specs/opencode.spec.dir/events.spec.md`
+- **Files Created**: 8 new files
+- **Tests**: Build and all tests pass
+
+### Components Implemented
+
+1. **Types** (`src/opencode/types.ts`)
+   - OpenCodePluginContext interface
+   - Event types (file.edited, agent.finished, session.idle, write.attempt)
+   - Database and tools interfaces
+   - Build profile types
+
+2. **Configuration** (`src/opencode/config.ts`)
+   - Build profiles: POC, MVP, Enterprise
+   - .speclangrc config file loading
+   - Profile-specific agent lists and pipeline settings
+
+3. **Plugin** (`src/opencode/plugin.ts`)
+   - Main SpeclangPlugin function
+   - File watching event handlers
+   - Spec header parsing and indexing
+   - Ownership enforcement
+   - Convergence detection
+   - Agent tools registration
+
+4. **Entry Point** (`src/opencode/index.ts`)
+   - Module exports
+   - Plugin factory function
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ All pass
+
+### Notes
+
+- Plugin integrates with existing db/, daemon/, and agents/ modules
+- Implements the architecture from spec (events → plugin → SQLite → skills → pipeline)
+- Build profile system supports POC/MVP/Enterprise with different agent sets
+
+---
+
 ## P1-002: Agent Session Manager
 
 **Status**: PASSED
