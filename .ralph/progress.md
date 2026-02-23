@@ -28,8 +28,9 @@ Project: SpecLang (meta-circular)
 |-------|---------|--------|
 | P0: Foundation | 4 | ✅ Complete |
 | P1: Core Runtime | 2 | ⬜ Not Started |
+| P0: Test Specs | 1 | ✅ Complete |
 
-**Total: 9 stories, 4 complete**
+**Total: 10 stories, 5 complete**
 
 ---
 
@@ -201,4 +202,29 @@ Project: SpecLang (meta-circular)
 
 **Spec References**:
 - `specs/tools.spec.md` - Main spec
+
+### P0-013: Test Specs Format (2026-02-23)
+
+**Status**: ✅ Complete
+
+**Files Verified**:
+- `src/test-specs/index.ts` - Main entry point exporting all modules
+- `src/test-specs/types.ts` - Type definitions (TestSpec, TestScenario, TestResult, etc.)
+- `src/test-specs/parser.ts` - TestSpecParser for parsing test spec files
+- `src/test-specs/generator.ts` - TestGenerator for generating test code (TypeScript, Python, Go)
+- `src/test-specs/runner.ts` - TestRunner for executing tests
+- `src/test-specs/reporter.ts` - TestSpecReporter for formatting test reports
+- `src/test-specs/sync.ts` - TestResultSync for syncing results back to spec files
+- `tests/test-specs.test.ts` - 25 test cases
+
+**Baby Steps Commits**:
+1. `speclang: baby-step: Fix vitest import in test-specs.test.ts`
+
+**Validation**:
+- ✅ TypeScript compiles: `npm run build`
+- ✅ Tests pass: 25 test-specs tests passed
+- ✅ Headers correct: All files have speclang-header comments
+
+**Spec References**:
+- `specs/test-specs.spec.md` - Main spec
 
