@@ -88,15 +88,15 @@ export interface RelationshipFields {
 /** Metadata fields - describe the spec */
 export interface MetadataFields {
   /** Abstraction layer 0-10 */
-  layer?: number;
+  layer: number;
   /** Project maturity level */
-  project_level?: ProjectLevel;
+  project_level: ProjectLevel;
   /** Agent support level */
-  agent_support?: AgentSupport;
+  agent_support: AgentSupport;
   /** Tags for search */
   tags?: string[];
   /** One-line description */
-  short?: string;
+  short: string;
   /** Target language */
   target?: string;
   /** Spec status */
@@ -111,6 +111,12 @@ export interface OwnershipFields {
   owned_by?: string;
   /** Current session ID */
   session_id?: string;
+  /** Commit that triggered this change */
+  caused_by?: string;
+  /** This commit's hash */
+  change_id?: string;
+  /** Cascade ID this belongs to */
+  part_of?: string;
 }
 
 /** Efficiency fields - for fast parsing */
