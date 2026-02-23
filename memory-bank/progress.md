@@ -1,5 +1,70 @@
 # Progress
 
+## P3-009: TypeScript Type Mappings
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `docs/prompts/phase-3.9-typescript-types.md`
+- **Files Created**: 6 files (src/codegen/targets/typescript/)
+- **Tests**: Build passes, 1018 tests pass (2 pre-existing codegen test failures)
+
+### Components Implemented
+
+1. **Core Type Mappings** (`src/codegen/targets/typescript/types.ts`)
+   - TypeScriptTypeMapping interface with stdlib, typescript, import, default fields
+   - TypeResolution interface with type, imports, isOptional, isUnion, isGeneric
+   - TYPESCRIPT_TYPE_MAPPINGS array with all primitive and special types
+   - resolveTypeScriptType() function returning full type resolution
+
+2. **Primitives** (`src/codegen/targets/typescript/types_primitives.ts`)
+   - PRIMITIVE_TYPE_MAPPINGS filter
+   - isPrimitiveType(), getPrimitiveMapping(), getPrimitiveDefault()
+   - needsImport() for import detection
+
+3. **Collections** (`src/codegen/targets/typescript/types_collections.ts`)
+   - COLLECTION_TYPE_MAPPINGS for Array, List, ReadonlyArray, Map, WeakMap, Set, WeakSet, Tuple
+   - isCollectionType(), resolveCollectionType(), getCollectionDefault()
+
+4. **Generics** (`src/codegen/targets/typescript/types_generics.ts`)
+   - resolveGenericType() - wrapper for resolveTypeScriptType
+   - isGenericType(), extractTypeParams(), formatGenericType()
+
+5. **Optional/Null** (`src/codegen/targets/typescript/types_optional.ts`)
+   - formatOptional() with optional, nullable, nullish modifiers
+   - hasNullModifier(), getTypeScriptDefault(), parseFieldType()
+   - detectNullModifier() for type inspection
+
+6. **Special Types** (`src/codegen/targets/typescript/types_special.ts`)
+   - DATE_TYPE_MAPPINGS, UUID_MAPPING, BYTES_TYPE_MAPPINGS, NODE_TYPE_MAPPINGS
+   - ZOD_TYPE_MAPPINGS for schema generation
+   - toZodSchema() function for validation schema generation
+   - isDateType(), isUUIDType(), isBytesType() helpers
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 1018 passed (2 pre-existing codegen test failures)
+
+### Verification
+
+Type mappings verified working:
+- Primitives: String→string, Int→number, Bool→boolean
+- Collections: Array<Int>→number[], Map<String,Int>→Map<string, number>
+- Optional: Optional<String>→string | undefined, Nullable<String>→string | null
+- Special: Date→Date (imports Date), UUID→string
+- Zod: Array<Int>→z.array(z.number().int())
+
+### Notes
+
+- Implements comprehensive TypeScript type mappings per phase-3.9 spec
+- All test cases from the spec are satisfied
+- Supports union types with | syntax (modern TypeScript)
+- Backwards compatible with existing codegen implementation
+
+---
+
 ## P3-008: Python Type Mappings
 
 **Status**: PASSED
