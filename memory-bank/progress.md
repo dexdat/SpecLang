@@ -1,5 +1,45 @@
 # Progress
 
+## P3-003: Compiler Target Languages
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/compiler.spec.dir/targets.spec.md`
+- **Files Created**: 2 files (src/compiler/index.ts, src/compiler/targets/index.ts)
+- **Tests**: Build passes, 991 tests pass
+
+### Components Implemented
+
+1. **Target Types** (`src/compiler/targets/index.ts`)
+   - CompilerTarget interface with id, name, fileExt, mappings, features
+   - TargetMapping interface for entity, operation, policy, enum mappings
+   - TargetFeatures interface with language-specific feature flags
+
+2. **Target Implementations**
+   - TypeScriptTarget: .ts, interface/class, function, type guard/middleware
+   - GoTarget: .go, struct, func, error handling
+   - RustTarget: .rs, struct, fn, Result types
+   - PythonTarget: .py, @dataclass/Pydantic, def, decorator/raise
+
+3. **Exports** (`src/compiler/index.ts`)
+   - getTarget(lang) - retrieve target by language name
+   - getAllTargets() - list all available targets
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 991 passed
+
+### Notes
+
+- Implements compiler target languages per @speclang/compiler.spec.dir/targets spec
+- Supports mapping entity/operation/policy/enum to language-specific constructs
+- Feature flags for language capabilities (type inference, error handling, etc.)
+
+---
+
 ## P3-002: Code Generation Templates
 
 **Status**: PASSED
