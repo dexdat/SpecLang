@@ -54,6 +54,57 @@
 
 ---
 
+## P3-005: Go Code Generator
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/compiler.spec.dir/go.spec.md`
+- **Files Created**: 4 files
+  - `src/compiler/go/types.ts` - Type mappings (stdlib → Go)
+  - `src/compiler/go/templates.ts` - Go code templates
+  - `src/compiler/go/builtins.ts` - Go stdlib packages
+  - `src/compiler/targets/go.ts` - GoGenerator class
+- **Tests**: 31 tests pass
+
+### Components Implemented
+
+1. **Type Mappings** (`src/compiler/go/types.ts`)
+   - Primitive types: String→string, Int→int, Bool→bool, Float→float64
+   - Time types: Date→time.Time (imports time)
+   - Identifiers: UUID→uuid.UUID (imports github.com/google/uuid)
+   - Collections: Array<T>→[]T, Map<K,V>→map[K]V
+   - Optional: Optional<T>→*T
+
+2. **Templates** (`src/compiler/go/templates.ts`)
+   - File header with source/timestamp
+   - Struct definition with fields
+   - Interface definition with methods
+   - Function with receiver support
+   - Enum with iota constants
+   - Import blocks (single and grouped)
+
+3. **GoGenerator** (`src/compiler/targets/go.ts`)
+   - generateStruct() - Generates Go structs with JSON tags
+   - generateInterface() - Generates Go interfaces
+   - generateFunction() - Generates Go functions/methods
+   - generateEnum() - Generates Go enums with iota
+   - formatImports() - Groups stdlib and third-party imports
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 31 Go generator tests pass
+
+### Notes
+
+- Follows Go naming conventions (PascalCase for types, camelCase for functions)
+- Handles import management (stdlib vs third-party)
+- Generates JSON struct tags by default
+
+---
+
 ## P3-003: Compiler Target Languages
 
 **Status**: PASSED
