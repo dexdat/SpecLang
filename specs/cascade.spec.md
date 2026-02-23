@@ -9,6 +9,7 @@ children:
   - "@ref:specs/cascade.dir/triggers"
   - "@ref:specs/cascade.dir/convergence"
   - "@ref:specs/cascade.dir/continuous-improvement"
+  - "@ref:specs/cascade.dir/error-handling"
 short: "Cascade - Reactive loop of spec expansion"
 status: draft
 ---
