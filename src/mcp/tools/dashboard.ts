@@ -6,12 +6,21 @@
 import os from 'os';
 import fs from 'fs';
 import type { SpecLangDB } from '../../db/index.js';
+import type { MCPServerConfig } from '../types.js';
+
+interface SSEEventType {
+  file_change: string[];
+  cascade_progress: string[];
+  agent_activity: string[];
+  convergence: string[];
+}
 
 /**
  * Dashboard tool handler for UI monitoring tools
  */
 export class DashboardToolHandler {
   private db: SpecLangDB;
+  private config: MCPServerConfig | null;
   private statsCache: {
     cpuPercent: number;
     memoryUsedMb: number;
@@ -23,8 +32,9 @@ export class DashboardToolHandler {
   } | null = null;
   private cacheInterval = 5000;
 
-  constructor(db: SpecLangDB) {
+  constructor(db: SpecLangDB, config?: MCPServerConfig) {
     this.db = db;
+    this.config = config || null;
   }
 
   /**
@@ -40,10 +50,10 @@ export class DashboardToolHandler {
     events: Array<{
       event_id: number;
       cascade_id: string;
-      depth: number;
-      trigger_file: string;
-      agent: string;
-      output_files: string[];
+      kind: string;
+      path: string;
+      session: string;
+      details: string;
       timestamp: string;
     }>;
   }> {
@@ -52,12 +62,12 @@ export class DashboardToolHandler {
 
     let sql = `
       SELECT 
-        e.event_pk as event_id,
+        e.id as event_id,
         e.cascade_id,
-        e.depth,
-        e.trigger_file,
-        e.agent,
-        e.output_files,
+        e.kind,
+        e.path,
+        e.session,
+        e.details,
         datetime(e.timestamp, 'unixepoch') as timestamp
       FROM events e
       WHERE 1=1
@@ -69,11 +79,11 @@ export class DashboardToolHandler {
       params.push(cascade_id);
     }
     if (agent) {
-      sql += ' AND e.agent = ?';
+      sql += ' AND e.session = ?';
       params.push(agent);
     }
     if (file_pattern) {
-      sql += ' AND e.trigger_file LIKE ?';
+      sql += ' AND e.path LIKE ?';
       params.push(`${file_pattern}%`);
     }
     if (since) {
@@ -87,24 +97,14 @@ export class DashboardToolHandler {
     const rows = db.prepare(sql).all(...params) as Array<{
       event_id: number;
       cascade_id: string;
-      depth: number;
-      trigger_file: string;
-      agent: string;
-      output_files: string;
+      kind: string;
+      path: string;
+      session: string;
+      details: string;
       timestamp: string;
     }>;
 
-    return {
-      events: rows.map(row => ({
-        event_id: row.event_id,
-        cascade_id: row.cascade_id,
-        depth: row.depth,
-        trigger_file: row.trigger_file,
-        agent: row.agent,
-        output_files: JSON.parse(row.output_files || '[]'),
-        timestamp: row.timestamp
-      }))
-    };
+    return { events: rows };
   }
 
   /**
@@ -129,13 +129,13 @@ export class DashboardToolHandler {
 
     let sql = `
       SELECT 
-        s.session_id,
+        s.id as session_id,
         s.agent,
         s.status,
-        s.current_file,
-        (SELECT COUNT(*) FROM commands c WHERE c.session_id = s.session_id AND c.status = 'pending') as queue_depth,
+        null as current_file,
+        (SELECT COUNT(*) FROM commands c WHERE c.session_id = s.id AND c.status = 'pending') as queue_depth,
         datetime(s.last_active, 'unixepoch') as last_active,
-        (strftime('%s','now') - s.created) as uptime_seconds
+        0 as uptime_seconds
       FROM sessions s
       WHERE 1=1
     `;
@@ -218,16 +218,16 @@ export class DashboardToolHandler {
 
     const rows = db.prepare(`
       SELECT 
-        c.command_id,
+        c.id as command_id,
         c.action,
-        c.target_file,
+        c.target as target_file,
         c.session_id,
-        c.priority,
+        0 as priority,
         datetime(c.created_at, 'unixepoch') as created_at,
         (strftime('%s','now') - c.created_at) as age_seconds
       FROM commands c
       WHERE c.status = 'pending'
-      ORDER BY c.priority DESC, c.created_at ASC
+      ORDER BY c.created_at ASC
       LIMIT ?
     `).all(limit) as Array<{
       command_id: string;
@@ -315,6 +315,43 @@ export class DashboardToolHandler {
       disk_used_mb: diskUsedMb,
       disk_total_mb: diskTotalMb,
       uptime_seconds: uptimeSeconds
+    };
+  }
+
+  /**
+   * Handle speclang_subscribe_events - Get SSE endpoint info for real-time updates
+   */
+  async handleSubscribeEvents(args: {
+    types?: string[];
+  }): Promise<{
+    endpoint: string;
+    event_types: string[];
+    connection_info: string;
+  }> {
+    const { types } = args;
+    
+    const availableTypes = [
+      'file_change',
+      'cascade_progress', 
+      'agent_activity',
+      'convergence'
+    ];
+    
+    const eventTypes = types && types.length > 0 
+      ? availableTypes.filter(t => types.includes(t))
+      : availableTypes;
+    
+    const queryParams = eventTypes.length < availableTypes.length 
+      ? `?types=${eventTypes.join(',')}`
+      : '';
+    
+    const ssePort = this.config?.port || 3000;
+    const sseHost = this.config?.host || 'localhost';
+    
+    return {
+      endpoint: `http://${sseHost}:${ssePort}/events${queryParams}`,
+      event_types: eventTypes,
+      connection_info: 'Connect to the SSE endpoint using EventSource API. Events will be streamed as JSON with fields: type, data, timestamp.'
     };
   }
 }
