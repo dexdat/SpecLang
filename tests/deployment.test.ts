@@ -12,9 +12,9 @@ import { EnterpriseModeService } from '../src/deployment/enterprise.js';
 
 describe('Deployment Modes', () => {
   describe('Mode Definitions', () => {
-    it('should have valid deployment modes', () => {
-      // DeploymentMode is a type, not a value
-      expect(typeof DeploymentMode).toBe('object');
+    it('should have valid deployment mode type', () => {
+      const mode: DeploymentMode = 'light';
+      expect(mode).toBe('light');
     });
     
     it('should have mode selection criteria', () => {
@@ -24,8 +24,8 @@ describe('Deployment Modes', () => {
     });
     
     it('should have mode recommendations', () => {
-      expect(MODE_RECOMMENDATION.light).toBeDefined();
-      expect(MODE_RECOMMENDATION.enterprise).toBeDefined();
+      expect(MODE_RECOMMENDATION.useLightWhen).toBeDefined();
+      expect(MODE_RECOMMENDATION.useEnterpriseWhen).toBeDefined();
     });
     
     it('should have feature comparison', () => {
