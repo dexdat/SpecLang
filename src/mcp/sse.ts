@@ -124,37 +124,56 @@ export class SSEManager {
    * Broadcast file change event
    */
   broadcastFileChange(data: FileChangeEventData): void {
-    this.broadcast('file_change', data as unknown as Record<string, unknown>);
+    this.broadcast('file.changed', {
+      path: data.path,
+      change_type: data.kind
+    });
   }
   
   /**
    * Broadcast cascade progress event
    */
   broadcastCascadeProgress(data: CascadeProgressEventData): void {
-    this.broadcast('cascade_progress', data as unknown as Record<string, unknown>);
+    this.broadcast('cascade.progress', data as unknown as Record<string, unknown>);
   }
   
   /**
    * Broadcast agent activity event
    */
   broadcastAgentActivity(data: AgentActivityEventData): void {
-    this.broadcast('agent_activity', data as unknown as Record<string, unknown>);
+    if (data.status === 'spawned' || data.status === 'active') {
+      this.broadcast('agent.spawned', {
+        session_id: data.agent_id,
+        agent: data.role,
+        file: data.working_on
+      });
+    } else if (data.status === 'completed' || data.status === 'failed') {
+      this.broadcast('agent.completed', {
+        session_id: data.agent_id,
+        file: data.working_on,
+        status: data.status
+      });
+    }
   }
   
   /**
    * Broadcast convergence event
    */
   broadcastConvergence(data: ConvergenceEventData): void {
-    this.broadcast('convergence', data as unknown as Record<string, unknown>);
+    this.broadcast('cascade.converged', {
+      cascade_id: data.cascade_id,
+      duration: data.duration
+    });
   }
 
-  /**
-   * Broadcast command executed event
-   */
   broadcastCommand(data: CommandEventData): void {
-    this.broadcast('command_executed', data as unknown as Record<string, unknown>);
+    this.broadcast('command.executed', {
+      command_id: data.command_id,
+      action: data.action,
+      status: data.status
+    });
   }
-  
+   
   /**
    * Get client count
    */

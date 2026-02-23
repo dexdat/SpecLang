@@ -331,10 +331,11 @@ export class DashboardToolHandler {
     const { types } = args;
     
     const availableTypes = [
-      'file_change',
-      'cascade_progress', 
-      'agent_activity',
-      'convergence'
+      'file.changed',
+      'cascade.progress', 
+      'agent.spawned',
+      'agent.completed',
+      'cascade.converged'
     ];
     
     const eventTypes = types && types.length > 0 
