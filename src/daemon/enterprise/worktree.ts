@@ -163,4 +163,26 @@ export class WorktreeManager {
       timestamp: Date.now(),
     };
   }
+
+  public async merge(name: string): Promise<{ ok: boolean; message: string }> {
+    const worktree = this.worktrees.get(name);
+    if (!worktree) {
+      throw new Error(`Worktree not found: ${name}`);
+    }
+
+    try {
+      // Merge worktree changes back to main
+      await execAsync(`git merge ${worktree.path}`, { cwd: process.cwd() });
+      
+      // Remove worktree after successful merge
+      await this.remove(name);
+      
+      return { ok: true, message: `Successfully merged worktree ${name}` };
+    } catch (error) {
+      return { 
+        ok: false, 
+        message: error instanceof Error ? error.message : String(error) 
+      };
+    }
+  }
 }
