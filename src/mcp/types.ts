@@ -22,11 +22,25 @@ export interface MCPServerConfig {
 /** Authentication configuration */
 export interface MCPAuthConfig {
   enabled: boolean;
-  type: 'none' | 'basic' | 'token';
+  type: 'none' | 'basic' | 'token' | 'config_file' | 'tls_client_cert';
   apiKeys?: string[];
   user?: string;
   pass?: string;
   token?: string;
+  configPath?: string;
+  tlsCertPath?: string;
+}
+
+/** User entry for config_file auth */
+export interface MCPAuthUser {
+  user: string;
+  hash: string;
+  permissions: string[];
+}
+
+/** Config file auth users */
+export interface MCPAuthUsersConfig {
+  users: MCPAuthUser[];
 }
 
 /** SSE configuration */
@@ -164,13 +178,14 @@ export interface IndexRefreshResult {
 
 /** SSE event types */
 export type SSEEventType = 
-  | 'file_change'
-  | 'cascade_progress'
-  | 'agent_activity'
-  | 'convergence'
-  | 'command_executed'
-  | 'lock_acquired'
-  | 'lock_released';
+  | 'file.changed'
+  | 'agent.spawned'
+  | 'agent.completed'
+  | 'cascade.converged'
+  | 'command.executed'
+  | 'cascade.progress'
+  | 'lock.acquired'
+  | 'lock.released';
 
 /** SSE event */
 export interface SSEEvent {

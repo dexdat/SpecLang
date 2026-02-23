@@ -3,8 +3,10 @@
  * Source: @speclang/mcp
  */
 
-import type { MCPAuthConfig } from './types.js';
+import type { MCPAuthConfig, MCPAuthUsersConfig } from './types.js';
 import type { Request, Response, NextFunction } from 'express';
+import * as fs from 'fs';
+import * as crypto from 'crypto';
 
 /**
  * Authentication middleware for MCP server
@@ -34,6 +36,10 @@ export class MCPAuth {
         return this.basicAuthMiddleware();
       case 'token':
         return this.tokenAuthMiddleware();
+      case 'config_file':
+        return this.configFileAuthMiddleware();
+      case 'tls_client_cert':
+        return this.tlsClientCertAuthMiddleware();
       default:
         return (_req, _res, next) => next();
     }
@@ -78,6 +84,86 @@ export class MCPAuth {
         return;
       }
       
+      next();
+    };
+  }
+
+  /**
+   * Config file based authentication middleware
+   */
+  private configFileAuthMiddleware(): (req: Request, res: Response, next: NextFunction) => void {
+    const configPath = this.config.configPath || '/etc/speclang/mcp-auth.json';
+    let usersConfig: MCPAuthUsersConfig | null = null;
+    
+    try {
+      if (fs.existsSync(configPath)) {
+        const content = fs.readFileSync(configPath, 'utf-8');
+        usersConfig = JSON.parse(content);
+      }
+    } catch (error) {
+      console.error(`Failed to load auth config from ${configPath}:`, error);
+    }
+    
+    const users = new Map<string, { hash: string; permissions: string[] }>();
+    if (usersConfig?.users) {
+      for (const user of usersConfig.users) {
+        users.set(user.user, { hash: user.hash, permissions: user.permissions });
+      }
+    }
+    
+    return (req: Request, res: Response, next: NextFunction) => {
+      const auth = req.headers.authorization;
+      
+      if (!auth) {
+        res.status(401).json({ error: 'Unauthorized', message: 'Missing authorization header' });
+        return;
+      }
+      
+      if (!auth.startsWith('Basic ')) {
+        res.status(401).json({ error: 'Unauthorized', message: 'Invalid authorization format' });
+        return;
+      }
+      
+      const decoded = Buffer.from(auth.slice(6), 'base64').toString('utf-8');
+      const [user, pass] = decoded.split(':');
+      
+      const userData = users.get(user);
+      if (!userData) {
+        res.status(401).json({ error: 'Unauthorized', message: 'Invalid credentials' });
+        return;
+      }
+      
+      const hash = crypto.createHash('sha256').update(pass).digest('hex');
+      if (hash !== userData.hash) {
+        res.status(401).json({ error: 'Unauthorized', message: 'Invalid credentials' });
+        return;
+      }
+      
+      (req as Request & { authUser?: string; authPermissions?: string[] }).authUser = user;
+      (req as Request & { authUser?: string; authPermissions?: string[] }).authPermissions = userData.permissions;
+      next();
+    };
+  }
+
+  /**
+   * TLS client certificate authentication middleware
+   */
+  private tlsClientCertAuthMiddleware(): (req: Request, res: Response, next: NextFunction) => void {
+    return (req: Request, res: Response, next: NextFunction) => {
+      const cert = (req as Request & { socket?: { getPeerCertificate?: () => unknown } }).socket?.getPeerCertificate();
+      
+      if (!cert || typeof cert !== 'object' || !('subject' in cert)) {
+        res.status(401).json({ error: 'Unauthorized', message: 'Client certificate required' });
+        return;
+      }
+      
+      const cn = (cert.subject as Record<string, string[]>).CN?.[0];
+      if (!cn) {
+        res.status(401).json({ error: 'Unauthorized', message: 'Invalid certificate subject' });
+        return;
+      }
+      
+      (req as Request & { authUser?: string }).authUser = cn;
       next();
     };
   }
