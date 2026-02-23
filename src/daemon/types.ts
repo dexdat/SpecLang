@@ -115,6 +115,7 @@ export interface DaemonConfig {
   watch: {
     paths: string[];
     ignore: string[];
+    debounce?: number;  // ms
   };
   convergence: {
     quietPeriod: number;  // seconds

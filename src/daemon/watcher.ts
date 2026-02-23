@@ -11,6 +11,8 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import { EventEmitter } from 'events';
 import { FileEvent, FileEventKind, DaemonConfig } from './types';
+import { Gitignore } from './gitignore';
+import { Debouncer } from './debounce';
 
 // Watch patterns from spec
 const WATCH_PATTERNS = [
@@ -27,14 +29,24 @@ export class Watcher extends EventEmitter {
   private pollInterval: number;
   private running: boolean;
   private pollTimer?: NodeJS.Timeout;
+  private gitignore: Gitignore;
+  private debouncer: Debouncer;
 
   constructor(config: DaemonConfig) {
     super();
     this.watchPaths = config.watch.paths;
     this.ignorePatterns = config.watch.ignore;
     this.fileStates = new Map();
-    this.pollInterval = 1000; // Poll every 1 second
+    this.pollInterval = 1000;
     this.running = false;
+    this.gitignore = new Gitignore();
+    this.debouncer = new Debouncer({ windowMs: config.watch.debounce ?? 100 });
+    
+    this.debouncer.on('batch', (batch) => {
+      for (const event of batch.events) {
+        this.emit('event', event);
+      }
+    });
   }
 
   /**
@@ -44,12 +56,33 @@ export class Watcher extends EventEmitter {
     if (this.running) return;
     this.running = true;
 
+    // Load .gitignore from project root
+    await this.loadGitignore();
+
     // Initial scan to build file state
     await this.initialScan();
 
     // Start polling
     this.pollTimer = setInterval(() => this.poll(), this.pollInterval);
     console.log(`[Watcher] Started watching: ${this.watchPaths.join(', ')}`);
+  }
+
+  /**
+   * Load .gitignore from project root
+   */
+  private async loadGitignore(): Promise<void> {
+    for (const watchPath of this.watchPaths) {
+      const gitignorePath = path.join(watchPath, '.gitignore');
+      const loaded = await Gitignore.fromFile(gitignorePath);
+      
+      // Add spec-specific ignores
+      loaded.add('.speclang/');
+      loaded.add('*.log');
+      loaded.add('reports/');
+      
+      // Merge patterns (this.gitignore starts empty)
+      this.gitignore = loaded;
+    }
   }
 
   /**
@@ -108,16 +141,19 @@ export class Watcher extends EventEmitter {
   private shouldWatch(filePath: string): boolean {
     const normalizedPath = filePath.replace(/\\/g, '/');
     
-    // Check ignore patterns
+    // Check gitignore first
+    if (this.gitignore.isIgnored(normalizedPath)) {
+      return false;
+    }
+    
+    // Check explicit ignore patterns from config
     for (const pattern of this.ignorePatterns) {
       const patternNorm = pattern.replace(/\\/g, '/');
       if (patternNorm.endsWith('/')) {
-        // Directory pattern
         if (normalizedPath.includes(patternNorm.slice(0, -1))) {
           return false;
         }
       } else if (patternNorm.startsWith('*.')) {
-        // Extension pattern
         const ext = patternNorm.slice(1);
         if (normalizedPath.endsWith(ext)) {
           return false;
@@ -171,14 +207,14 @@ export class Watcher extends EventEmitter {
       
       if (!oldState) {
         // New file
-        this.emit('event', {
+        this.debouncer.add({
           kind: FileEventKind.Create,
           path: filePath,
           timestamp: Date.now(),
         } as FileEvent);
       } else if (oldState.mtime !== state.mtime || oldState.size !== state.size) {
         // Modified file
-        this.emit('event', {
+        this.debouncer.add({
           kind: FileEventKind.Modify,
           path: filePath,
           timestamp: Date.now(),
@@ -189,7 +225,7 @@ export class Watcher extends EventEmitter {
     // Check for deleted files
     for (const [filePath] of Array.from(this.fileStates.entries())) {
       if (!currentFiles.has(filePath)) {
-        this.emit('event', {
+        this.debouncer.add({
           kind: FileEventKind.Delete,
           path: filePath,
           timestamp: Date.now(),
@@ -243,14 +279,14 @@ export class Watcher extends EventEmitter {
       
       if (exists && stat?.isFile()) {
         if (this.shouldWatch(pathToCheck)) {
-          this.emit('event', {
+          this.debouncer.add({
             kind: FileEventKind.Modify,
             path: pathToCheck,
             timestamp: Date.now(),
           } as FileEvent);
         }
       } else {
-        this.emit('event', {
+        this.debouncer.add({
           kind: FileEventKind.Delete,
           path: pathToCheck,
           timestamp: Date.now(),

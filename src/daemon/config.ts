@@ -13,6 +13,7 @@ const DEFAULT_CONFIG: DaemonConfig = {
   watch: {
     paths: ['specs/', 'tests/', 'generated/'],
     ignore: ['.git/', 'node_modules/', 'generated/', '.speclang/', '*.log'],
+    debounce: 100,
   },
   convergence: {
     quietPeriod: 30,  // seconds
