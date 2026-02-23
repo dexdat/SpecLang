@@ -108,7 +108,7 @@ export async function main(): Promise<void> {
   await program.parseAsync(process.argv);
 }
 
-// Allow running directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Allow running directly (CommonJS compatible)
+if (require.main === module) {
   main().catch(console.error);
 }

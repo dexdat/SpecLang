@@ -1,20 +1,36 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "CommonJS",
+    "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": false,
     "skipLibCheck": true,
     "outDir": "./dist",
-    "rootDir": ".",
+    "rootDir": "./src",
     "noImplicitAny": false,
     "resolveJsonModule": true,
-    "allowImportingTsExtensions": true,
-    "noEmit": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
     "jsx": "react-jsx"
   },
-  "include": ["*.ts", "*.tsx", "specs/**/*.ts", "src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules", "dist", "src/codegen.ts", "src/ralph-loop.ts", "src/speclang-mcp.ts", "src/validation.ts", "src/validation-system.ts", "specs/implementation.spec.dir"]
+  "include": ["src/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/dashboard/**/*",
+    "src/ui-dashboard/**/*",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "src/codegen.ts",
+    "src/ralph-loop.ts", 
+    "src/speclang-mcp.ts",
+    "src/validation-system.ts",
+    "src/validation.ts",
+    "src/ralph_loop.py",
+    "src/db/speclang_db.py",
+    "src/parser/speclang_parser.py"
+  ]
 }
