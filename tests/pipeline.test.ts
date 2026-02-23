@@ -5,7 +5,7 @@
  * Generated from: @speclang/pipeline
  */
 
-import { describe, test, expect, beforeAll, afterAll } from 'bun:test';
+import { describe, test, expect, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 import * as fs from 'fs-extra';
 import { PipelineExecutor, PipelineConfigManager, StageExecutor, RecoveryExecutor, orderStages, areDependenciesMet } from '../src/pipeline';
 import { Stage, RecoveryAction } from '../src/pipeline/types';
