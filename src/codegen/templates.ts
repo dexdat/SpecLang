@@ -4,6 +4,7 @@
  */
 
 import type { Template, TargetLanguage, CodeSpec, GeneratedFile } from './types';
+import type { SpecMetadata } from '../parser/types';
 
 // ============================================================================
 // TEMPLATE REGISTRY
@@ -201,9 +202,14 @@ export function formatMethods(methods: Array<{ name: string; params: string; ret
 export function createFileHeader(spec: CodeSpec, generatorName?: string): string {
   const timestamp = new Date().toISOString();
   const generator = generatorName || 'speclang-codegen';
+  const version = spec.header?.version || '0.0.0';
+  const layer = spec.header?.layer ?? 'N/A';
   
   return `/**
- * SPECLANG-GENERATED: Do not edit directly
+ * @speclang-id: ${spec.header?.id || 'unknown'}
+ * @speclang-version: ${version}
+ * @speclang-layer: ${layer}
+ * @speclang-generated: DO NOT EDIT BY HAND
  * Source: ${spec.sourceFile}
  * Generated: ${timestamp}
  * Generator: ${generator}
@@ -213,4 +219,120 @@ export function createFileHeader(spec: CodeSpec, generatorName?: string): string
 /** Create file footer */
 export function createFileFooter(_spec: CodeSpec): string {
   return '';
+}
+
+/** Create block-level markers for generated code */
+export function createBlockMarker(blockId: string, header: SpecMetadata | undefined, language: TargetLanguage = 'typescript'): string {
+  const version = header?.version || '0.0.0';
+  const layer = header?.layer ?? 'N/A';
+  const commentChar = getCommentChar(language);
+  
+  return `${commentChar} @speclang-id: ${blockId}
+${commentChar} @speclang-version: ${version}
+${commentChar} @speclang-layer: ${layer}
+${commentChar} @speclang-generated: DO NOT EDIT BY HAND`;
+}
+
+/** Get comment character for target language */
+function getCommentChar(language: TargetLanguage): string {
+  switch (language) {
+    case 'python':
+      return '#';
+    case 'rust':
+      return '//';
+    case 'go':
+      return '//';
+    case 'typescript':
+    default:
+      return '//';
+  }
+}
+
+// ============================================================================
+// EXTERNAL TEMPLATE LOADING
+// ============================================================================
+
+import * as fs from 'fs';
+import * as path from 'path';
+
+interface ExternalTemplate {
+  name: string;
+  target: TargetLanguage;
+  content: string;
+  variables: string[];
+  sourcePath: string;
+}
+
+const externalTemplates: Map<string, ExternalTemplate> = new Map();
+
+/** Load external .hbs template from filesystem */
+export function loadExternalTemplate(templatePath: string): ExternalTemplate | null {
+  try {
+    const normalizedPath = path.normalize(templatePath);
+    
+    if (externalTemplates.has(normalizedPath)) {
+      return externalTemplates.get(normalizedPath)!;
+    }
+    
+    if (!fs.existsSync(templatePath)) {
+      return null;
+    }
+    
+    const content = fs.readFileSync(templatePath, 'utf-8');
+    const basename = path.basename(templatePath, '.hbs');
+    const target = detectTargetFromPath(templatePath);
+    const variables = extractVariables(content);
+    
+    const template: ExternalTemplate = {
+      name: basename,
+      target,
+      content,
+      variables,
+      sourcePath: templatePath,
+    };
+    
+    externalTemplates.set(normalizedPath, template);
+    return template;
+  } catch (error) {
+    return null;
+  }
+}
+
+/** Detect target language from template path */
+function detectTargetFromPath(templatePath: string): TargetLanguage {
+  const dirname = path.dirname(templatePath);
+  const targetName = path.basename(dirname);
+  
+  if (targetName === 'typescript' || targetName === 'ts') return 'typescript';
+  if (targetName === 'go' || targetName === 'golang') return 'go';
+  if (targetName === 'python' || targetName === 'py') return 'python';
+  if (targetName === 'rust' || targetName === 'rs') return 'rust';
+  
+  return 'typescript';
+}
+
+/** Extract variable names from template content */
+function extractVariables(content: string): string[] {
+  const variablePattern = /\{\{([^#\/}][^}]*)\}\}/g;
+  const variables = new Set<string>();
+  let match;
+  
+  while ((match = variablePattern.exec(content)) !== null) {
+    const varName = match[1].trim();
+    if (!varName.startsWith('else') && !varName.startsWith('/')) {
+      variables.add(varName);
+    }
+  }
+  
+  return Array.from(variables);
+}
+
+/** Get all loaded external templates */
+export function getExternalTemplates(): ExternalTemplate[] {
+  return Array.from(externalTemplates.values());
+}
+
+/** Clear external template cache */
+export function clearExternalTemplates(): void {
+  externalTemplates.clear();
 }

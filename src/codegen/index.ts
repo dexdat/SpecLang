@@ -13,7 +13,17 @@ export { parseCodeSpec, parseCodeSpecContent, findCodeSpecFiles, specHasCodeBloc
 export { mapType, getStdlibTypes, isStdlibType, getTypeMapping, TYPE_MAPPINGS } from './mapper';
 
 // Templates
-export { renderTemplate, getTemplate, getTemplateNames, listTemplates, TEMPLATES } from './templates';
+export { 
+  renderTemplate, 
+  getTemplate, 
+  getTemplateNames, 
+  listTemplates, 
+  TEMPLATES, 
+  createBlockMarker,
+  loadExternalTemplate,
+  getExternalTemplates,
+  clearExternalTemplates,
+} from './templates';
 
 // Targets
 export {
