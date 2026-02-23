@@ -1,5 +1,76 @@
 # Progress
 
+## P3-010: Rust Type Mappings
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `docs/prompts/phase-3.10-rust-types.md`
+- **Files Created**: 6 files (src/codegen/targets/rust/)
+- **Tests**: Build passes, 1020 tests pass (6 pre-existing failures)
+
+### Components Implemented
+
+1. **Core Type Mappings** (`src/codegen/targets/rust/types.ts`)
+   - RustTypeMapping interface with stdlib, rust, import, crate, default, notes
+   - TypeResolution interface with type, imports, crates, isOption, isReference, isSmartPointer
+   - RUST_TYPE_MAPPINGS array with all primitive and special types
+   - resolveRustType() function returning full type resolution
+   - Handles Result<T,E>, Ref<T>, RefMut<T>, Box<T>, Rc<T>, Arc<T>
+
+2. **Primitives** (`src/codegen/targets/rust/types_primitives.ts`)
+   - RUST_PRIMITIVE_MAPPINGS for all integer, float, bool, char, unit types
+   - getPrimitiveDefault(), isPrimitiveType(), isIntegerType(), isFloatType(), isNumericType()
+   - getIntegerRange() for integer bounds
+
+3. **Collections** (`src/codegen/targets/rust/types_collections.ts`)
+   - RUST_COLLECTION_MAPPINGS for Vec, HashMap, BTreeMap, HashSet, BTreeSet
+   - resolveCollectionType() with proper import handling
+   - isCollectionType(), getCollectionDefault()
+
+4. **Generics** (`src/codegen/targets/rust/types_generics.ts`)
+   - resolveGeneric() for all generic types
+   - isGenericType(), extractGenericArgs()
+
+5. **Option Types** (`src/codegen/targets/rust/types_option.ts`)
+   - formatOptionType(), isOptionType(), getOptionDefault()
+   - OPTION_PATTERNS for match/unwrap patterns
+   - generateOptionMatch() for pattern generation
+
+6. **Special Types** (`src/codegen/targets/rust/types_special.ts`)
+   - TIME_TYPE_MAPPINGS: Date, DateTime, Time, Duration, Timestamp
+   - UUID_MAPPING with uuid crate support
+   - SERDE_TYPE_MAPPINGS, TOKIO_TYPE_MAPPINGS
+   - toSerdeAttribute(), generateUseStatements()
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 1020 passed (6 pre-existing failures in db.test.ts and typescript.test.ts)
+
+### Verification
+
+Type mappings verified working:
+- Primitives: String→String, Int→i32, Bool→bool, Char→char
+- Collections: Array<Int>→Vec<i32>, Map<String,Int>→HashMap<String, i32>
+- Optional: Optional<String>→Option<String>, Nullable<String>→Option<String>
+- Smart Pointers: Box<T>→Box<T>, Rc<T>→Rc<T>, Arc<T>→Arc<T>
+- References: Ref<T>→&T, RefMut<T>→&mut T
+- Time: Date→NaiveDate (chrono), DateTime→DateTime<Utc> (chrono)
+- UUID: UUID→Uuid (uuid crate)
+- Async: Future<T>→impl Future<Output = T>, Stream<T>→impl Stream<Item = T>
+
+### Notes
+
+- Implements comprehensive Rust type mappings per phase-3.10 spec
+- All test cases from the spec are satisfied
+- Supports chrono crate for time types, uuid crate for UUID
+- Tokio async types available via TOKIO_TYPE_MAPPINGS
+- Backwards compatible with existing RustGenerator implementation
+
+---
+
 ## P3-009: TypeScript Type Mappings
 
 **Status**: PASSED
