@@ -342,6 +342,120 @@ CREATE INDEX idx_messages_created ON messages(created_at DESC);
 ```
 ```
 
+## SLA and Notification System
+
+### @mcp/messages/sla
+
+```speclang
+# @block:mcp/messages/sla @kind:entity
+MessageSLA:
+  
+  priority_slas:
+    blocking:
+      max_response_time_minutes: 15
+      notification_channels: [push, email, sms]
+      auto_escalation_minutes: 30
+      required_human_response: true
+      
+    high:
+      max_response_time_minutes: 60
+      notification_channels: [email, push]
+      auto_escalation_minutes: 120
+      required_human_response: true
+      
+    medium:
+      max_response_time_minutes: 240
+      notification_channels: [email]
+      auto_escalation_minutes: 480
+      required_human_response: false
+      
+    low:
+      max_response_time_minutes: 1440  # 24 hours
+      notification_channels: [email]
+      auto_escalation_minutes: 2880
+      required_human_response: false
+      
+    informational:
+      max_response_time_minutes: 0  # no SLA
+      notification_channels: []
+      auto_escalation_minutes: 0
+      required_human_response: false
+      
+  notification_channels:
+    push:
+      description: "Real-time push notification"
+      delivery: "WebSocket, MCP server push"
+      ack_required: true
+      
+    email:
+      description: "Email notification"
+      delivery: "SMTP"
+      template: "message_notification.html"
+      ack_required: false
+      
+    sms:
+      description: "SMS notification"
+      delivery: "Twilio, AWS SNS, etc."
+      ack_required: false
+      
+  escalation_workflow:
+    - Message created with timestamp
+    - Timer starts based on priority SLA
+    - If not acknowledged within SLA, send reminder
+    - If not resolved within auto_escalation_minutes, escalate to higher priority
+    - Escalation can trigger additional notifications (manager, on-call)
+    
+  acknowledgment:
+    - Human must acknowledge receipt of blocking/high priority messages
+    - Acknowledgment stops SLA timer
+    - Resolution expected within reasonable time after acknowledgment
+```
+
+### @mcp/messages/confidence-calculation
+
+```speclang
+# @block:mcp/messages/confidence-calculation @kind:entity
+ConfidenceCalculation:
+  
+  factors:
+    historical_patterns:
+      description: "Similar messages resolved in past"
+      weight: 0.3
+      calculation: "Cosine similarity of message content to resolved messages"
+      
+    agent_confidence_score:
+      description: "Agent's self-reported confidence"
+      weight: 0.2
+      calculation: "Agent provides 0.0-1.0 confidence score"
+      
+    spec_completeness:
+      description: "How complete the target spec is"
+      weight: 0.2
+      calculation: "Percentage of required fields present"
+      
+    validation_error_type:
+      description: "Type of validation error"
+      weight: 0.3
+      calculation: "Predefined confidence for error types"
+        - syntax_error: 0.9
+        - missing_field: 0.7
+        - ambiguous_language: 0.5
+        - business_logic_gap: 0.3
+        
+  auto_resolution_threshold: 0.8
+  
+  auto_resolution_rules:
+    - Confidence >= 0.9: Auto-resolve with suggested fix
+    - Confidence 0.8-0.89: Auto-resolve but notify human
+    - Confidence 0.7-0.79: Suggest fix, wait for human confirmation
+    - Confidence < 0.7: Require human review
+    
+  learning_mechanism:
+    - Track human resolutions
+    - Update confidence weights based on accuracy
+    - Improve pattern matching over time
+```
+
 ## Integration with Continuous Improvement Loop
 
 ### @mcp/messages/continuous-improvement
