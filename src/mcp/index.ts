@@ -8,6 +8,7 @@ export { MCPToolRegistry, getToolDefinitions } from './tools/index.js';
 export { createAuth, MCPAuth } from './auth.js';
 export { createSSEManager, SSEManager } from './sse.js';
 export { loadConfig, getArg, getArgInt, getArgBool } from './config.js';
+export * as errors from './errors/index.js';
 
 export type { 
   MCPServerConfig, 
