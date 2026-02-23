@@ -49,7 +49,7 @@ export class MCPToolRegistry {
     this.locks = new LocksToolHandler(db);
     this.cascade = new CascadeToolHandler(db);
     this.index = new IndexToolHandler(db, config.specsDir);
-    this.dashboard = new DashboardToolHandler(db);
+    this.dashboard = new DashboardToolHandler(db, this.config);
   }
   
   /**
@@ -155,6 +155,9 @@ export class MCPToolRegistry {
             break;
           case 'speclang_get_system_stats':
             result = await this.dashboard.handleGetSystemStats();
+            break;
+          case 'speclang_subscribe_events':
+            result = await this.dashboard.handleSubscribeEvents(args as unknown as { types?: string[] });
             break;
             
           default:
@@ -644,6 +647,20 @@ export function getToolDefinitions() {
       inputSchema: {
         type: 'object',
         properties: {}
+      }
+    },
+    {
+      name: 'speclang_subscribe_events',
+      description: 'Get SSE endpoint info for real-time event streaming',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          types: {
+            type: 'array',
+            items: { type: 'string' },
+            description: 'Event types to subscribe to (file_change, cascade_progress, agent_activity, convergence)'
+          }
+        }
       }
     }
   ];
