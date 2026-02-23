@@ -2,6 +2,18 @@
 // Source: @speclang/test-specs
 // DO NOT EDIT MANUALLY
 
+// speclang-header lines:12
+// id: @speclang/test-specs
+// version: 0.1.0
+// layer: 0
+// tags: [tests, bdd, natural-language]
+// imports: [@speclang/core]
+// status: draft
+// short: Test Specs
+// @ref: @speclang/test-specs/format
+// @ref: @speclang/test-specs/examples
+// ---
+
 /**
  * Test Specs Module
  * 

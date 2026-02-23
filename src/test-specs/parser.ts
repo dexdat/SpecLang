@@ -2,6 +2,18 @@
 // Source: @speclang/test-specs/parser
 // DO NOT EDIT MANUALLY
 
+// speclang-header lines:12
+// id: @speclang/test-specs/parser
+// version: 0.1.0
+// layer: 1
+// tags: [tests, bdd, parser]
+// imports: [@speclang/core]
+// status: draft
+// short: Test Spec Parser
+// @ref: @speclang/test-specs
+// @ref: @speclang/test-specs/format
+// ---
+
 import * as yaml from 'yaml';
 import { TestSpec, TestScenario, ExampleTable, TestSpecHeader } from './types';
 

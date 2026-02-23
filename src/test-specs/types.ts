@@ -2,6 +2,17 @@
 // Source: @speclang/test-specs
 // DO NOT EDIT MANUALLY
 
+// speclang-header lines:12
+// id: @speclang/test-specs/types
+// version: 0.1.0
+// layer: 1
+// tags: [tests, bdd, types]
+// imports: [@speclang/core]
+// status: draft
+// short: Test Spec Types
+// @ref: @speclang/test-specs
+// ---
+
 /**
  * TypeScript types for Test Specs
  * Test specs are first-class citizens that describe expected behavior
