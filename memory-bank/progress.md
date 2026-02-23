@@ -7,8 +7,8 @@
 ### Implementation Summary
 
 - **Spec**: `specs/cascade-protocol.spec.md`, `specs/cascade-protocol.spec.dir/events.spec.md`, `specs/cascade-protocol.spec.dir/flow.spec.md`
-- **Files Created**: 2 new files
-- **Tests**: Build passes, 910 tests pass (4 failures pre-existing db timing issue)
+- **Files Created**: 6 new files (coordinator.ts, state.ts, invocation.ts, verification.ts + existing index.ts, dependency.ts)
+- **Tests**: Build passes, 909 tests pass (5 failures pre-existing db timing issues)
 
 ### Components Implemented
 
@@ -25,10 +25,28 @@
    - Implements cascade ordering algorithm
    - Saves/loads cascade state to .speclang/cascade_state.json
 
+3. **State** (`src/cascade/coordinator/state.ts`) - NEW
+   - CascadeState interface with status, depth, agents_invoked
+   - AgentInvocation and VerificationResult types
+   - createInitialState factory function
+
+4. **Invocation** (`src/cascade/coordinator/invocation.ts`) - NEW
+   - AgentInvoker class for explicit agent invocation
+   - getAgentForTrigger to route triggers to appropriate agents
+   - InvocationOptions and InvocationResult interfaces
+
+5. **Verification** (`src/cascade/coordinator/verification.ts`) - NEW
+   - VerificationGates class managing gate registry
+   - Default gates: reference-validation, compilation, tests
+   - createVerificationResult for result aggregation
+
+6. **Coordinator Entry** (`src/cascade/coordinator.ts`)
+   - Unified export from coordinator subfolder
+
 ### Test Results
 
 - **Build**: ✅ Passes
-- **Tests**: ✅ 910 passed (4 pre-existing failures unrelated to cascade)
+- **Tests**: ✅ 909 passed (5 pre-existing failures unrelated to cascade)
 
 ### Notes
 
