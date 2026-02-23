@@ -1,5 +1,45 @@
 # Progress
 
+## P2-004: MCP UI Tools
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/mcp-ui-tools.spec.dir/tools.spec.md`, `specs/mcp-ui-tools.spec.dir/ui.spec.md`
+- **Files Created**: 1 new file (src/mcp/tools/dashboard.ts)
+- **Files Modified**: 1 file (src/mcp/tools/index.ts)
+- **Tests**: Build passes, all tests pass
+
+### Components Implemented
+
+1. **DashboardToolHandler** (`src/mcp/tools/dashboard.ts`) - NEW
+   - 5 new MCP tools for dashboard monitoring:
+     - `speclang_query_events`: Query cascade events with filtering (limit, cascade_id, agent, file_pattern, since)
+     - `speclang_get_agent_statuses`: Get detailed agent session status (session_id, agent, status, current_file, queue_depth, last_active, uptime)
+     - `speclang_get_project_stats`: Get project metrics (specs_count, generated_files_count, test_files_count, cascade_active, cascade_depth, queue_depth)
+     - `speclang_get_queue_status`: Get pending command queue details (command_id, action, target_file, session_id, priority, created_at, age_seconds)
+     - `speclang_get_system_stats`: Get system-level stats (cpu_percent, memory_used_mb, memory_total_mb, disk_used_mb, disk_total_mb, uptime_seconds) with 5s cache
+
+2. **Tool Registration** (`src/mcp/tools/index.ts`)
+   - Added DashboardToolHandler to MCPToolRegistry
+   - Registered 5 new tool handlers in switch statement
+   - Added tool definitions for MCP protocol
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ All tests pass
+
+### Notes
+
+- Implements dashboard monitoring tools per @speclang/mcp-ui-tools spec
+- Uses existing SQLite tables (events, sessions, commands, cascades)
+- System stats uses os module for CPU/memory, fs for disk
+- SSE streaming (speclang_subscribe_events) already exists in sse.ts
+
+---
+
 ## P2-003: MCP Daemon (speclangd Enterprise)
 
 **Status**: PASSED
