@@ -32,8 +32,9 @@ Project: SpecLang (meta-circular)
 | P0: Dynamic Split | 1 | ✅ Complete |
 | P0: Project Layout | 1 | ✅ Complete |
 | P0: Header Fields | 1 | ✅ Complete |
+| P0: Header Validation | 1 | ✅ Complete |
 
-**Total: 12 stories, 7 complete**
+**Total: 13 stories, 8 complete**
 
 ---
 
@@ -307,6 +308,41 @@ Project: SpecLang (meta-circular)
 
 **Spec References**:
 - `specs/headers.spec.md` - Header field definitions
+
+---
+
+### P0-018: Header Validation Rules (2026-02-23)
+
+**Status**: ✅ Complete (passes: true)
+
+**Files Verified**:
+- `src/parser/header-validator.ts` - Full header validation with required fields, format checks, enum validation
+- `src/parser/validation-messages.ts` - Error, warning, info codes for all validation scenarios
+- `src/parser/validation-recovery.ts` - Fix suggestions and auto-fix capabilities
+- `tests/header-validation.test.ts` - 55 test cases
+- `tests/validation/rules.test.ts` - 20 test cases
+
+**Validation Rules Implemented**:
+- Required fields: id, version, layer, project_level, agent_support, short
+- Format validation: ID pattern (@domain/path), semver, layer range (0-10)
+- Enum validation: project_level, agent_support, status
+- Reference validation: depends_on, children, parent, refs (@ref: format)
+- Ownership validation: caused_by (@commit:HASH), change_id (@commit:HASH), part_of (@cascade:DATE-ID)
+- Part format validation (N/M)
+- Tags array validation
+- Lines field validation
+- Unknown field detection
+
+**Baby Steps Commits**:
+1. `speclang: baby-step: Add ownership field validation (caused_by, change_id, part_of)`
+
+**Validation**:
+- ✅ TypeScript compiles: `npm run build`
+- ✅ Tests pass: 75 tests (55 header-validation + 20 rules)
+- ✅ Commit format: `speclang: baby-step: ...`
+
+**Spec References**:
+- `specs/headers.spec.md` - Header format and validation rules
 
 ---
 
