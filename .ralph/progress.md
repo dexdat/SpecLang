@@ -30,8 +30,9 @@ Project: SpecLang (meta-circular)
 | P1: Core Runtime | 2 | ⬜ Not Started |
 | P0: Test Specs | 1 | ✅ Complete |
 | P0: Dynamic Split | 1 | ✅ Complete |
+| P0: Project Layout | 1 | ✅ Complete |
 
-**Total: 10 stories, 5 complete**
+**Total: 11 stories, 6 complete**
 
 ---
 
@@ -259,7 +260,7 @@ Project: SpecLang (meta-circular)
 
 ### P0-016: Project Layout and Init Command (2026-02-23)
 
-**Status**: ✅ Complete
+**Status**: ✅ Complete (passes: true)
 
 **Files Created**:
 - `src/cli/commands/init.ts` - CLI init command wrapper
