@@ -2,7 +2,7 @@
 // Source: @speclang/test-specs
 // DO NOT EDIT MANUALLY
 
-import { describe, it, expect, beforeAll } from 'bun:test';
+import { describe, it, expect, beforeAll } from 'vitest';
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import type {
