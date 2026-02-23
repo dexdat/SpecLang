@@ -815,12 +815,12 @@
           "prompt": "docs/prompts/phase-1.11-agent-ownership.md",
           "outputs": [
             "src/agents/ownership.ts",
-            "src/agents/guard.ts",
+            "src/agents/interceptor.ts (guard functions)",
             "src/agents/violations.ts",
             "tests/agent-ownership.test.ts"
           ],
           "priority": 11,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P1-012",
