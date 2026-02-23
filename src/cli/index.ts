@@ -16,7 +16,7 @@ import { cascadeCommand, CascadeOptions } from './commands/cascade.js';
 import { guardCommand, GuardOptions } from './commands/guard.js';
 import { metaGenerateCommand, metaValidateCommand, metaBootstrapCommand, metaCheckCommand, MetaCLIOptions } from './commands/meta.js';
 import { autonomousTestCommand, autonomousValidateCommand, autonomousReportCommand, autonomousVerifyCommand, AutonomousTestOptions, AutonomousValidateOptions, AutonomousReportOptions, AutonomousVerifyOptions } from './commands/autonomous.js';
-import { mcpStatusCommand, mcpStopCommand, mcpStartCommand, mcpServeCommand, mcpGenerateOpenapiCommand, McpStatusOptions, McpStopOptions, McpStartOptions, McpServeOptions, McpGenerateOpenapiOptions } from './commands/mcp.js';
+import { mcpStatusCommand, mcpStopCommand, mcpStartCommand, mcpServeCommand, mcpGenerateOpenapiCommand, mcpGenerateAllCommand, McpStatusOptions, McpStopOptions, McpStartOptions, McpServeOptions, McpGenerateOpenapiOptions } from './commands/mcp.js';
 
 const program = new Command();
 
@@ -228,8 +228,9 @@ mcp
   .option('-b, --base-url <url>', 'Base URL for API requests')
   .option('--force', 'Overwrite existing files')
   .option('--register', 'Automatically register with SpecLang MCP server')
+  .option('--dry-run', 'Validate spec without generating files')
   .option('--json', 'JSON output')
-  .action(async (options: McpGenerateOpenapiOptions & { input: string; output: string; transport?: string; port?: number; serverName?: string; baseUrl?: string; force?: boolean; register?: boolean }) => {
+  .action(async (options: McpGenerateOpenapiOptions & { input: string; output: string; transport?: string; port?: number; serverName?: string; baseUrl?: string; force?: boolean; register?: boolean; dryRun?: boolean }) => {
     const opts: McpGenerateOpenapiOptions = {
       input: options.input,
       output: options.output,
@@ -239,9 +240,25 @@ mcp
       baseUrl: options.baseUrl,
       force: options.force,
       register: options.register,
+      dryRun: options.dryRun,
       json: options.json
     };
     await mcpGenerateOpenapiCommand(opts);
+  });
+
+mcp
+  .command('generate-all')
+  .description('Generate all MCP servers from config')
+  .option('-c, --config <path>', 'Config file path', '.speclang/openapi-mcp.yaml')
+  .option('--force', 'Overwrite existing files')
+  .option('--json', 'JSON output')
+  .action(async (options: { config?: string; force?: boolean; json?: boolean }) => {
+    const opts = {
+      config: options.config,
+      force: options.force,
+      json: options.json
+    };
+    await mcpGenerateAllCommand(opts);
   });
 
 // ============================================================================

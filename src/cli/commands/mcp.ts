@@ -8,6 +8,7 @@ import { getDbPath, ensureSpeclangDir } from '../utils.js';
 import { spawn, execSync } from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as yaml from 'yaml';
 
 export interface McpStartOptions {
   remote?: boolean;
@@ -42,6 +43,7 @@ export interface McpGenerateOpenapiOptions {
   baseUrl?: string;
   force?: boolean;
   register?: boolean;
+  dryRun?: boolean;
   json?: boolean;
 }
 
@@ -333,6 +335,7 @@ export async function mcpGenerateOpenapiCommand(options: McpGenerateOpenapiOptio
   const baseUrl = options.baseUrl || '';
   const force = options.force ? '--force' : '';
   const register = options.register ? '--register' : '';
+  const dryRun = options.dryRun;
   
   let specPath = input;
   if (input.startsWith('http://') || input.startsWith('https://')) {
@@ -344,6 +347,86 @@ export async function mcpGenerateOpenapiCommand(options: McpGenerateOpenapiOptio
       console.log(JSON.stringify({ success: false, message: `File not found: ${input}` }));
     }
     process.exit(1);
+  }
+  
+  if (dryRun) {
+    if (!options.json) {
+      console.log(`Dry run mode - validating OpenAPI spec without generating files`);
+    }
+    
+    try {
+      let specContent: string;
+      if (specPath.startsWith('http://') || specPath.startsWith('https://')) {
+        const https = await import('https');
+        specContent = await new Promise<string>((resolve, reject) => {
+          https.get(specPath, (res) => {
+            let data = '';
+            res.on('data', chunk => data += chunk);
+            res.on('end', () => resolve(data));
+            res.on('error', reject);
+          }).on('error', reject);
+        });
+      } else {
+        specContent = fs.readFileSync(specPath, 'utf-8');
+      }
+      
+      const parsed = yaml.parse(specContent);
+      if (!parsed) {
+        console.log(JSON.stringify({ success: false, message: 'Empty spec' }));
+        process.exit(1);
+      }
+      
+      const paths = parsed.paths || {};
+      const operations = Object.entries(paths).flatMap(([p, methods]: [string, any]) => {
+        if (!methods || typeof methods !== 'object') return [];
+        return Object.entries(methods)
+          .filter(([m]) => ['get', 'post', 'put', 'delete', 'patch'].includes(m))
+          .map(([m, op]: [string, any]) => ({ path: p, method: m, operationId: op.operationId || `${m}${p.replace(/[^a-zA-Z0-9]/g, '')}` }));
+      });
+      
+      const info = parsed.info || {};
+      const result = {
+        success: true,
+        dryRun: true,
+        spec: specPath,
+        info: {
+          title: info.title || 'Unknown API',
+          version: info.version || '1.0.0',
+          description: info.description || ''
+        },
+        operations: operations.length,
+        tools: operations.map((op: any) => `${serverName}_${op.operationId}`),
+        output: output,
+        transport: transport,
+        port: port,
+        estimatedFiles: [
+          `${output}/package.json`,
+          `${output}/tsconfig.json`,
+          `${output}/src/index.ts`,
+          `${output}/src/tools.ts`,
+          `${output}/src/types.ts`
+        ]
+      };
+      
+      if (!options.json) {
+        console.log(`\nValidation: ✅ PASSED`);
+        console.log(`\nAPI Info:`);
+        console.log(`  Title: ${result.info.title}`);
+        console.log(`  Version: ${result.info.version}`);
+        console.log(`\nOperations: ${result.operations}`);
+        console.log(`\nTools to generate:`);
+        result.tools.forEach((t: string) => console.log(`  - ${t}`));
+        console.log(`\nOutput directory: ${output}`);
+        console.log(`Transport: ${transport}`);
+        if (transport !== 'stdio') console.log(`Port: ${port}`);
+        console.log(`\nEstimated files to create: ${result.estimatedFiles.length}`);
+      }
+      console.log(JSON.stringify(result, null, options.json ? 2 : 0));
+      return;
+    } catch (error) {
+      console.log(JSON.stringify({ success: false, message: error instanceof Error ? error.message : 'Validation failed' }));
+      process.exit(1);
+    }
   }
   
   const npxCmd = process.platform === 'win32' ? 'npx.cmd' : 'npx';
@@ -400,10 +483,83 @@ export async function mcpGenerateOpenapiCommand(options: McpGenerateOpenapiOptio
   }
 }
 
+export interface McpGenerateAllOptions {
+  config?: string;
+  force?: boolean;
+  json?: boolean;
+}
+
+export async function mcpGenerateAllCommand(options: McpGenerateAllOptions): Promise<void> {
+  const configPath = options.config || '.speclang/openapi-mcp.yaml';
+  const baseDir = getDbPath().replace('.speclang.db', '');
+  const configFile = path.resolve(baseDir, configPath);
+  
+  if (!fs.existsSync(configFile)) {
+    if (!options.json) {
+      console.error(`Config file not found: ${configFile}`);
+      console.error(`Create one at ${configPath} with server definitions.`);
+    } else {
+      console.log(JSON.stringify({ success: false, message: `Config not found: ${configFile}` }));
+    }
+    process.exit(1);
+  }
+  
+  if (!options.json) {
+    console.log(`Loading config: ${configFile}`);
+  }
+  
+  try {
+    const configContent = fs.readFileSync(configFile, 'utf-8');
+    const config = yaml.parse(configContent);
+    
+    if (!config || !config.servers || !Array.isArray(config.servers)) {
+      console.log(JSON.stringify({ success: false, message: 'Invalid config: missing servers array' }));
+      process.exit(1);
+    }
+    
+    const servers = config.servers;
+    const results: Array<{ name: string; success: boolean; message: string }> = [];
+    
+    for (const server of servers) {
+      if (!options.json) {
+        console.log(`\nGenerating ${server.name}...`);
+      }
+      
+      const opts: McpGenerateOpenapiOptions = {
+        input: server.spec,
+        output: path.join(baseDir, config.defaults?.output_base || 'generated/mcp-servers', server.output || server.name),
+        transport: server.transport || config.defaults?.transport || 'stdio',
+        port: server.port || config.defaults?.port || 3000,
+        serverName: server.name,
+        force: options.force,
+        json: false
+      };
+      
+      try {
+        await mcpGenerateOpenapiCommand(opts);
+        results.push({ name: server.name, success: true, message: 'Generated' });
+      } catch (err) {
+        results.push({ name: server.name, success: false, message: err instanceof Error ? err.message : 'Failed' });
+      }
+    }
+    
+    const successCount = results.filter(r => r.success).length;
+    if (!options.json) {
+      console.log(`\n=== Generation Complete ===`);
+      console.log(`Success: ${successCount}/${results.length}`);
+    }
+    console.log(JSON.stringify({ success: results.length > 0, total: results.length, successCount, results }, null, 2));
+  } catch (error) {
+    console.log(JSON.stringify({ success: false, message: error instanceof Error ? error.message : 'Config error' }));
+    process.exit(1);
+  }
+}
+
 export default { 
   mcpStartCommand, 
   mcpServeCommand, 
   mcpStatusCommand, 
   mcpStopCommand,
-  mcpGenerateOpenapiCommand 
+  mcpGenerateOpenapiCommand,
+  mcpGenerateAllCommand 
 };
