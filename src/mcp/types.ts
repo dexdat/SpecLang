@@ -168,6 +168,7 @@ export type SSEEventType =
   | 'cascade_progress'
   | 'agent_activity'
   | 'convergence'
+  | 'command_executed'
   | 'lock_acquired'
   | 'lock_released';
 
@@ -207,6 +208,14 @@ export interface ConvergenceEventData {
   cascade_id: string;
   files_changed: string[];
   duration: number;
+}
+
+/** Command executed event data */
+export interface CommandEventData {
+  command_id: string;
+  action: string;
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  target?: string;
 }
 
 /** Default server configuration */

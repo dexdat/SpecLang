@@ -11,7 +11,8 @@ import type {
   FileChangeEventData,
   CascadeProgressEventData,
   AgentActivityEventData,
-  ConvergenceEventData
+  ConvergenceEventData,
+  CommandEventData
 } from './types.js';
 
 /**
@@ -146,6 +147,13 @@ export class SSEManager {
   broadcastConvergence(data: ConvergenceEventData): void {
     this.broadcast('convergence', data as unknown as Record<string, unknown>);
   }
+
+  /**
+   * Broadcast command executed event
+   */
+  broadcastCommand(data: CommandEventData): void {
+    this.broadcast('command_executed', data as unknown as Record<string, unknown>);
+  }
   
   /**
    * Get client count
@@ -191,6 +199,20 @@ export class SSEManager {
           role: session.agent,
           status: session.status as 'spawned' | 'active' | 'completed' | 'failed',
           working_on: session.current_file || undefined
+        });
+      }
+      
+      // Check for new commands
+      const newCommands = db.prepare(
+        `SELECT * FROM commands WHERE created_at > ?`
+      ).all(timestamp);
+      
+      for (const cmd of newCommands as Array<{ id: string; action: string; status: string; target: string | null }>) {
+        this.broadcastCommand({
+          command_id: cmd.id,
+          action: cmd.action,
+          status: cmd.status as 'pending' | 'running' | 'completed' | 'failed',
+          target: cmd.target || undefined
         });
       }
       
