@@ -13,6 +13,9 @@
 5. **CLI Commands** - Added 10 new commands (cascade, errors, rollback, etc.)
 6. **API Specification** - Created OpenAPI spec for REST API
 7. **Fixed Directory Structure** - Renamed `*.dir` to `*.spec.dir`
+8. **Implementation Path** - Created step-by-step bootstrap guide (NEW)
+9. **Hello World Cascade** - Created complete end-to-end example (NEW)
+10. **Testing Strategy** - Created comprehensive testing approach (NEW)
 
 ### Key Conventions Learned
 
@@ -34,6 +37,9 @@ GENERATION FLOW:
 ### Files Created/Modified
 
 **Created:**
+- `specs/implementation-path.spec.md` - **CRITICAL: Step-by-step build guide**
+- `specs/examples.spec.dir/hello-world-cascade.spec.md` - **CRITICAL: End-to-end demo**
+- `specs/testing-strategy.spec.md` - Comprehensive testing approach
 - `specs/cascade.dir/error-handling.spec.md` - Comprehensive error handling
 - `specs/api.spec.md` - API overview
 - `specs/api.spec.dir/openapi.spec.md` - OpenAPI requirements
@@ -48,6 +54,43 @@ GENERATION FLOW:
 - `specs/cli.dir/commands.spec.md` - Added 10 new commands
 - `specs/cli.spec.md` - Renamed to cli.spec
 - `GETTING-STARTED.md` - Added naming conventions section
+
+## New Critical Files
+
+### implementation-path.spec.md
+**Purpose:** Step-by-step guide to build SpecLang from scratch
+
+**Contents:**
+- Phase 1-5 implementation sequence
+- MVP definition and success criteria
+- Existing code mapping to specs
+- Build order dependency graph
+- For AI agents: how to build
+
+**Location:** `specs/implementation-path.spec.md`
+
+### hello-world-cascade.spec.md
+**Purpose:** Complete end-to-end demonstration of the system
+
+**Shows:**
+- Step 1-9: User creates spec → Cascade → Code generation → Tests → Pipeline
+- Complete timeline with timestamps
+- Expected files and commits
+- Mermaid diagram of flow
+
+**Location:** `specs/examples.spec.dir/hello-world-cascade.spec.md`
+
+### testing-strategy.spec.md
+**Purpose:** Comprehensive testing approach
+
+**Contents:**
+- Test categories (unit, integration, cascade, agent, e2e)
+- Coverage requirements by maturity level
+- Cascade testing strategy with mocks
+- Agent testing with golden files
+- Quality gates and execution strategy
+
+**Location:** `specs/testing-strategy.spec.md`
 
 ## Architecture Decisions
 
@@ -91,6 +134,16 @@ Error Categories:
 | Low | 24 hours | 48 hours |
 | Info | None | None |
 
+## Implementation Phases
+
+| Phase | Focus | Duration | Key Deliverables |
+|-------|-------|----------|------------------|
+| 1 | Foundation | 1-2 weeks | Parser, Validator, Index |
+| 2 | Daemon | 2 weeks | File Watcher, Event Router, Convergence |
+| 3 | Agents | 2 weeks | Session Manager, Guard, Cascade Executor |
+| 4 | CodeGen | 2 weeks | TypeScript/Go generators, Templates |
+| 5 | Pipeline | 2 weeks | Build, Test, Rollback, Notify |
+
 ## Common Mistakes to Avoid
 
 1. **Don't use `*.dir`** - Always use `*.spec.dir`
@@ -98,6 +151,8 @@ Error Categories:
 3. **Don't mix YAML in markdown** - Intent specs use `# @block:` syntax
 4. **Don't create UUIDs** - Use git commit hashes instead
 5. **Don't skip the adversarial review** - Always run @adversary on significant changes
+6. **Don't skip phases** - Build Phase 1 before Phase 2
+7. **Don't code without reading specs** - Read first, code second
 
 ## Quick Reference
 
@@ -124,7 +179,11 @@ git commit --only <file> -m "speclang: <role> <summary> [parent:<hash>]"
 
 ## Next Steps (If Any)
 
-- [ ] **Rename all `*.dir` directories to `*.spec.dir`** - There are ~20 directories to rename
+- [ ] **Start with Phase 1** - Build the foundation (parser, validator, index)
+- [ ] Run hello-world-cascade example manually to verify understanding
+- [ ] Create test fixtures for agent testing
+- [ ] Build the MVP and verify success criteria
+- [ ] Fix remaining `*.dir` directories to `*.spec.dir` (20 directories)
 - [ ] Update all spec IDs to include `.spec`
 - [ ] Run full validation on all specs
 - [ ] Generate actual openapi.yaml from openapi.spec.md
