@@ -1363,17 +1363,17 @@
         {
           "id": "P3-005",
           "title": "Implement Go code generator",
-          "spec": "specs/compiler.dir/go.spec.md",
+          "spec": "specs/compiler.spec.dir/go.spec.md",
           "prompt": "docs/prompts/phase-3.5-go-generator.md",
           "outputs": [
             "src/compiler/targets/go.ts",
             "src/compiler/go/types.ts",
             "src/compiler/go/templates.ts",
             "src/compiler/go/builtins.ts",
-            "tests/go-generator.test.ts"
+            "tests/codegen/go-generator.test.ts"
           ],
           "priority": 5,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P3-006",

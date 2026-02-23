@@ -1,6 +1,6 @@
 {
   "version": "0.2.0",
-  "generated": "2026-02-23T13:50:37.441ZZ",
+  "generated": "2026-02-23T14:29:16.392ZZ",
   "specs": {
     "@speclang/agent-behavior-matrix/matrix": {
       "id": "@speclang/agent-behavior-matrix/matrix",
@@ -1088,6 +1088,33 @@
         "specs/cli",
         "specs/cli",
         "specs/cli"
+      ]
+    },
+    "@speclang/compiler.spec.dir/go": {
+      "id": "@speclang/compiler.spec.dir/go",
+      "file": "compiler.spec.dir/go.spec.md",
+      "version": "0.1.0",
+      "layer": 5,
+      "project_level": "Alpha",
+      "agent_support": "agent_autonomous",
+      "tags": [
+        "compiler",
+        "targets",
+        "go"
+      ],
+      "short": "Go code generator implementation",
+      "depends_on": [],
+      "blocks": [],
+      "lastModified": "2026-02-23T14:03:57.215ZZ",
+      "lines": 2863,
+      "header_lines": 15,
+      "status": "draft",
+      "content_refs": [
+        "specs/compiler",
+        "src/compiler/go/types",
+        "src/compiler/go/templates",
+        "src/compiler/go/builtins",
+        "src/compiler/targets/go"
       ]
     },
     "@speclang/compiler.spec.dir/phases": {
@@ -8104,6 +8131,13 @@
       "@speclang/cli.spec": [
         "specs/cli"
       ],
+      "@speclang/compiler.spec.dir/go": [
+        "specs/compiler",
+        "src/compiler/go/types",
+        "src/compiler/go/templates",
+        "src/compiler/go/builtins",
+        "src/compiler/targets/go"
+      ],
       "@speclang/compiler.spec.dir/phases": [
         "speclang/compiler"
       ],
@@ -9355,17 +9389,30 @@
         "@speclang/config.spec.dir/schema",
         "@speclang/mcp/messages"
       ],
+      "specs/compiler": [
+        "@speclang/compiler.spec.dir/go",
+        "@speclang/compiler",
+        "@speclang/examples.spec.dir/hello-world-cascade",
+        "@speclang/implementation-path"
+      ],
+      "src/compiler/go/types": [
+        "@speclang/compiler.spec.dir/go"
+      ],
+      "src/compiler/go/templates": [
+        "@speclang/compiler.spec.dir/go"
+      ],
+      "src/compiler/go/builtins": [
+        "@speclang/compiler.spec.dir/go"
+      ],
+      "src/compiler/targets/go": [
+        "@speclang/compiler.spec.dir/go"
+      ],
       "speclang/compiler": [
         "@speclang/compiler.spec.dir/phases",
         "@speclang/compiler.spec.dir/targets",
         "@speclang/compiler.spec.dir/templates",
         "@speclang/implementation.codegen",
         "@speclang/yaml-schema"
-      ],
-      "specs/compiler": [
-        "@speclang/compiler",
-        "@speclang/examples.spec.dir/hello-world-cascade",
-        "@speclang/implementation-path"
       ],
       "specs/parser": [
         "@speclang/compiler",
@@ -10112,7 +10159,7 @@
   "validation": {
     "missing_refs": [],
     "valid_refs": [],
-    "total_specs": 308,
+    "total_specs": 309,
     "total_refs": 0,
     "missing_ref_count": 0
   }
