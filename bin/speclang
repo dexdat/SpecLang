@@ -203,4 +203,120 @@ program
     }
   });
 
+// MCP command group
+const mcp = program
+  .command('mcp')
+  .description('MCP server management');
+
+// MCP start command
+mcp
+  .command('start')
+  .description('Start MCP server')
+  .option('-p, --port <port>', 'HTTP port (for remote mode)', '3000')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .option('--remote', 'Start in HTTP server mode')
+  .option('--auth <type>', 'Auth type (none, basic, token)', 'none')
+  .option('--user <username>', 'Username for basic auth')
+  .option('--pass <password>', 'Password for basic auth')
+  .option('--token <token>', 'Token for token auth')
+  .option('--config <path>', 'Config file path')
+  .action(async (options) => {
+    const projectDir = path.resolve(options.dir);
+    
+    console.log('🚀 Starting SpecLang MCP server...');
+    console.log(`   Mode: ${options.remote ? 'HTTP' : 'stdio'}`);
+    console.log(`   Directory: ${projectDir}`);
+    
+    if (options.remote) {
+      console.log(`   Port: ${options.port}`);
+    }
+    
+    try {
+      const { MCPServer } = require('../dist/mcp/index.js');
+      const config = {
+        port: parseInt(options.port),
+        database: path.join(projectDir, '.speclang', 'speclang.db'),
+        specsDir: path.join(projectDir, 'specs'),
+        auth: {
+          enabled: options.auth !== 'none',
+          type: options.auth,
+          user: options.user,
+          pass: options.pass,
+          token: options.token
+        }
+      };
+      
+      const server = new MCPServer(config);
+      
+      if (options.remote) {
+        await server.startHTTP(parseInt(options.port));
+      } else {
+        await server.startStdio();
+      }
+    } catch (err) {
+      if (err.code === 'MODULE_NOT_FOUND') {
+        console.error('\n❌ SpecLang not built. Run: npm run build');
+        process.exit(1);
+      }
+      console.error('Failed to start MCP server:', err);
+      process.exit(1);
+    }
+  });
+
+// MCP status command
+mcp
+  .command('status')
+  .description('Show MCP server status')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .action(async (options) => {
+    const projectDir = path.resolve(options.dir);
+    const pidFile = path.join(projectDir, '.speclang', 'mcp.pid');
+    const portFile = path.join(projectDir, '.speclang', 'mcp.port');
+    
+    console.log('📊 SpecLang MCP Status');
+    console.log(`   Project: ${projectDir}`);
+    
+    if (fs.existsSync(pidFile)) {
+      const pid = fs.readFileSync(pidFile, 'utf-8').trim();
+      console.log(`   Status: Running (PID ${pid})`);
+      
+      if (fs.existsSync(portFile)) {
+        const port = fs.readFileSync(portFile, 'utf-8').trim();
+        console.log(`   Port: ${port}`);
+      }
+    } else {
+      console.log('   Status: Not running');
+    }
+  });
+
+// MCP stop command
+mcp
+  .command('stop')
+  .description('Stop MCP server')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .action(async (options) => {
+    const projectDir = path.resolve(options.dir);
+    const pidFile = path.join(projectDir, '.speclang', 'mcp.pid');
+    
+    if (!fs.existsSync(pidFile)) {
+      console.log('MCP server not running');
+      return;
+    }
+    
+    const pid = parseInt(fs.readFileSync(pidFile, 'utf-8').trim());
+    
+    try {
+      process.kill(pid, 'SIGTERM');
+      fs.unlinkSync(pidFile);
+      console.log('✅ MCP server stopped');
+    } catch (err) {
+      if (err.code === 'ESRCH') {
+        console.log('MCP server not running (stale PID file removed)');
+        fs.unlinkSync(pidFile);
+      } else {
+        throw err;
+      }
+    }
+  });
+
 program.parse();
