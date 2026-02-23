@@ -105,6 +105,61 @@
 
 ---
 
+## P3-006: Python Code Generator
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/compiler.spec.dir/python.spec.md`
+- **Files Created**: 4 files
+  - `src/compiler/python/types.ts` - Type mappings (stdlib → Python)
+  - `src/compiler/python/templates.ts` - Python code templates
+  - `src/compiler/python/builtins.ts` - Python stdlib modules
+  - `src/compiler/targets/python.ts` - PythonGenerator class
+- **Tests**: Build passes, 1020 tests pass
+
+### Components Implemented
+
+1. **Type Mappings** (`src/compiler/python/types.ts`)
+   - Primitives: String→str, Int→int, Bool→bool, Float→float
+   - Time types: Date→date, DateTime→datetime (imports datetime)
+   - Identifiers: UUID→UUID (imports uuid)
+   - Collections: Array<T>→list[T], Map<K,V>→dict[K,V], Set<T>→set[T]
+   - Optional: Optional<T>→T | None
+
+2. **Templates** (`src/compiler/python/templates.ts`)
+   - File header with shebang and docstring
+   - Dataclass definition with fields
+   - Pydantic model with Field()
+   - Function and async function
+   - Class with inheritance
+   - Enum with str, Enum base
+   - Protocol for structural typing
+   - Exception with __init__
+
+3. **PythonGenerator** (`src/compiler/targets/python.ts`)
+   - generateDataclass() - Generates @dataclass decorated classes
+   - generatePydanticModel() - Generates Pydantic BaseModel classes
+   - generateFunction() - Generates def/async def functions
+   - generateEnum() - Generates Enum classes
+   - generateProtocol() - Generates Protocol classes
+   - formatImports() - Groups stdlib and third-party imports
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 1020 passed (6 pre-existing db test failures)
+
+### Notes
+
+- Follows Python naming conventions (PascalCase for classes, snake_case for functions)
+- Handles import management (stdlib vs third-party)
+- Supports dataclass and Pydantic generation modes
+- Type hints enabled by default
+
+---
+
 ## P3-003: Compiler Target Languages
 
 **Status**: PASSED
