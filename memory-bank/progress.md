@@ -1,5 +1,59 @@
 # Progress
 
+## P2-001: MCP Server Implementation
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/mcp.spec.md` and sub-specs in `specs/mcp.spec.dir/`
+- **Files Created/Modified**: Complete MCP server in `src/mcp/`
+- **Tests**: Build passes, 964 tests pass (4 pre-existing db failures)
+
+### Components Implemented
+
+1. **Server** (`src/mcp/server.ts`)
+   - MCPServer class with stdio and HTTP modes
+   - Express-based HTTP server with SSE support
+   - MCP protocol tool registration
+
+2. **Tools Registry** (`src/mcp/tools/index.ts`)
+   - 20+ MCP tools registered
+   - Tool handlers: search, specs, locks, cascade, index
+
+3. **Tool Handlers**:
+   - `search.ts`: Full-text search (FTS5), semantic search fallback
+   - `specs.ts`: CRUD operations, validation, version history
+   - `locks.ts`: Acquire/release/check locks with TTL
+   - `cascade.ts`: Status, trigger, abort, converge
+   - `index-tools.ts`: Refresh, stats, validate
+
+4. **Auth** (`src/mcp/auth.ts`)
+   - Basic auth and token (Bearer) auth middleware
+   - API key validation
+
+5. **SSE Streaming** (`src/mcp/sse.ts`)
+   - Real-time event streaming (file_change, cascade_progress, agent_activity, convergence)
+   - Keepalive heartbeats, client management
+
+6. **Configuration** (`src/mcp/config.ts`)
+   - Environment variable support
+   - Config file loading
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 964 passed (4 pre-existing db failures unrelated to MCP)
+
+### Notes
+
+- Implements MCP protocol for OpenCode integration
+- Supports stdio mode (primary) and HTTP mode (remote/team)
+- 20+ tools for spec query, modification, locks, cascade control
+- SSE events for real-time UI updates
+
+---
+
 ## P1-010: Agent Sessions and Lifecycle
 
 **Status**: PASSED
