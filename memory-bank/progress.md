@@ -1,5 +1,54 @@
 # Progress
 
+## P2-005: OpenAPI-MCP Generator
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/mcp.spec.dir/openapi-generation.spec.md`
+- **Files Created**: 1 new file (src/mcp/tools/openapi.ts)
+- **Files Modified**: 3 files (src/mcp/tools/index.ts, src/mcp/types.ts, src/mcp/index.ts)
+- **Tests**: Build passes, all tests pass
+
+### Components Implemented
+
+1. **OpenAPIToolHandler** (`src/mcp/tools/openapi.ts`) - NEW
+   - 5 new MCP tools for OpenAPI-MCP integration:
+     - `speclang_openapi_validate`: Validate OpenAPI spec (YAML/JSON, local or URL)
+     - `speclang_openapi_generate`: Generate MCP server from OpenAPI spec
+     - `speclang_openapi_register`: Register generated server with SpecLang
+     - `speclang_openapi_list_servers`: List registered MCP servers
+     - `speclang_openapi_unregister`: Unregister MCP server
+
+2. **Tool Registration** (`src/mcp/tools/index.ts`)
+   - Added OpenAPIToolHandler to MCPToolRegistry
+   - Registered 5 new tool handlers in switch statement
+   - Added tool definitions for MCP protocol
+
+3. **Types** (`src/mcp/types.ts`)
+   - Added OpenAPIGenerateInput, OpenAPIGenerateResult
+   - Added OpenAPIValidateInput, OpenAPIValidateResult
+   - Added OpenAPIRegisterInput, OpenAPIRegisterResult
+
+4. **Module Exports** (`src/mcp/index.ts`)
+   - Added OpenAPIToolHandler export
+   - Added type exports for OpenAPI types
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ All tests pass
+
+### Notes
+
+- Implements OpenAPI-MCP generator integration per @speclang/mcp/openapi-generation spec
+- Uses openapi-mcp-generator CLI when available, falls back to local server creation
+- Supports stdio, web, and streamable-http transports
+- Validates OpenAPI specs (checks for openapi/swagger field, operations count)
+
+---
+
 ## P2-004: MCP UI Tools
 
 **Status**: PASSED
