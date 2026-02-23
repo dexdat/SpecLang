@@ -8,6 +8,7 @@ import * as path from 'path';
 import { DepthTracker } from './tracker.js';
 import { CycleDetector } from './cycle-detection.js';
 import { ConvergenceDetector } from './convergence.js';
+import { CascadeTerminator } from './termination.js';
 import { DepthConfig, DepthState, DepthCheckResult, CascadeStatus, DEFAULT_DEPTH_CONFIG } from './types.js';
 
 /**
@@ -196,3 +197,4 @@ export * from './types.js';
 export { DepthTracker } from './tracker.js';
 export { CycleDetector } from './cycle-detection.js';
 export { ConvergenceDetector } from './convergence.js';
+export { CascadeTerminator, type TerminationResult, type TerminationType } from './termination.js';
