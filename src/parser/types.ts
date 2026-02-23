@@ -90,6 +90,12 @@ export interface SpecMetadata {
   generated?: string[];
   /** Header line count if declared */
   lines?: number;
+  /** Commit that caused this change */
+  caused_by?: string;
+  /** This commit's hash */
+  change_id?: string;
+  /** Cascade ID this belongs to */
+  part_of?: string;
   /** Custom additional fields */
   [key: string]: unknown;
 }

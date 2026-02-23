@@ -35,6 +35,12 @@ export const PART_PATTERN = /^\d+\/\d+$/;
 export const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+/** Pattern for commit hashes */
+export const COMMIT_PATTERN = /^@commit:[a-f0-9]{8,40}$/i;
+
+/** Pattern for cascade IDs */
+export const CASCADE_PATTERN = /^@cascade:\d{8}-\d{3}$/;
+
 // ============================================================================
 // ENUM VALUE SETS
 // ============================================================================
@@ -136,8 +142,8 @@ export const FIELD_DEFINITIONS: Record<string, FieldDefinition> = {
   layer: {
     name: 'layer',
     type: 'number',
-    required: false,
-    description: 'Abstraction level (0=north star, 10=code)',
+    required: true,
+    description: 'Depth in dependency tree (0=root/north star, increasing for deeper nodes)',
     example: '5',
     range: { min: 0, max: 10 },
     category: 'metadata',
@@ -145,7 +151,7 @@ export const FIELD_DEFINITIONS: Record<string, FieldDefinition> = {
   project_level: {
     name: 'project_level',
     type: 'enum',
-    required: false,
+    required: true,
     description: 'Project maturity level',
     example: 'Alpha',
     enumValues: PROJECT_LEVELS,
@@ -154,7 +160,7 @@ export const FIELD_DEFINITIONS: Record<string, FieldDefinition> = {
   agent_support: {
     name: 'agent_support',
     type: 'enum',
-    required: false,
+    required: true,
     description: 'Agent autonomy support level',
     example: 'agent_autonomous',
     enumValues: AGENT_SUPPORTS,
@@ -171,8 +177,8 @@ export const FIELD_DEFINITIONS: Record<string, FieldDefinition> = {
   short: {
     name: 'short',
     type: 'string',
-    required: false,
-    description: 'One-line human-readable description',
+    required: true,
+    description: 'One-line description',
     example: 'JWT authentication handler',
     category: 'metadata',
   },
@@ -219,6 +225,33 @@ export const FIELD_DEFINITIONS: Record<string, FieldDefinition> = {
     description: 'Session UUID',
     example: '550e8400-e29b-41d4-a716-446655440000',
     pattern: UUID_PATTERN,
+    category: 'ownership',
+  },
+  caused_by: {
+    name: 'caused_by',
+    type: 'string',
+    required: false,
+    description: 'Commit hash that triggered this change',
+    example: '@commit:abc123def',
+    pattern: COMMIT_PATTERN,
+    category: 'ownership',
+  },
+  change_id: {
+    name: 'change_id',
+    type: 'string',
+    required: false,
+    description: 'This commit\'s hash',
+    example: '@commit:def456ghi',
+    pattern: COMMIT_PATTERN,
+    category: 'ownership',
+  },
+  part_of: {
+    name: 'part_of',
+    type: 'string',
+    required: false,
+    description: 'Cascade ID this change belongs to',
+    example: '@cascade:20250222-001',
+    pattern: CASCADE_PATTERN,
     category: 'ownership',
   },
 
