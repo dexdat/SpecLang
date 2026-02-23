@@ -8,6 +8,7 @@ import { searchCommand, SearchOptions } from './commands/search.js';
 import { getCommand, GetOptions } from './commands/get.js';
 import { listCommand, ListOptions } from './commands/list.js';
 import { validateCommand, ValidateOptions } from './commands/validate.js';
+import { initCommand, InitOptions } from './commands/init.js';
 import { generateCommand, GenerateOptions } from './commands/generate.js';
 import { serverCommand, ServerOptions } from './commands/server.js';
 import { indexCommand, IndexOptions } from './commands/index.js';
@@ -76,6 +77,34 @@ program
       tags: options.tags ? options.tags.split(',') : undefined
     };
     await listCommand(opts);
+  });
+
+// ============================================================================
+// INIT COMMAND
+// ============================================================================
+
+program
+  .command('init [name]')
+  .description('Initialize a new speclang project')
+  .option('-d, --dir <path>', 'Target directory', '.')
+  .option('--no-git', 'Skip git initialization')
+  .option('-f, --force', 'Overwrite existing project')
+  .option('--targets <types>', 'Target languages (comma-separated)', 'typescript')
+  .option('--description <text>', 'Project description')
+  .option('--version <ver>', 'Project version', '0.1.0')
+  .option('--json', 'JSON output')
+  .action(async (name: string | undefined, options: InitOptions & { dir?: string; git?: boolean; targets?: string }) => {
+    const opts: InitOptions = {
+      name: name || 'my-project',
+      targetDir: options.dir || process.cwd(),
+      initGit: options.git !== false,
+      force: options.force || false,
+      targets: options.targets ? options.targets.split(',') : ['typescript'],
+      description: options.description,
+      version: options.version,
+      json: options.json
+    };
+    await initCommand(opts);
   });
 
 // ============================================================================
