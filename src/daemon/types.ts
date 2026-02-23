@@ -101,6 +101,20 @@ export interface Lock {
   contentHash?: string;
 }
 
+// Agent status
+export enum AgentStatusKind {
+  Idle = 'idle',
+  Busy = 'busy',
+  Error = 'error',
+}
+
+export interface AgentStatus {
+  id: string;
+  status: AgentStatusKind;
+  lastUpdate: number;
+  currentTask?: string;
+}
+
 // Convergence result
 export interface ConvergenceResult {
   converged: boolean;
@@ -108,6 +122,16 @@ export interface ConvergenceResult {
   duration: number;
   cascadeDepth: number;
   timestamp: number;
+  testResults?: TestResults;
+  commitSha?: string;
+}
+
+export interface TestResults {
+  passed: number;
+  failed: number;
+  total: number;
+  duration: number;
+  errors: string[];
 }
 
 // Configuration types
@@ -120,6 +144,8 @@ export interface DaemonConfig {
   convergence: {
     quietPeriod: number;  // seconds
     maxDepth: number;
+    testOnConverge?: boolean;
+    autoCommit?: boolean;
   };
   agentApi: {
     port: number;
