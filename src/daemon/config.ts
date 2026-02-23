@@ -18,6 +18,8 @@ const DEFAULT_CONFIG: DaemonConfig = {
   convergence: {
     quietPeriod: 30,  // seconds
     maxDepth: 100,
+    testOnConverge: true,
+    autoCommit: false,
   },
   agentApi: {
     port: 7777,
