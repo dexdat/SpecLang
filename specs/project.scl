@@ -38,6 +38,26 @@ Key innovations:
 - Self-healing recovery with rollback
 ```
 
+## Getting Started
+
+```speclang
+# @block:northstar/getting-started @kind:note
+For new agents and users:
+
+1. **Read first:** `000-bootstrap.md` - Bootstrap primer and directory guide
+2. **Then read:** This file (`project.scl`) - North Star intent
+3. **Check:** `_index.md` in each directory - File listings
+4. **Follow:** `@ref:` links in headers - Dependency chains
+
+Key files to understand:
+- `000-bootstrap.md` - READ FIRST - Explains everything
+- `core.spec.md` - Core architecture
+- `spec-format.spec.md` - Spec file format
+- `headers.spec.md` - Universal headers
+
+Remember: Specs are source code. Generated code is machine code.
+```
+
 ## Goals
 
 ```speclang

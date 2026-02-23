@@ -67,11 +67,11 @@ export function getDefaultConfig(): ProjectConfig {
     },
     targets: ['typescript'],
     config: {
-      watcher: DEFAULT_WATCHER_CONFIG,
-      split: DEFAULT_SPLIT_CONFIG,
-      embeddings: DEFAULT_EMBEDDING_CONFIG,
-      database: DEFAULT_DATABASE_CONFIG,
-      cascade: DEFAULT_CASCADE_CONFIG,
+      watcher: structuredClone(DEFAULT_WATCHER_CONFIG),
+      split: structuredClone(DEFAULT_SPLIT_CONFIG),
+      embeddings: structuredClone(DEFAULT_EMBEDDING_CONFIG),
+      database: structuredClone(DEFAULT_DATABASE_CONFIG),
+      cascade: structuredClone(DEFAULT_CASCADE_CONFIG),
       agents: {},
     },
   };

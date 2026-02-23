@@ -1,0 +1,1 @@
+../specs/scripts.spec.dir/validate_refs.py

@@ -21,7 +21,7 @@ This SIP defines dynamic spec splitting when size limits are exceeded.
 1. **Limits:** `max_tokens: 10000`, `max_lines: 800`, `max_chars: 60000`
 2. **Budget:** `budget_overhead: 500` (real limit: 10500)
 3. **When Split:** Spec exceeds limit
-4. **Result:** Creates `.dir/` folder with children
+4. **Result:** Creates `.spec.dir/` folder with children
 
 ### Example
 
@@ -30,7 +30,7 @@ Before: auth.spec.yaml (12k tokens)
 
 After:
   auth.spec.yaml (index, 500 tokens)
-  auth.spec.dir/
+  auth.spec.spec.dir/
     ├── entities.spec.yaml
     ├── operations.spec.yaml
     └── tests.spec.yaml
@@ -57,7 +57,7 @@ After:
 
 ## Abstract
 
-This SIP defines the dynamic splitting system for Speclang. When specs exceed user-defined size limits, they automatically split into a parent index file and child specs in a `.dir/` folder.
+This SIP defines the dynamic splitting system for Speclang. When specs exceed user-defined size limits, they automatically split into a parent index file and child specs in a `.spec.dir/` folder.
 
 ## Motivation
 
@@ -81,7 +81,7 @@ AI models have token limits. Large specs:
 
 **Split Strategy:**
 - Parent becomes index
-- Children in `.dir/` folder
+- Children in `.spec.dir/` folder
 - Bidirectional refs
 - Natural boundaries
 
@@ -165,7 +165,7 @@ specs/auth.spec.yaml (12,000 tokens)
 **After:**
 ```
 specs/auth.spec.yaml (index, 500 tokens)
-specs/auth.spec.dir/
+specs/auth.spec.spec.dir/
   ├── overview.spec.yaml (2,000 tokens)
   ├── entities.spec.yaml (3,000 tokens)
   ├── operations.spec.yaml (3,500 tokens)
@@ -181,16 +181,16 @@ specs/auth.spec.dir/
 id: @specs/auth
 version: 1.0.0
 children:
-  - @ref:specs/auth.spec.dir/overview
-  - @ref:specs/auth.spec.dir/entities
-  - @ref:specs/auth.spec.dir/operations
-  - @ref:specs/auth.spec.dir/policies
-  - @ref:specs/auth.spec.dir/tests
+  - @ref:specs/auth.spec.spec.dir/overview
+  - @ref:specs/auth.spec.spec.dir/entities
+  - @ref:specs/auth.spec.spec.dir/operations
+  - @ref:specs/auth.spec.spec.dir/policies
+  - @ref:specs/auth.spec.spec.dir/tests
 short: "Authentication system (split into 5 parts)"
 ---
 
 # @block:auth/overview @kind:note
-This spec has been split. See children in auth.spec.dir/
+This spec has been split. See children in auth.spec.spec.dir/
 
 # @block:auth/index @kind:table
 | Part | Description | Size |
@@ -207,16 +207,16 @@ This spec has been split. See children in auth.spec.dir/
 **Structure:**
 ```yaml
 # speclang-header lines:12
-id: @specs/auth.spec.dir/entities
+id: @specs/auth.spec.spec.dir/entities
 parent: @ref:specs/auth
 part: 2/5
 siblings:
-  prev: @ref:specs/auth.spec.dir/overview
-  next: @ref:specs/auth.spec.dir/operations
+  prev: @ref:specs/auth.spec.spec.dir/overview
+  next: @ref:specs/auth.spec.spec.dir/operations
 order: 2
 short: "Auth entities (User, Session, Token)"
 refs:
-  - @ref:specs/auth.spec.dir/overview
+  - @ref:specs/auth.spec.spec.dir/overview
 ---
 
 # @block:auth/entities @kind:entity
@@ -235,14 +235,14 @@ Session:
 
 **Naming:**
 ```
-{parent-name}.spec.dir/
+{parent-name}.spec.spec.dir/
 ```
 
 **Examples:**
 ```
-auth.spec.dir/
-user-management.spec.dir/
-api-endpoints.spec.dir/
+auth.spec.spec.dir/
+user-management.spec.spec.dir/
+api-endpoints.spec.spec.dir/
 ```
 
 **Content:**
@@ -267,7 +267,7 @@ Before:
 
 After:
   Merge into single file
-  Delete .dir/ folder
+  Delete .spec.dir/ folder
   Update refs
 ```
 
@@ -295,7 +295,7 @@ SELECT * FROM specs WHERE parent_id = '@specs/auth';
 
 -- Find parent
 SELECT * FROM specs WHERE id = (
-  SELECT parent_id FROM specs WHERE id = '@specs/auth.spec.dir/entities'
+  SELECT parent_id FROM specs WHERE id = '@specs/auth.spec.spec.dir/entities'
 );
 
 -- Tree
@@ -414,19 +414,19 @@ blocks:
 # auth.spec.yaml (index)
 id: @specs/auth
 children:
-  - @ref:specs/auth.spec.dir/entities
-  - @ref:specs/auth.spec.dir/operations
+  - @ref:specs/auth.spec.spec.dir/entities
+  - @ref:specs/auth.spec.spec.dir/operations
 ```
 
 ```yaml
-# auth.spec.dir/entities.spec.yaml
-id: @specs/auth.spec.dir/entities
+# auth.spec.spec.dir/entities.spec.yaml
+id: @specs/auth.spec.spec.dir/entities
 parent: @ref:specs/auth
 ```
 
 ```yaml
-# auth.spec.dir/operations.spec.yaml
-id: @specs/auth.spec.dir/operations
+# auth.spec.spec.dir/operations.spec.yaml
+id: @specs/auth.spec.spec.dir/operations
 parent: @ref:specs/auth
 ```
 
@@ -448,7 +448,7 @@ specs/
 ```
 specs/
   api.spec.yaml (index)
-  api.spec.dir/
+  api.spec.spec.dir/
     ├── 01-rest.spec.yaml
     ├── 02-graphql.spec.yaml
     ├── 03-websocket.spec.yaml

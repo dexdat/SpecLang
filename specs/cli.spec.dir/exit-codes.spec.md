@@ -1,5 +1,5 @@
 # speclang-header lines:12
-id: "@speclang/cli.dir/exit-codes"
+id: "@speclang/cli.spec.dir/exit-codes"
 version: 0.1.0
 layer: 1
 tags: [cli, exit-codes]

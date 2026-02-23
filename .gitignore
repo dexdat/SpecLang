@@ -44,3 +44,14 @@ coverage/
 temp_*.md
 __pycache__/
 *.pyc
+
+# Python test cache
+.pytest_cache/
+
+# Runtime state files
+.speclang_simulator.log
+ralph_todo.json
+
+# Generated files
+_index.json
+validation_results.json

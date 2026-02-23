@@ -11,7 +11,7 @@ children: ["@speclang/dynamic-split/strategy", "@speclang/dynamic-split/token-bu
 short: Dynamic Splitting (split into 2 sub-specs)
 ---
 
-This spec has been split into focused sub-specs. See `dynamic-split.dir/` for details.
+This spec has been split into focused sub-specs. See `dynamic-split.spec.dir/` for details.
 
 ## Sub‑specs
 

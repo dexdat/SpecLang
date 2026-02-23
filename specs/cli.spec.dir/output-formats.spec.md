@@ -1,5 +1,5 @@
 # speclang-header lines:12
-id: "@speclang/cli.dir/output-formats"
+id: "@speclang/cli.spec.dir/output-formats"
 version: 0.1.0
 layer: 1
 tags: [cli, output]

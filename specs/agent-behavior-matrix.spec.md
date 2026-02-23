@@ -21,7 +21,7 @@ This spec has been split into sub‑specs for better organization:
 The agent behavior matrix defines how each agent role should behave based on metadata fields:
 - `project_level` (POC → Enterprise)
 - `agent_support` (human_only → agent_autonomous)
-- `layer` (0‑10)
+- `layer` (depth in tree)
 
 ## Usage
 

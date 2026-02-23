@@ -385,7 +385,7 @@ User: "Add authentication"
 
 1. project.scl updated
 2. specs/auth.spec.yaml created
-3. auth splits into auth.spec.dir/
+3. auth splits into auth.spec.spec.dir/
    - entities.spec.yaml
    - operations.spec.yaml
    - policies.spec.yaml

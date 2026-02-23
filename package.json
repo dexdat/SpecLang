@@ -7,7 +7,10 @@
     "speclang": "./bin/speclang"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run",
+    "test:ui": "vitest run --config vitest.config.ts tests/dashboard/ tests/mocks/",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "speclang": "node --loader ts-node/esm bin/speclang"
   },
   "repository": {

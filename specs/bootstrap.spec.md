@@ -51,4 +51,4 @@ This spec has been split into focused sub-specs for better organization:
 - Bootstrap execution sequence, validation, and recovery
 - First-run steps, self-hosting test, agent roles, rollback procedures
 
-*See individual parts in `bootstrap.dir/`.*
+*See individual parts in `bootstrap.spec.dir/`.*

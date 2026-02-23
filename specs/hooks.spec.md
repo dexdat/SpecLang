@@ -6,16 +6,16 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [typescript, generated, auto-generated]
 children:
-  - "@ref:specs/hooks.dir/lifecycle"
-  - "@ref:specs/hooks.dir/handlers"
+  - "@ref:specs/hooks.spec.dir/lifecycle"
+  - "@ref:specs/hooks.spec.dir/handlers"
 short: "Hook execution system for pipeline - lifecycle and built-in handlers"
 ---
 # Hook Execution System
 
 Provides hook execution capabilities for the pipeline. Splits into two sub‑specs:
 
-- **Lifecycle** (`@ref:specs/hooks.dir/lifecycle`): Hook execution, context creation, and lifecycle management.
-- **Handlers** (`@ref:specs/hooks.dir/handlers`): Built‑in hook utilities and custom handler creation.
+- **Lifecycle** (`@ref:specs/hooks.spec.dir/lifecycle`): Hook execution, context creation, and lifecycle management.
+- **Handlers** (`@ref:specs/hooks.spec.dir/handlers`): Built‑in hook utilities and custom handler creation.
 
 ## @block:hooksystem @kind:entity
 

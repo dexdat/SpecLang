@@ -15,4 +15,4 @@ children:
 
 # MCP UI Tools
 
-This spec has been split into sub‑specs. See `mcp‑ui‑tools.dir/` for details.
+This spec has been split into sub‑specs. See `mcp‑ui‑tools.spec.dir/` for details.

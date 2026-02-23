@@ -1,0 +1,1 @@
+../specs/scripts.spec.dir/generate_sqlite_schema.py

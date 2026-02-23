@@ -181,9 +181,9 @@ Phase2:
     
   specs_to_read:
     - @ref:specs/daemon
-    - @ref:specs/daemon.dir/events
-    - @ref:specs/daemon.dir/routing
-    - @ref:specs/daemon.dir/convergence
+    - @ref:specs/daemon.spec.dir/events
+    - @ref:specs/daemon.spec.dir/routing
+    - @ref:specs/daemon.spec.dir/convergence
     - @ref:specs/opencode-plugin
 ```
 
@@ -235,7 +235,7 @@ Phase3:
   specs_to_read:
     - @ref:specs/agent-protocol
     - @ref:specs/cascade
-    - @ref:specs/cascade.dir/error-handling
+    - @ref:specs/cascade.spec.dir/error-handling
     - @ref:specs/guard
     - @ref:specs/skills
 ```
@@ -287,8 +287,8 @@ Phase4:
     
   specs_to_read:
     - @ref:specs/compiler
-    - @ref:specs/compiler.dir/targets
-    - @ref:specs/compiler.dir/templates
+    - @ref:specs/compiler.spec.dir/targets
+    - @ref:specs/compiler.spec.dir/templates
 ```
 
 ### Phase 5: Pipeline & Testing (Week 9-10)
@@ -338,8 +338,8 @@ Phase5:
   specs_to_read:
     - @ref:specs/pipeline
     - @ref:specs/test-specs
-    - @ref:specs/git-history.dir/rollback
-    - @ref:specs/cascade.dir/error-handling
+    - @ref:specs/git-history.spec.dir/rollback
+    - @ref:specs/cascade.spec.dir/error-handling
 ```
 
 ## Minimum Viable Product (MVP)

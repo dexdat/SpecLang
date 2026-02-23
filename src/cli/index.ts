@@ -13,6 +13,8 @@ import { serverCommand, ServerOptions } from './commands/server.js';
 import { indexCommand, IndexOptions } from './commands/index.js';
 import { cascadeCommand, CascadeOptions } from './commands/cascade.js';
 import { guardCommand, GuardOptions } from './commands/guard.js';
+import { metaGenerateCommand, metaValidateCommand, metaBootstrapCommand, metaCheckCommand, MetaCLIOptions } from './commands/meta.js';
+import { autonomousTestCommand, autonomousValidateCommand, autonomousReportCommand, autonomousVerifyCommand, AutonomousTestOptions, AutonomousValidateOptions, AutonomousReportOptions, AutonomousVerifyOptions } from './commands/autonomous.js';
 
 const program = new Command();
 
@@ -218,6 +220,100 @@ guard
   .option('--json', 'JSON output')
   .action(async (options: GuardOptions) => {
     await guardCommand('stats', undefined, options);
+  });
+
+// ============================================================================
+// META COMMAND
+// ============================================================================
+
+const meta = program
+  .command('meta')
+  .description('Self-specifying system operations');
+
+meta
+  .command('generate')
+  .description('Generate specs from code')
+  .option('--dry-run', 'Show what would be generated')
+  .option('--verbose', 'Verbose output')
+  .option('--json', 'JSON output')
+  .action(async (options: MetaCLIOptions) => {
+    await metaGenerateCommand(options);
+  });
+
+meta
+  .command('validate')
+  .description('Validate self-consistency')
+  .option('--fix', 'Attempt to fix issues')
+  .option('--verbose', 'Show warnings')
+  .option('--json', 'JSON output')
+  .action(async (options: MetaCLIOptions) => {
+    await metaValidateCommand(options);
+  });
+
+meta
+  .command('bootstrap')
+  .description('Run full bootstrap sequence')
+  .option('--dry-run', 'Show what would happen')
+  .option('--verbose', 'Verbose output')
+  .option('--json', 'JSON output')
+  .action(async (options: MetaCLIOptions) => {
+    await metaBootstrapCommand(options);
+  });
+
+meta
+  .command('check')
+  .description('Check if system is self-specifying')
+  .option('--verbose', 'Verbose output')
+  .option('--json', 'JSON output')
+  .action(async (options: MetaCLIOptions) => {
+    await metaCheckCommand(options);
+  });
+
+// ============================================================================
+// AUTONOMOUS COMMAND
+// ============================================================================
+
+const autonomous = program
+  .command('autonomous')
+  .description('Autonomous testing and validation operations');
+
+autonomous
+  .command('test')
+  .description('Run autonomous tests')
+  .option('--scenario <name>', 'Run specific test scenario')
+  .option('--verbose', 'Verbose output')
+  .option('--json', 'JSON output')
+  .action(async (options: AutonomousTestOptions) => {
+    await autonomousTestCommand('test', options);
+  });
+
+autonomous
+  .command('validate')
+  .description('Validate autonomous readiness')
+  .option('--fix', 'Attempt to fix issues')
+  .option('--verbose', 'Verbose output')
+  .option('--json', 'JSON output')
+  .action(async (options: AutonomousValidateOptions) => {
+    await autonomousValidateCommand(options);
+  });
+
+autonomous
+  .command('report')
+  .description('Generate autonomous test report')
+  .option('--format <format>', 'Output format (text|json|html)', 'text')
+  .option('--output <file>', 'Output file path')
+  .action(async (options: AutonomousReportOptions) => {
+    await autonomousReportCommand(options);
+  });
+
+autonomous
+  .command('verify')
+  .description('Run full autonomous verification')
+  .option('--verbose', 'Verbose output')
+  .option('--json', 'JSON output')
+  .option('--timeout <ms>', 'Timeout in milliseconds', parseInt)
+  .action(async (options: AutonomousVerifyOptions) => {
+    await autonomousVerifyCommand(options);
   });
 
 // ============================================================================

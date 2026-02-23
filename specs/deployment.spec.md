@@ -42,8 +42,8 @@ Same codebase, different scale.
 
 This specification is split into two detailed sub‑specs:
 
-- **@ref:specs/deployment.dir/light.spec.md** – Light mode details
-- **@ref:specs/deployment.dir/enterprise.spec.md** – Enterprise mode details
+- **@ref:specs/deployment.spec.dir/light.spec.md** – Light mode details
+- **@ref:specs/deployment.spec.dir/enterprise.spec.md** – Enterprise mode details
 
 Each sub‑spec contains architecture, configuration, and performance details for its respective mode.
 

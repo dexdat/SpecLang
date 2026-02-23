@@ -25,7 +25,7 @@ export type ProjectLevel =
 export type AgentSupport = 'human_only' | 'agent_assisted' | 'agent_autonomous';
 
 /** Valid spec status */
-export type SpecStatus = 'draft' | 'stable' | 'deprecated';
+export type SpecStatus = 'draft' | 'stable' | 'deprecated' | 'active' | 'generated';
 
 /** Valid block kinds */
 export type BlockKind = 

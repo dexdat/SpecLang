@@ -1,0 +1,1 @@
+../specs/scripts.spec.dir/generate_mcp_server.py

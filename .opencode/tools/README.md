@@ -44,7 +44,7 @@ Tool implementation and usage documentation.
 
 - `speclang_split_if_needed` - Split oversized specs
 - `speclang_get_size` - Estimate spec size
-- `speclang_create_dir` - Create .dir/ folder
+- `speclang_create_dir` - Create .spec.dir/ folder
 
 ### Query Tools
 

@@ -102,9 +102,18 @@ DirectMapping:
     - models.py.spec → models.py
     
   purpose:
-    - Final layer before code
-    - Direct correspondence
-    - No expansion needed
+    - Leaf nodes in spanning tree that generate code
+    - Direct correspondence (spec → generated file)
+    - No further expansion needed
+  
+  format_rule: "Always YAML format for precise schema"
+  yaml_schema: "Follows structured schema for boilerplate generation"
+  tree_position: "Final leaves in dependency tree"
+  benefits:
+    - Reduces model errors with validation
+    - Provides clear structure for code generation
+    - Enables contract definition (APIs, databases)
+    - Links dependencies via @ref: markers
 ```
 
 ### @naming/direct-example
@@ -115,7 +124,7 @@ DirectMapping:
 # handler.go.spec
 speclang-header:
   id: @generated/handler-go
-  layer: 10
+  layer: 5
   produces: handler.go
   refs: [@ref:specs/auth#login]
 
@@ -274,59 +283,59 @@ blocks:
 
 ---
 
-## Layer Organization
+## Spanning Tree Structure
 
-### @naming/layers
+### @naming/spanning-tree
 
 ```speclang
-# @block:naming/layers @kind:entity
-LayerStructure:
-  description: "Specs expand through layers"
+# @block:naming/spanning-tree @kind:entity
+SpanningTree:
+  description: "Specs form a dependency tree that self-expands"
   
-  level_0:
-    name: intent
-    format: .scl or .spec.md
+  root:
+    name: north-star
+    format: .scl or .yaml (project.scl or project.yaml)
     owner: user + orchestrator
-    content: one-liner goals, features
+    content: system intent, goals, rules
     
-  level_1:
-    name: features
-    format: .spec.md
-    owner: spec-writer
-    content: feature breakdown, flows
-    
-  level_2:
-    name: components
+  branches:
+    name: expanding-specs
     format: .spec.md or .spec.yaml
     owner: spec-writer
-    content: entities, operations, policies
+    content: feature definitions, architecture, design
+    depth: "Any depth allowed - tree expands as needed"
     
-  level_3_to_9:
-    name: details
-    format: .spec.yaml
-    owner: spec-writer
-    content: detailed implementation specs
-    
-  level_10:
+  leaves:
     name: code-mapping
-    format: .{ext}.spec
+    format: .{ext}.spec (always YAML)
     owner: code-gen
-    content: direct code generation
+    content: direct code generation with YAML schema
+    schema: "Structured YAML for contracts, APIs, boilerplate"
+  
+  properties:
+    - no_fixed_layers: "Tree depth depends on system complexity"
+    - self_expanding: "Agents create new nodes as needed"
+    - dependency_based: "Tree structure follows @ref: links"
+    - concurrent_expansion: "Multiple branches can expand simultaneously"
 ```
 
-### @naming/layer-example
+### @naming/tree-example
 
 ```speclang
-# @block:naming/layer-example @kind:code
+# @block:naming/tree-example @kind:code
 ```
 specs/
-  project.scl                    # level 0 (north star)
-  auth.spec.md                   # level 1 (feature overview)
+  project.scl                    # root (north star)
+  auth.spec.md                   # branch (feature)
   auth/
-    entities.spec.yaml           # level 2 (components)
-    operations.spec.yaml         # level 2
-    login-flow.spec.yaml         # level 3 (details)
-    jwt-handler.go.spec          # level 10 (direct mapping)
+    entities.spec.yaml           # sub-branch (data structures)
+    operations.spec.yaml         # sub-branch (functions)
+    login-flow.spec.yaml         # deeper branch (detailed flow)
+    jwt-handler.go.spec          # leaf → generates handler.go
+  user-profile.spec.md           # parallel branch
+  user-profile/
+    api.ts.spec                  # leaf → generates api.ts
+  docker-compose.yaml.spec       # leaf → generates docker-compose.yaml
 ```
 ```
 

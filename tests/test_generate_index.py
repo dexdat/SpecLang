@@ -98,7 +98,8 @@ def test_get_spec_files(tmp_path):
     files = get_spec_files(str(tmp_path / 'specs'))
     # Should find 4 spec files
     assert len(files) == 4
-    paths = [os.path.basename(f) for f in files]
+    # get_spec_files returns tuples (relpath, filepath)
+    paths = [os.path.basename(filepath) for relpath, filepath in files]
     assert 'test1.spec.md' in paths
     assert 'test2.spec.yaml' in paths
     assert 'test3.scl' in paths
@@ -136,13 +137,14 @@ short: Test spec 2
 # Content""")
     
     monkeypatch.chdir(tmp_path)
-    # Run generate_index.py via subprocess
+    # Run generate_index.py via subprocess (script is in project root)
     import subprocess
+    generate_index_path = Path(__file__).parent.parent / 'generate_index.py'
     result = subprocess.run(
-        [sys.executable, 'generate_index.py'],
+        [sys.executable, str(generate_index_path)],
         capture_output=True,
         text=True,
-        cwd=Path(__file__).parent.parent
+        cwd=tmp_path
     )
     # Should succeed
     assert result.returncode == 0
