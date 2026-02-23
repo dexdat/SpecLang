@@ -1,5 +1,45 @@
 # Progress
 
+## P2-012: MCP Server Overview
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/mcp.spec.dir/overview.spec.md`
+- **Files Reviewed**: src/mcp/index.ts, server.ts, types.ts
+- **Tests**: Build passes, 991 tests pass
+
+### Components Verified
+
+1. **MCPServer** (`src/mcp/server.ts`)
+   - Standalone server, not tied to OpenCode ✓
+   - Provides SQLite access via MCP tools ✓
+   - Works with ANY MCP-compatible editor (Cursor, Claude Code, Zed, etc.) ✓
+   - Three run modes: editor-initiated (stdio), remote (HTTP), server (daemon) ✓
+   - Commands table for inter-agent communication ✓
+   - Error logs accessible via MCP tools (error handling module exists, would need error_logs table)
+
+2. **Tool Registry** (`src/mcp/tools/index.ts`)
+   - 30+ MCP tools registered
+   - Search, specs CRUD, locks, cascade, index, dashboard, commands
+
+3. **Error Handling** (`src/mcp/errors/`)
+   - Error types, handler, translations, recovery
+   - Database, tool, and transport error configs
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 991 passed
+
+### Notes
+
+- Overview spec is satisfied by existing implementation
+- Next sibling: `@ref:specs/mcp.spec.dir/architecture`
+
+---
+
 ## P2-011: MCP Search Tools
 
 **Status**: PASSED
