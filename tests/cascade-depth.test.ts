@@ -2,7 +2,7 @@
 // DO NOT EDIT MANUALLY
 // Source: docs/prompts/phase-0.20-cascade-depth.md
 
-import { describe, test, expect, beforeEach, afterEach } from 'bun:test';
+import { describe, test, expect, beforeEach, afterEach } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import { 
