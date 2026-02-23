@@ -26,13 +26,10 @@ Project: SpecLang (meta-circular)
 
 | Phase | Stories | Status |
 |-------|---------|--------|
-| P0: Foundation | 3 | ✅ Complete |
+| P0: Foundation | 4 | ✅ Complete |
 | P1: Core Runtime | 2 | ⬜ Not Started |
-| P2: MCP Interface | 1 | ⬜ Not Started |
-| P3: Code Generation | 1 | ⬜ Not Started |
-| P4: Pipeline | 2 | ⬜ Not Started |
 
-**Total: 9 stories, 3 complete**
+**Total: 9 stories, 4 complete**
 
 ---
 
@@ -126,4 +123,29 @@ Project: SpecLang (meta-circular)
 - `specs/stdlib.spec.md` - Main spec
 - `specs/stdlib.spec.dir/types.spec.md` - Types sub-spec
 - `specs/stdlib.spec.dir/mapping.spec.md` - Functions & Assertions sub-spec
+
+### P0-011: Skills Pack (2026-02-23)
+
+**Status**: ✅ Complete
+
+**Files Created**:
+- `.opencode/skills/spec-writer.md` - SpecWriter skill definition
+- `.opencode/skills/code-gen.md` - CodeGen skill definition
+- `.opencode/skills/test-writer.md` - TestWriter skill definition
+- `.opencode/skills/back-sync.md` - BackSync skill definition
+- `.opencode/skills/orchestrator.md` - Orchestrator skill definition
+- `src/skills/types.ts` - Type definitions for Skill, SkillTrigger, SkillEvent
+- `src/skills/registry.ts` - SkillRegistry for managing skills
+- `src/skills/loader.ts` - SkillLoader for loading skill files
+- `src/skills/executor.ts` - SkillExecutor for running skills
+- `src/skills/index.ts` - Main entry point
+- `tests/skills.test.ts` - 9 test cases
+
+**Validation**:
+- ✅ TypeScript compiles: `npm run build`
+- ✅ Tests pass: 9 skills tests passed
+- ✅ Skills load correctly: All core skills registered (spec-writer, code-gen, test-writer, back-sync, Orchestrator)
+
+**Spec References**:
+- `specs/skills.spec.md` - Main spec (already existed)
 
