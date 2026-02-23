@@ -31,6 +31,7 @@ project.scl:
     embeddings: EmbeddingConfig
     database: DatabaseConfig
     cascade: CascadeConfig
+    continuous_improvement: ContinuousImprovementConfig
     agents: AgentsConfig
 ```
 
@@ -181,6 +182,41 @@ CascadeConfig:
     description: "Max files changed per cascade (safety)"
     type: Integer
     default: 1000
+```
+
+## Continuous Improvement Configuration
+
+### @config/continuous-improvement
+
+```speclang
+# @block:config/continuous-improvement @kind:entity
+ContinuousImprovementConfig:
+  description: "Configuration for continuous improvement loop. See @ref:specs/cascade/continuous-improvement for details."
+  
+  enabled:
+    description: "Enable continuous improvement loop"
+    type: Boolean
+    default: true
+    
+  max_iterations:
+    description: "Maximum number of improvement iterations before stopping (0 = unlimited)"
+    type: Integer
+    default: 0
+    
+  max_time_since_human_update:
+    description: "Maximum seconds since last human interaction before pausing loop (0 = no limit)"
+    type: Integer
+    default: 86400  # 24 hours
+    
+  escalation_threshold:
+    description: "Number of unresolved MCP messages before escalating to human"
+    type: Integer
+    default: 5
+    
+  auto_resolve_confidence_threshold:
+    description: "Confidence threshold (0.0-1.0) for AI to auto-resolve messages without human input"
+    type: Float
+    default: 0.8
 ```
 
 ## Agent Configuration
