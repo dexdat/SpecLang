@@ -1,5 +1,54 @@
 # Progress
 
+## P1-008: Daemon Event Routing
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/daemon.spec.dir/routing.spec.md`
+- **Files**: Router already implemented in src/daemon/router.ts
+- **Tests**: Build passes, all daemon tests pass
+
+### Components
+
+1. **Router Class** (`src/daemon/router.ts`)
+   - RouteRule interface with pattern, agent, taskKind
+   - initializeRules() - defines routing patterns:
+     - project.scl → northstar (SpecWriter)
+     - specs/**/*.scl → spec-agent (SpecWriter)
+     - specs/**/*.spec.md → spec-agent (SpecWriter)
+     - specs/**/*.spec.yaml → spec-agent (SpecWriter)
+     - tests/**/*.test.spec.scl → test-agent (TestWriter)
+     - generated/**/*.go → code-agent-go (CodeGen)
+     - generated/**/*.ts → code-agent-ts (CodeGen)
+     - generated/**/*.js → code-agent-js (CodeGen)
+     - generated/**/*.py → code-agent-python (CodeGen)
+     - generated/**/*.rs → code-agent-rust (CodeGen)
+
+2. **route(event)** - Maps FileEvent to AgentTask
+   - Pattern matching against file path
+   - Extracts spec and target paths
+   - Handles cascade depth tracking for generated files
+   - Emits 'route' event with event, task, agent
+
+3. **extractSpecPath(filePath)** - Maps file to corresponding spec
+4. **extractTargetPath(filePath)** - Maps spec to output location
+5. **AgentSession interface** - for agent notification
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ All router tests pass
+
+### Notes
+
+- Implements file pattern → agent mapping per spec
+- Handles back-sync for human edits in generated/ files
+- Cascade depth tracking for non-spec file changes
+
+---
+
 ## P1-007: Daemon Convergence Detection
 
 **Status**: PASSED
