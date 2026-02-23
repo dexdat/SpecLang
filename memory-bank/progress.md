@@ -1,5 +1,47 @@
 # Progress
 
+## P3-002: Code Generation Templates
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/templates.spec.md`
+- **Files Reviewed**: src/codegen/templates.ts
+- **Tests**: Build passes, 991 tests pass
+
+### Components Verified
+
+1. **TEMPLATES Registry** (`src/codegen/templates.ts`)
+   - TypeScript: interface, function, class, type ✓
+   - Go: struct, func, interface ✓
+   - Python: class, function, dataclass ✓
+   - Rust: struct, impl, function, enum ✓
+
+2. **Template Functions**
+   - renderTemplate(template, vars) ✓
+   - getTemplate(target, name) ✓
+   - getTemplateNames(target) ✓
+   - listTemplates() ✓
+   - formatFields(fields, indent) ✓
+   - formatParams(params) ✓
+   - formatMethods(methods, indent) ✓
+   - createFileHeader(spec, generatorName) ✓
+   - createFileFooter(spec) ✓
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Tests**: ✅ 991 passed (4 pre-existing CLI test failures)
+
+### Notes
+
+- Implementation matches @speclang/templates spec exactly
+- All template variables and helper functions implemented
+- Multi-language support: TypeScript, Go, Python, Rust
+
+---
+
 ## P3-001: Code Generator Framework
 
 **Status**: PASSED
