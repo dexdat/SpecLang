@@ -2,6 +2,17 @@
 // Source: @speclang/test-specs/reporter
 // DO NOT EDIT MANUALLY
 
+// speclang-header lines:12
+// id: @speclang/test-specs/reporter
+// version: 0.1.0
+// layer: 1
+// tags: [tests, bdd, reporter]
+// imports: [@speclang/core]
+// status: draft
+// short: Test Reporter
+// @ref: @speclang/test-specs
+// ---
+
 import { TestReport, TestResult } from './types';
 
 /**

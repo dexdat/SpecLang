@@ -2,6 +2,18 @@
 // Source: @speclang/test-specs/generator
 // DO NOT EDIT MANUALLY
 
+// speclang-header lines:12
+// id: @speclang/test-specs/generator
+// version: 0.1.0
+// layer: 1
+// tags: [tests, bdd, generator]
+// imports: [@speclang/core]
+// status: draft
+// short: Test Generator
+// @ref: @speclang/test-specs
+// @ref: @speclang/test-specs/format
+// ---
+
 import { TestSpec, TestScenario, SupportedLanguage } from './types';
 
 /**

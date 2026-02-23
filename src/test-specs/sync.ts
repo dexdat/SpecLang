@@ -2,6 +2,17 @@
 // Source: @speclang/test-specs/sync
 // DO NOT EDIT MANUALLY
 
+// speclang-header lines:12
+// id: @speclang/test-specs/sync
+// version: 0.1.0
+// layer: 1
+// tags: [tests, bdd, sync]
+// imports: [@speclang/core]
+// status: draft
+// short: Test Result Sync
+// @ref: @speclang/test-specs
+// ---
+
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { glob } from 'glob';
