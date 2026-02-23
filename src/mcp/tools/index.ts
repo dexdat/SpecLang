@@ -14,13 +14,16 @@ import { LocksToolHandler } from './locks.js';
 import { CascadeToolHandler } from './cascade.js';
 import { IndexToolHandler } from './index-tools.js';
 import { DashboardToolHandler } from './dashboard.js';
+import { CommandsToolHandler } from './commands.js';
 import type { 
   SearchInput, 
   CreateSpecInput, 
   UpdateSpecInput, 
   LockInput, 
   UnlockInput, 
-  CascadeTriggerInput 
+  CascadeTriggerInput,
+  CommandInput,
+  QueryCommandsInput
 } from '../types.js';
 
 /**
@@ -38,6 +41,7 @@ export class MCPToolRegistry {
   public cascade: CascadeToolHandler;
   public index: IndexToolHandler;
   public dashboard: DashboardToolHandler;
+  public commands: CommandsToolHandler;
   
   constructor(db: SpecLangDB, config: MCPServerConfig) {
     this.db = db;
@@ -50,6 +54,7 @@ export class MCPToolRegistry {
     this.cascade = new CascadeToolHandler(db);
     this.index = new IndexToolHandler(db, config.specsDir);
     this.dashboard = new DashboardToolHandler(db, this.config);
+    this.commands = new CommandsToolHandler(db);
   }
   
   /**
@@ -158,6 +163,29 @@ export class MCPToolRegistry {
             break;
           case 'speclang_subscribe_events':
             result = await this.dashboard.handleSubscribeEvents(args as unknown as { types?: string[] });
+            break;
+
+          // Command queue tools
+          case 'speclang_query_commands':
+            result = await this.commands.handleQueryCommands(args as unknown as QueryCommandsInput) as unknown as Record<string, unknown>;
+            break;
+          case 'speclang_insert_command':
+            result = await this.commands.handleInsertCommand(args as unknown as CommandInput);
+            break;
+          case 'speclang_update_command':
+            result = await this.commands.handleUpdateCommand(args as unknown as { command_id: string; status: 'pending' | 'running' | 'completed' | 'failed'; error?: string });
+            break;
+          case 'speclang_delete_command':
+            result = await this.commands.handleDeleteCommand(args as unknown as { command_id: string });
+            break;
+          case 'speclang_get_next_command':
+            result = await this.commands.handleGetNextCommand() as unknown as Record<string, unknown>;
+            break;
+          case 'speclang_clear_completed':
+            result = await this.commands.handleClearCompleted(args as unknown as { olderThan?: number });
+            break;
+          case 'speclang_batch_insert':
+            result = await this.commands.handleBatchInsert(args as unknown as { commands: Array<{ cascade_id: string; action: string; target_file?: string; priority?: number }> });
             break;
             
           default:
@@ -661,6 +689,102 @@ export function getToolDefinitions() {
             description: 'Event types to subscribe to (file_change, cascade_progress, agent_activity, convergence)'
           }
         }
+      }
+    },
+
+    // Command queue tools
+    {
+      name: 'speclang_query_commands',
+      description: 'Query commands from the queue',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          status: { type: 'string', description: 'Filter by status', default: 'pending' },
+          limit: { type: 'number', description: 'Max results', default: 10 },
+          cascade_id: { type: 'string', description: 'Filter by cascade ID' },
+          session_id: { type: 'string', description: 'Filter by session ID' }
+        }
+      }
+    },
+    {
+      name: 'speclang_insert_command',
+      description: 'Insert a command into the queue',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          cascade_id: { type: 'string', description: 'Cascade this command belongs to' },
+          action: { type: 'string', description: 'Action to perform' },
+          target_file: { type: 'string', description: 'Target file for the action' },
+          session_id: { type: 'string', description: 'Associated session ID' },
+          payload: { type: 'object', description: 'Additional payload data' },
+          priority: { type: 'number', description: 'Command priority (higher = more urgent)', default: 0 }
+        },
+        required: ['cascade_id', 'action']
+      }
+    },
+    {
+      name: 'speclang_update_command',
+      description: 'Update command status',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          command_id: { type: 'string', description: 'Command ID' },
+          status: { type: 'string', enum: ['pending', 'running', 'completed', 'failed'], description: 'New status' },
+          error: { type: 'string', description: 'Error message if failed' }
+        },
+        required: ['command_id', 'status']
+      }
+    },
+    {
+      name: 'speclang_delete_command',
+      description: 'Delete a command from the queue',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          command_id: { type: 'string', description: 'Command ID to delete' }
+        },
+        required: ['command_id']
+      }
+    },
+    {
+      name: 'speclang_get_next_command',
+      description: 'Get next pending command (highest priority)',
+      inputSchema: {
+        type: 'object',
+        properties: {}
+      }
+    },
+    {
+      name: 'speclang_clear_completed',
+      description: 'Clear completed or failed commands older than cutoff',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          olderThan: { type: 'number', description: 'Unix timestamp cutoff' }
+        }
+      }
+    },
+    {
+      name: 'speclang_batch_insert',
+      description: 'Insert multiple commands in batch',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          commands: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                cascade_id: { type: 'string' },
+                action: { type: 'string' },
+                target_file: { type: 'string' },
+                priority: { type: 'number' }
+              }
+            },
+            description: 'Array of commands to insert'
+          }
+        },
+        required: ['commands']
       }
     }
   ];
