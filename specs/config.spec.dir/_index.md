@@ -11,13 +11,17 @@ status: active
 
 # Config Directory Index
 
-**Directory:** `specs/config.dir/`  
-**Purpose:** Contains config sub-specs.
+**Directory:** `specs/config.spec.dir/`  
+**Purpose:** Contains config sub-specs and implementation.
 
 ## Spec Files
 
 - `defaults.spec.md`
 - `schema.spec.md`
+
+## Implementation
+
+- `src/` - TypeScript implementation (symlinked to `src/config/`)
 
 ## Notes
 
