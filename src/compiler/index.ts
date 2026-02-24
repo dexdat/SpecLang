@@ -1,7 +1,1 @@
-/**
- * SPECLANG-GENERATED: Compiler Module
- * Source: @speclang/compiler
- */
-
-export * from "./targets";
-export * from "./phases";
+../../specs/compiler.spec.dir/src/index.ts
