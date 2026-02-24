@@ -1,5 +1,76 @@
 # Progress
 
+## P4-001: Build Pipeline
+
+**Status**: PASSED
+
+### Implementation Summary
+
+- **Spec**: `specs/pipeline.spec.md`, `specs/pipeline.spec.dir/build.spec.md`, `specs/pipeline.spec.dir/hooks.spec.md`, `specs/pipeline.spec.dir/recovery.spec.md`
+- **Files Existing**: src/pipeline/ (complete implementation)
+- **Tests**: Build passes, 24 pipeline tests added and pass, 1044 total tests pass
+
+### Components Verified
+
+1. **Pipeline Executor** (`src/pipeline/executor.ts`)
+   - PipelineExecutor class with full pipeline execution ✓
+   - Stage ordering, dependency resolution ✓
+   - Condition evaluation (file-changed, package.json) ✓
+   - Recovery on failure with retry attempts ✓
+   - Event emission (stage_start, stage_complete, pipeline_complete) ✓
+
+2. **Stage Executor** (`src/pipeline/stages.ts`)
+   - StageExecutor class for running commands ✓
+   - Pre/post hooks execution ✓
+   - Post-success and post-fail hooks ✓
+   - Dry-run mode support ✓
+   - Topological sort for stage ordering ✓
+
+3. **Config Manager** (`src/pipeline/config.ts`)
+   - PipelineConfigManager class ✓
+   - YAML config loading from build.yaml ✓
+   - Stage dependency validation ✓
+   - Circular dependency detection ✓
+
+4. **Hook System** (`src/pipeline/hooks.ts`)
+   - HookExecutor for script execution ✓
+   - Built-in hooks (notifyDiscord, notifySlack, logToFile) ✓
+   - Hook context with stage/pipeline state ✓
+
+5. **Recovery** (`src/pipeline/recovery.ts`)
+   - RecoveryExecutor for failure handling ✓
+   - Rollback actions (last_spec_change, last_pipeline, all) ✓
+   - Notification actions (orchestrator, log, file) ✓
+   - Retry and pause actions ✓
+   - Error logging to .speclang/errors/ ✓
+
+6. **Types** (`src/pipeline/types.ts`)
+   - Complete type definitions ✓
+   - PipelineConfig, Stage, StageResult ✓
+   - Hook, RecoveryAction, RecoveryContext ✓
+
+7. **Tests** (`tests/pipeline.test.ts`)
+   - 24 tests covering all pipeline functionality ✓
+   - Converted from bun:test to vitest ✓
+   - All tests pass ✓
+
+### Test Results
+
+- **Build**: ✅ Passes
+- **Pipeline Tests**: ✅ 24 tests pass
+- **Total Tests**: ✅ 1044 passed (6 pre-existing failures in db.test.ts, codegen/typescript.test.ts)
+
+### Notes
+
+- Pipeline implementation is complete per @speclang/pipeline spec
+- Self-defining pipeline via build.yaml (like a modern makefile)
+- Convergence-triggered execution after quiet period
+- Recovery with automatic rollback and retry (max 3 attempts)
+- Hook system for pre/post stage actions
+- Notifications to orchestrator on failure
+
+---
+
 ## P3-010: Rust Type Mappings
 
 **Status**: PASSED
