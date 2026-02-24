@@ -1,4 +1,4 @@
-# speclang-header lines:14
+# speclang-header lines:16
 id: "@speclang/sqlite/schema"
 version: 0.1.0
 layer: 2
@@ -8,8 +8,9 @@ tags: [sqlite, schema, database]
 imports: ["@speclang/sqlite"]
 status: draft
 project_level: Alpha
-agent_support: agent_assisted
-short: SQLite database schema
+agent_support: agent_autonomous
+target: src/db/index.ts
+short: SQLite database schema - Main SpecLangDB class and operations
 ---
 ## Database Schema
 
