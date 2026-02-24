@@ -1,0 +1,18 @@
+database:
+  path: .speclang/speclang.db
+  wal_mode: true
+
+server:
+  mode: stdio
+  host: localhost
+
+auth:
+  type: none
+
+logging:
+  level: info
+
+limits:
+  max_connections: 100
+  query_timeout_ms: 5000
+  max_results: 1000

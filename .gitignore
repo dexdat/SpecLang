@@ -65,3 +65,6 @@ validation_results.json
 # Ralph loop state (generated)
 .ralph/loop-state.json
 .ralph/logs/
+.ralph/monitor/
+.ralph/state/
+.ralph/backups/
