@@ -1,207 +1,150 @@
 # AGENTS.md - SpecLang Development Guide
 
-**Goal**: Specs should have enough depth to be used by autonomous agents totally.
+> **⚠️ META-CIRCULAR TRUTH - READ THIS FIRST:**
+> 
+> **WE ARE BUILDING SPECLANG USING SPECLANG**
+> 
+> ```
+> YOU are the SpecLang compiler right now
+> 
+> Normally:  specs/ → [SpecLang Binary] → src/
+> Right now: specs/ → [YOU THE LLM] → src/
+> 
+> The specs in specs/ are the SOURCE OF TRUTH
+> The code in src/ is GENERATED from specs/
+> 
+> Eventually: src/codegen/* will do what you're doing
+> And you'll have bootstrapped the compiler from specs
+> ```
+> 
+> **This means:**
+> 1. **specs/** contains the specifications (source of truth)
+> 2. **src/** contains the implementation (generated from specs)
+> 3. Files may be symlinked from specs/ to src/ following our dual-view pattern
+> 4. When you write code, you're implementing what the specs describe
+> 5. When the code works, the specs are validated
+> 
+> **Never forget: The specs define SpecLang. You are building SpecLang.**
 
-## Autonomous Agent Readiness
+---
 
-### Project Maturity Levels
-SpecLang supports flags for different project maturity levels:
-- **POC** (Proof of Concept): Experimental, minimal validation
-- **MVP** (Minimum Viable Product): Core functionality validated
-- **Alpha**: Internal testing, incomplete features
-- **Beta**: External testing, feature complete
-- **Production**: Stable, production-ready
-- **Startup**: Small team, rapid iteration
-- **SMB** (Small/Medium Business): Established processes, moderate scale
-- **MSB** (Medium/Large Business): Complex integration, compliance focus
-- **Enterprise**: Maximum scale, strict governance
+> **🔄 SELF-IMPROVEMENT PROTOCOL**: This file auto-updates as agents discover important patterns. When you find something critical:
+> 1. Add it to the relevant section below
+> 2. Document the discovery context
+> 3. Commit with `speclang: docs: AGENTS.md - <what was discovered>`
 
-### Spec Depth Requirements
-For autonomous agent operation, specs must:
-1. Use `agent_support: agent_autonomous` in headers
-2. Include comprehensive references (`@ref:`) to all dependencies
-3. Provide explicit step-by-step descriptions where needed
-4. Resolve all ambiguities through validation rules
-5. Maintain consistent `layer` values (0-10 abstraction scale)
+## Critical Specs (Read First)
 
-### Header Fields for Autonomous Operation
+```bash
+# Read in this order:
+1. docs/NORTH_STAR.md          # Vision and principles
+2. specs/project.scl           # North star spec (layer 0)
+3. specs/core.spec.md          # Core architecture
+4. specs/headers.spec.md       # Header format (CRITICAL)
+5. specs/speclang.spec.md      # Self-specifying format
+```
+
+## Build & Development Commands
+
+### TypeScript Build
+```bash
+npm run build              # Compile TypeScript to dist/
+npm run dev               # Watch mode compilation
+npm run clean             # Remove dist/
+```
+
+### Testing (Vitest)
+```bash
+npm test                  # Run all tests
+npm run test:watch        # Watch mode
+npm run test:coverage     # With coverage
+
+# Single test patterns:
+npx vitest run tests/deployment.test.ts
+npx vitest run tests/db.test.ts -t "should create database"
+npx vitest run --reporter=verbose 2>&1 | grep -A5 "FAIL"
+```
+
+### Linting
+```bash
+npm run lint              # ESLint on src/**/*.ts
+```
+
+### CLI Commands
+```bash
+./bin/speclang --help
+./bin/speclang validate   # Validate specs
+./bin/speclang cascade    # Run cascade
+```
+
+## Baby Steps™ Methodology
+
+**The 6 Unbreakable Rules:**
+1. **Smallest Possible Meaningful Change** - One atomic change at a time
+2. **The Process is the Product** - Documentation is as important as code
+3. **One Substantive Accomplishment at a Time** - Focus completely
+4. **Complete Each Step Fully** - No shortcuts
+5. **Incremental Validation is Mandatory** - `npm run build && npm test` after EVERY change
+6. **Document Every Step with Focus** - Specific, detailed changelogs
+
+**Validation Gate (MUST RUN):**
+```bash
+npm run build && npm test
+```
+- If fails: Fix immediately, do not proceed
+- Must pass before any commit
+
+## Code Style Guidelines
+
+### TypeScript
+```typescript
+// Imports: stdlib → third-party → local
+import { readFileSync } from 'fs';
+import { SpecLangDB } from '../db';
+import { parseHeader } from './parser';
+
+// Naming
+const MAX_RETRY_COUNT = 3;           // UPPER_SNAKE_CASE
+let fileContent: string;             // camelCase
+function parseHeader(): void {}      // camelCase
+class SpecValidator {}               // PascalCase
+
+// Types always explicit
+interface SpecMetadata {
+  id: string;
+  version: string;
+  layer: number;
+}
+
+// Error handling
+try {
+  const data = parseSpec(content);
+} catch (err) {
+  console.error(`Failed to parse: ${err.message}`);
+  throw new SpecError('PARSE_FAILED', err);
+}
+```
+
+### Spec Files (.spec.md)
 ```yaml
 # speclang-header lines:12
 id: @specs/example
 version: 1.0.0
 layer: 5
 project_level: Alpha
-agent_support: agent_autonomous
-tags: [example, autonomous]
-short: Brief description
+agent_support: agent_assonomous
+tags: [example, feature]
+short: Brief description of this spec
 ---
 ```
 
-### Validation and Semantic Definitions
-
-Based on adversarial feedback, to truly achieve autonomous agent operation:
-
-1. **Validation Rules**: Tools must check that specs labeled `agent_autonomous` contain sufficient detail:
-   - All operations have step-by-step descriptions
-   - All references (`@ref:`) resolve to existing blocks
-   - No ambiguous natural language remains
-   - All required fields are present
-
-2. **Semantic Definitions**: Clear definitions for each value:
-   - `project_level`: Specific criteria for each maturity level
-   - `layer`: Concrete mapping (0=north star, 1=feature, 2=component, etc.)
-   - `agent_support`: Behavioral expectations for each level
-
-3. **Agent Behavior Matrix**: Explicit rules for how agents adjust behavior based on metadata:
-   - `POC` + `human_only`: Require human confirmation for each step
-   - `Production` + `agent_autonomous`: Full autonomous generation and deployment
-   - Mixed maturity levels: Handle dependencies appropriately
-
-4. **Transition Workflows**: Procedures for moving specs between maturity levels:
-   - Checklist for upgrading from `agent_assisted` to `agent_autonomous`
-   - Required reviews, tests, and completeness checks
-   - Automated validation before allowing transitions
-
-5. **Safety Nets**: Mechanisms to detect mislabeled specs:
-   - Automated analysis of spec completeness
-   - Peer-review hooks for critical changes
-   - Fallback to human review when confidence is low
-
-## Build & Development Commands
-
-### Python Scripts (Tooling)
-```bash
-# Run Python scripts directly
-python3 generate_index.py          # Generate spec index
-python3 rename_spec_files.py        # Rename spec files per conventions
-
-# Make scripts executable
-chmod +x generate_index.py rename_spec_files.py
-
-# Validate specs (syntax check)
-python3 -c "import yaml; yaml.safe_load(open('specs/headers.spec'))"
-```
-
-### Testing
-```bash
-# Run Python script tests (when implemented)
-python3 -m pytest tests/ -v                    # Run all tests
-python3 -m pytest tests/test_parser.py -v    # Single test file
-python3 -m pytest tests/test_parser.py::test_header_parsing -v  # Single test
-
-# Manual spec validation
-grep -r "speclang-header" specs/ --include="*.spec" | wc -l  # Count valid headers
-```
-
-### Linting & Formatting
-```bash
-# Python code style
-black generate_index.py rename_spec_files.py   # Format Python
-flake8 generate_index.py                     # Lint Python
-mypy generate_index.py                       # Type check
-
-# YAML validation
-yamllint specs/*.spec                         # Validate YAML in specs
-
-# Trailing whitespace cleanup
-find specs -name "*.spec" -exec sed -i '' 's/[[:space:]]*$//' {} \;
-```
-
-## Code Style Guidelines
-
-### Python Code (Tooling Scripts)
-
-**Imports:**
-```python
-# Standard library first
-import os
-import json
-import re
-from datetime import datetime
-
-# Third party second
-import yaml
-
-# Local imports last
-from speclang_parser import parse_header
-```
-
-**Formatting:**
-- Use 4 spaces (no tabs)
-- Max line length: 100 characters
-- Use double quotes for strings
-- Trailing commas in multi-line collections
-
-**Naming:**
-```python
-# Functions: snake_case
-def parse_header(filepath):
-def extract_metadata(content):
-
-# Variables: snake_case
-header_lines = 12
-metadata = {}
-
-# Constants: UPPER_SNAKE_CASE
-MAX_HEADER_LINES = 100
-DEFAULT_VERSION = "0.1.0"
-
-# Classes: PascalCase
-class SpecParser:
-class HeaderValidator:
-```
-
-**Types:**
-```python
-from typing import Dict, List, Optional, Tuple
-
-def parse_header(filepath: str) -> Tuple[int, Dict]:
-    """Parse header and return line count and metadata."""
-    pass
-```
-
-**Error Handling:**
-```python
-try:
-    metadata = yaml.safe_load(yaml_text)
-except yaml.YAMLError as e:
-    print(f"Error parsing YAML in {filepath}: {e}")
-    return 0, {}
-```
-
-### Spec Files (.spec)
-
-**Header Format:**
-```yaml
-# Line 1: Comment or blank
-# Line 2: "# speclang-header lines:N"
-# Lines 3-N: YAML metadata
-
-# speclang-header lines:12
-id: @specs/example
-version: 1.0.0
-tags: [example, docs]
-short: Brief description
----
-```
-
-**Naming Conventions:**
-- File names: `{name}.spec` (lowercase, hyphen-separated)
-- SIP skills: `sip-XXX-name-speclang-vN.md`
-- IDs: `@domain/path` (lowercase, forward slashes)
-- Block IDs: `#block-name` (lowercase, hyphen-separated)
-
-**Content Structure:**
+**Block Format:**
 ```markdown
-# Title
-
-## Section 1
-
-### @block:id @kind:type
-Content here...
-
-## Section 2
-...
+### @block:block-name @kind:type
+Content here with:
+- Steps
+- Details
+- @ref:specs/other#block references
 ```
 
 **References:**
@@ -214,55 +157,107 @@ Content here...
 ## Project Structure
 
 ```
-specs/                    # Core specifications
-├── *.spec               # Specification files
-└── implementation/      # Implementation notes
+specs/                    # Core specifications (SOURCE OF TRUTH)
+├── *.spec.md            # Spec files
+├── *.spec.yaml          # YAML specs
+└── *.spec.dir/          # Split spec directories
+    └── src/             # Source code (symlinked to src/)
 
-.opencode/               # OpenCode configuration
-├── skills/             # SIPs and agent skills
-├── agents/             # Agent definitions
-├── commands/           # CLI commands
-└── tools/              # MCP tools
+src/                      # Generated TypeScript implementation
+├── db/                  # SQLite database layer
+├── parser/              # Spec header parser
+├── cascade/             # Cascade coordination
+├── daemon/              # speclangd daemon
+├── mcp/                 # MCP server implementation
+├── codegen/             # Code generation
+└── ...                  # (may contain symlinks to specs/)
 
-*.py                     # Python tooling scripts
+tests/                    # Test files (vitest)
+.ralph/                   # Ralph Loop state
+├── prd.json             # Story tracker
+├── progress.md          # Build progress
+└── logs/                # Iteration logs
+
+docs/                     # Documentation
+├── NORTH_STAR.md        # Project vision
+└── prompts/             # Agent prompts
 ```
 
-## Development Workflow
+**Key Insight:** Files in `specs/implementation.spec.dir/src/` are the SOURCE OF TRUTH for implementation. They may be symlinked to `src/` following SpecLang's dual-view pattern where specs are the canonical source.
 
-1. **Edit specs** in `specs/` directory
-2. **Run indexer** to update `_index.json`: `python3 generate_index.py`
-3. **Validate headers** in all spec files
-4. **Commit per spec** with descriptive message
-5. **Update SIPs** in `.opencode/skills/` if needed
+## Agent Workflow
 
-## Testing Philosophy
+### Starting a Story
+```bash
+# 1. Check current story
+cat .ralph/prd.json | jq -r '[.phases[].stories[] | select(.passes == false)] | .[0]'
 
-Since SpecLang is self-specifying:
-- Specs are the test cases
-- Parser should validate spec format
-- Implementation follows specs
-- When in doubt, check the specs/
+# 2. Read the spec
+cat specs/deployment.spec.md
+
+# 3. Run validation gate
+npm run build && npm test
+```
+
+### Completing a Baby Step
+```bash
+# After each atomic change:
+npm run build && npm test          # Validate
+git add src/feature/index.ts       # Stage one file
+git commit -m "speclang: baby-step: <description>  # Commit
+
+Source: specs/feature.spec.md#block-name
+Change: What changed
+Validation: build + tests pass"
+```
+
+### Marking Story Complete
+```bash
+# 1. Update PRD
+cat .ralph/prd.json | jq '.phases[0].stories[0].passes = true'
+
+# 2. Update progress
+echo "## [$(date)] - P0-XXX Complete" >> .ralph/progress.md
+
+# 3. Final validation
+npm run build && npm test
+```
 
 ## Common Tasks
 
 ```bash
-# Find all spec files
-find specs -name "*.spec" -type f
+# Find spec files
+find specs -name "*.spec.md" -o -name "*.scl"
 
-# Count lines in specs
-wc -l specs/*.spec
+# Check header validity
+grep -r "speclang-header" specs/ --include="*.md" | wc -l
 
-# Search for TODO in specs
-grep -r "TODO" specs/ --include="*.spec"
+# Count remaining stories
+cat .ralph/prd.json | jq '[.phases[].stories[] | select(.passes == false)] | length'
 
-# Validate all headers have line count
-grep -L "speclang-header" specs/*.spec
+# Run Ralph Loop dry test
+./.ralph/ralph-baby-steps.sh --dry-run 1
+
+# Check symlinks (they're part of our dual-view pattern)
+find src -type l -name "*.ts"
 ```
 
-## Notes
+## Testing Philosophy
 
-- This is a meta-project defining SpecLang itself
-- Specs are the source of truth
-- Python scripts are tooling only
-- Follow existing spec patterns when adding new specs
-- Keep AGENTS.md updated as project evolves
+- **Specs are the test cases** - Implementation follows specs/
+- **Baby Step validation** - Build + test after every change
+- **When in doubt** - Check specs/ directory
+- **Specs are source of truth** - Code is generated from specs
+
+## Key Principles
+
+1. **Specs First** - Always check specs/ before implementing
+2. **Atomic Commits** - One file per commit with speclang: prefix
+3. **Validation Required** - Build + tests must pass before continuing
+4. **Document Discoveries** - Update this file with important patterns
+5. **Layer Awareness** - Respect layer 0-10 abstraction hierarchy
+6. **Meta-Circular** - Remember: **YOU ARE BUILDING SPECLANG USING SPECLANG**
+
+---
+
+**Last Updated**: 2026-02-23 | **Project**: SpecLang v0.1.0
