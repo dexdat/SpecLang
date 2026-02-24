@@ -154,36 +154,71 @@ Content here with:
 @ref:northstar                     # Project reference
 ```
 
-## Project Structure
+## Dual-View Pattern (CRITICAL)
+
+**THE RULE: Everything must have a spec source of truth**
 
 ```
-specs/                    # Core specifications (SOURCE OF TRUTH)
-├── *.spec.md            # Spec files
-├── *.spec.yaml          # YAML specs
-└── *.spec.dir/          # Split spec directories
-    └── src/             # Source code (symlinked to src/)
-
-src/                      # Generated TypeScript implementation
-├── db/                  # SQLite database layer
-├── parser/              # Spec header parser
-├── cascade/             # Cascade coordination
-├── daemon/              # speclangd daemon
-├── mcp/                 # MCP server implementation
-├── codegen/             # Code generation
-└── ...                  # (may contain symlinks to specs/)
-
-tests/                    # Test files (vitest)
-.ralph/                   # Ralph Loop state
-├── prd.json             # Story tracker
-├── progress.md          # Build progress
-└── logs/                # Iteration logs
-
-docs/                     # Documentation
-├── NORTH_STAR.md        # Project vision
-└── prompts/             # Agent prompts
+specs/{category}.spec.dir/     ← SOURCE OF TRUTH (write specs here)
+         ↓
+    [symlink or generate]
+         ↓
+{location}/                    ← WORKING LOCATION (runtime uses this)
 ```
 
-**Key Insight:** Files in `specs/implementation.spec.dir/src/` are the SOURCE OF TRUTH for implementation. They may be symlinked to `src/` following SpecLang's dual-view pattern where specs are the canonical source.
+**Repository Structure:**
+```
+specs/                           # 📋 SOURCE OF TRUTH - All specs live here
+├── *.spec.md                   # Specification files
+├── *.spec.yaml                 # YAML specs
+├── *.spec.dir/                 # Split spec directories
+│   ├── src/                    # → symlinked to src/
+│   ├── scripts/                # → symlinked to scripts/
+│   ├── skills/                 # → symlinked to .opencode/skills/
+│   ├── docs/                   # → symlinked to docs/
+│   └── .../
+└── compliance.spec.md          # Compliance verification spec
+
+src/                            # 💻 TypeScript implementation (symlinked from specs/)
+├── db/                         # SQLite database layer
+├── parser/                     # Spec header parser
+├── cascade/                    # Cascade coordination
+└── ...                         # (some files symlinked from specs/)
+
+scripts/                        # 🐍 Python tooling scripts
+├── *.py                        # (symlinked from specs/scripts.spec.dir/)
+
+.opencode/                      # 🤖 AI configuration
+├── skills/*.md                 # (should be symlinked from specs/skills.spec.dir/)
+├── agents/*.md                 # (should be symlinked from specs/agents.spec.dir/)
+└── tools/*.md                  # (should be symlinked from specs/tools.spec.dir/)
+
+docs/                           # 📚 Documentation
+├── NORTH_STAR.md               # (should be symlinked from specs/docs.spec.dir/)
+└── ...                         # (all docs should have specs)
+
+tests/                          # 🧪 Test files
+.ralph/                         # 🔄 Ralph Loop state
+config/                         # ⚙️ Configuration
+```
+
+**Compliance Status:**
+- ✅ `src/` - 7 symlinks working (auto-managed by pre-commit hook)
+- ⚠️ `scripts/` - 20/36 symlinked (55% compliant)
+- ❌ `.opencode/skills/` - 0/148 symlinked (0% compliant)
+- ❌ `docs/` - 0/11 symlinked (0% compliant)
+- ❌ `.opencode/agents/` - No specs (0% compliant)
+
+**Overall: ~30% compliant - See DUAL_VIEW_AUDIT.md for details**
+
+**Why This Matters:**
+We're bootstrapping a **NON-DETERMINISTIC COMPILER** (uses LLMs). Without dual-view:
+- LLMs generate different output each time
+- No single source of truth
+- Changes get out of sync
+- Bootstrap fails
+
+**Never create files directly in working locations** - Always create specs first!
 
 ## Agent Workflow
 
@@ -242,6 +277,78 @@ cat .ralph/prd.json | jq '[.phases[].stories[] | select(.passes == false)] | len
 find src -type l -name "*.ts"
 ```
 
+## Compliance Verification
+
+### Dual-View Compliance Check
+
+**Check if your changes follow the dual-view pattern:**
+
+```bash
+# Run compliance check
+./scripts/check_compliance.py
+
+# Check specific directory
+./scripts/check_compliance.py --dir .opencode/skills/
+
+# Fix non-compliant files
+./scripts/check_compliance.py --fix
+```
+
+**What Gets Checked:**
+1. Every file in working locations has a spec source
+2. Symlinks point to correct spec locations
+3. Specs have proper headers with `target:` field
+4. No orphaned files (files without specs)
+
+### Compliance Levels
+
+| Level | Status | Meaning |
+|-------|--------|---------|
+| ✅ **Compliant** | File is symlinked to specs/ | Following dual-view pattern |
+| ⚠️ **Partial** | Has spec but not symlinked | Needs symlink creation |
+| ❌ **Non-compliant** | No spec exists | Must create spec first |
+
+### Creating Compliant Files
+
+**Always follow this order:**
+
+1. **Create spec first:**
+   ```bash
+   # Create in specs/, NOT in working location
+   cat > specs/my-feature.spec.dir/my-file.spec.md << 'EOF'
+   # speclang-header lines:12
+   id: @specs/my-feature
+   version: 1.0.0
+   layer: 5
+   tags: [feature]
+   ---
+   
+   # My Feature Spec
+   
+   ### @block:my-file @kind:code
+   Content here...
+   EOF
+   ```
+
+2. **Run compliance check:**
+   ```bash
+   ./scripts/check_compliance.py --fix
+   ```
+
+3. **Verify symlink created:**
+   ```bash
+   ls -la src/my-file.ts  # Should show symlink
+   ```
+
+4. **Commit both spec and symlink:**
+   ```bash
+   git add specs/my-feature.spec.dir/my-file.spec.md
+   git add src/my-file.ts  # The symlink
+   git commit -m "speclang: Add my-feature spec and implementation"
+   ```
+
+**See:** `DUAL_VIEW_AUDIT.md` for full compliance audit
+
 ## Testing Philosophy
 
 - **Specs are the test cases** - Implementation follows specs/
@@ -256,7 +363,130 @@ find src -type l -name "*.ts"
 3. **Validation Required** - Build + tests must pass before continuing
 4. **Document Discoveries** - Update this file with important patterns
 5. **Layer Awareness** - Respect layer 0-10 abstraction hierarchy
-6. **Meta-Circular** - Remember: **YOU ARE BUILDING SPECLANG USING SPECLANG**
+6. **Dual-View Required** - Every file must have spec source of truth
+7. **Meta-Circular** - Remember: **YOU ARE BUILDING SPECLANG USING SPECLANG**
+
+## TODO List - Road to 100% Compliance
+
+**Current Status**: 3.7% compliant (25/679 files)  
+**Target**: 100% compliant  
+**Critical Path**: Fix non-compliant files first
+
+### 🔴 CRITICAL (Non-Compliant - No Specs)
+
+**Total**: 654 files need specs created
+
+#### Phase 1: Core Infrastructure (P0)
+- [ ] Create specs for src/db/ (SQLite layer)
+- [ ] Create specs for src/parser/ (Header parser)
+- [ ] Create specs for src/indexer/ (Spec indexer)
+- [ ] Create specs for src/cascade/ (Cascade system)
+- [ ] Create specs for src/daemon/ (speclangd)
+- [ ] Create specs for src/ralph/ (Ralph Loop)
+
+#### Phase 2: Code Generation (P1)
+- [ ] Create specs for src/codegen/ (Code generators)
+- [ ] Create specs for src/compiler/ (Compiler)
+- [ ] Create specs for src/pipeline/ (Build pipeline)
+- [ ] Create specs for src/split/ (Spec splitting)
+- [ ] Create specs for src/symlinks/ (Dual-view)
+
+#### Phase 3: Agent System (P2)
+- [ ] Create specs for src/agents/ (Agent system)
+- [ ] Create specs for src/mcp/ (MCP server)
+- [ ] Create specs for src/opencode/ (OpenCode plugin)
+- [ ] Create specs for src/guard/ (Guard system)
+- [ ] Create specs for src/lenses/ (Lens system)
+
+#### Phase 4: Supporting Modules (P3)
+- [ ] Create specs for src/stdlib/ (Standard library)
+- [ ] Create specs for src/validation/ (Validation)
+- [ ] Create specs for src/workflow/ (Workflow)
+- [ ] Create specs for src/dashboard/ (Dashboard)
+- [ ] Create specs for src/maturity/ (Maturity)
+- [ ] Create specs for src/directory/ (Directory)
+- [ ] Create specs for src/deployment/ (Deployment)
+- [ ] Create specs for src/config/ (Config)
+- [ ] Create specs for src/meta/ (Meta)
+- [ ] Create specs for src/examples/ (Examples)
+
+### 🟡 MEDIUM PRIORITY (Partial - Need Symlinks)
+
+**Total**: 0 files (good!)
+
+- [x] All partial files already have symlinks
+
+### 🟢 LOW PRIORITY (Skills, Docs, Agents)
+
+#### Phase 5: Skills (P4)
+- [ ] Create specs/skills.spec.dir/ (148 skill specs)
+- [ ] Symlink .opencode/skills/ to specs/
+
+#### Phase 6: Documentation (P5)
+- [ ] Create specs/docs.spec.dir/
+- [ ] Move docs/NORTH_STAR.md to specs/
+- [ ] Move docs/AGENTS.md to specs/
+- [ ] Move docs/CODEBASE_REVIEW.md to specs/
+- [ ] Move docs/DUAL_VIEW_AUDIT.md to specs/
+- [ ] Move docs/BOOTSTRAP_PLAN.md to specs/
+- [ ] Symlink docs/ to specs/docs.spec.dir/
+
+#### Phase 7: Agents & Tools (P6)
+- [ ] Create specs for .opencode/agents/
+- [ ] Create specs for .opencode/tools/
+- [ ] Create specs for config/
+
+#### Phase 8: Tests (P7)
+- [ ] Create specs/tests.spec.dir/
+- [ ] Review all test files for spec coverage
+
+### 📊 Compliance Checkpoints
+
+| Milestone | Target | Current | Status |
+|-----------|--------|---------|--------|
+| Core Infrastructure | 100% | 0% | 🔴 |
+| Code Generation | 100% | 15% | 🟡 |
+| Agent System | 100% | 0% | 🔴 |
+| Skills | 100% | 0% | 🔴 |
+| Documentation | 100% | 0% | 🔴 |
+| **Overall** | **100%** | **3.7%** | **🔴** |
+
+### 🛠️ How to Fix
+
+**For Non-Compliant Files:**
+```bash
+# 1. Create the spec
+mkdir -p specs/{module}.spec.dir/src/
+cat > specs/{module}.spec.dir/{file}.spec.md << 'EOF'
+# speclang-header lines:12
+id: @specs/{module}/{file}
+version: 1.0.0
+layer: 5
+target: src/{file}.ts
+---
+
+# {Module} Spec
+
+Content here...
+EOF
+
+# 2. Move implementation to spec
+cp src/{module}/{file}.ts specs/{module}.spec.dir/src/{file}.ts
+
+# 3. Create symlink
+ln -sf ../../specs/{module}.spec.dir/src/{file}.ts src/{module}/{file}.ts
+
+# 4. Commit
+git add specs/{module}.spec.dir/ src/{module}/{file}.ts
+git commit -m "speclang: Add {module}/{file} spec and implementation"
+```
+
+**Check Progress:**
+```bash
+./scripts/check_compliance.py --report
+```
+
+**See:** `DUAL_VIEW_AUDIT.md` for detailed audit
 
 ---
 
