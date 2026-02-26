@@ -1,7 +1,8 @@
-# speclang-header lines:13
+# speclang-header lines:14
 id: "@speclang/test-specs"
 version: 0.1.0
 layer: 0
+target: src/test-specs/
 tags: [tests, bdd, natural-language]
 imports: ["@speclang/core"]
 status: draft
