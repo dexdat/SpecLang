@@ -1,6 +1,7 @@
 # speclang-header lines:12
 id: "@speclang/project-layout"
 version: 0.1.0
+target: src/project-layout/
 layer: 0
 tags: [layout, structure, files]
 children: ["@speclang/project-layout/structure", "@speclang/project-layout/conventions"]

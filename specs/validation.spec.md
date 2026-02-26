@@ -1,6 +1,7 @@
 # speclang-header lines:11
 id: "@speclang/validation"
 version: 0.1.0
+target: src/validation/
 layer: 0
 tags: [validation, schema, errors]
 status: draft

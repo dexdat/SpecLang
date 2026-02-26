@@ -1,6 +1,7 @@
 # speclang-header lines:20
 id: "@speclang/cli.spec"
 version: 0.1.0
+target: src/cli/
 layer: 0
 tags: [cli, commands, interface]
 imports: ["@speclang/core", "@speclang/stdlib"]
