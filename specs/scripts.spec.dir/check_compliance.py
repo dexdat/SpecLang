@@ -86,37 +86,56 @@ def check_symlink_target_valid(file_path: Path, expected_spec_path: str) -> bool
         if '# speclang-header lines:' in content:
             return True
         
-        if 'SPECLANG-GENERATED' in content:
-            # Check if there's a corresponding .spec.md file
-            spec_file = target_path.with_suffix('.spec.md')
-            if spec_file.exists():
-                spec_content = spec_file.read_text()
-                if '# speclang-header lines:' in spec_content:
-                    return True
-            # Also check parent directory for .spec.md files
-            for md_file in target_path.parent.glob('*.spec.md'):
-                if '# speclang-header lines:' in md_file.read_text():
-                    return True
-            # Or check if there's a spec.md in parent .spec.dir
-            parent_spec = target_path.parent.parent / (target_path.parent.name.replace('.spec.dir', '') + '.spec.md')
-            if parent_spec.exists():
-                spec_content = parent_spec.read_text()
-                if '# speclang-header lines:' in spec_content:
-                    return True
-            return True  # Generated file is valid if no .spec.md found
+        # For files without speclang-header, check if they have a grandparent spec
+        # This handles files copied from src/ to specs/*.spec.dir/src/ that don't have special markers
+        grandparent_name = target_path.parent.name  # 'src'
+        great_grandparent = target_path.parent.parent  # e.g., specs/agents.spec.dir
         
-        # 3. Check if target has SPECLANG-GENERATED comment
-        if 'SPECLANG-GENERATED' in content:
-            # Check if there's a corresponding .spec.md file
-            spec_file = target_path.with_suffix('.spec.md')
-            if spec_file.exists():
-                spec_content = spec_file.read_text()
+        # Try different patterns to find the spec
+        candidate_specs = []
+        
+        # FIXED: Handle nested directories - keep going up until we find .spec.dir
+        # e.g., specs/daemon.spec.dir/src/enterprise/http_server.ts
+        #       - parent = enterprise/
+        #       - grandparent = src/
+        #       - great-grandparent = daemon.spec.dir/ (FOUND!)
+        current = target_path.parent
+        while current.name != '' and current.name != 'specs':
+            if current.name.endswith('.spec.dir'):
+                base_name = current.name.replace('.spec.dir', '')
+                candidate_specs.append(current.parent / (base_name + '.spec.md'))
+                # Also try pattern for .ts prefix (e.g., speclangd.ts.spec.dir -> speclangd.spec.md)
+                if base_name.endswith('.ts'):
+                    alt_name = base_name.replace('.ts', '')
+                    candidate_specs.append(current.parent / (alt_name + '.spec.md'))
+                break
+            current = current.parent
+        
+        if great_grandparent.name.endswith('.spec.dir'):
+            # Pattern 1: specs/agents.spec.dir -> specs/agents.spec.md
+            base_name = great_grandparent.name.replace('.spec.dir', '')
+            candidate_specs.append(great_grandparent.parent / (base_name + '.spec.md'))
+            # Pattern 2: specs/speclangd.ts.spec.dir -> specs/speclangd.spec.md (strip .ts prefix)
+            if base_name.endswith('.ts'):
+                alt_name = base_name.replace('.ts', '')
+                candidate_specs.append(great_grandparent.parent / (alt_name + '.spec.md'))
+        
+        for grandparent in candidate_specs:
+            if grandparent.exists():
+                spec_content = grandparent.read_text()
                 if '# speclang-header lines:' in spec_content:
                     return True
-            # Also check parent directory for .spec.md files
-            for md_file in target_path.parent.glob('*.spec.md'):
-                if '# speclang-header lines:' in md_file.read_text():
-                    return True
+        
+        # Also check if there's a spec at the great-grandparent level
+        # (for cases where file is in specs/agents.spec.md directly)
+        if great_grandparent.exists() and great_grandparent.suffix == '.md':
+            spec_content = great_grandparent.read_text()
+            if '# speclang-header lines:' in spec_content:
+                return True
+        
+        # If file has SPECLANG-GENERATED, consider it valid even without spec
+        if 'SPECLANG-GENERATED' in content:
+            return True
         
         return False
         

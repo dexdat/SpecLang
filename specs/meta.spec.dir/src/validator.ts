@@ -14,6 +14,11 @@ import {
 } from "./types.js";
 
 /**
+ * SelfConsistencyValidator - Verify that specs match generated code
+ * 
+ * This validator ensures that the self-specifying system maintains
+ * consistency between spec files and their corresponding code.
+ */
 export class SelfConsistencyValidator {
   private projectRoot: string;
   private strictMode: boolean;
@@ -219,16 +224,19 @@ export class SelfConsistencyValidator {
     const issues: ConsistencyIssue[] = [];
     
     // Check for header
+    if (!content.includes("# speclang-header")) {
       issues.push({
         type: "missing_block",
         specLocation: specPath,
         codeLocation: "",
+        message: "Missing speclang-header",
         severity: "error",
       });
       return issues;
     }
 
     // Validate header fields
+    const headerMatch = content.match(/^# speclang-header lines:(\d+)\n([\s\S]*?)^---/m);
     
     if (headerMatch) {
       const yamlContent = headerMatch[2];

@@ -1,10 +1,3 @@
-/**
-speclang-header lines:5
-id: @specs/ralph-loop
-version: 1.0.0
-layer: 5
- */
-
 // Generated from specs/implementation.spec.dir/ralph-loop-implementation.spec.md
 // DO NOT EDIT MANUALLY
 // Source: @speclang/implementation.ralph-loop

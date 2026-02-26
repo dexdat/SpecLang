@@ -1,10 +1,3 @@
-/**
-speclang-header lines:5
-id: @specs/cascade
-version: 1.0.0
-layer: 5
- */
-
 // SPECLANG-GENERATED: @speclang/cascade/triggers
 // This file implements the reactive trigger system for cascade reactions
 

@@ -1,10 +1,3 @@
-/**
-speclang-header lines:5
-id: @specs/cascade
-version: 1.0.0
-layer: 5
- */
-
 import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';

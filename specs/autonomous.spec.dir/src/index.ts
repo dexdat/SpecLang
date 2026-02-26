@@ -1,11 +1,4 @@
 /**
-speclang-header lines:5
-id: @specs/autonomous
-version: 1.0.0
-layer: 5
- */
-
-/**
  * SPECLANG-GENERATED: Main exports for autonomous testing system
  * Source: @speclang/autonomous-validation
  */

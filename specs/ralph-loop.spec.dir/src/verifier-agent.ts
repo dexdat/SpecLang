@@ -11,6 +11,12 @@ import { Task, VerificationResult, DatabaseInstance } from './types';
 const execAsync = promisify(exec);
 
 /**
+ * VerifierAgent - Responsible for validating specs and generated code
+ * 
+ * Part of the Ralph Loop dual-agent system, the VerifierAgent validates
+ * the output from the BuilderAgent by checking spec format, code compilation,
+ * and reference integrity.
+ */
 export class VerifierAgent {
   constructor(private db: DatabaseInstance) {}
 
@@ -54,9 +60,13 @@ export class VerifierAgent {
     const errors: string[] = [];
     const content = await readFile(specPath, 'utf-8');
     
+    // Check for speclang-header
+    if (!content.includes('# speclang-header')) {
+      errors.push(`Missing speclang-header in ${specPath}`);
     }
 
     // Parse header lines
+    const headerMatch = content.match(/# speclang-header lines:(\d+)/);
     if (headerMatch) {
       const expectedLines = parseInt(headerMatch[1], 10);
       const lines = content.split('\n');

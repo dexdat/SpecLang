@@ -7,6 +7,12 @@ import { Database } from './types';
 import { Task, BuilderResult, DatabaseInstance } from './types';
 
 /**
+ * BuilderAgent - Responsible for writing specs and generating code
+ * 
+ * Part of the Ralph Loop dual-agent system, the BuilderAgent executes
+ * tasks assigned by the LoopController by writing implementation specs
+ * and generating code files.
+ */
 export class BuilderAgent {
   constructor(private db: DatabaseInstance) {}
 
@@ -53,6 +59,7 @@ export class BuilderAgent {
   private async writeImplementationSpec(task: Task): Promise<string> {
     // Implementation spec writing logic
     // Use existing patterns from specs/implementation/
+    const specContent = `# speclang-header lines:8\n...`;
     const specPath = `specs/implementation/${task.id}.spec.md`;
     await writeFile(specPath, specContent);
     
