@@ -39,6 +39,12 @@ export interface FileEvent {
   
   /** File content hash (for modifications) */
   hash?: string;
+  
+  /** Associated cascade ID (set when processed) */
+  cascadeId?: number;
+  
+  /** Processing status */
+  processed?: boolean;
 }
 
 /**

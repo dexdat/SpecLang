@@ -110,9 +110,17 @@ import { HeaderParser } from './header-parser';
  * Extracts @block: definitions and spec headers
  */
 export class BlockParser {
-  private readonly blockPattern = /^###\s+@block:(\w+)\s+@kind:(\w+)/gm;
-  private readonly paramPattern = /^-\s+(\w+):\s+(\w+)\s+-\s+(.+)$/gm;
-  private readonly returnPattern = /\*\*Returns:\*\*\s*(\w+)\s*-\s*(.+)/;
+  // Block ID allows: letters, numbers, underscores, hyphens
+  private readonly blockPattern = /^###\s+@block:([a-zA-Z0-9_-]+)\s+@kind:(\w+)/gm;
+  
+  // Parameter: name (optional ?), type (complex types allowed), description
+  // Examples: "name: string", "name?: string", "items: string[]", "config: { foo: string }"
+  private readonly paramPattern = /^-\s+(\w+\??):\s*([^-]+?)\s+-\s*(.+)$/gm;
+  
+  // Return type: captures complex types like "string[]", "Promise<string>", "void"
+  private readonly returnPattern = /\*\*Returns:\*\*\s*(.+?)\s*-\s*(.+)/;
+  
+  // Code examples
   private readonly examplePattern = /```(\w+)\n([\s\S]*?)```/g;
   
   private headerParser: HeaderParser;
@@ -231,6 +239,7 @@ export class BlockParser {
   
   /**
    * Parse parameters section
+   * Handles: "name: string - description", "name?: string - optional param"
    */
   private parseParameters(section: string): Parameter[] {
     const params: Parameter[] = [];
@@ -238,16 +247,21 @@ export class BlockParser {
     
     if (!paramSection) return params;
     
-    const lines = paramSection[1].split('\n');
-    for (const line of lines) {
-      const match = line.match(/^-\s+(\w+):\s+(\w+)\s+-\s+(.+)$/);
-      if (match) {
-        params.push({
-          name: match[1],
-          type: match[2],
-          description: match[3].trim()
-        });
-      }
+    // Reset regex lastIndex
+    this.paramPattern.lastIndex = 0;
+    
+    let match;
+    while ((match = this.paramPattern.exec(paramSection[1])) !== null) {
+      const rawName = match[1];
+      const isOptional = rawName.endsWith('?');
+      const name = isOptional ? rawName.slice(0, -1) : rawName;
+      
+      params.push({
+        name,
+        type: match[2].trim(),
+        description: match[3].trim(),
+        optional: isOptional
+      });
     }
     
     return params;

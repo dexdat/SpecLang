@@ -55,7 +55,7 @@ logging:
 ```typescript
 import { readFile } from 'fs/promises';
 import { existsSync } from 'fs';
-import { join } from 'path';
+import * as yaml from 'js-yaml';
 
 /**
  * Default configuration values
@@ -83,15 +83,15 @@ export const DEFAULT_CONFIG = {
 
 /**
  * Configuration loader
+ * Uses js-yaml for robust YAML parsing
  */
 export class ConfigLoader {
   async load(configPath = '.speclang/config.yaml') {
     let config = { ...DEFAULT_CONFIG };
     
     if (existsSync(configPath)) {
-      const fileConfig = await this.parseYaml(
-        await readFile(configPath, 'utf-8')
-      );
+      const content = await readFile(configPath, 'utf-8');
+      const fileConfig = this.parseYaml(content);
       config = this.merge(config, fileConfig);
     }
     
@@ -99,45 +99,22 @@ export class ConfigLoader {
     return config;
   }
   
-  private parseYaml(yaml) {
-    // Simplified YAML parser
-    const result = {};
-    let section = null;
-    let array = null;
-    
-    for (const line of yaml.split('\n')) {
-      const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith('#')) continue;
-      
-      if (trimmed.endsWith(':') && !trimmed.includes(' ')) {
-        section = trimmed.slice(0, -1);
-        result[section] = {};
-        array = null;
-      } else if (trimmed.startsWith('- ') && array) {
-        array.push(trimmed.slice(2));
-      } else {
-        const match = trimmed.match(/^(\w+):\s*(.+)$/);
-        if (match && section) {
-          if (match[2].trim() === '') {
-            array = [];
-            result[section][match[1]] = array;
-          } else {
-            result[section][match[1]] = this.parseValue(match[2]);
-          }
-        }
-      }
+  /**
+   * Parse YAML content using js-yaml
+   * Falls back to default config on parse error
+   */
+  private parseYaml(content) {
+    try {
+      return yaml.load(content) || {};
+    } catch (error) {
+      console.warn('[Config] Failed to parse YAML:', error.message);
+      return {};
     }
-    
-    return result;
   }
   
-  private parseValue(value) {
-    if (value === 'true') return true;
-    if (value === 'false') return false;
-    if (/^\d+$/.test(value)) return parseInt(value, 10);
-    return value.replace(/^["']|["']$/g, '');
-  }
-  
+  /**
+   * Merge file config with defaults
+   */
   private merge(defaults, file) {
     return {
       watch: { ...defaults.watch, ...file.watch },
@@ -147,11 +124,26 @@ export class ConfigLoader {
     };
   }
   
+  /**
+   * Validate configuration values
+   * @throws Error if configuration is invalid
+   */
   private validate(config) {
-    if (config.watch.debounce < 0) {
-      throw new Error('Invalid debounce');
+    if (config.watch.debounce < 0 || config.watch.debounce > 10000) {
+      throw new Error(`Invalid debounce: ${config.watch.debounce}`);
+    }
+    if (config.cascade.quietPeriod < 1000) {
+      throw new Error(`Invalid quietPeriod: ${config.cascade.quietPeriod}`);
     }
   }
+}
+
+/**
+ * Convenience function to load config
+ */
+export async function loadConfig(configPath) {
+  const loader = new ConfigLoader();
+  return loader.load(configPath);
 }
 ```
 
@@ -165,4 +157,17 @@ const config = await loader.load();
 
 console.log(config.watch.directory); // ./specs
 console.log(config.watch.debounce);  // 300
+```
+
+## Dependencies
+
+### @poc/config/deps
+
+**js-yaml**: Required for YAML parsing
+```json
+{
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  }
+}
 ```

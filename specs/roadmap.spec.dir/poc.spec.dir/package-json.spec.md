@@ -37,7 +37,9 @@ Complete package.json specification for the POC implementation.
   "dependencies": {
     "chokidar": "^3.5.3",
     "sqlite3": "^5.1.6",
-    "commander": "^11.0.0"
+    "commander": "^11.0.0",
+    "glob": "^10.3.0",
+    "js-yaml": "^4.1.0"
   },
   "devDependencies": {
     "@types/node": "^20.5.0",
