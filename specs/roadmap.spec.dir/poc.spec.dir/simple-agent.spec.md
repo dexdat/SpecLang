@@ -40,32 +40,18 @@ For the POC, we use **one agent** that does everything:
 
 **Problem:** Spec IDs like `@examples/greeting` contain invalid path characters (`@` and `/`)
 
-**Solution:** Slugify spec IDs to create valid directory names
+**Solution:** Use `slugifySpecId` from path-utils to create filesystem-safe slugs
 
+**Transformation:**
+```
+@examples/greeting     → examples-greeting
+@speclang/core/types   → speclang-core-types
+@my-spec              → my-spec
+```
+
+**Import:**
 ```typescript
-/**
- * Slugify a spec ID for filesystem use
- * @examples/greeting → examples-greeting
- * @speclang/core → speclang-core
- * 
- * Rules:
- * 1. Remove leading @
- * 2. Replace / with -
- * 3. Replace any other special chars with -
- * 4. Lowercase
- */
-export function slugifySpecId(specId: string): string {
-  return specId
-    .replace(/^@/, '')           // Remove leading @
-    .replace(/\//g, '-')         // Replace / with -
-    .replace(/[^a-zA-Z0-9-_]/g, '-') // Replace special chars
-    .toLowerCase();
-}
-
-// Examples:
-// slugifySpecId('@examples/greeting')     // 'examples-greeting'
-// slugifySpecId('@speclang/core/types')   // 'speclang-core-types'
-// slugifySpecId('@my-spec')               // 'my-spec'
+import { slugifySpecId } from './path-utils';
 ```
 
 ## Simple Implementation
