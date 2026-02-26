@@ -26,13 +26,18 @@ children:
   - "@ref:specs/roadmap.spec.dir/poc.spec.dir/installation"
   - "@ref:specs/roadmap.spec.dir/poc.spec.dir/user-flows"
   - "@ref:specs/roadmap.spec.dir/poc.spec.dir/troubleshooting"
-  # New specs added after @adversary review
+  # New specs added after @adversary review (Priority 1 fixes)
   - "@ref:specs/roadmap.spec.dir/poc.spec.dir/package-json"
   - "@ref:specs/roadmap.spec.dir/poc.spec.dir/tsconfig-json"
   - "@ref:specs/roadmap.spec.dir/poc.spec.dir/header-parser"
   - "@ref:specs/roadmap.spec.dir/poc.spec.dir/events"
   - "@ref:specs/roadmap.spec.dir/poc.spec.dir/error-handling"
- - "@ref:specs/roadmap.spec.dir/poc.spec.dir/template-registry"
+  - "@ref:specs/roadmap.spec.dir/poc.spec.dir/template-registry"
+  # Additional specs for complete coverage
+  - "@ref:specs/roadmap.spec.dir/poc.spec.dir/code-generator"
+  - "@ref:specs/roadmap.spec.dir/poc.spec.dir/path-utils"
+  - "@ref:specs/roadmap.spec.dir/poc.spec.dir/config-loader"
+  - "@ref:specs/roadmap.spec.dir/poc.spec.dir/build-integration"
 depends_on:
   - "@ref:specs/daemon"
   - "@ref:specs/cascade"
@@ -75,9 +80,13 @@ When implementing the POC, these are the ONLY specs you need to read and impleme
 | [@ref:specs/roadmap.spec.dir/poc.spec.dir/header-parser] | Parse spec headers (YAML) | `src/parser/header-parser.ts` |
 | [@ref:specs/roadmap.spec.dir/poc.spec.dir/templates] | Code generation templates | `src/codegen/templates/*.ts` |
 | [@ref:specs/roadmap.spec.dir/poc.spec.dir/template-registry] | Template loading/management | `src/codegen/template-registry.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/code-generation] | Code generation overview | `src/codegen/generator.ts` |
+| [@ref:specs/roadmap.spec.dir/poc.spec.dir/code-generator] | Code generator orchestrator | `src/codegen/generator.ts` |
+| [@ref:specs/roadmap.spec.dir/poc.spec.dir/path-utils] | Path resolution utilities | `src/utils/path-utils.ts` |
+| [@ref:specs/roadmap.spec.dir/poc.spec.dir/code-generation] | Code generation overview | `src/codegen/index.ts` |
 | [@ref:specs/roadmap.spec.dir/poc.spec.dir/events] | Event system interface | `src/events/typed-emitter.ts` |
 | [@ref:specs/roadmap.spec.dir/poc.spec.dir/error-handling] | Error recovery strategies | `src/errors/handler.ts` |
+| [@ref:specs/roadmap.spec.dir/poc.spec.dir/config-loader] | Configuration loading | `src/config/loader.ts` |
+| [@ref:specs/roadmap.spec.dir/poc.spec.dir/build-integration] | Build integration | `src/build/integration.ts` |
 | [@ref:specs/roadmap.spec.dir/poc.spec.dir/package-json] | Package dependencies | `package.json` |
 | [@ref:specs/roadmap.spec.dir/poc.spec.dir/tsconfig-json] | TypeScript config | `tsconfig.json` |
 | [@ref:specs/roadmap.spec.dir/poc.spec.dir/tests] | **Complete test suite** | `tests/**/*.test.ts` |
