@@ -1,7 +1,8 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/tools"
 version: 0.1.0
 layer: 5
+target: src/tools/
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [typescript, generated, auto-generated]
