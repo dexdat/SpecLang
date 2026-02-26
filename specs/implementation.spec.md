@@ -1,6 +1,7 @@
 # speclang-header lines:18
 id: "@speclang/implementation"
 version: 0.1.0
+target: src/implementation/
 layer: 0
 tags: [implementation, code, source]
 status: draft

@@ -1,7 +1,8 @@
-# speclang-header lines:14
+# speclang-header lines:15
 id: "@speclang/examples.spec"
 version: 0.1.0
 layer: 1
+target: src/examples/
 tags: [examples]
 imports: ["@speclang/core"]
 children:

@@ -1,6 +1,7 @@
 # speclang-header lines:13
 id: "@speclang/daemon"
 version: 0.2.0
+target: src/daemon/
 layer: 1
 project_level: Alpha
 agent_support: agent_autonomous

@@ -1,6 +1,7 @@
 # speclang-header lines:13
 id: "@speclang/cascade"
 version: 0.2.0
+target: src/cascade/
 layer: 1
 project_level: Alpha
 agent_support: agent_autonomous

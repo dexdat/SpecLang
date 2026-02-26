@@ -1,0 +1,37 @@
+/* SPECLANG-GENERATED: @speclang/ui.visual-design */
+/* DO NOT EDIT MANUALLY */
+/* Source: specs/ui.dir/visual-design.spec.md */
+
+.grid-background {
+  background-image: 
+    linear-gradient(var(--grid-color) var(--grid-line-width), transparent var(--grid-line-width)),
+    linear-gradient(90deg, var(--grid-color) var(--grid-line-width), transparent var(--grid-line-width));
+  background-size: var(--grid-size) var(--grid-size);
+  background-position: calc(var(--grid-size) * -0.5) calc(var(--grid-size) * -0.5);
+}
+
+.grid-background-dense {
+  --grid-size: 4px;
+  --grid-color: rgba(255, 255, 255, 0.03);
+}
+
+.grid-background-sparse {
+  --grid-size: 16px;
+  --grid-color: rgba(255, 255, 255, 0.08);
+}
+
+.grid-background-high-contrast {
+  --grid-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Blueprint style for technical diagrams */
+.blueprint-grid {
+  background-color: #0a1628;
+  background-image:
+    linear-gradient(rgba(0, 100, 200, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 100, 200, 0.1) 1px, transparent 1px),
+    linear-gradient(rgba(0, 100, 200, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 100, 200, 0.05) 1px, transparent 1px);
+  background-size: 64px 64px, 64px 64px, 8px 8px, 8px 8px;
+  background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+}

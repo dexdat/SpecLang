@@ -1,6 +1,7 @@
 # speclang-header lines:15
 id: "@speclang/mcp"
 version: 0.2.0
+target: src/mcp/
 layer: 1
 project_level: Alpha
 agent_support: agent_autonomous
