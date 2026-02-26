@@ -25,6 +25,9 @@ export type FileEventType = 'created' | 'modified' | 'deleted' | 'renamed';
  * File change event
  */
 export interface FileEvent {
+  /** Database ID (auto-generated) */
+  id?: number;
+  
   /** Event type */
   type: FileEventType;
   

@@ -224,6 +224,9 @@ CREATE INDEX idx_task_file ON tasks(file_path);
 ### @poc/database/access
 
 ```typescript
+import { Database } from 'sqlite3';
+import { FileEvent, AgentTask, TaskResult, CascadeStats, GeneratedFileRecord, ParsedSpec } from './types';
+
 export class POCDatabase {
   private db: Database;
   
@@ -250,11 +253,13 @@ export class POCDatabase {
   getUnprocessedEvents(): FileEvent[] {
     const stmt = this.db.prepare(`
       SELECT 
+        id,
         type,
         path,
         oldPath,
         hash,
-        timestamp
+        timestamp,
+        cascadeId
       FROM file_events 
       WHERE processed = FALSE 
       ORDER BY timestamp ASC
@@ -371,7 +376,7 @@ export class POCDatabase {
   // Tasks
   createTask(task: AgentTask, cascadeId: number): void {
     const stmt = this.db.prepare(`
-      INSERT INTO tasks (id, type, file_path, cascadeId, status, created_at)
+      INSERT INTO tasks (id, type, file_path, cascade_id, status, created_at)
       VALUES (?, ?, ?, ?, 'pending', ?)
     `);
     stmt.run(task.id, task.type, task.event.path, cascadeId, task.createdAt);

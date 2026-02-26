@@ -29,7 +29,7 @@ type Template = (data: BlockData) => string;
 ```typescript
 const functionTemplate = (data: BlockData): string => {
   const params = data.parameters
-    .map(p => `${p.name}: ${p.type}`)
+    .map(p => `${p.name}${p.optional ? '?' : ''}: ${p.type}`)
     .join(', ');
   
   const paramDocs = data.parameters
@@ -99,7 +99,7 @@ export class ${data.id} {
 ```typescript
 const interfaceTemplate = (data: BlockData): string => {
   const properties = data.properties
-    ?.map(p => `  ${p.name}: ${p.type};  // ${p.description}`)
+    ?.map(p => `  ${p.name}${p.optional ? '?' : ''}: ${p.type};  // ${p.description}`)
     .join('\n') || '';
   
   return `/**
