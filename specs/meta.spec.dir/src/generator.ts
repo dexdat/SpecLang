@@ -17,6 +17,12 @@ import {
 } from "./types.js";
 
 /**
+ * SpecGenerator - Generate spec files from existing code
+ * 
+ * This is the core component for making SpecLang self-specifying.
+ * It can analyze TypeScript, Go, Python, and other code files
+ * and generate corresponding spec files.
+ */
 export class SpecGenerator {
   private projectRoot: string;
   private options: GenerateOptions;
@@ -392,6 +398,7 @@ export class SpecGenerator {
     const headerYaml = this.renderHeader(header);
     const blocksContent = blocks.map(b => this.renderBlock(b)).join("\n\n");
     
+    return `# speclang-header lines:${headerYaml.split("\n").length + 2}
 ${headerYaml}
 ---
 
@@ -513,6 +520,7 @@ ${block.content}
   }
 
   private parseHeader(content: string): SpecMetadata {
+    const headerMatch = content.match(/^# speclang-header lines:(\d+)\n([\s\S]*?)^---/m);
     
     if (!headerMatch) {
       return {

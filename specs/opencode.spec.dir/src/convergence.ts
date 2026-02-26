@@ -1,10 +1,3 @@
-/**
-speclang-header lines:5
-id: @specs/opencode
-version: 1.0.0
-layer: 5
- */
-
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import type { OpenCodeDatabase, OpenCodePluginConfig } from './types';

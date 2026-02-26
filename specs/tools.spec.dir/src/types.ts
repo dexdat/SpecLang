@@ -1,11 +1,4 @@
 /**
-speclang-header lines:5
-id: @specs/tools
-version: 1.0.0
-layer: 5
- */
-
-/**
  * speclang-header lines:10
  * @ref:specs/tools.spec.md#simpletoolregistry
  * @ref:specs/tools.spec.md#readspechandler

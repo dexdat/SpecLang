@@ -1,11 +1,4 @@
 /**
-speclang-header lines:5
-id: @specs/cli
-version: 1.0.0
-layer: 5
- */
-
-/**
  * SPECLANG-GENERATED: CLI utilities
  * Source: @speclang/mcp.cli
  * 

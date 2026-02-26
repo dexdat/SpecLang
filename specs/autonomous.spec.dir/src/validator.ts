@@ -1,11 +1,4 @@
 /**
-speclang-header lines:5
-id: @specs/autonomous
-version: 1.0.0
-layer: 5
- */
-
-/**
  * SPECLANG-GENERATED: Autonomous validator for validating system readiness
  * Source: @speclang/autonomous-validation
  */

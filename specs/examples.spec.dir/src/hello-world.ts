@@ -1,10 +1,3 @@
-/**
-speclang-header lines:5
-id: @specs/examples
-version: 1.0.0
-layer: 5
- */
-
 // Generated from specs/examples/hello-world.spec.md
 // DO NOT EDIT MANUALLY
 // Source: @examples/hello-world

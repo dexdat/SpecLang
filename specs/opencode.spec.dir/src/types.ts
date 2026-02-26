@@ -1,11 +1,4 @@
 /**
-speclang-header lines:5
-id: @specs/opencode
-version: 1.0.0
-layer: 5
- */
-
-/**
  * OpenCode Plugin Types
  * 
  * Types for the SpecLang OpenCode plugin

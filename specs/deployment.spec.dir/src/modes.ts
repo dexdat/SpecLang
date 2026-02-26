@@ -1,11 +1,4 @@
 /**
-speclang-header lines:5
-id: @specs/deployment
-version: 1.0.0
-layer: 5
- */
-
-/**
  * Generated from specs/deployment.spec.md
  * DO NOT EDIT MANUALLY
  * Source: @block:deploy/selection, @block:deploy/recommend

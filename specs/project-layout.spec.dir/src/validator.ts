@@ -1,11 +1,4 @@
 /**
-speclang-header lines:5
-id: @specs/project-layout
-version: 1.0.0
-layer: 5
- */
-
-/**
  * SPECLANG-GENERATED - Do not edit directly
  * 
  * Source: specs/project-layout.spec.md

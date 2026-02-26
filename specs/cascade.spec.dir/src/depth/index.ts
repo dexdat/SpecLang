@@ -1,10 +1,3 @@
-/**
-speclang-header lines:5
-id: @specs/cascade
-version: 1.0.0
-layer: 5
- */
-
 // SPECLANG-GENERATED: Phase 0.20 - Cascade Depth and Cycle Detection
 // DO NOT EDIT MANUALLY
 // Source: docs/prompts/phase-0.20-cascade-depth.md

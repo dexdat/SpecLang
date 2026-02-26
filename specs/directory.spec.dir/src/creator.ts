@@ -28,6 +28,8 @@ export interface CreateSpecOptions {
 }
 
 /**
+ * Create a new spec file following directory patterns
+ */
 export async function createSpec(options: CreateSpecOptions): Promise<string> {
   const { parent, name, kind, content = '' } = options;
   
@@ -93,6 +95,7 @@ function shouldCreateSubDirectory(kind: SpecKind): boolean {
 
 function generateDefaultContent(name: string, kind: SpecKind): string {
   const timestamp = new Date().toISOString();
+  return `# speclang-header lines:10
 id: "@specs/${name}"
 version: 0.1.0
 layer: 2
@@ -104,13 +107,15 @@ agent_support: agent_assisted
 short: ${name} ${kind}
 ---
 
+# ${name}
 
 Generated on ${timestamp}
 `;
 }
 
 /**
-
+ * SQLite tree queries for directory structure
+ */
 export const SQLITE_TREE_QUERIES = {
   getChildren: `SELECT path FROM specs WHERE depends_on LIKE '%@ref:specs/auth%';`,
   getFullTree: `WITH RECURSIVE tree AS (
@@ -125,11 +130,15 @@ SELECT * FROM tree ORDER BY depth;`,
 };
 
 /**
-
+ * Git ignore rules for spec directories
+ */
 export const GIT_IGNORE_RULES = `# Symlinks are OK (they point to specs/)
+# Code lives in specs/, symlinks are just for convenience
 
+# Speclang internal
 .speclang/
 
+# Keep spec dirs
 !*.dir/
 !specs/
 `;

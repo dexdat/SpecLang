@@ -1,11 +1,4 @@
 /**
-speclang-header lines:5
-id: @specs/cascade
-version: 1.0.0
-layer: 5
- */
-
-/**
  * Cascade Runner - Main entry point for running cascades
  * 
  * A cascade is the process of:

@@ -1,11 +1,4 @@
 /**
-speclang-header lines:5
-id: @specs/ui-dashboard
-version: 1.0.0
-layer: 5
- */
-
-/**
  * UI Dashboard main exports
  * Generated from: @implementation/ui-dashboard
  */

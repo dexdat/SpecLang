@@ -1,10 +1,3 @@
-/**
-speclang-header lines:5
-id: @specs/maturity
-version: 1.0.0
-layer: 5
- */
-
 // SPECLANG-GENERATED: @speclang/project-maturity-levels
 // DO NOT EDIT MANUALLY
 // Source: specs/project-maturity-levels.dir/criteria.spec.md

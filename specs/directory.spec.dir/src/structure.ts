@@ -1,10 +1,3 @@
-/**
-speclang-header lines:5
-id: @specs/directory
-version: 1.0.0
-layer: 5
- */
-
 // Generated from specs/directory-structure.dir/pattern.spec.md
 // DO NOT EDIT MANUALLY
 // Source: @block:dir/pattern, @block:dir/naming, @block:dir/depth, @block:dir/unlimited-nesting

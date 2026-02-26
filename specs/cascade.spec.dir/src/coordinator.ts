@@ -1,10 +1,3 @@
-/**
-speclang-header lines:5
-id: @specs/cascade
-version: 1.0.0
-layer: 5
- */
-
 export { CascadeCoordinator } from './coordinator/index.js';
 export { DependencyTracker } from './coordinator/dependency.js';
 export { 

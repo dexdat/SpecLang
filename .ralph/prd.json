@@ -300,7 +300,7 @@
         {
           "id": "P0-019",
           "title": "Implement cascade triggers",
-          "spec": "specs/cascade.dir/triggers.spec.md",
+          "spec": "specs/cascade.spec.dir/triggers.spec.md",
           "prompt": "docs/prompts/phase-0.19-cascade-triggers.md",
           "outputs": [
             "src/cascade/triggers.ts",
@@ -314,7 +314,7 @@
         {
           "id": "P0-020",
           "title": "Implement cascade depth and convergence",
-          "spec": "specs/cascade.dir/convergence.spec.md",
+          "spec": "specs/cascade.spec.dir/convergence.spec.md",
           "prompt": "docs/prompts/phase-0.20-cascade-depth.md",
           "outputs": [
             "src/cascade/convergence.ts",
@@ -328,7 +328,7 @@
         {
           "id": "P0-021",
           "title": "Implement UI interactions",
-          "spec": "specs/ui.dir/interactions.spec.md",
+          "spec": "specs/ui-dashboard.spec.dir/interactions.spec.md",
           "prompt": "docs/prompts/phase-0.21-ui-interactions.md",
           "outputs": [
             "src/dashboard/interactions/cascade-control.ts",
@@ -343,7 +343,7 @@
         {
           "id": "P0-022",
           "title": "Implement UI testing",
-          "spec": "specs/ui.dir/testing.spec.md",
+          "spec": "specs/ui-dashboard.spec.dir/testing.spec.md",
           "prompt": "docs/prompts/phase-0.22-ui-testing.md",
           "outputs": [
             "src/dashboard/testing/mock-mcp.ts",
@@ -357,7 +357,7 @@
         {
           "id": "P0-023",
           "title": "Implement UI visual design system",
-          "spec": "specs/ui.dir/visual-design.spec.md",
+          "spec": "specs/ui-dashboard.spec.dir/visual-design.spec.md",
           "prompt": "docs/prompts/phase-0.23-ui-visual.md",
           "outputs": [
             "src/dashboard/styles/brutalist.css",
@@ -401,7 +401,7 @@
         {
           "id": "P0-026",
           "title": "Implement standard library types",
-          "spec": "specs/stdlib.dir/types.spec.md",
+          "spec": "specs/stdlib.spec.dir/types.spec.md",
           "prompt": "docs/prompts/phase-0.26-stdlib-types.md",
           "outputs": [
             "src/stdlib/types/index.ts",
@@ -418,7 +418,7 @@
         {
           "id": "P0-027",
           "title": "Implement standard library functions",
-          "spec": "specs/stdlib.dir/mapping.spec.md",
+          "spec": "specs/stdlib.spec.dir/mapping.spec.md",
           "prompt": "docs/prompts/phase-0.27-stdlib-functions.md",
           "outputs": [
             "src/stdlib/functions/index.ts",
@@ -439,7 +439,7 @@
         {
           "id": "P0-028",
           "title": "Implement Mermaid diagram lens specification",
-          "spec": "specs/lenses.dir/mermaid.spec.md",
+          "spec": "specs/lenses.spec.dir/mermaid.spec.md",
           "prompt": "docs/prompts/phase-0.28-lenses-mermaid.md",
           "outputs": [
             "specs/lenses.dir/mermaid.spec.md"
@@ -450,7 +450,7 @@
         {
           "id": "P0-029",
           "title": "Implement Code lens specification",
-          "spec": "specs/lenses.dir/code.spec.md",
+          "spec": "specs/lenses.spec.dir/code.spec.md",
           "prompt": "docs/prompts/phase-0.29-lenses-code.md",
           "outputs": [
             "specs/lenses.dir/code.spec.md"
@@ -461,7 +461,7 @@
         {
           "id": "P0-030",
           "title": "Implement Entity lens specification",
-          "spec": "specs/lenses.dir/entity.spec.md",
+          "spec": "specs/lenses.spec.dir/entity.spec.md",
           "prompt": "docs/prompts/phase-0.30-lenses-entity.md",
           "outputs": [
             "specs/lenses.dir/entity.spec.md"
@@ -472,7 +472,7 @@
         {
           "id": "P0-031",
           "title": "Implement Operation lens specification",
-          "spec": "specs/lenses.dir/operation.spec.md",
+          "spec": "specs/lenses.spec.dir/operation.spec.md",
           "prompt": "docs/prompts/phase-0.31-lenses-operation.md",
           "outputs": [
             "specs/lenses.dir/operation.spec.md"
@@ -483,7 +483,7 @@
         {
           "id": "P0-032",
           "title": "Implement Prose lens specification",
-          "spec": "specs/lenses.dir/prose.spec.md",
+          "spec": "specs/lenses.spec.dir/prose.spec.md",
           "prompt": "docs/prompts/phase-0.32-lenses-prose.md",
           "outputs": [
             "specs/lenses.dir/prose.spec.md"
@@ -494,7 +494,7 @@
         {
           "id": "P0-033",
           "title": "Layer System Overview",
-          "spec": "specs/",
+          "spec": "specs/layer-definitions.spec.md",
           "prompt": "docs/prompts/phase-0.33-layers-overview.md",
           "outputs": [
             "src/layers/",
@@ -512,7 +512,7 @@
         {
           "id": "P0-034",
           "title": "Layer Abstraction Concepts",
-          "spec": "specs/",
+          "spec": "specs/layer-definitions.spec.dir/abstraction.spec.md",
           "prompt": "docs/prompts/phase-0.34-layers-abstraction.md",
           "outputs": [
             "src/layers/",
@@ -530,7 +530,7 @@
         {
           "id": "P0-035",
           "title": "Project Level - POC (Proof of Concept)",
-          "spec": "specs/",
+          "spec": "specs/project-maturity-levels.spec.dir/levels.spec.md#poc",
           "prompt": "docs/prompts/phase-0.35-project-levels-poc.md",
           "outputs": [
             "src/maturity/levels/",
@@ -547,7 +547,7 @@
         {
           "id": "P0-036",
           "title": "Project Level - MVP (Minimum Viable Product)",
-          "spec": "specs/",
+          "spec": "specs/project-maturity-levels.spec.dir/levels.spec.md#mvp",
           "prompt": "docs/prompts/phase-0.36-project-levels-mvp.md",
           "outputs": [
             "src/maturity/levels/",
@@ -564,7 +564,7 @@
         {
           "id": "P0-037",
           "title": "Project Level - Alpha",
-          "spec": "specs/",
+          "spec": "specs/project-maturity-levels.spec.dir/levels.spec.md#alpha",
           "prompt": "docs/prompts/phase-0.37-project-levels-alpha.md",
           "outputs": [
             "src/maturity/levels/",
@@ -581,7 +581,7 @@
         {
           "id": "P0-038",
           "title": "Beta Maturity Level",
-          "spec": "specs/",
+          "spec": "specs/project-maturity-levels.spec.dir/levels.spec.md#beta",
           "prompt": "docs/prompts/phase-0.38-project-levels-beta.md",
           "outputs": [
             "src/maturity/beta/",
@@ -597,7 +597,7 @@
         {
           "id": "P0-039",
           "title": "Production Maturity Level",
-          "spec": "specs/",
+          "spec": "specs/project-maturity-levels.spec.dir/levels.spec.md#production",
           "prompt": "docs/prompts/phase-0.39-project-levels-production.md",
           "outputs": [
             "src/maturity/production/",
@@ -615,7 +615,7 @@
         {
           "id": "P0-040",
           "title": "Startup Maturity Level",
-          "spec": "specs/",
+          "spec": "specs/project-maturity-levels.spec.dir/levels.spec.md#startup",
           "prompt": "docs/prompts/phase-0.40-project-levels-startup.md",
           "outputs": [
             "src/maturity/startup/",
@@ -633,7 +633,7 @@
         {
           "id": "P0-041",
           "title": "Enterprise Maturity Level",
-          "spec": "specs/",
+          "spec": "specs/project-maturity-levels.spec.dir/levels.spec.md#enterprise",
           "prompt": "docs/prompts/phase-0.41-project-levels-enterprise.md",
           "outputs": [
             "src/maturity/enterprise/",
@@ -738,7 +738,7 @@
         {
           "id": "P1-006",
           "title": "Implement daemon events and watcher",
-          "spec": "specs/daemon.dir/events.spec.md",
+          "spec": "specs/daemon.spec.dir/events.spec.md",
           "prompt": "docs/prompts/phase-1.6-daemon-events.md",
           "outputs": [
             "src/daemon/watcher.rs",
@@ -753,7 +753,7 @@
         {
           "id": "P1-007",
           "title": "Implement daemon convergence detection",
-          "spec": "specs/daemon.dir/convergence.spec.md",
+          "spec": "specs/daemon.spec.dir/convergence.spec.md",
           "prompt": "docs/prompts/phase-1.7-daemon-convergence.md",
           "outputs": [
             "src/daemon/convergence.rs",
@@ -767,7 +767,7 @@
         {
           "id": "P1-008",
           "title": "Implement daemon event routing",
-          "spec": "specs/daemon.dir/routing.spec.md",
+          "spec": "specs/daemon.spec.dir/routing.spec.md",
           "prompt": "docs/prompts/phase-1.8-daemon-routing.md",
           "outputs": [
             "src/daemon/router.rs",
@@ -849,12 +849,12 @@
           "outputs": [
             "src/validation/",
             "ambiguity/",
-            "\u2502    index.ts           # Exports",
-            "\u2502    detector.ts        # Main detection logic",
-            "\u2502    patterns.ts        # Ambiguity patterns",
-            "\u2502    context.ts         # Context-aware filtering",
-            "\u2502    scorer.ts          # Ambiguity severity scoring",
-            "\u2502    reporter.ts       # Report generation"
+            "│    index.ts           # Exports",
+            "│    detector.ts        # Main detection logic",
+            "│    patterns.ts        # Ambiguity patterns",
+            "│    context.ts         # Context-aware filtering",
+            "│    scorer.ts          # Ambiguity severity scoring",
+            "│    reporter.ts       # Report generation"
           ],
           "priority": 13,
           "passes": false
@@ -867,12 +867,12 @@
           "outputs": [
             "src/validation/",
             "completeness/",
-            "\u2502    index.ts           # Exports",
-            "\u2502    checker.ts         # Main completeness checking",
-            "\u2502    metadata.ts       # Metadata validation",
-            "\u2502    blocks.ts         # Block structure validation",
-            "\u2502    references.ts     # Reference validation",
-            "\u2502    scorer.ts          # Completeness scoring"
+            "│    index.ts           # Exports",
+            "│    checker.ts         # Main completeness checking",
+            "│    metadata.ts       # Metadata validation",
+            "│    blocks.ts         # Block structure validation",
+            "│    references.ts     # Reference validation",
+            "│    scorer.ts          # Completeness scoring"
           ],
           "priority": 14,
           "passes": false
@@ -885,12 +885,12 @@
           "outputs": [
             "src/validation/",
             "step-detection/",
-            "\u2502    index.ts           # Exports",
-            "\u2502    detector.ts        # Main step detection",
-            "\u2502    patterns.ts        # Step patterns",
-            "\u2502    analyzer.ts        # Content analysis",
-            "\u2502    scorer.ts          # Coverage scoring",
-            "\u2502    reporter.ts        # Report generation"
+            "│    index.ts           # Exports",
+            "│    detector.ts        # Main step detection",
+            "│    patterns.ts        # Step patterns",
+            "│    analyzer.ts        # Content analysis",
+            "│    scorer.ts          # Coverage scoring",
+            "│    reporter.ts        # Report generation"
           ],
           "priority": 15,
           "passes": false
@@ -972,12 +972,12 @@
           "outputs": [
             "src/transition/",
             "upgrade/",
-            "\u2502    index.ts              # Upgrade exports",
-            "\u2502    planner.ts            # Upgrade planning",
-            "\u2502    checklist.ts          # Upgrade checklist",
-            "\u2502    validator.ts          # Upgrade validation",
-            "\u2502    executor.ts           # Upgrade execution",
-            "\u2502    rollback.ts           # Upgrade rollback"
+            "│    index.ts              # Upgrade exports",
+            "│    planner.ts            # Upgrade planning",
+            "│    checklist.ts          # Upgrade checklist",
+            "│    validator.ts          # Upgrade validation",
+            "│    executor.ts           # Upgrade execution",
+            "│    rollback.ts           # Upgrade rollback"
           ],
           "priority": 20,
           "passes": false
@@ -990,12 +990,12 @@
           "outputs": [
             "src/transition/",
             "downgrade/",
-            "\u2502    index.ts              # Downgrade exports",
-            "\u2502    triggers.ts           # Downgrade triggers",
-            "\u2502    planner.ts            # Downgrade planning",
-            "\u2502    executor.ts           # Downgrade execution",
-            "\u2502    notification.ts       # Downgrade notifications",
-            "\u2502    audit.ts              # Downgrade audit trail"
+            "│    index.ts              # Downgrade exports",
+            "│    triggers.ts           # Downgrade triggers",
+            "│    planner.ts            # Downgrade planning",
+            "│    executor.ts           # Downgrade execution",
+            "│    notification.ts       # Downgrade notifications",
+            "│    audit.ts              # Downgrade audit trail"
           ],
           "priority": 21,
           "passes": false
@@ -1198,10 +1198,10 @@
           "outputs": [
             "src/mcp/",
             "locks/",
-            "\u2502    index.ts            # Main exports",
-            "\u2502    lock-manager.ts     # Lock management logic",
-            "\u2502    types.ts            # Lock types",
-            "\u2502    tools.ts            # MCP tool definitions"
+            "│    index.ts            # Main exports",
+            "│    lock-manager.ts     # Lock management logic",
+            "│    types.ts            # Lock types",
+            "│    tools.ts            # MCP tool definitions"
           ],
           "priority": 13,
           "passes": false
@@ -1214,11 +1214,11 @@
           "outputs": [
             "src/mcp/",
             "sql/",
-            "\u2502    index.ts            # Main exports",
-            "\u2502    query-builder.ts   # Safe query builder",
-            "\u2502    tools.ts            # MCP tool definitions",
-            "\u2502    sanitizer.ts       # SQL sanitization",
-            "\u2502    history.ts         # Query history"
+            "│    index.ts            # Main exports",
+            "│    query-builder.ts   # Safe query builder",
+            "│    tools.ts            # MCP tool definitions",
+            "│    sanitizer.ts       # SQL sanitization",
+            "│    history.ts         # Query history"
           ],
           "priority": 14,
           "passes": false
@@ -1593,11 +1593,11 @@
           "outputs": [
             "src/recovery/",
             "strategies/",
-            "\u2502    index.ts          # Strategy exports",
-            "\u2502    context.ts        # Context gathering",
-            "\u2502    decision.ts       # Decision engine",
-            "\u2502    scoring.ts        # Strategy scoring",
-            "\u2502    adaptive.ts       # Adaptive strategies",
+            "│    index.ts          # Strategy exports",
+            "│    context.ts        # Context gathering",
+            "│    decision.ts       # Decision engine",
+            "│    scoring.ts        # Strategy scoring",
+            "│    adaptive.ts       # Adaptive strategies",
             "intelligence/"
           ],
           "priority": 9,
@@ -1611,12 +1611,12 @@
           "outputs": [
             "src/pipeline/stages/",
             "build/",
-            "\u2502    index.ts           # Build stage exports",
-            "\u2502    types.ts           # Build stage types",
-            "\u2502    compiler.ts        # Compilation stage",
-            "\u2502    bundler.ts         # Bundling stage",
-            "\u2502    linker.ts          # Linking stage",
-            "\u2502    cache.ts           # Build cache"
+            "│    index.ts           # Build stage exports",
+            "│    types.ts           # Build stage types",
+            "│    compiler.ts        # Compilation stage",
+            "│    bundler.ts         # Bundling stage",
+            "│    linker.ts          # Linking stage",
+            "│    cache.ts           # Build cache"
           ],
           "priority": 10,
           "passes": false
@@ -1629,12 +1629,12 @@
           "outputs": [
             "src/pipeline/stages/",
             "test/",
-            "\u2502    index.ts           # Test stage exports",
-            "\u2502    types.ts           # Test stage types",
-            "\u2502    runner.ts         # Test runner",
-            "\u2502    coverage.ts       # Coverage collection",
-            "\u2502    watcher.ts        # Test watcher",
-            "\u2502    reporters.ts      # Test reporters"
+            "│    index.ts           # Test stage exports",
+            "│    types.ts           # Test stage types",
+            "│    runner.ts         # Test runner",
+            "│    coverage.ts       # Coverage collection",
+            "│    watcher.ts        # Test watcher",
+            "│    reporters.ts      # Test reporters"
           ],
           "priority": 11,
           "passes": false
@@ -1647,12 +1647,12 @@
           "outputs": [
             "src/pipeline/stages/",
             "deploy/",
-            "\u2502    index.ts           # Deploy stage exports",
-            "\u2502    types.ts           # Deploy stage types",
-            "\u2502    publisher.ts       # Package publishing",
-            "\u2502    environments.ts    # Environment deployment",
-            "\u2502    registry.ts        # Registry management",
-            "\u2502    rollback.ts        # Rollback handling"
+            "│    index.ts           # Deploy stage exports",
+            "│    types.ts           # Deploy stage types",
+            "│    publisher.ts       # Package publishing",
+            "│    environments.ts    # Environment deployment",
+            "│    registry.ts        # Registry management",
+            "│    rollback.ts        # Rollback handling"
           ],
           "priority": 12,
           "passes": false
@@ -1665,12 +1665,12 @@
           "outputs": [
             "src/pipeline/stages/",
             "lint/",
-            "\u2502    index.ts           # Lint stage exports",
-            "\u2502    types.ts           # Lint stage types",
-            "\u2502    runner.ts         # Lint runner",
-            "\u2502    formatters.ts     # Output formatters",
-            "\u2502    fixers.ts         # Auto-fix runners",
-            "\u2502    rules.ts          # Rule definitions"
+            "│    index.ts           # Lint stage exports",
+            "│    types.ts           # Lint stage types",
+            "│    runner.ts         # Lint runner",
+            "│    formatters.ts     # Output formatters",
+            "│    fixers.ts         # Auto-fix runners",
+            "│    rules.ts          # Rule definitions"
           ],
           "priority": 13,
           "passes": false
@@ -1683,12 +1683,12 @@
           "outputs": [
             "src/pipeline/stages/",
             "format/",
-            "\u2502    index.ts           # Format stage exports",
-            "\u2502    types.ts           # Format stage types",
-            "\u2502    runner.ts         # Format runner",
-            "\u2502    config.ts         # Format configuration",
-            "\u2502    checkers.ts       # Format checkers",
-            "\u2502    languages.ts      # Language-specific formatters"
+            "│    index.ts           # Format stage exports",
+            "│    types.ts           # Format stage types",
+            "│    runner.ts         # Format runner",
+            "│    config.ts         # Format configuration",
+            "│    checkers.ts       # Format checkers",
+            "│    languages.ts      # Language-specific formatters"
           ],
           "priority": 14,
           "passes": false
@@ -1904,13 +1904,13 @@
           "prompt": "docs/prompts/phase-6.5-ui-testing-strategy.md",
           "outputs": [
             "ui/",
-            "\u2502    components/",
-            "\u2502   \u2502    components.test.tsx",
-            "\u2502   \u2502    agent-health-grid.test.tsx",
-            "\u2502   \u2502    cascade-graph.test.tsx",
-            "\u2502   \u2502    control-panel.test.tsx",
-            "\u2502   \u2502    log-viewer.test.tsx",
-            "\u2502   \u2502    queue-depth.test.tsx"
+            "│    components/",
+            "│   │    components.test.tsx",
+            "│   │    agent-health-grid.test.tsx",
+            "│   │    cascade-graph.test.tsx",
+            "│   │    control-panel.test.tsx",
+            "│   │    log-viewer.test.tsx",
+            "│   │    queue-depth.test.tsx"
           ],
           "priority": 5,
           "passes": false
@@ -2040,12 +2040,12 @@
           "outputs": [
             "src/examples/",
             "auth/",
-            "\u2502    index.ts                 # Main exports",
-            "\u2502    entities/",
-            "\u2502   \u2502    user.ts              # User entity",
-            "\u2502   \u2502    login-request.ts      # Login request",
-            "\u2502   \u2502    login-response.ts     # Login response",
-            "\u2502   \u2502    token.ts              # Token entity"
+            "│    index.ts                 # Main exports",
+            "│    entities/",
+            "│   │    user.ts              # User entity",
+            "│   │    login-request.ts      # Login request",
+            "│   │    login-response.ts     # Login response",
+            "│   │    token.ts              # Token entity"
           ],
           "priority": 3,
           "passes": false

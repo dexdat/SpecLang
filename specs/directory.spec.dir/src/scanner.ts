@@ -1,10 +1,3 @@
-/**
-speclang-header lines:5
-id: @specs/directory
-version: 1.0.0
-layer: 5
- */
-
 // Generated from specs/directory-structure.spec.md
 // DO NOT EDIT MANUALLY
 // Source: @block:dir/* @kind:entity

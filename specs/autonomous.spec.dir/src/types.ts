@@ -1,11 +1,4 @@
 /**
-speclang-header lines:5
-id: @specs/autonomous
-version: 1.0.0
-layer: 5
- */
-
-/**
  * SPECLANG-GENERATED: TypeScript types for autonomous testing
  * Source: @speclang/autonomous-validation
  */

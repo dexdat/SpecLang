@@ -1,11 +1,4 @@
 /**
-speclang-header lines:5
-id: @specs/tools
-version: 1.0.0
-layer: 5
- */
-
-/**
  * SPECLANG-GENERATED: Git Tools
  * Source: @speclang/tools
  * 

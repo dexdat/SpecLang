@@ -1,11 +1,4 @@
 /**
-speclang-header lines:5
-id: @specs/opencode
-version: 1.0.0
-layer: 5
- */
-
-/**
  * OpenCode Integration Module
  * 
  * SpecLang's OpenCode plugin for reactive spec-driven development.

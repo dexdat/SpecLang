@@ -1,10 +1,3 @@
-/**
-speclang-header lines:5
-id: @specs/ralph
-version: 1.0.0
-layer: 5
- */
-
 // Generated from specs/ralph-loop.spec.md
 // DO NOT EDIT MANUALLY
 // Source: @speclang/ralph-loop @ref:specs/ralph-loop#ralph/steering-packets
