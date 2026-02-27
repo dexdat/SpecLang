@@ -100,7 +100,7 @@ specs/greeting.spec.md (user spec)
 
 **Full Path Resolution:**
 ```typescript
-import { slugifySpecId } from './utils';
+import { slugifySpecId } from './path-utils';
 
 const specId = '@examples/greeting';
 const blockId = 'greet';

@@ -48,7 +48,7 @@ How all POC components wire together.
 // src/daemon/daemon.ts
 
 import { FileWatcher } from './file-watcher';
-import { EventRouter } from './event-router';
+import { EventRouter } from './event-routing';
 import { SimpleAgent } from './simple-agent';
 import { ConvergenceDetector } from './convergence';
 
