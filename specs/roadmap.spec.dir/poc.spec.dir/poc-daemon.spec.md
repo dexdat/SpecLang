@@ -41,6 +41,12 @@ Main entry point that wires all POC components together.
 ### @poc/daemon/wiring
 
 ```typescript
+import { FileWatcher } from './file-watcher';
+import { EventRouter } from './event-routing';
+import { SimpleAgent } from './simple-agent';
+import { ConvergenceDetector } from './convergence';
+import { FileEvent } from './types';
+
 export class PocDaemon {
   private watcher: FileWatcher;
   private router: EventRouter;

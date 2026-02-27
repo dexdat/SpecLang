@@ -46,6 +46,7 @@ Ensure generated code compiles correctly and integrates with the project build s
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { existsSync } from 'fs';
+import { ConvergenceEvent } from './types';
 
 const execAsync = promisify(exec);
 

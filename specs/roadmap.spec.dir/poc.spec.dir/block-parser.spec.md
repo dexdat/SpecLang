@@ -47,7 +47,7 @@ interface ParsedBlock {
   description: string;  // "Greets a user by name."
   parameters: Parameter[];
   returns?: ReturnType;
-  examples?: Example[];
+  examples?: CodeExample[];
 }
 
 interface Parameter {

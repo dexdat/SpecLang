@@ -56,6 +56,7 @@ logging:
 import { readFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import * as yaml from 'js-yaml';
+import { POCConfig } from './types';
 
 /**
  * Default configuration values
