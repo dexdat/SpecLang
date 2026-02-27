@@ -41,7 +41,7 @@ interface ConvergenceEvent {
 ```typescript
 import { TypedEventEmitter } from './events';
 import { ConvergenceEvents, ConvergenceEvent, ConvergenceState } from './types';
-import { POC_CONSTANTS } from './constants';
+import { POC_CONSTANTS } from './types';
 
 export class ConvergenceDetector extends TypedEventEmitter<ConvergenceEvents> {
   private state: ConvergenceState = {

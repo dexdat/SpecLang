@@ -275,7 +275,7 @@ layer: 3
 
 ```typescript
 import { HeaderParser } from './header-parser';
-import { POCError } from './errors';
+import { POCError } from './types';
 
 describe('HeaderParser', () => {
   let parser: HeaderParser;

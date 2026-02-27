@@ -62,7 +62,6 @@ import { slugifySpecId } from './path-utils';
 import { FileEvent } from './types';
 import { BlockParser } from './block-parser';
 import { CodeGenerator } from './code-generator';
-import { slugifySpecId } from './path-utils';
 import { symlink, unlink, mkdir, writeFile } from 'fs/promises';
 import { platform } from 'os';
 

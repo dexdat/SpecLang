@@ -60,7 +60,7 @@ interface FileEvent {
 import { watch, FSWatcher } from 'chokidar';
 import { EventEmitter } from 'events';
 import { FileEvent, FileEventType } from './types';
-import { POC_CONSTANTS } from './constants';
+import { POC_CONSTANTS } from './types';
 
 /**
  * File system watcher with debouncing

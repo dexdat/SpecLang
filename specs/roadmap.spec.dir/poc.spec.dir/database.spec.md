@@ -270,7 +270,7 @@ export class POCDatabase {
   markEventProcessed(eventId: number, cascadeId: number): void {
     const stmt = this.db.prepare(`
       UPDATE file_events 
-      SET processed = TRUE, cascadeId = ? 
+      SET processed = TRUE, cascade_id = ? 
       WHERE id = ?
     `);
     stmt.run(cascadeId, eventId);
