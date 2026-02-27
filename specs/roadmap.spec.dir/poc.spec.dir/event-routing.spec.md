@@ -37,6 +37,9 @@ SimpleAgent processes
 ### @poc/routing/impl
 
 ```typescript
+import { SimpleAgent } from './simple-agent';
+import { FileEvent } from './types';
+
 export class EventRouter {
   private agent: SimpleAgent;
   
