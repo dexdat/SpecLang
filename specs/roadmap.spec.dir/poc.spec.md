@@ -254,11 +254,187 @@ Then: Convergence is detected and logged
 
 **Target**: 3 weeks from start
 
+## Implementation TODO
+
+**Implementation Checklist with Exact Spec References**
+
+### Phase 1: Foundation (Read These Specs First)
+
+#### P1.1 - Project Setup
+- [ ] **Create project structure** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/installation]
+  - Run `npm init`
+  - Create directory structure
+- [ ] **Configure TypeScript** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/tsconfig-json]
+  - Set `target: ES2022`, `module: NodeNext`
+  - Set `outDir: ./dist`, `rootDir: ./src`
+- [ ] **Install dependencies** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/package-json]
+  - `chokidar`, `sqlite3`, `commander`, `js-yaml`, `glob`
+  - dev: `@types/node`, `typescript`, `jest`, `@types/jest`
+- [ ] **Define all types** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/types]
+  - Export: `FileEvent`, `ParsedBlock`, `BlockKind`, `POCError`, `POCConfig`, `Template`
+  - Export: `ConvergenceEvent`, `ConvergenceState`, `DaemonStats`
+
+#### P1.2 - Core Utilities
+- [ ] **Implement path utilities** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/path-utils]
+  - `slugifySpecId(specId: string): string`
+  - `resolveSpecPaths(specId: string): Paths`
+  - `resolveBlockOutputPath(specId: string, blockId: string): string`
+  - `ensureSpecDirectories(specId: string): Promise<void>`
+- [ ] **Implement config loader** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/config-loader]
+  - Load from `.speclang/config.yaml`
+  - Merge with defaults
+  - Validate settings
+- [ ] **Implement error handling** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/error-handling]
+  - `POCError` class with `toUserMessage()`
+  - `ErrorHandler` with recovery strategies
+  - Error codes: WATCH_ERROR, PARSE_ERROR, GENERATION_ERROR, etc.
+
+### Phase 2: File Watching & Events
+
+#### P2.1 - Event System
+- [ ] **Implement TypedEventEmitter** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/events]
+  - `on<K>(event: K, handler: (data: T[K]) => void)`
+  - `emit<K>(event: K, data: T[K])`
+  - Event types: FileWatcherEvents, ConvergenceEvents
+
+#### P2.2 - File Watcher
+- [ ] **Implement FileWatcher** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/file-watcher]
+  - Use `chokidar` for watching
+  - Debounce: 300ms (POC_CONSTANTS.DEBOUNCE_MS)
+  - Events: 'change', 'ready', 'error'
+  - Filter: ignore *.tmp, .git/, node_modules/
+
+#### P2.3 - Convergence Detection
+- [ ] **Implement ConvergenceDetector** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/convergence]
+  - Quiet period: 5000ms (POC_CONSTANTS.CONVERGENCE_MS)
+  - Track files changed
+  - Emit 'converged' event with duration, filesChanged
+
+### Phase 3: Spec Parsing
+
+#### P3.1 - Header Parser
+- [ ] **Implement HeaderParser** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/header-parser]
+  - Parse `# speclang-header lines:N` marker
+  - Extract: id, version, layer, short, tags
+  - Validate required fields (id, version, layer)
+  - Return `SpecHeader` interface
+
+#### P3.2 - Block Parser
+- [ ] **Implement BlockParser** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/block-parser]
+  - Regex: `/^###\s+@block:([a-zA-Z0-9_-]+)\s+@kind:(\w+)/gm`
+  - Parse parameters: `name: type - description`
+  - Parse optional: `name?: type - description`
+  - Parse properties: `name: type - description` (for classes/interfaces)
+  - Parse return types (complex types allowed)
+  - Return `ParsedBlock[]`
+
+### Phase 4: Code Generation
+
+#### P4.1 - Templates
+- [ ] **Implement function template** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/templates]
+  - Generate: `export function name(params): returnType`
+  - Add JSDoc comments
+  - Handle optional parameters with `?`
+- [ ] **Implement class template** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/templates]
+  - Generate: `export class Name`
+  - Include properties with optional marker
+- [ ] **Implement interface template** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/templates]
+  - Generate: `export interface Name`
+  - Handle optional properties with `?`
+
+#### P4.2 - Template Registry
+- [ ] **Implement TemplateRegistry** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/template-registry]
+  - `register(kind: BlockKind, template: Template)`
+  - `get(kind: BlockKind): Template`
+  - `loadFromFile(filePath: string)`
+  - Built-ins: function, class, interface, type, enum, constant
+
+#### P4.3 - Code Generator
+- [ ] **Implement CodeGenerator** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/code-generator]
+  - `generate(specId, header, block): GeneratedFile`
+  - Add SPECLANG-GENERATED header
+  - Write to: `specs/{slug}.spec.dir/src/{blockId}.ts`
+  - Create barrel export: `specs/{slug}.spec.dir/src/index.ts`
+  - Create symlink: `src/{slug}` → `../specs/{slug}.spec.dir/src`
+
+### Phase 5: Agent & Daemon
+
+#### P5.1 - Simple Agent
+- [ ] **Implement SimpleAgent** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/simple-agent]
+  - `onFileChanged(event: FileEvent): Promise<void>`
+  - Parse spec with BlockParser
+  - Generate code for each block
+  - Create symlinks
+  - Handle Windows fallback (copy vs symlink)
+
+#### P5.2 - Event Router
+- [ ] **Implement EventRouter** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/event-routing]
+  - Simple routing: all events → SimpleAgent
+  - `route(event: FileEvent): Promise<void>`
+
+#### P5.3 - POC Daemon
+- [ ] **Implement PocDaemon** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/poc-daemon]
+  - Wire components:
+    - FileWatcher → EventRouter → SimpleAgent
+    - FileWatcher → ConvergenceDetector
+  - `start(): Promise<void>` - begin watching
+  - `stop(): Promise<void>` - cleanup
+  - Process existing specs on startup
+
+### Phase 6: Database & State
+
+#### P6.1 - Database
+- [ ] **Implement POCDatabase** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/database]
+  - Tables: file_events, cascades, tasks, specs, generated_files
+  - SQL column names: snake_case
+  - TypeScript: camelCase
+  - Methods: `insertFileEvent`, `createCascade`, `completeCascade`
+
+### Phase 7: Integration & Testing
+
+#### P7.1 - Component Integration
+- [ ] **Wire all components** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/integration]
+  - Daemon creates and connects all components
+  - Event flow: FileWatcher → Router → Agent → CodeGen
+
+#### P7.2 - Build Integration
+- [ ] **Implement build integration** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/build-integration]
+  - Run `npm run build` after convergence
+  - Verify generated code compiles
+
+#### P7.3 - CLI
+- [ ] **Create CLI entry** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/cli]
+  - `./bin/speclangd-poc`
+  - Parse arguments with commander
+  - Start/stop daemon
+
+#### P7.4 - Tests
+- [ ] **Write test suite** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/tests]
+  - Unit: FileWatcher, BlockParser, CodeGenerator
+  - Integration: Daemon, Cascade
+  - E2E: Demo workflow
+
+### Phase 8: Demo & Documentation
+
+#### P8.1 - Demo Workflow
+- [ ] **Implement demo** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/demo-workflow]
+  - Create `specs/greeting.spec.md`
+  - Edit file
+  - Verify code generates in < 5 seconds
+  - Run `npm run build` successfully
+
+#### P8.2 - Documentation
+- [ ] **Update troubleshooting** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/troubleshooting]
+  - Document common errors
+  - Document error codes
+
 ## Definition of Done
 
 POC is complete when:
+- [ ] All Phase 1-8 TODO items complete
 - [ ] All acceptance criteria pass
 - [ ] Build succeeds (`npm run build`)
+- [ ] Tests pass (`npm test`)
 - [ ] Demo video recorded
 - [ ] Documentation updated
 
