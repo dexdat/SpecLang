@@ -225,7 +225,7 @@ CREATE INDEX idx_task_file ON tasks(file_path);
 
 ```typescript
 import { Database } from 'sqlite3';
-import { FileEvent, AgentTask, TaskResult, CascadeStats, GeneratedFileRecord, ParsedSpec } from './types';
+import { FileEvent, AgentTask, TaskResult, CascadeStats, GeneratedFileRecord, ParsedSpec, DaemonStats } from './types';
 
 export class POCDatabase {
   private db: Database;
