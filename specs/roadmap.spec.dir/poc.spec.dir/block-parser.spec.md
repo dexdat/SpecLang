@@ -99,6 +99,7 @@ import {
   ParsedSpec, 
   BlockKind, 
   Parameter, 
+  Property,
   ReturnType, 
   CodeExample,
   SpecHeader 
@@ -197,6 +198,7 @@ export class BlockParser {
       kind,
       description: this.parseDescription(section),
       parameters: this.parseParameters(section),
+      properties: this.parseProperties(section),
       returns: this.parseReturns(section),
       examples: this.parseExamples(section),
       rawContent: section
@@ -265,6 +267,36 @@ export class BlockParser {
     }
     
     return params;
+  }
+  
+  /**
+   * Parse properties section (for classes/interfaces)
+   * Handles: "name: type - description"
+   */
+  private parseProperties(section: string): Property[] {
+    const properties: Property[] = [];
+    const propSection = section.match(/\*\*Properties:\*\*([\s\S]*?)(?=\*\*|$)/);
+    
+    if (!propSection) return properties;
+    
+    const lines = propSection[1].split('\n');
+    for (const line of lines) {
+      const match = line.match(/^-\s+(\w+\??):\s*(.+?)\s+-\s*(.+)$/);
+      if (match) {
+        const rawName = match[1];
+        const isOptional = rawName.endsWith('?');
+        const name = isOptional ? rawName.slice(0, -1) : rawName;
+        
+        properties.push({
+          name,
+          type: match[2].trim(),
+          description: match[3].trim(),
+          optional: isOptional
+        });
+      }
+    }
+    
+    return properties;
   }
   
   /**

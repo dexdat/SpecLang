@@ -55,7 +55,7 @@ tags: [example, feature]
 
 **Parsed Header Interface:**
 ```typescript
-import { SpecHeader, HeaderValidationResult } from './types';
+import { SpecHeader, HeaderValidationResult, POCError } from './types';
 
 export class HeaderParser {
   /**

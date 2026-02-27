@@ -123,6 +123,9 @@ export interface ParsedBlock {
   /** Parameters */
   parameters: Parameter[];
   
+  /** Properties (for classes/interfaces) */
+  properties?: Property[];
+  
   /** Return type (for functions) */
   returns?: ReturnType;
   
@@ -445,23 +448,60 @@ export type POCErrorCode =
   | 'TEMPLATE_ERROR';
 
 /**
- * POC error
+ * POC error class
+ * Used across all POC components for error handling
  */
-export interface POCError {
+export class POCError extends Error {
   /** Error code */
   code: POCErrorCode;
-  
-  /** Error message */
-  message: string;
   
   /** File path (if applicable) */
   filePath?: string;
   
-  /** Stack trace */
-  stack?: string;
-  
   /** Timestamp */
   timestamp: number;
+  
+  /** Original error (if wrapped) */
+  cause?: Error;
+  
+  constructor(code: POCErrorCode, message: string, filePath?: string, cause?: Error) {
+    super(message);
+    this.code = code;
+    this.filePath = filePath;
+    this.timestamp = Date.now();
+    this.cause = cause;
+    
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, POCError);
+    }
+  }
+  
+  /**
+   * Convert to user-friendly message
+   */
+  toUserMessage(): string {
+    const messages: Record<POCErrorCode, string> = {
+      'WATCH_ERROR': 'Failed to watch directory',
+      'PARSE_ERROR': 'Failed to parse spec file',
+      'GENERATION_ERROR': 'Failed to generate code',
+      'WRITE_ERROR': 'Failed to write file',
+      'SYMLINK_ERROR': 'Failed to create symlink',
+      'CONVERGENCE_ERROR': 'Convergence detection failed',
+      'TIMEOUT_ERROR': 'Operation timed out',
+      'HEADER_ERROR': 'Invalid spec header',
+      'TEMPLATE_ERROR': 'Template not found'
+    };
+    
+    let msg = `[${this.code}] ${messages[this.code] || 'Unknown error'}`;
+    if (this.filePath) {
+      msg += `\n  File: ${this.filePath}`;
+    }
+    if (this.message) {
+      msg += `\n  Details: ${this.message}`;
+    }
+    
+    return msg;
+  }
 }
 
 /**
@@ -754,6 +794,55 @@ export interface ErrorRecoveryConfig {
   
   /** Stop cascade after N consecutive errors */
   maxConsecutiveErrors: number;
+}
+```
+
+## Configuration
+
+### @poc/types/config
+
+```typescript
+/**
+ * POC Daemon Configuration
+ */
+export interface POCConfig {
+  /** Watch settings */
+  watch: {
+    /** Directory to watch */
+    directory: string;
+    /** Watch recursively */
+    recursive: boolean;
+    /** Debounce time (ms) */
+    debounce: number;
+    /** Ignore patterns */
+    ignore: string[];
+  };
+  
+  /** Cascade settings */
+  cascade: {
+    /** Quiet period for convergence (ms) */
+    quietPeriod: number;
+    /** Maximum cascade depth */
+    maxDepth: number;
+  };
+  
+  /** Output settings */
+  output: {
+    /** Output directory for generated code */
+    codeDirectory: string;
+    /** Create symlinks (vs copy) */
+    useSymlinks: boolean;
+  };
+  
+  /** Logging settings */
+  logging: {
+    /** Log level */
+    level: 'debug' | 'info' | 'warn' | 'error';
+    /** Enable colors */
+    colors: boolean;
+    /** Include timestamps */
+    timestamps: boolean;
+  };
 }
 ```
 
