@@ -56,19 +56,58 @@ export class TypedEventEmitter<T extends Record<string, any>>
   implements EventEmitter<T> {
   
   on<K extends keyof T>(event: K, handler: (data: T[K]) => void): this {
-    return super.on(event as string, handler);
+    // Wrap handler with error catching
+    const wrappedHandler = (data: T[K]) => {
+      try {
+        handler(data);
+      } catch (error) {
+        console.error(`[TypedEventEmitter] Uncaught error in handler for event "${String(event)}":`, error);
+        // Emit error event without crashing
+        super.emit('error', error);
+      }
+    };
+    
+    // Store reference to wrapped handler for off() removal
+    (handler as any).__wrappedHandler = wrappedHandler;
+    return super.on(event as string, wrappedHandler);
   }
   
   off<K extends keyof T>(event: K, handler: (data: T[K]) => void): this {
-    return super.off(event as string, handler);
+    // Remove the wrapped handler if it exists
+    const wrappedHandler = (handler as any).__wrappedHandler || handler;
+    return super.off(event as string, wrappedHandler);
   }
   
   emit<K extends keyof T>(event: K, data: T[K]): boolean {
-    return super.emit(event as string, data);
+    // For 'error' event, emit directly without wrapping
+    if (event === 'error') {
+      return super.emit(event as string, data);
+    }
+    
+    // For other events, emit safely
+    try {
+      return super.emit(event as string, data);
+    } catch (error) {
+      console.error(`[TypedEventEmitter] Error emitting event "${String(event)}":`, error);
+      // Emit error event
+      super.emit('error', error);
+      return false;
+    }
   }
   
   once<K extends keyof T>(event: K, handler: (data: T[K]) => void): this {
-    return super.once(event as string, handler);
+    // Wrap handler with error catching
+    const wrappedHandler = (data: T[K]) => {
+      try {
+        handler(data);
+      } catch (error) {
+        console.error(`[TypedEventEmitter] Uncaught error in once handler for event "${String(event)}":`, error);
+        super.emit('error', error);
+      }
+    };
+    
+    (handler as any).__wrappedHandler = wrappedHandler;
+    return super.once(event as string, wrappedHandler);
   }
 }
 ```

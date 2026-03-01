@@ -113,7 +113,27 @@ export class ConvergenceDetector extends TypedEventEmitter<ConvergenceEvents> {
   }
   
   /**
+   * Build reverse graph for O(1) predecessor lookups
+   * Maps node -> set of nodes that point to it
+   */
+  private buildReverseGraph(): Map<string, Set<string>> {
+    const reverse = new Map<string, Set<string>>();
+    
+    for (const [source, targets] of this.state.edgeGraph) {
+      for (const target of targets) {
+        if (!reverse.has(target)) {
+          reverse.set(target, new Set());
+        }
+        reverse.get(target)!.add(source);
+      }
+    }
+    
+    return reverse;
+  }
+  
+  /**
    * Check if adding edge from -> to would create a cycle
+   * Uses iterative DFS: O(V + E) where V = files, E = dependencies
    */
   private wouldCreateCycle(from: string, to: string): boolean {
     // Use DFS to detect if 'to' can reach 'from'
@@ -141,20 +161,22 @@ export class ConvergenceDetector extends TypedEventEmitter<ConvergenceEvents> {
   
   /**
    * Find the actual cycle path for debugging
+   * Uses reverse graph for O(path length) instead of O(V * path)
    */
   private findCycle(from: string, to: string): string[] {
+    const reverseGraph = this.buildReverseGraph();
     const path: string[] = [to];
     let current = to;
     
     while (current !== from) {
-      // Find predecessor
-      for (const [source, targets] of this.state.edgeGraph) {
-        if (targets.has(current)) {
-          path.unshift(source);
-          current = source;
-          break;
-        }
-      }
+      const predecessors = reverseGraph.get(current);
+      if (!predecessors || predecessors.size === 0) break;
+      
+      // Get first predecessor
+      const predecessor = predecessors.values().next().value;
+      path.unshift(predecessor);
+      current = predecessor;
+      
       // Safety: prevent infinite loop
       if (path.length > this.MAX_DEPTH) break;
     }
