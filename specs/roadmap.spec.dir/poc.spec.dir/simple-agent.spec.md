@@ -59,16 +59,16 @@ import { slugifySpecId } from './path-utils';
 ### @poc/simple-agent/impl
 
 ```typescript
-import { FileEvent } from './types';
+import { FileEvent, ParsedSpec } from './types';
 import { BlockParser } from './block-parser';
 import { CodeGenerator } from './code-generator';
-import { slugifySpecId } from './path-utils';
 import { symlink, unlink, mkdir, writeFile } from 'fs/promises';
 import { platform } from 'os';
 
 export class SimpleAgent {
   private parser: BlockParser;
   private generator: CodeGenerator;
+  private activeSpecs: Map<string, Promise<void>> = new Map();  // Track in-progress operations per spec
   
   constructor() {
     this.parser = new BlockParser();
@@ -82,25 +82,72 @@ export class SimpleAgent {
   async onFileChanged(event: FileEvent): Promise<void> {
     console.log(`[SimpleAgent] Processing: ${event.path}`);
     
+    // 1. Parse spec to get ID
+    let spec;
     try {
-      // 1. Parse spec
-      const spec = await this.parser.parseFile(event.path);
-      const specSlug = slugifySpecId(spec.id);
-      
-      // 2. Generate code for each block
+      spec = await this.parser.parseFile(event.path);
+    } catch (error) {
+      console.error(`[SimpleAgent] Failed to parse ${event.path}:`, error);
+      throw error;
+    }
+    
+    const specSlug = slugifySpecId(spec.id);
+    
+    // RACE CONDITION FIX: Prevent concurrent processing of same spec
+    // If this spec is already being processed, wait for it to complete
+    const existingOperation = this.activeSpecs.get(specSlug);
+    if (existingOperation) {
+      console.log(`[SimpleAgent] Waiting for existing operation on ${specSlug}...`);
+      await existingOperation;
+    }
+    
+    // Create new operation promise
+    const operation = this.processSpec(spec, specSlug, event.path);
+    this.activeSpecs.set(specSlug, operation);
+    
+    try {
+      await operation;
+    } finally {
+      // Clean up when done
+      this.activeSpecs.delete(specSlug);
+    }
+  }
+  
+  /**
+   * Process a spec (internal method with locking)
+   */
+  private async processSpec(spec: ParsedSpec, specSlug: string, filePath: string): Promise<void> {
+    try {
+      // 1. Generate code for each block
       const generatedFiles: string[] = [];
+      const errors: Array<{ blockId: string; error: Error }> = [];
+      
       for (const block of spec.blocks) {
-        const code = this.generator.generate(spec.id, block);
-        const filePath = await this.writeCode(specSlug, block.id, code);
-        generatedFiles.push(filePath);
+        try {
+          const code = this.generator.generate(spec.id, block);
+          const outputPath = await this.writeCode(specSlug, block.id, code);
+          generatedFiles.push(outputPath);
+        } catch (error) {
+          console.error(`[SimpleAgent] Failed to generate ${block.id}:`, error);
+          errors.push({ blockId: block.id, error: error as Error });
+        }
       }
       
-      // 3. Create/update symlinks
+      // 2. Create/update symlinks (with file locking)
       await this.updateSymlinks(specSlug);
       
-      console.log(`✅ Generated ${generatedFiles.length} files for ${spec.id}`);
+      // 3. Report results
+      if (errors.length > 0) {
+        console.warn(`⚠️  Generated ${generatedFiles.length} files, ${errors.length} failed for ${spec.id}`);
+        throw new AggregateError(
+          errors.map(e => e.error),
+          `Failed to generate ${errors.length} blocks: ${errors.map(e => e.blockId).join(', ')}`
+        );
+      } else {
+        console.log(`✅ Generated ${generatedFiles.length} files for ${spec.id}`);
+      }
     } catch (error) {
-      console.error(`[SimpleAgent] Error processing ${event.path}:`, error);
+      console.error(`[SimpleAgent] Error processing ${filePath}:`, error);
       throw error;
     }
   }
