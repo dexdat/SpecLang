@@ -48,7 +48,8 @@ export class ConvergenceDetector extends TypedEventEmitter<ConvergenceEvents> {
     isTracking: false,
     filesChanged: new Set(),
     currentDepth: 0,
-    cascadeHistory: []  // Track cascade IDs to detect loops
+    cascadeHistory: [],
+    edgeGraph: new Map()  // Track edges: fileA -> fileB (fileA caused fileB to regenerate)
   };
   
   private readonly MAX_DEPTH = POC_CONSTANTS.MAX_CASCADE_DEPTH; // 10
@@ -56,9 +57,9 @@ export class ConvergenceDetector extends TypedEventEmitter<ConvergenceEvents> {
   
   /**
    * Handle file change - reset timer
-   * Includes protection against infinite loops and runaway cascades
+   * Includes proper circular dependency detection using edge tracking
    */
-  onFileChange(path: string): void {
+  onFileChange(path: string, causedBy?: string): void {
     // Check for runaway cascade (too many files)
     if (this.state.filesChanged.size >= this.MAX_FILES_PER_CASCADE) {
       this.emit('max-files', { 
@@ -68,18 +69,35 @@ export class ConvergenceDetector extends TypedEventEmitter<ConvergenceEvents> {
       return;
     }
     
-    // Check for circular dependency (same file changing repeatedly)
-    if (this.state.filesChanged.has(path)) {
-      this.state.currentDepth++;
+    // Track cascade history
+    this.state.cascadeHistory.push(path);
+    if (this.state.cascadeHistory.length > this.MAX_DEPTH * 2) {
+      this.state.cascadeHistory.shift();
+    }
+    
+    // PROPER CIRCULAR DETECTION: Build dependency graph
+    if (causedBy) {
+      // Add edge: causedBy -> path
+      if (!this.state.edgeGraph.has(causedBy)) {
+        this.state.edgeGraph.set(causedBy, new Set());
+      }
+      this.state.edgeGraph.get(causedBy)!.add(path);
       
-      if (this.state.currentDepth >= this.MAX_DEPTH) {
-        this.emit('max-depth', { 
-          depth: this.state.currentDepth,
-          path,
-          timestamp: Date.now()
-        });
-        this.reset();
-        return;
+      // Detect cycle: if path causes causedBy (or transitively causes)
+      if (this.wouldCreateCycle(causedBy, path)) {
+        this.state.currentDepth++;
+        
+        if (this.state.currentDepth >= this.MAX_DEPTH) {
+          this.emit('circular-dependency', { 
+            depth: this.state.currentDepth,
+            from: causedBy,
+            to: path,
+            timestamp: Date.now(),
+            cycle: this.findCycle(causedBy, path)
+          });
+          this.reset();
+          return;
+        }
       }
     }
     
@@ -92,6 +110,56 @@ export class ConvergenceDetector extends TypedEventEmitter<ConvergenceEvents> {
     }
     
     this.resetTimer();
+  }
+  
+  /**
+   * Check if adding edge from -> to would create a cycle
+   */
+  private wouldCreateCycle(from: string, to: string): boolean {
+    // Use DFS to detect if 'to' can reach 'from'
+    const visited = new Set<string>();
+    const stack = [to];
+    
+    while (stack.length > 0) {
+      const current = stack.pop()!;
+      if (current === from) return true;
+      if (visited.has(current)) continue;
+      visited.add(current);
+      
+      const neighbors = this.state.edgeGraph.get(current);
+      if (neighbors) {
+        for (const neighbor of neighbors) {
+          if (!visited.has(neighbor)) {
+            stack.push(neighbor);
+          }
+        }
+      }
+    }
+    
+    return false;
+  }
+  
+  /**
+   * Find the actual cycle path for debugging
+   */
+  private findCycle(from: string, to: string): string[] {
+    const path: string[] = [to];
+    let current = to;
+    
+    while (current !== from) {
+      // Find predecessor
+      for (const [source, targets] of this.state.edgeGraph) {
+        if (targets.has(current)) {
+          path.unshift(source);
+          current = source;
+          break;
+        }
+      }
+      // Safety: prevent infinite loop
+      if (path.length > this.MAX_DEPTH) break;
+    }
+    
+    return path;
   }
   
   /**
@@ -119,6 +187,7 @@ export class ConvergenceDetector extends TypedEventEmitter<ConvergenceEvents> {
       timestamp: Date.now(),
       filesChanged: Array.from(this.state.filesChanged),
       cascadeDepth: this.state.currentDepth,
+      history: [...this.state.cascadeHistory],
       duration,
       tasksExecuted: 0,  // Set by daemon
       successRate: 1.0   // Set by daemon
@@ -139,7 +208,8 @@ export class ConvergenceDetector extends TypedEventEmitter<ConvergenceEvents> {
     this.state = {
       isTracking: false,
       filesChanged: new Set(),
-      currentDepth: 0
+      currentDepth: 0,
+      cascadeHistory: []
     };
   }
 }
