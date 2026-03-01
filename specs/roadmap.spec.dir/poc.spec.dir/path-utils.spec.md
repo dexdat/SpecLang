@@ -56,16 +56,55 @@ specs/{slug}.spec.dir/src/index.ts       # Barrel export
 import { join, dirname, basename, extname } from 'path';
 
 /**
- * Slugify a spec ID for filesystem use
+ * Windows reserved filenames that cannot be used
+ */
+const WINDOWS_RESERVED_NAMES = new Set([
+  'con', 'prn', 'aux', 'nul',
+  'com1', 'com2', 'com3', 'com4', 'com5', 'com6', 'com7', 'com8', 'com9',
+  'lpt1', 'lpt2', 'lpt3', 'lpt4', 'lpt5', 'lpt6', 'lpt7', 'lpt8', 'lpt9'
+]);
+
+/**
+ * Slugify a spec ID for filesystem use with reversible encoding
  * @param specId - Full spec ID (e.g., "@examples/greeting")
- * @returns Filesystem-safe slug (e.g., "examples-greeting")
+ * @returns Filesystem-safe slug (e.g., "examples--greeting")
  */
 export function slugifySpecId(specId: string): string {
-  return specId
+  // Use double dash to encode / for reversibility
+  // @examples/greeting → examples--greeting
+  // @my-spec/auth → my-spec--auth
+  let slug = specId
     .replace(/^@/, '')                    // Remove leading @
-    .replace(/\//g, '-')                   // Replace / with -
-    .replace(/[^a-zA-Z0-9-_]/g, '-')      // Replace special chars
+    .replace(/\//g, '--')                  // Replace / with -- (reversible)
+    .replace(/[^a-zA-Z0-9-_]/g, '-')      // Replace other special chars
     .toLowerCase();
+  
+  // Handle Windows reserved names by prefixing with underscore
+  const baseName = slug.split('--').pop() || slug;
+  if (WINDOWS_RESERVED_NAMES.has(baseName)) {
+    slug = slug.replace(baseName, '_' + baseName);
+  }
+  
+  return slug;
+}
+
+/**
+ * Reverse slugification (recover original spec ID)
+ * @param slug - Filesystem slug
+ * @returns Original spec ID (e.g., "@examples/greeting")
+ */
+export function unslugifySpecId(slug: string): string {
+  // Remove Windows reserved name prefix if present
+  let cleaned = slug;
+  for (const reserved of WINDOWS_RESERVED_NAMES) {
+    if (slug.includes('_' + reserved)) {
+      cleaned = slug.replace('_' + reserved, reserved);
+      break;
+    }
+  }
+  
+  // Reverse: replace -- with /
+  return '@' + cleaned.replace(/--/g, '/');
 }
 
 /**
