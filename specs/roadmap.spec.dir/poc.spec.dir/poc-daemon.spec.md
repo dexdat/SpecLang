@@ -243,22 +243,45 @@ export class PocDaemon {
   
   /**
    * Check if spec is up to date
+   * Compares spec file mtime to the most recent generated file mtime
    */
   private async isUpToDate(filePath: string): Promise<boolean> {
-    const { stat } = await import('fs/promises');
+    const { stat, readdir } = await import('fs/promises');
+    const { join } = await import('path');
     
     try {
       const specStat = await stat(filePath);
-      const generatedPath = this.getGeneratedPath(filePath);
+      const generatedDir = this.getGeneratedPath(filePath);
       
-      const generatedStat = await stat(generatedPath).catch(() => null);
+      // Check if generated directory exists
+      const dirStat = await stat(generatedDir).catch(() => null);
+      if (!dirStat || !dirStat.isDirectory()) {
+        return false; // No generated code directory
+      }
       
-      if (!generatedStat) {
-        return false; // No generated code
+      // Read all generated files and find the newest
+      const files = await readdir(generatedDir);
+      if (files.length === 0) {
+        return false; // Directory exists but empty
+      }
+      
+      // Find the most recently modified generated file
+      let newestMtime = 0;
+      for (const file of files) {
+        if (file.endsWith('.ts')) {
+          const fileStat = await stat(join(generatedDir, file));
+          if (fileStat.mtimeMs > newestMtime) {
+            newestMtime = fileStat.mtimeMs;
+          }
+        }
+      }
+      
+      if (newestMtime === 0) {
+        return false; // No TypeScript files found
       }
       
       // Check if generated code is newer than spec
-      return generatedStat.mtime >= specStat.mtime;
+      return newestMtime >= specStat.mtimeMs;
     } catch {
       return false;
     }

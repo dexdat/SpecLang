@@ -93,7 +93,8 @@ const paramPattern = /^-\s+(\w+):\s+(\w+)\s+-\s+(.+)$/gm;
 ### @poc/block-parser/impl
 
 ```typescript
-import { readFile } from 'fs/promises';
+import { readFile, access, constants } from 'fs/promises';
+import { resolve } from 'path';
 import { 
   ParsedBlock, 
   ParsedSpec, 
@@ -102,7 +103,8 @@ import {
   Property,
   ReturnType, 
   CodeExample,
-  SpecHeader 
+  SpecHeader,
+  POCError 
 } from './types';
 import { HeaderParser } from './header-parser';
 
@@ -133,14 +135,51 @@ export class BlockParser {
   }
   
   /**
-   * Parse a spec file
-   * @param filePath - Path to the spec file
+   * Allowed spec root directory
+   */
+  private readonly specRoot: string = resolve(process.cwd(), 'specs');
+  
+  /**
+   * Parse a spec file with path traversal protection
+   * @param filePath - Path to the spec file (must be within specs/)
    * @returns Complete parsed spec with header and blocks
-   * @throws {POCError} If file cannot be read or parsed
+   * @throws {POCError} If file cannot be read, is outside specs/, or parsing fails
    */
   async parseFile(filePath: string): Promise<ParsedSpec> {
-    const content = await readFile(filePath, 'utf-8');
-    return this.parse(content, filePath);
+    // Resolve to absolute path
+    const absolutePath = resolve(filePath);
+    
+    // SECURITY: Verify path is within allowed spec directory
+    if (!absolutePath.startsWith(this.specRoot)) {
+      throw new POCError(
+        'PARSE_ERROR',
+        `Access denied: Path "${filePath}" is outside allowed spec directory`,
+        filePath
+      );
+    }
+    
+    // SECURITY: Check for path traversal sequences
+    if (filePath.includes('..') || filePath.includes('~')) {
+      throw new POCError(
+        'PARSE_ERROR',
+        `Invalid path: "${filePath}" contains traversal sequences`,
+        filePath
+      );
+    }
+    
+    // Verify file exists and is readable
+    try {
+      await access(absolutePath, constants.R_OK);
+    } catch {
+      throw new POCError(
+        'PARSE_ERROR',
+        `Cannot read file: "${filePath}" does not exist or is not readable`,
+        filePath
+      );
+    }
+    
+    const content = await readFile(absolutePath, 'utf-8');
+    return this.parse(content, absolutePath);
   }
   
   /**

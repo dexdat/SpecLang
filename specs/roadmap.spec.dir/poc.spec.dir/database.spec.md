@@ -40,8 +40,8 @@ CREATE TABLE file_events (
   hash TEXT, -- Content hash for modifications (maps to FileEvent.hash)
   timestamp INTEGER NOT NULL, -- Unix timestamp (ms)
   processed BOOLEAN DEFAULT FALSE,
-  cascadeId INTEGER, -- Maps to FileEvent.cascadeId
-  FOREIGN KEY (cascadeId) REFERENCES cascades(id)
+  cascade_id INTEGER, -- Maps to FileEvent.cascadeId
+  FOREIGN KEY (cascade_id) REFERENCES cascades(id)
 );
 
 -- Index for unprocessed events
@@ -61,7 +61,7 @@ CREATE INDEX idx_file_path ON file_events(path);
 | hash | TEXT | MD5 hash of content | FileEvent.hash |
 | timestamp | INTEGER | Unix timestamp (ms) | FileEvent.timestamp |
 | processed | BOOLEAN | Has been processed | - |
-| cascadeId | INTEGER | FK to cascade | FileEvent.cascadeId |
+| cascade_id | INTEGER | FK to cascade | FileEvent.cascadeId |
 
 ### @poc/database/cascades
 
@@ -259,7 +259,7 @@ export class POCDatabase {
         oldPath,
         hash,
         timestamp,
-        cascadeId
+        cascade_id as cascadeId
       FROM file_events 
       WHERE processed = FALSE 
       ORDER BY timestamp ASC

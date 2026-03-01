@@ -43,12 +43,25 @@ Ensure generated code compiles correctly and integrates with the project build s
 ### @poc/build/impl
 
 ```typescript
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 import { existsSync } from 'fs';
-import { ConvergenceEvent } from './types';
+import { resolve } from 'path';
+import { ConvergenceEvent, POCError } from './types';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
+
+/**
+ * Whitelist of allowed build commands for security
+ */
+const ALLOWED_BUILD_COMMANDS = [
+  'npm run build',
+  'npm run compile',
+  'tsc',
+  'tsc --build',
+  'yarn build',
+  'pnpm build'
+];
 
 /**
  * Build integration for generated code
@@ -57,11 +70,46 @@ export class BuildIntegration {
   private config: { buildCommand: string; verifyCommand?: string };
   
   constructor(config: { buildCommand: string; verifyCommand?: string }) {
-    this.config = config;
+    // SECURITY: Validate build command against whitelist
+    this.config = this.validateBuildCommand(config);
   }
   
   /**
-   * Run build after code generation
+   * Validate and sanitize build command
+   * @throws {POCError} If command is not in whitelist
+   */
+  private validateBuildCommand(config: { buildCommand: string; verifyCommand?: string }): 
+    { buildCommand: string; verifyCommand?: string } {
+    const command = config.buildCommand.trim();
+    
+    // Check if command is in whitelist
+    const isAllowed = ALLOWED_BUILD_COMMANDS.some(allowed => 
+      command === allowed || command.startsWith(allowed + ' ')
+    );
+    
+    if (!isAllowed) {
+      throw new POCError(
+        'VALIDATION_ERROR',
+        `Build command "${command}" is not in whitelist. Allowed commands: ${ALLOWED_BUILD_COMMANDS.join(', ')}`,
+        undefined
+      );
+    }
+    
+    // SECURITY: Reject commands with shell metacharacters
+    const dangerousChars = /[;|&$`\n\r<>]/;
+    if (dangerousChars.test(command)) {
+      throw new POCError(
+        'VALIDATION_ERROR',
+        `Build command contains dangerous characters: ${command}`,
+        undefined
+      );
+    }
+    
+    return config;
+  }
+  
+  /**
+   * Run build after code generation with security hardening
    * @returns Build result with success status and output
    */
   async runBuild(): Promise<{
@@ -73,7 +121,13 @@ export class BuildIntegration {
     const start = Date.now();
     
     try {
-      const { stdout, stderr } = await execAsync(this.config.buildCommand);
+      // SECURITY: Use execFile instead of exec to prevent shell injection
+      // Parse command into executable and arguments
+      const [executable, ...args] = this.config.buildCommand.split(' ');
+      const { stdout, stderr } = await execFileAsync(executable, args, {
+        timeout: 300000, // 5 minute timeout
+        maxBuffer: 1024 * 1024 * 10 // 10MB buffer
+      });
       
       return {
         success: true,
