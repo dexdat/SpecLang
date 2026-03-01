@@ -104,7 +104,9 @@ import {
   ReturnType, 
   CodeExample,
   SpecHeader,
-  POCError 
+  POCError,
+  isValidBlockKind,
+  VALID_BLOCK_KINDS
 } from './types';
 import { HeaderParser } from './header-parser';
 
@@ -192,8 +194,8 @@ export class BlockParser {
     // Parse header
     const header = this.headerParser.parse(content);
     
-    // Parse blocks
-    const blocks = this.parseBlocks(content);
+    // Parse blocks with filePath for error reporting
+    const blocks = this.parseBlocks(content, filePath);
     
     return {
       id: header.id,
@@ -209,14 +211,15 @@ export class BlockParser {
   /**
    * Parse all blocks from content
    * @param content - Markdown content
+   * @param filePath - Source file path (for error reporting)
    * @returns Array of parsed blocks
    */
-  parseBlocks(content: string): ParsedBlock[] {
+  parseBlocks(content: string, filePath: string): ParsedBlock[] {
     const blocks: ParsedBlock[] = [];
     const matches = content.matchAll(this.blockPattern);
     
     for (const match of matches) {
-      const block = this.parseBlock(match, content);
+      const block = this.parseBlock(match, content, filePath);
       blocks.push(block);
     }
     
@@ -229,10 +232,21 @@ export class BlockParser {
    * @param fullContent - Full file content
    * @returns Parsed block
    */
-  private parseBlock(match: RegExpMatchArray, fullContent: string): ParsedBlock {
+  private parseBlock(match: RegExpMatchArray, fullContent: string, filePath: string): ParsedBlock {
     const id = match[1];
-    const kind = match[2] as BlockKind;
+    const rawKind = match[2];
     const section = this.extractSection(match.index!, fullContent);
+    
+    // SECURITY: Validate block kind
+    if (!isValidBlockKind(rawKind)) {
+      throw new POCError(
+        'PARSE_ERROR',
+        `Invalid block kind "${rawKind}" for block "${id}". Valid kinds: ${VALID_BLOCK_KINDS.join(', ')}`,
+        filePath
+      );
+    }
+    
+    const kind = rawKind as BlockKind;
     
     return {
       id,
