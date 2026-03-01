@@ -47,13 +47,42 @@ export class ConvergenceDetector extends TypedEventEmitter<ConvergenceEvents> {
   private state: ConvergenceState = {
     isTracking: false,
     filesChanged: new Set(),
-    currentDepth: 0
+    currentDepth: 0,
+    cascadeHistory: []  // Track cascade IDs to detect loops
   };
+  
+  private readonly MAX_DEPTH = POC_CONSTANTS.MAX_CASCADE_DEPTH; // 10
+  private readonly MAX_FILES_PER_CASCADE = 100;  // Prevent runaway file generation
   
   /**
    * Handle file change - reset timer
+   * Includes protection against infinite loops and runaway cascades
    */
   onFileChange(path: string): void {
+    // Check for runaway cascade (too many files)
+    if (this.state.filesChanged.size >= this.MAX_FILES_PER_CASCADE) {
+      this.emit('max-files', { 
+        count: this.state.filesChanged.size,
+        timestamp: Date.now()
+      });
+      return;
+    }
+    
+    // Check for circular dependency (same file changing repeatedly)
+    if (this.state.filesChanged.has(path)) {
+      this.state.currentDepth++;
+      
+      if (this.state.currentDepth >= this.MAX_DEPTH) {
+        this.emit('max-depth', { 
+          depth: this.state.currentDepth,
+          path,
+          timestamp: Date.now()
+        });
+        this.reset();
+        return;
+      }
+    }
+    
     this.state.filesChanged.add(path);
     
     if (!this.state.isTracking) {
