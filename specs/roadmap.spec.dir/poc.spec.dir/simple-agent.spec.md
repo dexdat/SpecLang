@@ -59,7 +59,7 @@ import { slugifySpecId } from './path-utils';
 ### @poc/simple-agent/impl
 
 ```typescript
-import { FileEvent, ParsedSpec } from './types';
+import { FileEvent, ParsedSpec, SpecHeader } from './types';
 import { BlockParser } from './block-parser';
 import { CodeGenerator } from './code-generator';
 import { symlink, unlink, mkdir, writeFile } from 'fs/promises';
@@ -122,9 +122,20 @@ export class SimpleAgent {
       const generatedFiles: string[] = [];
       const errors: Array<{ blockId: string; error: Error }> = [];
       
+      // Build header from spec
+      const header: SpecHeader = {
+        id: spec.id,
+        version: spec.version,
+        layer: 0, // Default layer
+        short: spec.short || '',
+        tags: [],
+        lineCount: spec.headerLines.length,
+        rawHeader: spec.headerLines.join('\n')
+      };
+      
       for (const block of spec.blocks) {
         try {
-          const code = this.generator.generate(spec.id, block);
+          const code = this.generator.generate(spec.id, header, block);
           const outputPath = await this.writeCode(specSlug, block.id, code);
           generatedFiles.push(outputPath);
         } catch (error) {

@@ -207,25 +207,6 @@ ${code}`;
       await symlink(targetPath, linkPath);
     }
   }
-    
-    // Platform-specific symlink
-    const isWindows = platform() === 'win32';
-    
-    if (isWindows) {
-      try {
-        await symlink(targetPath, linkPath, 'junction');
-      } catch (error) {
-        // Fallback: sync directory contents
-        console.log(`[CodeGenerator] Symlink failed on Windows, using directory sync`);
-        await this.syncDirectory(
-          join('specs', `${slug}.spec.dir`, 'src'),
-          linkPath
-        );
-      }
-    } else {
-      await symlink(targetPath, linkPath);
-    }
-  }
   
   /**
    * Sync directory contents (Windows fallback)

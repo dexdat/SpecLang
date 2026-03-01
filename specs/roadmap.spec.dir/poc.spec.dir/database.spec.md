@@ -36,7 +36,7 @@ CREATE TABLE file_events (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   type TEXT NOT NULL CHECK (type IN ('created', 'modified', 'deleted', 'renamed')),
   path TEXT NOT NULL,
-  oldPath TEXT, -- For renames
+  old_path TEXT, -- For renames
   hash TEXT, -- Content hash for modifications (maps to FileEvent.hash)
   timestamp INTEGER NOT NULL, -- Unix timestamp (ms)
   processed BOOLEAN DEFAULT FALSE,
@@ -57,7 +57,7 @@ CREATE INDEX idx_file_path ON file_events(path);
 | id | INTEGER | Primary key | - (auto-generated) |
 | type | TEXT | created/modified/deleted/renamed | FileEvent.type |
 | path | TEXT | Absolute file path | FileEvent.path |
-| oldPath | TEXT | Previous path (renames only) | FileEvent.oldPath |
+| old_path | TEXT | Previous path (renames only) | FileEvent.oldPath |
 | hash | TEXT | MD5 hash of content | FileEvent.hash |
 | timestamp | INTEGER | Unix timestamp (ms) | FileEvent.timestamp |
 | processed | BOOLEAN | Has been processed | - |
@@ -243,7 +243,7 @@ export class POCDatabase {
   // File Events
   insertFileEvent(event: FileEvent): number {
     const stmt = this.db.prepare(`
-      INSERT INTO file_events (type, path, oldPath, hash, timestamp)
+      INSERT INTO file_events (type, path, old_path, hash, timestamp)
       VALUES (?, ?, ?, ?, ?)
     `);
     const result = stmt.run(event.type, event.path, event.oldPath, event.hash, event.timestamp);
@@ -256,7 +256,7 @@ export class POCDatabase {
         id,
         type,
         path,
-        oldPath,
+        old_path as oldPath,
         hash,
         timestamp,
         cascade_id as cascadeId
