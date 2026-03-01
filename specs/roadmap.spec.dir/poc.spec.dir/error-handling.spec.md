@@ -236,6 +236,16 @@ export const ENHANCED_DEFAULT_CONFIG: EnhancedErrorConfig = {
 };
 
 /**
+ * Maximum error log size to prevent unbounded growth
+ */
+const MAX_ERROR_LOG_SIZE = 1000;
+
+/**
+ * Maximum retry attempts map size to prevent memory leaks
+ */
+const MAX_RETRY_MAP_SIZE = 1000;
+
+/**
  * Central error handler with circuit breaker and exponential backoff
  */
 export class ErrorHandler {
@@ -377,6 +387,13 @@ export class ErrorHandler {
         }
         
         this.retryAttempts.set(key, attempts + 1);
+        
+        // ENFORCE BOUND: Clean up oldest entries if map gets too large
+        if (this.retryAttempts.size > MAX_RETRY_MAP_SIZE) {
+          const firstKey = this.retryAttempts.keys().next().value;
+          this.retryAttempts.delete(firstKey);
+        }
+        
         return 'retry';
       } else {
         console.log(`[ErrorHandler] Max retries exceeded for ${error.code}`);
@@ -385,13 +402,6 @@ export class ErrorHandler {
     }
     
     return strategy;
-  }
-  
-  /**
-   * Sleep helper
-   */
-  private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
   }
   
   /**
@@ -405,99 +415,27 @@ export class ErrorHandler {
       this.closeCircuit();
     }
   }
-    
-    // Get strategy for error type
-    const strategy = this.config.strategies[error.code] || 'skip';
-    
-    // Log strategy
-    console.log(`[ErrorHandler] ${error.code} → ${strategy}`);
-    
-    // Execute strategy
-    switch (strategy) {
-      case 'skip':
-        this.handleSkip(error);
-        break;
-      case 'retry':
-        return await this.handleRetry(error, 0);
-      case 'retry-delayed':
-        return await this.handleRetry(error, this.config.retryDelayMs);
-      case 'stop':
-        this.handleStop(error);
-        break;
-      case 'fatal':
-        this.handleFatal(error);
-        break;
-    }
-    
-    return strategy;
-  }
+
+  
+
   
   /**
-   * Reset consecutive error counter
-   */
-  reset(): void {
-    if (this.consecutiveErrors > 0) {
-      console.log(`[ErrorHandler] Reset error counter (was ${this.consecutiveErrors})`);
-      this.consecutiveErrors = 0;
-    }
-  }
-  
-  /**
-   * Log error to file/database
+   * Log error to file/database with bounded growth
    */
   private logError(error: POCError): void {
     this.errorLog.push(error);
+    
+    // ENFORCE BOUND: Remove oldest errors when exceeding max size
+    if (this.errorLog.length > MAX_ERROR_LOG_SIZE) {
+      this.errorLog.shift(); // Remove oldest error
+    }
+    
     console.error(error.toUserMessage());
   }
   
   /**
    * Handle skip strategy
-   */
-  private handleSkip(error: POCError): void {
-    console.log(`[ErrorHandler] Skipping file: ${error.filePath || 'unknown'}`);
-    // Continue with next file
-  }
-  
-  /**
-   * Handle retry strategy
-   */
-  private async handleRetry(error: POCError, delayMs: number): Promise<RecoveryStrategy> {
-    const maxRetries = this.config.maxRetries;
-    
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      if (delayMs > 0) {
-        console.log(`[ErrorHandler] Retrying in ${delayMs}ms (attempt ${attempt}/${maxRetries})`);
-        await this.sleep(delayMs);
-      } else {
-        console.log(`[ErrorHandler] Retrying immediately (attempt ${attempt}/${maxRetries})`);
-      }
-      
-      // Retry would be handled by caller
-      // For now, just return 'retry' and let caller decide
-      return 'retry';
-    }
-    
-    // Max retries exceeded
-    console.error(`[ErrorHandler] Max retries exceeded for ${error.code}`);
-    return 'skip';
-  }
-  
-  /**
-   * Handle stop strategy
-   */
-  private handleStop(error: POCError): void {
-    console.error(`[ErrorHandler] Stopping current cascade due to ${error.code}`);
-    // Signal cascade to stop
-  }
-  
-  /**
-   * Handle fatal strategy
-   */
-  private handleFatal(error: POCError): void {
-    console.error(`[ErrorHandler] FATAL: ${error.toUserMessage()}`);
-    // Clean up and exit
-    process.exit(1);
-  }
+
   
   /**
    * Get error statistics
