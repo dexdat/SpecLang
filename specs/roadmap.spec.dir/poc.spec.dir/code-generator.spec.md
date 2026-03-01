@@ -26,10 +26,10 @@ The `CodeGenerator` is the bridge between parsed specs and generated code:
 
 ```typescript
 import { TemplateRegistry } from './template-registry';
-import { BlockData, GeneratedFile, SpecHeader } from './types';
-import { slugifySpecId } from './path-utils';
+import { BlockData, GeneratedFile, SpecHeader, POCError } from './types';
+import { slugifySpecId, resolveOutputPath } from './path-utils';
 import { mkdir, writeFile, symlink, unlink } from 'fs/promises';
-import { dirname, join } from 'path';
+import { dirname, join, relative } from 'path';
 import { platform } from 'os';
 ```
 
@@ -66,10 +66,20 @@ export class CodeGenerator {
     header: SpecHeader,
     block: BlockData
   ): Promise<GeneratedFile> {
-    // 1. Get template for block kind
+    // 1. Check if template exists for block kind
+    if (!this.registry.has(block.kind)) {
+      throw new POCError(
+        'TEMPLATE_ERROR',
+        `No template registered for block kind "${block.kind}". ` +
+        `Available kinds: ${Array.from(this.registry.getAll().keys()).join(', ')}`,
+        resolveOutputPath(specId, block.id)
+      );
+    }
+    
+    // 2. Get template for block kind
     const template = this.registry.get(block.kind);
     
-    // 2. Render code
+    // 3. Render code
     const code = template(block);
     
     // 3. Add file header
@@ -160,7 +170,20 @@ ${code}`;
   private async createSymlink(specId: string): Promise<void> {
     const slug = slugifySpecId(specId);
     const linkPath = join(this.outputDir, slug);
-    const targetPath = join('..', 'specs', `${slug}.spec.dir`, 'src');
+    const sourceDir = join('specs', `${slug}.spec.dir`, 'src');
+    
+    // SECURITY: Calculate relative path dynamically based on actual paths
+    // This ensures correct relative path regardless of outputDir location
+    const targetPath = relative(dirname(linkPath), sourceDir);
+    
+    // Validate the relative path doesn't escape project
+    if (targetPath.startsWith('..') && targetPath.split('..').length > 3) {
+      throw new POCError(
+        'SYMLINK_ERROR',
+        `Symlink target "${targetPath}" would escape project directory`,
+        linkPath
+      );
+    }
     
     // Remove existing symlink if present
     try {
@@ -178,8 +201,24 @@ ${code}`;
       } catch (error) {
         // Fallback: sync directory contents
         console.log(`[CodeGenerator] Symlink failed on Windows, using directory sync`);
+        await this.syncDirectory(sourceDir, linkPath);
+      }
+    } else {
+      await symlink(targetPath, linkPath);
+    }
+  }
+    
+    // Platform-specific symlink
+    const isWindows = platform() === 'win32';
+    
+    if (isWindows) {
+      try {
+        await symlink(targetPath, linkPath, 'junction');
+      } catch (error) {
+        // Fallback: sync directory contents
+        console.log(`[CodeGenerator] Symlink failed on Windows, using directory sync`);
         await this.syncDirectory(
-          join('specs', `${slug}.spec.dir`, 'src`),
+          join('specs', `${slug}.spec.dir`, 'src'),
           linkPath
         );
       }
@@ -253,19 +292,7 @@ ${exports}
     await writeFile(indexPath, content, 'utf-8');
   }
   
-  /**
-   * Copy directory (Windows fallback)
-   */
-  private async copyDirectory(source: string, dest: string): Promise<void> {
-    const { readdir, copyFile, mkdir } = await import('fs/promises');
-    
-    await mkdir(dest, { recursive: true });
-    const files = await readdir(source);
-    
-    for (const file of files) {
-      await copyFile(join(source, file), join(dest, file));
-    }
-  }
+
 }
 ```
 
