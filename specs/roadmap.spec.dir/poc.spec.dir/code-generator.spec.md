@@ -176,15 +176,54 @@ ${code}`;
       try {
         await symlink(targetPath, linkPath, 'junction');
       } catch (error) {
-        // Fallback: copy files instead
-        console.log(`[CodeGenerator] Symlink failed on Windows, using copy`);
-        await this.copyDirectory(
-          join('specs', `${slug}.spec.dir`, 'src'),
+        // Fallback: sync directory contents
+        console.log(`[CodeGenerator] Symlink failed on Windows, using directory sync`);
+        await this.syncDirectory(
+          join('specs', `${slug}.spec.dir`, 'src`),
           linkPath
         );
       }
     } else {
       await symlink(targetPath, linkPath);
+    }
+  }
+  
+  /**
+   * Sync directory contents (Windows fallback)
+   * Handles incremental updates: adds new files, updates modified, removes deleted
+   */
+  private async syncDirectory(source: string, dest: string): Promise<void> {
+    const { readdir, stat, copyFile, unlink, mkdir } = await import('fs/promises');
+    const { join } = await import('path');
+    
+    await mkdir(dest, { recursive: true });
+    
+    const sourceFiles = await readdir(source);
+    const destFiles = await readdir(dest);
+    
+    // Copy/update files from source
+    for (const file of sourceFiles) {
+      const srcPath = join(source, file);
+      const destPath = join(dest, file);
+      
+      try {
+        const srcStat = await stat(srcPath);
+        const destStat = await stat(destPath).catch(() => null);
+        
+        // Copy if doesn't exist or source is newer
+        if (!destStat || srcStat.mtime > destStat.mtime) {
+          await copyFile(srcPath, destPath);
+        }
+      } catch {
+        // Skip files that can't be read
+      }
+    }
+    
+    // Remove files that no longer exist in source
+    for (const file of destFiles) {
+      if (!sourceFiles.includes(file)) {
+        await unlink(join(dest, file)).catch(() => {});
+      }
     }
   }
   

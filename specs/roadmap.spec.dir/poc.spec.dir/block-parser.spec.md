@@ -115,11 +115,13 @@ export class BlockParser {
   private readonly blockPattern = /^###\s+@block:([a-zA-Z0-9_-]+)\s+@kind:(\w+)/gm;
   
   // Parameter: name (optional ?), type (complex types allowed), description
-  // Examples: "name: string", "name?: string", "items: string[]", "config: { foo: string }"
-  private readonly paramPattern = /^-\s+(\w+\??):\s*([^-]+?)\s+-\s*(.+)$/gm;
+  // Supports: string, string[], Promise<string>, Array<T>, string | number, { a: string }
+  // Pattern captures everything up to " - " as type, allowing complex TypeScript types
+  private readonly paramPattern = /^-\s+(\w+\??):\s*(.+?)\s+-\s*(.+)$/gm;
   
-  // Return type: captures complex types like "string[]", "Promise<string>", "void"
-  private readonly returnPattern = /\*\*Returns:\*\*\s*(.+?)\s*-\s*(.+)/;
+  // Return type: captures complex types including generics, unions, intersections
+  // Supports: string, Promise<string>, string | number, Array<T>, { [key: string]: any }
+  private readonly returnPattern = /\*\*Returns:\*\*\s*([^\n]+?)(?:\s+-\s*(.+))?$/m;
   
   // Code examples
   private readonly examplePattern = /```(\w+)\n([\s\S]*?)```/g;

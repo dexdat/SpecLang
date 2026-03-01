@@ -173,30 +173,238 @@ export const DEFAULT_RECOVERY_CONFIG: ErrorRecoveryConfig = {
 import { POCError, RecoveryStrategy, ErrorRecoveryConfig } from './types';
 
 /**
- * Central error handler
+ * Circuit breaker state
+ */
+export interface CircuitBreakerState {
+  /** Is circuit open (failing fast) */
+  isOpen: boolean;
+  /** Number of consecutive failures */
+  failures: number;
+  /** Threshold before opening circuit */
+  threshold: number;
+  /** Timeout before attempting reset */
+  timeoutMs: number;
+  /** Last failure timestamp */
+  lastFailure: number;
+}
+
+/**
+ * Error metrics for monitoring
+ */
+export interface ErrorMetrics {
+  /** Total errors by code */
+  byCode: Record<POCErrorCode, number>;
+  /** Total errors by file */
+  byFile: Record<string, number>;
+  /** Consecutive current errors */
+  consecutive: number;
+  /** Circuit breaker state */
+  circuitBreaker: CircuitBreakerState;
+  /** Start time of current error window */
+  windowStart: number;
+}
+
+/**
+ * Enhanced recovery config with circuit breaker
+ */
+export interface EnhancedErrorConfig extends ErrorRecoveryConfig {
+  /** Circuit breaker threshold */
+  circuitBreakerThreshold: number;
+  /** Circuit breaker timeout */
+  circuitBreakerTimeoutMs: number;
+  /** Error window for rate calculation */
+  errorWindowMs: number;
+  /** Max errors per window before throttling */
+  maxErrorsPerWindow: number;
+  /** Exponential backoff base */
+  backoffBaseMs: number;
+  /** Exponential backoff max */
+  backoffMaxMs: number;
+}
+
+/**
+ * Enhanced default config with circuit breaker
+ */
+export const ENHANCED_DEFAULT_CONFIG: EnhancedErrorConfig = {
+  ...DEFAULT_RECOVERY_CONFIG,
+  circuitBreakerThreshold: 5,
+  circuitBreakerTimeoutMs: 30000, // 30 seconds
+  errorWindowMs: 60000, // 1 minute
+  maxErrorsPerWindow: 10,
+  backoffBaseMs: 1000,
+  backoffMaxMs: 30000
+};
+
+/**
+ * Central error handler with circuit breaker and exponential backoff
  */
 export class ErrorHandler {
-  private config: ErrorRecoveryConfig;
+  private config: EnhancedErrorConfig;
   private consecutiveErrors: number = 0;
   private errorLog: POCError[] = [];
+  private circuitBreaker: CircuitBreakerState;
+  private errorWindow: POCError[] = [];
+  private retryAttempts: Map<string, number> = new Map();
   
-  constructor(config: ErrorRecoveryConfig = DEFAULT_RECOVERY_CONFIG) {
-    this.config = config;
+  constructor(config: Partial<EnhancedErrorConfig> = {}) {
+    this.config = { ...ENHANCED_DEFAULT_CONFIG, ...config };
+    this.circuitBreaker = {
+      isOpen: false,
+      failures: 0,
+      threshold: this.config.circuitBreakerThreshold,
+      timeoutMs: this.config.circuitBreakerTimeoutMs,
+      lastFailure: 0
+    };
   }
   
   /**
-   * Handle an error and determine recovery action
+   * Handle an error with circuit breaker protection
    */
   async handle(error: POCError): Promise<RecoveryStrategy> {
-    // Log the error
-    this.logError(error);
-    this.consecutiveErrors++;
-    
-    // Check if we've hit max consecutive errors
-    if (this.consecutiveErrors >= this.config.maxConsecutiveErrors) {
-      console.error(`[ErrorHandler] Max consecutive errors reached (${this.config.maxConsecutiveErrors})`);
+    // Check circuit breaker first
+    if (this.isCircuitOpen()) {
+      console.error(`[ErrorHandler] Circuit breaker OPEN - failing fast for ${this.config.circuitBreakerTimeoutMs}ms`);
       return 'fatal';
     }
+    
+    // Log and track
+    this.logError(error);
+    this.updateCircuitBreaker();
+    this.updateErrorWindow();
+    
+    // Check rate limiting
+    if (this.isRateLimited()) {
+      console.error(`[ErrorHandler] Rate limit exceeded (${this.config.maxErrorsPerWindow} errors in ${this.config.errorWindowMs}ms)`);
+      this.openCircuit();
+      return 'stop';
+    }
+    
+    // Increment consecutive errors
+    this.consecutiveErrors++;
+    
+    // Check max consecutive
+    if (this.consecutiveErrors >= this.config.maxConsecutiveErrors) {
+      console.error(`[ErrorHandler] Max consecutive errors reached (${this.config.maxConsecutiveErrors})`);
+      this.openCircuit();
+      return 'fatal';
+    }
+    
+    // Get strategy for error code
+    const strategy = this.config.strategies[error.code] || 'skip';
+    
+    // Execute recovery
+    return await this.executeRecovery(error, strategy);
+  }
+  
+  /**
+   * Check if circuit breaker is open
+   */
+  private isCircuitOpen(): boolean {
+    if (!this.circuitBreaker.isOpen) return false;
+    
+    // Check if it's time to try again
+    const elapsed = Date.now() - this.circuitBreaker.lastFailure;
+    if (elapsed > this.circuitBreaker.timeoutMs) {
+      console.log('[ErrorHandler] Circuit breaker closing - attempting recovery');
+      this.closeCircuit();
+      return false;
+    }
+    
+    return true;
+  }
+  
+  /**
+   * Update circuit breaker state
+   */
+  private updateCircuitBreaker(): void {
+    this.circuitBreaker.failures++;
+    this.circuitBreaker.lastFailure = Date.now();
+    
+    if (this.circuitBreaker.failures >= this.circuitBreaker.threshold) {
+      this.openCircuit();
+    }
+  }
+  
+  /**
+   * Open circuit breaker
+   */
+  private openCircuit(): void {
+    this.circuitBreaker.isOpen = true;
+    console.error(`[ErrorHandler] Circuit breaker OPENED after ${this.circuitBreaker.threshold} failures`);
+  }
+  
+  /**
+   * Close circuit breaker
+   */
+  private closeCircuit(): void {
+    this.circuitBreaker.isOpen = false;
+    this.circuitBreaker.failures = 0;
+    this.consecutiveErrors = 0;
+    console.log('[ErrorHandler] Circuit breaker CLOSED');
+  }
+  
+  /**
+   * Check if error rate is limited
+   */
+  private isRateLimited(): boolean {
+    return this.errorWindow.length >= this.config.maxErrorsPerWindow;
+  }
+  
+  /**
+   * Update error window
+   */
+  private updateErrorWindow(): void {
+    const cutoff = Date.now() - this.config.errorWindowMs;
+    this.errorWindow = this.errorWindow.filter(e => e.timestamp > cutoff);
+  }
+  
+  /**
+   * Execute recovery with exponential backoff
+   */
+  private async executeRecovery(error: POCError, strategy: RecoveryStrategy): Promise<RecoveryStrategy> {
+    const key = `${error.code}:${error.filePath || 'unknown'}`;
+    const attempts = this.retryAttempts.get(key) || 0;
+    
+    if (strategy === 'retry' || strategy === 'retry-delayed') {
+      if (attempts < this.config.maxRetries) {
+        const delay = strategy === 'retry-delayed' 
+          ? Math.min(this.config.backoffBaseMs * Math.pow(2, attempts), this.config.backoffMaxMs)
+          : 0;
+        
+        if (delay > 0) {
+          console.log(`[ErrorHandler] Retrying in ${delay}ms (attempt ${attempts + 1}/${this.config.maxRetries})`);
+          await this.sleep(delay);
+        }
+        
+        this.retryAttempts.set(key, attempts + 1);
+        return 'retry';
+      } else {
+        console.log(`[ErrorHandler] Max retries exceeded for ${error.code}`);
+        this.retryAttempts.delete(key);
+      }
+    }
+    
+    return strategy;
+  }
+  
+  /**
+   * Sleep helper
+   */
+  private sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  
+  /**
+   * Reset error tracking on success
+   */
+  reset(): void {
+    this.consecutiveErrors = 0;
+    this.errorWindow = [];
+    this.retryAttempts.clear();
+    if (this.circuitBreaker.isOpen) {
+      this.closeCircuit();
+    }
+  }
     
     // Get strategy for error type
     const strategy = this.config.strategies[error.code] || 'skip';
