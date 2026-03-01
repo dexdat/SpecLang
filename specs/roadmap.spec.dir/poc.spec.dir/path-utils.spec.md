@@ -108,17 +108,6 @@ export function unslugifySpecId(slug: string): string {
 }
 
 /**
- * Reverse: Get spec ID from slug (best effort)
- * @param slug - Filesystem slug
- * @returns Reconstructed spec ID (may not be exact)
- */
-export function unslugifySpecId(slug: string): string {
-  // Simple reversal - assumes original used /
-  // Cannot perfectly reverse since - could be / or literal -
-  return `@${slug}`;
-}
-
-/**
  * Resolve paths for a spec ID
  * @param specId - Full spec ID
  * @returns Resolved path information

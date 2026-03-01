@@ -735,6 +735,9 @@ export interface TemplateRegistry {
   
   /** Check if template exists */
   has(kind: BlockKind): boolean;
+  
+  /** Get all registered templates */
+  getAll(): Map<BlockKind, TemplateMetadata>;
 }
 ```
 

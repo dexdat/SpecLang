@@ -77,13 +77,7 @@ export class ConvergenceDetector extends TypedEventEmitter<ConvergenceEvents> {
     
     // PROPER CIRCULAR DETECTION: Build dependency graph
     if (causedBy) {
-      // Add edge: causedBy -> path
-      if (!this.state.edgeGraph.has(causedBy)) {
-        this.state.edgeGraph.set(causedBy, new Set());
-      }
-      this.state.edgeGraph.get(causedBy)!.add(path);
-      
-      // Detect cycle: if path causes causedBy (or transitively causes)
+      // Check for cycle BEFORE adding edge
       if (this.wouldCreateCycle(causedBy, path)) {
         this.state.currentDepth++;
         
@@ -98,6 +92,15 @@ export class ConvergenceDetector extends TypedEventEmitter<ConvergenceEvents> {
           this.reset();
           return;
         }
+        
+        // Don't add edge that would create cycle
+        console.warn(`[Convergence] Skipping edge ${causedBy} -> ${path} (would create cycle)`);
+      } else {
+        // Only add edge if it won't create a cycle
+        if (!this.state.edgeGraph.has(causedBy)) {
+          this.state.edgeGraph.set(causedBy, new Set());
+        }
+        this.state.edgeGraph.get(causedBy)!.add(path);
       }
     }
     
