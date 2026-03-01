@@ -148,6 +148,22 @@ export type BlockKind =
   | 'constant';
 
 /**
+ * Valid block kinds for validation
+ */
+export const VALID_BLOCK_KINDS: BlockKind[] = [
+  'function', 'class', 'interface', 'type', 'enum', 'constant'
+];
+
+/**
+ * Validate block kind
+ * @param kind - The kind to validate
+ * @returns True if valid BlockKind
+ */
+export function isValidBlockKind(kind: string): kind is BlockKind {
+  return VALID_BLOCK_KINDS.includes(kind as BlockKind);
+}
+
+/**
  * Complete parsed spec
  */
 export interface ParsedSpec {
@@ -261,7 +277,10 @@ export interface ConvergenceEvent {
   
   /** Cascade depth reached */
   cascadeDepth: number;
-  
+
+  /** Cascade history for debugging */
+  history?: string[];
+
   /** Duration from first change to convergence (ms) */
   duration: number;
   
@@ -287,7 +306,10 @@ export interface ConvergenceState {
   
   /** Current depth */
   currentDepth: number;
-  
+
+  /** Cascade history for loop detection */
+  cascadeHistory: string[];
+
   /** Timer reference */
   timer?: NodeJS.Timeout;
 }

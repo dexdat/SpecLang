@@ -79,7 +79,26 @@ export class HeaderParser {
     }
     
     const lineCount = parseInt(lineCountMatch[1], 10);
+    
+    // SECURITY: Validate line count is within bounds
+    if (lineCount <= 0 || lineCount > lines.length) {
+      throw new POCError(
+        'HEADER_ERROR',
+        `Invalid header line count: ${lineCount} (must be 1-${lines.length})`,
+        undefined
+      );
+    }
+    
     const headerLines = lines.slice(1, lineCount);
+    
+    // SECURITY: Validate header ends with '---' separator
+    if (!headerLines[headerLines.length - 1]?.trim().startsWith('---')) {
+      throw new POCError(
+        'HEADER_ERROR',
+        'Header must end with --- separator',
+        undefined
+      );
+    }
     
     // Parse YAML content
     const header = this.parseYaml(headerLines.join('\n'));
