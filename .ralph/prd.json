@@ -309,7 +309,7 @@
             "tests/cascade-triggers.test.ts"
           ],
           "priority": 19,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-020",
