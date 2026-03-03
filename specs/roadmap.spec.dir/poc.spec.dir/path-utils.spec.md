@@ -70,17 +70,17 @@ const WINDOWS_RESERVED_NAMES = new Set([
  * @returns Filesystem-safe slug (e.g., "examples--greeting")
  */
 export function slugifySpecId(specId: string): string {
-  // Use double dash to encode / for reversibility
-  // @examples/greeting → examples--greeting
-  // @my-spec/auth → my-spec--auth
+  // Use '-SLASH-' to encode / for unambiguous reversibility
+  // @examples/greeting → examples-SLASH-greeting
+  // @my-spec/auth → my-spec-SLASH-auth
   let slug = specId
     .replace(/^@/, '')                    // Remove leading @
-    .replace(/\//g, '--')                  // Replace / with -- (reversible)
+    .replace(/\//g, '-SLASH-')            // Replace / with -SLASH- (reversible, unique)
     .replace(/[^a-zA-Z0-9-_]/g, '-')      // Replace other special chars
     .toLowerCase();
   
   // Handle Windows reserved names by prefixing with underscore
-  const baseName = slug.split('--').pop() || slug;
+  const baseName = slug.split('-SLASH-').pop() || slug;
   if (WINDOWS_RESERVED_NAMES.has(baseName)) {
     slug = slug.replace(baseName, '_' + baseName);
   }
@@ -103,8 +103,8 @@ export function unslugifySpecId(slug: string): string {
     }
   }
   
-  // Reverse: replace -- with /
-  return '@' + cleaned.replace(/--/g, '/');
+  // Reverse: replace -SLASH- with /
+  return '@' + cleaned.replace(/-SLASH-/g, '/');
 }
 
 /**
@@ -244,10 +244,10 @@ export async function ensureSpecDirectories(specId: string): Promise<void> {
 
 **Basic slugification:**
 ```typescript
-slugifySpecId('@examples/greeting');      // 'examples-greeting'
-slugifySpecId('@speclang/core/types');    // 'speclang-core-types'
+slugifySpecId('@examples/greeting');      // 'examples-SLASH-greeting'
+slugifySpecId('@speclang/core/types');    // 'speclang-SLASH-core-SLASH-types'
 slugifySpecId('@my-spec_file');           // 'my-spec-file'
-slugifySpecId('@test.nested/deep');       // 'test-nested-deep'
+slugifySpecId('@test.nested/deep');       // 'test-nested-SLASH-deep'
 ```
 
 **Path resolution:**
@@ -356,8 +356,8 @@ describe('Path Utilities', () => {
       expect(slugifySpecId('@test')).toBe('test');
     });
     
-    it('should replace / with -', () => {
-      expect(slugifySpecId('@a/b/c')).toBe('a-b-c');
+    it('should replace / with -SLASH-', () => {
+      expect(slugifySpecId('@a/b/c')).toBe('a-SLASH-b-SLASH-c');
     });
     
     it('should lowercase', () => {
@@ -411,13 +411,13 @@ describe('Path Utilities', () => {
 **Deeply nested specs:**
 ```typescript
 slugifySpecId('@org/project/module/subcomponent');
-// → 'org-project-module-subcomponent'
+// → 'org-SLASH-project-SLASH-module-SLASH-subcomponent'
 ```
 
 **Specs with dashes in name:**
 ```typescript
 slugifySpecId('@my-feature/auth');
-// → 'my-feature-auth'
+// → 'my-feature-SLASH-auth'
 // Note: Cannot distinguish between 'my-feature/auth' and 'my/feature-auth'
 ```
 

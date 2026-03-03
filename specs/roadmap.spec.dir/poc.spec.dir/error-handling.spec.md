@@ -390,8 +390,14 @@ export class ErrorHandler {
         
         // ENFORCE BOUND: Clean up oldest entries if map gets too large
         if (this.retryAttempts.size > MAX_RETRY_MAP_SIZE) {
-          const firstKey = this.retryAttempts.keys().next().value;
-          this.retryAttempts.delete(firstKey);
+          // Remove 10% of oldest entries to keep map size manageable
+          const entriesToRemove = Math.floor(MAX_RETRY_MAP_SIZE * 0.1);
+          const iterator = this.retryAttempts.keys();
+          for (let i = 0; i < entriesToRemove; i++) {
+            const key = iterator.next().value;
+            if (key === undefined) break;
+            this.retryAttempts.delete(key);
+          }
         }
         
         return 'retry';

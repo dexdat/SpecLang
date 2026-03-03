@@ -50,7 +50,14 @@ export class EventRouter {
   async route(event: FileEvent): Promise<void> {
     // POC: All events go to the single agent
     console.log(`[Router] Routing ${event.path} to SimpleAgent`);
-    await this.agent.onFileChanged(event);
+    try {
+      await this.agent.onFileChanged(event);
+    } catch (error) {
+      console.error(`[Router] Failed to process ${event.path}:`, error);
+      // POC: Just log and continue
+      // MVP: Retry logic, error reporting, etc.
+      throw error; // Re-throw so caller knows it failed
+    }
   }
 }
 ```

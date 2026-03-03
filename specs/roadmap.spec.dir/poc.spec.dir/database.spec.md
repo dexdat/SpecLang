@@ -224,30 +224,139 @@ CREATE INDEX idx_task_file ON tasks(file_path);
 ### @poc/database/access
 
 ```typescript
-import { Database } from 'sqlite3';
-import { FileEvent, AgentTask, TaskResult, CascadeStats, GeneratedFileRecord, ParsedSpec, DaemonStats } from './types';
+import sqlite3 from 'sqlite3';
+import { FileEvent, AgentTask, TaskResult, CascadeStats, GeneratedFileRecord, ParsedSpec, DaemonStats, POCError } from './types';
+
+// Complete database schema from earlier in this spec
+const SCHEMA_SQL = `
+-- File change events
+CREATE TABLE IF NOT EXISTS file_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  type TEXT NOT NULL CHECK (type IN ('created', 'modified', 'deleted', 'renamed')),
+  path TEXT NOT NULL,
+  old_path TEXT, -- For renames
+  hash TEXT, -- Content hash for modifications (maps to FileEvent.hash)
+  timestamp INTEGER NOT NULL, -- Unix timestamp (ms)
+  processed BOOLEAN DEFAULT FALSE,
+  cascade_id INTEGER, -- Maps to FileEvent.cascadeId
+  FOREIGN KEY (cascade_id) REFERENCES cascades(id) ON DELETE SET NULL
+);
+
+-- Cascade tracking
+CREATE TABLE IF NOT EXISTS cascades (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  status TEXT NOT NULL CHECK (status IN ('running', 'completed', 'failed')),
+  started_at INTEGER NOT NULL,
+  completed_at INTEGER,
+  duration_ms INTEGER,
+  depth INTEGER DEFAULT 0,
+  files_changed_count INTEGER DEFAULT 0,
+  tasks_completed INTEGER DEFAULT 0,
+  tasks_failed INTEGER DEFAULT 0,
+  error_message TEXT
+);
+
+-- Generated code files
+CREATE TABLE IF NOT EXISTS generated_files (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  file_path TEXT NOT NULL UNIQUE,
+  spec_id TEXT NOT NULL,
+  block_id TEXT NOT NULL,
+  content_hash TEXT NOT NULL,
+  generated_at INTEGER NOT NULL,
+  last_modified INTEGER NOT NULL,
+  is_symlink BOOLEAN DEFAULT TRUE,
+  symlink_target TEXT,
+  cascade_id INTEGER,
+  FOREIGN KEY (cascade_id) REFERENCES cascades(id) ON DELETE SET NULL
+);
+
+-- Cached parsed specs
+CREATE TABLE IF NOT EXISTS specs (
+  id TEXT PRIMARY KEY,
+  file_path TEXT NOT NULL UNIQUE,
+  version TEXT NOT NULL,
+  short TEXT NOT NULL,
+  header_lines INTEGER NOT NULL,
+  raw_header TEXT NOT NULL,
+  parsed_at INTEGER NOT NULL,
+  last_modified INTEGER NOT NULL,
+  is_valid BOOLEAN DEFAULT TRUE,
+  parse_error TEXT
+);
+
+-- Agent tasks
+CREATE TABLE IF NOT EXISTS tasks (
+  id TEXT PRIMARY KEY,
+  type TEXT NOT NULL CHECK (type IN ('parse', 'generate', 'write', 'symlink')),
+  file_path TEXT NOT NULL,
+  cascade_id INTEGER NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('pending', 'running', 'completed', 'failed')),
+  created_at INTEGER NOT NULL,
+  started_at INTEGER,
+  completed_at INTEGER,
+  duration_ms INTEGER,
+  error_message TEXT,
+  result TEXT, -- JSON result
+  FOREIGN KEY (cascade_id) REFERENCES cascades(id) ON DELETE CASCADE
+);
+
+-- Indexes
+CREATE INDEX IF NOT EXISTS idx_unprocessed ON file_events(processed, timestamp);
+CREATE INDEX IF NOT EXISTS idx_file_path ON file_events(path);
+CREATE INDEX IF NOT EXISTS idx_cascade_status ON cascades(status, started_at);
+CREATE INDEX IF NOT EXISTS idx_gen_spec ON generated_files(spec_id, block_id);
+CREATE INDEX IF NOT EXISTS idx_gen_cascade ON generated_files(cascade_id);
+CREATE INDEX IF NOT EXISTS idx_spec_path ON specs(file_path);
+CREATE INDEX IF NOT EXISTS idx_spec_valid ON specs(is_valid);
+CREATE INDEX IF NOT EXISTS idx_task_cascade ON tasks(cascade_id, status);
+CREATE INDEX IF NOT EXISTS idx_task_status ON tasks(status, created_at);
+CREATE INDEX IF NOT EXISTS idx_task_file ON tasks(file_path);
+`;
 
 export class POCDatabase {
-  private db: Database;
+  private db: sqlite3.Database;
   
   constructor(dbPath: string = '.speclang/poc.db') {
-    this.db = new Database(dbPath);
+    this.db = new sqlite3.Database(dbPath);
     this.init();
   }
   
   private init(): void {
-    // Run schema creation
-    this.db.exec(SCHEMA_SQL);
+    try {
+      // Enable foreign keys
+      this.db.exec('PRAGMA foreign_keys = ON;');
+      // Run schema creation
+      this.db.exec(SCHEMA_SQL);
+      // Clean up any stale cascades from previous crash
+      this.cleanupStaleCascades();
+    } catch (error: any) {
+      throw new POCError(
+        'DATABASE_ERROR',
+        `Failed to initialize database: ${error.message}`,
+        undefined,
+        error
+      );
+    }
   }
   
   // File Events
   insertFileEvent(event: FileEvent): number {
-    const stmt = this.db.prepare(`
-      INSERT INTO file_events (type, path, old_path, hash, timestamp)
-      VALUES (?, ?, ?, ?, ?)
-    `);
-    const result = stmt.run(event.type, event.path, event.oldPath, event.hash, event.timestamp);
-    return result.lastInsertRowid as number;
+    try {
+      const stmt = this.db.prepare(`
+        INSERT INTO file_events (type, path, old_path, hash, timestamp)
+        VALUES (?, ?, ?, ?, ?)
+      `);
+      const result = stmt.run(event.type, event.path, event.oldPath, event.hash, event.timestamp);
+      return result.lastInsertRowid as number;
+    } catch (error: any) {
+      throw new POCError(
+        'DATABASE_ERROR',
+        `Failed to insert file event: ${error.message}`,
+        event.path,
+        error
+      );
+    }
   }
   
   getUnprocessedEvents(): FileEvent[] {
@@ -439,6 +548,36 @@ export class POCDatabase {
       successRate: success.rate || 0,
       filesWatched: 0 // Set by FileWatcher
     };
+  }
+  
+  /**
+   * Clean up stale cascades (e.g., after daemon crash)
+   * Marks all "running" cascades as "failed"
+   */
+  cleanupStaleCascades(): void {
+    try {
+      const stmt = this.db.prepare(`
+        UPDATE cascades 
+        SET status = 'failed',
+            completed_at = ?,
+            error_message = 'Daemon crashed or restarted'
+        WHERE status = 'running'
+      `);
+      stmt.run(Date.now());
+    } catch (error: any) {
+      console.error('[POCDatabase] Failed to cleanup stale cascades:', error.message);
+    }
+  }
+  
+  /**
+   * Close database connection
+   */
+  close(): void {
+    try {
+      this.db.close();
+    } catch (error: any) {
+      console.error('[POCDatabase] Failed to close database:', error.message);
+    }
   }
 }
 ```
