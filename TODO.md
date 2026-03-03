@@ -88,7 +88,7 @@ Follow the 8-phase implementation sequence from `specs/roadmap.spec.dir/poc.spec
 - [x] **Wire all components** - integration.spec.md → src/integration/wire.ts (daemon creates and connects all components, event flow: FileWatcher → Router → Agent → CodeGen)
 
 ### P7.2 - Build Integration
-- [ ] **Implement build integration** - build-integration.spec.md → src/build/integration.ts (run `npm run build` after convergence, verify generated code compiles)
+- [x] **Implement build integration** - build-integration.spec.md → src/build/integration.ts (run `npm run build` after convergence, verify generated code compiles)
 
 ### P7.3 - CLI
 - [ ] **Create CLI entry** - cli.spec.md → src/cli/index.ts (./bin/speclangd-poc, parse arguments with commander, start/stop daemon)
