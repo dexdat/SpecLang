@@ -3,10 +3,10 @@
  * Source: @speclang/mcp.cli
  */
 
-import { validateAllSpecs } from '../../parser/validator.js';
-import { validateIndexCmd, generateIndex } from '../../indexer/index.js';
+import { validateAllSpecs } from '../../../parser.spec.dir/src/validator.js';
+import { validateIndexCmd, generateIndex } from '../../../indexer.spec.dir/src/index.js';
 import { getSpecsDir } from '../utils.js';
-import type { SpecIndex } from '../../indexer/types.js';
+import type { SpecIndex } from '../../../indexer.spec.dir/src/types.js';
 
 export interface ValidateOptions {
   fix?: boolean;

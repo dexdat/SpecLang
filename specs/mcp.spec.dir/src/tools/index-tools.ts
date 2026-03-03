@@ -3,8 +3,8 @@
  * Source: @speclang/mcp
  */
 
-import type { SpecLangDB } from '../../db/index.js';
-import { generateIndex, populateDatabase, getSpecFiles, parseHeader, extractRefsFromContent, extractBlocksFromContent } from '../../indexer/index.js';
+import type { SpecLangDB } from '../../../sqlite.spec.dir/src/index.js';
+import { generateIndex, populateDatabase, getSpecFiles, parseHeader, extractRefsFromContent, extractBlocksFromContent } from '../../../indexer.spec.dir/src/index.js';
 import type { IndexRefreshResult } from '../types.js';
 
 /**

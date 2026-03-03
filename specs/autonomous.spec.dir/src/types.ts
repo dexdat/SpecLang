@@ -3,7 +3,7 @@
  * Source: @speclang/autonomous-validation
  */
 
-import type { SpecMetadata } from '../meta/types.js';
+import type { SpecMetadata } from '../../meta.spec.dir/src/types.js';
 
 // ============================================================================
 // Test Scenario Types

@@ -5,7 +5,7 @@
 
 import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
-import type { SpecLangDB } from '../../db/index.js';
+import type { SpecLangDB } from '../../../sqlite.spec.dir/src/index.js';
 import type { MCPServerConfig } from '../types.js';
 
 import { SearchToolHandler } from './search.js';

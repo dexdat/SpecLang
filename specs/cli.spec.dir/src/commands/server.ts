@@ -3,7 +3,7 @@
  * Source: @speclang/mcp.cli
  */
 
-import { MCPServer } from '../../mcp/server.js';
+import { MCPServer } from '../../../mcp.spec.dir/src/server.js';
 import { getDbPath, ensureSpeclangDir } from '../utils.js';
 
 export interface ServerOptions {

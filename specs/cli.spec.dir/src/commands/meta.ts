@@ -2,7 +2,7 @@
 // CLI command for meta operations
 // Source: @speclang/meta-cli
 
-import { executeMetaCommand } from "../../meta/index.js";
+import { executeMetaCommand } from "../../../meta.spec.dir/src/index.js";
 
 export interface MetaCLIOptions {
   dryRun?: boolean;

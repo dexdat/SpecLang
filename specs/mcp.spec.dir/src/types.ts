@@ -3,7 +3,7 @@
  * Source: @speclang/mcp
  */
 
-import type { SpecLangDB } from '../db/index.js';
+import type { SpecLangDB } from '../../sqlite.spec.dir/src/index.js';
 
 // ============================================================================
 // MCP SERVER TYPES
