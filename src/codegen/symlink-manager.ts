@@ -1,1 +1,1 @@
-../../../specs/roadmap.spec.dir/poc.spec.dir/src/codegen/symlink-manager.ts
+../../specs/roadmap.spec.dir/poc.spec.dir/src/codegen/symlink-manager.ts

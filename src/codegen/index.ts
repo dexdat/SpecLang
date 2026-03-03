@@ -1,1 +1,1 @@
-../../../specs/roadmap.spec.dir/poc.spec.dir/src/codegen/index.ts
+../../specs/roadmap.spec.dir/poc.spec.dir/src/codegen/index.ts

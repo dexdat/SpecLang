@@ -1,1 +1,1 @@
-../../../specs/roadmap.spec.dir/poc.spec.dir/src/codegen/template-registry.ts
+../../specs/roadmap.spec.dir/poc.spec.dir/src/codegen/template-registry.ts
