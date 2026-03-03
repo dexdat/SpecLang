@@ -77,27 +77,53 @@ export class SimpleAgent {
   
   /**
    * Acquire lock for a spec slug to prevent concurrent processing
+   * Uses atomic check-and-set with queue for proper mutual exclusion
    */
   private async acquireLock(specSlug: string): Promise<() => void> {
-    // Loop until we can acquire lock
-    while (this.specLocks.has(specSlug)) {
-      await this.specLocks.get(specSlug);
+    // Validate specSlug is not empty
+    if (!specSlug || specSlug.trim() === '') {
+      throw new POCError('VALIDATION_ERROR', 'specSlug cannot be empty', undefined);
     }
     
-    // Create a promise that will resolve when lock is released
+    // Create a promise that will resolve when lock is acquired
     let resolveLock: () => void;
     const lockPromise = new Promise<void>(resolve => {
       resolveLock = resolve;
     });
     
-    this.specLocks.set(specSlug, lockPromise);
+    // Get or create the queue for this spec
+    let queue = this.lockQueues.get(specSlug);
+    if (!queue) {
+      queue = [];
+      this.lockQueues.set(specSlug, queue);
+    }
+    
+    // Add ourselves to the queue
+    queue.push(resolveLock);
+    
+    // If we're not first in line, wait for our turn
+    if (queue.length > 1) {
+      await lockPromise;
+    }
+    
+    // Return release function
     return () => {
-      resolveLock!();
-      this.specLocks.delete(specSlug);
+      // Remove ourselves from queue
+      queue.shift();
+      
+      // Resolve the next waiter if any
+      if (queue.length > 0) {
+        const nextResolve = queue[0];
+        nextResolve();
+      } else {
+        // Clean up empty queue
+        this.lockQueues.delete(specSlug);
+      }
     };
   }
   
-  private specLocks = new Map<string, Promise<void>>();
+  // Lock queues for each spec (ensures FIFO order and proper mutual exclusion)
+  private lockQueues = new Map<string, Array<() => void>>();
   
   /**
    * Handle file change event

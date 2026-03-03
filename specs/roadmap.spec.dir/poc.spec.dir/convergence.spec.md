@@ -55,30 +55,60 @@ export class ConvergenceDetector extends TypedEventEmitter<ConvergenceEvents> {
   private readonly MAX_DEPTH = POC_CONSTANTS.MAX_DEPTH; // 10
   private readonly MAX_FILES_PER_CASCADE = 100;  // Prevent runaway file generation
   
-  // Mutex lock to prevent concurrent state modification
-  private isProcessing = false;
+  // Atomic lock using promise queue to prevent race conditions
+  private processingLock: Promise<void> = Promise.resolve();
+  private isLocked = false;
+  
+  /**
+   * Acquire lock atomically using compare-and-swap pattern
+   * @returns true if lock acquired, false if already locked
+   */
+  private acquireLock(): boolean {
+    if (this.isLocked) {
+      return false;
+    }
+    this.isLocked = true;
+    return true;
+  }
+  
+  /**
+   * Release the lock
+   */
+  private releaseLock(): void {
+    this.isLocked = false;
+  }
   
   /**
    * Handle file change - reset timer
    * Includes proper circular dependency detection using edge tracking
+   * Thread-safe with atomic locking
    */
   onFileChange(path: string, causedBy?: string): void {
-    // Prevent reentrant calls (concurrent modification)
-    if (this.isProcessing) {
-      console.error(`[ConvergenceDetector] Reentrant call detected for ${path}, skipping`);
+    // Validate path is non-empty
+    if (!path || typeof path !== 'string' || path.trim() === '') {
+      console.error('[ConvergenceDetector] Invalid path provided to onFileChange');
       return;
     }
     
-    this.isProcessing = true;
+    // Atomic lock acquisition
+    if (!this.acquireLock()) {
+      console.error(`[ConvergenceDetector] Concurrent modification detected for ${path}, queueing`);
+      // Queue this operation to run after current one completes
+      this.processingLock = this.processingLock.then(() => {
+        this._onFileChange(path, causedBy);
+      });
+      return;
+    }
+    
     try {
       this._onFileChange(path, causedBy);
     } finally {
-      this.isProcessing = false;
+      this.releaseLock();
     }
   }
   
   /**
-   * Internal implementation (assumes no reentrancy)
+   * Internal implementation (assumes lock is held)
    */
   private _onFileChange(path: string, causedBy?: string): void {
     // Check for runaway cascade (too many files)

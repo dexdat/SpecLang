@@ -126,32 +126,33 @@ export class HeaderParser {
       throw new POCError('HEADER_ERROR', 'Header data must be an object');
     }
     const header = data as Record<string, unknown>;
+    
     // Required: id
-    if (!data.id) {
+    if (!header.id) {
       throw new POCError('HEADER_ERROR', 'Missing required field: id');
     }
-    if (!data.id.startsWith('@')) {
-      throw new POCError('HEADER_ERROR', 'Spec ID must start with @');
+    if (typeof header.id !== 'string' || !header.id.startsWith('@')) {
+      throw new POCError('HEADER_ERROR', 'Spec ID must be a string starting with @');
     }
     
     // Required: version
-    if (!data.version) {
+    if (!header.version) {
       throw new POCError('HEADER_ERROR', 'Missing required field: version');
     }
-    if (!/^\d+\.\d+\.\d+/.test(data.version)) {
+    if (typeof header.version !== 'string' || !/^\d+\.\d+\.\d+/.test(header.version)) {
       throw new POCError('HEADER_ERROR', 'Version must be semantic (e.g., 1.0.0)');
     }
     
     // Required: layer
-    if (data.layer === undefined) {
+    if (header.layer === undefined) {
       throw new POCError('HEADER_ERROR', 'Missing required field: layer');
     }
-    if (typeof data.layer !== 'number' || data.layer < 0 || data.layer > 10) {
+    if (typeof header.layer !== 'number' || header.layer < 0 || header.layer > 10) {
       throw new POCError('HEADER_ERROR', 'Layer must be number 0-10');
     }
     
     // Optional: tags
-    if (data.tags && !Array.isArray(data.tags)) {
+    if (header.tags && !Array.isArray(header.tags)) {
       throw new POCError('HEADER_ERROR', 'Tags must be an array');
     }
   }

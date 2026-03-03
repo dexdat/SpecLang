@@ -315,7 +315,7 @@ CREATE INDEX IF NOT EXISTS idx_task_file ON tasks(file_path);
 `;
 
 export class POCDatabase {
-  private db: sqlite3.Database;
+  private db: Database;
   
   constructor(dbPath: string = '.speclang/poc.db') {
     this.db = new Database(dbPath);
