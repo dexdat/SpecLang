@@ -78,9 +78,9 @@ Follow the 8-phase implementation sequence from `specs/roadmap.spec.dir/poc.spec
 ## Phase 6: Database & State
 
 ### P6.1 - Database
-- [ ] **Create tables** - database.spec.md → src/db/poc-db.ts (file_events, cascades, tasks, specs, generated_files, SQL snake_case)
-- [ ] **Implement insert methods** - database.spec.md → src/db/poc-db.ts (insertFileEvent, createCascade)
-- [ ] **Implement query methods** - database.spec.md → src/db/poc-db.ts (completeCascade, getGeneratedFiles, etc.)
+- [x] **Create tables** - database.spec.md → src/db/poc-db.ts (file_events, cascades, tasks, specs, generated_files, SQL snake_case)
+- [x] **Implement insert methods** - database.spec.md → src/db/poc-db.ts (insertFileEvent, createCascade)
+- [x] **Implement query methods** - database.spec.md → src/db/poc-db.ts (completeCascade, getGeneratedFiles, etc.)
 
 ## Phase 7: Integration & Testing
 
