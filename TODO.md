@@ -8,34 +8,34 @@ Follow the 8-phase implementation sequence from `specs/roadmap.spec.dir/poc.spec
 - [ ] **Create project structure** - installation.spec.md → (run `npm init`, create directory structure)
 - [ ] **Configure TypeScript** - tsconfig-json.spec.md → tsconfig.json (set target: ES2022, module: NodeNext, outDir: ./dist, rootDir: ./src)
 - [ ] **Install dependencies** - package-json.spec.md → package.json (chokidar, sqlite3, commander, js-yaml, glob, dev dependencies)
-- [ ] **Define core types** - types.spec.md → src/types/poc.ts (FileEvent, ParsedBlock, BlockKind)
-- [ ] **Define error types** - types.spec.md → src/types/poc.ts (POCError, POCConfig, Template)
-- [ ] **Define event types** - types.spec.md → src/types/poc.ts (ConvergenceEvent, ConvergenceState, DaemonStats)
+- [x] **Define core types** - types.spec.md → src/types/poc.ts (FileEvent, ParsedBlock, BlockKind)
+- [x] **Define error types** - types.spec.md → src/types/poc.ts (POCError, POCConfig, Template)
+- [x] **Define event types** - types.spec.md → src/types/poc.ts (ConvergenceEvent, ConvergenceState, DaemonStats)
 
 ### P1.2 - Core Utilities
-- [ ] **Implement path utilities** - path-utils.spec.md → src/utils/path-utils.ts (slugifySpecId, resolveSpecPaths, resolveBlockOutputPath, ensureSpecDirectories)
-- [ ] **Implement config loader** - config-loader.spec.md → src/config/loader.ts (load from .speclang/config.yaml, merge with defaults, validate settings)
-- [ ] **Create POCError class** - error-handling.spec.md → src/errors/handler.ts (with toUserMessage())
-- [ ] **Create ErrorHandler** - error-handling.spec.md → src/errors/handler.ts (with recovery strategies)
-- [ ] **Define error codes** - error-handling.spec.md → src/errors/handler.ts (WATCH_ERROR, PARSE_ERROR, GENERATION_ERROR, etc.)
+- [x] **Implement path utilities** - path-utils.spec.md → src/utils/path-utils.ts (slugifySpecId, resolveSpecPaths, resolveBlockOutputPath, ensureSpecDirectories)
+- [x] **Implement config loader** - config-loader.spec.md → src/config/loader.ts (load from .speclang/config.yaml, merge with defaults, validate settings)
+- [x] **Create POCError class** - error-handling.spec.md → src/errors/handler.ts (with toUserMessage())
+- [x] **Create ErrorHandler** - error-handling.spec.md → src/errors/handler.ts (with recovery strategies)
+- [x] **Define error codes** - error-handling.spec.md → src/errors/handler.ts (WATCH_ERROR, PARSE_ERROR, GENERATION_ERROR, etc.)
 
 ## Phase 2: File Watching & Events
 
 ### P2.1 - Event System
-- [ ] **Implement TypedEventEmitter** - events.spec.md → src/events/typed-emitter.ts (on<K>, emit<K>, event types: FileWatcherEvents, ConvergenceEvents)
+- [x] **Implement TypedEventEmitter** - events.spec.md → src/events/typed-emitter.ts (on<K>, emit<K>, event types: FileWatcherEvents, ConvergenceEvents)
 
 ### P2.2 - File Watcher
-- [ ] **Setup chokidar watcher** - file-watcher.spec.md → src/daemon/file-watcher.ts (watch specs/ directory)
-- [ ] **Implement debouncing** - file-watcher.spec.md → src/daemon/file-watcher.ts (300ms debounce)
-- [ ] **Configure filters** - file-watcher.spec.md → src/daemon/file-watcher.ts (ignore *.tmp, .git/, node_modules/)
+- [x] **Setup chokidar watcher** - file-watcher.spec.md → src/daemon/file-watcher.ts (watch specs/ directory)
+- [x] **Implement debouncing** - file-watcher.spec.md → src/daemon/file-watcher.ts (300ms debounce)
+- [x] **Configure filters** - file-watcher.spec.md → src/daemon/file-watcher.ts (ignore *.tmp, .git/, node_modules/)
 
 ### P2.3 - Convergence Detection
-- [ ] **Implement ConvergenceDetector** - convergence.spec.md → src/daemon/convergence.ts (quiet period: 5000ms, track files changed, emit 'converged' event)
+- [x] **Implement ConvergenceDetector** - convergence.spec.md → src/daemon/convergence.ts (quiet period: 5000ms, track files changed, emit 'converged' event)
 
 ## Phase 3: Spec Parsing
 
 ### P3.1 - Header Parser
-- [ ] **Implement HeaderParser** - header-parser.spec.md → src/parser/header-parser.ts (parse # speclang-header lines:N, extract id, version, layer, short, tags, validate required fields)
+- [x] **Implement HeaderParser** - header-parser.spec.md → src/parser/header-parser.ts (parse # speclang-header lines:N, extract id, version, layer, short, tags, validate required fields)
 
 ### P3.2 - Block Parser
 - [ ] **Parse block headers** - block-parser.spec.md → src/parser/block-parser.ts (regex for @block: and @kind:)
