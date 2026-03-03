@@ -27,7 +27,7 @@ The `CodeGenerator` is the bridge between parsed specs and generated code:
 ```typescript
 import { TemplateRegistry } from './template-registry';
 import { BlockData, GeneratedFile, SpecHeader, POCError } from './types';
-import { slugifySpecId, resolveOutputPath } from './path-utils';
+import { slugifySpecId } from './path-utils';
 import { mkdir, writeFile, symlink, unlink } from 'fs/promises';
 import { dirname, join, relative } from 'path';
 import { platform } from 'os';

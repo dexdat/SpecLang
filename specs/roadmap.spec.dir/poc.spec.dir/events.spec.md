@@ -26,7 +26,7 @@ Provide type-safe event handling across POC components:
 /**
  * Generic event emitter with typed events
  */
-export interface EventEmitter<T extends Record<string, any>> {
+export interface EventEmitter<T extends Record<string, unknown>> {
   /** Register event handler */
   on<K extends keyof T>(event: K, handler: (data: T[K]) => void): void;
   
@@ -51,7 +51,7 @@ export interface EventEmitter<T extends Record<string, any>> {
  */
 import { EventEmitter as NodeEventEmitter } from 'events';
 
-export class TypedEventEmitter<T extends Record<string, any>> 
+export class TypedEventEmitter<T extends Record<string, unknown>> 
   extends NodeEventEmitter 
   implements EventEmitter<T> {
   // Map from original handlers to wrapped handlers for proper cleanup

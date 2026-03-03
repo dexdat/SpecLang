@@ -310,6 +310,9 @@ export interface ConvergenceState {
   /** Cascade history for loop detection */
   cascadeHistory: string[];
 
+  /** Dependency graph for circular detection */
+  edgeGraph: Map<string, Set<string>>;
+
   /** Timer reference */
   timer?: NodeJS.Timeout;
 }
@@ -749,7 +752,7 @@ export interface TemplateRegistry {
  * Referenced by file-watcher.spec.md, convergence.spec.md
  * Provides typed event handling
  */
-export interface EventEmitter<T extends Record<string, any>> {
+export interface EventEmitter<T extends Record<string, unknown>> {
   /** Register event handler */
   on<K extends keyof T>(event: K, handler: (data: T[K]) => void): void;
   

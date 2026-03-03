@@ -121,7 +121,11 @@ export class HeaderParser {
   /**
    * Validate a parsed header
    */
-  validateHeader(data: any): void {
+  validateHeader(data: unknown): void {
+    if (typeof data !== 'object' || data === null) {
+      throw new POCError('HEADER_ERROR', 'Header data must be an object');
+    }
+    const header = data as Record<string, unknown>;
     // Required: id
     if (!data.id) {
       throw new POCError('HEADER_ERROR', 'Missing required field: id');
