@@ -101,7 +101,7 @@ Follow the 8-phase implementation sequence from `specs/roadmap.spec.dir/poc.spec
 ## Phase 8: Demo & Documentation
 
 ### P8.1 - Demo Workflow
-- [ ] **Implement demo** - demo-workflow.spec.md → specs/greeting.spec.md + tests (create greeting spec, edit file, verify code generates in < 5 seconds, run `npm run build` successfully)
+- [x] **Implement demo** - demo-workflow.spec.md → specs/greeting.spec.md + tests (create greeting spec, edit file, verify code generates in < 5 seconds, run `npm run build` successfully)
 
 ### P8.2 - Documentation
 - [ ] **Update troubleshooting** - troubleshooting.spec.md → docs/troubleshooting.md (document common errors, error codes)

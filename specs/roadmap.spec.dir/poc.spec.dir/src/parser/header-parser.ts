@@ -52,8 +52,9 @@ export class HeaderParser {
       );
     }
     
-    // Parse YAML content
-    const header = this.parseYaml(headerLines.join('\n'));
+    // Parse YAML content (strip trailing --- document separator)
+    const yamlContent = headerLines.join('\n').replace(/^---$/m, '').trim();
+    const header = this.parseYaml(yamlContent);
     
     // Validate required fields
     this.validateHeader(header);
