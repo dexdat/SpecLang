@@ -510,3 +510,18 @@ Project: SpecLang (meta-circular)
 - `specs/project-layout.spec.md`
 - `specs/project-layout.spec.dir/structure.spec.md`
 
+### P0-018: Header Validation Rules (2026-03-03)
+
+**Status**: ✅ Validated and marked complete
+
+**Validation Performed**:
+- Verified header validation implementation matches spec blocks (@block:validation/header)
+- Verified validation-messages.ts contains error codes E001-E008, W001-W004
+- Verified validation-recovery.ts provides fix suggestions and auto-fix capabilities
+- Ran header validation tests (55 tests pass)
+- Updated PRD passes flag to true
+
+**Spec References**:
+- `specs/headers.spec.md`
+- `specs/parser.spec.dir/validation.spec.md`
+
