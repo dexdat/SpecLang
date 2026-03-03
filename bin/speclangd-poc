@@ -1,0 +1,135 @@
+#!/usr/bin/env node
+/**
+ * SpecLang POC Daemon Entry Point
+ * 
+ * Starts the POC daemon that watches specs/ and generates code.
+ * 
+ * Usage:
+ *   speclangd-poc              # Start with defaults
+ *   speclangd-poc --watch ./specs
+ *   speclangd-poc --verbose
+ */
+
+const path = require('path');
+
+// Parse command line arguments
+const args = process.argv.slice(2);
+let watchDir = './specs';
+let verbose = false;
+let silent = false;
+
+for (let i = 0; i < args.length; i++) {
+  const arg = args[i];
+  if (arg === '--watch' && args[i + 1]) {
+    watchDir = args[i + 1];
+    i++;
+  } else if (arg === '-w' && args[i + 1]) {
+    watchDir = args[i + 1];
+    i++;
+  } else if (arg === '--verbose' || arg === '-v') {
+    verbose = true;
+  } else if (arg === '--silent') {
+    silent = true;
+  } else if (arg === '--help' || arg === '-h') {
+    printHelp();
+    process.exit(0);
+  }
+}
+
+// Set environment for verbose/silent
+if (verbose) {
+  process.env.DEBUG = '1';
+}
+if (silent) {
+  process.env.SILENT = '1';
+}
+
+// Import the POC daemon
+let PocDaemon;
+try {
+  // Try to load from dist first (compiled)
+  PocDaemon = require('../dist/roadmap.spec.dir/poc.spec.dir/src/daemon/poc-daemon.js').PocDaemon;
+} catch (e) {
+  // Fallback to specs directory
+  try {
+    PocDaemon = require('../specs/roadmap.spec.dir/poc.spec.dir/src/daemon/poc-daemon.js').PocDaemon;
+  } catch (e2) {
+    console.error('Failed to load POC daemon:', e2.message);
+    process.exit(1);
+  }
+}
+
+// Create and start the daemon
+const daemon = new PocDaemon();
+
+// Banner
+if (!silent) {
+  console.log('╔═══════════════════════════════════════════════════╗');
+  console.log('║        SpecLang POC Daemon v0.1.0                ║');
+  console.log('╚═══════════════════════════════════════════════════╝');
+  console.log('');
+  console.log(`[speclangd-poc] Watching: ${watchDir}`);
+  console.log(`[speclangd-poc] Output: ./src`);
+  console.log(`[speclangd-poc] Verbose: ${verbose ? 'yes' : 'no'}`);
+  console.log('');
+}
+
+daemon.start().then(() => {
+  if (!silent) {
+    console.log('[speclangd-poc] ✅ Ready. Watching for changes...');
+    console.log('[speclangd-poc]');
+    console.log('[speclangd-poc] Edit a spec file to see the cascade in action!');
+    console.log('[speclangd-poc] Press Ctrl+C to stop.');
+  }
+}).catch((error) => {
+  console.error('[speclangd-poc] ERROR: Failed to start:', error.message);
+  if (verbose) {
+    console.error(error.stack);
+  }
+  process.exit(1);
+});
+
+// Handle shutdown
+process.on('SIGINT', async () => {
+  console.log('\n[speclangd-poc] Shutting down gracefully...');
+  await daemon.stop();
+  console.log('[speclangd-poc] ✅ Daemon stopped');
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('\n[speclangd-poc] Received SIGTERM, shutting down...');
+  await daemon.stop();
+  console.log('[speclangd-poc] ✅ Daemon stopped');
+  process.exit(0);
+});
+
+function printHelp() {
+  console.log(`
+SpecLang POC Daemon v0.1.0
+
+A reactive file watcher that generates code from specs.
+
+USAGE:
+  speclangd-poc [options]
+
+OPTIONS:
+  -w, --watch <dir>    Directory to watch for spec files (default: ./specs)
+  -v, --verbose        Enable verbose logging
+      --silent         Only show errors
+  -h, --help           Show this help message
+
+EXAMPLES:
+  # Start with defaults
+  speclangd-poc
+
+  # Watch custom directory
+  speclangd-poc --watch ./my-specs
+
+  # Debug mode
+  speclangd-poc --verbose
+
+LEARN MORE:
+  https://github.com/lexykwaii/SpecLang
+`);
+}
