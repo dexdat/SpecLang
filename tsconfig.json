@@ -3,6 +3,7 @@
     "target": "ES2022",
     "module": "CommonJS",
     "moduleResolution": "node",
+    "preserveSymlinks": true,
     "lib": ["ES2022"],
     "outDir": "./dist",
     "rootDir": "./src",
@@ -16,7 +17,21 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": false,
-    "jsx": "react-jsx"
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "sqlite.spec.dir/src/*": ["src/sqlite.spec.dir/src/*"],
+      "indexer.spec.dir/src/*": ["src/indexer.spec.dir/src/*"],
+      "parser.spec.dir/src/*": ["src/parser.spec.dir/src/*"],
+      "mcp.spec.dir/src/*": ["src/mcp.spec.dir/src/*"],
+      "cli.spec.dir/src/*": ["src/cli.spec.dir/src/*"],
+      "autonomous.spec.dir/src/*": ["src/autonomous.spec.dir/src/*"],
+      "guard.spec.dir/src/*": ["src/guard.spec.dir/src/*"],
+      "meta.spec.dir/src/*": ["src/meta.spec.dir/src/*"],
+      "agents.spec.dir/src/*": ["src/agents.spec.dir/src/*"],
+      "project-layout.spec.dir/src/*": ["src/project-layout.spec.dir/src/*"]
+    }
   },
   "include": ["src/**/*.ts"],
   "exclude": [
@@ -33,6 +48,12 @@
     "src/validation.ts",
     "src/ralph_loop.py",
     "src/db/speclang_db.py",
-    "src/parser/speclang_parser.py"
+    "src/parser/speclang_parser.py",
+    "src/cli/**",
+    "src/mcp/**",
+    "src/indexer/**",
+    "src/parser/**",
+    "src/codegen/**",
+    "**/spec.dir/**"
   ]
 }
