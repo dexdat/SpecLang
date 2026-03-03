@@ -1,6 +1,6 @@
 {
   "version": "0.2.0",
-  "generated": "2026-03-03T14:52:05.657ZZ",
+  "generated": "2026-03-03T15:10:51.010ZZ",
   "specs": {
     "@speclang/agent-behavior-matrix/matrix": {
       "id": "@speclang/agent-behavior-matrix/matrix",
