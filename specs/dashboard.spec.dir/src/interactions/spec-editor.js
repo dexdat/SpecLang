@@ -54,24 +54,16 @@ const mcpClient = {
   }
 };
 
-/**
 function generateHeaderTemplate(data: NewSpecDialogData): string {
+  return `# speclang-header lines:12
 id: @speclang/${data.id}
 version: 0.1.0
 layer: ${data.layer}
 tags: [${data.tags.join(', ')}]
 short: Description of spec
 ---
-
-
-## Overview
-
-### @block:overview @kind:prose
-Content here...
 `;
 }
-
-/**
 
 function generateBlockTemplate(data: AddBlockDialogData): string {
   const attrs = Object.entries(data.attributes)
@@ -85,8 +77,6 @@ ${attrs}
 `;
 }
 
-/**
-
 async function showNewSpecDialog(): Promise<NewSpecDialogData> {
   // In real implementation, this would open a modal dialog
   return {
@@ -96,8 +86,6 @@ async function showNewSpecDialog(): Promise<NewSpecDialogData> {
   };
 }
 
-/**
-
 async function showAddBlockDialog(): Promise<AddBlockDialogData> {
   // In real implementation, this would open a modal dialog
   return {
@@ -106,12 +94,6 @@ async function showAddBlockDialog(): Promise<AddBlockDialogData> {
     attributes: {}
   };
 }
-
-/**
-# speclang-header lines:5
-# id: @specs/dashboard
-# version: 1.0.0
-# layer: 5
 
 export function useSpecEditor(options: SpecEditorOptions = {}) {
   const { onToast, autoSave = false, autoSaveDelay = 2000 } = options;
