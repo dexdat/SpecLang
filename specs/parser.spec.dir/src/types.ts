@@ -3,7 +3,7 @@
  * Source: @speclang/headers @block:headers/field-types
  */
 
-import type { SpecRecord } from '../db/types';
+import type { SpecRecord } from '../../sqlite.spec.dir/src/types';
 
 // ============================================================================
 // HEADER FIELD TYPES

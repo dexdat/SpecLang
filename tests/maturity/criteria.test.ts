@@ -2,7 +2,7 @@
 // DO NOT EDIT MANUALLY
 // Source: specs/project-maturity-levels.dir/criteria.spec.md
 
-import { describe, it, expect } from 'bun:test';
+import { describe, it, expect } from 'vitest';
 import { CriteriaChecker } from '../../src/maturity/criteria';
 import { ParsedSpec } from '../../src/maturity/types';
 
