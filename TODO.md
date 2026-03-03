@@ -85,7 +85,7 @@ Follow the 8-phase implementation sequence from `specs/roadmap.spec.dir/poc.spec
 ## Phase 7: Integration & Testing
 
 ### P7.1 - Component Integration
-- [ ] **Wire all components** - integration.spec.md → src/integration/wire.ts (daemon creates and connects all components, event flow: FileWatcher → Router → Agent → CodeGen)
+- [x] **Wire all components** - integration.spec.md → src/integration/wire.ts (daemon creates and connects all components, event flow: FileWatcher → Router → Agent → CodeGen)
 
 ### P7.2 - Build Integration
 - [ ] **Implement build integration** - build-integration.spec.md → src/build/integration.ts (run `npm run build` after convergence, verify generated code compiles)
