@@ -323,7 +323,7 @@
             "tests/cascade-depth.test.ts"
           ],
           "priority": 20,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-021",
