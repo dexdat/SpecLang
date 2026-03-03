@@ -1,10 +1,8 @@
-# speclang-header lines:15
+# speclang-header lines:9
 id: "@speclang/api.spec.dir/openapi"
 version: 0.1.0
 layer: 2
 tags: [api, openapi, rest, http, specification]
-parent: "@ref:specs/api.spec"
-target: yaml
 project_level: Alpha
 agent_support: agent_autonomous
 short: OpenAPI specification requirements - generates openapi.yaml

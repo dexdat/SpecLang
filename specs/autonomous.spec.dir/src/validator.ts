@@ -11,7 +11,7 @@ import type {
   ValidationReport,
   ValidationStatus 
 } from './types';
-import { loadIndex } from 'cli.spec.dir/src/utils';
+import { loadIndex } from '../../cli.spec.dir/src/utils';
 
 /**
  * Parse spec header from file
