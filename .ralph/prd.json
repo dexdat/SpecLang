@@ -295,7 +295,7 @@
             "tests/header-validation.test.ts"
           ],
           "priority": 18,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-019",
