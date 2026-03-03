@@ -1,0 +1,1 @@
+../specs/scripts.spec.dir/generate_opencode_plugin_v2.py
