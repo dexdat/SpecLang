@@ -110,7 +110,7 @@ Follow the 8-phase implementation sequence from `specs/roadmap.spec.dir/poc.spec
 ## Completion
 - [x] All phases complete
 - [x] Build passes (1108 tests pass, 28 CLI tests fail due to excluded CLI module)
-- [ ] Demo workflow successful
+- [x] Demo workflow successful
 
 ## Notes
 - Build error in validator.ts fixed (import from cli.spec.dir removed)
