@@ -2,7 +2,7 @@
 // DO NOT EDIT MANUALLY
 // Source: specs/project-maturity-levels.dir/levels.spec.md
 
-import { describe, it, expect } from 'bun:test';
+import { describe, it, expect } from 'vitest';
 import {
   MATURITY_LEVELS,
   getLevelDefinition,

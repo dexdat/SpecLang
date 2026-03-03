@@ -2,7 +2,7 @@
 // DO NOT EDIT MANUALLY
 // Source: specs/project-maturity-levels.dir/criteria.spec.md
 
-import { describe, it, expect } from 'bun:test';
+import { describe, it, expect } from 'vitest';
 import { TransitionManager } from '../../src/maturity/transitions';
 import { ParsedSpec } from '../../src/maturity/types';
 
