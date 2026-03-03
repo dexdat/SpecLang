@@ -206,6 +206,7 @@ export function createFileHeader(spec: CodeSpec, generatorName?: string): string
   const layer = spec.header?.layer ?? 'N/A';
   
   return `/**
+ * SPECLANG-GENERATED
  * @speclang-id: ${spec.header?.id || 'unknown'}
  * @speclang-version: ${version}
  * @speclang-layer: ${layer}

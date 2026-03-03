@@ -93,8 +93,8 @@ const paramPattern = /^-\s+(\w+):\s+(\w+)\s+-\s+(.+)$/gm;
 ### @poc/block-parser/impl
 
 ```typescript
-import { readFile, access, constants } from 'fs/promises';
-import { resolve } from 'path';
+import { readFile, access, constants, realpath } from 'fs/promises';
+import { resolve, relative, normalize } from 'path';
 import { 
   ParsedBlock, 
   ParsedSpec, 
@@ -148,20 +148,27 @@ export class BlockParser {
    * @throws {POCError} If file cannot be read, is outside specs/, or parsing fails
    */
   async parseFile(filePath: string): Promise<ParsedSpec> {
-    // Resolve to absolute path
-    const absolutePath = resolve(filePath);
+    // SECURITY: Validate file path before any operations
+    const validatedPath = await this.validateFilePath(filePath);
     
-    // SECURITY: Verify path is within allowed spec directory
-    if (!absolutePath.startsWith(this.specRoot)) {
-      throw new POCError(
-        'PARSE_ERROR',
-        `Access denied: Path "${filePath}" is outside allowed spec directory`,
-        filePath
-      );
-    }
+    const content = await readFile(validatedPath, 'utf-8');
+    return this.parse(content, validatedPath);
+  }
+  
+  /**
+   * Validate file path for security
+   * - Resolves symlinks with realpath
+   * - Checks path is within specRoot
+   * - Normalizes path separators
+   * - Verifies file exists and is readable
+   */
+  private async validateFilePath(filePath: string): Promise<string> {
+    // Normalize path separators and resolve relative paths
+    const normalized = normalize(filePath);
     
-    // SECURITY: Check for path traversal sequences
-    if (filePath.includes('..') || filePath.includes('~')) {
+    // SECURITY: Reject paths with traversal sequences before resolution
+    // Check for any attempt to escape directory (including encoded forms)
+    if (normalized.includes('..') || normalized.includes('~')) {
       throw new POCError(
         'PARSE_ERROR',
         `Invalid path: "${filePath}" contains traversal sequences`,
@@ -169,9 +176,27 @@ export class BlockParser {
       );
     }
     
+    // Resolve to absolute path
+    const absolutePath = resolve(normalized);
+    
+    // SECURITY: Resolve symlinks to prevent symlink attacks
+    const realPath = await realpath(absolutePath).catch(() => absolutePath);
+    
+    // SECURITY: Verify path is within allowed spec directory
+    // Use relative path to check containment (more robust than startsWith)
+    const relativeToRoot = relative(this.specRoot, realPath);
+    if (relativeToRoot.startsWith('..') || relativeToRoot.includes(':')) {
+      // ':' catches Windows absolute paths with drive letter
+      throw new POCError(
+        'PARSE_ERROR',
+        `Access denied: Path "${filePath}" resolves to "${realPath}" which is outside allowed spec directory`,
+        filePath
+      );
+    }
+    
     // Verify file exists and is readable
     try {
-      await access(absolutePath, constants.R_OK);
+      await access(realPath, constants.R_OK);
     } catch {
       throw new POCError(
         'PARSE_ERROR',
@@ -180,8 +205,7 @@ export class BlockParser {
       );
     }
     
-    const content = await readFile(absolutePath, 'utf-8');
-    return this.parse(content, absolutePath);
+    return realPath;
   }
   
   /**

@@ -136,6 +136,7 @@ export class FileWatcher extends EventEmitter {
     const existingTimer = this.debounceTimers.get(path);
     if (existingTimer) {
       clearTimeout(existingTimer);
+      this.debounceTimers.delete(path);
     }
     
     // Set new debounced timer

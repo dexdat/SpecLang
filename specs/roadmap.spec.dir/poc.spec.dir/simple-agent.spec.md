@@ -62,18 +62,42 @@ import { slugifySpecId } from './path-utils';
 import { FileEvent, ParsedSpec, SpecHeader } from './types';
 import { BlockParser } from './block-parser';
 import { CodeGenerator } from './code-generator';
-import { symlink, unlink, mkdir, writeFile } from 'fs/promises';
+import { slugifySpecId } from './path-utils';
+import { symlink, unlink, mkdir, writeFile, cp } from 'fs/promises';
 import { platform } from 'os';
 
 export class SimpleAgent {
   private parser: BlockParser;
   private generator: CodeGenerator;
-  private activeSpecs: Map<string, Promise<void>> = new Map();  // Track in-progress operations per spec
   
   constructor() {
     this.parser = new BlockParser();
     this.generator = new CodeGenerator();
   }
+  
+  /**
+   * Acquire lock for a spec slug to prevent concurrent processing
+   */
+  private async acquireLock(specSlug: string): Promise<() => void> {
+    // Loop until we can acquire lock
+    while (this.specLocks.has(specSlug)) {
+      await this.specLocks.get(specSlug);
+    }
+    
+    // Create a promise that will resolve when lock is released
+    let resolveLock: () => void;
+    const lockPromise = new Promise<void>(resolve => {
+      resolveLock = resolve;
+    });
+    
+    this.specLocks.set(specSlug, lockPromise);
+    return () => {
+      resolveLock!();
+      this.specLocks.delete(specSlug);
+    };
+  }
+  
+  private specLocks = new Map<string, Promise<void>>();
   
   /**
    * Handle file change event
@@ -93,23 +117,12 @@ export class SimpleAgent {
     
     const specSlug = slugifySpecId(spec.id);
     
-    // RACE CONDITION FIX: Prevent concurrent processing of same spec
-    // If this spec is already being processed, wait for it to complete
-    const existingOperation = this.activeSpecs.get(specSlug);
-    if (existingOperation) {
-      console.log(`[SimpleAgent] Waiting for existing operation on ${specSlug}...`);
-      await existingOperation;
-    }
-    
-    // Create new operation promise
-    const operation = this.processSpec(spec, specSlug, event.path);
-    this.activeSpecs.set(specSlug, operation);
-    
+    // Acquire lock for this spec to prevent concurrent processing
+    const releaseLock = await this.acquireLock(specSlug);
     try {
-      await operation;
+      await this.processSpec(spec, specSlug, event.path);
     } finally {
-      // Clean up when done
-      this.activeSpecs.delete(specSlug);
+      releaseLock();
     }
   }
   
@@ -135,9 +148,8 @@ export class SimpleAgent {
       
       for (const block of spec.blocks) {
         try {
-          const code = this.generator.generate(spec.id, header, block);
-          const outputPath = await this.writeCode(specSlug, block.id, code);
-          generatedFiles.push(outputPath);
+          const generatedFile = await this.generator.generate(spec.id, header, block);
+          generatedFiles.push(generatedFile.path);
         } catch (error) {
           console.error(`[SimpleAgent] Failed to generate ${block.id}:`, error);
           errors.push({ blockId: block.id, error: error as Error });
@@ -210,18 +222,11 @@ export class SimpleAgent {
   }
   
   /**
-   * Copy directory contents (Windows fallback)
+   * Copy directory contents recursively (Windows fallback)
    */
   private async copyDirectory(source: string, destination: string): Promise<void> {
-    const { copyFile, mkdir } = await import('fs/promises');
-    const { readdir } = await import('fs/promises');
-    
-    await mkdir(destination, { recursive: true });
-    const files = await readdir(source);
-    
-    for (const file of files) {
-      await copyFile(`${source}/${file}`, `${destination}/${file}`);
-    }
+    // Use recursive copy (Node 16+)
+    await cp(source, destination, { recursive: true, force: true });
   }
 }
 ```

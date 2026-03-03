@@ -56,6 +56,7 @@ tags: [example, feature]
 **Parsed Header Interface:**
 ```typescript
 import { SpecHeader, HeaderValidationResult, POCError } from './types';
+import yaml from 'js-yaml';
 
 export class HeaderParser {
   /**
@@ -152,54 +153,21 @@ export class HeaderParser {
   }
   
   /**
-   * Parse YAML content (simplified for POC)
-   * Supports: key: value, arrays, strings
+   * Parse YAML content using js-yaml library
+   * Supports full YAML spec needed for headers
    */
-  private parseYaml(yaml: string): Record<string, any> {
-    const result: Record<string, any> = {};
-    const lines = yaml.split('\n');
-    
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith('#')) continue;
-      
-      // Match key: value
-      const match = trimmed.match(/^(\w+):\s*(.+)$/);
-      if (match) {
-        const [, key, value] = match;
-        result[key] = this.parseValue(value);
-      }
+  private parseYaml(yamlContent: string): Record<string, any> {
+    try {
+      const parsed = yaml.load(yamlContent) as Record<string, any>;
+      return parsed || {};
+    } catch (error: any) {
+      throw new POCError(
+        'HEADER_ERROR',
+        `Failed to parse YAML header: ${error.message}`,
+        undefined,
+        error
+      );
     }
-    
-    return result;
-  }
-  
-  /**
-   * Parse a YAML value
-   */
-  private parseValue(value: string): any {
-    const trimmed = value.trim();
-    
-    // Array: [a, b, c]
-    if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
-      return trimmed
-        .slice(1, -1)
-        .split(',')
-        .map(s => s.trim().replace(/^["']|["']$/g, ''))
-        .filter(s => s);
-    }
-    
-    // Number
-    if (/^\d+$/.test(trimmed)) {
-      return parseInt(trimmed, 10);
-    }
-    
-    // Boolean
-    if (trimmed === 'true') return true;
-    if (trimmed === 'false') return false;
-    
-    // String (remove quotes)
-    return trimmed.replace(/^["']|["']$/g, '');
   }
 }
 ```

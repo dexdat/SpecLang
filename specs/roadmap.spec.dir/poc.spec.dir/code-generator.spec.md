@@ -172,18 +172,11 @@ ${code}`;
     const linkPath = join(this.outputDir, slug);
     const sourceDir = join('specs', `${slug}.spec.dir`, 'src');
     
-    // SECURITY: Calculate relative path dynamically based on actual paths
-    // This ensures correct relative path regardless of outputDir location
-    const targetPath = relative(dirname(linkPath), sourceDir);
+    // SECURITY: Validate symlink target before creation
+    await this.validateSymlinkTarget(linkPath, sourceDir);
     
-    // Validate the relative path doesn't escape project
-    if (targetPath.startsWith('..') && targetPath.split('..').length > 3) {
-      throw new POCError(
-        'SYMLINK_ERROR',
-        `Symlink target "${targetPath}" would escape project directory`,
-        linkPath
-      );
-    }
+    // Calculate relative path from link location to source
+    const targetPath = relative(dirname(linkPath), sourceDir);
     
     // Remove existing symlink if present
     try {
@@ -209,40 +202,94 @@ ${code}`;
   }
   
   /**
+   * Validate symlink target for security
+   * - Ensures source directory exists and is within project
+   * - Ensures link path is within output directory
+   * - Prevents path traversal attacks
+   */
+  private async validateSymlinkTarget(linkPath: string, sourceDir: string): Promise<void> {
+    const { resolve, relative } = await import('path');
+    const { access, constants, realpath } = await import('fs/promises');
+    
+    // Resolve absolute paths
+    const absLinkPath = resolve(linkPath);
+    const absSourceDir = resolve(sourceDir);
+    
+    // SECURITY: Resolve symlinks to prevent symlink attacks
+    const realSourceDir = await realpath(absSourceDir).catch(() => absSourceDir);
+    
+    // Project root: directory containing specs/ and src/
+    const projectRoot = resolve(process.cwd());
+    
+    // Ensure source directory is within project
+    const sourceRelative = relative(projectRoot, realSourceDir);
+    if (sourceRelative.startsWith('..') || sourceRelative.includes(':')) {
+      throw new POCError(
+        'SYMLINK_ERROR',
+        `Symlink source "${sourceDir}" is outside project directory`,
+        linkPath
+      );
+    }
+    
+    // Ensure link path is within output directory (should be, but double-check)
+    const linkRelative = relative(resolve(this.outputDir), absLinkPath);
+    if (linkRelative.startsWith('..') || linkRelative.includes(':')) {
+      throw new POCError(
+        'SYMLINK_ERROR',
+        `Symlink path "${linkPath}" is outside output directory`,
+        linkPath
+      );
+    }
+    
+    // Verify source directory exists and is accessible
+    try {
+      await access(realSourceDir, constants.R_OK);
+    } catch {
+      throw new POCError(
+        'SYMLINK_ERROR',
+        `Source directory "${sourceDir}" does not exist or is not readable`,
+        linkPath
+      );
+    }
+  }
+  
+  /**
    * Sync directory contents (Windows fallback)
    * Handles incremental updates: adds new files, updates modified, removes deleted
    */
   private async syncDirectory(source: string, dest: string): Promise<void> {
-    const { readdir, stat, copyFile, unlink, mkdir } = await import('fs/promises');
-    const { join } = await import('path');
+    const { readdir, copyFile, mkdir, rename, rm } = await import('fs/promises');
+    const { join, dirname } = await import('path');
+    const { randomBytes } = await import('crypto');
     
-    await mkdir(dest, { recursive: true });
+    // Create temporary directory for atomic copy
+    const tempDir = join(dirname(dest), `.tmp-${randomBytes(8).toString('hex')}`);
     
-    const sourceFiles = await readdir(source);
-    const destFiles = await readdir(dest);
-    
-    // Copy/update files from source
-    for (const file of sourceFiles) {
-      const srcPath = join(source, file);
-      const destPath = join(dest, file);
+    try {
+      // Copy all files from source to temp directory
+      await mkdir(tempDir, { recursive: true });
+      const sourceFiles = await readdir(source);
       
-      try {
-        const srcStat = await stat(srcPath);
-        const destStat = await stat(destPath).catch(() => null);
-        
-        // Copy if doesn't exist or source is newer
-        if (!destStat || srcStat.mtime > destStat.mtime) {
-          await copyFile(srcPath, destPath);
-        }
-      } catch {
-        // Skip files that can't be read
+      for (const file of sourceFiles) {
+        const srcPath = join(source, file);
+        const destPath = join(tempDir, file);
+        await copyFile(srcPath, destPath);
       }
-    }
-    
-    // Remove files that no longer exist in source
-    for (const file of destFiles) {
-      if (!sourceFiles.includes(file)) {
-        await unlink(join(dest, file)).catch(() => {});
+      
+      // Atomic swap: remove old dest, rename temp to dest
+      try {
+        await rm(dest, { recursive: true, force: true });
+      } catch {
+        // dest may not exist
+      }
+      
+      await rename(tempDir, dest);
+    } finally {
+      // Clean up temp directory if rename failed
+      try {
+        await rm(tempDir, { recursive: true, force: true });
+      } catch {
+        // ignore cleanup errors
       }
     }
   }

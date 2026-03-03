@@ -54,6 +54,8 @@ import { EventEmitter as NodeEventEmitter } from 'events';
 export class TypedEventEmitter<T extends Record<string, any>> 
   extends NodeEventEmitter 
   implements EventEmitter<T> {
+  // Map from original handlers to wrapped handlers for proper cleanup
+  private handlerMap = new WeakMap<Function, Function>();
   
   on<K extends keyof T>(event: K, handler: (data: T[K]) => void): this {
     // Wrap handler with error catching
@@ -68,13 +70,14 @@ export class TypedEventEmitter<T extends Record<string, any>>
     };
     
     // Store reference to wrapped handler for off() removal
-    (handler as any).__wrappedHandler = wrappedHandler;
+    this.handlerMap.set(handler, wrappedHandler);
     return super.on(event as string, wrappedHandler);
   }
   
   off<K extends keyof T>(event: K, handler: (data: T[K]) => void): this {
     // Remove the wrapped handler if it exists
-    const wrappedHandler = (handler as any).__wrappedHandler || handler;
+    const wrappedHandler = this.handlerMap.get(handler) || handler;
+    this.handlerMap.delete(handler);
     return super.off(event as string, wrappedHandler);
   }
   
@@ -106,8 +109,16 @@ export class TypedEventEmitter<T extends Record<string, any>>
       }
     };
     
-    (handler as any).__wrappedHandler = wrappedHandler;
+    this.handlerMap.set(handler, wrappedHandler);
     return super.once(event as string, wrappedHandler);
+  }
+  
+  /**
+   * Remove all listeners and clean up resources
+   */
+  dispose(): void {
+    this.removeAllListeners();
+    this.handlerMap = new WeakMap();
   }
 }
 ```

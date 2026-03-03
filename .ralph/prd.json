@@ -214,7 +214,7 @@
             "tests/test-specs.test.ts"
           ],
           "priority": 13,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-014",
@@ -236,7 +236,7 @@
             "tests/lenses.test.ts"
           ],
           "priority": 14,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-015",

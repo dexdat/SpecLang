@@ -55,11 +55,32 @@ export class ConvergenceDetector extends TypedEventEmitter<ConvergenceEvents> {
   private readonly MAX_DEPTH = POC_CONSTANTS.MAX_CASCADE_DEPTH; // 10
   private readonly MAX_FILES_PER_CASCADE = 100;  // Prevent runaway file generation
   
+  // Mutex lock to prevent concurrent state modification
+  private isProcessing = false;
+  
   /**
    * Handle file change - reset timer
    * Includes proper circular dependency detection using edge tracking
    */
   onFileChange(path: string, causedBy?: string): void {
+    // Prevent reentrant calls (concurrent modification)
+    if (this.isProcessing) {
+      console.error(`[ConvergenceDetector] Reentrant call detected for ${path}, skipping`);
+      return;
+    }
+    
+    this.isProcessing = true;
+    try {
+      this._onFileChange(path, causedBy);
+    } finally {
+      this.isProcessing = false;
+    }
+  }
+  
+  /**
+   * Internal implementation (assumes no reentrancy)
+   */
+  private _onFileChange(path: string, causedBy?: string): void {
     // Check for runaway cascade (too many files)
     if (this.state.filesChanged.size >= this.MAX_FILES_PER_CASCADE) {
       this.emit('max-files', { 
@@ -234,7 +255,8 @@ export class ConvergenceDetector extends TypedEventEmitter<ConvergenceEvents> {
       isTracking: false,
       filesChanged: new Set(),
       currentDepth: 0,
-      cascadeHistory: []
+      cascadeHistory: [],
+      edgeGraph: new Map()
     };
   }
 }
