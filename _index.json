@@ -1,6 +1,6 @@
 {
   "version": "0.2.0",
-  "generated": "2026-03-03T15:10:51.010ZZ",
+  "generated": "2026-03-03T15:39:08.907ZZ",
   "specs": {
     "@speclang/agent-behavior-matrix/matrix": {
       "id": "@speclang/agent-behavior-matrix/matrix",
@@ -2770,6 +2770,28 @@
       "lines": 334,
       "header_lines": 10,
       "status": "generated",
+      "content_refs": []
+    },
+    "@examples/greeting": {
+      "id": "@examples/greeting",
+      "file": "greeting.spec.md",
+      "version": "1.0.0",
+      "layer": 5,
+      "project_level": "",
+      "agent_support": "",
+      "tags": [
+        "example",
+        "greeting"
+      ],
+      "short": "Simple greeting functions",
+      "depends_on": [],
+      "blocks": [
+        "greet"
+      ],
+      "lastModified": "2026-03-03T15:13:38.098ZZ",
+      "lines": 413,
+      "header_lines": 7,
+      "status": "draft",
       "content_refs": []
     },
     "@specs/guard": {
@@ -12818,6 +12840,7 @@
     "@specs/docs",
     "@speclang/dynamic-split",
     "@speclang/go",
+    "@examples/greeting",
     "@speclang/header",
     "@codegen/go",
     "@codegen/typescript",
@@ -12910,7 +12933,7 @@
       "@speclang/roadmap/production -> @ref:specs/deployment (depends_on)"
     ],
     "valid_refs": [],
-    "total_specs": 408,
+    "total_specs": 409,
     "total_refs": 0,
     "missing_ref_count": 8
   }
