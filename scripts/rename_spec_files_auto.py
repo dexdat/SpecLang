@@ -1,1 +1,0 @@
-../specs/scripts.spec.dir/rename_spec_files_auto.py
