@@ -493,3 +493,20 @@ Project: SpecLang (meta-circular)
 - `specs/lenses.spec.md` - Main spec
 - `specs/lenses.spec.dir/formats.spec.md` - Built-in lens formats
 
+---
+
+### P0-016: Project Layout and Init Command (2026-03-03)
+
+**Status**: ✅ Validated and marked complete
+
+**Validation Performed**:
+- Verified init command implementation matches spec blocks (@block:layout/init)
+- Verified templates exist and match spec sources
+- Verified validate command exists (TypeScript implementation)
+- Ran init tests (8 tests pass)
+- Updated PRD passes flag to true
+
+**Spec References**:
+- `specs/project-layout.spec.md`
+- `specs/project-layout.spec.dir/structure.spec.md`
+
