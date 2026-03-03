@@ -43,7 +43,7 @@ exports.formatValidationReport = formatValidationReport;
 const fs = __importStar(require("fs-extra"));
 const path = __importStar(require("path"));
 const yaml = __importStar(require("yaml"));
-const utils_js_1 = require("../../cli.spec.dir/src/utils.js");
+const utils_1 = require("../../cli.spec.dir/src/utils");
 /**
  * Parse spec header from file
  */
@@ -212,7 +212,7 @@ class AutonomousValidator {
      */
     async checkReferenceResolution() {
         try {
-            const index = (0, utils_js_1.loadIndex)();
+            const index = (0, utils_1.loadIndex)();
             const validation = index.validation;
             if (!validation) {
                 return {

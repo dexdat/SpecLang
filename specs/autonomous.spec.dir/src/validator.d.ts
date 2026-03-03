@@ -2,7 +2,7 @@
  * SPECLANG-GENERATED: Autonomous validator for validating system readiness
  * Source: @speclang/autonomous-validation
  */
-import type { ValidationReport } from './types.js';
+import type { ValidationReport } from './types';
 /**
  * Autonomous Validator - Validates system meets autonomous operation criteria
  */
