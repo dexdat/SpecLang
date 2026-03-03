@@ -42,8 +42,9 @@ class HeaderParser {
         if (!headerLines[headerLines.length - 1]?.trim().startsWith('---')) {
             throw new poc_1.POCError('HEADER_ERROR', 'Header must end with --- separator', undefined);
         }
-        // Parse YAML content
-        const header = this.parseYaml(headerLines.join('\n'));
+        // Parse YAML content (strip trailing --- document separator)
+        const yamlContent = headerLines.join('\n').replace(/^---$/m, '').trim();
+        const header = this.parseYaml(yamlContent);
         // Validate required fields
         this.validateHeader(header);
         return {
