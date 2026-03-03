@@ -104,10 +104,10 @@ Follow the 8-phase implementation sequence from `specs/roadmap.spec.dir/poc.spec
 - [x] **Implement demo** - demo-workflow.spec.md → specs/greeting.spec.md + tests (create greeting spec, edit file, verify code generates in < 5 seconds, run `npm run build` successfully)
 
 ### P8.2 - Documentation
-- [ ] **Update troubleshooting** - troubleshooting.spec.md → docs/troubleshooting.md (document common errors, error codes)
-- [ ] **Update user flows** - user-flows.spec.md → docs/user-flows.md (document user interaction flows)
+- [x] **Update troubleshooting** - troubleshooting.spec.md → docs/troubleshooting.md (document common errors, error codes)
+- [x] **Update user flows** - user-flows.spec.md → docs/user-flows.md (document user interaction flows)
 
 ## Completion
-- [ ] All phases complete
+- [x] All phases complete
 - [ ] All tests pass
 - [ ] Demo workflow successful
