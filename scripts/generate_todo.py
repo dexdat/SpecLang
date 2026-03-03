@@ -1,1 +1,0 @@
-../specs/scripts.spec.dir/generate_todo.py

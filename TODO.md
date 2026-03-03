@@ -38,10 +38,10 @@ Follow the 8-phase implementation sequence from `specs/roadmap.spec.dir/poc.spec
 - [x] **Implement HeaderParser** - header-parser.spec.md → src/parser/header-parser.ts (parse # speclang-header lines:N, extract id, version, layer, short, tags, validate required fields)
 
 ### P3.2 - Block Parser
-- [ ] **Parse block headers** - block-parser.spec.md → src/parser/block-parser.ts (regex for @block: and @kind:)
-- [ ] **Parse parameters** - block-parser.spec.md → src/parser/block-parser.ts (name: type - description)
-- [ ] **Parse optional/properties** - block-parser.spec.md → src/parser/block-parser.ts (optional: name?, properties for classes/interfaces)
-- [ ] **Return ParsedBlock[]** - block-parser.spec.md → src/parser/block-parser.ts (return array of parsed blocks)
+- [x] **Parse block headers** - block-parser.spec.md → src/parser/block-parser.ts (regex for @block: and @kind:)
+- [x] **Parse parameters** - block-parser.spec.md → src/parser/block-parser.ts (name: type - description)
+- [x] **Parse optional/properties** - block-parser.spec.md → src/parser/block-parser.ts (optional: name?, properties for classes/interfaces)
+- [x] **Return ParsedBlock[]** - block-parser.spec.md → src/parser/block-parser.ts (return array of parsed blocks)
 
 ## Phase 4: Code Generation
 

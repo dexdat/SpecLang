@@ -1,1 +1,0 @@
-../specs/scripts.spec.dir/validate_autonomous.py
