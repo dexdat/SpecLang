@@ -6,8 +6,8 @@ Follow the 8-phase implementation sequence from `specs/roadmap.spec.dir/poc.spec
 
 ### P1.1 - Project Setup
 - [ ] **Create project structure** - installation.spec.md → (run `npm init`, create directory structure)
-- [ ] **Configure TypeScript** - tsconfig-json.spec.md → tsconfig.json (set target: ES2022, module: NodeNext, outDir: ./dist, rootDir: ./src)
-- [ ] **Install dependencies** - package-json.spec.md → package.json (chokidar, sqlite3, commander, js-yaml, glob, dev dependencies)
+- [x] **Configure TypeScript** - tsconfig-json.spec.md → tsconfig.json (set target: ES2022, module: NodeNext, outDir: ./dist, rootDir: ./src)
+- [x] **Install dependencies** - package-json.spec.md → package.json (chokidar, sqlite3, commander, js-yaml, glob, dev dependencies)
 - [x] **Define core types** - types.spec.md → src/types/poc.ts (FileEvent, ParsedBlock, BlockKind)
 - [x] **Define error types** - types.spec.md → src/types/poc.ts (POCError, POCConfig, Template)
 - [x] **Define event types** - types.spec.md → src/types/poc.ts (ConvergenceEvent, ConvergenceState, DaemonStats)
