@@ -267,7 +267,7 @@
             "tests/init.test.ts"
           ],
           "priority": 16,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-017",
