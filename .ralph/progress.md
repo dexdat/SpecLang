@@ -539,3 +539,17 @@ Project: SpecLang (meta-circular)
 - `specs/cascade.spec.dir/triggers.spec.md`
 - `specs/cascade-protocol.spec.md`
 
+### P0-020: Cascade Depth and Convergence (2026-03-03)
+
+**Status**: ✅ Validated and marked complete
+
+**Validation Performed**:
+- Verified cascade depth and convergence implementation matches spec blocks (@block:cascade/depth)
+- Verified depth tracking, limits, cycle detection, and convergence detection exist
+- Ran cascade depth tests (22 tests pass)
+- Updated PRD passes flag to true
+
+**Spec References**:
+- `specs/cascade.spec.dir/convergence.spec.md`
+- `specs/cascade.spec.dir/triggers.spec.md`
+
