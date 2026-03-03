@@ -3,7 +3,7 @@
  * Source: @speclang/mcp.cli
  */
 
-import { initProject, formatInitResult } from '../../project-layout/init.ts';
+import { initProject, formatInitResult } from '../../../project-layout.spec.dir/src/init.ts';
 
 export interface InitOptions {
   name?: string;

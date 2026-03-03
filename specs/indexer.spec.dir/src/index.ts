@@ -368,7 +368,7 @@ function validateRefs(entries: SpecEntry[], allIds: Set<string>): { missing: str
 // SQLITE INTEGRATION
 // ============================================================================
 
-import type { SpecLangDB } from '../db/index.js';
+import type { SpecLangDB } from '../../sqlite.spec.dir/src/index.js';
 
 /**
  * Populate SQLite database with spec index data

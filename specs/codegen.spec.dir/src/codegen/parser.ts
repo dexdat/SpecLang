@@ -5,7 +5,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { parseSpec, parseSpecContent } from '../parser/header';
+import { parseSpec, parseSpecContent } from '../../../parser.spec.dir/src/header.js';
 import type { CodeSpec, CodeBlock, TargetConfig, TargetLanguage, CodeParserOptions } from './types';
 import { DEFAULT_CODE_PARSER_OPTIONS } from './types';
 

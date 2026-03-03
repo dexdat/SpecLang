@@ -7,9 +7,9 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
-import { SpecLangDB, createDatabase } from '../db/index.js';
-import { generateIndex, SpecIndex, getSpecFiles } from '../indexer/index.js';
-import { validateAllSpecs, findSpecFiles, loadSpecIndex } from '../parser/index.js';
+import { SpecLangDB, createDatabase } from '../../sqlite.spec.dir/src/index.js';
+import { generateIndex, SpecIndex, getSpecFiles } from '../../indexer.spec.dir/src/index.js';
+import { validateAllSpecs, findSpecFiles, loadSpecIndex } from '../../parser.spec.dir/src/index.js';
 
 /**
  * Whether to suppress console output (for JSON mode)

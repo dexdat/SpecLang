@@ -11,9 +11,9 @@ import {
   getViolations,
   getGuardStats,
   createOverride,
-} from '../../guard';
-import type { AgentRole } from '../../agents/types';
-import { DEFAULT_RULES } from '../../guard/rules';
+} from '../../../guard.spec.dir/src';
+import type { AgentRole } from '../../../agents.spec.dir/src/types';
+import { DEFAULT_RULES } from '../../../guard.spec.dir/src/rules';
 
 /**
  * Guard command options

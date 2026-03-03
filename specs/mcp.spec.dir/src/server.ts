@@ -9,7 +9,7 @@ import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import express, { Request, Response, NextFunction } from 'express';
 import { randomUUID } from 'crypto';
 
-import { createDatabase, SpecLangDB } from '../db/index.js';
+import { createDatabase, SpecLangDB } from '../../sqlite.spec.dir/src/index.js';
 import { MCPToolRegistry, getToolDefinitions } from './tools/index.js';
 import { loadConfig, getArg, getArgInt, getArgBool } from './config.js';
 import { createAuth, MCPAuth } from './auth.js';

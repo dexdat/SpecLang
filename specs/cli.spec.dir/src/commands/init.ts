@@ -3,7 +3,7 @@
  * Source: @speclang/mcp.cli
  */
 
-import { initProject, formatInitResult } from '../../project-layout/init.js';
+import { initProject, formatInitResult } from '../../../project-layout.spec.dir/src/init.js';
 
 export interface InitOptions {
   name?: string;

@@ -5,7 +5,7 @@
 
 import os from 'os';
 import fs from 'fs';
-import type { SpecLangDB } from '../../db/index.js';
+import type { SpecLangDB } from '../../../sqlite.spec.dir/src/index.js';
 import type { MCPServerConfig } from '../types.js';
 
 interface SSEEventType {

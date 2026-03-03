@@ -4,7 +4,7 @@
  */
 
 import { randomUUID } from 'crypto';
-import type { SpecLangDB } from '../../db/index.js';
+import type { SpecLangDB } from '../../../sqlite.spec.dir/src/index.js';
 import type { CascadeStatus, CascadeTriggerInput } from '../types.js';
 
 /**

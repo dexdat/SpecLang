@@ -5,7 +5,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { MCPServer } from '../../mcp/server.js';
+import { MCPServer } from '../../../mcp.spec.dir/src/server.js';
 import { getDbPath, ensureSpeclangDir } from '../utils.js';
 
 export interface ServerOptions {
