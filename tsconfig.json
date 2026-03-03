@@ -6,7 +6,7 @@
     "preserveSymlinks": true,
     "lib": ["ES2022"],
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -21,16 +21,16 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "sqlite.spec.dir/src/*": ["src/sqlite.spec.dir/src/*"],
-      "indexer.spec.dir/src/*": ["src/indexer.spec.dir/src/*"],
-      "parser.spec.dir/src/*": ["src/parser.spec.dir/src/*"],
-      "mcp.spec.dir/src/*": ["src/mcp.spec.dir/src/*"],
-      "cli.spec.dir/src/*": ["src/cli.spec.dir/src/*"],
-      "autonomous.spec.dir/src/*": ["src/autonomous.spec.dir/src/*"],
-      "guard.spec.dir/src/*": ["src/guard.spec.dir/src/*"],
-      "meta.spec.dir/src/*": ["src/meta.spec.dir/src/*"],
-      "agents.spec.dir/src/*": ["src/agents.spec.dir/src/*"],
-      "project-layout.spec.dir/src/*": ["src/project-layout.spec.dir/src/*"]
+      "sqlite.spec.dir/src/*": ["specs/sqlite.spec.dir/src/*"],
+      "indexer.spec.dir/src/*": ["specs/indexer.spec.dir/src/*"],
+      "parser.spec.dir/src/*": ["specs/parser.spec.dir/src/*"],
+      "mcp.spec.dir/src/*": ["specs/mcp.spec.dir/src/*"],
+      "cli.spec.dir/src/*": ["specs/cli.spec.dir/src/*"],
+      "autonomous.spec.dir/src/*": ["specs/autonomous.spec.dir/src/*"],
+      "guard.spec.dir/src/*": ["specs/guard.spec.dir/src/*"],
+      "meta.spec.dir/src/*": ["specs/meta.spec.dir/src/*"],
+      "agents.spec.dir/src/*": ["specs/agents.spec.dir/src/*"],
+      "project-layout.spec.dir/src/*": ["specs/project-layout.spec.dir/src/*"]
     }
   },
   "include": ["src/**/*.ts"],
@@ -53,7 +53,6 @@
     "src/mcp/**",
     "src/indexer/**",
     "src/parser/**",
-    "src/codegen/**",
-    "**/spec.dir/**"
+    "src/codegen/**"
   ]
 }

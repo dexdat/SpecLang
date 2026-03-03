@@ -3,7 +3,7 @@
  * Source: phase-0.3-indexer.md
  */
 
-import type { SpecMetadata, Block, Reference } from '../parser/types';
+import type { SpecMetadata, Block, Reference } from 'parser.spec.dir/src/types';
 
 // ============================================================================
 // INDEX STRUCTURE

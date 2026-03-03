@@ -10,8 +10,8 @@ import type {
   ValidationCheck, 
   ValidationReport,
   ValidationStatus 
-} from './types.js';
-import { loadIndex } from '../../cli.spec.dir/src/utils.js';
+} from './types';
+import { loadIndex } from 'cli.spec.dir/src/utils';
 
 /**
  * Parse spec header from file
