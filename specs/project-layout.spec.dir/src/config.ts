@@ -22,7 +22,7 @@ import type {
   ProjectStructure
 } from './types.js';
 import { DEFAULT_PROJECT_STRUCTURE } from './types.js';
-import { getDefaultConfig } from '../config/loader.js';
+import { getDefaultConfig } from '../config/loader.ts';
 
 /**
  * Find project root by looking for project.scl or .speclangrc
