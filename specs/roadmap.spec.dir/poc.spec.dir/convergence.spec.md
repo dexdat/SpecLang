@@ -52,7 +52,7 @@ export class ConvergenceDetector extends TypedEventEmitter<ConvergenceEvents> {
     edgeGraph: new Map()  // Track edges: fileA -> fileB (fileA caused fileB to regenerate)
   };
   
-  private readonly MAX_DEPTH = POC_CONSTANTS.MAX_CASCADE_DEPTH; // 10
+  private readonly MAX_DEPTH = POC_CONSTANTS.MAX_DEPTH; // 10
   private readonly MAX_FILES_PER_CASCADE = 100;  // Prevent runaway file generation
   
   // Mutex lock to prevent concurrent state modification

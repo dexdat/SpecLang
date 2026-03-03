@@ -382,11 +382,13 @@ export class BlockParser {
    * Parse return type
    */
   private parseReturns(section: string): ReturnType | undefined {
-    const match = section.match(this.returnPattern);
+    // Reset regex lastIndex to prevent state pollution
+    this.returnPattern.lastIndex = 0;
+    const match = this.returnPattern.exec(section);
     if (match) {
       return {
         type: match[1],
-        description: match[2].trim()
+        description: match[2]?.trim() || ''
       };
     }
     return undefined;
