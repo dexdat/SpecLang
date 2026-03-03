@@ -47,7 +47,7 @@ Follow the 8-phase implementation sequence from `specs/roadmap.spec.dir/poc.spec
 
 ### P4.1 - Templates
 - [x] **Implement function template** - templates.spec.md → src/codegen/templates/function.ts (export function name(params): returnType, JSDoc, optional parameters)
-- [ ] **Implement class template** - templates.spec.md → src/codegen/templates/class.ts (export class Name, properties with optional marker)
+- [x] **Implement class template** - templates.spec.md → src/codegen/templates/class.ts (export class Name, properties with optional marker)
 - [ ] **Implement interface template** - templates.spec.md → src/codegen/templates/interface.ts (export interface Name, optional properties with ?)
 - [ ] **Implement type template** - templates.spec.md → src/codegen/templates/type.ts (export type Name = ...)
 - [ ] **Implement enum template** - templates.spec.md → src/codegen/templates/enum.ts (export enum Name)
