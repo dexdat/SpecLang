@@ -5,7 +5,7 @@ Follow the 8-phase implementation sequence from `specs/roadmap.spec.dir/poc.spec
 ## Phase 1: Foundation
 
 ### P1.1 - Project Setup
-- [ ] **Create project structure** - installation.spec.md → (run `npm init`, create directory structure)
+- [x] **Create project structure** - installation.spec.md → (run `npm init`, create directory structure)
 - [x] **Configure TypeScript** - tsconfig-json.spec.md → tsconfig.json (set target: ES2022, module: NodeNext, outDir: ./dist, rootDir: ./src)
 - [x] **Install dependencies** - package-json.spec.md → package.json (chokidar, sqlite3, commander, js-yaml, glob, dev dependencies)
 - [x] **Define core types** - types.spec.md → src/types/poc.ts (FileEvent, ParsedBlock, BlockKind)
