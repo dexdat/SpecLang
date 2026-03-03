@@ -65,4 +65,4 @@ export type {
   ProjectStructure,
   ProjectLayoutConfig,
   SpeclangRcConfig
-} from './types.js';
+} from './types.ts';

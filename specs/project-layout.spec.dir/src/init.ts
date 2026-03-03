@@ -20,8 +20,8 @@ import type {
   InitOptions,
   InitResult,
   ProjectStructure
-} from './types.ts';
-import { DEFAULT_PROJECT_STRUCTURE, SUPPORTED_LANGUAGES } from './types.ts';
+} from './types.js';
+import { DEFAULT_PROJECT_STRUCTURE, SUPPORTED_LANGUAGES } from './types.js';
 import {
   generateProjectScl,
   generateSpeclangRc,
@@ -30,8 +30,8 @@ import {
   generateInitialTestSpec,
   getDefaultProjectSclVars,
   getDefaultSpeclangRcVars
-} from './templates.ts';
-import { isSpeclangProject, findProjectRoot } from './config.ts';
+} from './templates.js';
+import { isSpeclangProject, findProjectRoot } from './config.js';
 import { validateProject } from './validator.js';
 
 /**
