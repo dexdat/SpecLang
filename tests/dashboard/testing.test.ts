@@ -7,24 +7,25 @@
  * Baby Step: 4 of 4
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 import {
   createMockMCPClient,
   createMockMCPServer,
   mockMCPClient,
   mockMCPServer
-} from '../../../src/dashboard/testing/mock-mcp';
+} from '../../specs/dashboard.spec.dir/src/testing/mock-mcp';
 import {
   checkElementAccessibility,
   generateAccessibilityReport,
   runAccessibilityScan
-} from '../../../src/dashboard/testing/accessibility';
+} from '../../specs/dashboard.spec.dir/src/testing/accessibility';
 import {
   measureRenderTime,
   measureInteractionTime,
   runPerformanceSuite,
   generatePerformanceReport
-} from '../../../src/dashboard/testing/performance';
+} from '../../specs/dashboard.spec.dir/src/testing/performance';
 
 describe('UI Dashboard Testing Framework', () => {
   describe('Mock MCP', () => {
@@ -72,21 +73,38 @@ describe('UI Dashboard Testing Framework', () => {
   describe('Accessibility Testing', () => {
     let mockElement: HTMLElement;
 
+    beforeAll(() => {
+      // Mock document if not defined (Node.js environment)
+      if (typeof document === 'undefined') {
+        const mockDocument = {
+          createElement: (tagName: string) => ({
+            tagName: tagName.toUpperCase(),
+            hasAttribute: () => false,
+            setAttribute: () => {},
+            getAttribute: () => null,
+            querySelector: () => null,
+            matches: () => false,
+          })
+        };
+        vi.stubGlobal('document', mockDocument);
+      }
+    });
+
     beforeEach(() => {
-      mockElement = document.createElement('div');
-      mockElement.setAttribute('aria-label', 'Test label');
+      mockElement = document.createElement('div') as HTMLElement;
+      (mockElement as any).setAttribute('aria-label', 'Test label');
     });
 
     it('should check element accessibility', () => {
-      const result = checkElementAccessibility(mockElement);
+      const result = checkElementAccessibility(mockElement as any);
       expect(result).toHaveProperty('passed');
       expect(result).toHaveProperty('violations');
       expect(result).toHaveProperty('score');
     });
 
     it('should detect missing ARIA labels', () => {
-      const element = document.createElement('div');
-      const result = checkElementAccessibility(element);
+      const element = document.createElement('div') as HTMLElement;
+      const result = checkElementAccessibility(element as any);
       expect(result.warnings.length).toBeGreaterThan(0);
     });
 
@@ -103,7 +121,7 @@ describe('UI Dashboard Testing Framework', () => {
     });
 
     it('should run accessibility scan', async () => {
-      const result = await runAccessibilityScan(mockElement);
+      const result = await runAccessibilityScan(mockElement as any);
       expect(result).toHaveProperty('passed');
     });
   });
