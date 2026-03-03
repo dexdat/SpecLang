@@ -11,7 +11,26 @@ import type {
   ValidationReport,
   ValidationStatus 
 } from './types';
-import { loadIndex } from '../../cli.spec.dir/src/utils';
+
+interface SpecIndex {
+  validation?: {
+    missing_ref_count?: number;
+    total_refs?: number;
+    missing_refs?: string[];
+  };
+}
+
+/**
+ * Load spec index from .speclang/_index.json
+ */
+function loadIndex(): SpecIndex {
+  const indexPath = '.speclang/_index.json';
+  if (fs.existsSync(indexPath)) {
+    const content = fs.readFileSync(indexPath, 'utf-8');
+    return JSON.parse(content) as SpecIndex;
+  }
+  return {};
+}
 
 /**
  * Parse spec header from file
