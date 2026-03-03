@@ -65,15 +65,15 @@ Follow the 8-phase implementation sequence from `specs/roadmap.spec.dir/poc.spec
 ## Phase 5: Agent & Daemon
 
 ### P5.1 - Simple Agent
-- [ ] **Implement SimpleAgent** - simple-agent.spec.md → src/daemon/simple-agent.ts (onFileChanged, parse spec, generate code, create symlinks, handle Windows fallback)
+- [x] **Implement SimpleAgent** - simple-agent.spec.md → src/daemon/simple-agent.ts (onFileChanged, parse spec, generate code, create symlinks, handle Windows fallback)
 
 ### P5.2 - Event Router
-- [ ] **Implement EventRouter** - event-routing.spec.md → src/daemon/event-router.ts (simple routing: all events → SimpleAgent, route method)
+- [x] **Implement EventRouter** - event-routing.spec.md → src/daemon/event-router.ts (simple routing: all events → SimpleAgent, route method)
 
 ### P5.3 - POC Daemon
-- [ ] **Wire components** - poc-daemon.spec.md → src/daemon/poc-daemon.ts (FileWatcher → EventRouter → SimpleAgent, FileWatcher → ConvergenceDetector)
-- [ ] **Implement start/stop methods** - poc-daemon.spec.md → src/daemon/poc-daemon.ts (start(): Promise<void>, stop(): Promise<void>)
-- [ ] **Process existing specs on startup** - poc-daemon.spec.md → src/daemon/poc-daemon.ts (process all specs when daemon starts)
+- [x] **Wire components** - poc-daemon.spec.md → src/daemon/poc-daemon.ts (FileWatcher → EventRouter → SimpleAgent, FileWatcher → ConvergenceDetector)
+- [x] **Implement start/stop methods** - poc-daemon.spec.md → src/daemon/poc-daemon.ts (start(): Promise<void>, stop(): Promise<void>)
+- [x] **Process existing specs on startup** - poc-daemon.spec.md → src/daemon/poc-daemon.ts (process all specs when daemon starts)
 
 ## Phase 6: Database & State
 
