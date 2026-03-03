@@ -57,10 +57,10 @@ Follow the 8-phase implementation sequence from `specs/roadmap.spec.dir/poc.spec
 - [x] **Implement TemplateRegistry** - template-registry.spec.md → src/codegen/template-registry.ts (register, get, loadFromFile, built-ins: function, class, interface, type, enum, constant)
 
 ### P4.3 - Code Generator
-- [ ] **Generate file with header** - code-generator.spec.md → src/codegen/generator.ts (add SPECLANG-GENERATED header)
-- [ ] **Write to spec dir** - code-generator.spec.md → src/codegen/generator.ts (write to specs/{slug}.spec.dir/src/{blockId}.ts)
-- [ ] **Create barrel export** - code-generation.spec.md → src/codegen/index.ts (create barrel export: specs/{slug}.spec.dir/src/index.ts)
-- [ ] **Create symlinks** - code-generation.spec.md → src/codegen/symlink-manager.ts (create symlink: src/{slug} → ../specs/{slug}.spec.dir/src, handle Windows fallback)
+- [x] **Generate file with header** - code-generator.spec.md → src/codegen/generator.ts (add SPECLANG-GENERATED header)
+- [x] **Write to spec dir** - code-generator.spec.md → src/codegen/generator.ts (write to specs/{slug}.spec.dir/src/{blockId}.ts)
+- [x] **Create barrel export** - code-generation.spec.md → src/codegen/index.ts (create barrel export: specs/{slug}.spec.dir/src/index.ts)
+- [x] **Create symlinks** - code-generation.spec.md → src/codegen/symlink-manager.ts (create symlink: src/{slug} → ../specs/{slug}.spec.dir/src, handle Windows fallback)
 
 ## Phase 5: Agent & Daemon
 
