@@ -54,7 +54,7 @@ Follow the 8-phase implementation sequence from `specs/roadmap.spec.dir/poc.spec
 - [x] **Implement constant template** - templates.spec.md → src/codegen/templates/constant.ts (export const NAME: type = value)
 
 ### P4.2 - Template Registry
-- [ ] **Implement TemplateRegistry** - template-registry.spec.md → src/codegen/template-registry.ts (register, get, loadFromFile, built-ins: function, class, interface, type, enum, constant)
+- [x] **Implement TemplateRegistry** - template-registry.spec.md → src/codegen/template-registry.ts (register, get, loadFromFile, built-ins: function, class, interface, type, enum, constant)
 
 ### P4.3 - Code Generator
 - [ ] **Generate file with header** - code-generator.spec.md → src/codegen/generator.ts (add SPECLANG-GENERATED header)
