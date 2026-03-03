@@ -91,12 +91,12 @@ Follow the 8-phase implementation sequence from `specs/roadmap.spec.dir/poc.spec
 - [x] **Implement build integration** - build-integration.spec.md → src/build/integration.ts (run `npm run build` after convergence, verify generated code compiles)
 
 ### P7.3 - CLI
-- [ ] **Create CLI entry** - cli.spec.md → src/cli/index.ts (./bin/speclangd-poc, parse arguments with commander, start/stop daemon)
+- [x] **Create CLI entry** - cli.spec.md → src/cli/index.ts (./bin/speclangd-poc, parse arguments with commander, start/stop daemon)
 
 ### P7.4 - Tests
-- [ ] **Write unit tests** - tests.spec.md → tests/**/*.test.ts (FileWatcher, BlockParser, CodeGenerator)
-- [ ] **Write integration tests** - tests.spec.md → tests/**/*.test.ts (Daemon, Cascade)
-- [ ] **Write E2E tests** - tests.spec.md → tests/**/*.test.ts (Demo workflow)
+- [x] **Write unit tests** - tests.spec.md → tests/**/*.test.ts (FileWatcher, BlockParser, CodeGenerator)
+- [x] **Write integration tests** - tests.spec.md → tests/**/*.test.ts (Daemon, Cascade)
+- [x] **Write E2E tests** - tests.spec.md → tests/**/*.test.ts (Demo workflow)
 
 ## Phase 8: Demo & Documentation
 
