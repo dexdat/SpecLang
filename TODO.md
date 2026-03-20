@@ -136,7 +136,7 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P0-035**: Project Level - POC (Proof of Concept)
 - [x] **P0-036**: Project Level - MVP (Minimum Viable Product)
 - [x] **P0-037**: Project Level - Alpha
-- [ ] **P0-038**: Beta Maturity Level
+- [x] **P0-038**: Beta Maturity Level
 - [ ] **P0-039**: Production Maturity Level
 - [ ] **P0-040**: Startup Maturity Level
 - [ ] **P0-041**: Enterprise Maturity Level
