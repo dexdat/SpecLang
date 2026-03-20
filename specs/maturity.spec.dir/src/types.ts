@@ -50,6 +50,8 @@ export interface AgentBehavior {
   humanOversight: HumanOversight;
   cascadeDepth: number;
   autoDeploy: boolean;
+  generationEnabled?: boolean;
+  reviewRequired?: boolean;
 }
 
 export interface LevelDefinition {
@@ -60,6 +62,11 @@ export interface LevelDefinition {
   agentBehavior: AgentBehavior;
   requiredFields: string[];
   recommendedTests: string[];
+  displayName?: string;
+  recommendedFields?: string[];
+  optionalFields?: string[];
+  allowedTargets?: string[];
+  constraints?: Record<string, any>;
 }
 
 export interface CriteriaResult {
@@ -122,6 +129,7 @@ export interface ParsedSpec {
     depends_on?: string[];
     [key: string]: unknown;
   };
+  content?: string;
   blocks?: Array<{
     id?: string;
     content?: string;
@@ -129,3 +137,5 @@ export interface ParsedSpec {
   }>;
   testCoverage?: Record<string, boolean>;
 }
+
+export type ParsedSpecMetadata = ParsedSpec['metadata'];

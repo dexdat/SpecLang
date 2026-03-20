@@ -559,7 +559,7 @@
             "mvp-validator.test.ts"
           ],
           "priority": 36,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-037",
