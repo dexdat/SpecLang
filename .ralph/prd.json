@@ -525,7 +525,7 @@
             "agent-guidance.test.ts"
           ],
           "priority": 34,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-035",
@@ -542,7 +542,7 @@
             "poc-validator.test.ts"
           ],
           "priority": 35,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-036",
