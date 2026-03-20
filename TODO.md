@@ -129,7 +129,7 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P0-028**: Implement Mermaid diagram lens specification
 - [x] **P0-029**: Implement Code lens specification
 - [x] **P0-030**: Implement Entity lens specification
-- [ ] **P0-031**: Implement Operation lens specification
+- [x] **P0-031**: Implement Operation lens specification
 - [ ] **P0-032**: Implement Prose lens specification
 - [ ] **P0-033**: Layer System Overview
 - [ ] **P0-034**: Layer Abstraction Concepts
