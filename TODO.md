@@ -124,7 +124,7 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P0-023**: Implement UI visual design system
 - [x] **P0-024**: Implement header validation rules
 - [x] **P0-025**: Implement project maturity levels
-- [ ] **P0-026**: Implement standard library types
+- [x] **P0-026**: Implement standard library types
 - [ ] **P0-027**: Implement standard library functions
 - [ ] **P0-028**: Implement Mermaid diagram lens specification
 - [ ] **P0-029**: Implement Code lens specification
