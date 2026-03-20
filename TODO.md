@@ -132,8 +132,8 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P0-031**: Implement Operation lens specification
 - [x] **P0-032**: Implement Prose lens specification
 - [x] **P0-033**: Layer System Overview
-- [ ] **P0-034**: Layer Abstraction Concepts
-- [ ] **P0-035**: Project Level - POC (Proof of Concept)
+- [x] **P0-034**: Layer Abstraction Concepts
+- [x] **P0-035**: Project Level - POC (Proof of Concept)
 - [ ] **P0-036**: Project Level - MVP (Minimum Viable Product)
 - [ ] **P0-037**: Project Level - Alpha
 - [ ] **P0-038**: Beta Maturity Level
