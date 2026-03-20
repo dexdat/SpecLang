@@ -123,7 +123,7 @@ The following stories are from the full SpecLang roadmap prd.json.
 ## Phase: Foundation (phase-0)
 - [x] **P0-023**: Implement UI visual design system
 - [x] **P0-024**: Implement header validation rules
-- [ ] **P0-025**: Implement project maturity levels
+- [x] **P0-025**: Implement project maturity levels
 - [ ] **P0-026**: Implement standard library types
 - [ ] **P0-027**: Implement standard library functions
 - [ ] **P0-028**: Implement Mermaid diagram lens specification
