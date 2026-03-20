@@ -116,3 +116,128 @@ Follow the 8-phase implementation sequence from `specs/roadmap.spec.dir/poc.spec
 - Build error in validator.ts fixed (import from cli.spec.dir removed)
 - 28 failing tests are in CLI which is excluded from build (pre-existing issue)
 - CLI has systemic import path issues across specs (specs importing from other specs with paths that don't work at runtime)
+## Remaining Stories from PRD
+
+The following stories are from the full SpecLang roadmap prd.json.
+
+## Phase: Foundation (phase-0)
+- [ ] **P0-023**: Implement UI visual design system
+- [ ] **P0-024**: Implement header validation rules
+- [ ] **P0-025**: Implement project maturity levels
+- [ ] **P0-026**: Implement standard library types
+- [ ] **P0-027**: Implement standard library functions
+- [ ] **P0-028**: Implement Mermaid diagram lens specification
+- [ ] **P0-029**: Implement Code lens specification
+- [ ] **P0-030**: Implement Entity lens specification
+- [ ] **P0-031**: Implement Operation lens specification
+- [ ] **P0-032**: Implement Prose lens specification
+- [ ] **P0-033**: Layer System Overview
+- [ ] **P0-034**: Layer Abstraction Concepts
+- [ ] **P0-035**: Project Level - POC (Proof of Concept)
+- [ ] **P0-036**: Project Level - MVP (Minimum Viable Product)
+- [ ] **P0-037**: Project Level - Alpha
+- [ ] **P0-038**: Beta Maturity Level
+- [ ] **P0-039**: Production Maturity Level
+- [ ] **P0-040**: Startup Maturity Level
+- [ ] **P0-041**: Enterprise Maturity Level
+
+## Phase: Core Runtime (phase-1)
+- [ ] **P1-001**: Design speclangd daemon architecture
+- [ ] **P1-002**: Implement agent session manager
+- [ ] **P1-003**: Implement OpenCode integration
+- [ ] **P1-004**: Implement cascade coordination protocol
+- [ ] **P1-005**: Implement autonomous validation tool
+- [ ] **P1-006**: Implement daemon events and watcher
+- [ ] **P1-007**: Implement daemon convergence detection
+- [ ] **P1-008**: Implement daemon event routing
+- [ ] **P1-009**: Implement daemon file locking
+- [ ] **P1-013**: Ambiguity Detection
+- [ ] **P1-014**: Validation Completeness Checking
+- [ ] **P1-015**: Step-by-Step Detection
+- [ ] **P1-016**: Human-Only Agent Support
+- [ ] **P1-017**: Agent-Assisted Support Level
+- [ ] **P1-018**: Agent-Autonomous Support Level
+- [ ] **P1-019**: Agent Behavior Matrix
+- [ ] **P1-020**: Transition - Upgrade Workflows
+- [ ] **P1-021**: Transition - Downgrade Workflows
+
+## Phase: MCP Interface (phase-2)
+- [ ] **P2-001**: Complete MCP server implementation
+- [ ] **P2-002**: Implement MCP CLI
+- [ ] **P2-003**: Implement MCP daemon (speclangd Enterprise)
+- [ ] **P2-004**: Implement MCP UI tools
+- [ ] **P2-005**: Implement OpenAPI-MCP generator integration
+- [ ] **P2-006**: Implement SSE streaming for MCP
+- [ ] **P2-007**: Implement MCP authentication
+- [ ] **P2-008**: Implement MCP error handling
+- [ ] **P2-010**: Implement MCP command queue tools
+- [ ] **P2-011**: Implement MCP search tools
+- [ ] **P2-012**: Implement MCP server overview and entry point
+- [ ] **P2-013**: MCP Lock Management Tools
+- [ ] **P2-014**: MCP SQL Query Tools
+- [ ] **P2-015**: MCP Architecture Overview
+- [ ] **P2-016**: MCP Run Modes
+- [ ] **P2-017**: MCP Token Authentication
+- [ ] **P2-018**: MCP API Key Authentication
+- [ ] **P2-019**: MCP Error Codes
+
+## Phase: Code Generation (phase-3)
+- [ ] **P3-001**: Implement code generator framework
+- [ ] **P3-002**: Implement code generation templates
+- [ ] **P3-003**: Implement compiler target languages
+- [ ] **P3-004**: Implement compiler phases
+- [ ] **P3-006**: Implement Python code generator
+- [ ] **P3-007**: Go Type Mappings
+- [ ] **P3-008**: Python Type Mappings
+- [ ] **P3-009**: TypeScript Type Mappings
+- [ ] **P3-010**: Rust Type Mappings
+
+## Phase: Pipeline & Guard (phase-4)
+- [ ] **P4-001**: Implement pipeline executor
+- [ ] **P4-002**: Implement file ownership guard
+- [ ] **P4-003**: Implement recovery system
+- [ ] **P4-004**: Implement git history integration
+- [ ] **P4-005**: Implement pipeline hook system
+- [ ] **P4-006**: Implement pipeline stage execution
+- [ ] **P4-007**: Implement recovery actions
+- [ ] **P4-008**: Implement pipeline conditions
+- [ ] **P4-009**: Recovery Strategies
+- [ ] **P4-010**: Pipeline Build Stages
+- [ ] **P4-011**: Pipeline Test Stages
+- [ ] **P4-012**: Pipeline Deploy Stages
+- [ ] **P4-013**: Pipeline Lint Stages
+- [ ] **P4-014**: Pipeline Format Stages
+
+## Phase: Meta-Circular (phase-5)
+- [ ] **P5-001**: Create self-specifying specs
+- [ ] **P5-002**: Run autonomous agent test
+- [ ] **P5-003**: Implement transition workflows
+- [ ] **P5-004**: Implement safety nets
+- [ ] **P5-005**: Implement meta-circular bootstrap
+- [ ] **P5-006**: Safety Confidence Scoring
+- [ ] **P5-007**: Safety Fallback Protocols
+- [ ] **P5-008**: Safety Detection Mechanisms
+
+## Phase: UI Dashboard (phase-6)
+- [ ] **P6-001**: Implement system monitoring dashboard
+- [ ] **P6-002**: Implement UI component library
+- [ ] **P6-003**: Implement UI state management
+- [ ] **P6-004**: Implement individual UI components
+- [ ] **P6-005**: UI Testing Strategy
+- [ ] **P6-006**: Agent Health Component
+- [ ] **P6-007**: Cascade Graph Component
+- [ ] **P6-008**: Log Viewer Component
+- [ ] **P6-009**: Metrics Components
+- [ ] **P6-010**: Control Panel Component
+
+## Phase: Examples & Documentation (phase-7)
+- [ ] **P7-001**: Create example projects
+- [ ] **P7-002**: Create hello-world example
+- [ ] **P7-003**: Auth Example
+
+## Phase: Tooling Scripts (phase-8)
+- [ ] **P8-001**: Implement Python tooling scripts
+
+## Phase: Testing (phase-9)
+- [ ] **P9-001**: Implement integration tests
+- [ ] **P9-002**: Implement performance tests

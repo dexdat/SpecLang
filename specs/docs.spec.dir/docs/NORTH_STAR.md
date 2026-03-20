@@ -126,7 +126,24 @@ Specs form a spanning tree dependency structure, not fixed abstraction layers. T
 
 **Failure Recovery**: When build/test fails, an orchestrator agent analyzes the failure, edits multiple specs/code files to fix issues, then releases control so the cascade resumes. This temporary multi-file write access enables intelligent recovery without human intervention.
 
-### 5. Context Never Lost - MCP Communication Hub
+### 5. Context Window Advantage - The Scientific Theory
+
+**The fundamental insight: AI context windows are finite, but software systems are unbounded.**
+
+SpecLang solves this through **slice-based architecture**:
+- Each agent owns **one file** and sees only its **explicit dependencies** (`@ref:`)
+- Working set always fits in context: Agent prompt + owned file + 2-4 dependencies
+- No RAG, no guessing, no "relevant code" retrieval - deterministic context by design
+
+**Why this matters:**
+- Other tools use probabilistic retrieval (may miss critical context)
+- SpecLang uses explicit references (guaranteed complete context)
+- Agents work in parallel (isolated working sets, no conflicts)
+- System scales indefinitely (context required = O(dependency depth), not O(codebase size))
+
+**The Scientific Claim:** By architecting systems into context-sized slices with explicit dependencies, we achieve deterministic code generation at any scale without context overflow.
+
+### 6. Context Never Lost - MCP Communication Hub
 
 - **SQLite database** indexes all specs with FTS and vector search
 - **Graph system** visualizes dependency tree and provides search tools for agents

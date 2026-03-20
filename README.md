@@ -55,6 +55,45 @@ Final output: clean, verified code in any language
 
 ---
 
+## The Core Scientific Theory: Context Window Independence
+
+**SpecLang proves that AI context windows don't need to expand indefinitely.**
+
+Traditional code generation fails at scale because:
+- **Large codebases exceed context limits**
+- **RAG-based retrieval is probabilistic** (may miss critical dependencies)
+- **Agents can't reason about what they can't see**
+
+**SpecLang's solution:** Pre-slice the system into context-sized chunks.
+
+### How It Works
+
+Every agent has a **bounded working set**:
+```
+Context Window:
+├── Agent Instructions (~2K tokens)
+├── File Being Modified (~5K tokens)  
+├── Explicit Dependencies (~10K tokens via @ref:)
+└── Cascade Context (~3K tokens)
+Total: ~20K tokens (fits in any modern model)
+```
+
+**Key insight:** Agents don't need to see the entire system. They only need:
+1. The file they own
+2. Files that directly influence it (explicitly declared)
+3. The cascade that triggered them
+
+### Why This Is Revolutionary
+
+- **Deterministic context** - No guessing what's relevant, dependencies are explicit
+- **Parallel execution** - Agents work simultaneously without conflicts
+- **Unbounded scale** - System can grow infinitely; context required stays constant
+- **No RAG needed** - Eliminates probabilistic retrieval errors
+
+**The claim:** By architecting software as a dependency tree of context-sized slices, we achieve reliable AI code generation at any scale.
+
+---
+
 ## How It Actually Works
 
 ### 1. Specs Define the Tree Structure
