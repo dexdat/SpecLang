@@ -127,7 +127,7 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P0-026**: Implement standard library types
 - [x] **P0-027**: Implement standard library functions
 - [x] **P0-028**: Implement Mermaid diagram lens specification
-- [ ] **P0-029**: Implement Code lens specification
+- [x] **P0-029**: Implement Code lens specification
 - [ ] **P0-030**: Implement Entity lens specification
 - [ ] **P0-031**: Implement Operation lens specification
 - [ ] **P0-032**: Implement Prose lens specification
