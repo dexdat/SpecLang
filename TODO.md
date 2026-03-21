@@ -210,7 +210,7 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P4-014**: Pipeline Format Stages
 
 ## Phase: Meta-Circular (phase-5)
-- [ ] **P5-001**: Create self-specifying specs
+- [x] **P5-001**: Create self-specifying specs
 - [ ] **P5-002**: Run autonomous agent test
 - [ ] **P5-003**: Implement transition workflows
 - [ ] **P5-004**: Implement safety nets
