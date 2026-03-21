@@ -962,7 +962,7 @@
             "validators.ts         # Behavior validation"
           ],
           "priority": 19,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P1-020",
