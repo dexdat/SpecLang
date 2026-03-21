@@ -104,8 +104,8 @@ export function refreshIndex(): SpecIndex {
     outputPath: '.speclang/_index.json'
   });
   
-  // Populate database
-  const { populateDatabase } = require('../indexer/index.js');
+  // Populate database - use correct relative path from cli.spec.dir/src to indexer.spec.dir/src
+  const { populateDatabase } = require('../../indexer.spec.dir/src/index.js');
   populateDatabase(index, db);
   
   return index;
