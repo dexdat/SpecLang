@@ -183,15 +183,15 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P2-019**: MCP Error Codes
 
 ## Phase: Code Generation (phase-3)
-- [ ] **P3-001**: Implement code generator framework
-- [ ] **P3-002**: Implement code generation templates
-- [ ] **P3-003**: Implement compiler target languages
-- [ ] **P3-004**: Implement compiler phases
-- [ ] **P3-006**: Implement Python code generator
-- [ ] **P3-007**: Go Type Mappings
-- [ ] **P3-008**: Python Type Mappings
-- [ ] **P3-009**: TypeScript Type Mappings
-- [ ] **P3-010**: Rust Type Mappings
+- [x] **P3-001**: Implement code generator framework
+- [x] **P3-002**: Implement code generation templates
+- [x] **P3-003**: Implement compiler target languages
+- [x] **P3-004**: Implement compiler phases
+- [x] **P3-006**: Implement Python code generator
+- [x] **P3-007**: Go Type Mappings
+- [x] **P3-008**: Python Type Mappings
+- [x] **P3-009**: TypeScript Type Mappings
+- [x] **P3-010**: Rust Type Mappings
 
 ## Phase: Pipeline & Guard (phase-4)
 - [ ] **P4-001**: Implement pipeline executor
