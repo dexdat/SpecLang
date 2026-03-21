@@ -165,15 +165,15 @@ The following stories are from the full SpecLang roadmap prd.json.
 ## Phase: MCP Interface (phase-2)
 - [x] **P2-001**: Complete MCP server implementation
 - [x] **P2-002**: Implement MCP CLI (partial: start, status, stop subcommands added; serve and generate-openapi pending)
-- [ ] **P2-003**: Implement MCP daemon (speclangd Enterprise)
+- [x] **P2-003**: Implement MCP daemon (speclangd Enterprise)
 - [ ] **P2-004**: Implement MCP UI tools
 - [ ] **P2-005**: Implement OpenAPI-MCP generator integration
-- [ ] **P2-006**: Implement SSE streaming for MCP
+- [x] **P2-006**: Implement SSE streaming for MCP
 - [ ] **P2-007**: Implement MCP authentication
 - [ ] **P2-008**: Implement MCP error handling
-- [ ] **P2-010**: Implement MCP command queue tools
+- [x] **P2-010**: Implement MCP command queue tools
 - [ ] **P2-011**: Implement MCP search tools
-- [ ] **P2-012**: Implement MCP server overview and entry point
+- [x] **P2-012**: Implement MCP server overview and entry point
 - [ ] **P2-013**: MCP Lock Management Tools
 - [ ] **P2-014**: MCP SQL Query Tools
 - [ ] **P2-015**: MCP Architecture Overview
