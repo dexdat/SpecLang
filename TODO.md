@@ -152,7 +152,7 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P1-007**: Implement daemon convergence detection
 - [x] **P1-008**: Implement daemon event routing
 - [x] **P1-009**: Implement daemon file locking
-- [ ] **P1-013**: Ambiguity Detection
+- [x] **P1-013**: Ambiguity Detection
 - [ ] **P1-014**: Validation Completeness Checking
 - [ ] **P1-015**: Step-by-Step Detection
 - [ ] **P1-016**: Human-Only Agent Support
