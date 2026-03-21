@@ -148,10 +148,10 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P1-003**: Implement OpenCode integration
 - [x] **P1-004**: Implement cascade coordination protocol
 - [x] **P1-005**: Implement autonomous validation tool
-- [ ] **P1-006**: Implement daemon events and watcher
-- [ ] **P1-007**: Implement daemon convergence detection
-- [ ] **P1-008**: Implement daemon event routing
-- [ ] **P1-009**: Implement daemon file locking
+- [x] **P1-006**: Implement daemon events and watcher
+- [x] **P1-007**: Implement daemon convergence detection
+- [x] **P1-008**: Implement daemon event routing
+- [x] **P1-009**: Implement daemon file locking
 - [ ] **P1-013**: Ambiguity Detection
 - [ ] **P1-014**: Validation Completeness Checking
 - [ ] **P1-015**: Step-by-Step Detection
