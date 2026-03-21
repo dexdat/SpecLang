@@ -163,7 +163,7 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P1-021**: Transition - Downgrade Workflows
 
 ## Phase: MCP Interface (phase-2)
-- [ ] **P2-001**: Complete MCP server implementation
+- [x] **P2-001**: Complete MCP server implementation
 - [ ] **P2-002**: Implement MCP CLI
 - [ ] **P2-003**: Implement MCP daemon (speclangd Enterprise)
 - [ ] **P2-004**: Implement MCP UI tools
