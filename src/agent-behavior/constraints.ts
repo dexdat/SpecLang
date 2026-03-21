@@ -1,0 +1,1 @@
+../../specs/agent-behavior.spec.dir/src/constraints.ts
