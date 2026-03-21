@@ -4,6 +4,7 @@
 
 import type { ParsedSpec, UpgradePlan, UpgradeTarget, UpgradeType } from './types';
 import { getUpgradeType } from './types';
+import { UpgradeChecklistProvider } from './checklist';
 
 /**
  * Upgrade Planner
@@ -11,6 +12,8 @@ import { getUpgradeType } from './types';
  * Creates upgrade plans based on current and target levels.
  */
 export class UpgradePlanner {
+  private checklistProvider = new UpgradeChecklistProvider();
+
   /**
    * Create an upgrade plan for a spec
    */
@@ -49,9 +52,7 @@ export class UpgradePlanner {
    * Get checklists for the transition
    */
   private getChecklists(current: UpgradeTarget, target: UpgradeTarget): any[] {
-    // TODO: Implement based on upgrade.spec.md checklists
-    // For now, return empty array
-    return [];
+    return this.checklistProvider.getCombinedChecklists(current, target);
   }
   
   /**

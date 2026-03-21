@@ -43,15 +43,15 @@ export interface ParsedSpec {
 }
 
 export interface TransitionCheck {
-  category: 'documentation' | 'testing' | 'review' | 'deployment';
+  category: 'spec' | 'validation' | 'test' | 'documentation' | 'approval' | 'automated' | 'agent' | 'human' | 'safety' | 'documentation' | 'testing' | 'review' | 'deployment';
   description: string;
   required: boolean;
   automated: boolean;
 }
 
 export interface TransitionChecklist {
-  from: MaturityLevel;
-  to: MaturityLevel;
+  from: string;
+  to: string;
   checks: TransitionCheck[];
 }
 
