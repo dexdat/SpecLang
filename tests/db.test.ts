@@ -272,16 +272,15 @@ describe('Database', () => {
       expect(db.isLocked('specs/auth.spec.md')).toBe(false);
     });
 
-    it('should respect TTL on locks', () => {
+    it('should respect TTL on locks', async () => {
       db.acquireLock('specs/auth.spec.md', 'session-1', 100); // 100ms TTL
       
       // Immediately should be locked
       expect(db.isLocked('specs/auth.spec.md')).toBe(true);
       
       // Wait for TTL to expire
-      setTimeout(() => {
-        expect(db.isLocked('specs/auth.spec.md')).toBe(false);
-      }, 150);
+      await new Promise(resolve => setTimeout(resolve, 150));
+      expect(db.isLocked('specs/auth.spec.md')).toBe(false);
     });
   });
 
