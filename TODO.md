@@ -145,8 +145,8 @@ The following stories are from the full SpecLang roadmap prd.json.
 ## Phase: Core Runtime (phase-1)
 - [x] **P1-001**: Design speclangd daemon architecture
 - [x] **P1-002**: Implement agent session manager
-- [ ] **P1-003**: Implement OpenCode integration
-- [ ] **P1-004**: Implement cascade coordination protocol
+- [x] **P1-003**: Implement OpenCode integration
+- [x] **P1-004**: Implement cascade coordination protocol
 - [ ] **P1-005**: Implement autonomous validation tool
 - [ ] **P1-006**: Implement daemon events and watcher
 - [ ] **P1-007**: Implement daemon convergence detection
