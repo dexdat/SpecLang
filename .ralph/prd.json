@@ -1711,7 +1711,7 @@
             "specs/examples/*.spec.md"
           ],
           "priority": 1,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P5-002",

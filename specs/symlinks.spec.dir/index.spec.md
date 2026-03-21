@@ -3,7 +3,7 @@ id: @specs/symlinks
 version: 1.0.0
 layer: 3
 project_level: Alpha
-agent_support: agent_assisted
+agent_support: agent_autonomous
 target: src/symlinks/
 tags: [symlinks, dual-view, infrastructure]
 short: Dual-view system for spec-to-implementation mapping

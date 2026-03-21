@@ -6,7 +6,7 @@ tags: [symlinks, creation, rebuild, portability, cross-platform]
 imports: ["@speclang/symlinks"]
 status: draft
 project_level: Alpha
-agent_support: agent_assisted
+agent_support: agent_autonomous
 short: Symlink Creation and Management
 ---
 # Symlink Creation and Management

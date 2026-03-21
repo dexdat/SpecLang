@@ -8,7 +8,7 @@ children: ["@speclang/directory-structure/pattern", "@speclang/directory-structu
 status: draft
 
 project_level: Alpha
-agent_support: agent_assisted
+agent_support: agent_autonomous
 short: Directory Structure
 ---
 

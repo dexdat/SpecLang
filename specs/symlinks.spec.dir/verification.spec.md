@@ -6,7 +6,7 @@ tags: [symlinks, verification, git, tools, layout]
 imports: ["@speclang/symlinks"]
 status: draft
 project_level: Alpha
-agent_support: agent_assisted
+agent_support: agent_autonomous
 short: Symlink Verification and Tooling
 ---
 # Symlink Verification and Tooling
