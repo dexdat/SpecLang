@@ -176,11 +176,11 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P2-012**: Implement MCP server overview and entry point
 - [x] **P2-013**: MCP Lock Management Tools
 - [x] **P2-014**: MCP SQL Query Tools
-- [ ] **P2-015**: MCP Architecture Overview
-- [ ] **P2-016**: MCP Run Modes
-- [ ] **P2-017**: MCP Token Authentication
-- [ ] **P2-018**: MCP API Key Authentication
-- [ ] **P2-019**: MCP Error Codes
+- [x] **P2-015**: MCP Architecture Overview
+- [x] **P2-016**: MCP Run Modes
+- [x] **P2-017**: MCP Token Authentication
+- [x] **P2-018**: MCP API Key Authentication
+- [x] **P2-019**: MCP Error Codes
 
 ## Phase: Code Generation (phase-3)
 - [ ] **P3-001**: Implement code generator framework
