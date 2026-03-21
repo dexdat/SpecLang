@@ -211,7 +211,7 @@ The following stories are from the full SpecLang roadmap prd.json.
 
 ## Phase: Meta-Circular (phase-5)
 - [x] **P5-001**: Create self-specifying specs
-- [ ] **P5-002**: Run autonomous agent test
+- [x] **P5-002**: Run autonomous agent test
 - [ ] **P5-003**: Implement transition workflows
 - [ ] **P5-004**: Implement safety nets
 - [ ] **P5-005**: Implement meta-circular bootstrap
