@@ -13,11 +13,35 @@ const REQUIRED_AUTONOMOUS_FIELDS = ['layer', 'project_level', 'tags', 'short'];
 const AMBIGUOUS_PATTERNS = [
   { pattern: /\bTBD\b/gi, message: 'Contains "TBD" - should be specified' },
   { pattern: /\bTODO\b/gi, message: 'Contains "TODO" - should be completed' },
+  // Modal verbs
+  { pattern: /\bshould\b/gi, message: 'Contains "should" - use definitive language' },
+  { pattern: /\bcould\b/gi, message: 'Contains "could" - use definitive language' },
+  { pattern: /\bmight\b/gi, message: 'Contains "might" - use definitive language' },
+  { pattern: /\bmay\b/gi, message: 'Contains "may" - use definitive language' },
+  { pattern: /\bwould\b/gi, message: 'Contains "would" - use definitive language' },
+  // Uncertainty
   { pattern: /\bmaybe\b/gi, message: 'Contains "maybe" - should be definite' },
   { pattern: /\bperhaps\b/gi, message: 'Contains "perhaps" - should be definite' },
-  { pattern: /\bshould\s+be\b/gi, message: 'Contains "should be" - be more specific' },
-  { pattern: /\bmight\s+happen\b/gi, message: 'Contains "might happen" - specify what will happen' },
-  { pattern: /\bwe'll\s+see\b/gi, message: 'Contains "we\'ll see" - be more certain' },
+  { pattern: /\bpossibly\b/gi, message: 'Contains "possibly" - should be definite' },
+  { pattern: /\bprobably\b/gi, message: 'Contains "probably" - should be definite' },
+  // Vague quantifiers
+  { pattern: /\bsome\b/gi, message: 'Contains "some" - specify quantity' },
+  { pattern: /\bfew\b/gi, message: 'Contains "few" - specify quantity' },
+  { pattern: /\bmany\b/gi, message: 'Contains "many" - specify quantity' },
+  { pattern: /\bseveral\b/gi, message: 'Contains "several" - specify quantity' },
+  { pattern: /\bvarious\b/gi, message: 'Contains "various" - specify list' },
+  // Imprecise terms
+  { pattern: /\betc\./gi, message: 'Contains "etc." - list all items' },
+  { pattern: /\band so on\b/gi, message: 'Contains "and so on" - list all items' },
+  { pattern: /\band more\b/gi, message: 'Contains "and more" - list all items' },
+  { pattern: /\bamong others\b/gi, message: 'Contains "among others" - list all items' },
+  // Subjective language
+  { pattern: /\bbetter\b/gi, message: 'Contains "better" - specify metric' },
+  { pattern: /\bworse\b/gi, message: 'Contains "worse" - specify metric' },
+  { pattern: /\bfast\b/gi, message: 'Contains "fast" - specify speed or time' },
+  { pattern: /\bslow\b/gi, message: 'Contains "slow" - specify speed or time' },
+  { pattern: /\beasy\b/gi, message: 'Contains "easy" - specify difficulty level' },
+  { pattern: /\bhard\b/gi, message: 'Contains "hard" - specify difficulty level' },
 ];
 
 /**
