@@ -143,8 +143,8 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P0-041**: Enterprise Maturity Level
 
 ## Phase: Core Runtime (phase-1)
-- [ ] **P1-001**: Design speclangd daemon architecture
-- [ ] **P1-002**: Implement agent session manager
+- [x] **P1-001**: Design speclangd daemon architecture
+- [x] **P1-002**: Implement agent session manager
 - [ ] **P1-003**: Implement OpenCode integration
 - [ ] **P1-004**: Implement cascade coordination protocol
 - [ ] **P1-005**: Implement autonomous validation tool
