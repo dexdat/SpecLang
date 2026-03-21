@@ -3,8 +3,7 @@
  * Source: @speclang/validation/rules
  */
 
-import type { ParsedSpec } from '../parser/types';
-import type { SpecMetadata, Block, Reference } from '../parser/types';
+import type { ParsedSpec, SpecMetadata, Block, Reference } from '../parser/types';
 
 // ============================================================================
 // VALIDATION RULE TYPES

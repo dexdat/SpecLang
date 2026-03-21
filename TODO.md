@@ -147,7 +147,7 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P1-002**: Implement agent session manager
 - [x] **P1-003**: Implement OpenCode integration
 - [x] **P1-004**: Implement cascade coordination protocol
-- [ ] **P1-005**: Implement autonomous validation tool
+- [x] **P1-005**: Implement autonomous validation tool
 - [ ] **P1-006**: Implement daemon events and watcher
 - [ ] **P1-007**: Implement daemon convergence detection
 - [ ] **P1-008**: Implement daemon event routing

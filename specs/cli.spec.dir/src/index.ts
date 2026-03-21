@@ -117,6 +117,7 @@ program
   .option('--fix', 'Attempt to fix errors')
   .option('--json', 'JSON output')
   .option('--verbose', 'Show warnings')
+  .option('--type <type>', 'Validation type (basic, language-blocks, autonomous)', 'basic')
   .action(async (options: ValidateOptions) => {
     await validateCommand(options);
   });
