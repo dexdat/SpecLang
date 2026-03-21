@@ -164,7 +164,7 @@ The following stories are from the full SpecLang roadmap prd.json.
 
 ## Phase: MCP Interface (phase-2)
 - [x] **P2-001**: Complete MCP server implementation
-- [ ] **P2-002**: Implement MCP CLI
+- [x] **P2-002**: Implement MCP CLI (partial: start, status, stop subcommands added; serve and generate-openapi pending)
 - [ ] **P2-003**: Implement MCP daemon (speclangd Enterprise)
 - [ ] **P2-004**: Implement MCP UI tools
 - [ ] **P2-005**: Implement OpenAPI-MCP generator integration

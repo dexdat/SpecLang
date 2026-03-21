@@ -66,5 +66,5 @@ CLI:
 | Configuration | DONE | JSON schema with examples |
 | Connection mgmt | DONE | Cleanup on disconnect |
 | Logging | DONE | Structured logging |
-| CLI | DONE | Commands with options |
+| CLI | PARTIAL | mcp command group added with start, status, stop subcommands; serve and generate-openapi pending |
 ```
