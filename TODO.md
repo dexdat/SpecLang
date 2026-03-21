@@ -215,7 +215,7 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P5-003**: Implement transition workflows
 - [x] **P5-004**: Implement safety nets (analysis and fallback scripts implemented)
 - [x] **P5-005**: Implement meta-circular bootstrap (bootstrap CLI command added)
-- [ ] **P5-006**: Safety Confidence Scoring
+- [x] **P5-006**: Safety Confidence Scoring
 - [ ] **P5-007**: Safety Fallback Protocols
 - [ ] **P5-008**: Safety Detection Mechanisms
 
