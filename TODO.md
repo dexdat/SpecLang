@@ -159,8 +159,8 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P1-017**: Agent-Assisted Support Level
 - [x] **P1-018**: Agent-Autonomous Support Level
 - [x] **P1-019**: Agent Behavior Matrix
-- [ ] **P1-020**: Transition - Upgrade Workflows
-- [ ] **P1-021**: Transition - Downgrade Workflows
+- [x] **P1-020**: Transition - Upgrade Workflows
+- [x] **P1-021**: Transition - Downgrade Workflows
 
 ## Phase: MCP Interface (phase-2)
 - [ ] **P2-001**: Complete MCP server implementation

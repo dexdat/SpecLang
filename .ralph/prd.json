@@ -980,7 +980,7 @@
             "│    rollback.ts           # Upgrade rollback"
           ],
           "priority": 20,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P1-021",
@@ -998,7 +998,7 @@
             "│    audit.ts              # Downgrade audit trail"
           ],
           "priority": 21,
-          "passes": false
+          "passes": true
         }
       ]
     },
