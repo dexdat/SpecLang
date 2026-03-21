@@ -213,7 +213,7 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P5-001**: Create self-specifying specs
 - [x] **P5-002**: Run autonomous agent test
 - [x] **P5-003**: Implement transition workflows
-- [ ] **P5-004**: Implement safety nets
+- [ ] **P5-004**: Implement safety nets (partially implemented: analysis and fallback scripts)
 - [ ] **P5-005**: Implement meta-circular bootstrap
 - [ ] **P5-006**: Safety Confidence Scoring
 - [ ] **P5-007**: Safety Fallback Protocols
