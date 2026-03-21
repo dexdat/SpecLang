@@ -155,7 +155,7 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P1-013**: Ambiguity Detection
 - [x] **P1-014**: Validation Completeness Checking
 - [x] **P1-015**: Step-by-Step Detection
-- [ ] **P1-016**: Human-Only Agent Support
+- [x] **P1-016**: Human-Only Agent Support
 - [ ] **P1-017**: Agent-Assisted Support Level
 - [ ] **P1-018**: Agent-Autonomous Support Level
 - [ ] **P1-019**: Agent Behavior Matrix
