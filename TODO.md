@@ -157,7 +157,7 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P1-015**: Step-by-Step Detection
 - [x] **P1-016**: Human-Only Agent Support
 - [x] **P1-017**: Agent-Assisted Support Level
-- [ ] **P1-018**: Agent-Autonomous Support Level
+- [x] **P1-018**: Agent-Autonomous Support Level
 - [ ] **P1-019**: Agent Behavior Matrix
 - [ ] **P1-020**: Transition - Upgrade Workflows
 - [ ] **P1-021**: Transition - Downgrade Workflows
