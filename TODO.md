@@ -194,20 +194,20 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P3-010**: Rust Type Mappings
 
 ## Phase: Pipeline & Guard (phase-4)
-- [ ] **P4-001**: Implement pipeline executor
-- [ ] **P4-002**: Implement file ownership guard
-- [ ] **P4-003**: Implement recovery system
-- [ ] **P4-004**: Implement git history integration
-- [ ] **P4-005**: Implement pipeline hook system
-- [ ] **P4-006**: Implement pipeline stage execution
-- [ ] **P4-007**: Implement recovery actions
-- [ ] **P4-008**: Implement pipeline conditions
-- [ ] **P4-009**: Recovery Strategies
-- [ ] **P4-010**: Pipeline Build Stages
-- [ ] **P4-011**: Pipeline Test Stages
-- [ ] **P4-012**: Pipeline Deploy Stages
-- [ ] **P4-013**: Pipeline Lint Stages
-- [ ] **P4-014**: Pipeline Format Stages
+- [x] **P4-001**: Implement pipeline executor
+- [x] **P4-002**: Implement file ownership guard
+- [x] **P4-003**: Implement recovery system
+- [x] **P4-004**: Implement git history integration
+- [x] **P4-005**: Implement pipeline hook system
+- [x] **P4-006**: Implement pipeline stage execution
+- [x] **P4-007**: Implement recovery actions
+- [x] **P4-008**: Implement pipeline conditions
+- [x] **P4-009**: Recovery Strategies
+- [x] **P4-010**: Pipeline Build Stages
+- [x] **P4-011**: Pipeline Test Stages
+- [x] **P4-012**: Pipeline Deploy Stages
+- [x] **P4-013**: Pipeline Lint Stages
+- [x] **P4-014**: Pipeline Format Stages
 
 ## Phase: Meta-Circular (phase-5)
 - [ ] **P5-001**: Create self-specifying specs
