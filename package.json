@@ -7,6 +7,12 @@
   "bin": {
     "speclang": "./bin/speclang"
   },
+  "files": [
+    "dist",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
@@ -32,7 +38,7 @@
     "developer-tools",
     "cli"
   ],
-  "author": "",
+  "author": "SpecLang Contributors",
   "license": "MIT",
   "type": "commonjs",
   "bugs": {
