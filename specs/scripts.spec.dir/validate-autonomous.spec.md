@@ -10,7 +10,7 @@ agent_support: agent_assisted
 short: Validate Autonomous Specs Script
 target: scripts/validate_autonomous.py
 depends_on:
-  - "@ref:speclang/autonomous"
+  - "@specs/autonomous"
 ---
 
 # Validate Autonomous Specs Script
