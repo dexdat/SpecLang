@@ -2,15 +2,50 @@
 
 A specification-driven multi-agent system where specs cascade through dependency trees to generate working code.
 
+## Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/dexdat/SpecLang.git
+cd SpecLang
+
+# Install dependencies
+npm install
+
+# Build the TypeScript project
+npm run build
+
+# Verify installation
+./bin/speclang --help
+```
+
+### Prerequisites
+
+- **Node.js** >= 18.0.0
+- **npm** >= 9.0.0
+- **Python** >= 3.8 (for tooling scripts)
+
+### CLI Commands
+
+```bash
+./bin/speclang --help           # Show all commands
+./bin/speclang validate         # Validate all specs
+./bin/speclang index            # Generate spec index
+./bin/speclang cascade          # Run cascade (dry-run by default)
+./bin/speclang status           # Show system status
+./bin/speclang errors           # List cascade errors
+```
+
 ## Current Status: Reality-Based Alpha
 
 **✅ What Works:**
-- 153 specifications with proper headers and references
-- Reference validation (all 153 specs resolve correctly)
+- 419 specifications with proper headers and references
+- Reference validation (all specs resolve correctly)
 - Autonomous validation (scores specs for agent readiness)
 - Hello World example (compiles and runs)
 - Explicit cascade protocol with verification gates
 - Working agent definitions for OpenCode
+- 1229+ tests passing
 
 **⚠️ Current Limitations:**
 - **No automatic file watching** - Coordinator must be invoked explicitly
@@ -199,7 +234,7 @@ python3 scripts/validate_refs.py
 
 # 2. Run autonomous validation
 python3 scripts/validate_autonomous.py --project
-# Output: 153 specs validated
+# Output: 419 specs validated
 
 # 3. Try Hello World example
 npx tsc --noEmit --skipLibCheck src/examples/hello-world.ts
@@ -254,7 +289,7 @@ python3 generate_index.py
 ### File Structure
 
 ```
-specs/                    # Source of truth (153 specs)
+specs/                    # Source of truth (419 specs)
 ├── project.scl          # Layer 0 - North Star
 ├── core.spec.md         # Layer 1 - Core concepts
 ├── cascade.spec.md      # Layer 1 - Cascade system
@@ -291,7 +326,7 @@ scripts/                 # Tools
 
 ### ✅ Working
 
-- **Spec validation**: All 153 specs have valid headers and references
+- **Spec validation**: All 419 specs have valid headers and references
 - **Reference resolution**: `validate_refs.py` confirms 100% accuracy
 - **Autonomous validation**: Scores specs for agent readiness (0.75-1.05 confidence)
 - **Hello World**: Compiles successfully (proof of concept)
@@ -384,5 +419,5 @@ ISC
 
 **Status**: Alpha - One working example, solid foundation, much more to build.
 
-**Last Updated**: 2026-02-22
-**Specs**: 153 | **Examples**: 1 working | **Tests**: Broken (fixing)
+**Last Updated**: 2026-03-22
+**Specs**: 419 | **Examples**: 1 working | **Tests**: 1229 passing
