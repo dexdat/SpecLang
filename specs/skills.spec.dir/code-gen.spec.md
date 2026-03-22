@@ -1,5 +1,5 @@
 # speclang-header lines:12
-id: @speclang/skills/code-gen
+id: "@speclang/skills/code-gen"
 version: 0.1.0
 layer: 2
 tags: [skills, code-gen, agents]
