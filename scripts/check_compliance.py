@@ -1,1 +1,1 @@
-specs/scripts.spec.dir/check_compliance.py.spec.md
+specs/scripts.spec.dir/check_compliance.py
