@@ -37,7 +37,7 @@ program
     
     try {
       // Import and start the daemon
-      const { startDaemon } = require('../dist/daemon/index.js');
+      const { startDaemon } = require('../dist/src/daemon/index.js');
       await startDaemon({
         projectDir: path.resolve(options.dir),
         port: parseInt(options.port),
@@ -72,7 +72,7 @@ program
     console.log(`   Spec: ${specPath}`);
     
     try {
-      const { runCascade } = require('../dist/cascade/index.js');
+      const { runCascade } = require('../dist/src/cascade/index.js');
       const result = await runCascade(specPath, {
         verbose: options.verbose
       });
@@ -185,7 +185,7 @@ program
     console.log('📋 Validating specs...');
     
     try {
-      const { validateCommand } = require('../dist/validation/cli.js');
+      const { validateCommand } = require('../dist/src/validation/cli.js');
       await validateCommand({
         files: files.length > 0 ? files : ['specs/**/*.spec.md'],
         projectDir,
@@ -362,7 +362,7 @@ mcp
     }
     
     try {
-      const { MCPServer } = require('../dist/mcp/index.js');
+      const { MCPServer } = require('../dist/src/mcp/index.js');
       const config = {
         port: parseInt(options.port),
         database: path.join(projectDir, '.speclang', 'speclang.db'),
