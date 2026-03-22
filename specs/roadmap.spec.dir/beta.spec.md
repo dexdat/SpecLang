@@ -14,8 +14,8 @@ children:
   - "@ref:specs/roadmap.spec.dir/beta.spec.dir/monitoring"
   - "@ref:specs/roadmap.spec.dir/beta.spec.dir/external-testing"
 depends_on:
-  - "@ref:specs/roadmap/alpha"
-  - "@ref:specs/testing-strategy"
+  - "@speclang/roadmap/alpha"
+  - "@speclang/testing-strategy.spec"
 ---
 
 # Beta Phase: External Testing
