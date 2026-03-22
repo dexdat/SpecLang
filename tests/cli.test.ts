@@ -6,6 +6,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import path from 'path';
 
 const execAsync = promisify(exec);
 
@@ -55,6 +56,7 @@ fs.mkdirSync('.speclang/tmp', { recursive: true });
 fs.writeFileSync(tmpConfigPath, tmpConfig);
 
 const CLI = `npx tsx --tsconfig ${tmpConfigPath} src/cli/index.ts`;
+const CLI_BIN = './bin/speclang';
 
 describe('CLI Commands', () => {
   describe('search', () => {
@@ -256,6 +258,147 @@ describe('CLI Commands', () => {
       expect(stdout).toContain('--layer');
       expect(stdout).toContain('--json');
       expect(stdout).toContain('--quiet');
+    });
+  });
+
+  describe('new', () => {
+    const testProjectDir = '.speclang/tmp/test-new-project';
+    const fs = require('fs');
+    
+    // Cleanup before and after tests
+    beforeAll(() => {
+      if (fs.existsSync(testProjectDir)) {
+        fs.rmSync(testProjectDir, { recursive: true, force: true });
+      }
+    });
+    
+    afterAll(() => {
+      if (fs.existsSync(testProjectDir)) {
+        fs.rmSync(testProjectDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should create a new minimal project', async () => {
+      const { stdout } = await execAsync(`${CLI_BIN} new test-new-project --dir ${testProjectDir}`);
+      expect(stdout).toContain('Creating new speclang project');
+      expect(stdout).toContain('Created .speclangrc');
+      expect(stdout).toContain('Created initial spec');
+      
+      // Verify directory structure
+      expect(fs.existsSync(testProjectDir)).toBe(true);
+      expect(fs.existsSync(path.join(testProjectDir, 'specs'))).toBe(true);
+      expect(fs.existsSync(path.join(testProjectDir, 'src'))).toBe(true);
+      expect(fs.existsSync(path.join(testProjectDir, 'tests'))).toBe(true);
+    });
+
+    it('should create .speclangrc with correct content', async () => {
+      const speclangrcPath = path.join(testProjectDir, '.speclangrc');
+      expect(fs.existsSync(speclangrcPath)).toBe(true);
+      
+      const speclangrc = JSON.parse(fs.readFileSync(speclangrcPath, 'utf-8'));
+      expect(speclangrc.version).toBe('0.1.0');
+      expect(speclangrc.name).toBe('test-new-project');
+      expect(speclangrc.targets).toContain('typescript');
+    });
+
+    it('should create initial spec file', async () => {
+      const specPath = path.join(testProjectDir, 'specs', 'main.spec.md');
+      expect(fs.existsSync(specPath)).toBe(true);
+      
+      const specContent = fs.readFileSync(specPath, 'utf-8');
+      expect(specContent).toContain('# test-new-project');
+      expect(specContent).toContain('speclang-header');
+    });
+
+    it('should support http template', async () => {
+      const httpProjectDir = '.speclang/tmp/test-http-project';
+      
+      // Cleanup first
+      if (fs.existsSync(httpProjectDir)) {
+        fs.rmSync(httpProjectDir, { recursive: true, force: true });
+      }
+      
+      const { stdout } = await execAsync(`${CLI_BIN} new http-project --dir ${httpProjectDir} --template http`);
+      expect(stdout).toContain('Template: http');
+      
+      const specPath = path.join(httpProjectDir, 'specs', 'main.spec.md');
+      const specContent = fs.readFileSync(specPath, 'utf-8');
+      expect(specContent).toContain('/health');
+      expect(specContent).toContain('/status');
+      
+      // Cleanup
+      fs.rmSync(httpProjectDir, { recursive: true, force: true });
+    });
+
+    it('should support --bare flag', async () => {
+      const bareProjectDir = '.speclang/tmp/test-bare-project';
+      
+      // Cleanup first
+      if (fs.existsSync(bareProjectDir)) {
+        fs.rmSync(bareProjectDir, { recursive: true, force: true });
+      }
+      
+      const { stdout } = await execAsync(`${CLI_BIN} new bare-project --dir ${bareProjectDir} --bare`);
+      expect(stdout).toContain('Creating new speclang project');
+      
+      // Should not create initial spec with --bare
+      const specPath = path.join(bareProjectDir, 'specs', 'main.spec.md');
+      expect(fs.existsSync(specPath)).toBe(false);
+      
+      // Should still create directory structure
+      expect(fs.existsSync(path.join(bareProjectDir, 'specs'))).toBe(true);
+      expect(fs.existsSync(path.join(bareProjectDir, 'src'))).toBe(true);
+      expect(fs.existsSync(path.join(bareProjectDir, 'tests'))).toBe(true);
+      
+      // Cleanup
+      fs.rmSync(bareProjectDir, { recursive: true, force: true });
+    });
+
+    it('should fail with invalid project name', async () => {
+      try {
+        await execAsync(`${CLI_BIN} new 123-invalid --dir .speclang/tmp`);
+        expect(true).toBe(false); // Should not reach here
+      } catch (result: unknown) {
+        const { stderr } = result as { stdout: string; stderr: string };
+        expect(stderr).toContain('Invalid project name');
+      }
+    });
+
+    it('should fail when directory exists without --force', async () => {
+      // First create a project
+      if (!fs.existsSync(testProjectDir)) {
+        fs.mkdirSync(testProjectDir, { recursive: true });
+      }
+      
+      try {
+        await execAsync(`${CLI_BIN} new test-new-project --dir ${testProjectDir}`);
+        expect(true).toBe(false); // Should not reach here
+      } catch (result: unknown) {
+        const { stderr } = result as { stdout: string; stderr: string };
+        expect(stderr).toContain('Directory already exists');
+      }
+    });
+
+    it('should overwrite with --force flag', async () => {
+      // First create a project
+      if (!fs.existsSync(testProjectDir)) {
+        fs.mkdirSync(testProjectDir, { recursive: true });
+      }
+      
+      // Add a file to verify it gets overwritten
+      fs.writeFileSync(path.join(testProjectDir, 'old-file.txt'), 'old content');
+      
+      const { stdout } = await execAsync(`${CLI_BIN} new test-new-project --dir ${testProjectDir} --force`);
+      expect(stdout).toContain('Creating new speclang project');
+    });
+
+    it('should show help for new command', async () => {
+      const { stdout } = await execAsync(`${CLI_BIN} new --help`);
+      expect(stdout).toContain('--dir');
+      expect(stdout).toContain('--template');
+      expect(stdout).toContain('--bare');
+      expect(stdout).toContain('--force');
+      expect(stdout).toContain('--no-git');
     });
   });
 });
