@@ -63,10 +63,10 @@ Fixed regex pattern to detect test results correctly:
 - [ ] Test on clean machine (no dev dependencies)
 - [x] Test CLI commands manually
 - [ ] Verify example projects work
-- [ ] Check for console warnings/errors
+- [x] Check for console warnings/errors
 
 ### Examples
-- [ ] Verify hello-world example works
+- [x] Verify hello-world example works
 - [ ] Create auth example
 - [ ] Create API example
 - [ ] Test examples in clean environment
