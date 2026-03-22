@@ -11,4 +11,5 @@ export * from './fallback';
 export * from './quarantine';
 export * from './peer-review';
 export * from './notification';
+export * from './detection';
 export * from './types';
