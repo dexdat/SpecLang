@@ -979,4 +979,146 @@ program
     console.log('✅ Expansion complete');
   });
 
+// ============================================================================
+// SEARCH COMMAND - Search across all specs
+// ============================================================================
+
+program
+  .command('search <query>')
+  .description('Search across all specs')
+  .option('-k, --kind <type>', 'Filter by block kind (e.g., entity, operation, interface)')
+  .option('-t, --tag <tag>', 'Filter by tag')
+  .option('-l, --limit <n>', 'Maximum results to show', '20')
+  .option('-v, --verbose', 'Show detailed output')
+  .action(async (query, options) => {
+    const projectDir = process.cwd();
+    const specsDir = path.join(projectDir, 'specs');
+    
+    if (!fs.existsSync(specsDir)) {
+      console.error('❌ No specs directory found. Run from a speclang project.');
+      process.exit(1);
+    }
+    
+    console.log(`🔍 Searching for: "${query}"`);
+    if (options.kind) console.log(`   Kind filter: ${options.kind}`);
+    if (options.tag) console.log(`   Tag filter: ${options.tag}`);
+    
+    const limit = parseInt(options.limit) || 20;
+    let results = [];
+    
+    // Find all spec files
+    const findSpecFiles = (dir) => {
+      const files = [];
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          files.push(...findSpecFiles(fullPath));
+        } else if (entry.name.endsWith('.spec.md') || entry.name.endsWith('.spec.yaml') || entry.name.endsWith('.scl')) {
+          files.push(fullPath);
+        }
+      }
+      return files;
+    };
+    
+    const specFiles = findSpecFiles(specsDir);
+    console.log(`   Searching in ${specFiles.length} spec files...`);
+    
+    // Search in each file
+    for (const specFile of specFiles) {
+      try {
+        const content = fs.readFileSync(specFile, 'utf-8');
+        const relativePath = path.relative(projectDir, specFile);
+        
+        // Parse header for tags
+        let fileTags = [];
+        const headerMatch = content.match(/^# speclang-header lines:\d+\n([\s\S]*?)^---/m);
+        if (headerMatch) {
+          const tagMatch = headerMatch[1].match(/tags:\s*\[(.*?)\]/);
+          if (tagMatch) {
+            fileTags = tagMatch[1].split(',').map(t => t.trim().replace(/"/g, ''));
+          }
+        }
+        
+        // Filter by tag if specified
+        if (options.tag && !fileTags.includes(options.tag)) {
+          continue;
+        }
+        
+        // Search for matches - look for the query in content
+        const lines = content.split('\n');
+        let matches = [];
+        
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          // Check if line contains the query (case-insensitive)
+          if (line.toLowerCase().includes(query.toLowerCase())) {
+            // Get context (surrounding lines)
+            const start = Math.max(0, i - 1);
+            const end = Math.min(lines.length, i + 2);
+            const context = lines.slice(start, end).join('\n');
+            
+            matches.push({
+              lineNumber: i + 1,
+              line: line.trim(),
+              context
+            });
+          }
+        }
+        
+        if (matches.length > 0) {
+          results.push({
+            file: relativePath,
+            matches: matches.slice(0, 5), // Limit matches per file
+            totalMatches: matches.length,
+            tags: fileTags
+          });
+        }
+      } catch (err) {
+        // Skip files we can't read
+      }
+    }
+    
+    // Filter by kind if specified - search in block definitions
+    if (options.kind) {
+      results = results.filter(r => {
+        try {
+          const content = fs.readFileSync(path.join(specsDir, r.file), 'utf-8');
+          return content.includes(`@kind:${options.kind}`);
+        } catch {
+          return false;
+        }
+      });
+    }
+    
+    // Limit results
+    results = results.slice(0, limit);
+    
+    // Display results
+    console.log(`\n📋 Found ${results.length} file(s) with matches:\n`);
+    
+    for (const result of results) {
+      console.log(`--- ${result.file} ---`);
+      if (result.tags.length > 0) {
+        console.log(`   Tags: ${result.tags.join(', ')}`);
+      }
+      console.log(`   ${result.totalMatches} match(es)`);
+      
+      if (options.verbose) {
+        for (const match of result.matches) {
+          console.log(`   Line ${match.lineNumber}: ${match.line.substring(0, 80)}`);
+        }
+      } else {
+        // Show first match as preview
+        if (result.matches.length > 0) {
+          const firstMatch = result.matches[0].line;
+          console.log(`   Preview: ${firstMatch.substring(0, 80)}`);
+        }
+      }
+      console.log('');
+    }
+    
+    console.log(`✅ Search complete - ${results.length} files`);
+  });
+
 program.parse();
