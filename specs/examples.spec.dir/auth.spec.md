@@ -1,5 +1,5 @@
 # speclang-header lines:14
-id: @speclang/examples/auth
+id: "@speclang/examples/auth"
 version: 0.1.0
 layer: 2
 project_level: Alpha
@@ -16,7 +16,7 @@ Example authentication specification demonstrating entity definitions, operation
 
 ## Entities
 
-### @block:auth/user @kind:entity
+### @block::auth/user @kind:entity
 ```typescript
 interface User {
   id: string;
@@ -27,7 +27,7 @@ interface User {
 }
 ```
 
-### @block:auth/login-request @kind:entity
+### @block::auth/login-request @kind:entity
 ```typescript
 interface LoginRequest {
   email: string;
@@ -36,7 +36,7 @@ interface LoginRequest {
 }
 ```
 
-### @block:auth/login-response @kind:entity
+### @block::auth/login-response @kind:entity
 ```typescript
 interface LoginResponse {
   success: boolean;
@@ -48,7 +48,7 @@ interface LoginResponse {
 
 ## Operations
 
-### @block:auth/login @kind:operation
+### @block::auth/login @kind:operation
 **Description**: Authenticate a user with email and password.
 
 **Input**: `LoginRequest`
@@ -68,10 +68,10 @@ interface LoginResponse {
 
 ## Security Patterns
 
-### @block:auth/rate-limiting @kind:pattern
+### @block::auth/rate-limiting @kind:pattern
 Limit login attempts to 5 per hour per IP address.
 
-### @block:auth/jwt-config @kind:pattern
+### @block::auth/jwt-config @kind:pattern
 JWT configuration:
 - Algorithm: HS256
 - Expiry: 24 hours

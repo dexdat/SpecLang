@@ -1,5 +1,5 @@
 # speclang-header lines:12
-id: @speclang/directory-structure/pattern
+id: "@speclang/directory-structure/pattern"
 version: 0.1.0
 layer: 2
 tags: [directory, structure, pattern]

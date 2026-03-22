@@ -211,7 +211,7 @@ export class SimpleAgent {
 **User edits spec:**
 ```bash
 # User edits specs/hello.spec.md
-echo "### @block:greet @kind:function" >> specs/hello.spec.md
+echo "### @block::greet @kind:function" >> specs/hello.spec.md
 ```
 
 **Agent detects:**

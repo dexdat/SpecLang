@@ -188,7 +188,7 @@ export class SimpleAgent {
 
 **Example Input:**
 ```markdown
-### @block:greet @kind:function
+### @block::greet @kind:function
 Greets a user.
 
 **Parameters:**

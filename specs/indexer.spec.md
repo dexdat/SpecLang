@@ -1,5 +1,5 @@
 # speclang-header lines:12
-id: @specs/indexer
+id: "@specs/indexer"
 version: 1.0.0
 layer: 3
 project_level: Alpha
@@ -11,6 +11,6 @@ short: Spec indexer with dependency graph analysis
 
 This is the parent spec for the indexer module.
 
-### @block:overview @kind:prose
+### @block::overview @kind:prose
 
 The indexer module provides spec indexing and dependency graph analysis.

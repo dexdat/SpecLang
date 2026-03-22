@@ -1,5 +1,5 @@
 # speclang-header lines:10
-id: @speclang/bugs
+id: "@speclang/bugs"
 version: 1.0.0
 layer: 5
 tags: [bugs, issues, fixes]

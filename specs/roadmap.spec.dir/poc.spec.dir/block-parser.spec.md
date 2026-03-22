@@ -21,7 +21,7 @@ Extract structured information from spec blocks so SimpleAgent can generate code
 
 **Markdown Block:**
 ```markdown
-### @block:greet @kind:function
+### @block::greet @kind:function
 Greets a user by name.
 
 **Parameters:**
@@ -430,7 +430,7 @@ export class BlockParser {
 
 ```typescript
 const input = `
-### @block:hello @kind:function
+### @block::hello @kind:function
 Say hello.
 
 **Parameters:**

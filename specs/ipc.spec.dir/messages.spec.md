@@ -12,7 +12,7 @@ part: 1/2
 ## @block:messages @kind:entity
 IPC messages are the fundamental data units exchanged between processes.
 
-### @block:message-types @kind:enum
+### @block::message-types @kind:enum
 ```typescript
 enum MessageType {
   REQUEST = 'request',
@@ -22,7 +22,7 @@ enum MessageType {
 }
 ```
 
-### @block:message-format @kind:interface
+### @block::message-format @kind:interface
 ```typescript
 interface Message {
   id: string;
@@ -33,5 +33,5 @@ interface Message {
 }
 ```
 
-### @block:serialization @kind:function
+### @block::serialization @kind:function
 Messages are serialized using JSON for cross‑process compatibility.

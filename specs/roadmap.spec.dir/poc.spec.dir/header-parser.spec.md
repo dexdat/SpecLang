@@ -27,7 +27,7 @@ Extract metadata from spec file headers:
 **Header Structure:**
 ```markdown
 # speclang-header lines:N
-id: @specs/example
+id: "@specs/example"
 version: 1.0.0
 layer: 5
 short: Brief description
@@ -230,7 +230,7 @@ export class HeaderParser {
 **Valid Header:**
 ```markdown
 # speclang-header lines:7
-id: @specs/auth/login
+id: "@specs/auth/login"
 version: 1.0.0
 layer: 5
 short: User login functionality
@@ -255,7 +255,7 @@ parent: @ref:specs/auth
 **Minimal Header:**
 ```markdown
 # speclang-header lines:5
-id: @specs/utils
+id: "@specs/utils"
 version: 0.1.0
 layer: 3
 ---
@@ -278,7 +278,7 @@ describe('HeaderParser', () => {
   
   it('should parse valid header', () => {
     const content = `# speclang-header lines:6
-id: @specs/test
+id: "@specs/test"
 version: 1.0.0
 layer: 5
 short: Test spec
@@ -313,7 +313,7 @@ layer: 5
   
   it('should throw on invalid version', () => {
     const content = `# speclang-header lines:4
-id: @specs/test
+id: "@specs/test"
 version: v1
 layer: 5
 ---
@@ -324,7 +324,7 @@ layer: 5
   
   it('should parse array tags', () => {
     const content = `# speclang-header lines:5
-id: @specs/test
+id: "@specs/test"
 version: 1.0.0
 layer: 5
 tags: [a, b, c]

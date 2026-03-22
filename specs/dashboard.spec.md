@@ -1,5 +1,5 @@
 # speclang-header lines:15
-id: @specs/dashboard
+id: "@specs/dashboard"
 version: 1.0.0
 layer: 5
 target: src/dashboard/
@@ -11,19 +11,19 @@ This spec defines the dashboard UI for SpecLang, including handlers, hooks, inte
 
 ## Components
 
-### @block:handlers @kind:directory
+### @block::handlers @kind:directory
 Event handlers for dashboard interactions.
 
-### @block:hooks @kind:directory
+### @block::hooks @kind:directory
 React hooks for dashboard functionality.
 
-### @block:interactions @kind:directory
+### @block::interactions @kind:directory
 Interaction modules for dashboard features.
 
-### @block:styles @kind:directory
+### @block::styles @kind:directory
 CSS styles and themes for dashboard UI.
 
-### @block:tailwind-config @kind:code
+### @block::tailwind-config @kind:code
 Tailwind CSS configuration for dashboard styling.
 
 ## Dependencies

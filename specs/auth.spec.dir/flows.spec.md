@@ -1,5 +1,5 @@
 # speclang-header lines:11
-id: @speclang/auth/flows
+id: "@speclang/auth/flows"
 version: 0.1.0
 layer: 2
 project_level: "Alpha"
@@ -15,7 +15,7 @@ Authentication factory function and usage patterns.
 
 ## createAuth Factory
 
-### @block:auth/create-auth @kind:code
+### @block::auth/create-auth @kind:code
 ```typescript
 export function createAuth(config: MCPAuthConfig): MCPAuth {
   return new MCPAuth(config);
@@ -42,7 +42,7 @@ const auth = createAuth({
 
 ## Authentication Middleware Flow
 
-### @block:auth/middleware-flow @kind:flow
+### @block::auth/middleware-flow @kind:flow
 **Description**: How authentication middleware integrates into Express server.
 
 **Steps**:
@@ -69,7 +69,7 @@ app.use(auth.middleware());
 
 ## Token Validation Flow
 
-### @block:auth/token-validation-flow @kind:flow
+### @block::auth/token-validation-flow @kind:flow
 **Description**: Flow for validating API tokens in MCP protocol.
 
 **Steps**:

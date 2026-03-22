@@ -1,5 +1,5 @@
 # speclang-header lines:14
-id: @speclang/registry/storage
+id: "@speclang/registry/storage"
 version: 0.1.0
 layer: 2
 project_level: Alpha

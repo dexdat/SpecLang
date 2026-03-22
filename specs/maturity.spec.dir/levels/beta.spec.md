@@ -14,7 +14,7 @@ Implementation of Beta maturity level for external testing with feature complete
 
 ## Files
 
-### @block:beta-level-definition @kind:code @target:src/maturity/levels/beta.ts
+### @block::beta-level-definition @kind:code @target:src/maturity/levels/beta.ts
 ```typescript
 import { MaturityLevel, LevelDefinition, LevelCriteria, AgentBehavior } from '../types';
 
@@ -117,7 +117,7 @@ export function createBetaSpecDefaults(): Partial<ParsedSpecMetadata> {
 }
 ```
 
-### @block:beta-validator @kind:code @target:src/maturity/levels/beta-validator.ts
+### @block::beta-validator @kind:code @target:src/maturity/levels/beta-validator.ts
 ```typescript
 import { BETA_LEVEL, BETA_CRITERIA } from './beta';
 
@@ -333,7 +333,7 @@ interface PromoteResult {
 export const betaValidator = new BetaValidator();
 ```
 
-### @block:beta-transitions @kind:code @target:src/maturity/levels/beta-transitions.ts
+### @block::beta-transitions @kind:code @target:src/maturity/levels/beta-transitions.ts
 ```typescript
 import { BETA_LEVEL } from './beta';
 
@@ -653,7 +653,7 @@ interface TransitionPreparation {
 export const betaTransitionHandler = new BetaTransitionHandler();
 ```
 
-### @block:beta-behavior @kind:code @target:src/maturity/levels/beta-behavior.ts
+### @block::beta-behavior @kind:code @target:src/maturity/levels/beta-behavior.ts
 ```typescript
 import { BETA_LEVEL } from './beta';
 

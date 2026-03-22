@@ -32,7 +32,7 @@ tags: [example, greeting]
 
 Simple greeting utilities.
 
-### @block:greet @kind:function
+### @block::greet @kind:function
 
 Returns a personalized greeting.
 
@@ -168,7 +168,7 @@ version: 1.0.0
 layer: 5
 ---
 
-### @block:sayHello @kind:function
+### @block::sayHello @kind:function
 Say hello to someone.
 
 **Parameters:**

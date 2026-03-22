@@ -1,5 +1,5 @@
 # speclang-header lines:13
-id: @specs/validation/rules/autonomous
+id: "@specs/validation/rules/autonomous"
 version: 1.1.0
 layer: 5
 project_level: Alpha
@@ -11,7 +11,7 @@ short: Autonomous mode validation rule
 
 # Autonomous Mode Validation Rule
 
-### @block:rule @kind:operation
+### @block::rule @kind:operation
 
 Additional validation for specs with agent_support: agent_autonomous
 

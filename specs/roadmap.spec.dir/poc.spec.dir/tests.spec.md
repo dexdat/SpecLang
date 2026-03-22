@@ -144,7 +144,7 @@ describe('BlockParser', () => {
   
   it('should parse function block', () => {
     const markdown = `
-### @block:greet @kind:function
+### @block::greet @kind:function
 Greets a user.
 
 **Parameters:**
@@ -173,10 +173,10 @@ Greets a user.
   
   it('should parse multiple blocks', () => {
     const markdown = `
-### @block:foo @kind:function
+### @block::foo @kind:function
 Foo function.
 
-### @block:bar @kind:class
+### @block::bar @kind:class
 Bar class.
 `;
     
@@ -189,7 +189,7 @@ Bar class.
   
   it('should handle optional parameters', () => {
     const markdown = `
-### @block:test @kind:function
+### @block::test @kind:function
 Test function.
 
 **Parameters:**
@@ -205,7 +205,7 @@ Test function.
   
   it('should parse class block', () => {
     const markdown = `
-### @block:User @kind:class
+### @block::User @kind:class
 User entity.
 
 **Properties:**
@@ -221,7 +221,7 @@ User entity.
   
   it('should handle block with no parameters', () => {
     const markdown = `
-### @block:hello @kind:function
+### @block::hello @kind:function
 Say hello.
 `;
     
@@ -232,7 +232,7 @@ Say hello.
   
   it('should parse code examples', () => {
     const markdown = `
-### @block:greet @kind:function
+### @block::greet @kind:function
 Greets a user.
 
 **Example:**
@@ -340,7 +340,7 @@ id: "@test/hello"
 version: 1.0.0
 ---
 
-### @block:greet @kind:function
+### @block::greet @kind:function
 Greets a user.
 
 **Parameters:**
@@ -411,7 +411,7 @@ id: "@test/hello"
 version: 1.0.0
 ---
 
-### @block:greet @kind:function
+### @block::greet @kind:function
 Say hello.
 `);
     
@@ -523,7 +523,7 @@ id: "@test/hello"
 version: 1.0.0
 ---
 
-### @block:greet @kind:function
+### @block::greet @kind:function
 Greets a user.
 
 **Parameters:**
@@ -539,7 +539,7 @@ id: "@test/complex"
 version: 1.0.0
 ---
 
-### @block:calculateTotal @kind:function
+### @block::calculateTotal @kind:function
 Calculate total price.
 
 **Parameters:**
@@ -549,7 +549,7 @@ Calculate total price.
 
 **Returns:** number - Total price
 
-### @block:Order @kind:class
+### @block::Order @kind:class
 Order entity.
 
 **Properties:**
@@ -557,7 +557,7 @@ Order entity.
 - total: number - Order total
 - status: OrderStatus - Order status
 
-### @block:OrderStatus @kind:enum
+### @block::OrderStatus @kind:enum
 Order status values.
 
 **Values:**

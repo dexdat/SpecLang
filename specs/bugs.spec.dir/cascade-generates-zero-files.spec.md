@@ -1,5 +1,5 @@
 # speclang-header lines:10
-id: @bugs/cascade-generates-zero-files
+id: "@bugs/cascade-generates-zero-files"
 version: 1.0.0
 layer: 5
 tags: [bug, cascade, code-generation, documentation]
@@ -36,7 +36,7 @@ The cascade only generates code from TypeScript code blocks (```typescript ... `
 
 Our test spec has:
 ```markdown
-### @block:greeting @kind:function
+### @block::greeting @kind:function
 Generate a greeting message for a user.
 
 **Parameters:**
@@ -46,7 +46,7 @@ Generate a greeting message for a user.
 
 But NO code block like:
 ```markdown
-### @block:greeting @kind:function
+### @block::greeting @kind:function
 ```typescript
 export function greeting(name: string): string {
   return `Hello, ${name}!`;
@@ -104,7 +104,7 @@ if (generatedFiles.length === 0) {
 Add TypeScript code blocks to specs:
 
 ```markdown
-### @block:greeting @kind:function
+### @block::greeting @kind:function
 Generate a greeting message for a user.
 
 **Parameters:**

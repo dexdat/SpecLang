@@ -14,7 +14,7 @@ Implementation of Production maturity level for production-ready, supported syst
 
 ## Files
 
-### @block:production-level-definition @kind:code @target:src/maturity/levels/production.ts
+### @block::production-level-definition @kind:code @target:src/maturity/levels/production.ts
 ```typescript
 import { MaturityLevel, LevelDefinition, LevelCriteria, AgentBehavior } from '../types';
 
@@ -121,7 +121,7 @@ export function createProductionSpecDefaults(): Partial<ParsedSpecMetadata> {
 }
 ```
 
-### @block:production-validator @kind:code @target:src/maturity/levels/production-validator.ts
+### @block::production-validator @kind:code @target:src/maturity/levels/production-validator.ts
 ```typescript
 import { PRODUCTION_LEVEL, PRODUCTION_CRITERIA } from './production';
 
@@ -349,7 +349,7 @@ interface PromoteResult {
 export const productionValidator = new ProductionValidator();
 ```
 
-### @block:production-transitions @kind:code @target:src/maturity/levels/production-transitions.ts
+### @block::production-transitions @kind:code @target:src/maturity/levels/production-transitions.ts
 ```typescript
 import { PRODUCTION_LEVEL } from './production';
 
@@ -561,7 +561,7 @@ interface TransitionPreparation {
 export const productionTransitionHandler = new ProductionTransitionHandler();
 ```
 
-### @block:production-behavior @kind:code @target:src/maturity/levels/production-behavior.ts
+### @block::production-behavior @kind:code @target:src/maturity/levels/production-behavior.ts
 ```typescript
 import { PRODUCTION_LEVEL } from './production';
 

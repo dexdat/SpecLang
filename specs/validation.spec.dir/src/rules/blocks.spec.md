@@ -1,5 +1,5 @@
 # speclang-header lines:13
-id: @specs/validation/rules/blocks
+id: "@specs/validation/rules/blocks"
 version: 1.0.0
 layer: 5
 project_level: Alpha
@@ -11,7 +11,7 @@ short: Block validation rule
 
 # Block Validation Rule
 
-### @block:rule @kind:operation
+### @block::rule @kind:operation
 
 Validates content blocks in specs.
 

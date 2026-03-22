@@ -1,5 +1,5 @@
 # speclang-header lines:13
-id: @specs/validation/reporter
+id: "@specs/validation/reporter"
 version: 1.0.0
 layer: 5
 project_level: Alpha
@@ -11,7 +11,7 @@ short: Validation error reporter
 
 # Validation Reporter
 
-### @block:class @kind:entity
+### @block::class @kind:entity
 
 Formats validation results for display in various formats.
 

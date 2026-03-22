@@ -18,7 +18,7 @@ This spec defines search capabilities for SpecLang, split into two sub‑specs:
 
 ## Search Tool Handler
 
-### @block:search/tool-handler @kind:entity
+### @block::search/tool-handler @kind:entity
 ```text
 export class SearchToolHandler {
 ```

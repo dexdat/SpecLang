@@ -1,5 +1,5 @@
 # speclang-header lines:13
-id: @speclang/dynamic-split/token-budget
+id: "@speclang/dynamic-split/token-budget"
 version: 0.1.0
 layer: 2
 tags: [splitting, tokens, budget, limits]

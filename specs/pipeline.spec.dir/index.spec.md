@@ -1,5 +1,5 @@
 # speclang-header lines:16
-id: @specs/pipeline
+id: "@specs/pipeline"
 version: 1.0.0
 layer: 3
 project_level: Alpha
@@ -25,7 +25,7 @@ The Pipeline module provides a complete build and execution system for SpecLang.
 - **RecoveryExecutor** - Handles error recovery and rollback
 - **PipelineConfigManager** - Loads and validates pipeline configuration
 
-### @block:types @kind:types
+### @block::types @kind:types
 
 Type definitions for pipeline configuration, stages, hooks, and recovery:
 
@@ -36,7 +36,7 @@ Type definitions for pipeline configuration, stages, hooks, and recovery:
 - `PipelineResult` - Final pipeline output
 - `ExecutorOptions` - Execution configuration
 
-### @block:config @kind:code
+### @block::config @kind:code
 
 Configuration management system:
 
@@ -45,7 +45,7 @@ Configuration management system:
 - Provides default configuration values
 - Singleton pattern for config management
 
-### @block:stages @kind:code
+### @block::stages @kind:code
 
 Stage execution with dependency resolution:
 
@@ -54,7 +54,7 @@ Stage execution with dependency resolution:
 - Command execution with stdout/stderr capture
 - Dependency validation before execution
 
-### @block:hooks @kind:code
+### @block::hooks @kind:code
 
 Hook execution system:
 
@@ -62,7 +62,7 @@ Hook execution system:
 - Built-in hook utilities (Discord, Slack, file logging)
 - Multiple hook execution with failure tolerance
 
-### @block:recovery @kind:code
+### @block::recovery @kind:code
 
 Error recovery system:
 
@@ -72,7 +72,7 @@ Error recovery system:
 - Pause/delay actions
 - Error logging with suggestions
 
-### @block:executor @kind:code
+### @block::executor @kind:code
 
 Main pipeline executor:
 

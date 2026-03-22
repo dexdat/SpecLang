@@ -1,5 +1,5 @@
 # speclang-header lines:11
-id: @speclang/auth/entities
+id: "@speclang/auth/entities"
 version: 0.1.0
 layer: 2
 project_level: "Alpha"
@@ -15,7 +15,7 @@ Core authentication entities for the MCP server.
 
 ## MCPAuthConfig
 
-### @block:auth/mcp-auth-config @kind:entity
+### @block::auth/mcp-auth-config @kind:entity
 ```typescript
 export interface MCPAuthConfig {
   enabled: boolean;
@@ -39,7 +39,7 @@ export interface MCPAuthConfig {
 
 ## MCPAuth
 
-### @block:auth/mcp-auth @kind:entity
+### @block::auth/mcp-auth @kind:entity
 ```typescript
 export class MCPAuth {
   private config: MCPAuthConfig;

@@ -67,13 +67,13 @@ When you receive a file change:
 Use the standard speclang format:
 
 # speclang-header
-id: @domain/feature
+id: "@domain/feature"
 ...
 
 ---
 
 # @block:domain/feature @kind:entity
-refs: [@ref:northstar#feature]
+refs: ["@ref:northstar#feature"]
 ...
 ```
 ```

@@ -14,7 +14,7 @@ Implementation of Alpha maturity level for internal testing with incomplete feat
 
 ## Files
 
-### @block:alpha-level-definition @kind:code @target:src/maturity/levels/alpha.ts
+### @block::alpha-level-definition @kind:code @target:src/maturity/levels/alpha.ts
 ```typescript
 import { MaturityLevel, LevelDefinition, LevelCriteria, AgentBehavior } from '../types';
 
@@ -113,7 +113,7 @@ export function createAlphaSpecDefaults(): Partial<ParsedSpecMetadata> {
 }
 ```
 
-### @block:alpha-validator @kind:code @target:src/maturity/levels/alpha-validator.ts
+### @block::alpha-validator @kind:code @target:src/maturity/levels/alpha-validator.ts
 ```typescript
 import { ALPHA_LEVEL, ALPHA_CRITERIA } from './alpha';
 
@@ -301,7 +301,7 @@ interface PromoteResult {
 export const alphaValidator = new AlphaValidator();
 ```
 
-### @block:alpha-transitions @kind:code @target:src/maturity/levels/alpha-transitions.ts
+### @block::alpha-transitions @kind:code @target:src/maturity/levels/alpha-transitions.ts
 ```typescript
 import { ALPHA_LEVEL } from './alpha';
 
@@ -562,7 +562,7 @@ interface TransitionPreparation {
 export const alphaTransitionHandler = new AlphaTransitionHandler();
 ```
 
-### @block:alpha-behavior @kind:code @target:src/maturity/levels/alpha-behavior.ts
+### @block::alpha-behavior @kind:code @target:src/maturity/levels/alpha-behavior.ts
 ```typescript
 import { ALPHA_LEVEL } from './alpha';
 

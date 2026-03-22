@@ -1,5 +1,5 @@
 # speclang-header lines:18
-id: @specs/lenses
+id: "@specs/lenses"
 version: 1.0.0
 layer: 3
 project_level: Alpha

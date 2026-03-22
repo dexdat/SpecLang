@@ -1,5 +1,5 @@
 # speclang-header lines:13
-id: @speclang/cascade-protocol/flow
+id: "@speclang/cascade-protocol/flow"
 version: 1.0.0
 layer: 2
 tags: [cascade, protocol, flow, process]
@@ -316,13 +316,13 @@ Specs can generate outputs in multiple trees:
 
 ```markdown
 # specs/auth.spec.md
-id: @specs/auth
-refs: [@ref:project.scl, @ref:specs/core]
+id: "@specs/auth"
+refs: ["@ref:project.scl", "@ref:specs/core"]
 ---
 
 ## API Specification
 
-### @block:auth/api @kind:code
+### @block::auth/api @kind:code
 ```yaml
 # Generates: specs/auth.api.yaml (spec tree)
 openapi: 3.0.0
@@ -332,13 +332,13 @@ paths:
       summary: User login
 ```
 
-### @block:auth/handler @kind:code
+### @block::auth/handler @kind:code
 ```typescript
 // Generates: src/auth/handler.ts (code tree)
 export async function loginHandler(req: Request) { ... }
 ```
 
-### @block:auth/tests @kind:code
+### @block::auth/tests @kind:code
 ```typescript
 // Generates: tests/auth.test.ts (test tree)
 describe('Auth', () => { ... });

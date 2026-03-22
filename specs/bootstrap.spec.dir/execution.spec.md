@@ -1,5 +1,5 @@
 # speclang-header lines:16
-id: @speclang/bootstrap/execution
+id: "@speclang/bootstrap/execution"
 version: 0.1.0
 layer: 2
 project_level: Alpha

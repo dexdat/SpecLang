@@ -50,7 +50,7 @@ Cascade:
 
 Each cascade instance has a unique identifier for tracking:
 
-### @block:cascade/uuid-tracking @kind:entity
+### @block::cascade/uuid-tracking @kind:entity
 ```speclang
 # @block:cascade/uuid-tracking @kind:entity
 CascadeTracking:
@@ -85,7 +85,7 @@ CascadeTracking:
 
 The cascade uses a queue to manage concurrent agent execution:
 
-### @block:cascade/queue-system @kind:entity
+### @block::cascade/queue-system @kind:entity
 ```speclang
 # @block:cascade/queue-system @kind:entity
 QueueSystem:
@@ -138,7 +138,7 @@ See @ref:specs/cascade.spec.dir/convergence for quiet period detection, pipeline
 
 When the build pipeline fails, an **Orchestrator agent** (parent) handles recovery:
 
-### @block:cascade/orchestrator @kind:entity
+### @block::cascade/orchestrator @kind:entity
 ```speclang
 # @block:cascade/orchestrator @kind:entity
 Orchestrator:

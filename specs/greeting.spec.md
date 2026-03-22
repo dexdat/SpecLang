@@ -10,7 +10,7 @@ tags: [example, greeting]
 
 Simple greeting utilities.
 
-### @block:greet @kind:function
+### @block::greet @kind:function
 
 Returns a personalized greeting.
 

@@ -51,7 +51,7 @@ Every SpecLang file begins with a universal header:
 
 ```yaml
 # speclang-header lines:12
-id: @specs/example
+id: "@specs/example"
 version: 1.0.0
 layer: 5
 project_level: Alpha

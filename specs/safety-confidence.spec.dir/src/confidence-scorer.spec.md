@@ -1,5 +1,5 @@
 # speclang-header lines:12
-id: @specs/safety-confidence/confidence-scorer
+id: "@specs/safety-confidence/confidence-scorer"
 version: 1.0.0
 layer: 5
 project_level: Alpha

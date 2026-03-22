@@ -20,9 +20,9 @@ Part 2 of 2: Concrete test examples. See also @ref:speclang/test-specs/format fo
 ```speclang
 # @block:tests/example @kind:test
 # speclang-header
-id: @tests/auth.login
+id: "@tests/auth".login
 version: 1.0
-refs: [@ref:specs/auth#login, @ref:northstar#auth]
+refs: ["@ref:specs/auth#login", "@ref:northstar#auth"]
 
 ---
 
@@ -180,9 +180,9 @@ Then: returns result within 2 seconds
 ```speclang
 # @block:tests/unit-example @kind:test
 # speclang-header
-id: @tests/hash.bcrypt
+id: "@tests/hash".bcrypt
 category: unit
-refs: [@ref:specs/hash#bcrypt]
+refs: ["@ref:specs/hash#bcrypt"]
 
 ---
 
@@ -206,9 +206,9 @@ And: verify(hash, "wrong") returns false
 ```speclang
 # @block:tests/integration-example @kind:test
 # speclang-header
-id: @tests/auth.full-flow
+id: "@tests/auth".full-flow
 category: integration
-refs: [@ref:specs/auth]
+refs: ["@ref:specs/auth"]
 
 ---
 

@@ -1,5 +1,5 @@
 # speclang-header lines:8
-id: @northstar
+id: "@northstar"
 version: 0.1.0
 layer: 0
 tags: [northstar, project]

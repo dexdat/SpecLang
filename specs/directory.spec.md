@@ -1,5 +1,5 @@
 # speclang-header lines:15
-id: @specs/directory
+id: "@specs/directory"
 version: 1.0.0
 layer: 5
 target: src/directory/
@@ -11,16 +11,16 @@ This spec defines directory operations for SpecLang, including creation, scannin
 
 ## Components
 
-### @block:creator @kind:code
+### @block::creator @kind:code
 Directory creation utilities.
 
-### @block:scanner @kind:code
+### @block::scanner @kind:code
 Directory scanning and file discovery.
 
-### @block:structure @kind:code
+### @block::structure @kind:code
 Directory structure analysis and validation.
 
-### @block:index @kind:code
+### @block::index @kind:code
 Main directory module entry point.
 
 ## Dependencies

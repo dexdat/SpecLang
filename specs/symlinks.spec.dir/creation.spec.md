@@ -44,7 +44,7 @@ HeaderMapping:
 ```yaml
 # specs/core/auth/login.go.spec.yaml
 --- speclang-header lines:12
-id: @specs/auth/login
+id: "@specs/auth/login"
 target: src/auth/login.go
 language: go
 ---

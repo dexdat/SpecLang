@@ -17,7 +17,7 @@ Generate TypeScript code from spec blocks.
 
 **Parse Spec Blocks:**
 ```markdown
-### @block:greet @kind:function
+### @block::greet @kind:function
 Greets a user by name.
 
 **Parameters:**

@@ -79,7 +79,7 @@ This prevents agents from stepping on each other's files during concurrent casca
 
 Agents can create new files via a dedicated tool (available in OpenCode plugin):
 
-### @block:agent-protocol/file-creation-tool @kind:tool
+### @block::agent-protocol/file-creation-tool @kind:tool
 ```speclang
 # @block:agent-protocol/file-creation-tool @kind:tool
 FileCreationTool:
@@ -145,7 +145,7 @@ This tool allows agents to create new files while maintaining proper headers and
 
 Agents must follow the commit protocol after writing files:
 
-### @block:agent-protocol/commit-protocol @kind:protocol
+### @block::agent-protocol/commit-protocol @kind:protocol
 ```speclang
 # @block:agent-protocol/commit-protocol @kind:protocol
 CommitProtocol:

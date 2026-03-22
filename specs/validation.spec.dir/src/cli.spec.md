@@ -1,5 +1,5 @@
 # speclang-header lines:13
-id: @specs/validation/cli
+id: "@specs/validation/cli"
 version: 1.0.0
 layer: 5
 project_level: Alpha
@@ -11,7 +11,7 @@ short: Validation CLI command
 
 # Validation CLI
 
-### @block:command @kind:operation
+### @block::command @kind:operation
 
 Command-line interface for running validation.
 

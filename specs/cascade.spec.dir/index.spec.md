@@ -1,5 +1,5 @@
 # speclang-header lines:15
-id: @specs/cascade/implementation
+id: "@specs/cascade/implementation"
 version: 1.0.0
 layer: 2
 project_level: Alpha
@@ -24,7 +24,7 @@ The cascade system provides:
 
 ## Core Functions
 
-### @block:run-cascade @kind:operation
+### @block::run-cascade @kind:operation
 
 **Purpose:** Main entry point for running cascades on spec files.
 
@@ -42,18 +42,18 @@ The cascade system provides:
 5. Run generated tests
 6. Check convergence (tests pass = converged)
 
-### @block:parse-spec @kind:operation
+### @block::parse-spec @kind:operation
 
 **Purpose:** Parse a spec file and extract metadata and blocks.
 
 **Steps:**
 1. Split content into lines
 2. Detect speclang-header and extract metadata
-3. Parse block definitions (`### @block:name @kind:type`)
+3. Parse block definitions (`### @block::name @kind:type`)
 4. Extract code blocks (```typescript ... ```)
 5. Return structured spec object
 
-### @block:generate-code @kind:operation
+### @block::generate-code @kind:operation
 
 **Purpose:** Generate code files from spec blocks.
 
@@ -65,7 +65,7 @@ The cascade system provides:
 5. Add auto-generated header with source reference
 6. Write file to output directory
 
-### @block:run-tests @kind:operation
+### @block::run-tests @kind:operation
 
 **Purpose:** Execute generated test files using vitest.
 
@@ -77,7 +77,7 @@ The cascade system provides:
 
 ## Types
 
-### @block:types @kind:entity
+### @block::types @kind:entity
 
 ```typescript
 interface CascadeOptions {
@@ -106,7 +106,7 @@ interface SpecBlock {
 
 ## Submodules
 
-### @block:coordinator @kind:entity
+### @block::coordinator @kind:entity
 
 The coordinator manages cascade execution, dependency tracking, and state.
 
@@ -117,7 +117,7 @@ The coordinator manages cascade execution, dependency tracking, and state.
 - `src/coordinator/state.ts` - Cascade state management
 - `src/coordinator/verification.ts` - Verification gates
 
-### @block:triggers @kind:entity
+### @block::triggers @kind:entity
 
 The triggers module handles file system watching and event routing.
 
@@ -129,7 +129,7 @@ The triggers module handles file system watching and event routing.
 - `src/triggers/types.ts` - Trigger types
 - `src/triggers/watcher.ts` - File watcher
 
-### @block:depth @kind:entity
+### @block::depth @kind:entity
 
 The depth module handles cascade depth limits, cycle detection, and convergence.
 

@@ -1,5 +1,5 @@
 # speclang-header lines:14
-id: @speclang/examples/api
+id: "@speclang/examples/api"
 version: 0.1.0
 layer: 2
 project_level: Alpha
@@ -16,7 +16,7 @@ Example API specification demonstrating endpoint definitions, request/response s
 
 ## Endpoints
 
-### @block:api/users-list @kind:endpoint
+### @block::api/users-list @kind:endpoint
 **Method**: `GET`
 **Path**: `/api/users`
 **Description**: List users with pagination.
@@ -36,7 +36,7 @@ interface UsersListResponse {
 }
 ```
 
-### @block:api/user-create @kind:endpoint
+### @block::api/user-create @kind:endpoint
 **Method**: `POST`
 **Path**: `/api/users`
 **Description**: Create a new user.
@@ -66,7 +66,7 @@ interface CreateUserResponse {
 
 ## Schemas
 
-### @block:api/user-schema @kind:schema
+### @block::api/user-schema @kind:schema
 ```typescript
 interface User {
   id: string;
@@ -77,7 +77,7 @@ interface User {
 }
 ```
 
-### @block:api/error-schema @kind:schema
+### @block::api/error-schema @kind:schema
 ```typescript
 interface ErrorResponse {
   code: string;
@@ -88,7 +88,7 @@ interface ErrorResponse {
 
 ## Error Handling
 
-### @block:api/error-codes @kind:pattern
+### @block::api/error-codes @kind:pattern
 Standard error codes:
 - `VALIDATION_ERROR`: Input validation failed
 - `NOT_FOUND`: Resource not found

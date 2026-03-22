@@ -1,5 +1,5 @@
 # speclang-header lines:15
-id: @specs/indexer
+id: "@specs/indexer"
 version: 1.0.0
 layer: 3
 project_level: Alpha

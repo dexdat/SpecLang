@@ -15,17 +15,17 @@ The workflow module provides CLI functionality and command handlers for Speclang
 
 ## Exports
 
-### @block:cli @kind:code
+### @block::cli @kind:code
 CLI entry point - and runs creates the command-line interface.
 
-### @block:setup @kind:code  
+### @block::setup @kind:code  
 Project initialization and validation - sets up new Speclang projects.
 
-### @block:commands @kind:code
+### @block::commands @kind:code
 NorthStar command parsing and execution - handles skill downloads and listings.
 
-### @block:review @kind:code
+### @block::review @kind:code
 Status and diff viewing - shows changes, specs, and file modifications.
 
-### @block:conversation @kind:code
+### @block::conversation @kind:code
 Natural language command processing - parses and executes user intents.

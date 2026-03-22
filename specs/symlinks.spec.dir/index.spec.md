@@ -1,5 +1,5 @@
 # speclang-header lines:18
-id: @specs/symlinks
+id: "@specs/symlinks"
 version: 1.0.0
 layer: 3
 project_level: Alpha
@@ -22,7 +22,7 @@ The symlinks module provides:
 
 ## Architecture
 
-### @block:symlinks/overview @kind:concept
+### @block::symlinks/overview @kind:concept
 
 ```
 specs/                          src/
@@ -32,7 +32,7 @@ specs/                          src/
 │   └── index.ts       →  ←──  └── index.ts
 ```
 
-### @block:symlinks/types @kind:types
+### @block::symlinks/types @kind:types
 
 Types for dual-view system:
 
@@ -50,19 +50,19 @@ interface SymlinkEntry {
 }
 ```
 
-### @block:symlinks/creation @kind:module
+### @block::symlinks/creation @kind:module
 
 **Location:** `src/symlinks/creator.ts`
 
 Creates symlinks from specs to working locations based on `target` header field.
 
-### @block:symlinks/verification @kind:module
+### @block::symlinks/verification @kind:module
 
 **Location:** `src/symlinks/verifier.ts`
 
 Verifies symlinks are valid, detects broken links.
 
-### @block:symlinks/rebuilding @kind:module
+### @block::symlinks/rebuilding @kind:module
 
 **Location:** `src/symlinks/rebuilder.ts`
 
@@ -70,7 +70,7 @@ Regenerates all symlinks, optionally cleaning first.
 
 ## API
 
-### @block:symlinks/api @kind:api
+### @block::symlinks/api @kind:api
 
 ```typescript
 // Main exports from index.ts
@@ -82,7 +82,7 @@ export * from './rebuilder.js';
 
 ## Cross-Platform
 
-### @block:symlinks/platform @kind:concept
+### @block::symlinks/platform @kind:concept
 
 - **Unix**: Uses `ln -s` (symbolic links)
 - **Windows**: Uses `mklink /J` (junction) or symbolic links

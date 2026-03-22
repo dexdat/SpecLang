@@ -166,7 +166,7 @@ id: "@demo/hello"
 version: 1.0.0
 ---
 
-### @block:greet @kind:function
+### @block::greet @kind:function
 Say hello.
 SPEC
 
@@ -202,7 +202,7 @@ id: "@test/fixed"
 version: 1.0.0
 ---
 
-### @block:test @kind:function
+### @block::test @kind:function
 Test function.
 SPEC
 ```
@@ -214,7 +214,7 @@ SPEC
 | "Missing speclang-header" | No header line | Add `# speclang-header lines:N` |
 | "Invalid header format" | Wrong header syntax | Use `# speclang-header lines:5` |
 | "Missing id field" | No id in header | Add `id: "@scope/name"` |
-| "No blocks found" | No @block: definitions | Add `### @block:name @kind:type` |
+| "No blocks found" | No @block: definitions | Add `### @block::name @kind:type` |
 
 ---
 
@@ -442,7 +442,7 @@ id: "@test/minimal"
 version: 1.0.0
 ---
 
-### @block:test @kind:function
+### @block::test @kind:function
 Test.
 SPEC
 

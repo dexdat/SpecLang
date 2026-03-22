@@ -1,5 +1,5 @@
 # speclang-header lines:10
-id: @bugs/cli-missing-generate-command
+id: "@bugs/cli-missing-generate-command"
 version: 1.0.0
 layer: 5
 tags: [bug, cli, commands]

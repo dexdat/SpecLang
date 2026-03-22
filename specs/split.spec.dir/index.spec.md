@@ -1,5 +1,5 @@
 # speclang-header lines:14
-id: @specs/split
+id: "@specs/split"
 version: 1.0.0
 layer: 3
 project_level: Alpha

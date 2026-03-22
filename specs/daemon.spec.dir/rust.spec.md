@@ -18,7 +18,7 @@ Rust implementation of speclangd daemon for enterprise mode.
 
 ## Cargo.toml
 
-### @block:cargo-toml @kind:code
+### @block::cargo-toml @kind:code
 ```toml
 [package]
 name = "speclangd"
@@ -46,7 +46,7 @@ assert_fs = "1.0"
 
 ## Main Entry Point
 
-### @block:main-rs @kind:code
+### @block::main-rs @kind:code
 ```rust
 use anyhow::Result;
 use tracing::{info, error};
@@ -89,7 +89,7 @@ async fn main() -> Result<()> {
 
 ## Watcher Module
 
-### @block:watcher-rs @kind:code
+### @block::watcher-rs @kind:code
 ```rust
 use std::path::{Path, PathBuf};
 use std::time::Duration;
@@ -187,7 +187,7 @@ impl Watcher {
 
 ## Configuration Module
 
-### @block:config-rs @kind:code
+### @block::config-rs @kind:code
 ```rust
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
@@ -266,7 +266,7 @@ fn default_config() -> DaemonConfig {
 
 ## Event Router Module
 
-### @block:router-rs @kind:code
+### @block::router-rs @kind:code
 ```rust
 use tokio::sync::mpsc::Receiver;
 use crate::FileEvent;
@@ -297,7 +297,7 @@ impl Router {
 
 ## Convergence Detection Module
 
-### @block:convergence-rs @kind:code
+### @block::convergence-rs @kind:code
 ```rust
 use std::time::{Duration, Instant};
 use tokio::time;
@@ -347,7 +347,7 @@ impl ConvergenceDetector {
 
 ## IPC Module
 
-### @block:ipc-rs @kind:code
+### @block::ipc-rs @kind:code
 ```rust
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
@@ -382,7 +382,7 @@ impl IpcServer {
 
 ## State Module
 
-### @block:state-rs @kind:code
+### @block::state-rs @kind:code
 ```rust
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};

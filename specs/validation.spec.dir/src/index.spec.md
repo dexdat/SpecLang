@@ -1,5 +1,5 @@
 # speclang-header lines:13
-id: @specs/validation/index
+id: "@specs/validation/index"
 version: 1.0.0
 layer: 5
 project_level: Alpha
@@ -11,7 +11,7 @@ short: Validation module exports
 
 # Validation Module Index
 
-### @block:exports @kind:code
+### @block::exports @kind:code
 
 Exports all validation types, engine, reporter, CLI, and rules.
 

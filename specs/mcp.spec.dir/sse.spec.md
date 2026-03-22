@@ -1,5 +1,5 @@
 # speclang-header lines:13
-id: @specs/mcp/sse
+id: "@specs/mcp/sse"
 version: 1.0.0
 layer: 5
 project_level: Alpha

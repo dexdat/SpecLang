@@ -1,5 +1,5 @@
 # speclang-header lines:12
-id: @speclang/validation-tool/api
+id: "@speclang/validation-tool/api"
 version: 0.1.0
 layer: 2
 project_level: Alpha
