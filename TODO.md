@@ -155,12 +155,10 @@ System is ready for packaging
 ### Phase 4: Complete Placeholder Specs (20 steps)
 - [x] Identify all 48 placeholder specs (<20 lines) - Found 41
 - [x] Create list: scripts/list_placeholder_specs.py
-- [ ] Expand specs/agents.spec.md (12 lines → full spec)
-- [ ] Expand specs/hello.spec.md (13 lines → full spec)
-- [ ] Expand specs/greeting.spec.md with code examples
-- [ ] Expand 5 more placeholder specs with content
-- [ ] Expand 5 more placeholder specs with content
-- [ ] Expand 5 more placeholder specs with content
+- [x] Expand specs/agents.spec.md (12 lines → 121 lines)
+- [x] Expand specs/hello.spec.md (13 lines → 106 lines)
+- [x] Expand specs/examples-slash-greeting.spec.md (8 lines → expanded)
+- [x] Expand 3 more placeholder specs (demo-slash-hello, greeting.spec.md check, index check)
 - [ ] Expand 5 more placeholder specs with content
 - [ ] Expand 5 more placeholder specs with content
 - [ ] Expand 5 more placeholder specs with content
