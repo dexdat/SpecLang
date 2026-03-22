@@ -153,8 +153,8 @@ System is ready for packaging
 - [x] Validate: ./bin/speclang search "cascade" returns results
 
 ### Phase 4: Complete Placeholder Specs (20 steps)
-- [ ] Identify all 48 placeholder specs (<20 lines)
-- [ ] Create list: scripts/list_placeholder_specs.py
+- [x] Identify all 48 placeholder specs (<20 lines) - Found 41
+- [x] Create list: scripts/list_placeholder_specs.py
 - [ ] Expand specs/agents.spec.md (12 lines → full spec)
 - [ ] Expand specs/hello.spec.md (13 lines → full spec)
 - [ ] Expand specs/greeting.spec.md with code examples
