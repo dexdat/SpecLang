@@ -627,4 +627,151 @@ mcp
     }
   });
 
+// ============================================================================
+// NEW COMMAND - Create a new speclang project
+// ============================================================================
+
+program
+  .command('new <name>')
+  .description('Create a new speclang project')
+  .option('-d, --dir <path>', 'Target directory', undefined)
+  .option('-t, --template <template>', 'Starter template (minimal, http, api)', 'minimal')
+  .option('--bare', 'No example specs', false)
+  .option('--no-git', 'Skip git initialization')
+  .option('-f, --force', 'Overwrite existing directory')
+  .action(async (name, options) => {
+    const targetDir = options.dir || name;
+    const projectPath = path.resolve(targetDir);
+    
+    // Validate name is valid identifier
+    if (!/^[a-zA-Z][a-zA-Z0-9_-]*$/.test(name)) {
+      console.error(`❌ Invalid project name: ${name}`);
+      console.error('   Project name must start with a letter and contain only letters, numbers, hyphens, and underscores.');
+      process.exit(1);
+    }
+    
+    // Check if directory exists
+    if (fs.existsSync(projectPath) && !options.force) {
+      console.error(`❌ Directory already exists: ${projectPath}`);
+      console.error('   Use --force to overwrite or choose a different name.');
+      process.exit(1);
+    }
+    
+    console.log('🚀 Creating new speclang project...');
+    console.log(`   Name: ${name}`);
+    console.log(`   Path: ${projectPath}`);
+    console.log(`   Template: ${options.template}`);
+    
+    try {
+      // Create directory structure
+      fs.mkdirSync(projectPath, { recursive: true });
+      fs.mkdirSync(path.join(projectPath, 'specs'), { recursive: true });
+      fs.mkdirSync(path.join(projectPath, 'src'), { recursive: true });
+      fs.mkdirSync(path.join(projectPath, 'tests'), { recursive: true });
+      
+      // Create .speclangrc config file
+      const speclangrc = JSON.stringify({
+        version: '0.1.0',
+        name: name,
+        targets: ['typescript'],
+        cascade: {
+          maxDepth: 50,
+          quietPeriod: 30
+        }
+      }, null, 2);
+      fs.writeFileSync(path.join(projectPath, '.speclangrc'), speclangrc);
+      console.log('   ✓ Created .speclangrc');
+      
+      // Create initial spec based on template
+      let initialSpec = '';
+      if (!options.bare) {
+        if (options.template === 'http' || options.template === 'api') {
+          initialSpec = `# speclang-header lines:8
+id: "@${name}/api"
+version: 0.1.0
+layer: 1
+tags: [api, http]
+---
+
+# ${name} API
+
+## Endpoints
+
+### @block:health @kind:endpoint
+GET /health - Health check endpoint
+
+### @block:status @kind:endpoint  
+GET /status - Service status endpoint
+`;
+        } else {
+          // minimal template
+          initialSpec = `# speclang-header lines:8
+id: "@${name}/main"
+version: 0.1.0
+layer: 1
+tags: [project]
+---
+
+# ${name}
+
+## Overview
+
+This is a new speclang project.
+
+## Getting Started
+
+1. Edit specs in the \`specs/\` directory
+2. Run \`speclang generate\` to generate code
+3. Run \`speclang cascade <spec>\` to run cascade
+`;
+        }
+        fs.writeFileSync(path.join(projectPath, 'specs', 'main.spec.md'), initialSpec);
+        console.log('   ✓ Created initial spec');
+      }
+      
+      // Create package.json if not bare
+      if (!options.bare) {
+        const packageJson = {
+          name: name,
+          version: '0.1.0',
+          type: 'module',
+          scripts: {
+            build: 'speclang generate',
+            test: 'speclang validate && npm test',
+            dev: 'speclang start'
+          },
+          dependencies: {},
+          devDependencies: {}
+        };
+        fs.writeFileSync(path.join(projectPath, 'package.json'), JSON.stringify(packageJson, null, 2));
+        console.log('   ✓ Created package.json');
+      }
+      
+      // Initialize git if requested and not in existing repo
+      if (options.git !== false && !fs.existsSync(path.join(projectPath, '.git'))) {
+        try {
+          const { execSync } = require('child_process');
+          execSync('git init', { cwd: projectPath, stdio: 'pipe' });
+          console.log('   ✓ Initialized git repository');
+        } catch (err) {
+          console.log('   ⚠ Could not initialize git');
+        }
+      }
+      
+      console.log('');
+      console.log('✅ Project created successfully!');
+      console.log('');
+      console.log('Next steps:');
+      console.log(`   cd ${targetDir}`);
+      console.log('   npm install');
+      console.log('   speclang validate');
+      console.log('   speclang generate');
+      console.log('');
+      
+    } catch (err) {
+      console.error('❌ Failed to create project:', err.message);
+      process.exit(1);
+    }
+  });
+
 program.parse();

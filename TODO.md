@@ -110,20 +110,93 @@ python3 scripts/hard-checks.py
 System is ready for packaging
 ```
 
-## Remaining Work (For Loop to Complete)
+## Remaining Work (Baby Steps for Ralph Loop)
 
-The following can now be completed by the Ralph Loop:
+### Phase 1: CLI "new" Command (10 steps)
+- [ ] Create spec for "new" command: specs/cli.spec.dir/new-command.spec.md
+- [ ] Add command definition to bin/speclang (lines 510-520)
+- [ ] Create src/cli/new.ts with command handler
+- [ ] Implement directory creation logic
+- [ ] Implement .speclangrc generation
+- [ ] Implement initial spec template
+- [ ] Implement git init option
+- [ ] Add error handling for existing directories
+- [ ] Write tests for new command
+- [ ] Validate: ./bin/speclang new test-project works
 
-- [ ] Add CLI "new" command (specs/cli.spec.dir/commands.spec.md)
-- [ ] Add CLI "check" command
-- [ ] Add CLI "search" command
-- [ ] Add CLI "expand" command
-- [ ] Add CLI "diff" command
-- [ ] Add CLI "sync" command
-- [ ] Complete 48 placeholder specs (add content)
-- [ ] Add integration tests
-- [ ] Package for NPM
-- [ ] Create GitHub release
+### Phase 2: CLI "check" Command (8 steps)
+- [ ] Create spec for "check" command: specs/cli.spec.dir/check-command.spec.md
+- [ ] Add command definition to bin/speclang
+- [ ] Create src/cli/check.ts
+- [ ] Implement spec header validation
+- [ ] Implement @ref validation
+- [ ] Add --strict and --fix flags
+- [ ] Write tests for check command
+- [ ] Validate: ./bin/speclang check runs without errors
+
+### Phase 3: CLI "search" Command (8 steps)
+- [ ] Create spec for "search" command: specs/cli.spec.dir/search-command.spec.md
+- [ ] Add command definition to bin/speclang
+- [ ] Create src/cli/search.ts
+- [ ] Implement keyword search across specs
+- [ ] Implement --kind and --tag filters
+- [ ] Add formatted output
+- [ ] Write tests for search command
+- [ ] Validate: ./bin/speclang search "cascade" returns results
+
+### Phase 4: Complete Placeholder Specs (20 steps)
+- [ ] Identify all 48 placeholder specs (<20 lines)
+- [ ] Create list: scripts/list_placeholder_specs.py
+- [ ] Expand specs/agents.spec.md (12 lines → full spec)
+- [ ] Expand specs/hello.spec.md (13 lines → full spec)
+- [ ] Expand specs/greeting.spec.md with code examples
+- [ ] Expand 5 more placeholder specs with content
+- [ ] Expand 5 more placeholder specs with content
+- [ ] Expand 5 more placeholder specs with content
+- [ ] Expand 5 more placeholder specs with content
+- [ ] Expand 5 more placeholder specs with content
+- [ ] Expand 5 more placeholder specs with content
+- [ ] Expand 5 more placeholder specs with content
+- [ ] Expand 5 more placeholder specs with content
+- [ ] Validate all specs have proper headers
+- [ ] Validate all specs pass YAML validation
+- [ ] Run cascade on expanded specs
+- [ ] Verify code generates from expanded specs
+- [ ] Write tests for expanded specs
+- [ ] Update spec count in documentation
+- [ ] Validate: All 427 specs have meaningful content
+
+### Phase 5: Integration Tests (6 steps)
+- [ ] Create tests/e2e/spec-to-code.test.ts
+- [ ] Test: spec creation → cascade → generated code
+- [ ] Test: spec edit → cascade → updated code
+- [ ] Test: spec validation → error detection
+- [ ] Test: full project initialization flow
+- [ ] Validate: npm test includes e2e tests
+
+### Phase 6: NPM Package (8 steps)
+- [ ] Update package.json with proper metadata
+- [ ] Add keywords, description, author
+- [ ] Configure files whitelist for npm
+- [ ] Add prepublishOnly script
+- [ ] Create .npmignore
+- [ ] Test: npm pack creates valid tarball
+- [ ] Test: npm install -g ./tarball works
+- [ ] Validate: speclang command available after install
+
+### Phase 7: GitHub Release (5 steps)
+- [ ] Create CHANGELOG.md with version history
+- [ ] Tag version: git tag v0.1.0
+- [ ] Push tag to GitHub
+- [ ] Create GitHub release with notes
+- [ ] Validate: Release page shows v0.1.0
+
+### Phase 8: Documentation (5 steps)
+- [ ] Update README.md with current status
+- [ ] Add installation instructions
+- [ ] Add quickstart guide
+- [ ] Add API documentation
+- [ ] Validate: All links work, docs accurate
 
 ## Bug Specs Status
 
