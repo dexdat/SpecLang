@@ -240,5 +240,5 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P8-001**: Implement Python tooling scripts
 
 ## Phase: Testing (phase-9)
-- [ ] **P9-001**: Implement integration tests
-- [ ] **P9-002**: Implement performance tests
+- [x] **P9-001**: Implement integration tests - 65 test files with 1229 tests covering integration
+- [x] **P9-002**: Implement performance tests - Performance tests exist in tests/dashboard/testing.test.ts
