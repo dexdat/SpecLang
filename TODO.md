@@ -61,7 +61,7 @@ Fixed regex pattern to detect test results correctly:
 ### Testing & Quality
 - [x] All hard checks must pass (6/6)
 - [ ] Test on clean machine (no dev dependencies)
-- [ ] Test CLI commands manually
+- [x] Test CLI commands manually
 - [ ] Verify example projects work
 - [ ] Check for console warnings/errors
 
