@@ -20,19 +20,17 @@ Fixed 13 broken references by updating depends_on to use correct @speclang/xxx I
 Validation: All references now valid
 
 ### CRITICAL-2: Complete Database Schema
-**Status:** ⚠️ Only 2 migrations (need 8+)
+**Status:** ✅ FIXED (2026-03-22)
 
 Current migrations:
+- [x] 001_initial.sql - Create core tables (specs, headers, blocks)
+- [x] 002_events.sql - File events table
+- [x] 003_cascades.sql - Cascade tracking
+- [x] 004_sessions.sql - Agent sessions
 - [x] 005_ralph.sql
+- [x] 006_locks.sql - File locks
 - [x] 007_commands.sql
-
-Missing migrations (based on specs):
-- [ ] 001_initial.sql - Create core tables (specs, headers, blocks)
-- [ ] 002_events.sql - File events table
-- [ ] 003_cascades.sql - Cascade tracking
-- [ ] 004_sessions.sql - Agent sessions
-- [ ] 006_locks.sql - File locks
-- [ ] 008_index.sql - Search index tables
+- [x] 008_index.sql - Search index tables
 
 **Reference:** See `specs/sqlite.spec.dir/migrations.spec.md`
 
