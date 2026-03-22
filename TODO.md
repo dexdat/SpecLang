@@ -188,8 +188,8 @@ System is ready for packaging
 - [x] Configure files whitelist for npm
 - [x] Add prepublishOnly script
 - [x] Test: npm pack creates valid tarball (779KB)
-- [ ] Test: npm install -g ./tarball works
-- [ ] Validate: speclang command available after install
+- [x] Test: npm install -g ./tarball works
+- [x] Validate: speclang command available after install
 
 ### Phase 7: GitHub Release (5 steps)
 - [ ] Create CHANGELOG.md with version history
