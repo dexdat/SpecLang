@@ -237,7 +237,7 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [ ] **P7-003**: Auth Example
 
 ## Phase: Tooling Scripts (phase-8)
-- [ ] **P8-001**: Implement Python tooling scripts
+- [x] **P8-001**: Implement Python tooling scripts
 
 ## Phase: Testing (phase-9)
 - [ ] **P9-001**: Implement integration tests
