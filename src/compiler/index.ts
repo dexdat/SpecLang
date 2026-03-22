@@ -1,1 +1,1 @@
-../../specs/compiler.spec.dir/src/index.ts
+specs/compiler.spec.dir/index.spec.md

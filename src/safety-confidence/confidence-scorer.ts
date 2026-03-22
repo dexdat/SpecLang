@@ -1,1 +1,1 @@
-../../specs/safety-confidence.spec.dir/src/confidence-scorer.ts
+specs/safety-confidence.spec.dir/src/confidence-scorer.spec.md

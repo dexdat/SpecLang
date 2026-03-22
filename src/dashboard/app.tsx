@@ -1,1 +1,1 @@
-../../specs/ui.spec.dir/src/dashboard/app.tsx
+specs/ui.spec.dir/app.spec.md

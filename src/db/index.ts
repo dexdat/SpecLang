@@ -1,1 +1,1 @@
-../../specs/sqlite.spec.dir/src/index.ts
+specs/sqlite.spec.dir/schema.spec.md

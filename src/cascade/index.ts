@@ -1,1 +1,1 @@
-../../specs/cascade.spec.dir/src/index.ts
+specs/cascade.spec.dir/index.spec.md
