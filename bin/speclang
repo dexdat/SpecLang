@@ -774,4 +774,176 @@ This is a new speclang project.
     }
   });
 
+// ============================================================================
+// EXPAND COMMAND - Expand a block into detailed specs
+// ============================================================================
+
+program
+  .command('expand <block-id>')
+  .description('Expand a block ID into detailed specs')
+  .option('-d, --depth <n>', 'Expansion depth', '1')
+  .option('--no-ai', 'Disable AI expansion (show raw blocks)')
+  .option('-v, --verbose', 'Show detailed output')
+  .action(async (blockId, options) => {
+    const projectDir = process.cwd();
+    const specsDir = path.join(projectDir, 'specs');
+    
+    if (!fs.existsSync(specsDir)) {
+      console.error('❌ No specs directory found. Run from a speclang project.');
+      process.exit(1);
+    }
+    
+    // Parse block ID - extract spec and block name
+    let specPattern = blockId;
+    let blockName = null;
+    
+    if (blockId.includes('#')) {
+      const parts = blockId.split('#');
+      specPattern = parts[0];
+      blockName = parts[1];
+    }
+    
+    // Search all spec files - filter by block name later
+    // If blockName specified (from #), use it; otherwise use the whole blockId
+    // Convert dots to slashes for matching (cli.new -> cli/new)
+    let searchPattern = (blockName || blockId).replace(/\./g, '/');
+    
+    // Also set blockName for exact matching
+    if (!blockName) {
+      blockName = searchPattern;
+    }
+    
+    console.log('🔍 Expanding block:', blockId);
+    console.log(`   Pattern: ${searchPattern}`);
+    if (blockName) {
+      console.log(`   Block: ${blockName}`);
+    }
+    
+    // Find matching spec files
+    const { execSync } = require('child_process');
+    let specFiles = [];
+    
+    // If a specific block is requested, find spec files that might contain it
+    if (blockName) {
+      // Search for specs that contain this block name (or partial match)
+      const searchTerm = blockName.includes('/') ? blockName : `@.*${blockName}`;
+      try {
+        const grepOutput = execSync(`grep -rl "${searchTerm}" "${specsDir}" 2>/dev/null || true`, { encoding: 'utf-8' });
+        specFiles = grepOutput.trim().split('\n').filter(f => f.length > 0 && f.endsWith('.spec.md'));
+      } catch (e) {
+        // No matches
+      }
+      }
+    
+    // If no specific files found, search all
+    if (specFiles.length === 0) {
+      try {
+        const findOutput = execSync(`find "${specsDir}" -name "*.spec.md" -type f`, { encoding: 'utf-8' });
+        specFiles = findOutput.trim().split('\n').filter(f => f.length > 0);
+      } catch (e) {
+        console.error('❌ Could not find spec files');
+        process.exit(1);
+      }
+    }
+    
+    if (specFiles.length === 0) {
+      console.error(`❌ No specs found matching: ${blockId}`);
+      process.exit(1);
+    }
+    
+    console.log(`   Found ${specFiles.length} matching spec(s)`);
+    
+    // Search for the block in spec files
+    // Match formats:
+    // 1. ### @blockname followed by ```speclang # @block:name @kind:kind ...
+    // 2. ### @block:name @kind:kind directly
+    let foundBlocks = [];
+    
+    for (const specFile of specFiles) {
+      try {
+        const content = fs.readFileSync(specFile, 'utf-8');
+        
+        // First try: find ### @block:name followed by ```speclang block
+        // The format in specs is:
+        // ### @cli/new
+        // ```speclang
+        // # @block:cli/new @kind:operation
+        // ...
+        // ```
+        
+        // Find all ### @ patterns (block headings)
+        // This matches: ### @blockname\ncontent
+        const headingRegex = /### @([^\s\n]+)\s*\n([\s\S]*?)(?=\n###|\n```|\n##\s|$)/g;
+        let match;
+        
+        while ((match = headingRegex.exec(content)) !== null) {
+          const headingName = match[1];
+          const blockContent = match[2].trim();
+          
+          // Check if there's a @kind: in the content
+          const kindMatch = blockContent.match(/# @kind:(\w+)/);
+          const blockNameMatch = blockContent.match(/# @block:([^\s]+)/);
+          
+          const name = blockNameMatch ? blockNameMatch[1] : headingName;
+          const kind = kindMatch ? kindMatch[1] : 'unknown';
+          
+          // If blockName specified, filter by it
+          if (blockName && name !== blockName) {
+            continue;
+          }
+          
+          // Also filter by search pattern if specified
+          // Match blocks that START WITH the search pattern
+          if (searchPattern && !name.startsWith(searchPattern) && !headingName.startsWith(searchPattern)) {
+            continue;
+          }
+          
+          foundBlocks.push({
+            file: path.relative(projectDir, specFile),
+            name,
+            kind,
+            content: blockContent
+          });
+        }
+      } catch (err) {
+        // Skip files we can't read
+      }
+    }
+    
+    if (foundBlocks.length === 0) {
+      console.error(`❌ Block not found: ${blockId}`);
+      if (!blockName) {
+        console.log('   Note: Use @spec/file#blockname to specify a block');
+      }
+      process.exit(1);
+    }
+    
+    // Display found blocks
+    console.log(`\n📦 Found ${foundBlocks.length} block(s):\n`);
+    
+    for (const block of foundBlocks) {
+      console.log(`--- ${block.file} ---`);
+      console.log(`@block:${block.name} @kind:${block.kind}`);
+      console.log('');
+      
+      // Show first few lines of content
+      const lines = block.content.split('\n');
+      const preview = lines.slice(0, 20).join('\n');
+      console.log(preview);
+      
+      if (lines.length > 20) {
+        console.log(`    ... ${lines.length - 20} more lines`);
+      }
+      console.log('');
+    }
+    
+    // If AI expansion requested (not implemented yet)
+    if (options.ai && foundBlocks.length > 0) {
+      console.log('💡 AI expansion not yet implemented.');
+      console.log('   The block has been loaded and is ready for manual expansion.');
+    }
+    
+    console.log('✅ Expansion complete');
+  });
+
 program.parse();
