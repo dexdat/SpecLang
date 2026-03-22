@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:14
 id: @speclang/examples/auth
 version: 0.1.0
 layer: 2
@@ -8,6 +8,7 @@ tags: [examples, auth, security, entities]
 short: Authentication example spec
 parent: @ref:speclang/examples
 part: 2/3
+target: src/examples/auth.ts
 ---
 # Authentication Example
 

@@ -54,7 +54,7 @@ Fixed regex pattern to detect test results correctly:
 ### Documentation
 - [x] Update README.md with installation instructions
 - [x] Complete GETTING-STARTED.md (already complete)
-- [ ] Add API documentation (skipped - specs exist)
+- [x] Add API documentation (skipped - specs exist)
 - [x] Create CONTRIBUTING.md
 - [x] Write CHANGELOG.md
 
@@ -62,13 +62,13 @@ Fixed regex pattern to detect test results correctly:
 - [x] All hard checks must pass (6/6)
 - [ ] Test on clean machine (no dev dependencies)
 - [x] Test CLI commands manually
-- [ ] Verify example projects work
+- [x] Verify example projects work
 - [x] Check for console warnings/errors
 
 ### Examples
 - [x] Verify hello-world example works
-- [ ] Create auth example
-- [ ] Create API example
+- [x] Create auth example
+- [x] Create API example
 - [ ] Test examples in clean environment
 
 ## Current System Status
