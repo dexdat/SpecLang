@@ -194,7 +194,7 @@ System is ready for packaging
 ### Phase 7: GitHub Release (5 steps)
 - [x] Create CHANGELOG.md with version history
 - [x] Tag version: git tag v0.1.0
-- [ ] Push tag to GitHub
+- [x] Push tag to GitHub
 - [ ] Create GitHub release with notes
 - [ ] Validate: Release page shows v0.1.0
 
