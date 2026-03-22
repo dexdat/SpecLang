@@ -81,6 +81,9 @@ program
         console.log('\n✅ Cascade complete');
         console.log(`   Generated: ${result.filesGenerated.length} files`);
         console.log(`   Converged: ${result.converged ? 'Yes' : 'No'}`);
+        if (result.warning) {
+          console.log(`   ⚠️  ${result.warning}`);
+        }
         if (result.filesGenerated.length > 0) {
           result.filesGenerated.forEach(f => console.log(`   - ${f}`));
         }

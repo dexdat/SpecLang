@@ -26,6 +26,7 @@ export interface CascadeResult {
   converged: boolean;
   convergenceTime?: number;
   error?: string;
+  warning?: string;
 }
 
 /**
@@ -79,6 +80,11 @@ export async function runCascade(
     // 4. Generate code from spec blocks
     const generatedFiles = await generateCode(spec, generatedDir, verbose);
     result.filesGenerated = generatedFiles;
+
+    // Warning if no files generated
+    if (generatedFiles.length === 0) {
+      result.warning = 'No TypeScript code blocks found in spec. Add code blocks with ```typescript to generate code.';
+    }
 
     // 5. Run tests if any test files were generated
     const testFiles = generatedFiles.filter(f => f.endsWith('.test.ts'));
