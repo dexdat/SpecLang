@@ -160,7 +160,7 @@ System is ready for packaging
 - [x] Expand specs/examples-slash-greeting.spec.md (8 lines → expanded)
 - [x] Expand 3 more placeholder specs (demo-slash-hello, greeting.spec.md check, index check)
 - [x] Expand 5 more placeholder specs with content (2026-03-22: 3 specs expanded)
-- [ ] Expand 5 more placeholder specs with content
+- [x] Expand 5 more placeholder specs with content (2026-03-22: generate-mcp-server, generate-ralph-loop, generate-todo, fix-headers, generate-opencode-plugin)
 - [ ] Expand 5 more placeholder specs with content
 - [ ] Expand 5 more placeholder specs with content
 - [ ] Expand 5 more placeholder specs with content
@@ -226,6 +226,17 @@ System is ready for packaging
   - validate-autonomous.spec.md (15 → 167 lines)
 - Fixed header line counts for proper YAML parsing
 - Reduced placeholder count from 31 to 28
+
+### 2026-03-22 Session (continued)
+- Expanded 5 more placeholder specs in scripts.spec.dir:
+  - generate-mcp-server.spec.md (15 → 201 lines)
+  - generate-ralph-loop.spec.md (15 → 190 lines)
+  - generate-todo.spec.md (15 → 180 lines)
+  - fix-headers.spec.md (15 → 154 lines)
+  - generate-opencode-plugin.spec.md (15 → 167 lines)
+- Reduced placeholder count from 28 to 23
+- Build: ✓ passes
+- Tests: ✓ 1238 pass
 
 **The Ralph Loop can now run successfully!**
 **SPECLANG-BUILD-COMPLETE**
