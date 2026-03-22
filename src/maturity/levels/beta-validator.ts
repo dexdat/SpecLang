@@ -1,1 +1,1 @@
-../../specs/maturity.spec.dir/src/levels/beta-validator.ts
+../../../specs/maturity.spec.dir/src/levels/beta-validator.ts

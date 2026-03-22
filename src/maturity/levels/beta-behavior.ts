@@ -1,1 +1,1 @@
-../../specs/maturity.spec.dir/src/levels/beta-behavior.ts
+../../../specs/maturity.spec.dir/src/levels/beta-behavior.ts

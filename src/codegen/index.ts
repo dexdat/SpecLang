@@ -1,1 +1,1 @@
-specs/codegen.spec.md
+../../specs/codegen.spec.dir/src/codegen/index.ts

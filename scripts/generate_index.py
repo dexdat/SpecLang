@@ -1,1 +1,1 @@
-specs/scripts.spec.dir/generate_index.py.spec.md
+specs/scripts.spec.dir/generate_index.py

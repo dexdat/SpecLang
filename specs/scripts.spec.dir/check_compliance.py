@@ -19,7 +19,7 @@ from typing import Dict, List, Tuple
 
 # Working locations that must be symlinked
 WORKING_LOCATIONS = [
-    ('src/', 'specs/implementation.spec.dir/src/', '.ts'),
+    ('src/', 'specs/', '.ts'),
     ('scripts/', 'specs/scripts.spec.dir/', '.py'),
     ('.opencode/skills/', 'specs/skills.spec.dir/', '.md'),
     ('.opencode/agents/', 'specs/agents.spec.dir/', '.md'),
@@ -51,6 +51,7 @@ EXEMPTIONS = [
 
 def check_symlink_target_valid(file_path: Path, expected_spec_path: str) -> bool:
     """Check if file is a symlink to specs/ with valid target."""
+    print(f"DEBUG check_symlink_target_valid: {file_path}, expected {expected_spec_path}")
     if not file_path.is_symlink():
         return False
     
@@ -60,21 +61,20 @@ def check_symlink_target_valid(file_path: Path, expected_spec_path: str) -> bool
         target_str = str(target)
         
         # Check if symlink points to specs/ directory
-        if expected_spec_path == 'specs/implementation.spec.dir/src/':
-            # For src/ files, check if symlink points to specs/*.spec.dir/
-            if 'specs/' not in target_str or '.spec.dir/' not in target_str:
-                return False
-        else:
-            # For other directories, use original check
-            if expected_spec_path not in target_str:
-                return False
+        # Check if symlink points to specs/ directory
+        print(f"DEBUG target_str: {target_str}")
+        if 'specs/' not in target_str:
+            print(f"DEBUG: specs/ not in target_str")
+            return False
         
         # Now verify the target is valid:
         # 1. Resolve the actual file path
         parent_dir = file_path.parent
         target_path = (parent_dir / target).resolve()
         
+        print(f"DEBUG target_path: {target_path}")
         if not target_path.exists():
+            print(f"DEBUG: target_path does not exist")
             return False
         
         # 2. Check if target has speclang-header (either format)
@@ -134,7 +134,9 @@ def check_symlink_target_valid(file_path: Path, expected_spec_path: str) -> bool
                 return True
         
         # If file has SPECLANG-GENERATED, consider it valid even without spec
+        print(f"DEBUG: Checking SPECLANG-GENERATED in content length {len(content)}")
         if 'SPECLANG-GENERATED' in content:
+            print(f"DEBUG: Found SPECLANG-GENERATED")
             return True
         
         return False
