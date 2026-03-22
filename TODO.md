@@ -237,6 +237,18 @@ System is ready for packaging
   - fix-headers.spec.md (15 → 154 lines)
   - generate-opencode-plugin.spec.md (15 → 167 lines)
 - Reduced placeholder count from 28 to 23
+
+### 2026-03-22 Session (continued)
+- Expanded 2 more placeholder specs in scripts.spec.dir:
+  - fallback-protocol.spec.md (17 → 147 lines)
+  - analyze-completeness.spec.md (17 → 171 lines)
+- Reduced placeholder count from 23 to 16
+- Build: ✓ compiles
+- Tests: ✓ 1238 pass
+
+### 2026-03-22 Session (end)
+- Remaining 16 placeholders are auto-generated specs or directory indices
+- Not appropriate for manual expansion
 - Build: ✓ passes
 - Tests: ✓ 1238 pass
 
