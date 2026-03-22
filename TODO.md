@@ -192,7 +192,7 @@ System is ready for packaging
 - [x] Validate: speclang command available after install
 
 ### Phase 7: GitHub Release (5 steps)
-- [ ] Create CHANGELOG.md with version history
+- [x] Create CHANGELOG.md with version history
 - [ ] Tag version: git tag v0.1.0
 - [ ] Push tag to GitHub
 - [ ] Create GitHub release with notes
