@@ -161,6 +161,8 @@ System is ready for packaging
 - [x] Expand 3 more placeholder specs (demo-slash-hello, greeting.spec.md check, index check)
 - [x] Expand 5 more placeholder specs with content (2026-03-22: 3 specs expanded)
 - [x] Expand 5 more placeholder specs with content (2026-03-22: generate-mcp-server, generate-ralph-loop, generate-todo, fix-headers, generate-opencode-plugin)
+- [x] Expand 5 more placeholder specs with content (2026-03-22: fallback-protocol, analyze-completeness)
+- [ ] Expand 5 more placeholder specs with content
 - [ ] Expand 5 more placeholder specs with content
 - [ ] Expand 5 more placeholder specs with content
 - [ ] Expand 5 more placeholder specs with content
