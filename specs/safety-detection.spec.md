@@ -7,8 +7,8 @@ agent_support: agent_autonomous
 tags: [safety, detection, security, validation]
 short: Safety Detection Mechanisms for autonomous agents
 depends_on:
-  - "@ref:specs/safety"
-  - "@ref:specs/skills"
+  - "@specs/safety"
+  - "@speclang/skills"
 ---
 
 # Safety Detection Mechanisms

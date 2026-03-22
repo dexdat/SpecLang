@@ -14,9 +14,9 @@ children:
   - "@ref:specs/roadmap.spec.dir/mvp.spec.dir/agent-tools-api"
   - "@ref:specs/roadmap.spec.dir/mvp.spec.dir/file-ownership"
 depends_on:
-  - "@ref:specs/roadmap/poc"
-  - "@ref:specs/agents"
-  - "@ref:specs/agent-protocol"
+  - "@speclang/roadmap/poc"
+  - "@speclang/agents"
+  - "@speclang/agent-protocol"
 ---
 
 # MVP Phase: Minimum Viable Product

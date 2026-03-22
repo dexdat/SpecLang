@@ -14,9 +14,9 @@ children:
   - "@ref:specs/roadmap.spec.dir/production.spec.dir/compliance"
   - "@ref:specs/roadmap.spec.dir/production.spec.dir/support"
 depends_on:
-  - "@ref:specs/roadmap/beta"
-  - "@ref:specs/deployment"
-  - "@ref:specs/safety-nets"
+  - "@speclang/roadmap/beta"
+  - "@speclang/deployment"
+  - "@speclang/safety-nets"
 ---
 
 # Production Phase: Enterprise Ready

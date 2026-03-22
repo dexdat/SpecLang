@@ -8,9 +8,9 @@ tags: [agent, behavior, matrix, implementation]
 short: Agent behavior matrix implementation
 target: src/agent-behavior/behavior-matrix.ts
 depends_on:
-  - "@ref:specs/project-maturity-levels"
-  - "@ref:specs/agent-support-levels"
-  - "@ref:specs/agent-behavior-matrix"
+  - "@speclang/project-maturity-levels"
+  - "@speclang/agent-support-levels"
+  - "@speclang/agent-behavior-matrix"
 ---
 
 # Agent Behavior Matrix Implementation

@@ -14,9 +14,9 @@ children:
   - "@ref:specs/roadmap.spec.dir/alpha.spec.dir/test-integration"
   - "@ref:specs/roadmap.spec.dir/alpha.spec.dir/recovery-system"
 depends_on:
-  - "@ref:specs/roadmap/mvp"
-  - "@ref:specs/pipeline"
-  - "@ref:specs/validation"
+  - "@speclang/roadmap/mvp"
+  - "@speclang/pipeline"
+  - "@speclang/validation"
 ---
 
 # Alpha Phase: Internal Testing
