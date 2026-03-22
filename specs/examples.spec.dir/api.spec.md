@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:14
 id: @speclang/examples/api
 version: 0.1.0
 layer: 2
@@ -8,6 +8,7 @@ tags: [examples, api, design, endpoints]
 short: API design example spec
 parent: @ref:speclang/examples
 part: 3/3
+target: src/examples/api.ts
 ---
 # API Design Example
 
