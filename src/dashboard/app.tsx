@@ -1,0 +1,1 @@
+../../specs/ui.spec.dir/src/dashboard/app.tsx
