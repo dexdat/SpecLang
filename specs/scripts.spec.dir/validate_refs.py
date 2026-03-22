@@ -4,11 +4,16 @@
 import json
 
 def load_index():
-    entries = []
     with open('_index.json', 'r') as f:
-        for line in f:
-            entries.append(json.loads(line))
-    return entries
+        data = json.load(f)
+    # Handle both old format (list) and new format (dict with 'specs' key)
+    if isinstance(data, dict):
+        specs = data.get('specs', {})
+        # If specs is a dict, return its values; if it's a list, return as-is
+        if isinstance(specs, dict):
+            return list(specs.values())
+        return specs
+    return data
 
 def main():
     entries = load_index()
