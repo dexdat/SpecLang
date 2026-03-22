@@ -52,7 +52,7 @@ Fixed regex pattern to detect test results correctly:
 - [x] Add keywords, author, license fields (author updated)
 
 ### Documentation
-- [ ] Update README.md with installation instructions
+- [x] Update README.md with installation instructions
 - [ ] Complete GETTING-STARTED.md
 - [ ] Add API documentation
 - [ ] Create CONTRIBUTING.md
