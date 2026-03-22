@@ -142,15 +142,15 @@ System is ready for packaging
 - [x] Write tests for check command
 - [x] Validate: ./bin/speclang check runs without errors
 
-### Phase 3: CLI "search" Command (8 steps)
-- [ ] Create spec for "search" command: specs/cli.spec.dir/search-command.spec.md
-- [ ] Add command definition to bin/speclang
-- [ ] Create src/cli/search.ts
-- [ ] Implement keyword search across specs
-- [ ] Implement --kind and --tag filters
-- [ ] Add formatted output
-- [ ] Write tests for search command
-- [ ] Validate: ./bin/speclang search "cascade" returns results
+### Phase 3: CLI "search" Command (8 steps) ✅ COMPLETE
+- [x] Create spec for "search" command: specs/cli.spec.dir/search-command.spec.md (already exists in commands.spec.md)
+- [x] Add command definition to bin/speclang
+- [x] Create src/cli/search.ts (already exists in specs/cli.spec.dir/src/)
+- [x] Implement keyword search across specs
+- [x] Implement --kind and --tag filters
+- [x] Add formatted output
+- [x] Write tests for search command (tests already exist in cli.test.ts)
+- [x] Validate: ./bin/speclang search "cascade" returns results
 
 ### Phase 4: Complete Placeholder Specs (20 steps)
 - [ ] Identify all 48 placeholder specs (<20 lines)
