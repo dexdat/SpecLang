@@ -217,6 +217,76 @@ interface SpecBlock {
 }
 
 /**
+ * Generate TypeScript code from a spec block description
+ * This is a template-based generator that creates basic TypeScript from descriptions
+ */
+function generateTypeScriptFromBlock(block: SpecBlock): string {
+  const lines: string[] = [];
+  
+  // Extract parameters from the block code/description
+  const paramMatches = block.code.match(/\*\*Parameters:\*\*\s*\n((?:\s*-\s*\w+:\s*\w+[^\n]*\n?)+)/);
+  const returnMatch = block.code.match(/\*\*Returns:\*\*\s*([^\n]+)/);
+  
+  if (block.kind === 'function') {
+    // Generate function signature
+    const params: string[] = [];
+    if (paramMatches) {
+      const paramLines = paramMatches[1].trim().split('\n');
+      for (const line of paramLines) {
+        const match = line.match(/-\s*(\w+):\s*(\w+)/);
+        if (match) {
+          const [, name, type] = match;
+          const tsType = type.toLowerCase() === 'string' ? 'string' : 
+                        type.toLowerCase() === 'int' || type.toLowerCase() === 'float' ? 'number' : 
+                        type.toLowerCase() === 'bool' ? 'boolean' : 'any';
+          params.push(`${name}: ${tsType}`);
+        }
+      }
+    }
+    
+    const returnType = returnMatch ? 
+      (returnMatch[1].toLowerCase().includes('string') ? 'string' : 
+       returnMatch[1].toLowerCase().includes('number') || returnMatch[1].toLowerCase().includes('int') ? 'number' : 
+       returnMatch[1].toLowerCase().includes('bool') ? 'boolean' : 
+       returnMatch[1].toLowerCase().includes('void') ? 'void' : 'any') : 'any';
+    
+    lines.push(`export function ${block.name}(${params.join(', ')}): ${returnType} {`);
+    lines.push(`  // TODO: Implement ${block.name}`);
+    lines.push(`  throw new Error('${block.name} not implemented');`);
+    lines.push(`}`);
+  } else if (block.kind === 'interface' || block.kind === 'entity') {
+    // Generate interface
+    lines.push(`export interface ${block.name} {`);
+    
+    if (paramMatches) {
+      const paramLines = paramMatches[1].trim().split('\n');
+      for (const line of paramLines) {
+        const match = line.match(/-\s*(\w+):\s*(\w+)(?:\s*-\s*(.+))?/);
+        if (match) {
+          const [, name, type, desc] = match;
+          const tsType = type.toLowerCase() === 'string' ? 'string' : 
+                        type.toLowerCase() === 'int' || type.toLowerCase() === 'float' ? 'number' : 
+                        type.toLowerCase() === 'bool' ? 'boolean' : 'any';
+          if (desc) {
+            lines.push(`  /** ${desc} */`);
+          }
+          lines.push(`  ${name}: ${tsType};`);
+        }
+      }
+    }
+    
+    lines.push(`}`);
+  } else if (block.kind === 'class') {
+    // Generate class
+    lines.push(`export class ${block.name} {`);
+    lines.push(`  // TODO: Implement ${block.name} class`);
+    lines.push(`}`);
+  }
+  
+  return lines.join('\n');
+}
+
+/**
  * Generate code files from spec blocks
  */
 async function generateCode(
@@ -232,13 +302,23 @@ async function generateCode(
       continue;
     }
 
-    // Only generate TypeScript blocks
-    if (block.language !== 'typescript' && block.language !== 'ts') {
+    let code: string;
+    let fileName: string;
+    
+    // Check if block has existing TypeScript code
+    if (block.language === 'typescript' || block.language === 'ts') {
+      // Use existing code
+      code = block.code;
+      fileName = block.name.replace(/-/g, '_') + '.ts';
+    } else if (['function', 'interface', 'entity', 'class'].includes(block.kind)) {
+      // Generate code from description
+      code = generateTypeScriptFromBlock(block);
+      fileName = block.name.replace(/-/g, '_') + '.ts';
+    } else {
+      // Skip other block types
       continue;
     }
 
-    // Generate filename from block name
-    const fileName = block.name.replace(/-/g, '_') + '.ts';
     const filePath = path.join(outputDir, fileName);
 
     // Add auto-generated header
@@ -253,7 +333,7 @@ async function generateCode(
 
 `;
     
-    fs.writeFileSync(filePath, header + block.code);
+    fs.writeFileSync(filePath, header + code);
     generatedFiles.push(filePath);
 
     if (verbose) {

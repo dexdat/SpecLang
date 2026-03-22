@@ -1,5 +1,5 @@
 # speclang-header lines:12
-id: @specs/compiler
+id: "@specs/compiler"
 version: 1.0.0
 layer: 3
 project_level: Alpha
@@ -13,7 +13,7 @@ target: src/compiler/index.ts
 
 The SpecLang compiler transforms specification files into executable code for various target languages.
 
-### @block:overview @kind:note
+### @block::overview @kind:note
 
 **Compiler Pipeline:**
 1. **Parse** - Read spec files and extract blocks, references, headers
@@ -28,7 +28,7 @@ The SpecLang compiler transforms specification files into executable code for va
 - Python
 - Rust (planned)
 
-### @block:index-export @kind:code
+### @block::index-export @kind:code
 
 ```typescript
 export * from "./targets";

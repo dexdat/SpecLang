@@ -39,7 +39,7 @@ Creates:
 Create `specs/auth.spec.md`:
 ```yaml
 # speclang-header lines:12
-id: @specs/auth
+id: "@specs/auth"
 version: 1.0.0
 layer: 3
 agent_support: agent_autonomous

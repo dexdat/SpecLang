@@ -1,5 +1,5 @@
 # speclang-header lines:15
-id: @specs/safety-detection
+id: "@specs/safety-detection"
 version: 1.0.0
 layer: 5
 project_level: Alpha
@@ -43,11 +43,11 @@ console.log(`Found ${report.total_detections} issues`);
 console.log(`Risk score: ${(report.normalized_risk * 100).toFixed(1)}%`);
 ```
 
-### @block:exports @kind:entity
+### @block::exports @kind:entity
 
 Exports all detection types and functions.
 
-### @block:detectors @kind:interface
+### @block::detectors @kind:interface
 
 Detector implementations:
 - HardcodedSecretsDetector
@@ -56,6 +56,6 @@ Detector implementations:
 - BehavioralAnomalyDetector
 - QualityDetector
 
-### @block:aggregator @kind:operation
+### @block::aggregator @kind:operation
 
 DetectionAggregator class runs all enabled detectors and produces consolidated reports.

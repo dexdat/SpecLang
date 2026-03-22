@@ -1,5 +1,5 @@
 # speclang-header lines:12
-id: @specs/compiler/phases
+id: "@specs/compiler/phases"
 version: 1.0.0
 layer: 4
 project_level: Alpha
@@ -13,7 +13,7 @@ target: src/compiler/phases/index.ts
 
 The compilation pipeline consists of distinct phases that transform specs into code.
 
-### @block:phases-export @kind:code
+### @block::phases-export @kind:code
 
 ```typescript
 export * from './types';

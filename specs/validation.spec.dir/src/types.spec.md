@@ -1,5 +1,5 @@
 # speclang-header lines:13
-id: @specs/validation/types
+id: "@specs/validation/types"
 version: 1.0.0
 layer: 5
 project_level: Alpha
@@ -11,7 +11,7 @@ short: Validation type definitions
 
 # Validation Types
 
-### @block:interfaces @kind:entity
+### @block::interfaces @kind:entity
 
 Core type definitions for the validation system.
 
@@ -57,6 +57,6 @@ interface ValidationConfig {
 }
 ```
 
-### @block:helpers @kind:code
+### @block::helpers @kind:code
 
 Helper functions: createError(), createWarning(), DEFAULT_VALIDATION_CONFIG

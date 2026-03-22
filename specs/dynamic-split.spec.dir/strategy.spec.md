@@ -1,5 +1,5 @@
 # speclang-header lines:13
-id: @speclang/dynamic-split/strategy
+id: "@speclang/dynamic-split/strategy"
 version: 0.1.0
 layer: 2
 tags: [splitting, strategy, logic]

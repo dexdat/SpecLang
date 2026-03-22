@@ -33,7 +33,7 @@ Converts spec blocks to flowchart syntax.
 
 **Input:**
 ```speclang
-### @block:process @kind:flow
+### @block::process @kind:flow
 Step 1 → Step 2 → Step 3
 ```
 

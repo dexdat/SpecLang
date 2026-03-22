@@ -1,5 +1,5 @@
 # speclang-header lines:8
-id: @bugs/integration-test-template
+id: "@bugs/integration-test-template"
 version: 1.0.0
 layer: 5
 tags: [bug, template, documentation]

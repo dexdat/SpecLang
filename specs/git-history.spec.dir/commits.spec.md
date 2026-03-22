@@ -1,5 +1,5 @@
 # speclang-header lines:12
-id: @speclang/git-history/commits
+id: "@speclang/git-history/commits"
 version: 0.1.0
 layer: 2
 tags: [git, history, commits, traceability]

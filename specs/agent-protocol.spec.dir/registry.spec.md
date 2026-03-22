@@ -1,5 +1,5 @@
 # speclang-header lines:10
-id: @speclang/agent-protocol/registry
+id: "@speclang/agent-protocol/registry"
 version: 0.1.0
 layer: 5
 project_level: Alpha

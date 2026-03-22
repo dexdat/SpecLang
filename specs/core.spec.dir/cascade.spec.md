@@ -1,5 +1,5 @@
 # speclang-header lines:11
-id: @speclang/core/cascade
+id: "@speclang/core/cascade"
 version: 0.1.0
 layer: 2
 project_level: Alpha

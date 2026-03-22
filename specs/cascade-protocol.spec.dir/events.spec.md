@@ -1,5 +1,5 @@
 # speclang-header lines:13
-id: @speclang/cascade-protocol/events
+id: "@speclang/cascade-protocol/events"
 version: 1.0.0
 layer: 2
 tags: [cascade, protocol, events, definitions]

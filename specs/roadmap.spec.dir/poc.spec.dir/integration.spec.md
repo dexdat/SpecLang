@@ -171,7 +171,7 @@ id: "@test/demo"
 version: 1.0.0
 ---
 
-### @block:hello @kind:function
+### @block::hello @kind:function
 Hello function.
 `);
     

@@ -165,7 +165,7 @@ HeaderSplitFields:
 # @block:format/header-example @kind:code
 ```yaml
 # speclang-header
-id: @myapp/auth
+id: "@myapp/auth"
 version: 1.2.0
 layer: 1
 project_level: Alpha
@@ -176,7 +176,7 @@ imports:
   - @myapp/users
 status: stable
 owner: @team-security
-refs: [@ref:northstar#auth]
+refs: ["@ref:northstar#auth"]
 
 ---
 ```
@@ -189,7 +189,7 @@ refs: [@ref:northstar#auth]
 Parent index spec (auth.spec.md):
 ```yaml
 # speclang-header
-id: @myapp/auth
+id: "@myapp/auth"
 version: 1.2.0
 children:
   - @ref:specs/auth.spec.dir/entities
@@ -204,7 +204,7 @@ This spec has been split. See auth.spec.dir/ for details.
 Child spec (auth.spec.dir/entities.spec.yaml):
 ```yaml
 # speclang-header
-id: @myapp/auth.spec.dir/entities
+id: "@myapp/auth".spec.dir/entities
 parent: @ref:specs/auth
 part: 1/3
 siblings:
@@ -227,7 +227,7 @@ short: "Auth entities"
 # @block:format/minimal @kind:code
 ```speclang
 # speclang-header
-id: @example/minimal
+id: "@example/minimal"
 version: 1.0.0
 
 ---

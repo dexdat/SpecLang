@@ -1,5 +1,5 @@
 # speclang-header lines:15
-id: @specs/meta
+id: "@specs/meta"
 version: 1.0.0
 layer: 5
 target: src/meta/
@@ -11,19 +11,19 @@ This spec defines meta-programming utilities for SpecLang, including bootstrap, 
 
 ## Components
 
-### @block:bootstrap @kind:code
+### @block::bootstrap @kind:code
 Bootstrap utilities for meta-circular compilation.
 
-### @block:generator @kind:code
+### @block::generator @kind:code
 Code generation utilities for meta-programming.
 
-### @block:validator @kind:code
+### @block::validator @kind:code
 Meta-spec validation utilities.
 
-### @block:types @kind:code
+### @block::types @kind:code
 Type definitions for meta-programming.
 
-### @block:index @kind:code
+### @block::index @kind:code
 Main meta module entry point.
 
 ## Dependencies

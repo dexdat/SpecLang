@@ -381,7 +381,7 @@
             "tests/validation-rules.test.ts"
           ],
           "priority": 24,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-025",

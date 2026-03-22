@@ -4,5 +4,5 @@ version: 1.0.0
 layer: 5
 ---
 
-### @block:directory @kind:note
+### @block::directory @kind:note
 Generated directory for @examples/greeting spec.

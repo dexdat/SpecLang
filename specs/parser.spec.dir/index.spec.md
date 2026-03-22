@@ -1,5 +1,5 @@
 # speclang-header lines:19
-id: @speclang/parser/index
+id: "@speclang/parser/index"
 version: 1.0.0
 layer: 5
 project_level: Alpha
@@ -13,7 +13,7 @@ target: src/parser/index.ts
 
 This module provides spec file parsing, validation, and header extraction functionality for SpecLang.
 
-### @block:parser/main @kind:code
+### @block::parser/main @kind:code
 
 The parser module is the core engine for:
 - Parsing spec file headers

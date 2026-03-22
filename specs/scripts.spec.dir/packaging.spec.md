@@ -34,7 +34,7 @@ Before packaging, the system must pass all hard checks:
 
 ## Packaging Steps
 
-### @block:packaging/steps @kind:operation
+### @block::packaging/steps @kind:operation
 ```speclang
 packagingSteps:
   1. Run hard checks:

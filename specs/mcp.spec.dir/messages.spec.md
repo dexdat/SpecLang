@@ -267,7 +267,7 @@ MessagePriorities:
     "title": "Ambiguous password validation requirements",
     "description": "The spec says 'validate password' but doesn't specify minimum length, character requirements, or whether to check against breached password databases.",
     "suggested_fix": "Add specific requirements: minimum 8 characters, at least one uppercase, one lowercase, one number, and optionally check against HaveIBeenPwned API.",
-    "code_snippet": "### @block:auth/password-validation @kind:operation\nPassword validation should:\n1. Minimum 8 characters\n2. At least one uppercase letter\n3. At least one lowercase letter\n4. At least one number\n5. Optional: check against HaveIBeenPwned"
+    "code_snippet": "### @block::auth/password-validation @kind:operation\nPassword validation should:\n1. Minimum 8 characters\n2. At least one uppercase letter\n3. At least one lowercase letter\n4. At least one number\n5. Optional: check against HaveIBeenPwned"
   },
   "metadata": {
     "created_at": "2025-02-22T10:30:00Z",

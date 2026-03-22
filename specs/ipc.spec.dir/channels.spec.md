@@ -12,7 +12,7 @@ part: 2/2
 ## @block:channels @kind:entity
 IPC channels establish and manage communication pathways between processes.
 
-### @block:channel-types @kind:enum
+### @block::channel-types @kind:enum
 ```typescript
 enum ChannelType {
   MAIN = 'main',
@@ -22,7 +22,7 @@ enum ChannelType {
 }
 ```
 
-### @block:channel-interface @kind:interface
+### @block::channel-interface @kind:interface
 ```typescript
 interface Channel {
   id: string;
@@ -33,5 +33,5 @@ interface Channel {
 }
 ```
 
-### @block:channel-management @kind:function
+### @block::channel-management @kind:function
 Channels are managed by the IPC system, ensuring proper lifecycle and cleanup.

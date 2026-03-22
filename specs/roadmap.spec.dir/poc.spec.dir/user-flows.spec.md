@@ -151,7 +151,7 @@ $ ./bin/speclangd
 [speclangd]   echo 'id: "@demo/hello"' >> specs/hello.spec.md
 [speclangd]   echo '---' >> specs/hello.spec.md
 [speclangd]   echo '' >> specs/hello.spec.md
-[speclangd]   echo '### @block:greet @kind:function' >> specs/hello.spec.md
+[speclangd]   echo '### @block::greet @kind:function' >> specs/hello.spec.md
 [speclangd]   echo 'Say hello.' >> specs/hello.spec.md
 [speclangd] 
 [speclangd] ✅ Ready. Watching for changes...

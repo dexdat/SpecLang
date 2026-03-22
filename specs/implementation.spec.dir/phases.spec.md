@@ -23,37 +23,37 @@ Implementation follows a phased approach to ensure systematic development and qu
 
 ## Phases
 
-### @block:phases/specification @kind:phase
+### @block::phases/specification @kind:phase
 **Specification Phase**
 - Define requirements and create spec files
 - Validate spec completeness
 - Establish validation rules
 
-### @block:phases/design @kind:phase
+### @block::phases/design @kind:phase
 **Design Phase**
 - Architectural design
 - Component decomposition
 - Interface definitions
 
-### @block:phases/development @kind:phase
+### @block::phases/development @kind:phase
 **Development Phase**
 - Write implementation code
 - Follow spec-driven development
 - Continuous integration
 
-### @block:phases/testing @kind:phase
+### @block::phases/testing @kind:phase
 **Testing Phase**
 - Unit tests
 - Integration tests
 - Validation against specs
 
-### @block:phases/deployment @kind:phase
+### @block::phases/deployment @kind:phase
 **Deployment Phase**
 - Packaging
 - Distribution
 - Installation
 
-### @block:phases/maintenance @kind:phase
+### @block::phases/maintenance @kind:phase
 **Maintenance Phase**
 - Bug fixes
 - Updates

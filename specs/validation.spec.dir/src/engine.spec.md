@@ -1,5 +1,5 @@
 # speclang-header lines:13
-id: @specs/validation/engine
+id: "@specs/validation/engine"
 version: 1.0.0
 layer: 5
 project_level: Alpha
@@ -11,7 +11,7 @@ short: Validation engine implementation
 
 # Validation Engine
 
-### @block:class @kind:entity
+### @block::class @kind:entity
 
 The ValidationEngine executes validation rules against specs and produces reports.
 

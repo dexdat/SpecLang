@@ -25,7 +25,7 @@ This spec demonstrates:
 
 ## Implementation
 
-### @block:hello/function @kind:code
+### @block::hello/function @kind:code
 ```typescript
 /**
  * Hello World function

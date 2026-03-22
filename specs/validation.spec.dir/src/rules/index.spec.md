@@ -1,5 +1,5 @@
 # speclang-header lines:13
-id: @specs/validation/rules/index
+id: "@specs/validation/rules/index"
 version: 1.0.0
 layer: 5
 project_level: Alpha
@@ -11,7 +11,7 @@ short: Rule registry and exports
 
 # Validation Rules Index
 
-### @block:registry @kind:entity
+### @block::registry @kind:entity
 
 Manages registration and retrieval of validation rules.
 

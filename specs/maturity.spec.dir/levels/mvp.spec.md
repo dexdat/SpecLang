@@ -14,7 +14,7 @@ Implementation of MVP (Minimum Viable Product) maturity level.
 
 ## Files
 
-### @block:mvp-level-definition @kind:code @target:src/maturity/levels/mvp.ts
+### @block::mvp-level-definition @kind:code @target:src/maturity/levels/mvp.ts
 ```typescript
 import { MaturityLevel, LevelDefinition, LevelCriteria, AgentBehavior } from '../types';
 
@@ -107,7 +107,7 @@ export function createMVPSpecDefaults(): Partial<ParsedSpecMetadata> {
 }
 ```
 
-### @block:mvp-validator @kind:code @target:src/maturity/levels/mvp-validator.ts
+### @block::mvp-validator @kind:code @target:src/maturity/levels/mvp-validator.ts
 ```typescript
 import { MVP_LEVEL, MVP_CRITERIA } from './mvp';
 
@@ -270,7 +270,7 @@ interface PromoteResult {
 export const mvpValidator = new MVPValidator();
 ```
 
-### @block:mvp-transitions @kind:code @target:src/maturity/levels/mvp-transitions.ts
+### @block::mvp-transitions @kind:code @target:src/maturity/levels/mvp-transitions.ts
 ```typescript
 import { MVP_LEVEL } from './mvp';
 
@@ -506,7 +506,7 @@ interface TransitionPreparation {
 export const mvpTransitionHandler = new MVPTransitionHandler();
 ```
 
-### @block:mvp-behavior @kind:code @target:src/maturity/levels/mvp-behavior.ts
+### @block::mvp-behavior @kind:code @target:src/maturity/levels/mvp-behavior.ts
 ```typescript
 import { MVP_LEVEL } from './mvp';
 

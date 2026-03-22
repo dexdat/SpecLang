@@ -1,5 +1,5 @@
 # speclang-header lines:25
-id: @specs/guard
+id: "@specs/guard"
 version: 1.0.0
 layer: 2
 project_level: Alpha
@@ -31,7 +31,7 @@ The Guard System is a security layer that:
 4. **Rules** (`rules.ts`) - Default ownership rules
 5. **Types** (`types.ts`) - TypeScript type definitions
 
-### @block:ownership-rules @kind:data
+### @block::ownership-rules @kind:data
 
 Default ownership rules define which agent owns which files:
 
@@ -45,7 +45,7 @@ Default ownership rules define which agent owns which files:
 
 Higher priority wins when there are conflicts.
 
-### @block:interceptor @kind:component
+### @block::interceptor @kind:component
 
 **WriteInterceptor** - Main interceptor class
 
@@ -73,7 +73,7 @@ class WriteInterceptor {
 }
 ```
 
-### @block:registry @kind:component
+### @block::registry @kind:component
 
 **OwnershipRegistry** - Rule management and pattern matching
 
@@ -97,7 +97,7 @@ class OwnershipRegistry {
 }
 ```
 
-### @block:violations @kind:component
+### @block::violations @kind:component
 
 **ViolationTracker** - Tracks policy violations
 
@@ -119,7 +119,7 @@ class ViolationTracker {
 
 ## Configuration
 
-### @block:config @kind:data
+### @block::config @kind:data
 
 ```typescript
 interface GuardConfig {
@@ -139,7 +139,7 @@ const DEFAULT_GUARD_CONFIG = {
 
 ## Usage
 
-### @block:usage @kind:example
+### @block::usage @kind:example
 
 ```typescript
 import { getGuard, checkOwnership, initGuard } from '@speclang/guard';

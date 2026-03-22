@@ -1,5 +1,5 @@
 # speclang-header lines:13
-id: @speclang/project-layout/conventions
+id: "@speclang/project-layout/conventions"
 version: 0.1.0
 layer: 2
 tags: [layout, conventions, naming, refs]

@@ -1,5 +1,5 @@
 # speclang-header lines:15
-id: @specs/guard
+id: "@specs/guard"
 version: 1.0.0
 layer: 2
 project_level: Alpha

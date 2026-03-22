@@ -97,7 +97,7 @@ version: 1.0.0
 layer: 5
 ---
 
-### @block:greet @kind:function
+### @block::greet @kind:function
 Greet someone.
 
 **Parameters:**
@@ -239,7 +239,7 @@ id: "@test/verify"
 version: 1.0.0
 ---
 
-### @block:test @kind:function
+### @block::test @kind:function
 Test function.
 SPEC
 
@@ -361,7 +361,7 @@ id: "@myproject/feature"
 version: 1.0.0
 ---
 
-### @block:myFunction @kind:function
+### @block::myFunction @kind:function
 Your function description.
 
 **Parameters:**

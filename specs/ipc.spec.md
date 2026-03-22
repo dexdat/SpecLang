@@ -18,7 +18,7 @@ Message types and formats for IPC communication.
 ### @ref:specs/ipc/channels#channels
 Communication channels and their management.
 
-### @block:ipc-class @kind:class
+### @block::ipc-class @kind:class
 ```typescript
 export class IPC extends EventEmitter {
   private channels: Map<string, Channel>;

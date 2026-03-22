@@ -126,7 +126,7 @@ speclang-header:
   id: @generated/handler-go
   layer: 5
   produces: handler.go
-  refs: [@ref:specs/auth#login]
+  refs: ["@ref:specs/auth#login"]
 
 block:
   kind: code
@@ -178,7 +178,7 @@ MarkdownSpec:
 # auth.spec.md
 
 # speclang-header
-id: @specs/auth
+id: "@specs/auth"
 layer: 1
 
 ---
