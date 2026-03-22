@@ -1,1 +1,1 @@
-specs/docs.spec.dir/docs/CHANGELOG.spec.md
+../specs/docs.spec.dir/docs/CHANGELOG.md
