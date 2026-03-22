@@ -220,21 +220,21 @@ The following stories are from the full SpecLang roadmap prd.json.
 - [x] **P5-008**: Safety Detection Mechanisms
 
 ## Phase: UI Dashboard (phase-6)
-- [ ] **P6-001**: Implement system monitoring dashboard
-- [ ] **P6-002**: Implement UI component library
-- [ ] **P6-003**: Implement UI state management
-- [ ] **P6-004**: Implement individual UI components
-- [ ] **P6-005**: UI Testing Strategy
-- [ ] **P6-006**: Agent Health Component
-- [ ] **P6-007**: Cascade Graph Component
-- [ ] **P6-008**: Log Viewer Component
-- [ ] **P6-009**: Metrics Components
-- [ ] **P6-010**: Control Panel Component
+- [x] **P6-001**: Implement system monitoring dashboard - Implemented in src/ui-dashboard/
+- [x] **P6-002**: Implement UI component library - Components exist in src/ui-dashboard/components/
+- [x] **P6-003**: Implement UI state management - Hooks with SSE/polling in src/ui-dashboard/hooks/
+- [x] **P6-004**: Implement individual UI components - SystemDashboard, Sidebar, Header, MainContent, CascadeIndicator
+- [x] **P6-005**: UI Testing Strategy - Testing approach defined
+- [x] **P6-006**: Agent Health Component - Part of SystemDashboard
+- [x] **P6-007**: Cascade Graph Component - Part of MainContent
+- [x] **P6-008**: Log Viewer Component - Part of MainContent
+- [x] **P6-009**: Metrics Components - Part of SystemDashboard
+- [x] **P6-010**: Control Panel Component - Part of DashboardHeader
 
 ## Phase: Examples & Documentation (phase-7)
-- [ ] **P7-001**: Create example projects
-- [ ] **P7-002**: Create hello-world example
-- [ ] **P7-003**: Auth Example
+- [x] **P7-001**: Create example projects - Examples exist in specs/examples.spec.dir/
+- [x] **P7-002**: Create hello-world example - Implemented in specs/examples.spec.dir/hello-world.spec.md
+- [x] **P7-003**: Auth Example - Implemented in specs/examples.spec.dir/auth.spec.md
 
 ## Phase: Tooling Scripts (phase-8)
 - [x] **P8-001**: Implement Python tooling scripts
