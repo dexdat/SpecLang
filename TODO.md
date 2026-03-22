@@ -133,14 +133,14 @@ System is ready for packaging
 - [x] Validate: ./bin/speclang expand cli.new works
 
 ### Phase 2: CLI "check" Command (8 steps)
-- [ ] Create spec for "check" command: specs/cli.spec.dir/check-command.spec.md
-- [ ] Add command definition to bin/speclang
-- [ ] Create src/cli/check.ts
-- [ ] Implement spec header validation
-- [ ] Implement @ref validation
-- [ ] Add --strict and --fix flags
-- [ ] Write tests for check command
-- [ ] Validate: ./bin/speclang check runs without errors
+- [x] Create spec for "check" command: specs/cli.spec.dir/check-command.spec.md
+- [x] Add command definition to bin/speclang
+- [x] Create src/cli/check.ts
+- [x] Implement spec header validation
+- [x] Implement @ref validation
+- [x] Add --strict and --fix flags
+- [x] Write tests for check command
+- [x] Validate: ./bin/speclang check runs without errors
 
 ### Phase 3: CLI "search" Command (8 steps)
 - [ ] Create spec for "search" command: specs/cli.spec.dir/search-command.spec.md
