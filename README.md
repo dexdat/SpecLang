@@ -4,6 +4,13 @@ A specification-driven multi-agent system where specs cascade through dependency
 
 ## Installation
 
+### From npm (recommended)
+```bash
+npm install -g speclang
+speclang --help
+```
+
+### From source
 ```bash
 # Clone the repository
 git clone https://github.com/dexdat/SpecLang.git
@@ -35,6 +42,12 @@ npm run build
 ./bin/speclang status           # Show system status
 ./bin/speclang errors           # List cascade errors
 ```
+
+### API Reference
+
+For programmatic access, see:
+- `specs/api.spec.md` - REST API specification
+- `specs/mcp.spec.md` - MCP server for AI agent integration
 
 ## Current Status: Reality-Based Alpha
 
