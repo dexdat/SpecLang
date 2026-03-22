@@ -35,11 +35,12 @@ Current migrations:
 **Reference:** See `specs/sqlite.spec.dir/migrations.spec.md`
 
 ### CRITICAL-3: Fix Hard Checks Script
-**Status:** ❌ Bug in test result parsing
+**Status:** ✅ FIXED (2026-03-22)
 
-The hard-checks.py script incorrectly reports tests as failed when they pass.
-- Fix regex pattern to detect "65 passed" correctly
-- Handle ANSI color codes in output
+Fixed regex pattern to detect test results correctly:
+- Improved regex to handle "Tests" and "Test Files" patterns
+- Added line-by-line parsing to avoid confusion with "skipped" and "failed"
+- ANSI color codes already handled
 
 ## Release Preparation Tasks
 

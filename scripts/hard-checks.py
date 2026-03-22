@@ -93,15 +93,22 @@ class HardChecks:
             tests_passed_match = re.search(r'Tests\s+([\d,]+)\s+passed', clean_output, re.IGNORECASE)
             files_passed_match = re.search(r'Test Files\s+([\d,]+)\s+passed', clean_output, re.IGNORECASE)
             failed_match = re.search(r'(\d+)\s+failed', clean_output, re.IGNORECASE)
+            skipped_match = re.search(r'(\d+)\s+skipped', clean_output, re.IGNORECASE)
             
             if tests_passed_match:
                 passed_count = tests_passed_match.group(1).replace(',', '')
             elif files_passed_match:
                 passed_count = files_passed_match.group(1).replace(',', '')
             else:
-                # Fallback to any "N passed" pattern - but skip "Test Files" to prefer individual tests
-                any_passed = re.search(r'^(?!.*Test Files).*?([\d,]+)\s+passed', clean_output, re.IGNORECASE | re.MULTILINE)
-                passed_count = any_passed.group(1).replace(',', '') if any_passed else "0"
+                # Fallback to any "N passed" pattern - but skip lines containing "skipped" or "failed"
+                # Search line by line
+                passed_count = "0"
+                for line in clean_output.split('\n'):
+                    if 'passed' in line.lower() and 'skipped' not in line.lower() and 'failed' not in line.lower():
+                        match = re.search(r'([\d,]+)\s+passed', line, re.IGNORECASE)
+                        if match:
+                            passed_count = match.group(1).replace(',', '')
+                            break
             
             failed_count = int(failed_match.group(1)) if failed_match else 0
             
