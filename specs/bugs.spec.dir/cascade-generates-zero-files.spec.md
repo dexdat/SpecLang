@@ -5,7 +5,7 @@ layer: 5
 tags: [bug, cascade, code-generation, documentation]
 short: Cascade completes but generates 0 files - needs better error messages
 severity: medium
-status: open
+status: closed
 found_during: dogfooding
 ---
 
@@ -115,4 +115,14 @@ export function greeting(name: string, greeting: string = 'Hello'): string {
   return `${greeting}, ${name}!`;
 }
 ```
+
+## Resolution (2026-03-22)
+
+Fixed by adding warning message when cascade generates 0 files:
+
+- Added `warning` field to `CascadeResult` interface
+- Cascade runner now sets warning when no TypeScript code blocks found
+- CLI now displays warning with ⚠️ icon
+- Message: "No TypeScript code blocks found in spec. Add code blocks with \`\`\`typescript to generate code."
+
 ```

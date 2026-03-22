@@ -77,8 +77,8 @@ Fixed regex pattern to detect test results correctly:
 - [x] Generate auth system in _tmp/
 - [x] Verify generated code compiles
 - [x] Document any bugs found in specs/bugs/
-- [ ] Fix critical bugs found
-- [ ] Re-run until integration test passes
+- [x] Fix critical bugs found
+- [x] Re-run until integration test passes
 
 **See:** `docs/DOGFOODING.md` for detailed workflow
 
@@ -103,16 +103,16 @@ Verification:
 ```
 
 #### BUG-002: Cascade Generates 0 Files (No Error)
-**Status:** 🔴 Open
+**Status:** ✅ Fixed (2026-03-22)
 **Severity:** Medium
 **File:** `specs/bugs/cascade-generates-zero-files.spec.md`
 
 When specs don't have TypeScript code blocks, cascade reports success but generates 0 files.
 
 **Fix:**
-- [ ] Add helpful error message when 0 files generated
-- [ ] Explain that code blocks are needed
-- [ ] Suggest using AI generation or adding code blocks
+- [x] Add helpful error message when 0 files generated
+- [x] Explain that code blocks are needed
+- [x] Suggest using AI generation or adding code blocks
 
 ## Current System Status
 
