@@ -1,1 +1,1 @@
-../../specs/mcp.spec.dir/src/sse.ts
+specs/mcp.spec.dir/sse.spec.md

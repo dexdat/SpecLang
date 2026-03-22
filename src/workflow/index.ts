@@ -1,1 +1,1 @@
-../../specs/workflow.spec.dir/src/index.ts
+specs/workflow.spec.dir/index.spec.md

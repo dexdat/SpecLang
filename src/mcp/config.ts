@@ -1,1 +1,1 @@
-../../specs/mcp.spec.dir/src/config.ts
+specs/mcp.spec.dir/config.spec.md

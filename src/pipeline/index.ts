@@ -1,1 +1,1 @@
-../../specs/pipeline.spec.dir/src/index.ts
+specs/pipeline.spec.dir/index.spec.md

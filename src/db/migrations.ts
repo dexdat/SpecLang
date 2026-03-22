@@ -1,1 +1,1 @@
-../../specs/sqlite.spec.dir/src/migrations.ts
+specs/sqlite.spec.dir/migrations.spec.md
