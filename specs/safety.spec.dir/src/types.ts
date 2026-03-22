@@ -11,6 +11,7 @@ export interface Spec {
   id: string;
   metadata: {
     agent_support: 'human_only' | 'agent_assisted' | 'agent_autonomous';
+    project_level?: string;
     tags?: string[];
   };
 }
