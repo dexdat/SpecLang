@@ -367,7 +367,7 @@
             "tests/ui-visual.test.ts"
           ],
           "priority": 23,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-024",
