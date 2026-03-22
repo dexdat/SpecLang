@@ -1,1 +1,1 @@
-../../specs/ui-dashboard.spec.dir/src/hooks/useTheme.ts
+../../../specs/ui-dashboard.spec.dir/src/hooks/useTheme.ts
