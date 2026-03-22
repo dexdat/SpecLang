@@ -1,5 +1,5 @@
 # speclang-header lines:9
-id: @speclang/transition-workflows/upgrade
+id: "@speclang/transition-workflows/upgrade"
 version: 0.1.0
 layer: 2
 project_level: Alpha
