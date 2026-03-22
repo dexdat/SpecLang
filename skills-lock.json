@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "skills": {
+    "baby-steps": {
+      "source": "wojons/skills",
+      "sourceType": "github",
+      "computedHash": "21c3c2825e369b3a3bbe1fd548de2a612d1ead36ef4817b9e93354e641a2a8ad"
+    },
+    "completeness-validator": {
+      "source": "wojons/skills",
+      "sourceType": "github",
+      "computedHash": "72e97cfb9367a174187057618fe63a882cd05ac31ad5d103cb295451e6c01d99"
+    },
+    "data-flow-architect": {
+      "source": "wojons/skills",
+      "sourceType": "github",
+      "computedHash": "e079aaefbacb9d7263a2050c4d116b182a3c50327b704c09ad4a5a1da8e3717a"
+    },
+    "sherlock-debugging": {
+      "source": "wojons/skills",
+      "sourceType": "github",
+      "computedHash": "a36793933021f05c27cb563c3b483b19833ec19acc21f0c32fdb29159bfb620c"
+    }
+  }
+}
