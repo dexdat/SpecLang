@@ -1,0 +1,1 @@
+../../../specs/sqlite.spec.dir/src/migrations/002_events.sql
