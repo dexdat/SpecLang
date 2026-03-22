@@ -112,17 +112,25 @@ System is ready for packaging
 
 ## Remaining Work (Baby Steps for Ralph Loop)
 
-### Phase 1: CLI "new" Command (10 steps)
-- [ ] Create spec for "new" command: specs/cli.spec.dir/new-command.spec.md
-- [ ] Add command definition to bin/speclang (lines 510-520)
-- [ ] Create src/cli/new.ts with command handler
-- [ ] Implement directory creation logic
-- [ ] Implement .speclangrc generation
-- [ ] Implement initial spec template
-- [ ] Implement git init option
-- [ ] Add error handling for existing directories
+### Phase 1: CLI "new" Command (10 steps) ✅ COMPLETE
+- [x] Create spec for "new" command: specs/cli.spec.dir/new-command.spec.md (already exists in commands.spec.md)
+- [x] Add command definition to bin/speclang (lines 630-770)
+- [x] Create src/cli/new.ts with command handler (implemented in bin/speclang)
+- [x] Implement directory creation logic
+- [x] Implement .speclangrc generation
+- [x] Implement initial spec template
+- [x] Implement git init option
+- [x] Add error handling for existing directories
 - [ ] Write tests for new command
-- [ ] Validate: ./bin/speclang new test-project works
+- [x] Validate: ./bin/speclang new test-project works
+
+### Phase 1.5: CLI "expand" Command (6 steps) ✅ COMPLETE
+- [x] Add 'expand' command to bin/speclang
+- [x] Parse block ID format (@spec/file#block or dot notation)
+- [x] Search specs for matching blocks
+- [x] Display block content and metadata
+- [x] Handle dot-to-slash conversion (cli.new -> cli/new)
+- [x] Validate: ./bin/speclang expand cli.new works
 
 ### Phase 2: CLI "check" Command (8 steps)
 - [ ] Create spec for "check" command: specs/cli.spec.dir/check-command.spec.md
