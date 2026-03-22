@@ -1,1 +1,1 @@
-specs/mcp.spec.dir/types.spec.md
+../../specs/mcp.spec.dir/src/types.ts

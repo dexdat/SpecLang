@@ -1,1 +1,1 @@
-specs/parser.spec.dir/index.spec.md
+../../specs/parser.spec.dir/src/index.ts

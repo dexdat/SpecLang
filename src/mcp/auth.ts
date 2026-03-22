@@ -1,1 +1,1 @@
-specs/mcp.spec.dir/auth.spec.md
+../../specs/mcp.spec.dir/src/auth.ts

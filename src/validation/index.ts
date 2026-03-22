@@ -1,1 +1,1 @@
-specs/validation.spec.dir/src/index.spec.md
+../../specs/validation.spec.dir/src/index.ts
