@@ -56,7 +56,7 @@ Fixed regex pattern to detect test results correctly:
 - [x] Complete GETTING-STARTED.md (already complete)
 - [ ] Add API documentation (skipped - specs exist)
 - [x] Create CONTRIBUTING.md
-- [ ] Write CHANGELOG.md
+- [x] Write CHANGELOG.md
 
 ### Testing & Quality
 - [x] All hard checks must pass (6/6)
