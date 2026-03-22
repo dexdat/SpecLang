@@ -1,16 +1,1 @@
-/* SPECLANG-GENERATED: @speclang/ui.visual-design */
-/* DO NOT EDIT MANUALLY */
-/* Source: specs/ui.dir/visual-design.spec.md */
-
-:root[data-theme="brutalist-light"] {
-  --color-primary: #000000;
-  --color-secondary: #ffffff;
-  --color-accent: #cc0000;
-  --color-background: #ffffff;
-  --color-surface: #f0f0f0;
-  --color-surface-elevated: #e0e0e0;
-  --color-text: #000000;
-  --color-text-muted: #666666;
-  --color-text-dimmed: #999999;
-  --grid-color: rgba(0, 0, 0, 0.05);
-}
+../../../../specs/ui-dashboard.spec.dir/src/dashboard/styles/themes/brutalist-light.css
