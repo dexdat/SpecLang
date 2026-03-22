@@ -1,1 +1,1 @@
-specs/sqlite.spec.dir/types.spec.md
+../../specs/sqlite.spec.dir/src/types.ts

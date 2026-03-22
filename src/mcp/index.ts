@@ -1,1 +1,1 @@
-specs/mcp.spec.dir/index.spec.md
+../../specs/mcp.spec.dir/src/index.ts

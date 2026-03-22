@@ -1,1 +1,1 @@
-specs/sqlite.spec.dir/search.spec.md
+../../specs/sqlite.spec.dir/src/search.ts

@@ -1,1 +1,1 @@
-specs/validation.spec.dir/src/reporter.spec.md
+../../specs/validation.spec.dir/src/reporter.ts

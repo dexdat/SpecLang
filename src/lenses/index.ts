@@ -1,1 +1,1 @@
-specs/lenses.spec.dir/index.spec.md
+../../specs/lenses.spec.dir/src/index.ts

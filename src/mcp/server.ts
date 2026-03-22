@@ -1,1 +1,1 @@
-specs/mcp.spec.dir/server.spec.md
+../../specs/mcp.spec.dir/src/server.ts

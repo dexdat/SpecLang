@@ -1,1 +1,1 @@
-specs/validation.spec.dir/src/rules/autonomous.spec.md
+../../../specs/validation.spec.dir/src/rules/autonomous.ts
