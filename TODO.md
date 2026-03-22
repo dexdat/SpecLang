@@ -121,7 +121,7 @@ System is ready for packaging
 - [x] Implement initial spec template
 - [x] Implement git init option
 - [x] Add error handling for existing directories
-- [ ] Write tests for new command
+- [x] Write tests for new command
 - [x] Validate: ./bin/speclang new test-project works
 
 ### Phase 1.5: CLI "expand" Command (6 steps) ✅ COMPLETE
