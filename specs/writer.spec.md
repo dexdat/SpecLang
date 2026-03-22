@@ -9,13 +9,13 @@ short: "Auto-generated spec for writer.ts"
 status: generated
 ---
 
-## @block:codewriter @kind:entity
+## @block:codewriter-class @kind:entity
 ```text
 export class CodeWriter {
 ```
 
 
-## @block:codewriter @kind:code
+## @block:codewriter-instance @kind:code
 ```typescript
 export const codeWriter = new CodeWriter();
 ```

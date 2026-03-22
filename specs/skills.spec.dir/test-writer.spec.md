@@ -1,5 +1,5 @@
 # speclang-header lines:12
-id: @speclang/skills/test-writer
+id: "@speclang/skills/test-writer"
 version: 0.1.0
 layer: 2
 tags: [skills, test-writer, agents]
