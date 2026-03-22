@@ -1,1 +1,1 @@
-specs/speclangd.spec.md
+../specs/speclangd.ts.spec.dir/src/speclangd.ts
