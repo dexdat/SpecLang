@@ -203,6 +203,181 @@ program
     }
   });
 
+// Generate command
+program
+  .command('generate [files...]')
+  .description('Generate code from specs')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .option('-t, --target <type>', 'Target language (typescript|go|python|rust)', 'typescript')
+  .option('-o, --output-dir <dir>', 'Output directory', 'src/generated')
+  .option('--dry-run', 'Show what would be generated without writing files')
+  .option('-v, --verbose', 'Show detailed output')
+  .action(async (files, options) => {
+    const projectDir = path.resolve(options.dir);
+    const specsDir = path.join(projectDir, 'specs');
+    const outputDir = path.resolve(options.dir, options.outputDir);
+    const target = options.target || 'typescript';
+    
+    console.log('🔧 Generating code from specs...');
+    console.log(`   Target: ${target}`);
+    console.log(`   Output: ${outputDir}`);
+    console.log(`   Mode: ${options.dryRun ? 'DRY RUN' : 'LIVE'}`);
+    
+    try {
+      // Find spec files
+      let specFiles = [];
+      
+      if (files.length > 0) {
+        // Use specified files
+        specFiles = files.map(f => path.resolve(options.dir, f)).filter(f => fs.existsSync(f));
+      } else {
+        // Find all spec files in specs directory
+        const { execSync } = require('child_process');
+        try {
+          const findOutput = execSync(`find "${specsDir}" -name "*.spec.*" -type f`, { encoding: 'utf-8' });
+          specFiles = findOutput.trim().split('\n').filter(f => f.length > 0);
+        } catch (e) {
+          console.error('❌ Failed to find spec files');
+          process.exit(1);
+        }
+      }
+      
+      console.log(`   Found ${specFiles.length} spec files`);
+      
+      // Extract code blocks from specs
+      const generatedFiles = [];
+      const errors = [];
+      
+      for (const specFile of specFiles) {
+        try {
+          const content = fs.readFileSync(specFile, 'utf-8');
+          
+          // Extract @kind:code blocks
+          const codeBlockRegex = /```speclang\s*\n# @kind:code\s*\n([\s\S]*?)```/g;
+          let match;
+          let blockCount = 0;
+          
+          while ((match = codeBlockRegex.exec(content)) !== null) {
+            blockCount++;
+            const code = match[1];
+            const specName = path.basename(specFile, path.extname(specFile));
+            const ext = getExtensionForTarget(target);
+            const outputPath = path.join(outputDir, `${specName}-${blockCount}${ext}`);
+            
+            generatedFiles.push({
+              specFile,
+              outputPath,
+              code,
+              blockNumber: blockCount
+            });
+          }
+          
+          // Also check for @block: with @kind:impl or @kind:class
+          const blockRegex = /### @block:(\w+)\s+@kind:(impl|class|function)\s*\n([\s\S]*?)(?=\n###|\n```|\n\n\n##|\n##|$)/g;
+          while ((match = blockRegex.exec(content)) !== null) {
+            const blockName = match[1];
+            const blockKind = match[2];
+            const code = match[3].trim();
+            
+            if (code.length > 10) { // Skip empty or very short blocks
+              const specName = path.basename(specFile, path.extname(specFile));
+              const ext = getExtensionForTarget(target);
+              const outputPath = path.join(outputDir, `${specName}-${blockName}${ext}`);
+              
+              generatedFiles.push({
+                specFile,
+                outputPath,
+                code,
+                blockName
+              });
+            }
+          }
+          
+        } catch (err) {
+          errors.push({ file: specFile, error: err.message });
+        }
+      }
+      
+      // Write files
+      let writtenCount = 0;
+      let skippedCount = 0;
+      
+      if (!options.dryRun && generatedFiles.length > 0) {
+        // Create output directory
+        if (!fs.existsSync(outputDir)) {
+          fs.mkdirSync(outputDir, { recursive: true });
+        }
+        
+        for (const file of generatedFiles) {
+          try {
+            // Add file header
+            const header = `/**
+ * SPECLANG-GENERATED - Do not edit directly
+ * Source: ${path.relative(projectDir, file.specFile)}
+ * Generated: ${new Date().toISOString()}
+ */
+`;
+            fs.writeFileSync(file.outputPath, header + file.code, 'utf-8');
+            writtenCount++;
+          } catch (err) {
+            errors.push({ file: file.outputPath, error: err.message });
+          }
+        }
+      } else if (options.dryRun) {
+        skippedCount = generatedFiles.length;
+      }
+      
+      console.log(`\n✅ Generation complete`);
+      console.log(`   Code blocks found: ${generatedFiles.length}`);
+      console.log(`   Files written: ${writtenCount}`);
+      console.log(`   Errors: ${errors.length}`);
+      
+      if (errors.length > 0 && options.verbose) {
+        errors.forEach(e => console.log(`   - ${e.file}: ${e.error}`));
+      }
+      
+      if (generatedFiles.length > 0 && options.dryRun) {
+        console.log(`\n📁 Would generate:`);
+        generatedFiles.slice(0, 10).forEach(f => console.log(`   - ${path.relative(projectDir, f.outputPath)}`));
+        if (generatedFiles.length > 10) {
+          console.log(`   ... and ${generatedFiles.length - 10} more`);
+        }
+        console.log(`\n💡 Run without --dry-run to write files`);
+      } else if (generatedFiles.length > 0 && !options.dryRun) {
+        console.log(`\n📁 Generated files:`);
+        generatedFiles.slice(0, 10).forEach(f => console.log(`   - ${path.relative(projectDir, f.outputPath)}`));
+        if (generatedFiles.length > 10) {
+          console.log(`   ... and ${generatedFiles.length - 10} more`);
+        }
+      }
+      
+      if (generatedFiles.length === 0) {
+        console.log(`\n💡 No code blocks found in specs.`);
+        console.log(`   Add \`\`\`speclang blocks with @kind:code to your specs.`);
+        console.log(`   Or use cascade to generate code automatically.`);
+      }
+      
+    } catch (err) {
+      console.error('\n❌ Generation failed:', err.message);
+      if (options.verbose) {
+        console.error(err.stack);
+      }
+      process.exit(1);
+    }
+  });
+
+// Helper function to get file extension for target language
+function getExtensionForTarget(target) {
+  const extensions = {
+    typescript: '.ts',
+    go: '.go',
+    python: '.py',
+    rust: '.rs',
+    javascript: '.js'
+  };
+  return extensions[target] || '.txt';
+}
+
 // Bootstrap command - Meta-circular self-build
 program
   .command('bootstrap')

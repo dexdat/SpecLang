@@ -71,6 +71,49 @@ Fixed regex pattern to detect test results correctly:
 - [x] Create API example
 - [x] Test examples in clean environment
 
+### Dogfooding (Integration Testing)
+- [x] Run integration test: `python3 scripts/integration-test.py`
+- [x] Generate REST API project in _tmp/
+- [x] Generate auth system in _tmp/
+- [x] Verify generated code compiles
+- [x] Document any bugs found in specs/bugs/
+- [ ] Fix critical bugs found
+- [ ] Re-run until integration test passes
+
+**See:** `docs/DOGFOODING.md` for detailed workflow
+
+### Bugs Found During Dogfooding
+
+#### BUG-001: CLI Missing Generate Command
+**Status:** ✅ FIXED (2026-03-22)
+**Severity:** High
+**File:** `specs/bugs/cli-missing-generate-command.spec.md`
+
+The `generate` command now exists in `bin/speclang`. Users can generate code from specs.
+
+**Fix:**
+- [x] Add generate command to bin/speclang
+- [x] Implement code extraction from specs
+- [x] Test the command works
+
+Verification:
+```bash
+./bin/speclang generate --help
+./bin/speclang generate --dry-run
+```
+
+#### BUG-002: Cascade Generates 0 Files (No Error)
+**Status:** 🔴 Open
+**Severity:** Medium
+**File:** `specs/bugs/cascade-generates-zero-files.spec.md`
+
+When specs don't have TypeScript code blocks, cascade reports success but generates 0 files.
+
+**Fix:**
+- [ ] Add helpful error message when 0 files generated
+- [ ] Explain that code blocks are needed
+- [ ] Suggest using AI generation or adding code blocks
+
 ## Current System Status
 
 ### ✅ Working (Verified)
@@ -107,7 +150,7 @@ System is ready for packaging
 
 ## Post-Release Tasks
 
-- [ ] Publish to NPM
+- [ ] Publish to NPM (requires npm authentication)
 - [ ] Create GitHub release
 - [ ] Write blog post
 - [ ] Create video tutorial
