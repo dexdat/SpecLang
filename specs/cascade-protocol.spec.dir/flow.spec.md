@@ -317,7 +317,7 @@ Specs can generate outputs in multiple trees:
 ```markdown
 # specs/auth.spec.md
 id: "@specs/auth"
-refs: ["@ref:project.scl", "@ref:specs/core"]
+refs: [""@ref:project.scl"", ""@ref:specs/core""]
 ---
 
 ## API Specification

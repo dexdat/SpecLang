@@ -176,7 +176,7 @@ imports:
   - @myapp/users
 status: stable
 owner: @team-security
-refs: ["@ref:northstar#auth"]
+refs: [""@ref:northstar#auth""]
 
 ---
 ```

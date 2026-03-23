@@ -30,7 +30,7 @@ and deprecated field names.
 CommonIssues:
   quoting:
     - id: @specs/example → id: "@specs/example"
-    - tags: [tag@one] → tags: [tagone]
+    - tags: [tag"@one"] → tags: [tagone]
   
   block_ids:
     - @block:name → @block::name
