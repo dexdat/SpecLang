@@ -92,11 +92,38 @@ def tag_git_release():
     print("Git tag created and pushed.")
     return True
 
+def create_github_release():
+    """Create GitHub release."""
+    # Read version from package.json
+    with open('package.json', 'r') as f:
+        pkg = json.load(f)
+    version = pkg['version']
+    tag = f"v{version}"
+    print(f"Creating GitHub release {tag}...")
+    # Check if gh is authenticated
+    success, output = run_command("gh auth status")
+    if not success:
+        print("GitHub CLI not authenticated. Run 'gh auth login' first.")
+        print("Skipping GitHub release creation.")
+        return False
+    # Create release with notes from CHANGELOG.md
+    success, output = run_command(
+        f"gh release create {tag} "
+        f"--notes-file CHANGELOG.md "
+        f"--title \"SpecLang {tag}\""
+    )
+    if not success:
+        print("GitHub release creation failed.")
+        return False
+    print("GitHub release created successfully.")
+    return True
+
 def main():
     parser = argparse.ArgumentParser(description='SpecLang Packaging Script')
     parser.add_argument('--dry-run', action='store_true', help='Dry run only')
     parser.add_argument('--publish', action='store_true', help='Publish to NPM')
     parser.add_argument('--tag', action='store_true', help='Tag git release')
+    parser.add_argument('--github', action='store_true', help='Create GitHub release')
     args = parser.parse_args()
 
     # Step 1: Hard checks
@@ -120,6 +147,11 @@ def main():
     # Step 5: Tag (if requested)
     if args.tag:
         if not tag_git_release():
+            sys.exit(1)
+
+    # Step 6: GitHub release (if requested)
+    if args.github:
+        if not create_github_release():
             sys.exit(1)
 
     print("Packaging process completed successfully.")

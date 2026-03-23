@@ -54,12 +54,18 @@ packagingSteps:
      ```bash
      npm publish
      ```
-  7. Tag git release:
-     ```bash
-     git tag v$(node -p "require('./package.json').version")
-     git push origin --tags
-     ```
-  8. Create GitHub release (optional)
+   7. Tag git release:
+      ```bash
+      git tag v$(node -p "require('./package.json').version")
+      git push origin --tags
+      ```
+   8. Create GitHub release (optional):
+      ```bash
+      # Requires GitHub CLI authentication (gh auth login)
+      gh release create v$(node -p "require('./package.json').version") \
+        --notes-file CHANGELOG.md \
+        --title "SpecLang v$(node -p "require('./package.json').version")"
+      ```
 ```
 
 ## Configuration
