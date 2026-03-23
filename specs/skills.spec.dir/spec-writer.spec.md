@@ -73,7 +73,7 @@ id: "@domain/feature"
 ---
 
 # @block:domain/feature @kind:entity
-refs: ["@ref:northstar#feature"]
+refs: [""@ref:northstar#feature""]
 ...
 ```
 ```
