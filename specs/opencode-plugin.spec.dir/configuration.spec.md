@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:9
 id: "@speclang/opencode-plugin.spec.dir/configuration"
 version: 0.1.0
 layer: 5
@@ -58,4 +58,4 @@ tools.define('speclang_index', {
 
 ## References
 
-- @ref:speclang/opencode-plugin.spec.dir/tools (detailed tool definitions)
+- "@ref:speclang/opencode-plugin.spec.dir/tools (detailed tool definitions)

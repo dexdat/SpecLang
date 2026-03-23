@@ -1,4 +1,4 @@
-# speclang-header lines:15
+# speclang-header lines:9
 id: "@speclang/opencode-plugin.spec.dir/tools"
 version: 0.1.0
 layer: 5
@@ -63,5 +63,5 @@ tools.define('speclang_validate', {
 
 ## References
 
-- @ref:speclang/mcp (MCP tool pattern)
+- "@ref:speclang/mcp (MCP tool pattern)
 - @ref:speclang/opencode-plugin.spec.dir/mcp-client (for query/execute)

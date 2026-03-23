@@ -192,8 +192,7 @@ ReferenceValidation:
   resolution_process:
     1: "Extract all @ref: patterns from content"
     2: "For each reference:"
-      a: "Parse format: @ref:domain/path#block"
-      b: "Look up in _index.json"
+      a: "Parse format: ""@ref:domain/path#block"      b: "Look up in _index.json"
       c: "If not found, check forward reference"
       d: "If still not found, fail"
       
@@ -316,7 +315,7 @@ Integration:
 ### Valid Autonomous Spec
 
 ```yaml
-# speclang-header lines:9
+# speclang-header lines:8
 id: "@speclang/auth/login"
 version: 1.0.0
 layer: 4
@@ -356,7 +355,7 @@ Suggestion: Downgrade to agent_assisted if fixes not possible.
 
 ## References
 
-- @ref:speclang/autonomous-validation
+- "@ref:speclang/autonomous-validation
 - @ref:speclang/validation
 - @ref:speclang/headers
 - SIP 2: Header Format

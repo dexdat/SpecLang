@@ -592,7 +592,7 @@ class CascadeCoordinator:
 
 ## References
 
-- @ref:speclang/cascade-protocol
+- "@ref:speclang/cascade-protocol
 - @ref:speclang/pipeline
 - @ref:speclang/agent-protocol
 - SIP 6: Agent Protocol

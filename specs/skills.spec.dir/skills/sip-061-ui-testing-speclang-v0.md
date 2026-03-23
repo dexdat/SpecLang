@@ -445,7 +445,7 @@ testing:
 
 ## References
 
-- @ref:specs/ui.spec.dir/testing
+- "@ref:specs/ui.spec.dir/testing
 - SIP 36: UI
 - SIP 24: Test Specs
 - SIP 60: UI Interactions

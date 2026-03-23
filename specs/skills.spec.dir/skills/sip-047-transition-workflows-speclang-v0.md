@@ -710,7 +710,7 @@ class TransitionOrchestrator:
 
 ## References
 
-- @ref:speclang/transition-workflows
+- "@ref:speclang/transition-workflows
 - @ref:speclang/project-maturity-levels
 - @ref:speclang/agent-behavior-matrix
 - SIP 18: Maturity Levels

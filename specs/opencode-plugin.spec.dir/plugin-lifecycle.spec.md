@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:9
 id: "@speclang/opencode-plugin.spec.dir/plugin-lifecycle"
 version: 0.1.0
 layer: 5
@@ -66,5 +66,5 @@ async function initialize(db: Database): Promise<void> {
 
 ## References
 
-- @ref:speclang/opencode-plugin.spec.dir/overview (overview)
+- "@ref:speclang/opencode-plugin.spec.dir/overview (overview)
 - @ref:speclang/opencode-plugin.spec.dir/configuration (config)

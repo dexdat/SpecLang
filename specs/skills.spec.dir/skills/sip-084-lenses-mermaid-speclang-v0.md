@@ -24,7 +24,7 @@ Thisclang Core Team
 ### Quick Start
 
 ```markdown
-### @block:auth-flow @kind:diagram
+### @block::auth-flow @kind:diagram
 
 ```mermaid
 flowchart TD
@@ -330,7 +330,7 @@ AIBehavior:
 **@example/flowchart:**
 
 ```markdown
-### @block:user-auth @kind:diagram
+### @block::user-auth @kind:diagram
 
 ```mermaid
 flowchart TD
@@ -368,7 +368,7 @@ block:
 **@example/sequence:**
 
 ```markdown
-### @block:api-call @kind:diagram
+### @block::api-call @kind:diagram
 
 ```mermaid
 sequenceDiagram
@@ -387,7 +387,7 @@ sequenceDiagram
 **@example/state:**
 
 ```markdown
-### @block:order-state @kind:diagram
+### @block::order-state @kind:diagram
 
 ```mermaid
 stateDiagram-v2
@@ -404,7 +404,7 @@ stateDiagram-v2
 **@example/class:**
 
 ```markdown
-### @block:models @kind:diagram
+### @block::models @kind:diagram
 
 ```mermaid
 classDiagram
@@ -507,7 +507,7 @@ export async function renderToSVG(mermaidCode: string): Promise<string> {
 
 ## References
 
-- @ref:sip-035-lenses
+- "@ref:sip-035-lenses
 - @ref:speclang/lenses/diagram
 - @ref:speclang/lenses/mermaid
 

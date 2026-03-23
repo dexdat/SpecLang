@@ -1,10 +1,9 @@
-# speclang-header lines:12
+# speclang-header lines:10
 id: "@speclang/scripts.packaging"
 version: 0.1.0
 layer: 1
 tags: [scripts, packaging, release, npm]
-parent: "@ref:specs/scripts"
-status: draft
+parent: ""@ref:specs/scripts"status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Packaging and Release Process
@@ -73,6 +72,6 @@ Package configuration is defined in `package.json`:
 
 ## References
 
-- @ref:specs/scripts.hard-checks
+- "@ref:specs/scripts.hard-checks
 - @ref:specs/docs/packaging-strategy
 - @ref:specs/deployment

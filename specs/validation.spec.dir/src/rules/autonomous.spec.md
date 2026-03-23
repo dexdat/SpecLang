@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:9
 id: "@specs/validation/rules/autonomous"
 version: 1.1.0
 layer: 5
@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_assisted
 target: src/validation/rules/autonomous.ts
 tags: [validation, rules, autonomous]
-short: Autonomous mode validation rule
+short: "Autonomous mode validation rule"
 ---
 
 # Autonomous Mode Validation Rule

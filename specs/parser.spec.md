@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:12
 id: "@speclang/parser"
 version: 0.2.0
 layer: 1
@@ -6,9 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [parser, typescript, validation, headers]
 children:
-  - "@ref:specs/parser.spec.dir/parsing"
-  - "@ref:specs/parser.spec.dir/validation"
-short: "Parser - Header parsing and spec validation"
+  - ""@ref:specs/parser.spec.dir/parsing"  - ""@ref:specs/parser.spec.dir/validation"short: "Parser - Header parsing and spec validation"
 status: draft
 ---
 
@@ -42,7 +40,7 @@ Parser:
 
 ## Sub‑Specs
 
-- @ref:specs/parser.spec.dir/parsing – Parsing spec files: headers, blocks, references
+- "@ref:specs/parser.spec.dir/parsing – Parsing spec files: headers, blocks, references
 - @ref:specs/parser.spec.dir/validation – Validation rules for parsed spec data
 
 ## Universal Headers
@@ -59,7 +57,7 @@ agent_support: agent_autonomous
 tags: [example, docs]
 short: Brief description
 depends_on:
-  - @ref:specs/other#block
+  - "@ref:specs/other#block
 ---
 ```
 

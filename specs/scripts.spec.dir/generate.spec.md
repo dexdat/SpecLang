@@ -7,22 +7,9 @@ status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Generation Scripts for Speclang
-parent: "@ref:speclang/scripts"
-part: 1/2
+parent: ""@ref:speclang/scripts"part: 1/2
 children:
-  - "@ref:speclang/scripts.generate-index"
-  - "@ref:speclang/scripts.generate-ralph-loop"
-  - "@ref:speclang/scripts.generate-sqlite-schema"
-  - "@ref:speclang/scripts.generate-validation-system"
-  - "@ref:speclang/scripts.generate-mcp-server"
-  - "@ref:speclang/scripts.generate-opencode-plugin"
-  - "@ref:speclang/scripts.add-missing-fields"
-  - "@ref:speclang/scripts.compute-header-lines"
-  - "@ref:speclang/scripts.fix-headers"
-  - "@ref:speclang/scripts.rename-spec-files"
-  - "@ref:speclang/scripts.generate-todo"
-  - "@ref:speclang/scripts.generate-from-spec"
----
+  - ""@ref:speclang/scripts.generate-index"  - ""@ref:speclang/scripts.generate-ralph-loop"  - ""@ref:speclang/scripts.generate-sqlite-schema"  - ""@ref:speclang/scripts.generate-validation-system"  - ""@ref:speclang/scripts.generate-mcp-server"  - ""@ref:speclang/scripts.generate-opencode-plugin"  - ""@ref:speclang/scripts.add-missing-fields"  - ""@ref:speclang/scripts.compute-header-lines"  - ""@ref:speclang/scripts.fix-headers"  - ""@ref:speclang/scripts.rename-spec-files"  - ""@ref:speclang/scripts.generate-todo"  - ""@ref:speclang/scripts.generate-from-spec"---
 # Generation Scripts
 
 Scripts that generate code, indexes, and other artifacts from Speclang specs.

@@ -550,7 +550,7 @@ class Bootstrapper:
 
 ## References
 
-- @ref:speclang/bootstrap
+- "@ref:speclang/bootstrap
 - @ref:speclang/bootstrap#bootstrap/phases
 - @ref:speclang/bootstrap#bootstrap/minimal-specs
 - SIP 15: Self-Specifying

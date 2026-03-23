@@ -434,7 +434,7 @@ LockEvents:
 
 ## References
 
-- @ref:specs/daemon.spec.dir/locks
+- "@ref:specs/daemon.spec.dir/locks
 - SIP 10: Daemon Architecture
 - SIP 51: Daemon Events
 - SIP 54: SQLite Schema

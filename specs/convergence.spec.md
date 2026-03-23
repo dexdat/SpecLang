@@ -1,4 +1,4 @@
-# speclang-header lines:15
+# speclang-header lines:11
 id: "@speclang/convergence"
 version: 0.1.0
 layer: 1
@@ -7,9 +7,7 @@ agent_support: agent_autonomous
 tags: [convergence, core, reactive]
 short: "Convergence detection and triggers for reactive cascade"
 children:
-  - "@ref:speclang/convergence/detection"
-  - "@ref:speclang/convergence/triggers"
----
+  - ""@ref:speclang/convergence/detection"  - ""@ref:speclang/convergence/triggers"---
 # Convergence
 
 Convergence is the point at which the reactive cascade stops because no more changes are occurring. The system detects convergence through signals like quiet periods and agent idle states, then triggers post‑convergence actions (pipeline, commit, etc.).
@@ -36,7 +34,7 @@ Convergence ensures that:
 
 ## See Also
 
-- @ref:speclang/cascade/convergence – cascade‑specific convergence
+- "@ref:speclang/cascade/convergence – cascade‑specific convergence
 - @ref:speclang/daemon/convergence – daemon implementation
 - @ref:speclang/opencode-plugin.spec.dir/convergence – OpenCode plugin integration
 

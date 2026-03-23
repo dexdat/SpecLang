@@ -418,7 +418,7 @@ class PythonImportResolver {
 
 ## References
 
-- @ref:specs/python.types
+- "@ref:specs/python.types
 - @ref:specs/python/generator
 - SIP 67: Python Generator
 - SIP 109: Go Types

@@ -16,7 +16,7 @@ permission:
   bash: allow
 hidden: false
 ---
-# speclang-header lines:5
+# speclang-header lines:265
 # id: @specs/agents
 # version: 1.0.0
 # layer: 5
@@ -169,7 +169,7 @@ task:
 
 **Spec contains:**
 ```markdown
-### @block:db/schema @kind:code
+### @block::db/schema @kind:code
 ```sql
 CREATE TABLE users (
   id INTEGER PRIMARY KEY,
@@ -186,7 +186,7 @@ CREATE TABLE users (
 
 **Spec contains:**
 ```markdown
-### @block:api/login @kind:code
+### @block::api/login @kind:code
 ```typescript
 export async function loginHandler(req: Request) {
   // Implementation from spec
@@ -202,7 +202,7 @@ export async function loginHandler(req: Request) {
 
 **Spec contains:**
 ```markdown
-### @block:types/user @kind:code
+### @block::types/user @kind:code
 ```typescript
 interface User {
   id: number;

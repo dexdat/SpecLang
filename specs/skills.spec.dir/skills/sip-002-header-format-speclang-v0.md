@@ -5,7 +5,7 @@ version: 0.1.0
 description: Universal header format for all Speclang files
 category: standard
 ---
-# speclang-header lines:5
+# speclang-header lines:26
 # id: @specs/skills
 # version: 1.0.0
 # layer: 5
@@ -174,12 +174,9 @@ version: "semver"         # Semantic version
 ```yaml
 parent: "@ref:..."        # Parent spec
 children:                 # Child specs
-  - "@ref:..."
-depends_on:               # Dependencies
-  - "@ref:..."
-refs:                     # Outgoing references
-  - "@ref:..."
-tags:                     # Categorization
+  - ""@ref:..."depends_on:               # Dependencies
+  - ""@ref:..."refs:                     # Outgoing references
+  - ""@ref:..."tags:                     # Categorization
   - "tag1"
   - "tag2"
 short: "One line desc"    # Quick description
@@ -252,7 +249,7 @@ package auth
 id: @specs/auth
 version: 1.0.0
 refs:
-  - @ref:specs/user
+  - "@ref:specs/user
 tags: [auth, security]
 short: Authentication system
 ---
@@ -346,14 +343,14 @@ id: @specs/auth/login
 version: 2.1.0
 parent: @ref:specs/auth
 children:
-  - @ref:specs/auth/login/validation
-  - @ref:specs/auth/login/rate-limit
+  - "@ref:specs/auth/login/validation
+  - "@ref:specs/auth/login/rate-limit
 depends_on:
-  - @ref:specs/auth/entities
-  - @ref:specs/auth/policies
+  - "@ref:specs/auth/entities
+  - "@ref:specs/auth/policies
 refs:
-  - @ref:stdlib/Result
-  - @ref:stdlib/JWT
+  - "@ref:stdlib/Result
+  - "@ref:stdlib/JWT
 tags: [auth, login, jwt, rate-limit]
 short: Login operation with JWT and rate limiting
 target: go

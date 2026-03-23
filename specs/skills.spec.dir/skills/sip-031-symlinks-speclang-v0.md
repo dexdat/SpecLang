@@ -400,7 +400,7 @@ class SymlinkManager:
 
 ## References
 
-- @ref:speclang/symlinks
+- "@ref:speclang/symlinks
 - @ref:speclang/directory-structure
 - SIP 32: Directory Structure
 

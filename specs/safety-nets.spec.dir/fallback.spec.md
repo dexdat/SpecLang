@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:10
 id: "@speclang/safety-nets/fallback"
 version: 0.1.0
 layer: 2
@@ -189,8 +189,8 @@ outcome:
 ```speclang
 # @block:safety-nets/references @kind:refs
 refs:
-  - @ref:speclang/autonomous-validation
-  - @ref:speclang/transition-workflows
-  - @ref:speclang/agent-behavior-matrix
-  - @ref:speclang/agent-support-levels
+  - "@ref:speclang/autonomous-validation
+  - "@ref:speclang/transition-workflows
+  - "@ref:speclang/agent-behavior-matrix
+  - "@ref:speclang/agent-support-levels
 ```

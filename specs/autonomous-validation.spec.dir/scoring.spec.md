@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:10
 id: "@speclang/autonomous-validation/scoring"
 version: 0.1.0
 layer: 2
@@ -272,8 +272,8 @@ ScoringIntegration:
 ```speclang
 # @block:autonomous-validation/scoring-references @kind:refs
 refs:
-  - @ref:speclang/autonomous-validation/rules
-  - @ref:speclang/validation
-  - @ref:speclang/layer-definitions
-  - @ref:speclang/project-maturity-levels
+  - "@ref:speclang/autonomous-validation/rules
+  - "@ref:speclang/validation
+  - "@ref:speclang/layer-definitions
+  - "@ref:speclang/project-maturity-levels
 ```

@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:10
 id: "@speclang/skills/spec-writer"
 version: 0.1.0
 layer: 2

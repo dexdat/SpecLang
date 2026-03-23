@@ -371,7 +371,7 @@ ResourceAllocation:
 
 ## References
 
-- @ref:speclang/agent-behavior-matrix
+- "@ref:speclang/agent-behavior-matrix
 - @ref:speclang/agent-support-levels
 - @ref:speclang/semantic-definitions
 - SIP 19: Agent Support Levels

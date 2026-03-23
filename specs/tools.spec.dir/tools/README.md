@@ -1,4 +1,4 @@
-# speclang-header lines:5
+# speclang-header lines:23
 # id: @specs/tools
 # version: 1.0.0
 # layer: 5

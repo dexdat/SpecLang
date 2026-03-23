@@ -5,7 +5,7 @@ version: 0.1.0
 description: Tests written as specs in natural language with Given/When/Then syntax
 category: standard
 ---
-# speclang-header lines:5
+# speclang-header lines:84
 # id: @specs/skills
 # version: 1.0.0
 # layer: 5
@@ -216,8 +216,7 @@ TestSpecHeader:
   references:
     spec_under_test:
       description: "The spec being tested"
-      format: "@ref:specs/<path>"
-```
+      format: ""@ref:specs/<path>"```
 
 ### Test Generation
 
@@ -282,8 +281,7 @@ id: "@tests/auth/login"
 version: 1.0.0
 layer: 10
 target: "tests/auth/login.test.ts"
-spec_under_test: "@ref:specs/auth"
----
+spec_under_test: ""@ref:specs/auth"---
 
 # Login Tests
 
@@ -407,7 +405,7 @@ class TestSpecParser:
 
 ## References
 
-- @ref:speclang/test-specs
+- "@ref:speclang/test-specs
 - @ref:speclang/test-specs/format
 - @ref:speclang/skills (TestWriter)
 - SIP 12: Code Generation

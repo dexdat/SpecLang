@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:9
 id: "@speclang/opencode-plugin.spec.dir/git-integration"
 version: 0.1.0
 layer: 5
@@ -73,6 +73,6 @@ UUID Generation:
 
 ## References
 
-- @ref:speclang/git-history (for git conventions and UUID causality chains)
+- "@ref:speclang/git-history (for git conventions and UUID causality chains)
 - @ref:speclang/agent-protocol (for commit protocol requirements)
 - @ref:speclang/headers (for causality header fields: caused_by, change_id, part_of)

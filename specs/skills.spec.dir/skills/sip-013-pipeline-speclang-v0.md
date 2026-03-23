@@ -405,7 +405,7 @@ recovery:
 
 ## References
 
-- @ref:specs/pipeline - Pipeline spec (parent)
+- "@ref:specs/pipeline - Pipeline spec (parent)
 - @ref:specs/pipeline.spec.dir/build - Core stages
 - @ref:specs/pipeline.spec.dir/hooks - Hook system
 - @ref:specs/pipeline.spec.dir/recovery - Recovery strategies

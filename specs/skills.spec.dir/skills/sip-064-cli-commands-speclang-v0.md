@@ -648,7 +648,7 @@ fi
 
 ## References
 
-- @ref:specs/cli.spec.dir/commands
+- "@ref:specs/cli.spec.dir/commands
 - @ref:specs/cli.spec.dir/configuration
 - @ref:specs/cli.spec.dir/global-options
 - SIP 37: CLI

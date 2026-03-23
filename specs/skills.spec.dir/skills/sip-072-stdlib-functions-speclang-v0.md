@@ -398,7 +398,7 @@ class StdLibFunctions:
 
 ## References
 
-- @ref:speclang/stdlib
+- "@ref:speclang/stdlib
 - SIP 26: Standard Library
 - SIP 71: Standard Library Types
 

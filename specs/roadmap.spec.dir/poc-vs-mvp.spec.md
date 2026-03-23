@@ -1,7 +1,6 @@
-# speclang-header lines:15
+# speclang-header lines:7
 id: "@speclang/roadmap/poc-vs-mvp"
-parent: "@ref:specs/roadmap"
-version: 1.0.0
+parent: ""@ref:specs/roadmap"version: 1.0.0
 layer: 1
 short: "Clear separation of POC vs MVP features"
 tags: [roadmap, poc, mvp, comparison, scope]

@@ -475,7 +475,7 @@ node_modules/
 
 ## References
 
-- @ref:speclang/project-layout
+- "@ref:speclang/project-layout
 - @ref:speclang/project-layout#layout/northstar
 - @ref:speclang/project-layout#layout/specs
 - SIP 8: Configuration

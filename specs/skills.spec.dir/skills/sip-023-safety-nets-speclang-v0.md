@@ -471,7 +471,7 @@ class SafetyNet:
 
 ## References
 
-- @ref:speclang/safety-nets
+- "@ref:speclang/safety-nets
 - @ref:speclang/agent-support-levels
 - @ref:speclang/validation
 - SIP 19: Agent Support Levels

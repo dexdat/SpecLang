@@ -1,10 +1,9 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/project-maturity-levels/criteria"
 version: 0.1.0
 layer: 2
 tags: [project, maturity, levels, criteria, validation]
-parent: "@ref:specs/project-maturity-levels"
-part: 2/2
+parent: ""@ref:specs/project-maturity-levels"part: 2/2
 project_level: Alpha
 agent_support: agent_autonomous
 short: Detailed criteria and validation rules for project_level
@@ -244,7 +243,7 @@ ProjectLevelValidation:
 ```speclang
 # @block:project-level/references @kind:refs
 refs:
-  - @ref:speclang/headers#project_level
-  - @ref:speclang/layer-definitions
-  - @ref:speclang/agent-support-levels
+  - "@ref:speclang/headers#project_level
+  - "@ref:speclang/layer-definitions
+  - "@ref:speclang/agent-support-levels
 ```

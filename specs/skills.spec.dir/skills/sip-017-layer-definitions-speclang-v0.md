@@ -339,7 +339,7 @@ auth/login.test.spec.md (layer 7)
 
 ## References
 
-- @ref:speclang/layer-definitions
+- "@ref:speclang/layer-definitions
 - @ref:speclang/headers#layer
 - SIP 2: Header Format
 - SIP 16: Autonomous Validation

@@ -1,4 +1,4 @@
-# speclang-header lines:15
+# speclang-header lines:9
 id: "@speclang/opencode-plugin.spec.dir/architecture"
 version: 0.1.0
 layer: 4
@@ -73,6 +73,6 @@ Monitors quiet period (no changes for 30s), triggers pipeline (`generate_index.p
 
 ## References
 
-- @ref:speclang/opencode-plugin.spec.dir/event-system
+- "@ref:speclang/opencode-plugin.spec.dir/event-system
 - @ref:speclang/opencode-plugin.spec.dir/session-manager
 - @ref:speclang/opencode-plugin.spec.dir/ownership-guard

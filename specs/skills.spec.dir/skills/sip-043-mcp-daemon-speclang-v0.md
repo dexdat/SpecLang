@@ -427,7 +427,7 @@ class MCPDaemon:
 
 ## References
 
-- @ref:speclang/mcp-daemon
+- "@ref:speclang/mcp-daemon
 - @ref:speclang/mcp-daemon.spec.dir/architecture
 - @ref:speclang/mcp-daemon.spec.dir/config
 - SIP 10: Daemon

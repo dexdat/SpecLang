@@ -376,7 +376,7 @@ interface EvalResult {
 
 ## References
 
-- @ref:speclang/pipeline/build
+- "@ref:speclang/pipeline/build
 - @ref:speclang/executor/scheduling
 - SIP 13: Pipeline System
 - SIP 53: Pipeline Hooks

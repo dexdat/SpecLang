@@ -1,12 +1,11 @@
-# speclang-header lines:12
+# speclang-header lines:10
 id: "@speclang/parser/parsing"
 version: 0.1.0
 layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [parser, parsing, headers, blocks, references]
-parent: "@ref:speclang/parser"
-part: 1/2
+parent: ""@ref:speclang/parser"part: 1/2
 short: "Parsing spec files: headers, blocks, references"
 ---
 # Parsing Spec Files
@@ -87,6 +86,6 @@ ParsingPipeline:
 
 ## Dependencies
 
-- @ref:speclang/headers – Header format specification
+- "@ref:speclang/headers – Header format specification
 - @ref:speclang/spec-format – Spec file format
 - @ref:speclang/parser/validation – Validation rules for parsed data

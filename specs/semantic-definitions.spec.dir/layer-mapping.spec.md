@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/semantic-definitions/layer-mapping"
 version: 0.1.0
 layer: 2
@@ -96,8 +96,8 @@ All validation should be integrated into:
 ```speclang
 # @block:semantic-definitions/references-depth @kind:refs
 refs:
-  - @ref:speclang/layer-definitions
-  - @ref:speclang/project-maturity-levels
-  - @ref:speclang/agent-support-levels
-  - @ref:speclang/autonomous-validation
+  - "@ref:speclang/layer-definitions
+  - "@ref:speclang/project-maturity-levels
+  - "@ref:speclang/agent-support-levels
+  - "@ref:speclang/autonomous-validation
 ```

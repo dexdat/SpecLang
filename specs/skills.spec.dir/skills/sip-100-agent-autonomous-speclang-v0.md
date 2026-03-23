@@ -152,7 +152,7 @@ agent_autonomousContent:
 ### Example agent_autonomous Header
 
 ```yaml
-# speclang-header lines:15
+# speclang-header lines:9
 id: @specs/api/users
 version: 1.0.0
 project_level: Production
@@ -410,7 +410,7 @@ agent_autonomousMistakes:
 
 ## References
 
-- @ref:speclang/agent-support-levels
+- "@ref:speclang/agent-support-levels
 - @ref:speclang/agent-assisted
 - @ref:speclang/behavior-matrix
 - SIP 19: Agent Support Levels

@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/agent-protocol/sessions"
 version: 0.1.0
 layer: 2
@@ -6,8 +6,7 @@ project_level: Alpha
 agent_support: agent_assisted
 tags: [agents, protocol, sessions, lifecycle, api]
 short: Agent Sessions and Lifecycle
-parent: "@ref:speclang/agent-protocol"
-part: 1/2
+parent: ""@ref:speclang/agent-protocol"part: 1/2
 ---
 
 ## Sessions

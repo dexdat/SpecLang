@@ -1,11 +1,8 @@
-# speclang-header lines:14
+# speclang-header lines:13
 id: "@speclang/ui.components.cascade-status"
-parent: "@ref:specs/ui"
-part: 3/14
+parent: ""@ref:specs/ui"part: 3/14
 siblings:
-  prev: "@ref:specs/ui.spec.dir/visual-design"
-  next: "@ref:specs/ui.spec.dir/components/agent-health"
-short: Cascade status card component
+  prev: ""@ref:specs/ui.spec.dir/visual-design"  next: ""@ref:specs/ui.spec.dir/components/agent-health"short: Cascade status card component
 project_level: Alpha
 agent_support: agent_assisted
 tags: [speclang]

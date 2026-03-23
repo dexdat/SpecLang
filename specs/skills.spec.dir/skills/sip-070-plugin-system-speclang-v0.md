@@ -663,7 +663,7 @@ PluginSecurity:
 
 ## References
 
-- @ref:specs/plugins
+- "@ref:specs/plugins
 - @ref:specs/codegen.spec.dir/plugins
 - SIP 12: Codegen Framework
 - SIP 49: OpenCode Plugin

@@ -124,13 +124,13 @@ You run when:
 
 ```yaml
 # incident-2024-01-15.recovery.spec.yaml
-# speclang-header lines:10
+# speclang-header lines:7
 id: @recovery/incident-001
 timestamp: 2024-01-15T10:30:00Z
 severity: high
 type: test-failure
 refs:
-  - @ref:specs/auth/login
+  - "@ref:specs/auth/login
 ---
 
 # @block:incident/details @kind:note

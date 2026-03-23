@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/core/cascade"
 version: 0.1.0
 layer: 2
@@ -6,8 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [core]
 short: Reactive loop and convergence detection
-parent: "@ref:speclang/core"
-part: 2/6
+parent: ""@ref:speclang/core"part: 2/6
 ---
 
 ## The Reactive Loop

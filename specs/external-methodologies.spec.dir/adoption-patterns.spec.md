@@ -1,15 +1,13 @@
-# speclang-header lines:16
+# speclang-header lines:13
 id: "@speclang/external-methodologies/adoption-patterns"
 version: 0.1.0
 layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [bmad, patterns, adoption, mapping, workflow]
-parent: "@ref:specs/external-methodologies"
-part: "3/3"
+parent: ""@ref:specs/external-methodologies"part: "3/3"
 siblings:
-  prev: "@ref:specs/external-methodologies.spec.dir/recommendations"
-  next: null
+  prev: ""@ref:specs/external-methodologies.spec.dir/recommendations"  next: null
 short: Adoption Patterns - How to map BMAD concepts to SpecLang
 ---
 
@@ -105,11 +103,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [features, requirements, prd]
 depends_on:
-  - "@ref:project/product-brief"
-children:
-  - "@ref:project/features.spec.dir/auth"
-  - "@ref:project/features.spec.dir/api"
-short: Feature specifications (PRD equivalent)
+  - ""@ref:project/product-brief"children:
+  - ""@ref:project/features.spec.dir/auth"  - ""@ref:project/features.spec.dir/api"short: Feature specifications (PRD equivalent)
 ---
 
 # Features
@@ -144,13 +139,9 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [auth, component, architecture]
-parent: "@ref:project/features"
-depends_on:
-  - "@ref:project/features"
-children:
-  - "@ref:project/features.spec.dir/auth.spec.dir/entities"
-  - "@ref:project/features.spec.dir/auth.spec.dir/operations"
-short: Authentication component architecture
+parent: ""@ref:project/features"depends_on:
+  - ""@ref:project/features"children:
+  - ""@ref:project/features.spec.dir/auth.spec.dir/entities"  - ""@ref:project/features.spec.dir/auth.spec.dir/operations"short: Authentication component architecture
 ---
 
 # Authentication Component
@@ -188,8 +179,7 @@ layer: 4
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [auth, login, go, implementation]
-parent: "@ref:project/features/auth"
-short: Login implementation in Go
+parent: ""@ref:project/features/auth"short: Login implementation in Go
 ---
 
 # Login Implementation (Go)
@@ -281,8 +271,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [cascade, party-mode, multi-agent]
 depends_on:
-  - "@ref:project/features"
-caused_by: "@commit:abc123"  # Trigger commit
+  - ""@ref:project/features"caused_by: "@commit:abc123"  # Trigger commit
 part_of: "@cascade:20250222-001"
 short: Multi-agent collaboration example
 ---
@@ -438,8 +427,7 @@ validation_rules:
   
   references:
     must_resolve: true
-    syntax: "@ref:path/to/spec#block"
-  
+    syntax: ""@ref:path/to/spec#block"  
   autonomous_depth:
     required_for: agent_autonomous
     checks:

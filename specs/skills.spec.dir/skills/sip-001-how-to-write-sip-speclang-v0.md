@@ -5,7 +5,7 @@ version: 0.1.0
 description: Guide for writing Speclang Interface Protocol documents
 category: documentation
 ---
-# speclang-header lines:5
+# speclang-header lines:89
 # id: @specs/skills
 # version: 1.0.0
 # layer: 5

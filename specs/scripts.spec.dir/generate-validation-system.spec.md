@@ -3,8 +3,7 @@ id: "@speclang/scripts.generate-validation-system"
 version: 0.1.0
 layer: 2
 tags: [scripts, generation, validation]
-parent: "@ref:speclang/scripts"
-status: draft
+parent: ""@ref:speclang/scripts"status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Generate Validation System Script
@@ -88,7 +87,7 @@ def generate_validation_system(spec_paths: list[str],
 # @block:spec-format @kind:note
 Validation rules are defined in specs using @kind:entity:
 
-### @block:user-validation @kind:entity
+### @block::user-validation @kind:entity
 UserValidation:
   fields:
     - name: email
@@ -148,7 +147,7 @@ python3 scripts/generate_validation_system.py specs/ --lang python -o generated/
 ```speclang
 # @block:examples @kind:note
 Input (spec):
-  ### @block:user @kind:entity
+  ### @block::user @kind:entity
   User:
     email:
       validate:

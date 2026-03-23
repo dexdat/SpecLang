@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:9
 id: "@speclang/opencode-plugin.spec.dir/session-manager"
 version: 0.1.0
 layer: 5
@@ -77,5 +77,5 @@ async function updateSessionActivity(sessionId: string): Promise<void> {
 
 ## References
 
-- @ref:speclang/opencode-plugin.spec.dir/ownership-guard
+- "@ref:speclang/opencode-plugin.spec.dir/ownership-guard
 - @ref:speclang/sqlite (for database schema)

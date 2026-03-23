@@ -5,7 +5,7 @@ version: 0.1.0
 description: Structured content blocks within specs
 category: standard
 ---
-# speclang-header lines:5
+# speclang-header lines:340
 # id: @specs/skills
 # version: 1.0.0
 # layer: 5
@@ -190,7 +190,7 @@ steps:
   5. Return token
 
 refs:
-  - @ref:specs/auth/entities#User
+  - "@ref:specs/auth/entities#User
 ```
 
 #### Test Block
@@ -269,15 +269,15 @@ sequenceDiagram
 ```markdown
 # @block:auth/login @kind:operation
 refs:
-  - @ref:specs/auth/entities#User
-  - @ref:specs/auth/policies#rate-limit
+  - "@ref:specs/auth/entities#User
+  - "@ref:specs/auth/policies#rate-limit
 ```
 
 **From other blocks:**
 ```markdown
 # @block:user-profile @kind:operation
 uses:
-  - @ref:specs/auth#login for authentication
+  - "@ref:specs/auth#login for authentication
 ```
 
 ## Block Parsing
@@ -411,7 +411,7 @@ func Login(...) {...}
 # speclang-header lines:12
 id: @specs/auth
 refs:
-  - @ref:specs/user
+  - "@ref:specs/user
 ---
 
 # @block:auth/overview @kind:note
@@ -491,8 +491,8 @@ steps:
   6. Log audit event
 
 refs:
-  - @ref:#auth/entities
-  - @ref:specs/policies#rate-limit
+  - "@ref:#auth/entities
+  - "@ref:specs/policies#rate-limit
 
 # @block:auth/tests/login @kind:test
 category: unit

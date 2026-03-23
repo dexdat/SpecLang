@@ -408,7 +408,7 @@ export function createToolRegistry(): ToolRegistry {
 
 ## References
 
-- @ref:speclang/tools
+- "@ref:speclang/tools
 - @ref:speclang/agent-protocol
 - SIP 29: Agent Tools (overview)
 - SIP 50: MCP Tools

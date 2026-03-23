@@ -416,7 +416,7 @@ function useSSEConnection() {
 
 ## References
 
-- @ref:specs/ui.spec.dir/interactions
+- "@ref:specs/ui.spec.dir/interactions
 - SIP 36: UI
 - SIP 57: UI State
 - SIP 50: MCP Tools

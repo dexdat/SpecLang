@@ -501,7 +501,7 @@ class RalphLoop:
 
 ## References
 
-- @ref:speclang/ralph-loop
+- "@ref:speclang/ralph-loop
 - @ref:speclang/agent-protocol
 - @ref:speclang/cascade
 - @ref:speclang/recovery

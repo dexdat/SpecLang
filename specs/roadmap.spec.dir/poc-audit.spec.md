@@ -1,7 +1,6 @@
-# speclang-header lines:15
+# speclang-header lines:7
 id: "@speclang/roadmap/poc-audit"
-parent: "@ref:specs/roadmap"
-version: 1.0.0
+parent: ""@ref:specs/roadmap"version: 1.0.0
 layer: 1
 short: "Audit of specs needed for POC implementation"
 tags: [roadmap, poc, audit, checklist, gaps]

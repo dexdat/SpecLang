@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:9
 id: "@specs/docs/changelog"
 version: 1.0.0
 layer: 5
@@ -79,5 +79,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## References
 
-- @ref:specs/docs
+- "@ref:specs/docs
 - @ref:specs/release

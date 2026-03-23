@@ -243,7 +243,7 @@ See SIP 17 for detailed layer definitions and SIP 90 for abstraction concepts.
 
 ## References
 
-- @ref:speclang/layers
+- "@ref:speclang/layers
 - @ref:speclang/layers/overview
 - @ref:speclang/layers/definitions
 - SIP 17: Layer Definitions

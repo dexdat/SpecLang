@@ -457,7 +457,7 @@ HookEvents:
 
 ## References
 
-- @ref:specs/pipeline.spec.dir/hooks
+- "@ref:specs/pipeline.spec.dir/hooks
 - SIP 13: Pipeline
 - SIP 51: Daemon Events
 - SIP 10: Daemon Architecture

@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:12
 id: "@speclang/compiler.spec.dir/targets"
 version: 0.1.0
 layer: 2
@@ -6,8 +6,7 @@ tags: [compiler, targets, languages]
 imports: ["@speclang/core", "@speclang/stdlib", "@speclang/spec-format"]
 project_level: Alpha
 agent_support: agent_assisted
-parent: "@ref:speclang/compiler"
-part: 2/3
+parent: ""@ref:speclang/compiler"part: 2/3
 short: Compiler target languages
 
 ---

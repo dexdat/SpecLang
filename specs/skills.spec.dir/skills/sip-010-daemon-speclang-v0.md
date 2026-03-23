@@ -325,7 +325,7 @@ Recovery:
 
 ## References
 
-- @ref:specs/daemon - Daemon spec (parent)
+- "@ref:specs/daemon - Daemon spec (parent)
 - @ref:specs/daemon.spec.dir/architecture - Architecture details
 - @ref:specs/daemon.spec.dir/events - Event handling
 - @ref:specs/daemon.spec.dir/routing - Event routing

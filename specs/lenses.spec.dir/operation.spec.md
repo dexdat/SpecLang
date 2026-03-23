@@ -1,7 +1,6 @@
-# speclang-header lines:12
+# speclang-header lines:9
 id: "@speclang/lenses/operation"
-parent: "@ref:specs/lenses"
-short: "API operation documentation lens"
+parent: ""@ref:specs/lenses"short: "API operation documentation lens"
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [lenses, api, operations, documentation]

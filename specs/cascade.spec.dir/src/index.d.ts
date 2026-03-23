@@ -35,6 +35,7 @@ declare function parseSpec(content: string): {
     blocks: SpecBlock[];
 };
 interface SpecBlock {
+    id: string;
     name: string;
     kind: string;
     language?: string;

@@ -1,4 +1,4 @@
-# speclang-header lines:15
+# speclang-header lines:9
 id: "@specs/guard"
 version: 1.0.0
 layer: 2

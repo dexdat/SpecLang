@@ -3,8 +3,7 @@ id: "@speclang/scripts.validate-refs"
 version: 0.1.0
 layer: 2
 tags: [scripts, validation, references]
-parent: "@ref:speclang/scripts"
-status: draft
+parent: ""@ref:speclang/scripts"status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Validate References Script
@@ -42,25 +41,17 @@ Broken references cause cascade failures and confusion. This script:
 # @block:ref-types @kind:entity
 ReferenceTypes:
   block_ref:
-    - pattern: "@ref:path/to/spec#block-name"
-    - targets: Specific @block: in a spec file
-    - example: "@ref:specs/auth#login"
-  
+    - pattern: ""@ref:path/to/spec#block-name"    - targets: Specific @block: in a spec file
+    - example: ""@ref:specs/auth#login"  
   file_ref:
-    - pattern: "@ref:path/to/spec"
-    - targets: Entire spec file
-    - example: "@ref:specs/auth"
-  
+    - pattern: ""@ref:path/to/spec"    - targets: Entire spec file
+    - example: ""@ref:specs/auth"  
   project_ref:
-    - pattern: "@ref:project-name"
-    - targets: project.scl or northstar
-    - example: "@ref:northstar"
-  
+    - pattern: ""@ref:project-name"    - targets: project.scl or northstar
+    - example: ""@ref:northstar"  
   external_ref:
-    - pattern: "@ref:external/package"
-    - targets: External spec or resource
-    - example: "@ref:npm:express"
-```
+    - pattern: ""@ref:external/package"    - targets: External spec or resource
+    - example: ""@ref:npm:express"```
 
 ## Implementation
 
@@ -127,8 +118,7 @@ python3 scripts/validate_refs.py specs/auth.spec.md
 python3 scripts/validate_refs.py specs/ --json
 
 # Check specific reference pattern
-python3 scripts/validate_refs.py specs/ --pattern "@ref:northstar"
-```
+python3 scripts/validate_refs.py specs/ --pattern ""@ref:northstar"```
 
 ## Output Format
 

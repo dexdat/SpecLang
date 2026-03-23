@@ -424,7 +424,7 @@ Comparison:
 
 ## References
 
-- @ref:specs/mcp
+- "@ref:specs/mcp
 - SIP 114: MCP Architecture
 - SIP 116: Token Authentication
 - SIP 118: Error Codes

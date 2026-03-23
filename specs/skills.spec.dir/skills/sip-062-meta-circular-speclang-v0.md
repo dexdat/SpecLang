@@ -425,7 +425,7 @@ async function trackEvolution(): Promise<EvolutionMetrics[]> {
 
 ## References
 
-- @ref:specs/implementation.spec.spec.dir/meta-circular
+- "@ref:specs/implementation.spec.spec.dir/meta-circular
 - SIP 44: Bootstrap
 - SIP 45: Ralph Loop
 - SIP 15: Self-Specifying

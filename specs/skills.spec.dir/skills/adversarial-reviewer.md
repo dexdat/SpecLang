@@ -114,12 +114,12 @@ You run when:
 
 ```yaml
 # auth.review.spec.yaml
-# speclang-header lines:12
+# speclang-header lines:8
 id: @reviews/auth
 version: 1.0.0
 refs:
-  - @ref:specs/auth
-  - @ref:specs/auth/login
+  - "@ref:specs/auth
+  - "@ref:specs/auth/login
 tags: [review, auth, security]
 short: Adversarial review of auth specs
 ---

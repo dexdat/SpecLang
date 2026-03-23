@@ -488,7 +488,7 @@ EventRetention:
 
 ## References
 
-- @ref:specs/daemon.spec.dir/events
+- "@ref:specs/daemon.spec.dir/events
 - SIP 10: Daemon Architecture
 - SIP 43: MCP Daemon
 - SIP 52: Daemon Locks

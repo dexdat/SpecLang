@@ -182,15 +182,15 @@ specs/auth.spec.spec.dir/
 
 **Structure:**
 ```yaml
-# speclang-header lines:15
+# speclang-header lines:10
 id: @specs/auth
 version: 1.0.0
 children:
-  - @ref:specs/auth.spec.spec.dir/overview
-  - @ref:specs/auth.spec.spec.dir/entities
-  - @ref:specs/auth.spec.spec.dir/operations
-  - @ref:specs/auth.spec.spec.dir/policies
-  - @ref:specs/auth.spec.spec.dir/tests
+  - "@ref:specs/auth.spec.spec.dir/overview
+  - "@ref:specs/auth.spec.spec.dir/entities
+  - "@ref:specs/auth.spec.spec.dir/operations
+  - "@ref:specs/auth.spec.spec.dir/policies
+  - "@ref:specs/auth.spec.spec.dir/tests
 short: "Authentication system (split into 5 parts)"
 ---
 
@@ -221,7 +221,7 @@ siblings:
 order: 2
 short: "Auth entities (User, Session, Token)"
 refs:
-  - @ref:specs/auth.spec.spec.dir/overview
+  - "@ref:specs/auth.spec.spec.dir/overview
 ---
 
 # @block:auth/entities @kind:entity
@@ -419,8 +419,8 @@ blocks:
 # auth.spec.yaml (index)
 id: @specs/auth
 children:
-  - @ref:specs/auth.spec.spec.dir/entities
-  - @ref:specs/auth.spec.spec.dir/operations
+  - "@ref:specs/auth.spec.spec.dir/entities
+  - "@ref:specs/auth.spec.spec.dir/operations
 ```
 
 ```yaml

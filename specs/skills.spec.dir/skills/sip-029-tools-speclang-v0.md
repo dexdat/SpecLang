@@ -463,7 +463,7 @@ class SpecLangTools:
 
 ## References
 
-- @ref:speclang/tools
+- "@ref:speclang/tools
 - @ref:speclang/agent-protocol
 - SIP 6: Agent Protocol
 - SIP 11: MCP Tools

@@ -443,7 +443,7 @@ export default class SpecLangPlugin implements Plugin {
 
 ## References
 
-- @ref:speclang/opencode
+- "@ref:speclang/opencode
 - @ref:speclang/opencode/events
 - @ref:speclang/opencode/integration
 - SIP 10: Daemon

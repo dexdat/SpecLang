@@ -1,7 +1,6 @@
-# speclang-header lines:12
+# speclang-header lines:9
 id: "@speclang/lenses/code"
-parent: "@ref:specs/lenses"
-short: "Code block extraction and formatting lens"
+parent: ""@ref:specs/lenses"short: "Code block extraction and formatting lens"
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [lenses, code, syntax-highlighting]

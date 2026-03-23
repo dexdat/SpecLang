@@ -153,8 +153,8 @@ function parseSpec(content: string): { id: string; version: string; blocks: Spec
       continue;
     }
 
-    // Detect blocks: ### @block:name @kind:type
-    const blockMatch = line.match(/###\s+@block:(\S+)\s+@kind:(\S+)/);
+    // Detect blocks: ### @block::name @kind:type
+    const blockMatch = line.match(/###\s+@block::(\S+)\s+@kind:(\S+)/);
     if (blockMatch) {
       // Save previous block
       if (currentBlock) {
@@ -165,6 +165,7 @@ function parseSpec(content: string): { id: string; version: string; blocks: Spec
       }
       
       currentBlock = {
+        id: '@block::' + blockMatch[1],
         name: blockMatch[1],
         kind: blockMatch[2],
         code: ''
@@ -210,6 +211,7 @@ function parseSpec(content: string): { id: string; version: string; blocks: Spec
 }
 
 interface SpecBlock {
+  id: string;
   name: string;
   kind: string;
   language?: string;

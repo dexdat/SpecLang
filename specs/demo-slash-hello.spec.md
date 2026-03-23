@@ -1,4 +1,4 @@
-# speclang-header lines:18
+# speclang-header lines:10
 id: "@demo/hello-dir"
 version: 1.0.0
 layer: 5
@@ -7,8 +7,7 @@ agent_support: agent_assisted
 tags: [demo, hello-world, example]
 short: Hello world demo directory
 status: draft
-parent: "@ref:specs/demo"
----
+parent: ""@ref:specs/demo"---
 
 # Hello World Demo Directory
 

@@ -390,7 +390,7 @@ class GitHistory:
 
 ## References
 
-- @ref:speclang/git-history
+- "@ref:speclang/git-history
 - @ref:speclang/tools
 - SIP 29: Agent Tools API
 

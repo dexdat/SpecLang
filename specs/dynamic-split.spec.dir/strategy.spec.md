@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:9
 id: "@speclang/dynamic-split/strategy"
 version: 0.1.0
 layer: 2
@@ -178,10 +178,10 @@ DirStructure:
     header:
       id: @specs/auth/login
       children:
-        - @ref:specs/auth/login.spec.dir/overview
-        - @ref:specs/auth/login.spec.dir/entities
-        - @ref:specs/auth/login.spec.dir/operations
-        - @ref:specs/auth/login.spec.dir/tests
+        - "@ref:specs/auth/login.spec.dir/overview
+        - "@ref:specs/auth/login.spec.dir/entities
+        - "@ref:specs/auth/login.spec.dir/operations
+        - "@ref:specs/auth/login.spec.dir/tests
       short: "Login (4 sub-specs)"
     content: "See login.spec.dir/ for details"
 
@@ -245,9 +245,9 @@ Parent header (specs/auth.spec.yaml):
   id: @specs/auth
   version: 1.0.0
   children:
-    - @ref:specs/auth.spec.dir/entities
-    - @ref:specs/auth.spec.dir/operations
-    - @ref:specs/auth.spec.dir/policies
+    - "@ref:specs/auth.spec.dir/entities
+    - "@ref:specs/auth.spec.dir/operations
+    - "@ref:specs/auth.spec.dir/policies
   short: "Authentication system (3 parts)"
   ---
   

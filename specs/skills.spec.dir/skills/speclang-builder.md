@@ -6,7 +6,7 @@ trigger: Building Speclang implementation
 permissions: [read, write]
 subagent: true
 ---
-# speclang-header lines:5
+# speclang-header lines:102
 # id: @specs/skills
 # version: 1.0.0
 # layer: 5

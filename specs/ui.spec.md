@@ -1,4 +1,4 @@
-# speclang-header lines:26
+# speclang-header lines:25
 id: "@speclang/ui"
 version: 0.2.0
 layer: 2

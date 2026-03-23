@@ -5,7 +5,7 @@ version: 0.1.0
 description: File naming conventions and format selection
 category: standard
 ---
-# speclang-header lines:5
+# speclang-header lines:126
 # id: @specs/skills
 # version: 1.0.0
 # layer: 5

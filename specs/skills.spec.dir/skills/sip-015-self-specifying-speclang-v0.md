@@ -372,7 +372,7 @@ BootstrapRollback:
 
 ## References
 
-- @ref:speclang/bootstrap
+- "@ref:speclang/bootstrap
 - @ref:speclang/cascade
 - SIP 0: What is Speclang
 - SIP 7: Cascade System

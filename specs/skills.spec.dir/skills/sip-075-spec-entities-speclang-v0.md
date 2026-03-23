@@ -71,7 +71,7 @@ This follows patterns from DDD, JPA, and Prisma.
 ```yaml
 EntityBlock:
   syntax: |
-    ### @block:<id> @kind:entity
+    ### @block::<id> @kind:entity
     <EntityName>:
       description?: String
       fields:
@@ -106,7 +106,7 @@ FieldTypes:
     - Option<T>   # explicit option
     
   references:
-    - @ref:<EntityName>     # reference to entity
+    - "@ref:<EntityName>     # reference to entity
     - ID<EntityName>        # typed ID
     
   custom:
@@ -232,7 +232,7 @@ EntityMetadata:
 ### Example 1: Basic Entity
 
 ```yaml
-### @block:entities/user @kind:entity
+### @block::entities/user @kind:entity
 User:
   description: "Application user account"
   fields:
@@ -255,7 +255,7 @@ User:
 ### Example 2: Entity with Relationships
 
 ```yaml
-### @block:entities/order @kind:entity
+### @block::entities/order @kind:entity
 Order:
   description: "Customer order"
   fields:
@@ -288,7 +288,7 @@ Order:
 ### Example 3: Value Object
 
 ```yaml
-### @block:entities/money @kind:entity @valueObject
+### @block::entities/money @kind:entity @valueObject
 Money:
   description: "Monetary amount with currency"
   fields:
@@ -308,7 +308,7 @@ Money:
 ### Example 4: Enum Entity
 
 ```yaml
-### @block:entities/order-status @kind:entity
+### @block::entities/order-status @kind:entity
 OrderStatus:
   description: "Possible order states"
   type: enum
@@ -334,7 +334,7 @@ OrderStatus:
 ### Example 5: Aggregate Root
 
 ```yaml
-### @block:entities/customer @kind:entity @aggregate
+### @block::entities/customer @kind:entity @aggregate
 Customer:
   description: "Customer aggregate root"
   fields:
@@ -445,7 +445,7 @@ class Entity:
 
 ## References
 
-- @ref:speclang/spec-format
+- "@ref:speclang/spec-format
 - @ref:speclang/spec-format.spec.dir/blocks
 - SIP 3: Block System
 - SIP 12: Code Generation

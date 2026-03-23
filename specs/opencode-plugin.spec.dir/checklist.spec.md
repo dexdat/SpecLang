@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:9
 id: "@speclang/opencode-plugin.spec.dir/checklist"
 version: 0.2.0
 layer: 5
@@ -46,4 +46,4 @@ agent_support: agent_assisted
 
 ## References
 
-- @ref:speclang/opencode-plugin.spec.dir/* (individual components)
+- "@ref:speclang/opencode-plugin.spec.dir/* (individual components)

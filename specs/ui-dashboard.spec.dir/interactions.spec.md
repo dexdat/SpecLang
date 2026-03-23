@@ -1,7 +1,6 @@
-# speclang-header lines:12
+# speclang-header lines:9
 id: "@speclang/ui-dashboard/interactions"
-parent: "@ref:specs/ui-dashboard"
-short: "UI interaction handlers and event management"
+parent: ""@ref:specs/ui-dashboard"short: "UI interaction handlers and event management"
 project_level: Alpha
 agent_support: agent_assisted
 tags: [ui, dashboard, interactions, events]

@@ -258,7 +258,7 @@ SemanticValidation:
 ### Example 1: POC Feature Spec
 
 ```yaml
-# speclang-header lines:9
+# speclang-header lines:8
 id: @specs/new-feature
 version: 0.0.1
 layer: 1
@@ -352,7 +352,7 @@ KubernetesDeployment:
 
 ## References
 
-- @ref:speclang/semantic-definitions
+- "@ref:speclang/semantic-definitions
 - @ref:speclang/layer-definitions
 - @ref:speclang/project-maturity-levels
 - @ref:speclang/agent-support-levels

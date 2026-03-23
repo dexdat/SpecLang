@@ -753,7 +753,7 @@ MCPErrorHandling:
 
 ## References
 
-- @ref:specs/mcp.spec.dir/error-handling
+- "@ref:specs/mcp.spec.dir/error-handling
 - @ref:specs/validation.spec.dir/rules
 - SIP 22: Validation
 - SIP 65: Validation Rules

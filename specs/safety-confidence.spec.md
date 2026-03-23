@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:8
 id: "@specs/safety-confidence"
 version: 1.0.0
 layer: 5
@@ -22,7 +22,7 @@ The Safety Confidence Scoring system:
 
 ## @block:references @kind:ref
 
-- @ref:speclang/safety-nets
+- "@ref:speclang/safety-nets
 - @ref:speclang/autonomous-validation
 - @ref:speclang/security
 

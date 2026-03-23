@@ -1,7 +1,6 @@
-# speclang-header lines:12
+# speclang-header lines:9
 id: "@speclang/lenses/prose"
-parent: "@ref:specs/lenses"
-short: "Prose and narrative text extraction lens"
+parent: ""@ref:specs/lenses"short: "Prose and narrative text extraction lens"
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [lenses, prose, documentation, narrative]

@@ -1,4 +1,4 @@
-# speclang-header lines:20
+# speclang-header lines:9
 id: "@speclang/bootstrap"
 version: 1.0.0
 layer: 0
@@ -151,7 +151,7 @@ agent_support: agent_autonomous
 tags: [example, docs]
 short: Brief description
 depends_on:
-  - @ref:specs/other#block
+  - "@ref:specs/other#block
 ---
 ```
 

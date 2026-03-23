@@ -1,10 +1,9 @@
-# speclang-header lines:13
+# speclang-header lines:11
 id: "@speclang/scripts.fallback-protocol"
 version: 0.1.0
 layer: 2
 tags: [scripts, fallback, safety-nets, peer-review]
-parent: "@ref:speclang/scripts"
-status: draft
+parent: ""@ref:speclang/scripts"status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Fallback Protocol Script

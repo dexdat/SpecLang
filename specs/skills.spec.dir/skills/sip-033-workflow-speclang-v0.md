@@ -475,7 +475,7 @@ class UserWorkflow:
 
 ## References
 
-- @ref:speclang/workflow
+- "@ref:speclang/workflow
 - @ref:speclang/daemon
 - @ref:speclang/skills
 - SIP 6: Agent Protocol

@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/test-specs/examples"
 version: 0.1.0
 layer: 2

@@ -415,7 +415,7 @@ class TestExecutor {
 
 ## References
 
-- @ref:specs/pipeline.spec.dir/test
+- "@ref:specs/pipeline.spec.dir/test
 - SIP 13: Pipeline System
 - SIP 74: Pipeline Conditions
 - SIP 76: Integration Tests

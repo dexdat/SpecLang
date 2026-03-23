@@ -353,7 +353,7 @@ EnvironmentVariables:
 
 ## References
 
-- @ref:specs/mcp
+- "@ref:specs/mcp
 - SIP 114: MCP Architecture
 - SIP 43: MCP Daemon
 - SIP 50: MCP Tools Detailed

@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:9
 id: "@specs/validation/rules/header"
 version: 1.0.0
 layer: 5

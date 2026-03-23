@@ -406,7 +406,7 @@ TestCoverage:
 ### Example 1: Interaction Test
 
 ```speclang
-### @block:test-button-click @kind:test @test_type:interaction
+### @block::test-button-click @kind:test @test_type:interaction
 
 # Test: Button Click Interaction
 
@@ -437,7 +437,7 @@ assert callback_called == True
 ### Example 2: State Test
 
 ```speclang
-### @block:test-form-state @kind:test @test_type:state
+### @block::test-form-state @kind:test @test_type:state
 
 # Test: Form State Management
 
@@ -470,7 +470,7 @@ assert form.errors["password"] == "Password too short"
 ### Example 3: Visual Test
 
 ```speclang
-### @block:test-button-visual @kind:test @test_type:visual
+### @block::test-button-visual @kind:test @test_type:visual
 
 # Test: Button Visual States
 
@@ -504,7 +504,7 @@ assert form.errors["password"] == "Password too short"
 
 ## References
 
-- @ref:speclang/ui-specification
+- "@ref:speclang/ui-specification
 - @ref:speclang/ui-state
 - @ref:speclang/ui-interactions
 - SIP 36: UI Specification

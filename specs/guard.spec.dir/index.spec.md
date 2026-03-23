@@ -1,4 +1,4 @@
-# speclang-header lines:25
+# speclang-header lines:9
 id: "@specs/guard"
 version: 1.0.0
 layer: 2
@@ -162,5 +162,5 @@ initGuard(customRules, { strictMode: true });
 
 ## References
 
-- @ref:specs/core#agents - Agent definitions
+- "@ref:specs/core#agents - Agent definitions
 - @ref:specs/agents/types - AgentRole type

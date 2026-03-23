@@ -153,7 +153,7 @@ agent_assistedContent:
 ### Example agent_assisted Header
 
 ```yaml
-# speclang-header lines:12
+# speclang-header lines:8
 id: @specs/payment-service
 version: 0.1.0
 project_level: Alpha
@@ -387,7 +387,7 @@ agent_assistedMistakes:
 
 ## References
 
-- @ref:speclang/agent-support-levels
+- "@ref:speclang/agent-support-levels
 - @ref:speclang/agent-autonomous
 - @ref:speclang/behavior-matrix
 - SIP 19: Agent Support Levels

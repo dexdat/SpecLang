@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:9
 id: "@speclang/opencode-plugin.spec.dir/overview"
 version: 0.1.0
 layer: 4
@@ -46,6 +46,6 @@ The OpenCode plugin integrates Speclang's reactive cascade system into OpenCode,
 
 ## References
 
-- @ref:speclang/opencode-plugin.spec.dir/architecture
+- "@ref:speclang/opencode-plugin.spec.dir/architecture
 - @ref:speclang/opencode-plugin.spec.dir/event-system
 - @ref:speclang/opencode-plugin.spec.dir/session-manager

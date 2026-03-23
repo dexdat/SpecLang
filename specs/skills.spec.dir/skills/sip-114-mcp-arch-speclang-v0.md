@@ -369,7 +369,7 @@ ErrorHandling:
 
 ## References
 
-- @ref:specs/mcp
+- "@ref:specs/mcp
 - SIP 50: MCP Tools Detailed
 - SIP 43: MCP Daemon
 - SIP 115: MCP Run Modes

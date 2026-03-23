@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:12
 id: "@speclang/directory-structure"
 version: 0.1.0
 layer: 0

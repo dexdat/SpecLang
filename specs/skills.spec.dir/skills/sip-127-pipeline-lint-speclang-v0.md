@@ -409,7 +409,7 @@ lint:
 
 ## References
 
-- @ref:specs/pipeline.spec.dir/lint
+- "@ref:specs/pipeline.spec.dir/lint
 - SIP 13: Pipeline System
 - SIP 74: Pipeline Conditions
 - SIP 128: Pipeline Format

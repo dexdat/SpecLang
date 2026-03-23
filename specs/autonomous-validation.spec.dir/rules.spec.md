@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:10
 id: "@speclang/autonomous-validation/rules"
 version: 0.1.0
 layer: 2
@@ -57,8 +57,7 @@ AutonomousValidationCriteria:
       - id: "Must follow @domain/path format"
       - version: "Semantic version"
       - layer: "Integer (depth in tree), appropriate for content"
-      - project_level: "Value meets criteria defined in @ref:speclang/project-maturity-levels"
-      - agent_support: "agent_autonomous"
+      - project_level: "Value meets criteria defined in ""@ref:speclang/project-maturity-levels"      - agent_support: "agent_autonomous"
       - tags: "Non-empty array"
       - short: "One-line description"
     optional_but_recommended:
@@ -298,9 +297,9 @@ steps:
 ```speclang
 # @block:autonomous-validation/references @kind:refs
 refs:
-  - @ref:speclang/validation
-  - @ref:speclang/headers
-  - @ref:speclang/layer-definitions
-  - @ref:speclang/project-maturity-levels
-  - @ref:speclang/agent-support-levels
+  - "@ref:speclang/validation
+  - "@ref:speclang/headers
+  - "@ref:speclang/layer-definitions
+  - "@ref:speclang/project-maturity-levels
+  - "@ref:speclang/agent-support-levels
 ```

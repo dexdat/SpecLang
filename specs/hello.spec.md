@@ -1,4 +1,4 @@
-# speclang-header lines:18
+# speclang-header lines:9
 id: "@demo/hello"
 version: 1.0.0
 layer: 5

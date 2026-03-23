@@ -88,7 +88,7 @@ You run when:
 
 ```yaml
 # auth.go.spec
-# speclang-header lines:15
+# speclang-header lines:10
 id: @specs/auth/login.go.spec
 version: 1.0.0
 parent: @ref:specs/auth/login
@@ -96,8 +96,8 @@ target: go
 tags: [auth, login, go]
 short: Go implementation of login
 refs:
-  - @ref:specs/auth/entities
-  - @ref:specs/auth/login
+  - "@ref:specs/auth/entities
+  - "@ref:specs/auth/login
 ---
 
 package auth

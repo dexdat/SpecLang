@@ -620,7 +620,7 @@ MonitoringConfig:
 
 ## References
 
-- @ref:speclang/performance
+- "@ref:speclang/performance
 - SIP 76: Integration Testing
 - SIP 10: Daemon
 - SIP 11: MCP Tools

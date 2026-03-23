@@ -147,7 +147,7 @@ MVPContent:
 ### Example MVP Header
 
 ```yaml
-# speclang-header lines:10
+# speclang-header lines:8
 id: @specs/auth
 version: 0.1.0
 project_level: MVP
@@ -477,7 +477,7 @@ MVPMistakes:
 
 ## References
 
-- @ref:speclang/maturity-levels
+- "@ref:speclang/maturity-levels
 - @ref:speclang/maturity-levels/mvp
 - @ref:speclang/project-level
 - SIP 18: Maturity Levels

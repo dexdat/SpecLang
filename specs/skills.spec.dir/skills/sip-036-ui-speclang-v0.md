@@ -383,7 +383,7 @@ class DashboardComponent {
 
 ## References
 
-- @ref:speclang/ui
+- "@ref:speclang/ui
 - @ref:speclang/ui.spec.dir/overview
 - @ref:speclang/ui.spec.dir/components
 - @ref:speclang/mcp-ui-tools

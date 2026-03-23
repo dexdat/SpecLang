@@ -6,10 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [pipeline, build, hooks, recovery, convergence]
 children:
-  - "@ref:specs/pipeline.spec.dir/build"
-  - "@ref:specs/pipeline.spec.dir/hooks"
-  - "@ref:specs/pipeline.spec.dir/recovery"
-short: "Pipeline - Build, test, deploy execution after convergence"
+  - ""@ref:specs/pipeline.spec.dir/build"  - ""@ref:specs/pipeline.spec.dir/hooks"  - ""@ref:specs/pipeline.spec.dir/recovery"short: "Pipeline - Build, test, deploy execution after convergence"
 status: draft
 ---
 
@@ -87,6 +84,5 @@ pipeline:
       condition: deployment-requested
   recovery:
     max-attempts: 3
-    on-fail: notify-orchestrator "Tests failed — rolling back spec change @ref:xxx"
-```
+    on-fail: notify-orchestrator "Tests failed — rolling back spec change ""@ref:xxx"```
 

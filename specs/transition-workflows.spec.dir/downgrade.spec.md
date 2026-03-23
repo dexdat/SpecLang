@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:8
 id: "@speclang/transition-workflows/downgrade"
 version: 0.1.0
 layer: 2
@@ -203,9 +203,9 @@ MonitoringIntegration:
 ```speclang
 # @block:transition/references-downgrade @kind:refs
 refs:
-  - @ref:speclang/project-maturity-levels
-  - @ref:speclang/agent-support-levels
-  - @ref:speclang/autonomous-validation
-  - @ref:speclang/agent-behavior-matrix
-  - @ref:speclang/transition-workflows/upgrade
+  - "@ref:speclang/project-maturity-levels
+  - "@ref:speclang/agent-support-levels
+  - "@ref:speclang/autonomous-validation
+  - "@ref:speclang/agent-behavior-matrix
+  - "@ref:speclang/transition-workflows/upgrade
 ```

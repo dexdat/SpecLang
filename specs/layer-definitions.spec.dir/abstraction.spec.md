@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/layer-definitions/abstraction"
 version: 0.1.0
 layer: 2
@@ -95,8 +95,8 @@ LayerValidation:
 ```speclang
 # @block:depth/references @kind:refs
 refs:
-  - @ref:speclang/headers#layer
-  - @ref:speclang/spec-format#layers
-  - @ref:speclang/project-maturity-levels
-  - @ref:speclang/agent-support-levels
+  - "@ref:speclang/headers#layer
+  - "@ref:speclang/spec-format#layers
+  - "@ref:speclang/project-maturity-levels
+  - "@ref:speclang/agent-support-levels
 ```

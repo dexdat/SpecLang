@@ -31,13 +31,13 @@ This SIP defines the universal reference system for linking specs.
 ### Example
 
 ```yaml
-# speclang-header lines:10
+# speclang-header lines:7
 id: @specs/auth/login
 refs:
-  - @ref:specs/auth/entities#User
-  - @ref:specs/auth/policies#rate-limit
+  - "@ref:specs/auth/entities#User
+  - "@ref:specs/auth/policies#rate-limit
 depends_on:
-  - @ref:stdlib/Result
+  - "@ref:stdlib/Result
 ---
 ```
 
@@ -181,11 +181,11 @@ northstar            → project.scl
 # speclang-header lines:12
 id: @specs/auth/login
 refs:
-  - @ref:specs/auth/entities#User
-  - @ref:specs/auth/policies#rate-limit
+  - "@ref:specs/auth/entities#User
+  - "@ref:specs/auth/policies#rate-limit
 depends_on:
-  - @ref:stdlib/Result
-  - @ref:stdlib/JWT
+  - "@ref:stdlib/Result
+  - "@ref:stdlib/JWT
 ```
 
 **In Blocks:**
@@ -193,9 +193,9 @@ depends_on:
 ```markdown
 # @block:auth/login @kind:operation
 refs:
-  - @ref:specs/auth/entities#User
-  - @ref:specs/auth/policies#rate-limit
-  - @ref:northstar#auth
+  - "@ref:specs/auth/entities#User
+  - "@ref:specs/auth/policies#rate-limit
+  - "@ref:northstar#auth
 ```
 
 **In Code:**
@@ -221,12 +221,12 @@ the User entity (@ref:specs/auth/entities#user).
 
 ```yaml
 refs:              # Outgoing references
-  - @ref:specs/user
+  - "@ref:specs/user
 depends_on:       # Dependencies
-  - @ref:stdlib/Result
+  - "@ref:stdlib/Result
 children:          # Child specs
-  - @ref:specs/auth/entities
-  - @ref:specs/auth/operations
+  - "@ref:specs/auth/entities
+  - "@ref:specs/auth/operations
 parent:            # Parent spec
   @ref:specs/auth
 ```
@@ -300,11 +300,9 @@ def resolve_reference(ref_str, current_file):
 
 **Errors:**
 ```
-Error: Invalid reference "@ref:specs/auth#login"
-  File not found: specs/auth.spec.yaml
+Error: Invalid reference ""@ref:specs/auth#login"  File not found: specs/auth.spec.yaml
 
-Error: Invalid reference "@ref:specs/auth#login"
-  Block not found: "login" in specs/auth.spec.yaml
+Error: Invalid reference ""@ref:specs/auth#login"  Block not found: "login" in specs/auth.spec.yaml
 
 Error: Circular dependency detected
   specs/auth → specs/user → specs/auth
@@ -385,12 +383,12 @@ id: @specs/auth/login
 version: 1.0.0
 parent: @ref:specs/auth
 depends_on:
-  - @ref:specs/auth/entities#User
-  - @ref:specs/auth/policies#rate-limit
-  - @ref:stdlib/Result
+  - "@ref:specs/auth/entities#User
+  - "@ref:specs/auth/policies#rate-limit
+  - "@ref:stdlib/Result
 refs:
-  - @ref:northstar#auth
-  - @ref:specs/user
+  - "@ref:northstar#auth
+  - "@ref:specs/user
 ---
 
 # @block:auth/login @kind:operation
@@ -405,8 +403,8 @@ steps:
   3. Return @ref:stdlib/Result
 
 refs:
-  - @ref:specs/auth/entities#User
-  - @ref:specs/auth/policies#rate-limit
+  - "@ref:specs/auth/entities#User
+  - "@ref:specs/auth/policies#rate-limit
 ```
 
 ### Code Markers

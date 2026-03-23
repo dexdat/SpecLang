@@ -8,9 +8,7 @@ project_level: Alpha
 agent_support: agent_assisted
 short: Build and Development Scripts
 children:
-  - "@ref:speclang/scripts/generate"
-  - "@ref:speclang/scripts/validate"
----
+  - ""@ref:speclang/scripts/generate"  - ""@ref:speclang/scripts/validate"---
 
 # Build and Development Scripts
 

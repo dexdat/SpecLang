@@ -192,9 +192,9 @@ Parent index spec (auth.spec.md):
 id: "@myapp/auth"
 version: 1.2.0
 children:
-  - @ref:specs/auth.spec.dir/entities
-  - @ref:specs/auth.spec.dir/operations
-  - @ref:specs/auth.spec.dir/policies
+  - "@ref:specs/auth.spec.dir/entities
+  - "@ref:specs/auth.spec.dir/operations
+  - "@ref:specs/auth.spec.dir/policies
 short: "Authentication (3 parts)"
 ---
 

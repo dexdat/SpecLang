@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/agent-behavior-matrix/transitions"
 version: 0.1.0
 layer: 2
@@ -104,8 +104,8 @@ Integration points:
 ```speclang
 # @block:behavior-matrix/references @kind:refs
 refs:
-  - @ref:speclang/project-maturity-levels
-  - @ref:speclang/agent-support-levels
-  - @ref:speclang/semantic-definitions
-  - @ref:speclang/autonomous-validation
+  - "@ref:speclang/project-maturity-levels
+  - "@ref:speclang/agent-support-levels
+  - "@ref:speclang/semantic-definitions
+  - "@ref:speclang/autonomous-validation
 ```

@@ -1,11 +1,8 @@
 # speclang-header lines:14
 id: "@speclang/pipeline/hooks"
-parent: "@ref:speclang/pipeline"
-part: 2/3
+parent: ""@ref:speclang/pipeline"part: 2/3
 siblings:
-  prev: "@ref:speclang/pipeline/build"
-  next: "@ref:speclang/pipeline/recovery"
-short: Build Pipeline - Hooks
+  prev: ""@ref:speclang/pipeline/build"  next: ""@ref:speclang/pipeline/recovery"short: Build Pipeline - Hooks
 project_level: Alpha
 agent_support: agent_assisted
 tags: [pipeline, hooks]
