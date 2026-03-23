@@ -406,7 +406,7 @@ POCMistakes:
 
 ## References
 
-- @ref:speclang/maturity-levels
+- "@ref:speclang/maturity-levels
 - @ref:speclang/maturity-levels/poc
 - @ref:speclang/project-level
 - SIP 18: Maturity Levels

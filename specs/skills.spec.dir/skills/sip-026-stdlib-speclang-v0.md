@@ -524,7 +524,7 @@ class StdLib:
 
 ## References
 
-- @ref:speclang/stdlib
+- "@ref:speclang/stdlib
 - @ref:speclang/stdlib.spec.dir/types
 - @ref:speclang/stdlib.spec.dir/mapping
 - SIP 3: Block System

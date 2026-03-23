@@ -6,7 +6,7 @@ trigger: File write attempt or lock request
 permissions: [read]
 subagent: true
 ---
-# speclang-header lines:5
+# speclang-header lines:163
 # id: @specs/skills
 # version: 1.0.0
 # layer: 5

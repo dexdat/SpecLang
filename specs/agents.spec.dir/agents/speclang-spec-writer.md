@@ -14,7 +14,7 @@ permission:
   edit: allow
 hidden: false
 ---
-# speclang-header lines:5
+# speclang-header lines:31
 # id: @specs/agents
 # version: 1.0.0
 # layer: 5
@@ -75,7 +75,7 @@ refs: [@ref:specs/nonexistent]
 If `agent_support: agent_autonomous`, operation blocks MUST have explicit steps:
 
 ```markdown
-### @block:auth/login @kind:operation
+### @block::auth/login @kind:operation
 
 **Steps:**
 1. Validate input parameters (email, password)

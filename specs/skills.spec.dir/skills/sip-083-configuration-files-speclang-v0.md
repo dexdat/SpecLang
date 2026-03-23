@@ -718,7 +718,7 @@ project/
 
 ## References
 
-- @ref:sip-008-configuration
+- "@ref:sip-008-configuration
 - @ref:sip-037-cli
 - @ref:sip-064-cli-commands
 

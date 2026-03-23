@@ -1,10 +1,9 @@
-# speclang-header lines:13
+# speclang-header lines:11
 id: "@speclang/scripts.fix-headers"
 version: 0.1.0
 layer: 2
 tags: [scripts, headers, fix]
-parent: "@ref:speclang/scripts"
-status: draft
+parent: ""@ref:speclang/scripts"status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Fix Headers Script
@@ -38,8 +37,8 @@ CommonIssues:
     - @block:name @kind:type → @block:name @kind:type
   
   references:
-    - @ref:specs/foo → @ref:specs/foo.spec
-    - @ref:foo → @ref:specs/foo
+    - "@ref:specs/foo → @ref:specs/foo.spec
+    - "@ref:foo → @ref:specs/foo
   
   line_count:
     - Header says lines:10 but has 12 lines

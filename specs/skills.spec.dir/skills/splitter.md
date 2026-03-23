@@ -80,9 +80,9 @@ After:
 ```yaml
 id: @specs/auth
 children:
-  - @ref:specs/auth.spec.spec.dir/entities
-  - @ref:specs/auth.spec.spec.dir/operations
-  - @ref:specs/auth.spec.spec.dir/policies
+  - "@ref:specs/auth.spec.spec.dir/entities
+  - "@ref:specs/auth.spec.spec.dir/operations
+  - "@ref:specs/auth.spec.spec.dir/policies
 short: "Auth (3 sub-specs)"
 ```
 

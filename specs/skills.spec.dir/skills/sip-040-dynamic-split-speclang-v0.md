@@ -130,10 +130,10 @@ DirStructure:
 ParentHeader:
   id: @specs/auth/login
   children:
-    - @ref:specs/auth/login.spec.spec.dir/overview
-    - @ref:specs/auth/login.spec.spec.dir/entities
-    - @ref:specs/auth/login.spec.spec.dir/operations
-    - @ref:specs/auth/login.spec.spec.dir/tests
+    - "@ref:specs/auth/login.spec.spec.dir/overview
+    - "@ref:specs/auth/login.spec.spec.dir/entities
+    - "@ref:specs/auth/login.spec.spec.dir/operations
+    - "@ref:specs/auth/login.spec.spec.dir/tests
   short: "Login (4 sub-specs)"
   
 content: "See login.spec.spec.dir/ for details"
@@ -319,7 +319,7 @@ class DynamicSplitter:
 
 ## References
 
-- @ref:speclang/dynamic-split
+- "@ref:speclang/dynamic-split
 - @ref:speclang/dynamic-split.spec.dir/strategy
 - @ref:speclang/dynamic-split.spec.dir/token-budget
 - SIP 5: Splitting and Sizing

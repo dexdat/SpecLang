@@ -522,7 +522,7 @@ PRAGMA foreign_keys = ON;
 
 ## References
 
-- @ref:specs/database
+- "@ref:specs/database
 - SIP 11: MCP Tools
 - SIP 50: MCP Tools Detailed
 - SIP 51: Daemon Events

@@ -431,7 +431,7 @@ format:
 
 ## References
 
-- @ref:specs/pipeline.spec.dir/format
+- "@ref:specs/pipeline.spec.dir/format
 - SIP 13: Pipeline System
 - SIP 74: Pipeline Conditions
 - SIP 127: Pipeline Lint

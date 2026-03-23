@@ -32,7 +32,7 @@ This SIP provides a minimal working example of the SpecLang cascade for quick st
 ### Example
 
 ```speclang
-# speclang-header lines:13
+# speclang-header lines:11
 id: "@speclang/examples/hello-world"
 version: 1.0.0
 layer: 10
@@ -51,7 +51,7 @@ Minimal working example of the SpecLang cascade.
 
 ## Implementation
 
-### @block:hello/function @kind:code
+### @block::hello/function @kind:code
 ```typescript
 export function helloWorld(name: string): string {
   return `Hello, ${name}!`;
@@ -187,7 +187,7 @@ This spec demonstrates:
 
 ## Implementation
 
-### @block:hello/function @kind:code
+### @block::hello/function @kind:code
 ```typescript
 /**
  * Hello World function
@@ -314,7 +314,7 @@ agent_support: agent_autonomous
 short: Hello World
 ---
 
-### @block:hello @kind:code
+### @block::hello @kind:code
 export function hello(name: string): string {
   return `Hello, ${name}!`;
 }
@@ -351,19 +351,19 @@ layer: 10
 tags: [example, extended]
 ---
 
-### @block:greeting/formatter @kind:code
+### @block::greeting/formatter @kind:code
 export function formatGreeting(name: string, time: Date): string {
   const hour = time.getHours();
   const period = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
   return `Good ${period}, ${name}!`;
 }
 
-### @block:greeting/validator @kind:code
+### @block::greeting/validator @kind:code
 export function validateName(name: string): boolean {
   return name.length > 0 && name.length < 100;
 }
 
-### @block:greeting/main @kind:code
+### @block::greeting/main @kind:code
 export function greet(name: string): string {
   if (!validateName(name)) {
     throw new Error('Invalid name');
@@ -374,7 +374,7 @@ export function greet(name: string): string {
 
 ## References
 
-- @ref:specs/examples.spec.spec.dir/hello-world
+- "@ref:specs/examples.spec.spec.dir/hello-world
 - SIP 41: Examples
 - SIP 12: Codegen
 - SIP 13: Pipeline

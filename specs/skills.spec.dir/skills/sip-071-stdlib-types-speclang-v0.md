@@ -361,7 +361,7 @@ class StdLibTypes:
 
 ## References
 
-- @ref:speclang/stdlib
+- "@ref:speclang/stdlib
 - @ref:speclang/stdlib.spec.dir/types
 - SIP 26: Standard Library
 - SIP 72: Standard Library Functions

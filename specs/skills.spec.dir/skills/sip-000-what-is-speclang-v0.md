@@ -5,7 +5,7 @@ version: 0.1.0
 description: Introduction to Speclang - the spec-driven reactive system
 category: documentation
 ---
-# speclang-header lines:5
+# speclang-header lines:103
 # id: @specs/skills
 # version: 1.0.0
 # layer: 5

@@ -1,4 +1,4 @@
-# speclang-header lines:20
+# speclang-header lines:9
 id: "@speclang/opencode-plugin.spec.dir/event-system"
 version: 0.1.0
 layer: 5
@@ -115,6 +115,6 @@ async function parseHeader(path: string): Promise<Header> {
 
 ## References
 
-- @ref:speclang/opencode-plugin.spec.dir/session-manager (for ownership)
+- "@ref:speclang/opencode-plugin.spec.dir/session-manager (for ownership)
 - @ref:speclang/opencode-plugin.spec.dir/convergence (for pipeline)
 - @ref:speclang/spec-format (header format)

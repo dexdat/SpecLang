@@ -150,8 +150,7 @@ IdValidation:
 ```speclang
 # @block:validation/refs @kind:entity
 RefValidation:
-  format: "@ref:path#block-id"
-  
+  format: ""@ref:path#block-id"  
   checks:
     - Target file must exist
     - Target block must exist (if specified)
@@ -429,7 +428,7 @@ const refExistsRule: Rule = {
 
 ## References
 
-- @ref:specs/validation.spec.dir/rules
+- "@ref:specs/validation.spec.dir/rules
 - @ref:specs/validation.spec.dir/engine
 - SIP 22: Validation
 - SIP 16: Autonomous Validation

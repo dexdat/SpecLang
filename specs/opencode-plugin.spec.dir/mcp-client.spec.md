@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:9
 id: "@speclang/opencode-plugin.spec.dir/mcp-client"
 version: 0.1.0
 layer: 5
@@ -78,5 +78,5 @@ async function speclangExecute(sql: string, params: any[] = []): Promise<void> {
 
 ## References
 
-- @ref:speclang/mcp (MCP server spec)
+- "@ref:speclang/mcp (MCP server spec)
 - @ref:speclang/sqlite (for query/execute)

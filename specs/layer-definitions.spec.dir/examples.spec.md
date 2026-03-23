@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/layer-definitions/examples"
 version: 0.1.0
 layer: 2
@@ -29,8 +29,7 @@ Layer0:
   typical_file: "project.scl"
   owned_by: "human + AI (orchestrator)"
   agent_support: "agent_assisted (human reviews)"
-  example: "@ref:northstar/speclang"
-```
+  example: ""@ref:northstar/speclang"```
 
 ## Depth 1: Feature
 
@@ -48,8 +47,7 @@ Layer1:
   typical_file: "{feature}.spec.md"
   owned_by: "spec-writer"
   agent_support: "agent_autonomous (with validation)"
-  example: "@ref:specs/auth"
-```
+  example: ""@ref:specs/auth"```
 
 ## Depth 2: Component
 
@@ -67,8 +65,7 @@ Layer2:
   typical_file: "{component}.spec.yaml"
   owned_by: "spec-writer"
   agent_support: "agent_autonomous"
-  example: "@ref:specs/auth/entities"
-```
+  example: ""@ref:specs/auth/entities"```
 
 ## Depth 3: Detail
 
@@ -86,8 +83,7 @@ Layer3:
   typical_file: "{component}-detail.spec.yaml"
   owned_by: "spec-writer"
   agent_support: "agent_autonomous"
-  example: "@ref:specs/auth/login-algorithm"
-```
+  example: ""@ref:specs/auth/login-algorithm"```
 
 ## Depth 4: Implementation
 
@@ -105,8 +101,7 @@ Layer4:
   typical_file: "{component}-implementation.spec.yaml"
   owned_by: "code-gen"
   agent_support: "agent_autonomous"
-  example: "@ref:specs/auth/login-implementation"
-```
+  example: ""@ref:specs/auth/login-implementation"```
 
 ## Depth 5: Code Spec
 
@@ -123,8 +118,7 @@ Layer5:
   typical_file: "{component}.{ext}.spec"
   owned_by: "code-gen"
   agent_support: "agent_autonomous"
-  example: "@ref:generated/auth/login.go.spec"
-```
+  example: ""@ref:generated/auth/login.go.spec"```
 
 ## Depth 6: Generated Code
 
@@ -141,8 +135,7 @@ Layer6:
   typical_file: "generated/{lang}/{path}.{ext}"
   owned_by: "code-gen"
   agent_support: "agent_autonomous"
-  example: "@ref:generated/go/auth/login.go"
-```
+  example: ""@ref:generated/go/auth/login.go"```
 
 ## Depth 7: Test Spec
 
@@ -159,8 +152,7 @@ Layer7:
   typical_file: "{component}.test.spec.md"
   owned_by: "test-writer"
   agent_support: "agent_autonomous"
-  example: "@ref:specs/auth/login.test.spec.md"
-```
+  example: ""@ref:specs/auth/login.test.spec.md"```
 
 ## Depth 8: Test Code Spec
 
@@ -177,8 +169,7 @@ Layer8:
   typical_file: "{component}.test.{ext}.spec"
   owned_by: "test-writer"
   agent_support: "agent_autonomous"
-  example: "@ref:generated/auth/login.test.go.spec"
-```
+  example: ""@ref:generated/auth/login.test.go.spec"```
 
 ## Depth 9: Generated Test Code
 
@@ -195,8 +186,7 @@ Layer9:
   typical_file: "generated/{lang}/{path}_test.{ext}"
   owned_by: "test-writer"
   agent_support: "agent_autonomous"
-  example: "@ref:generated/go/auth/login_test.go"
-```
+  example: ""@ref:generated/go/auth/login_test.go"```
 
 ## Depth 10: Deployment/Ops
 
@@ -213,5 +203,4 @@ Layer10:
   typical_file: "deployment/{env}.spec.yaml"
   owned_by: "ops-agent"
   agent_support: "agent_autonomous"
-  example: "@ref:specs/deployment/k8s"
-```
+  example: ""@ref:specs/deployment/k8s"```

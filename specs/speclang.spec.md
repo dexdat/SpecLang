@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:8
 id: "@speclang/speclang"
 version: 0.1.0
 layer: "0"
@@ -109,7 +109,7 @@ speclang test
 
 ## @speclang/references
 
-- @ref:specs/core - Core architecture
+- "@ref:specs/core - Core architecture
 - @ref:specs/bootstrap - Bootstrap process
 - @ref:specs/tutorial - Step-by-step tutorial
 - @ref:specs/examples/hello-world - Minimal example

@@ -1,8 +1,6 @@
-# speclang-header lines:13
+# speclang-header lines:12
 id: "@speclang/skills"
 version: 0.1.0
-target: src/skills/
-target: .opencode/skills/
 layer: 0
 tags: [skills, agents, prompts, ai]
 imports: ["@speclang/core"]
@@ -10,7 +8,8 @@ status: draft
 
 project_level: Alpha
 agent_support: agent_assisted
-short: Speclang Skills Pack
+short: "Speclang Skills Pack"
+target: .opencode/skills/
 ---
 
 # Speclang Skills Pack

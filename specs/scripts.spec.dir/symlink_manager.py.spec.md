@@ -1,7 +1,6 @@
-# speclang-header lines:12
+# speclang-header lines:7
 id: "@speclang/scripts/symlink-manager"
-parent: "@ref:specs/scripts"
-version: 0.1.0
+parent: ""@ref:specs/scripts"version: 0.1.0
 layer: 3
 target: scripts/symlink_manager.py
 tags: [scripts, symlinks, dual-view, filesystem]

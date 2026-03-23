@@ -450,7 +450,7 @@ class DeployExecutor {
 
 ## References
 
-- @ref:specs/pipeline.spec.dir/deploy
+- "@ref:specs/pipeline.spec.dir/deploy
 - SIP 13: Pipeline System
 - SIP 39: Deployment
 - SIP 74: Pipeline Conditions

@@ -1,12 +1,11 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/config.spec.dir/schema"
 version: 0.1.0
 layer: 2
 tags: [config, schema, entities]
 project_level: Alpha
 agent_support: agent_assisted
-parent: "@ref:speclang/config"
-part: 1/2
+parent: ""@ref:speclang/config"part: 1/2
 short: Configuration schema definitions
 ---
 # Configuration Schema

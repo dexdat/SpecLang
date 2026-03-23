@@ -775,7 +775,7 @@ export { SpecLangPlugin, PluginConfig, Session, ConvergenceStatus };
 
 ## References
 
-- @ref:speclang/opencode-plugin
+- "@ref:speclang/opencode-plugin
 - @ref:speclang/agent-protocol
 - @ref:speclang/cascade
 - @ref:speclang/mcp

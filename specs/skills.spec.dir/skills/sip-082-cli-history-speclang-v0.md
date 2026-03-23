@@ -580,7 +580,7 @@ history-report:
 
 ## References
 
-- @ref:sip-037-cli
+- "@ref:sip-037-cli
 - @ref:sip-030-git-history
 - @ref:sip-064-cli-commands
 

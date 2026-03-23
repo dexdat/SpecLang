@@ -560,7 +560,7 @@ class MetricsStore:
 
 ## References
 
-- @ref:specs/ui-specification
+- "@ref:specs/ui-specification
 - @ref:specs/performance
 - SIP 36: UI Specification
 - SIP 77: Performance

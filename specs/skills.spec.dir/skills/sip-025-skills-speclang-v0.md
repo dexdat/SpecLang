@@ -5,7 +5,7 @@ version: 0.1.0
 description: AI editor skills that drive the reactive cascade system
 category: standard
 ---
-# speclang-header lines:5
+# speclang-header lines:402
 # id: @specs/skills
 # version: 1.0.0
 # layer: 5
@@ -459,8 +459,7 @@ skill_invocation:
   
   actions:
     1: "Read specs/auth.spec.md"
-    2: "Find specs with @ref:specs/auth"
-    3: "Update each child spec"
+    2: "Find specs with ""@ref:specs/auth"    3: "Update each child spec"
     4: "Validate references"
 ```
 
@@ -501,7 +500,7 @@ class SkillLoader:
 
 ## References
 
-- @ref:speclang/skills
+- "@ref:speclang/skills
 - @ref:speclang/skills.spec.dir/spec-writer
 - @ref:speclang/skills.spec.dir/code-gen
 - @ref:speclang/skills.spec.dir/test-writer

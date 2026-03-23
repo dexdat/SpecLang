@@ -629,7 +629,7 @@ fi
 
 ## References
 
-- @ref:sip-037-cli
+- "@ref:sip-037-cli
 - @ref:sip-012-codegen
 - @ref:sip-064-cli-commands
 - @ref:sip-066-go-generator

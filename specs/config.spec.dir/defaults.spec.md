@@ -1,12 +1,11 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/config.spec.dir/defaults"
 version: 0.1.0
 layer: 2
 tags: [config, defaults, examples]
 project_level: Alpha
 agent_support: agent_assisted
-parent: "@ref:speclang/config"
-part: 2/2
+parent: ""@ref:speclang/config"part: 2/2
 short: Configuration defaults and examples
 ---
 # Configuration Defaults

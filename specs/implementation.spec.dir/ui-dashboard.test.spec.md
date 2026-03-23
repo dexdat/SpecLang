@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@tests/ui-dashboard"
 version: 0.1.0
 layer: 3
@@ -77,6 +77,6 @@ Then: It should successfully:
 
 ## References
 
-- @ref:implementation/ui-dashboard
+- "@ref:implementation/ui-dashboard
 - @ref:speclang/ui
 - @ref:speclang/test-specs

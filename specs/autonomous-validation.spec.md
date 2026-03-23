@@ -1,4 +1,4 @@
-# speclang-header lines:62
+# speclang-header lines:12
 id: "@speclang/autonomous-validation"
 version: 0.1.0
 layer: 2
@@ -100,5 +100,5 @@ Minimum threshold for autonomous operation: **70/100**
 
 **Children specs:**
 
-- @ref:speclang/autonomous-validation/rules – Core validation rules and criteria
+- "@ref:speclang/autonomous-validation/rules – Core validation rules and criteria
 - @ref:speclang/autonomous-validation/scoring – Scoring algorithms and thresholds

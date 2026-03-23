@@ -91,13 +91,13 @@ You run when:
 ## Spec Format
 
 ```yaml
-# speclang-header lines:12
+# speclang-header lines:11
 id: @specs/auth/login
 version: 1.0.0
 parent: @ref:specs/auth
 refs:
-  - @ref:specs/auth/entities
-  - @ref:specs/auth/policies
+  - "@ref:specs/auth/entities
+  - "@ref:specs/auth/policies
 tags: [auth, login, jwt]
 short: Login operation with JWT
 target: go
@@ -123,8 +123,8 @@ steps:
   5. Return token
 
 refs:
-  - @ref:specs/auth/entities#User
-  - @ref:specs/auth/policies#rate-limit
+  - "@ref:specs/auth/entities#User
+  - "@ref:specs/auth/policies#rate-limit
 ```
 
 ## Size Management

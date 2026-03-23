@@ -439,7 +439,7 @@ class DeploymentManager:
 
 ## References
 
-- @ref:speclang/deployment
+- "@ref:speclang/deployment
 - @ref:speclang/deployment.spec.dir/light
 - @ref:speclang/deployment.spec.dir/enterprise
 - SIP 10: Daemon

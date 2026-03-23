@@ -634,7 +634,7 @@ class ValidationTool:
 
 ## References
 
-- @ref:speclang/validation-tool
+- "@ref:speclang/validation-tool
 - @ref:speclang/autonomous-validation
 - @ref:speclang/safety-nets
 - SIP 16: Autonomous Validation

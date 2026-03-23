@@ -628,7 +628,7 @@ DatabaseLocks:
 
 ## References
 
-- @ref:specs/core.spec.dir/concurrency
+- "@ref:specs/core.spec.dir/concurrency
 - @ref:specs/daemon.spec.dir/locks
 - SIP 10: Daemon
 - SIP 52: Daemon Locks

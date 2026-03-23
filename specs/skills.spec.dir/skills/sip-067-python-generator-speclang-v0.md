@@ -623,7 +623,7 @@ Example integration:
 
 ## References
 
-- @ref:specs/codegen.spec.dir/python
+- "@ref:specs/codegen.spec.dir/python
 - @ref:specs/codegen.spec.dir/templates
 - SIP 12: Codegen Framework
 - SIP 66: Go Generator

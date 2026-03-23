@@ -534,7 +534,7 @@ class FallbackHandler<T> {
 
 ## References
 
-- @ref:specs/recovery.strategies
+- "@ref:specs/recovery.strategies
 - SIP 27: Recovery System
 - SIP 69: Error Handling
 - SIP 104: Safety Confidence

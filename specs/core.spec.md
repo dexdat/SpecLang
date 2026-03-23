@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:16
 id: "@speclang/core"
 version: 0.2.0
 layer: 0
@@ -6,13 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [core, architecture, reactive, meta-circular]
 children:
-  - "@ref:specs/core.spec.dir/entities"
-  - "@ref:specs/core.spec.dir/cascade"
-  - "@ref:specs/core.spec.dir/file-types"
-  - "@ref:specs/core.spec.dir/agents"
-  - "@ref:specs/core.spec.dir/skills"
-  - "@ref:specs/core.spec.dir/concurrency"
-short: "Speclang Core - Reactive multi-agent system"
+  - ""@ref:specs/core.spec.dir/entities"  - ""@ref:specs/core.spec.dir/cascade"  - ""@ref:specs/core.spec.dir/file-types"  - ""@ref:specs/core.spec.dir/agents"  - ""@ref:specs/core.spec.dir/skills"  - ""@ref:specs/core.spec.dir/concurrency"short: "Speclang Core - Reactive multi-agent system"
 status: draft
 ---
 
@@ -72,7 +66,7 @@ Project layout is defined in @ref:specs/directory-structure and @ref:specs/proje
 
 ## See Also
 
-- @ref:specs/daemon - File watcher daemon implementation
+- "@ref:specs/daemon - File watcher daemon implementation
 - @ref:specs/skills - Skill definitions and templates
 - @ref:specs/test-specs - Test spec format
 - @ref:specs/spec-format - Spec format definition

@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:9
 id: "@speclang/opencode-plugin.spec.dir/convergence"
 version: 0.1.0
 layer: 5
@@ -67,5 +67,5 @@ async function runPipeline(): Promise<void> {
 
 ## References
 
-- @ref:speclang/cascade (cascade concepts)
+- "@ref:speclang/cascade (cascade concepts)
 - @ref:speclang/validation-tool (validation tools)

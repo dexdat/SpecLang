@@ -31,13 +31,13 @@ This SIP defines reference syntax, resolution, and validation for Speclang.
 ### Example
 
 ```yaml
-# speclang-header lines:10
+# speclang-header lines:7
 id: @specs/auth/login
 refs:
-  - @ref:specs/auth/entities#User
-  - @ref:specs/auth/policies#rate-limit
+  - "@ref:specs/auth/entities#User
+  - "@ref:specs/auth/policies#rate-limit
 depends_on:
-  - @ref:stdlib/Result
+  - "@ref:stdlib/Result
 ---
 ```
 
@@ -144,18 +144,18 @@ References need:
 ```yaml
 # Outgoing references
 refs:
-  - @ref:specs/user
-  - @ref:specs/auth#login
+  - "@ref:specs/user
+  - "@ref:specs/auth#login
 
 # Dependencies (must exist)
 depends_on:
-  - @ref:stdlib/Result
-  - @ref:stdlib/JWT
+  - "@ref:stdlib/Result
+  - "@ref:stdlib/JWT
 
 # Child specs
 children:
-  - @ref:specs/auth/entities
-  - @ref:specs/auth/operations
+  - "@ref:specs/auth/entities
+  - "@ref:specs/auth/operations
 
 # Parent spec
 parent: @ref:specs/auth

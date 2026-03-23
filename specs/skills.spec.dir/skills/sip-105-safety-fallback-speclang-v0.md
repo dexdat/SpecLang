@@ -614,7 +614,7 @@ class RestrictedExecutor:
 
 ## References
 
-- @ref:speclang/safety-nets
+- "@ref:speclang/safety-nets
 - @ref:speclang/confidence-scoring
 - @ref:speclang/detection-mechanisms
 - SIP 23: Safety Nets

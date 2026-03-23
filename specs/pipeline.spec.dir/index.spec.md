@@ -1,4 +1,4 @@
-# speclang-header lines:16
+# speclang-header lines:9
 id: "@specs/pipeline"
 version: 1.0.0
 layer: 3
@@ -85,4 +85,4 @@ Main pipeline executor:
 
 ## Dependencies
 
-- @ref:specs/daemon#types - ConvergenceResult type
+- "@ref:specs/daemon#types - ConvergenceResult type

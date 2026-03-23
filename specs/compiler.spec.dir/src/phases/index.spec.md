@@ -1,11 +1,11 @@
-# speclang-header lines:12
+# speclang-header lines:9
 id: "@specs/compiler/phases"
 version: 1.0.0
 layer: 4
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [compiler, phases]
-short: Compiler phases - parse, validate, resolve, transform, codegen
+short: "Compiler phases - parse, validate, resolve, transform, codegen"
 target: src/compiler/phases/index.ts
 ---
 

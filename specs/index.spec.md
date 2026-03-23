@@ -1,4 +1,4 @@
-# speclang-header lines:18
+# speclang-header lines:10
 id: "@speclang/index"
 version: 0.1.0
 layer: 5
@@ -7,8 +7,7 @@ agent_support: agent_autonomous
 tags: [typescript, generated, auto-generated]
 short: "Auto-generated spec for index.ts"
 status: generated
-parent: "@ref:specs/core"
----
+parent: ""@ref:specs/core"---
 
 # Index Module
 

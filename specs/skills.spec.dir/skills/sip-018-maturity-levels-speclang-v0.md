@@ -388,7 +388,7 @@ project_level: Production
 
 ## References
 
-- @ref:speclang/project-maturity-levels
+- "@ref:speclang/project-maturity-levels
 - @ref:speclang/project-maturity-levels/levels
 - @ref:speclang/project-maturity-levels/criteria
 - SIP 16: Autonomous Validation

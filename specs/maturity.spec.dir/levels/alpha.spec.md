@@ -1,10 +1,9 @@
-# speclang-header lines:11
+# speclang-header lines:9
 id: "@speclang/maturity/levels/alpha"
 version: 0.1.0
 layer: 3
 tags: [maturity, levels, alpha]
-parent: "@ref:specs/project-maturity-levels/levels"
-project_level: Alpha
+parent: ""@ref:specs/project-maturity-levels/levels"project_level: Alpha
 agent_support: agent_autonomous
 short: Alpha level definition, validation, transitions, and agent behavior
 ---
@@ -699,6 +698,6 @@ export const alphaBehaviorResolver = new AlphaAgentBehaviorResolver();
 
 ## References
 
-- @ref:specs/project-maturity-levels/levels - Level definitions
+- "@ref:specs/project-maturity-levels/levels - Level definitions
 - @ref:specs/maturity/levels/mvp - MVP level (previous level)
 - @ref:specs/maturity/levels/poc - POC level (earlier level)

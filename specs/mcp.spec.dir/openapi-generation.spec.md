@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/mcp/openapi-generation"
 version: 0.1.0
 layer: 2
@@ -517,7 +517,7 @@ Potential future enhancements:
 
 ## References
 
-- @ref:speclang/mcp
+- "@ref:speclang/mcp
 - @ref:speclang/cli
 - @ref:speclang/tools
 - @ref:speclang/pipeline

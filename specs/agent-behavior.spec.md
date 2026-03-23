@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:8
 id: "@specs/agent-behavior"
 version: 1.0.0
 layer: 5
@@ -55,6 +55,6 @@ console.log(result.resourceBudget);       // 'moderate'
 
 ## References
 
-- @ref:specs/agent-behavior-matrix - Behavior matrix definitions
+- "@ref:specs/agent-behavior-matrix - Behavior matrix definitions
 - @ref:specs/project-maturity-levels - Project maturity levels
 - @ref:specs/agent-support-levels - Agent support levels

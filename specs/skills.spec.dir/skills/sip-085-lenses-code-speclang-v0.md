@@ -24,7 +24,7 @@ This SIP defines the Code Lens—parsing and rendering of code blocks within spe
 ### Quick Start
 
 ```markdown
-### @block:login-fn @kind:code
+### @block::login-fn @kind:code
 
 ```typescript
 function login(email: string, password: string): Token {
@@ -419,7 +419,7 @@ AIBehavior:
 **@example/typescript:**
 
 ```markdown
-### @block:user-service @kind:code
+### @block::user-service @kind:code
 
 ```typescript
 import { User, Token } from './auth';
@@ -460,7 +460,7 @@ block:
 **@example/python:**
 
 ```markdown
-### @block:data-model @kind:code
+### @block::data-model @kind:code
 
 ```python
 from dataclasses import dataclass
@@ -488,7 +488,7 @@ class User:
 **@example/go:**
 
 ```markdown
-### @block:handler @kind:code
+### @block::handler @kind:code
 
 ```go
 package handler
@@ -517,7 +517,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 **@example/pseudocode:**
 
 ```markdown
-### @block:algorithm @kind:code
+### @block::algorithm @kind:code
 
 ```pseudocode
 function findPath(graph, start, end):
@@ -622,7 +622,7 @@ export function registerLanguage(spec: LanguageSpec): void {
 
 ## References
 
-- @ref:sip-035-lenses
+- "@ref:sip-035-lenses
 - @ref:sip-012-codegen
 - @ref:speclang/lenses/code
 

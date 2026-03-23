@@ -5,7 +5,7 @@ version: 0.1.0
 description: Example specifications demonstrating SpecLang features
 category: standard
 ---
-# speclang-header lines:5
+# speclang-header lines:212
 # id: @specs/skills
 # version: 1.0.0
 # layer: 5
@@ -143,7 +143,7 @@ HelloWorldTemplate:
       Demonstrates: Writing spec, generating code, verifying compilation
     
     implementation: |
-      ### @block:hello/function @kind:code
+      ### @block::hello/function @kind:code
       ```typescript
       export function helloWorld(name: string): string {
         return `Hello, ${name}!`;
@@ -232,7 +232,7 @@ This spec demonstrates:
 
 ## Implementation
 
-### @block:hello/function @kind:code
+### @block::hello/function @kind:code
 ```typescript
 export function helloWorld(name: string): string {
   return `Hello, ${name}!`;
@@ -269,7 +269,7 @@ Demonstrates how to define entities in SpecLang.
 
 ## Entities
 
-### @block:user/entity @kind:entity
+### @block::user/entity @kind:entity
 ```yaml
 User:
   id: UUID
@@ -282,7 +282,7 @@ User:
     - name must not be empty
 ```
 
-### @block:session/entity @kind:entity
+### @block::session/entity @kind:entity
 ```yaml
 Session:
   id: UUID
@@ -338,7 +338,7 @@ short: "{title}"
 
 ## Implementation
 
-### @block:main/function @kind:code
+### @block::main/function @kind:code
 ```typescript
 export function main(): string {{
   return "Hello, World!";
@@ -358,7 +358,7 @@ short: "{title}"
 
 ## Entities
 
-### @block:{name}/entity @kind:entity
+### @block::{name}/entity @kind:entity
 ```yaml
 {name}:
   id: UUID
@@ -380,7 +380,7 @@ short: "{title}"
 
 ## References
 
-- @ref:speclang/examples
+- "@ref:speclang/examples
 - @ref:speclang/examples.spec.spec.dir/hello-world
 - SIP 0: What is SpecLang
 - SIP 15: Self-Specifying

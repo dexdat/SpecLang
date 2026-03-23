@@ -481,7 +481,7 @@ Purpose:
 
 ## References
 
-- @ref:specs/compiler - Compiler spec (parent)
+- "@ref:specs/compiler - Compiler spec (parent)
 - @ref:specs/compiler.spec.dir/phases - Compiler phases
 - @ref:specs/compiler.spec.dir/targets - Target languages
 - @ref:specs/compiler.spec.dir/templates - Templates and markers

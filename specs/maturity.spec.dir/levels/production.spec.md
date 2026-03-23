@@ -1,10 +1,9 @@
-# speclang-header lines:11
+# speclang-header lines:9
 id: "@speclang/maturity/levels/production"
 version: 0.1.0
 layer: 3
 tags: [maturity, levels, production]
-parent: "@ref:specs/project-maturity-levels/levels"
-project_level: Alpha
+parent: ""@ref:specs/project-maturity-levels/levels"project_level: Alpha
 agent_support: agent_autonomous
 short: Production level definition, validation, transitions, and agent behavior
 ---
@@ -699,6 +698,6 @@ export const productionBehaviorResolver = new ProductionAgentBehaviorResolver();
 
 ## References
 
-- @ref:specs/project-maturity-levels/levels - Level definitions
+- "@ref:specs/project-maturity-levels/levels - Level definitions
 - @ref:specs/maturity/levels/beta - Beta level (previous level)
 - @ref:specs/maturity/levels/startup - Startup level (next level)

@@ -263,14 +263,14 @@ class TestFullCycle:
         # Create spec
         spec = temp_project / "specs" / "user.spec"
         spec.write_text("""
-# speclang-header lines:10
+# speclang-header lines:6
 id: @app/entities/user
 version: 1.0.0
 layer: 2
 tags: [entity]
 short: User entity
 ---
-### @block:user @kind:entity
+### @block::user @kind:entity
 User:
   fields:
     id: UUID
@@ -536,7 +536,7 @@ def integration_fixture(tmp_path) -> Generator[IntegrationTestFixture, None, Non
 
 ## References
 
-- @ref:speclang/testing
+- "@ref:speclang/testing
 - SIP 24: Test Specs
 - SIP 13: Pipeline
 - SIP 10: Daemon

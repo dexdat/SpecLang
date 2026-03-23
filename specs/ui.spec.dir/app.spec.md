@@ -1,10 +1,8 @@
 # speclang-header lines:13
 id: "@speclang/ui.app"
-parent: "@ref:specs/ui"
-part: 15/15
+parent: ""@ref:specs/ui"part: 15/15
 siblings:
-  prev: "@ref:specs/ui.spec.dir/index"
-short: Dashboard React app entry point
+  prev: ""@ref:specs/ui.spec.dir/index"short: Dashboard React app entry point
 project_level: Alpha
 agent_support: agent_assisted
 tags: [speclang]

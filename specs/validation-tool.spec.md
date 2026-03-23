@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:9
 id: "@speclang/validation-tool"
 version: 0.1.0
 layer: 4

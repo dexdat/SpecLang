@@ -1,4 +1,4 @@
-# speclang-header lines:5
+# speclang-header lines:37
 # id: @specs/docs
 # version: 1.0.0
 # layer: 5

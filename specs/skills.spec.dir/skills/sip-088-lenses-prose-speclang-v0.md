@@ -24,7 +24,7 @@ This SIP defines the Prose Lens—parsing and rendering of natural language cont
 ### Quick Start
 
 ```markdown
-### @block:intro @kind:prose
+### @block::intro @kind:prose
 
 This specification defines the authentication system for the platform.
 The system supports multiple authentication methods including email/password,
@@ -454,7 +454,7 @@ AIBehavior:
 **@example/feature:**
 
 ```markdown
-### @block:auth-features @kind:prose
+### @block::auth-features @kind:prose
 
 # Authentication System
 
@@ -499,7 +499,7 @@ block:
 **@example/api:**
 
 ```markdown
-### @block:api-docs @kind:prose
+### @block::api-docs @kind:prose
 
 # User API
 
@@ -536,7 +536,7 @@ Creates a new user.
 **@example/story:**
 
 ```markdown
-### @block:user-story @kind:prose
+### @block::user-story @kind:prose
 
 # User Registration Flow
 
@@ -560,7 +560,7 @@ As a new user, I want to create an account so that I can access the platform.
 **@example/adr:**
 
 ```markdown
-### @block:adr-001 @kind:prose
+### @block::adr-001 @kind:prose
 
 # ADR 001: Use PostgreSQL for Primary Database
 
@@ -648,7 +648,7 @@ function extractStructure(block: ProseBlock): any {
 
 ## References
 
-- @ref:sip-035-lenses
+- "@ref:sip-035-lenses
 - @ref:sip-021-semantic-definitions
 - @ref:sip-024-test-specs
 - @ref:speclang/lenses/prose

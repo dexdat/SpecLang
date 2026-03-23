@@ -1,10 +1,9 @@
-# speclang-header lines:12
+# speclang-header lines:10
 id: "@speclang/scripts.hard-checks"
 version: 0.1.0
 layer: 1
 tags: [scripts, verification, validation]
-parent: "@ref:specs/scripts"
-status: draft
+parent: ""@ref:specs/scripts"status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Hard Verification System Script

@@ -5,7 +5,7 @@ version: 0.1.0
 description: File ownership enforcement and guard plugin protocol
 category: standard
 ---
-# speclang-header lines:5
+# speclang-header lines:216
 # id: @specs/skills
 # version: 1.0.0
 # layer: 5
@@ -286,7 +286,7 @@ rules:
 
 ## References
 
-- @ref:speclang/agent-protocol/ownership
+- "@ref:speclang/agent-protocol/ownership
 - SIP 6: Agent Protocol
 - SIP 7: Cascade System
 

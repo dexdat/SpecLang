@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:8
 id: "@speclang/api.spec.dir/openapi"
 version: 0.1.0
 layer: 2
@@ -770,7 +770,7 @@ ContentTypes:
 
 ## References
 
-- @ref:specs/api.spec - API overview
+- "@ref:specs/api.spec - API overview
 - @ref:specs/mcp - MCP server specification
 - @ref:specs/validation/rules - Validation rules
 - @ref:specs/cascade - Cascade system

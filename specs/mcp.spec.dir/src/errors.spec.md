@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:9
 id: "@specs/mcp/errors/index"
 version: 1.0.0
 layer: 5

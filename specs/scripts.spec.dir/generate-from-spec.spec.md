@@ -3,8 +3,7 @@ id: "@speclang/scripts.generate-from-spec"
 version: 0.1.0
 layer: 2
 tags: [scripts, generation]
-parent: "@ref:speclang/scripts"
-status: draft
+parent: ""@ref:speclang/scripts"status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Generate From Spec Script
@@ -136,7 +135,7 @@ python3 scripts/generate_from_spec.py specs/auth.spec.md --lang ts --dry-run
 ```speclang
 # @block:examples @kind:note
 Input (spec):
-  ### @block:user @kind:entity
+  ### @block::user @kind:entity
   User:
     id: INTEGER
     name: TEXT

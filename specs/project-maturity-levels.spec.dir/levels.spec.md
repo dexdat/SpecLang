@@ -1,10 +1,9 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/project-maturity-levels/levels"
 version: 0.1.0
 layer: 2
 tags: [project, maturity, levels, definitions]
-parent: "@ref:specs/project-maturity-levels"
-part: 1/2
+parent: ""@ref:specs/project-maturity-levels"part: 1/2
 project_level: Alpha
 agent_support: agent_autonomous
 short: Definitions for each project_level value

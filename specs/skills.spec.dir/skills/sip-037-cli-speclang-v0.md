@@ -431,7 +431,7 @@ if __name__ == '__main__':
 
 ## References
 
-- @ref:speclang/cli
+- "@ref:speclang/cli
 - @ref:speclang/cli.spec.dir/commands
 - @ref:speclang/cli.spec.dir/configuration
 - SIP 8: Configuration

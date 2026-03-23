@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:8
 id: "@speclang/semantic-definitions"
 version: 0.1.0
 layer: 1

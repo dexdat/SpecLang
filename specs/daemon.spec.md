@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:15
 id: "@speclang/daemon"
 version: 0.2.0
 target: src/daemon/
@@ -7,11 +7,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [daemon, rust, typescript, reactive, file-watcher]
 children:
-  - "@ref:specs/daemon.spec.dir/architecture"
-  - "@ref:specs/daemon.spec.dir/events"
-  - "@ref:specs/daemon.spec.dir/routing"
-  - "@ref:specs/daemon.spec.dir/convergence"
-short: "speclangd - Reactive file watcher daemon"
+  - ""@ref:specs/daemon.spec.dir/architecture"  - ""@ref:specs/daemon.spec.dir/events"  - ""@ref:specs/daemon.spec.dir/routing"  - ""@ref:specs/daemon.spec.dir/convergence"short: "speclangd - Reactive file watcher daemon"
 status: draft
 ---
 

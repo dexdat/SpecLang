@@ -215,8 +215,7 @@ InputValidation:
     block_id_format: "[a-z0-9_\\-]+"
   
   references:
-    ref_format: "@ref:[a-z0-9_\\-/]+(#[a-z0-9_\\-]+)?"
-    max_depth: 10
+    ref_format: ""@ref:[a-z0-9_\\-/]+(#[a-z0-9_\\-]+)?"    max_depth: 10
     circular_detection: true
 ```
 
@@ -815,7 +814,7 @@ SecurityChecklist:
 
 ## References
 
-- @ref:speclang/security
+- "@ref:speclang/security
 - SIP 11: MCP Tools
 - SIP 08: Configuration
 - OWASP Top 10

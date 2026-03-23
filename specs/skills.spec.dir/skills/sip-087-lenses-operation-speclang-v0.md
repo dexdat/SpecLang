@@ -24,7 +24,7 @@ This SIP defines the Operation Lens—parsing and rendering of operation and fun
 ### Quick Start
 
 ```markdown
-### @block:auth/login @kind:operation
+### @block::auth/login @kind:operation
 
 ```signature
 login(email: string, password: string) -> Token | Error
@@ -458,7 +458,7 @@ AIBehavior:
 **@example/login:**
 
 ```markdown
-### @block:auth/login @kind:operation
+### @block::auth/login @kind:operation
 
 ```signature
 login(email: string, password: string) -> Token | Error
@@ -504,7 +504,7 @@ block:
 **@example/generic:**
 
 ```markdown
-### @block:filter @kind:operation
+### @block::filter @kind:operation
 
 ```signature
 async function filter<T>(
@@ -522,7 +522,7 @@ async function filter<T>(
 **@example/method:**
 
 ```markdown
-### @block:user/update @kind:operation
+### @block::user/update @kind:operation
 
 ```signature
 public async updateUser(
@@ -541,7 +541,7 @@ public async updateUser(
 **@example/event:**
 
 ```markdown
-### @block:handler/event @kind:operation
+### @block::handler/event @kind:operation
 
 ```signature
 onEvent(event: Event) -> void
@@ -556,7 +556,7 @@ onEvent(event: Event) -> void
 **@example/crud:**
 
 ```markdown
-### @block:repository @kind:operation
+### @block::repository @kind:operation
 
 ```signature
 # Create
@@ -687,7 +687,7 @@ function operationToCode(block: OperationBlock, language: string): string {
 
 ## References
 
-- @ref:sip-035-lenses
+- "@ref:sip-035-lenses
 - @ref:sip-011-mcp-tools
 - @ref:sip-073-agent-tools
 - @ref:speclang/lenses/operation

@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:10
 id: "@speclang/validation-tool/api"
 version: 0.1.0
 layer: 2
@@ -145,8 +145,8 @@ interface ValidationTool {
 ```speclang
 # @block:validation-tool/references @kind:refs
 refs:
-  - @ref:speclang/autonomous-validation
-  - @ref:speclang/safety-nets
-  - @ref:speclang/validation
-  - @ref:speclang/headers
+  - "@ref:speclang/autonomous-validation
+  - "@ref:speclang/safety-nets
+  - "@ref:speclang/validation
+  - "@ref:speclang/headers
 ```

@@ -551,7 +551,7 @@ class RecoveryManager:
 
 ## References
 
-- @ref:speclang/recovery
+- "@ref:speclang/recovery
 - @ref:speclang/recovery.spec.dir/rollback
 - @ref:speclang/recovery.spec.dir/retry
 - SIP 13: Pipeline System

@@ -426,7 +426,7 @@ confidence, level = scorer.calculate_confidence(signals)
 
 ## References
 
-- @ref:speclang/safety-nets
+- "@ref:speclang/safety-nets
 - @ref:speclang/autonomous-validation
 - @ref:speclang/security
 - SIP 23: Safety Nets

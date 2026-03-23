@@ -475,7 +475,7 @@ class ZodSchemaGenerator {
 
 ## References
 
-- @ref:specs/typescript.types
+- "@ref:specs/typescript.types
 - @ref:specs/typescript/generator
 - SIP 109: Go Types
 - SIP 110: Python Types

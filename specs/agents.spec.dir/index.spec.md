@@ -1,4 +1,4 @@
-# speclang-header lines:16
+# speclang-header lines:11
 id: "@specs/agents/implementation"
 version: 1.0.0
 layer: 5
@@ -8,8 +8,7 @@ tags: [agents, implementation]
 target: src/agents/
 short: Agent system implementation files
 refs:
-  - "@ref:specs/agent-protocol"
----
+  - ""@ref:specs/agent-protocol"---
 
 # Agents Implementation
 

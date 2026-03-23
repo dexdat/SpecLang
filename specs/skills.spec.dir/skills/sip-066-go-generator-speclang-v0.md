@@ -515,7 +515,7 @@ ${artifact.content}
 
 ## References
 
-- @ref:specs/codegen.spec.dir/go
+- "@ref:specs/codegen.spec.dir/go
 - @ref:specs/codegen.spec.dir/templates
 - SIP 12: Codegen Framework
 - SIP 67: Python Generator

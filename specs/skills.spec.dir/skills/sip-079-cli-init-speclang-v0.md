@@ -171,7 +171,7 @@ config:
 #### specs/index.spec.md
 
 ```markdown
-# speclang-header lines:10
+# speclang-header lines:6
 id: @specs/index
 version: 0.1.0
 layer: 0
@@ -535,7 +535,7 @@ Done!
 
 ## References
 
-- @ref:sip-037-cli
+- "@ref:sip-037-cli
 - @ref:sip-064-cli-commands
 - @ref:sip-042-project-layout
 - @ref:sip-083-configuration-files

@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:12
 id: "@speclang/project-layout/conventions"
 version: 0.1.0
 layer: 2
@@ -37,7 +37,7 @@ NamingConventions:
 # @block:layout/refs @kind:note
 Reference paths are relative to project root:
 
-- @ref:specs/auth -> specs/auth.scl
+- "@ref:specs/auth -> specs/auth.scl
 - @ref:tests/auth#login -> tests/auth.test.spec.scl block "login"
 - @ref:northstar -> project.scl
 - @ref:generated/ts/auth -> generated/ts/auth/

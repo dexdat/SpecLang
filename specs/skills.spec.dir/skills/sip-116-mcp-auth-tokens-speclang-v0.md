@@ -379,7 +379,7 @@ ExternalIDP:
 
 ## References
 
-- @ref:specs/mcp
+- "@ref:specs/mcp
 - SIP 114: MCP Architecture
 - SIP 117: API Key Authentication
 - SIP 118: Error Codes

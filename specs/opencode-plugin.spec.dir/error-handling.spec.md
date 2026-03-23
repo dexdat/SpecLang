@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:9
 id: "@speclang/opencode-plugin.spec.dir/error-handling"
 version: 0.1.0
 layer: 5
@@ -53,4 +53,4 @@ async function withErrorHandling<T>(fn: () => Promise<T>, context: string): Prom
 
 ## References
 
-- @ref:speclang/recovery (recovery system)
+- "@ref:speclang/recovery (recovery system)

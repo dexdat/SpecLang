@@ -151,7 +151,7 @@ AlphaContent:
 ### Example Alpha Header
 
 ```yaml
-# speclang-header lines:12
+# speclang-header lines:8
 id: @specs/platform
 version: 0.1.0
 project_level: Alpha
@@ -476,7 +476,7 @@ AlphaMistakes:
 
 ## References
 
-- @ref:speclang/maturity-levels
+- "@ref:speclang/maturity-levels
 - @ref:speclang/maturity-levels/alpha
 - @ref:speclang/project-level
 - SIP 18: Maturity Levels

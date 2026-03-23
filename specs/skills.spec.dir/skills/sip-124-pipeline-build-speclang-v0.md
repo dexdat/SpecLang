@@ -400,7 +400,7 @@ pipeline:
 
 ## References
 
-- @ref:specs/pipeline.spec.dir/build
+- "@ref:specs/pipeline.spec.dir/build
 - SIP 13: Pipeline System
 - SIP 74: Pipeline Conditions
 - SIP 53: Pipeline Hooks

@@ -1,4 +1,4 @@
-# speclang-header lines:16
+# speclang-header lines:10
 id: "@speclang/bootstrap/execution"
 version: 0.1.0
 layer: 2

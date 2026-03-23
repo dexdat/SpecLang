@@ -355,7 +355,7 @@ class LensRegistry:
 
 ## References
 
-- @ref:speclang/lenses
+- "@ref:speclang/lenses
 - @ref:speclang/lenses/formats
 - @ref:speclang/lenses/mermaid
 - SIP 3: Block System

@@ -1,10 +1,9 @@
-# speclang-header lines:15
+# speclang-header lines:9
 id: "@speclang/pipeline.spec.dir/build.yaml.spec"
 version: 0.1.0
 layer: 2
 tags: [pipeline, build.yaml, workflow, steps, tool-chaining]
-parent: "@ref:specs/pipeline"
-project_level: Alpha
+parent: ""@ref:specs/pipeline"project_level: Alpha
 agent_support: agent_autonomous
 short: "Build YAML - Workflow steps that chain tool calls together"
 ---
@@ -812,7 +811,7 @@ BuildConfigOptions:
 
 ## References
 
-- @ref:specs/pipeline - Pipeline overview
+- "@ref:specs/pipeline - Pipeline overview
 - @ref:specs/pipeline.spec.dir/hooks - Hooks spec
 - @ref:specs/pipeline.spec.dir/recovery - Recovery spec
 - @ref:specs/cascade.spec.dir/error-handling - Error handling in cascade

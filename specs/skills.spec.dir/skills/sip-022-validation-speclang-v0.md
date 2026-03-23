@@ -148,10 +148,7 @@ HeaderValidation:
 ```yaml
 ReferenceValidation:
   reference_patterns:
-    block_ref: "@ref:specs/path#block-id"
-    file_ref: "@ref:specs/path"
-    project_ref: "@ref:project-name"
-    
+    block_ref: ""@ref:specs/path#block-id"    file_ref: ""@ref:specs/path"    project_ref: ""@ref:project-name"    
   validation_rules:
     - "Reference must match pattern"
     - "Target spec must exist in _index.json"
@@ -453,7 +450,7 @@ class Validator:
 
 ## References
 
-- @ref:speclang/validation
+- "@ref:speclang/validation
 - @ref:speclang/agent-support-levels
 - @ref:speclang/semantic-definitions
 - SIP 19: Agent Support Levels

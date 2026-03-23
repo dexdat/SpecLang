@@ -695,7 +695,7 @@ for detection in report["detections"][:10]:  # Top 10
 
 ## References
 
-- @ref:speclang/safety-nets
+- "@ref:speclang/safety-nets
 - @ref:speclang/security
 - @ref:speclang/confidence-scoring
 - SIP 23: Safety Nets

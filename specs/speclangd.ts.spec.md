@@ -1,4 +1,4 @@
-# speclang-header lines:7
+# speclang-header lines:6
 id: "@specs/speclangd.ts"
 version: 1.0.0
 layer: 5

@@ -382,7 +382,7 @@ InvariantExample:
 
 ## References
 
-- @ref:speclang/layers
+- "@ref:speclang/layers
 - @ref:speclang/layers/abstraction
 - @ref:speclang/layers/transformations
 - SIP 17: Layer Definitions

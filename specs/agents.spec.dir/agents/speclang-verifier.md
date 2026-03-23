@@ -16,7 +16,7 @@ permission:
   bash: allow
 hidden: false
 ---
-# speclang-header lines:5
+# speclang-header lines:345
 # id: @specs/agents
 # version: 1.0.0
 # layer: 5

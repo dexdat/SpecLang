@@ -93,7 +93,7 @@ ExampleSpec:
 ### Authentication Entities
 
 ```speclang
-# speclang-header lines:20
+# speclang-header lines:9
 id: "@examples/auth"
 version: 1.0.0
 layer: 10
@@ -110,7 +110,7 @@ Complete authentication system example.
 
 ## Entities
 
-### @block:user-entity @kind:entity
+### @block::user-entity @kind:entity
 ```typescript
 interface User {
   id: string;
@@ -125,7 +125,7 @@ interface User {
 }
 ```
 
-### @block:session-entity @kind:entity
+### @block::session-entity @kind:entity
 ```typescript
 interface Session {
   id: string;
@@ -139,7 +139,7 @@ interface Session {
 }
 ```
 
-### @block:token-entity @kind:entity
+### @block::token-entity @kind:entity
 ```typescript
 interface AuthToken {
   accessToken: string;
@@ -155,7 +155,7 @@ interface AuthToken {
 ```speclang
 ## Operations
 
-### @block:login-operation @kind:operation
+### @block::login-operation @kind:operation
 ```typescript
 async function login(
   email: string,
@@ -204,14 +204,14 @@ async function login(
 }
 ```
 
-### @block:logout-operation @kind:operation
+### @block::logout-operation @kind:operation
 ```typescript
 async function logout(token: string): Promise<void> {
   await sessionRepository.deleteByToken(token);
 }
 ```
 
-### @block:refresh-operation @kind:operation
+### @block::refresh-operation @kind:operation
 ```typescript
 async function refreshToken(
   refreshToken: string
@@ -241,7 +241,7 @@ async function refreshToken(
 }
 ```
 
-### @block:validate-operation @kind:operation
+### @block::validate-operation @kind:operation
 ```typescript
 async function validateToken(token: string): Promise<User | null> {
   const session = await sessionRepository.findByToken(token);
@@ -264,7 +264,7 @@ async function validateToken(token: string): Promise<User | null> {
 ```speclang
 ## Validation
 
-### @block:email-validation @kind:validation
+### @block::email-validation @kind:validation
 ```typescript
 const emailValidator = {
   validate: (email: string): boolean => {
@@ -275,7 +275,7 @@ const emailValidator = {
 };
 ```
 
-### @block:password-validation @kind:validation
+### @block::password-validation @kind:validation
 ```typescript
 const passwordValidator = {
   validate: (password: string): ValidationResult => {
@@ -308,7 +308,7 @@ const passwordValidator = {
 ```speclang
 ## Security
 
-### @block:password-hashing @kind:utility
+### @block::password-hashing @kind:utility
 ```typescript
 import crypto from "crypto";
 
@@ -353,7 +353,7 @@ async function verifyPassword(
 }
 ```
 
-### @block:token-generation @kind:utility
+### @block::token-generation @kind:utility
 ```typescript
 import jwt from "jsonwebtoken";
 
@@ -400,7 +400,7 @@ async function generateTokens(user: User): Promise<AuthToken> {
 ```speclang
 ## Tests
 
-### @block:auth-tests @kind:test
+### @block::auth-tests @kind:test
 ```typescript
 describe("Authentication", () => {
   describe("login", () => {
@@ -543,7 +543,7 @@ SecurityFeatures:
 
 ## References
 
-- @ref:speclang/examples
+- "@ref:speclang/examples
 - @ref:speclang/hello-world
 - @ref:speclang/security
 - SIP 63: Hello World Example

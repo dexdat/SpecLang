@@ -1,11 +1,10 @@
-# speclang-header lines:13
+# speclang-header lines:12
 id: "@speclang/ralph-loop/state"
 version: 0.1.0
 layer: 2
 tags: [ralph, loop, state, entities, schema]
 imports: []
-parent: "@ref:specs/ralph-loop"
-part: 2/2
+parent: ""@ref:specs/ralph-loop"part: 2/2
 status: draft
 project_level: Alpha
 agent_support: agent_assisted

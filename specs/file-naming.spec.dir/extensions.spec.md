@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:10
 id: "@speclang/file-naming/extensions"
 version: 0.1.0
 layer: 2
@@ -209,8 +209,8 @@ speclang-header:
   version: 1.0.0
   layer: 3
   refs:
-    - @ref:northstar#auth
-    - @ref:stdlib/Result
+    - "@ref:northstar#auth
+    - "@ref:stdlib/Result
 
 blocks:
   - id: auth/User

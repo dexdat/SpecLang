@@ -1,7 +1,6 @@
-# speclang-header lines:15
+# speclang-header lines:7
 id: "@speclang/roadmap/poc/installation"
-parent: "@ref:specs/roadmap/poc"
-version: 0.1.0
+parent: ""@ref:specs/roadmap/poc"version: 0.1.0
 layer: 2
 short: "Installation and setup guide for POC"
 tags: [poc, installation, setup, getting-started]

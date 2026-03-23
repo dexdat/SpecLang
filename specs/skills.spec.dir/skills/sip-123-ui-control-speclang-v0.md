@@ -701,7 +701,7 @@ class ControlPanelEndpoints:
 
 ## References
 
-- @ref:specs/ui-specification
+- "@ref:specs/ui-specification
 - @ref:specs/cascade-triggers
 - @ref:specs/agent-protocol
 - SIP 36: UI Specification

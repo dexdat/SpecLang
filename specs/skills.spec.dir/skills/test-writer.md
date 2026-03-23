@@ -59,12 +59,12 @@ You run when:
 
 ```yaml
 # auth.test.spec.yaml
-# speclang-header lines:12
+# speclang-header lines:10
 id: @tests/auth.login
 version: 1.0.0
 refs:
-  - @ref:specs/auth/login
-  - @ref:specs/auth/login.go.spec
+  - "@ref:specs/auth/login
+  - "@ref:specs/auth/login.go.spec
 target: go
 tags: [auth, test, login]
 short: Tests for login operation

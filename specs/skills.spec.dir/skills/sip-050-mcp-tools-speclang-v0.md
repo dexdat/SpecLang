@@ -679,7 +679,7 @@ ErrorCodes:
 
 ## References
 
-- @ref:specs/mcp
+- "@ref:specs/mcp
 - SIP 11: MCP Tool Definitions
 - SIP 43: MCP Daemon
 - SIP 54: SQLite Schema

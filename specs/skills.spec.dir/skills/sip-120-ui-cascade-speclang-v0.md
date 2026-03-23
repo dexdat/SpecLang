@@ -561,7 +561,7 @@ class CascadeGraphEndpoint:
 
 ## References
 
-- @ref:specs/ui-specification
+- "@ref:specs/ui-specification
 - @ref:specs/dependency-graph
 - SIP 36: UI Specification
 - SIP 48: Dependency Graph

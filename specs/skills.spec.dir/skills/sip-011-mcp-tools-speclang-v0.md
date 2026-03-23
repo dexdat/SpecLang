@@ -447,7 +447,7 @@ events:
 
 ## References
 
-- @ref:specs/mcp - MCP spec (parent)
+- "@ref:specs/mcp - MCP spec (parent)
 - @ref:specs/mcp.spec.dir/overview - Overview
 - @ref:specs/mcp.spec.dir/architecture - Architecture
 - @ref:specs/mcp.spec.dir/tools/search - Search tools

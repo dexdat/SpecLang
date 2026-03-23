@@ -3,8 +3,7 @@ id: "@speclang/scripts.validate-autonomous"
 version: 0.1.0
 layer: 2
 tags: [scripts, validation, autonomous]
-parent: "@ref:speclang/scripts"
-status: draft
+parent: ""@ref:speclang/scripts"status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Validate Autonomous Specs Script

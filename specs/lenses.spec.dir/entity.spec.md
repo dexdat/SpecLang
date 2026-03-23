@@ -1,7 +1,6 @@
-# speclang-header lines:12
+# speclang-header lines:9
 id: "@speclang/lenses/entity"
-parent: "@ref:specs/lenses"
-short: "Entity relationship visualization lens"
+parent: ""@ref:specs/lenses"short: "Entity relationship visualization lens"
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [lenses, entity, er-diagram, visualization]

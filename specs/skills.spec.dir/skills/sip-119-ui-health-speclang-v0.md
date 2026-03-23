@@ -400,7 +400,7 @@ class HealthEndpoint:
 
 ## References
 
-- @ref:specs/ui-specification
+- "@ref:specs/ui-specification
 - SIP 36: UI Specification
 - SIP 43: MCP Daemon
 - SIP 51: Daemon Events

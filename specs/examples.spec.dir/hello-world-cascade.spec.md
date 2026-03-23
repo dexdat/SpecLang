@@ -1,10 +1,9 @@
-# speclang-header lines:15
+# speclang-header lines:9
 id: "@speclang/examples.spec.dir/hello-world-cascade"
 version: 0.1.0
 layer: 2
 tags: [example, cascade, end-to-end, tutorial, demo]
-parent: "@ref:specs/examples.spec"
-project_level: POC
+parent: ""@ref:specs/examples.spec"project_level: POC
 agent_support: agent_autonomous
 short: "Hello World Cascade - Complete end-to-end demonstration"
 ---
@@ -117,8 +116,7 @@ id: "@myproject/hello.ts"
 version: 1.0.0
 layer: 5
 target: typescript
-parent: "@ref:specs/hello"
-project_level: POC
+parent: ""@ref:specs/hello"project_level: POC
 agent_support: agent_autonomous
 tags: [greeting, typescript, generated]
 short: "TypeScript code mapping for hello module"
@@ -204,8 +202,7 @@ The test-writer agent creates a test spec:
 id: "@myproject/hello.test"
 version: 1.0.0
 layer: 7
-parent: "@ref:specs/hello"
-project_level: POC
+parent: ""@ref:specs/hello"project_level: POC
 agent_support: agent_autonomous
 tags: [test, greeting]
 short: "Tests for hello module"
@@ -438,7 +435,7 @@ Expected output:
 
 ## References
 
-- @ref:specs/examples.spec.dir/hello-world - Simple hello world
+- "@ref:specs/examples.spec.dir/hello-world - Simple hello world
 - @ref:specs/cascade - Cascade system
 - @ref:specs/agent-protocol - Agent roles
 - @ref:specs/compiler - Code generation

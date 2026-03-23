@@ -1,10 +1,9 @@
-# speclang-header lines:15
+# speclang-header lines:9
 id: "@speclang/cascade/continuous-improvement"
 version: 0.1.0
 layer: 2
 tags: [cascade, continuous-improvement, loop, self-improving, openclaw]
-parent: "@ref:specs/cascade"
-project_level: Alpha
+parent: ""@ref:specs/cascade"project_level: Alpha
 agent_support: agent_autonomous
 short: Continuous Improvement Loop - Self-improving applications like OpenClaw
 ---
@@ -274,7 +273,7 @@ ContinuousImprovementConfiguration:
     - Can be disabled for manual control
     
   integration_with_config_schema:
-    - @ref:specs/config/schema defines ContinuousImprovementConfig
+    - "@ref:specs/config/schema defines ContinuousImprovementConfig
     - All loop control parameters type-safe
     - Validation ensures safe values
     
@@ -307,7 +306,7 @@ This is the future of software development: continuous, collaborative, and adapt
 
 ## References
 
-- @ref:specs/mcp/messages - MCP message protocol
+- "@ref:specs/mcp/messages - MCP message protocol
 - @ref:specs/project-maturity-levels/depth-requirements - Depth requirements by scope
 - @ref:specs/cascade - Cascade system
 - @ref:specs/config/schema - Configuration schema including loop control

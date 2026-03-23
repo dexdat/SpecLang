@@ -24,7 +24,7 @@ This SIP defines the Entity Lens—parsing and rendering of entity definitions w
 ### Quick Start
 
 ```markdown
-### @block:user-entity @kind:entity
+### @block::user-entity @kind:entity
 
 ```yaml
 id: string
@@ -111,8 +111,7 @@ FieldFormat:
   array: "field_name: type_name[]"
   map: "field_name: Map<key, value>"
   union: "field_name: type_a | type_b"
-  reference: "field_name: @ref:entity-id"
-```
+  reference: "field_name: ""@ref:entity-id"```
 
 ### Supported Types
 
@@ -451,7 +450,7 @@ AIBehavior:
 **@example/user:**
 
 ```markdown
-### @block:user @kind:entity
+### @block::user @kind:entity
 
 ```yaml
 # User entity for authentication
@@ -498,7 +497,7 @@ block:
 **@example/order:**
 
 ```markdown
-### @block:order @kind:entity
+### @block::order @kind:entity
 
 ```yaml
 id: string
@@ -526,7 +525,7 @@ delivered_at?: datetime
 **@example/relationships:**
 
 ```markdown
-### @block:entities @kind:entity
+### @block::entities @kind:entity
 
 ```yaml
 # Entities with relationships
@@ -548,7 +547,7 @@ user <-> role        # Many users have many roles (through user_roles)
 **@example/complex:**
 
 ```markdown
-### @block:config @kind:entity
+### @block::config @kind:entity
 
 ```yaml
 settings: map<string, any>
@@ -659,7 +658,7 @@ function entityToSQL(block: EntityBlock): string {
 
 ## References
 
-- @ref:sip-035-lenses
+- "@ref:sip-035-lenses
 - @ref:sip-054-sqlite-schema
 - @ref:sip-075-spec-entities
 - @ref:speclang/lenses/entity

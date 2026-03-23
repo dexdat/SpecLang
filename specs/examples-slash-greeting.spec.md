@@ -1,4 +1,4 @@
-# speclang-header lines:18
+# speclang-header lines:10
 id: "@examples/greeting-dir"
 version: 1.0.0
 layer: 5
@@ -7,8 +7,7 @@ agent_support: agent_assisted
 tags: [example, greeting, demo]
 short: Greeting example directory
 status: draft
-parent: "@ref:specs/examples"
----
+parent: ""@ref:specs/examples"---
 
 # Greeting Examples Directory
 

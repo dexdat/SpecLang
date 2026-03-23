@@ -251,8 +251,8 @@ speclang-header:
   version: 1.0.0
   layer: 3
   refs:
-    - @ref:northstar#auth
-    - @ref:stdlib/Result
+    - "@ref:northstar#auth
+    - "@ref:stdlib/Result
 
 blocks:
   - id: auth/User

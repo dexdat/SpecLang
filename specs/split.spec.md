@@ -1,4 +1,4 @@
-# speclang-header lines:48
+# speclang-header lines:12
 id: "@specs/split"
 version: 1.0.0
 target: src/split/
@@ -8,9 +8,7 @@ agent_support: agent_assisted
 tags: [split, implementation]
 short: Implementation wrapper for split module
 depends_on:
-  - "@ref:specs/dynamic-split"
-  - "@ref:specs/core"
----
+  - ""@ref:specs/dynamic-split"  - ""@ref:specs/core"---
 
 This is an implementation wrapper spec. The actual specification is defined in `@speclang/dynamic-split`.
 

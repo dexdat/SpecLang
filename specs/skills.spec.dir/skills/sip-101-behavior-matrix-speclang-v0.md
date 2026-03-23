@@ -442,7 +442,7 @@ result:
 
 ## References
 
-- @ref:speclang/agent-support-levels
+- "@ref:speclang/agent-support-levels
 - @ref:speclang/agent-assisted
 - @ref:speclang/agent-autonomous
 - @ref:speclang/maturity-levels

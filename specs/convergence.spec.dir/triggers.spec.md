@@ -1,12 +1,10 @@
-# speclang-header lines:15
+# speclang-header lines:12
 id: "@speclang/convergence/triggers"
 version: 0.1.0
 layer: 2
-parent: "@ref:speclang/convergence"
-part: 2/2
+parent: ""@ref:speclang/convergence"part: 2/2
 siblings:
-  prev: "@ref:speclang/convergence/detection"
-project_level: Alpha
+  prev: ""@ref:speclang/convergence/detection"project_level: Alpha
 agent_support: agent_autonomous
 tags: [convergence, triggers, termination]
 short: Convergence triggers and termination conditions

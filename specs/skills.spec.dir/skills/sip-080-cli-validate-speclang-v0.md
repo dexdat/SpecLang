@@ -548,7 +548,7 @@ fi
 
 ## References
 
-- @ref:sip-037-cli
+- "@ref:sip-037-cli
 - @ref:sip-022-validation
 - @ref:sip-065-validation-rules
 - @ref:sip-064-cli-commands

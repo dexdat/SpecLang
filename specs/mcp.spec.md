@@ -1,4 +1,4 @@
-# speclang-header lines:15
+# speclang-header lines:19
 id: "@speclang/mcp"
 version: 0.2.0
 target: src/mcp/
@@ -7,15 +7,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [mcp, server, typescript, opensource, protocol]
 children:
-  - "@ref:specs/mcp.spec.dir/overview"
-  - "@ref:specs/mcp.spec.dir/architecture"
-  - "@ref:specs/mcp.spec.dir/authentication"
-  - "@ref:specs/mcp.spec.dir/cli"
-  - "@ref:specs/mcp.spec.dir/configuration"
-  - "@ref:specs/mcp.spec.dir/error-handling"
-  - "@ref:specs/mcp.spec.dir/run-modes"
-  - "@ref:specs/mcp.spec.dir/sse-stream"
-short: "MCP Server - Model Context Protocol server for SpecLang"
+  - ""@ref:specs/mcp.spec.dir/overview"  - ""@ref:specs/mcp.spec.dir/architecture"  - ""@ref:specs/mcp.spec.dir/authentication"  - ""@ref:specs/mcp.spec.dir/cli"  - ""@ref:specs/mcp.spec.dir/configuration"  - ""@ref:specs/mcp.spec.dir/error-handling"  - ""@ref:specs/mcp.spec.dir/run-modes"  - ""@ref:specs/mcp.spec.dir/sse-stream"short: "MCP Server - Model Context Protocol server for SpecLang"
 status: draft
 ---
 

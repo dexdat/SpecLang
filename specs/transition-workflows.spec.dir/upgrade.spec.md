@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:8
 id: "@speclang/transition-workflows/upgrade"
 version: 0.1.0
 layer: 2
@@ -402,8 +402,8 @@ Integration:
 ```speclang
 # @block:transition/references @kind:refs
 refs:
-  - @ref:speclang/project-maturity-levels
-  - @ref:speclang/agent-support-levels
-  - @ref:speclang/autonomous-validation
-  - @ref:speclang/agent-behavior-matrix
+  - "@ref:speclang/project-maturity-levels
+  - "@ref:speclang/agent-support-levels
+  - "@ref:speclang/autonomous-validation
+  - "@ref:speclang/agent-behavior-matrix
 ```

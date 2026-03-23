@@ -1,9 +1,8 @@
-# speclang-header lines:12
+# speclang-header lines:11
 id: "@speclang/implementation.checklist"
 version: 0.1.0
 layer: 2
-parent: "@ref:speclang/implementation"
-tags: [checklist, implementation, quality]
+parent: ""@ref:speclang/implementation"tags: [checklist, implementation, quality]
 part: 2/2
 status: draft
 project_level: Alpha

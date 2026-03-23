@@ -1,4 +1,4 @@
-# speclang-header lines:15
+# speclang-header lines:8
 id: "@speclang/testing-strategy.spec"
 version: 0.1.0
 layer: 1
@@ -449,7 +449,7 @@ Best Practices for SpecLang Testing:
 
 ## References
 
-- @ref:specs/test-specs - Test spec format
+- "@ref:specs/test-specs - Test spec format
 - @ref:specs/validation - Validation system
 - @ref:specs/cascade.spec.dir/error-handling - Error handling
 - @ref:specs/project-maturity-levels - Maturity levels

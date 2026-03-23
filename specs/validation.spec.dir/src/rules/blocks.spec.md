@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:9
 id: "@specs/validation/rules/blocks"
 version: 1.0.0
 layer: 5
@@ -19,7 +19,7 @@ Validates content blocks in specs.
 
 **Steps:**
 1. Check block IDs are unique
-2. Check block IDs follow @block:name format
+2. Check block IDs follow @block::name format
 3. Check block kinds are valid
 4. Check content not empty for required types
 

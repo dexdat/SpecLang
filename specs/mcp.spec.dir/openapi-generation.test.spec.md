@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/mcp-openapi-generation-tests"
 version: 0.1.0
 layer: 5
@@ -143,6 +143,6 @@ Test Implementation:
 
 ## References
 
-- @ref:speclang/mcp-openapi-generation
+- "@ref:speclang/mcp-openapi-generation
 - @ref:speclang/test-specs
 - @ref:speclang/mcp-openapi-generation-cli

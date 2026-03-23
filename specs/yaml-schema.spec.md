@@ -1,4 +1,4 @@
-# speclang-header lines:20
+# speclang-header lines:9
 id: "@speclang/yaml-schema"
 version: 0.1.0
 layer: 2
@@ -269,6 +269,6 @@ This schema applies specifically to `{name}.{ext}.spec` files:
 
 ## References
 
-- @ref:speclang/file-naming - File naming conventions
+- "@ref:speclang/file-naming - File naming conventions
 - @ref:speclang/compiler - Code generation pipeline
 - @ref:speclang/headers - Universal header format

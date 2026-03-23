@@ -355,7 +355,7 @@ class GoImportResolver {
 
 ## References
 
-- @ref:specs/go.types
+- "@ref:specs/go.types
 - @ref:specs/go/generator
 - SIP 66: Go Generator
 - SIP 110: Python Types

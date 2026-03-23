@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:8
 id: "@speclang/safety-nets"
 version: 0.1.0
 layer: 2
@@ -41,8 +41,8 @@ This specification has been split into two focused sub‑specifications:
 ```speclang
 # @block:safety-nets/references @kind:refs
 refs:
-  - @ref:speclang/autonomous-validation
-  - @ref:speclang/transition-workflows
-  - @ref:speclang/agent-behavior-matrix
-  - @ref:speclang/agent-support-levels
+  - "@ref:speclang/autonomous-validation
+  - "@ref:speclang/transition-workflows
+  - "@ref:speclang/agent-behavior-matrix
+  - "@ref:speclang/agent-support-levels
 ```

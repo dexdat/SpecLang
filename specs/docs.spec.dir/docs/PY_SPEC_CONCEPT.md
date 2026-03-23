@@ -21,7 +21,7 @@ This document proves that the `.py.spec` concept works:
 **File:** `specs/scripts.spec.dir/generate-index.py.spec`
 
 ```
-# speclang-header lines:12
+# speclang-header lines:7
 id: "@speclang/scripts.generate-index.py"
 version: 0.1.0
 layer: 5
@@ -34,7 +34,7 @@ output_path: scripts/generate_index.py
 
 ## Implementation
 
-### @block:scripts/generate-index/main @kind:code
+### @block::scripts/generate-index/main @kind:code
 ```python
 #!/usr/bin/env python3
 # Actual Python code here
@@ -298,7 +298,7 @@ Description here.
 
 ## Implementation
 
-### @block:mynew/myscript @kind:code
+### @block::mynew/myscript @kind:code
 \`\`\`python
 #!/usr/bin/env python3
 

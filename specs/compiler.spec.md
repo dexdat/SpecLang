@@ -6,10 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [compiler, codegen, transformation, multi-language]
 children:
-  - "@ref:specs/compiler.spec.dir/phases"
-  - "@ref:specs/compiler.spec.dir/targets"
-  - "@ref:specs/compiler.spec.dir/templates"
-short: "Compiler - Transforms specs into target language code"
+  - ""@ref:specs/compiler.spec.dir/phases"  - ""@ref:specs/compiler.spec.dir/targets"  - ""@ref:specs/compiler.spec.dir/templates"short: "Compiler - Transforms specs into target language code"
 status: draft
 ---
 

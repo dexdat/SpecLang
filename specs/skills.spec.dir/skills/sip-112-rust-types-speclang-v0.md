@@ -499,7 +499,7 @@ class SerdeAttributeGenerator {
 
 ## References
 
-- @ref:specs/rust.types
+- "@ref:specs/rust.types
 - @ref:specs/rust/generator
 - SIP 66: Go Generator
 - SIP 109: Go Types

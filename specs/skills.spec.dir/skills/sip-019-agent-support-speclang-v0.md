@@ -222,7 +222,7 @@ combined_warnings:
 ### Example 1: human_only Spec
 
 ```yaml
-# speclang-header lines:9
+# speclang-header lines:8
 id: @specs/new-feature
 version: 0.0.1
 layer: 1
@@ -296,7 +296,7 @@ short: Login operation with full step-by-step
 
 ## References
 
-- @ref:speclang/agent-support-levels
+- "@ref:speclang/agent-support-levels
 - @ref:speclang/agent-behavior-matrix
 - @ref:speclang/semantic-definitions
 - SIP 20: Agent Behavior Matrix

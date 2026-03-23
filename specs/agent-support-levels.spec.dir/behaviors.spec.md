@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/agent-support-levels/behaviors"
 version: 0.1.0
 layer: 2
@@ -80,8 +80,8 @@ Integration:
 ```speclang
 # @block:agent-support/references @kind:refs
 refs:
-  - @ref:speclang/headers#agent_support
-  - @ref:speclang/layer-definitions
-  - @ref:speclang/project-maturity-levels
-  - @ref:speclang/autonomous-validation
+  - "@ref:speclang/headers#agent_support
+  - "@ref:speclang/layer-definitions
+  - "@ref:speclang/project-maturity-levels
+  - "@ref:speclang/autonomous-validation
 ```

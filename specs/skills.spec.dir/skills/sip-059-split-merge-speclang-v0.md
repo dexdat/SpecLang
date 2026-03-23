@@ -207,13 +207,13 @@ def split_spec(file_path: str, content: str) -> SplitResult:
 **Parent Format:**
 
 ```yaml
-# speclang-header lines:15
+# speclang-header lines:10
 id: @specs/auth
 version: 1.0.0
 children:
-  - @ref:specs/auth.spec.dir/entities
-  - @ref:specs/auth.spec.dir/operations
-  - @ref:specs/auth.spec.dir/policies
+  - "@ref:specs/auth.spec.dir/entities
+  - "@ref:specs/auth.spec.dir/operations
+  - "@ref:specs/auth.spec.dir/policies
 short: "Authentication system (split into 3 parts)"
 part: 0/3
 total_parts: 3
@@ -400,8 +400,8 @@ def update_refs_on_merge(parent_id: str, children: List[Spec]):
 ```yaml
 # In parent header
 children:
-  - @ref:specs/auth.spec.dir/entities
-  - @ref:specs/auth.spec.dir/operations
+  - "@ref:specs/auth.spec.dir/entities
+  - "@ref:specs/auth.spec.dir/operations
 ```
 
 **Children → Parent:**
