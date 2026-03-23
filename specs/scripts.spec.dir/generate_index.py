@@ -418,7 +418,7 @@ def build_reference_maps(entries: List[dict]) -> Tuple[Dict[str, str], Dict[str,
     
     for entry in entries:
         spec_id = entry['id']
-        file_path = entry['path']
+        file_path = entry['file']
         
         id_to_entry[spec_id] = entry
         
@@ -579,7 +579,7 @@ def generate_index(root_dir: str = '.', output_file: str = '_index.json') -> dic
             
             entry = {
                 'id': spec_id,
-                'path': relpath,
+                'file': relpath,
                 'version': metadata.get('version', '0.0.0'),
                 'layer': layer,
                 'project_level': metadata.get('project_level'),

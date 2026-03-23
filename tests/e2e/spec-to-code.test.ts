@@ -93,7 +93,7 @@ export function add(a: number, b: number): number {
       // Cascade generates files in generated/ directory relative to spec location
       // Since we ran cascade with cwd=TEST_DIR, files should be in TEST_DIR/generated/
       // Note: block name includes colon due to double colon syntax
-      const generatedFile = join(GENERATED_DIR, ':add.ts');
+      const generatedFile = join(GENERATED_DIR, 'add.ts');
       expect(existsSync(generatedFile)).toBe(true);
 
       const content = readFileSync(generatedFile, 'utf-8');
@@ -108,7 +108,7 @@ export function add(a: number, b: number): number {
   describe('Spec Edit → Cascade → Updated Code', () => {
     const specName = 'edit-test.spec.md';
     const specPath = join(SPECS_DIR, specName);
-    const generatedFileName = ':multiply.ts';
+    const generatedFileName = 'multiply.ts';
     const generatedFilePath = join(GENERATED_DIR, generatedFileName);
 
     beforeEach(() => {
