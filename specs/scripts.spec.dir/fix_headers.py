@@ -15,6 +15,62 @@ def quote_at_values(line):
     line = re.sub(r'([\{\[ ])(@[^\s,\]\}]+)(\s*)$', r'\1"\2"\3', line)
     return line
 
+def fix_children_line(line_text):
+    """Fix corrupted children list line.
+    Example: '- ""@ref:specs/xxx"  - ""@ref:specs/yyy"---'
+    Should become separate lines (handled elsewhere).
+    Returns fixed line_text (or same if no fix needed).
+    """
+    # If line contains '  - ' (two spaces dash) after a ref, split
+    # We'll handle this in the caller by detecting children field
+    return line_text
+
+def fix_children_list(yaml_lines):
+    """Fix corrupted children lists in YAML lines.
+    Detects children field and splits concatenated list items.
+    Returns new yaml_lines list.
+    """
+    new_lines = []
+    i = 0
+    while i < len(yaml_lines):
+        line = yaml_lines[i]
+        stripped = line.strip()
+        # Check if this line is a children field
+        if stripped.startswith('children:'):
+            new_lines.append(line)
+            # Look at next line(s) that are list items
+            j = i + 1
+            while j < len(yaml_lines) and yaml_lines[j].strip().startswith('-'):
+                item_line = yaml_lines[j]
+                # Check if line contains multiple items separated by '  - '
+                if '  - ' in item_line:
+                    # Split by '  - ' but preserve indentation
+                    indent = item_line[:len(item_line) - len(item_line.lstrip())]
+                    # Split using regex to capture the dash with spaces
+                    parts = re.split(r'\s{2,}-\s+', item_line.strip())
+                    # Rebuild each part as separate line
+                    for part in parts:
+                        part = part.strip()
+                        # Remove extra quotes if present
+                        if part.startswith('""'):
+                            part = part[1:]
+                        if part.endswith('---'):
+                            part = part[:-3]
+                        # Ensure part is quoted
+                        if not part.startswith('"'):
+                            part = '"' + part
+                        if not part.endswith('"'):
+                            part = part + '"'
+                        new_lines.append(indent + '- ' + part + '\n')
+                else:
+                    new_lines.append(item_line)
+                j += 1
+            i = j  # skip processed lines
+        else:
+            new_lines.append(line)
+            i += 1
+    return new_lines
+
 def compute_header_lines(content):
     """Return (header_start, line_count) for speclang header."""
     lines = content.splitlines()
@@ -55,6 +111,9 @@ def fix_header(content):
     while i < len(lines) and not lines[i].strip() == '---':
         yaml_lines.append(lines[i])
         i += 1
+    
+    # Fix corrupted children lists
+    yaml_lines = fix_children_list(yaml_lines)
     
     if not yaml_lines:
         return content
