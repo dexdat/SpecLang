@@ -45,24 +45,24 @@ npm run build && npm test
 - [x] **Validate:** Build passes
 
 #### Step 3: Implement maturity level enum (30 min)
-- [ ] Edit src/maturity/levels.ts
-- [ ] Add MaturityLevel enum: POC | MVP | ALPHA | BETA | PRODUCTION
-- [ ] Add level descriptions
-- [ ] Add level metadata
-- [ ] **Validate:** Tests pass
+- [x] Edit src/maturity/levels.ts
+- [x] Add MaturityLevel enum: POC | MVP | ALPHA | BETA | PRODUCTION
+- [x] Add level descriptions
+- [x] Add level metadata
+- [x] **Validate:** Tests pass
 
 #### Step 4: Implement criteria checker (60 min)
-- [ ] Edit src/maturity/criteria.ts
-- [ ] Implement checkCriteria(level: MaturityLevel): CriteriaResult
-- [ ] Add criteria for each level
-- [ ] Add pass/fail determination logic
-- [ ] **Validate:** Add unit test, test passes
+- [x] Edit src/maturity/criteria.ts
+- [x] Implement checkCriteria(level: MaturityLevel): CriteriaResult
+- [x] Add criteria for each level
+- [x] Add pass/fail determination logic
+- [x] **Validate:** Add unit test, test passes
 
 #### Step 5: Implement validation logic (45 min)
-- [ ] Edit src/maturity/validation.ts
-- [ ] Implement validateMaturity(spec: Spec): MaturityResult
-- [ ] Check spec meets level requirements
-- [ ] Return violations and suggestions
+- [x] Edit src/maturity/validation.ts
+- [x] Implement validateMaturity(spec: Spec): MaturityResult
+- [x] Check spec meets level requirements
+- [x] Return violations and suggestions
 - [ ] **Validate:** Add unit test, test passes
 
 #### Step 6: Add CLI command (45 min)

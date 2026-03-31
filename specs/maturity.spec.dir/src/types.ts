@@ -138,4 +138,12 @@ export interface ParsedSpec {
   testCoverage?: Record<string, boolean>;
 }
 
+export interface MaturityResult {
+  valid: boolean;
+  level: MaturityLevel;
+  criteriaResults: CriteriaResult[];
+  violations: string[];
+  suggestions: string[];
+}
+
 export type ParsedSpecMetadata = ParsedSpec['metadata'];
