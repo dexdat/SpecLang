@@ -1,6 +1,7 @@
 # speclang-header lines:9
-id: "@speclang/lenses/mermaid"
-parent: ""@ref:specs/lenses"short: "Mermaid diagram generation lens"
+id: @speclang/lenses/mermaid
+parent: @ref:specs/lenses
+short: Mermaid diagram generation lens
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [lenses, mermaid, diagrams, visualization]
