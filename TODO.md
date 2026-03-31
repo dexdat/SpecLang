@@ -545,10 +545,10 @@ Each requires specification, implementation, and tests.
 - [x] **Validate:** Add tests
 
 #### Step 3: Implement tool registry (45 min)
-- [ ] Create tool registry
-- [ ] Add register/unregister
-- [ ] Add discovery
-- [ ] **Validate:** Add tests
+- [x] Create tool registry
+- [x] Add register/unregister
+- [x] Add discovery
+- [x] **Validate:** Add tests
 
 #### Step 4: Implement request router (60 min)
 - [ ] Parse MCP requests
