@@ -1,13 +1,3 @@
-# speclang-header lines:5
-# id: @specs/ui-dashboard
-# version: 1.0.0
-# layer: 5
-
-/**
- * SystemDashboard - Main dashboard component
- * Generated from: @implementation/ui-dashboard
- */
-
 import React, { useState } from 'react';
 import DashboardHeader from './DashboardHeader';
 import Sidebar from './Sidebar';

@@ -1,13 +1,3 @@
-# speclang-header lines:5
-# id: @specs/ui-dashboard
-# version: 1.0.0
-# layer: 5
-
-/**
- * DashboardHeader component
- * Generated from: @implementation/ui-dashboard
- */
-
 import React from 'react';
 import { CascadeIndicator } from './CascadeIndicator';
 
