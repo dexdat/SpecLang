@@ -63,34 +63,34 @@ npm run build && npm test
 - [x] Implement validateMaturity(spec: Spec): MaturityResult
 - [x] Check spec meets level requirements
 - [x] Return violations and suggestions
-- [ ] **Validate:** Add unit test, test passes
+- [x] **Validate:** Add unit test, test passes
 
 #### Step 6: Add CLI command (45 min)
-- [ ] Add `speclang maturity <spec>` to bin/speclang
-- [ ] Show current maturity level
-- [ ] Show criteria check results
-- [ ] Show recommendations
-- [ ] **Validate:** Manual test with example spec
+- [x] Add `speclang maturity <spec>` to bin/speclang
+- [x] Show current maturity level
+- [x] Show criteria check results
+- [x] Show recommendations
+- [x] **Validate:** Manual test with example spec
 
 #### Step 7: Write integration tests (45 min)
-- [ ] Create tests/maturity.test.ts
-- [ ] Test each maturity level
-- [ ] Test criteria validation
-- [ ] Test CLI command
-- [ ] **Validate:** `npm test` includes new tests
+- [x] Create tests/maturity.test.ts
+- [x] Test each maturity level
+- [x] Test criteria validation
+- [x] Test CLI command
+- [x] **Validate:** `npm test` includes new tests
 
 #### Step 8: Update documentation (30 min)
-- [ ] Update specs/project-maturity-levels.spec.md with examples
-- [ ] Add usage examples to spec
-- [ ] Add validation examples
-- [ ] **Validate:** Build + tests pass
+- [x] Update specs/project-maturity-levels.spec.md with examples
+- [x] Add usage examples to spec
+- [x] Add validation examples
+- [x] **Validate:** Build + tests pass
 
 **Completion Criteria:**
-- [ ] All 8 steps complete
-- [ ] `npm run build` passes
-- [ ] `npm test` passes with new tests
-- [ ] `./bin/speclang maturity` works
-- [ ] Update PRD: `jq '.phases[0].stories[] | select(.id=="P0-025") | .passes = true' .ralph/prd.json --in-place`
+- [x] All 8 steps complete
+- [x] `npm run build` passes
+- [x] `npm test` passes with new tests
+- [x] `./bin/speclang maturity` works
+- [x] Update PRD: `jq '.phases[0].stories[] | select(.id=="P0-025") | .passes = true' .ralph/prd.json --in-place`
 
 ---
 
@@ -103,65 +103,65 @@ npm run build && npm test
 **Baby Steps:**
 
 #### Step 1: Review existing stdlib types (20 min)
-- [ ] Read specs/stdlib.spec.dir/types/
-- [ ] Read src/stdlib/types.ts (if exists)
-- [ ] Identify missing types
-- [ ] List types to implement
-- [ ] **Validate:** Understand current state
+- [x] Read specs/stdlib.spec.dir/types/
+- [x] Read src/stdlib/types.ts (if exists)
+- [x] Identify missing types
+- [x] List types to implement
+- [x] **Validate:** Understand current state
 
 #### Step 2: Implement primitive types (45 min)
-- [ ] Edit src/stdlib/types/primitives.ts
-- [ ] Add Int, Float, String, Bool type aliases
-- [ ] Add type validators
-- [ ] Add type guards
-- [ ] **Validate:** Build passes
+- [x] Edit src/stdlib/types/primitives.ts
+- [x] Add Int, Float, String, Bool type aliases
+- [x] Add type validators
+- [x] Add type guards
+- [x] **Validate:** Build passes
 
 #### Step 3: Implement composite types (60 min)
-- [ ] Edit src/stdlib/types/composites.ts
-- [ ] Add List<T>, Map<K,V>, Set<T>
-- [ ] Add Tuple types
-- [ ] Add Record types
-- [ ] **Validate:** Build passes
+- [x] Edit src/stdlib/types/composites.ts
+- [x] Add List<T>, Map<K,V>, Set<T>
+- [x] Add Tuple types
+- [x] Add Record types
+- [x] **Validate:** Build passes
 
 #### Step 4: Implement Result types (45 min)
-- [ ] Edit src/stdlib/types/result.ts
-- [ ] Add Result<T, E> type
-- [ ] Add Ok<T> and Err<E> types
-- [ ] Add match/pipe functions
-- [ ] **Validate:** Add tests, tests pass
+- [x] Edit src/stdlib/types/result.ts
+- [x] Add Result<T, E> type
+- [x] Add Ok<T> and Err<E> types
+- [x] Add match/pipe functions
+- [x] **Validate:** Add tests, tests pass
 
 #### Step 5: Implement Option types (45 min)
-- [ ] Edit src/stdlib/types/option.ts
-- [ ] Add Option<T> type
-- [ ] Add Some<T> and None types
-- [ ] Add map/and_then/or Else
-- [ ] **Validate:** Add tests, tests pass
+- [x] Edit src/stdlib/types/option.ts
+- [x] Add Option<T> type
+- [x] Add Some<T> and None types
+- [x] Add map/and_then/or Else
+- [x] **Validate:** Add tests, tests pass
 
 #### Step 6: Add type utilities (30 min)
-- [ ] Edit src/stdlib/types/utils.ts
-- [ ] Add isType(), assertType() functions
-- [ ] Add typeOf() function
-- [ ] Add TypeName utility type
-- [ ] **Validate:** Build passes
+- [x] Edit src/stdlib/types/utils.ts
+- [x] Add isType(), assertType() functions
+- [x] Add typeOf() function
+- [x] Add TypeName utility type
+- [x] **Validate:** Build passes
 
 #### Step 7: Export all types (15 min)
-- [ ] Edit src/stdlib/types/index.ts
-- [ ] Export all types from sub-modules
-- [ ] Add barrel export
-- [ ] **Validate:** Imports work
+- [x] Edit src/stdlib/types/index.ts
+- [x] Export all types from sub-modules
+- [x] Add barrel export
+- [x] **Validate:** Imports work
 
 #### Step 8: Write comprehensive tests (60 min)
-- [ ] Create tests/stdlib/types.test.ts
-- [ ] Test each type category
-- [ ] Test type guards
-- [ ] Test edge cases
-- [ ] **Validate:** All tests pass
+- [x] Create tests/stdlib/types.test.ts
+- [x] Test each type category
+- [x] Test type guards
+- [x] Test edge cases
+- [x] **Validate:** All tests pass
 
 **Completion Criteria:**
-- [ ] All 8 steps complete
-- [ ] Build passes
-- [ ] Tests pass with stdlib coverage
-- [ ] Types available in cascade
+- [x] All 8 steps complete
+- [x] Build passes
+- [x] Tests pass with stdlib coverage
+- [x] Types available in cascade
 - [ ] Update PRD
 
 ---

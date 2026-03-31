@@ -17,6 +17,7 @@ import { guardCommand, GuardOptions } from './commands/guard.js';
 import { mcpCommand } from './commands/mcp.js';
 import { metaGenerateCommand, metaValidateCommand, metaBootstrapCommand, metaCheckCommand, MetaCLIOptions } from './commands/meta.js';
 import { autonomousTestCommand, autonomousValidateCommand, autonomousReportCommand, autonomousVerifyCommand, AutonomousTestOptions, AutonomousValidateOptions, AutonomousReportOptions, AutonomousVerifyOptions } from './commands/autonomous.js';
+import { maturityCommand, MaturityOptions } from './commands/maturity.js';
 
 const program = new Command();
 
@@ -417,6 +418,25 @@ autonomous
   .option('--timeout <ms>', 'Timeout in milliseconds', parseInt)
   .action(async (options: AutonomousVerifyOptions) => {
     await autonomousVerifyCommand(options);
+  });
+
+// ============================================================================
+// MATURITY COMMAND
+// ============================================================================
+
+program
+  .command('maturity [spec]')
+  .description('Show maturity level info or validate a spec')
+  .option('--level <level>', 'Show info for specific level')
+  .option('--json', 'JSON output')
+  .option('--verbose', 'Show detailed criteria')
+  .action(async (spec: string | undefined, options: MaturityOptions & { level?: string }) => {
+    await maturityCommand({
+      spec,
+      level: options.level,
+      json: options.json,
+      verbose: options.verbose,
+    });
   });
 
 // ============================================================================

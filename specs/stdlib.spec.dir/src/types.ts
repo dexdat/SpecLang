@@ -104,6 +104,33 @@ export const Duration = {
 // Version type
 export type Version = string & { __brand: 'Version' };
 
+// Spec reference type
+export type SpecRef = string & { __brand: 'SpecRef' };
+
+// Layer type (0-10)
+export type Layer = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+
+// Project maturity level
+export type MaturityLevel = 
+  | 'POC'
+  | 'MVP'
+  | 'Alpha'
+  | 'Beta'
+  | 'Production'
+  | 'Startup'
+  | 'SMB'
+  | 'MSB'
+  | 'Enterprise';
+
+// Agent role enumeration
+export type AgentRole = 
+  | 'NorthStar'
+  | 'SpecWriter'
+  | 'CodeGen'
+  | 'TestWriter'
+  | 'Orchestrator'
+  | 'BackSync';
+
 // Semantic version operations
 export const Version = {
   parse: (version: string): Version | null => {
