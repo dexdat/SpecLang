@@ -134,3 +134,21 @@ const TEMPLATES = {
 function renderTemplate(template: string, vars: Record<string, string>): string;
 ```
 
+### @block::output-format @kind:code
+Output format for generated code.
+
+```typescript
+interface GeneratedFile {
+  path: string;
+  content: string;
+  source_block: string;
+}
+
+const GENERATED_HEADER = `// SPECLANG-GENERATED: Do not edit directly
+// Source: {{source}}
+// Generated: {{timestamp}}
+// Edit the spec, not this file.`;
+
+function formatGeneratedFile(spec: CodeSpec, content: string): string;
+```
+
