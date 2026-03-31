@@ -762,25 +762,25 @@ Each requires specification, implementation, and tests.
 **Baby Steps:**
 
 #### Step 1: Expand transition spec (45 min)
-- [ ] Expand specs/transition.spec.md to 80+ lines
-- [ ] Define upgrade workflows
-- [ ] Define downgrade workflows
-- [ ] Add safety checks
-- [ ] **Validate:** Spec validates
+- [x] Expand specs/transition.spec.md to 80+ lines
+- [x] Define upgrade workflows
+- [x] Define downgrade workflows
+- [x] Add safety checks
+- [x] **Validate:** Spec validates
 
 #### Step 2: Implement upgrade workflow (60 min)
-- [ ] Create src/transition/upgrade.ts
-- [ ] Implement level upgrade
-- [ ] Add pre-upgrade checks
-- [ ] Add post-upgrade validation
-- [ ] **Validate:** Add tests
+- [x] Create src/transition/upgrade.ts
+- [x] Implement level upgrade
+- [x] Add pre-upgrade checks
+- [x] Add post-upgrade validation
+- [x] **Validate:** Add tests
 
 #### Step 3: Implement downgrade workflow (60 min)
-- [ ] Create src/transition/downgrade.ts
-- [ ] Implement level downgrade
-- [ ] Add safety warnings
-- [ ] Add data preservation
-- [ ] **Validate:** Add tests
+- [x] Create src/transition/downgrade.ts
+- [x] Implement level downgrade
+- [x] Add safety warnings
+- [x] Add data preservation
+- [x] **Validate:** Add tests
 
 #### Step 4: Add workflow registry (30 min)
 - [ ] Create workflow registry
