@@ -18,6 +18,7 @@ import { mcpCommand } from './commands/mcp.js';
 import { metaGenerateCommand, metaValidateCommand, metaBootstrapCommand, metaCheckCommand, MetaCLIOptions } from './commands/meta.js';
 import { autonomousTestCommand, autonomousValidateCommand, autonomousReportCommand, autonomousVerifyCommand, AutonomousTestOptions, AutonomousValidateOptions, AutonomousReportOptions, AutonomousVerifyOptions } from './commands/autonomous.js';
 import { maturityCommand, MaturityOptions } from './commands/maturity.js';
+import { configureDaemonCommand } from '../../../src/daemon/index.js';
 
 const program = new Command();
 
@@ -438,6 +439,12 @@ program
       verbose: options.verbose,
     });
   });
+
+// ============================================================================
+// DAEMON COMMAND
+// ============================================================================
+
+configureDaemonCommand(program);
 
 // ============================================================================
 // PARSE AND EXECUTE

@@ -174,6 +174,122 @@ program
     }
   });
 
+// Daemon subcommands
+const daemon = program
+  .command('daemon')
+  .description('Manage SpecLang daemon');
+
+daemon
+  .command('start')
+  .description('Start the daemon')
+  .option('-p, --port <port>', 'Dashboard port', '3000')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .option('--dashboard', 'Enable web dashboard')
+  .action(async (options) => {
+    const projectDir = path.resolve(options.dir);
+    console.log('🚀 Starting SpecLang Daemon...');
+    console.log(`   Project: ${projectDir}`);
+    console.log(`   Port: ${options.port}`);
+    
+    try {
+      const { startDaemon } = require('../dist/src/daemon/index.js');
+      await startDaemon({
+        projectDir,
+        port: parseInt(options.port),
+        dashboard: options.dashboard
+      });
+    } catch (err) {
+      if (err.code === 'MODULE_NOT_FOUND') {
+        console.error('\n❌ SpecLang not built. Run: npm run build\n');
+        process.exit(1);
+      }
+      throw err;
+    }
+  });
+
+daemon
+  .command('stop')
+  .description('Stop the daemon')
+  .action(async () => {
+    const projectDir = process.cwd();
+    const pidFile = path.join(projectDir, '.speclang', 'daemon.pid');
+    
+    if (!fs.existsSync(pidFile)) {
+      console.log('Daemon not running');
+      return;
+    }
+    
+    const pid = parseInt(fs.readFileSync(pidFile, 'utf-8').trim());
+    
+    try {
+      process.kill(pid, 'SIGTERM');
+      fs.unlinkSync(pidFile);
+      console.log('✅ Daemon stopped');
+    } catch (err) {
+      if (err.code === 'ESRCH') {
+        console.log('Daemon not running (stale PID file removed)');
+        fs.unlinkSync(pidFile);
+      } else {
+        throw err;
+      }
+    }
+  });
+
+daemon
+  .command('status')
+  .description('Show daemon status')
+  .option('--json', 'JSON output')
+  .action(async (options) => {
+    const projectDir = process.cwd();
+    const pidFile = path.join(projectDir, '.speclang', 'daemon.pid');
+    const stateFile = path.join(projectDir, '.speclang', 'daemon-state.json');
+    
+    let isRunning = false;
+    let pid = null;
+    
+    if (fs.existsSync(pidFile)) {
+      pid = parseInt(fs.readFileSync(pidFile, 'utf-8').trim());
+      try {
+        process.kill(pid, 0);
+        isRunning = true;
+      } catch {
+        fs.unlinkSync(pidFile);
+      }
+    }
+    
+    if (!isRunning) {
+      if (options.json) {
+        console.log(JSON.stringify({ running: false, pid: null, status: 'stopped' }));
+      } else {
+        console.log('🔴 Daemon: Stopped');
+      }
+      return;
+    }
+    
+    let state = null;
+    if (fs.existsSync(stateFile)) {
+      try {
+        state = JSON.parse(fs.readFileSync(stateFile, 'utf-8'));
+      } catch {}
+    }
+    
+    if (options.json) {
+      console.log(JSON.stringify({
+        running: true,
+        pid,
+        status: state?.status || 'unknown',
+        cascadeDepth: state?.cascadeDepth || 0,
+        filesChanged: state?.filesChanged?.length || 0
+      }));
+    } else {
+      console.log('🟢 Daemon: Running');
+      console.log(`   PID: ${pid}`);
+      console.log(`   Status: ${state?.status || 'unknown'}`);
+      console.log(`   Cascade Depth: ${state?.cascadeDepth || 0}`);
+      console.log(`   Files Changed: ${state?.filesChanged?.length || 0}`);
+    }
+  });
+
 // Validate command
 program
   .command('validate [files...]')

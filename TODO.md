@@ -450,41 +450,41 @@ Each maturity level requires:
 - [x] **Validate:** Add tests
 
 #### Step 4: Implement session management (60 min)
-- [ ] Create session store
-- [ ] Add create/destroy/join operations
-- [ ] Add session cleanup
-- [ ] **Validate:** Add tests
+- [x] Create session store
+- [x] Add create/destroy/join operations
+- [x] Add session cleanup
+- [x] **Validate:** Add tests
 
 #### Step 5: Implement event system (60 min)
-- [ ] Create event emitter
-- [ ] Add subscribe/unsubscribe
-- [ ] Add event routing
-- [ ] **Validate:** Add tests
+- [x] Create event emitter
+- [x] Add subscribe/unsubscribe
+- [x] Add event routing
+- [x] **Validate:** Add tests
 
 #### Step 6: Watch for spec changes (60 min)
-- [ ] Implement file watcher
-- [ ] Add debounce logic
-- [ ] Add recursive watching
-- [ ] **Validate:** Manual test
+- [x] Implement file watcher
+- [x] Add debounce logic
+- [x] Add recursive watching
+- [x] **Validate:** Manual test
 
 #### Step 7: Integrate with cascade (45 min)
-- [ ] Connect daemon to cascade
-- [ ] Add auto-cascade on change
-- [ ] Add cascade results
-- [ ] **Validate:** Manual test
+- [x] Connect daemon to cascade
+- [x] Add auto-cascade on change
+- [x] Add cascade results
+- [x] **Validate:** Manual test
 
 #### Step 8: Add CLI daemon commands (45 min)
-- [ ] Add `speclang daemon start`
-- [ ] Add `speclang daemon stop`
-- [ ] Add `speclang daemon status`
-- [ ] **Validate:** CLI works
+- [x] Add `speclang daemon start`
+- [x] Add `speclang daemon stop`
+- [x] Add `speclang daemon status`
+- [x] **Validate:** CLI works
 
 **Completion Criteria:**
-- [ ] Daemon runs
-- [ ] Sessions work
-- [ ] Events work
-- [ ] Watching works
-- [ ] Tests pass
+- [x] Daemon runs
+- [x] Sessions work
+- [x] Events work
+- [x] Watching works
+- [x] Tests pass
 - [ ] Update PRD
 
 ---

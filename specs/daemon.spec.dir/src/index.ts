@@ -17,6 +17,8 @@ export * from './ipc';
 export * from './locks';
 export * from './deadlock';
 export * from './lock_client';
+export * from './session-store';
+export { configureDaemonCommand } from './daemon-cli';
 export { Daemon, createDaemon, getDaemon } from './daemon';
 
 /**
