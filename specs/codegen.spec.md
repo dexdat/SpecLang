@@ -48,6 +48,7 @@ Python target generator.
 TypeScript target generator.
 
 ### @block::targets/rust @kind:code
+Rust target generator.
 
 ### @block::generator-interface @kind:code
 Defines the interface for code generators.
@@ -98,4 +99,38 @@ interface CodeBlock {
   line: number;
 }
 ```
-Rust target generator.
+
+### @block::template-system @kind:code
+Template rendering system.
+
+```typescript
+interface Template {
+  name: string;
+  target: string;
+  content: string;
+  variables: string[];
+}
+
+const TEMPLATES = {
+  typescript: {
+    interface: `export interface {{name}} {\n{{fields}}\n}`,
+    function: `export async function {{name}}({{params}}): Promise<{{return}}> {\n{{body}}\n}`,
+    class: `export class {{name}} {\n{{body}}\n}`,
+  },
+  go: {
+    struct: `type {{name}} struct {\n{{fields}}\n}`,
+    func: `func {{name}}({{params}}) ({{return}}) {\n{{body}}\n}`,
+  },
+  python: {
+    class: `class {{name}}:\n{{body}}`,
+    function: `def {{name}}({{params}}):\n{{body}}`,
+  },
+  rust: {
+    struct: `struct {{name}} {\n{{fields}}\n}`,
+    impl: `impl {{name}} {\n{{body}}\n}`,
+  },
+};
+
+function renderTemplate(template: string, vars: Record<string, string>): string;
+```
+
