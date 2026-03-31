@@ -166,3 +166,79 @@ export function assertHasProperty(obj: Record<string, unknown>, prop: string, me
     throw new Error(message || `Expected object to have property ${prop}`);
   }
 }
+
+/**
+ * Deep equality check
+ */
+function deepEqual<T>(a: T, b: T): boolean {
+  if (a === b) return true;
+  if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null) return false;
+  if (Array.isArray(a) && Array.isArray(b)) {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+      if (!deepEqual(a[i], b[i])) return false;
+    }
+    return true;
+  }
+  const keysA = Object.keys(a as object);
+  const keysB = Object.keys(b as object);
+  if (keysA.length !== keysB.length) return false;
+  for (const key of keysA) {
+    if (!keysB.includes(key)) return false;
+    if (!deepEqual((a as any)[key], (b as any)[key])) return false;
+  }
+  return true;
+}
+
+/**
+ * Assert deep equality - throw if values are not deeply equal
+ */
+export function assertDeepEqual<T>(actual: T, expected: T, message?: string): void {
+  if (!deepEqual(actual, expected)) {
+    throw new Error(message || `Expected deep equality but got ${actual}`);
+  }
+}
+
+/**
+ * Assert rejects - throw if promise does not reject
+ */
+export async function assertRejects(promise: Promise<unknown>, message?: string): Promise<void> {
+  try {
+    await promise;
+    throw new Error(message || 'Expected promise to reject but it resolved');
+  } catch (e) {
+    // Expected to reject
+  }
+}
+
+/**
+ * Assert equal (alias for assertEquals)
+ */
+export const assertEqual = assertEquals;
+
+/**
+ * Custom matcher factory
+ */
+export function expect<T>(actual: T) {
+  return {
+    toBe(expected: T): void {
+      assertEquals(actual, expected);
+    },
+    toEqual(expected: T): void {
+      assertDeepEqual(actual, expected);
+    },
+    toThrow(message?: string): void {
+      if (typeof actual !== 'function') {
+        throw new Error('Expected a function');
+      }
+      assertThrows(actual as () => void, message);
+    },
+    toReject(message?: string): Promise<void> {
+      if (typeof actual !== 'function' && !(actual instanceof Promise)) {
+        throw new Error('Expected a function or promise');
+      }
+      const promise = typeof actual === 'function' ? actual() : actual;
+      return assertRejects(promise, message);
+    }
+  };
+}
