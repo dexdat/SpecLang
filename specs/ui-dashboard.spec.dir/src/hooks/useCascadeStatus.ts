@@ -81,10 +81,10 @@ export const useCascadeStatus = (): UseCascadeStatusReturn => {
       try {
         const response = await fetch('/api/cascade/status');
         if (response.ok) {
-          const data = await response.json();
+          const data = await response.json() as Partial<CascadeState>;
           setCascadeState((prev) => ({
             ...prev,
-            ...data,
+            ...(data as object),
             lastUpdate: new Date(),
           }));
         }
@@ -153,7 +153,7 @@ export const useFileWatcherStatus = () => {
       try {
         const response = await fetch('/api/file-watcher/status');
         if (response.ok) {
-          const data = await response.json();
+          const data = await response.json() as Partial<FileWatcherStatus>;
           setFileWatcher({
             isWatching: data.isWatching ?? false,
             filesMonitored: data.filesMonitored ?? 0,
