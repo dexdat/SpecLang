@@ -801,10 +801,10 @@ Each requires specification, implementation, and tests.
 - [x] **Validate:** Tests pass
 
 **Completion Criteria:**
-- [ ] Transitions work
-- [ ] CLI works
-- [ ] Tests pass
-- [ ] Update PRD
+- [x] Transitions work
+- [x] CLI works
+- [x] Tests pass
+- [x] Update PRD
 
 ---
 
