@@ -429,25 +429,25 @@ Each maturity level requires:
 **Baby Steps:**
 
 #### Step 1: Expand daemon architecture spec (60 min)
-- [ ] Read specs/daemon/architecture.spec.md
-- [ ] Add component diagram
-- [ ] Add sequence diagrams
-- [ ] Add deployment modes
-- [ ] Add 200+ lines of content
-- [ ] **Validate:** Spec validates
+- [x] Read specs/daemon/architecture.spec.md
+- [x] Add component diagram
+- [x] Add sequence diagrams
+- [x] Add deployment modes
+- [x] Add 200+ lines of content
+- [x] **Validate:** Spec validates
 
 #### Step 2: Define daemon interfaces (45 min)
-- [ ] Define Daemon interface
-- [ ] Define Session interface
-- [ ] Define Event interfaces
-- [ ] Define Lock interfaces
-- [ ] **Validate:** Build passes
+- [x] Define Daemon interface
+- [x] Define Session interface
+- [x] Define Event interfaces
+- [x] Define Lock interfaces
+- [x] **Validate:** Build passes
 
 #### Step 3: Implement daemon lifecycle (60 min)
-- [ ] Implement start(), stop(), restart()
-- [ ] Implement health check
-- [ ] Implement graceful shutdown
-- [ ] **Validate:** Add tests
+- [x] Implement start(), stop(), restart()
+- [x] Implement health check
+- [x] Implement graceful shutdown
+- [x] **Validate:** Add tests
 
 #### Step 4: Implement session management (60 min)
 - [ ] Create session store
