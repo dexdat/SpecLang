@@ -740,7 +740,7 @@ Each requires specification, implementation, and tests.
 - [x] Hooks work
 - [x] Recovery works
 - [x] Tests pass
-- [ ] Update PRD
+- [x] Update PRD
 
 ---
 
