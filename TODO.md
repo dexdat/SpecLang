@@ -217,21 +217,21 @@ npm run build && npm test
 - [x] **Validate:** Add tests
 
 #### Step 7: Write integration tests (45 min)
-- [ ] Create tests/stdlib/functions.test.ts
-- [ ] Test each function category
-- [ ] Test composition
-- [ ] **Validate:** All tests pass
+- [x] Create tests/stdlib/functions.test.ts
+- [x] Test each function category
+- [x] Test composition
+- [x] **Validate:** All tests pass
 
 #### Step 8: Document stdlib usage (30 min)
-- [ ] Update specs/stdlib.spec.dir/USAGE.spec.md
-- [ ] Add examples for each function
-- [ ] Add type annotations
-- [ ] **Validate:** Build passes
+- [x] Update specs/stdlib.spec.dir/USAGE.spec.md
+- [x] Add examples for each function
+- [x] Add type annotations
+- [x] **Validate:** Build passes
 
 **Completion Criteria:**
-- [ ] All 8 steps complete
-- [ ] Build + tests pass
-- [ ] Stdlib usable in specs
+- [x] All 8 steps complete
+- [x] Build + tests pass
+- [x] Stdlib usable in specs
 - [ ] Update PRD
 
 ---

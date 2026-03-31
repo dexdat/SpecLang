@@ -1,0 +1,1 @@
+../../specs/stdlib.spec.dir/src/functions.d.ts
