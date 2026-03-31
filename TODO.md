@@ -175,46 +175,46 @@ npm run build && npm test
 **Baby Steps:**
 
 #### Step 1: Implement assertion functions (60 min)
-- [ ] Edit src/stdlib/assertions.ts
-- [ ] Add assert(), assertEqual(), assertDeepEqual()
-- [ ] Add assertThrows(), assertRejects()
-- [ ] Add custom matchers
-- [ ] **Validate:** Build passes
+- [x] Edit src/stdlib/assertions.ts
+- [x] Add assert(), assertEqual(), assertDeepEqual()
+- [x] Add assertThrows(), assertRejects()
+- [x] Add custom matchers
+- [x] **Validate:** Build passes
 
 #### Step 2: Implement string functions (45 min)
-- [ ] Edit src/stdlib/strings.ts
-- [ ] Add split(), join(), trim(), format()
-- [ ] Add template literals
-- [ ] Add interpolation
-- [ ] **Validate:** Add tests
+- [x] Edit src/stdlib/strings.ts
+- [x] Add split(), join(), trim(), format()
+- [x] Add template literals
+- [x] Add interpolation
+- [x] **Validate:** Add tests
 
 #### Step 3: Implement collection functions (60 min)
-- [ ] Edit src/stdlib/collections.ts
-- [ ] Add map(), filter(), reduce(), find()
-- [ ] Add sort(), groupBy(), chunk()
-- [ ] Add flatten(), unique()
-- [ ] **Validate:** Add tests
+- [x] Edit src/stdlib/collections.ts
+- [x] Add map(), filter(), reduce(), find()
+- [x] Add sort(), groupBy(), chunk()
+- [x] Add flatten(), unique()
+- [x] **Validate:** Add tests
 
 #### Step 4: Implement math functions (30 min)
-- [ ] Edit src/stdlib/math.ts
-- [ ] Add basic math operations
-- [ ] Add statistics functions
-- [ ] Add random utilities
-- [ ] **Validate:** Add tests
+- [x] Edit src/stdlib/math.ts
+- [x] Add basic math operations
+- [x] Add statistics functions
+- [x] Add random utilities
+- [x] **Validate:** Add tests
 
 #### Step 5: Implement object functions (45 min)
-- [ ] Edit src/stdlib/objects.ts
-- [ ] Add keys(), values(), entries()
-- [ ] Add merge(), pick(), omit()
-- [ ] Add deepClone(), deepEqual()
-- [ ] **Validate:** Add tests
+- [x] Edit src/stdlib/objects.ts
+- [x] Add keys(), values(), entries()
+- [x] Add merge(), pick(), omit()
+- [x] Add deepClone(), deepEqual()
+- [x] **Validate:** Add tests
 
 #### Step 6: Add function composition (30 min)
-- [ ] Edit src/stdlib/compose.ts
-- [ ] Add pipe(), compose()
-- [ ] Add curry(), partial()
-- [ ] Add memoize()
-- [ ] **Validate:** Add tests
+- [x] Edit src/stdlib/compose.ts
+- [x] Add pipe(), compose()
+- [x] Add curry(), partial()
+- [x] Add memoize()
+- [x] **Validate:** Add tests
 
 #### Step 7: Write integration tests (45 min)
 - [ ] Create tests/stdlib/functions.test.ts
