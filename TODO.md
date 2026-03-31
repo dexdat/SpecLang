@@ -667,8 +667,7 @@ Each requires specification, implementation, and tests.
 - [x] Generator works for all targets
 - [x] Tests pass
 - [x] Performance acceptable
-- [ ] Update PRD
-
+- [x] Update PRD
 ---
 
 ### P3-002 to P3-010: Code Gen Components
