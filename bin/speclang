@@ -1121,4 +1121,173 @@ program
     console.log(`✅ Search complete - ${results.length} files`);
   });
 
+// ============================================================================
+// MATURITY COMMAND
+// ============================================================================
+
+program
+  .command('maturity [spec]')
+  .description('Show maturity level info or validate a spec')
+  .option('--level <level>', 'Show info for specific level')
+  .option('--json', 'JSON output')
+  .option('--verbose', 'Show detailed criteria')
+  .action(async (spec, options) => {
+    const projectDir = process.cwd();
+    const specsDir = path.join(projectDir, 'specs');
+    
+    // If no spec provided, show all levels
+    if (!spec) {
+      if (options.json) {
+        const levels = ['POC', 'MVP', 'Alpha', 'Beta', 'Production', 'Startup', 'SMB', 'MSB', 'Enterprise'];
+        console.log(JSON.stringify({
+          levels: levels.map(l => ({ name: l }))
+        }, null, 2));
+      } else {
+        console.log('\n=== Project Maturity Levels ===\n');
+        
+        const levels = [
+          { name: 'POC', desc: 'Proof of Concept - Experimental, minimal validation' },
+          { name: 'MVP', desc: 'Minimum Viable Product - Core functionality validated' },
+          { name: 'Alpha', desc: 'Internal Testing - Incomplete features, internal use' },
+          { name: 'Beta', desc: 'External Testing - Feature complete, stability focus' },
+          { name: 'Production', desc: 'Stable Production - Production-ready, supported' },
+          { name: 'Startup', desc: 'Small Team Scale - Rapid iteration, limited resources' },
+          { name: 'SMB', desc: 'Small/Medium Business - Established processes, moderate scale' },
+          { name: 'MSB', desc: 'Medium/Large Business - Complex integration, compliance focus' },
+          { name: 'Enterprise', desc: 'Maximum Scale - Strict governance, high availability' },
+        ];
+        
+        levels.forEach(l => {
+          console.log(`  ${l.name.padEnd(12)} ${l.desc}`);
+        });
+        
+        console.log('\nUsage: speclang maturity <spec-path>');
+        console.log('Example: speclang maturity specs/auth.spec.md');
+      }
+      return;
+    }
+    
+    // Validate a specific spec
+    let specPath = spec;
+    if (!path.isAbsolute(spec)) {
+      specPath = path.join(specsDir, spec);
+    }
+    
+    if (!fs.existsSync(specPath)) {
+      console.error(`❌ Spec file not found: ${specPath}`);
+      process.exit(1);
+    }
+    
+    try {
+      const content = fs.readFileSync(specPath, 'utf-8');
+      
+      // Parse header
+      const headerMatch = content.match(/^# speclang-header lines:\d+\n([\s\S]*?)^---/m);
+      if (!headerMatch) {
+        console.error('❌ No valid speclang header found');
+        process.exit(1);
+      }
+      
+      // Extract project_level
+      let projectLevel = 'POC';
+      const levelMatch = headerMatch[1].match(/project_level:\s*(\w+)/);
+      if (levelMatch) {
+        projectLevel = levelMatch[1];
+      }
+      
+      // Extract agent_support
+      let agentSupport = 'unknown';
+      const agentMatch = headerMatch[1].match(/agent_support:\s*(\w+)/);
+      if (agentMatch) {
+        agentSupport = agentMatch[1];
+      }
+      
+      // Extract tags
+      let tags = [];
+      const tagMatch = headerMatch[1].match(/tags:\s*\[(.*?)\]/);
+      if (tagMatch) {
+        tags = tagMatch[1].split(',').map((t) => t.trim().replace(/"/g, ''));
+      }
+      
+      // Validate maturity rules
+      const violations = [];
+      const suggestions = [];
+      
+      // Rule 1: autonomousRequiresBeta
+      if (agentSupport === 'agent_autonomous' && !['Beta', 'Production', 'Startup', 'SMB', 'MSB', 'Enterprise'].includes(projectLevel)) {
+        violations.push('Specs with agent_autonomous must have project_level >= Beta');
+        suggestions.push(`Change project_level from ${projectLevel} to Beta or higher`);
+      }
+      
+      // Rule 2: productionRequiresDeps
+      if (projectLevel === 'Production') {
+        const depMatch = headerMatch[1].match(/depends_on:\s*\n?\s*-/);
+        if (!depMatch) {
+          violations.push('Production specs should have depends_on references');
+        }
+      }
+      
+      // Rule 3: enterpriseRequiresCompliance
+      if (projectLevel === 'Enterprise' && !tags.includes('compliance')) {
+        suggestions.push('Consider adding "compliance" tag for Enterprise level');
+      }
+      
+      // Output results
+      if (options.json) {
+        console.log(JSON.stringify({
+          spec: path.basename(specPath),
+          level: projectLevel,
+          agent_support: agentSupport,
+          tags,
+          valid: violations.length === 0,
+          violations,
+          suggestions,
+        }, null, 2));
+      } else {
+        console.log(`\n=== Maturity Validation: ${path.basename(specPath)} ===\n`);
+        console.log(`Level: ${projectLevel}`);
+        console.log(`Agent Support: ${agentSupport}`);
+        console.log(`Tags: ${tags.join(', ') || 'none'}`);
+        console.log(`Valid: ${violations.length === 0 ? '✅ Yes' : '❌ No'}`);
+        
+        if (violations.length > 0) {
+          console.log('\n❌ Violations:');
+          violations.forEach(v => console.log(`  - ${v}`));
+        }
+        
+        if (suggestions.length > 0) {
+          console.log('\n💡 Suggestions:');
+          suggestions.forEach(s => console.log(`  - ${s}`));
+        }
+        
+        if (options.verbose) {
+          console.log(`\n📋 Description:`);
+          const descriptions = {
+            'POC': 'Proof of Concept - Experimental, minimal validation',
+            'MVP': 'Minimum Viable Product - Core functionality validated',
+            'Alpha': 'Internal Testing - Incomplete features, internal use',
+            'Beta': 'External Testing - Feature complete, stability focus',
+            'Production': 'Stable Production - Production-ready, supported',
+            'Startup': 'Small Team Scale - Rapid iteration, limited resources',
+            'SMB': 'Small/Medium Business - Established processes, moderate scale',
+            'MSB': 'Medium/Large Business - Complex integration, compliance focus',
+            'Enterprise': 'Maximum Scale - Strict governance, high availability',
+          };
+          console.log(`  ${descriptions[projectLevel] || 'Unknown'}`);
+        }
+        
+        if (violations.length > 0) {
+          process.exit(1);
+        }
+      }
+    } catch (error) {
+      if (options.json) {
+        console.log(JSON.stringify({ error: error.message }, null, 2));
+      } else {
+        console.error(`Error: ${error.message}`);
+      }
+      process.exit(1);
+    }
+  });
+
 program.parse();

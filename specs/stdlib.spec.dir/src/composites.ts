@@ -171,3 +171,70 @@ export const OneOf = {
     (value: unknown): value is T[number] =>
       (options as readonly unknown[]).includes(value)
 };
+
+/**
+ * Tuple operations
+ */
+export const TupleOps = {
+  of: <T extends any[]>(...validators: { [K in keyof T]: TypeValidator<T[K]> }): TypeValidator<T> => ({
+    validate: (value: unknown): value is T => {
+      if (!Array.isArray(value)) return false;
+      if (value.length !== validators.length) return false;
+      return value.every((item, index) => validators[index].validate(item));
+    },
+    default: [] as unknown as T, // @ts-ignore
+    examples: [[]]
+  }),
+  
+  get: <T extends any[], K extends number>(tuple: T, index: K): T[K] =>
+    tuple[index],
+  
+  set: <T extends any[], K extends number, V>(tuple: T, index: K, value: V): [...T] => {
+    const newTuple = [...tuple] as [...T];
+    newTuple[index] = value as T[K];
+    return newTuple;
+  },
+  
+  length: <T extends any[]>(tuple: T): number => tuple.length
+};
+
+/**
+ * Record operations
+ */
+export const RecordOps = {
+  of: <V>(valueValidator: TypeValidator<V>): TypeValidator<Record<string, V>> => ({
+    validate: (value: unknown): value is Record<string, V> => {
+      if (typeof value !== 'object' || value === null) return false;
+      return Object.values(value as Record<string, V>).every(v => valueValidator.validate(v));
+    },
+    default: {},
+    examples: [{}]
+  }),
+  
+  get: <V>(record: Record<string, V>, key: string): V | undefined =>
+    record[key],
+  
+  set: <V>(record: Record<string, V>, key: string, value: V): Record<string, V> =>
+    ({ ...record, [key]: value }),
+  
+  has: (record: Record<string, unknown>, key: string): boolean =>
+    key in record,
+  
+  keys: <V>(record: Record<string, V>): string[] =>
+    Object.keys(record),
+  
+  values: <V>(record: Record<string, V>): V[] =>
+    Object.values(record),
+  
+  entries: <V>(record: Record<string, V>): [string, V][] =>
+    Object.entries(record),
+  
+  size: <V>(record: Record<string, V>): number =>
+    Object.keys(record).length,
+  
+  delete: <V>(record: Record<string, V>, key: string): Record<string, V> => {
+    const newRecord = { ...record };
+    delete newRecord[key];
+    return newRecord;
+  }
+};

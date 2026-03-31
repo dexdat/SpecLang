@@ -18,6 +18,7 @@ export * from './results';
 export * from './functions';
 export * from './assertions';
 export * from './validators';
+export * from './utils';
 export * from './mapping';
 export * from './types';
 
