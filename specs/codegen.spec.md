@@ -134,6 +134,32 @@ const TEMPLATES = {
 function renderTemplate(template: string, vars: Record<string, string>): string;
 ```
 
+### @block::template-conditionals @kind:code
+Template conditionals - supported via ternary and helper functions.
+
+```typescript
+// Simple conditional using ternary
+const conditionalTemplate = `{{#if isAsync}}async {{/if}}function {{name}}()`;
+
+// Using helper function
+function renderConditional(condition: boolean, ifTrue: string, ifFalse: string): string {
+  return condition ? ifTrue : ifFalse;
+}
+```
+
+### @block::template-loops @kind:code
+Template loops - supported via helper functions and map.
+
+```typescript
+// Loop via map
+const fieldsTemplate = (fields: Field[]) => fields.map(f => `  ${f.name}: ${f.type};`).join('\n');
+
+// Loop inline via helper
+function renderList<T>(items: T[], render: (item: T) => string): string {
+  return items.map(render).join('');
+}
+```
+
 ### @block::output-format @kind:code
 Output format for generated code.
 
