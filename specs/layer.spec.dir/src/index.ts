@@ -19,5 +19,5 @@ export {
   getMinValidLayer,
 } from './types';
 
-export { validateLayer, validateLayerDependency, validateLayerChain } from './validator';
+export { validateLayer, validateLayerDependency, validateLayerChain, getMaxLayerForMaturity } from './validator';
 export { resolveLayer, resolveLayerFromPath, resolveLayerFromContent } from './resolver';
