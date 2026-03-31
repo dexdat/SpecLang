@@ -1011,15 +1011,15 @@ Each requires specification, implementation, and tests.
 - [ ] **Validate:** Test passes
 
 #### Step 6: Add CI integration (30 min)
-- [ ] Add GitHub Actions workflow
-- [ ] Add test matrix
-- [ ] Add coverage reporting
-- [ ] **Validate:** CI passes
+- [x] Add GitHub Actions workflow
+- [x] Add test matrix
+- [x] Add coverage reporting
+- [x] **Validate:** CI passes
 
 **Completion Criteria:**
-- [ ] All integration tests pass
-- [ ] CI configured
-- [ ] Coverage >80%
+- [x] All integration tests pass
+- [x] CI configured
+- [x] Coverage >80%
 - [ ] Update PRD
 
 ---
