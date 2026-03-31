@@ -21,6 +21,7 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
+      "@/*": ["src/ui-dashboard/*"],
       "sqlite.spec.dir/src/*": ["specs/sqlite.spec.dir/src/*"],
       "indexer.spec.dir/src/*": ["specs/indexer.spec.dir/src/*"],
       "parser.spec.dir/src/*": ["specs/parser.spec.dir/src/*"],
@@ -33,12 +34,11 @@
       "project-layout.spec.dir/src/*": ["specs/project-layout.spec.dir/src/*"]
     }
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": [
     "node_modules",
     "dist",
     "src/dashboard/**/*",
-    "src/ui-dashboard/**/*",
     "**/*.spec.ts",
     "**/*.test.ts",
     "src/codegen.ts",

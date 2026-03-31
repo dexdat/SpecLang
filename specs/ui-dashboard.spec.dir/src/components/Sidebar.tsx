@@ -1,8 +1,3 @@
-# speclang-header lines:5
-# id: @specs/ui-dashboard
-# version: 1.0.0
-# layer: 5
-
 /**
  * Sidebar component for navigation
  * Generated from: @implementation/ui-dashboard

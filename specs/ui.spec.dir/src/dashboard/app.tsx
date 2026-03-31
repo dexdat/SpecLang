@@ -1,8 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { SystemDashboard } from '../ui-dashboard/components/SystemDashboard';
-import './styles/tailwind.css';
-import './styles/brutalist.css';
+import { SystemDashboard } from '@/components/SystemDashboard';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
