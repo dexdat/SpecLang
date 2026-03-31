@@ -825,11 +825,11 @@ Each requires specification, implementation, and tests.
 **Baby Steps:**
 
 #### Step 1: Expand dashboard spec (60 min)
-- [ ] Expand specs/ui-dashboard.spec.md
-- [ ] Define components
-- [ ] Define layouts
-- [ ] Add wireframes
-- [ ] **Validate:** Spec validates
+- [x] Expand specs/ui-dashboard.spec.md
+- [x] Define components
+- [x] Define layouts
+- [x] Add wireframes
+- [x] **Validate:** Spec validates
 
 #### Step 2: Setup UI framework (45 min)
 - [ ] Choose framework (React/Vue/etc)
