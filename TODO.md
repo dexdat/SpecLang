@@ -953,21 +953,21 @@ Each requires specification, implementation, and tests.
 - [x] **Validate:** Scripts run
 
 #### Step 2: Add missing scripts (60 min)
-- [ ] Add any missing tools
-- [ ] Add integration scripts
-- [ ] Add utility scripts
-- [ ] **Validate:** Scripts run
+- [x] Add any missing tools
+- [x] Add integration scripts
+- [x] Add utility scripts
+- [x] **Validate:** Scripts run
 
 #### Step 3: Document scripts (45 min)
-- [ ] Write scripts/README.md
-- [ ] Add usage for each
-- [ ] Add examples
-- [ ] **Validate:** Docs reviewed
+- [x] Write scripts/README.md
+- [x] Add usage for each
+- [x] Add examples
+- [x] **Validate:** Docs reviewed
 
 **Completion Criteria:**
-- [ ] All scripts work
-- [ ] Documentation complete
-- [ ] Update PRD
+- [x] All scripts work
+- [x] Documentation complete
+- [x] Update PRD
 
 ---
 
