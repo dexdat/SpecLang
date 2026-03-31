@@ -1,1 +1,1 @@
-../../specs/layer-definitions.spec.dir/src/index.ts
+../../specs/layer.spec.dir/src/index.ts

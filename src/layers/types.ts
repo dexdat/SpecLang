@@ -1,1 +1,1 @@
-../../specs/layer-definitions.spec.dir/src/types.ts
+../../specs/layer.spec.dir/src/types.ts
