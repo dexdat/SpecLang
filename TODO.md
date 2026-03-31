@@ -897,43 +897,43 @@ Each requires specification, implementation, and tests.
 **Baby Steps:**
 
 #### Step 1: Create hello-world example (45 min)
-- [ ] Create examples/hello-world/
-- [ ] Add hello.spec.md
-- [ ] Add generated code
-- [ ] Add README
-- [ ] **Validate:** Example runs
+- [x] Create examples/hello-world/
+- [x] Add hello.spec.md
+- [x] Add generated code
+- [x] Add README
+- [x] **Validate:** Example runs
 
 #### Step 2: Create auth example (90 min)
-- [ ] Create examples/auth/
-- [ ] Add auth spec
-- [ ] Add generated server
-- [ ] Add generated client
-- [ ] **Validate:** Example runs
+- [x] Create examples/auth/
+- [x] Add auth spec
+- [x] Add generated server
+- [x] Add generated client
+- [x] **Validate:** Example runs
 
 #### Step 3: Create CRUD example (90 min)
-- [ ] Create examples/crud-app/
-- [ ] Add entity specs
-- [ ] Add API specs
-- [ ] Add UI specs
-- [ ] **Validate:** Example runs
+- [x] Create examples/crud-app/
+- [x] Add entity specs
+- [x] Add API specs
+- [x] Add UI specs
+- [x] **Validate:** Example runs
 
 #### Step 4: Document examples (45 min)
-- [ ] Write example README
-- [ ] Add usage instructions
-- [ ] Add screenshots
-- [ ] **Validate:** Docs reviewed
+- [x] Write example README
+- [x] Add usage instructions
+- [x] Add screenshots
+- [x] **Validate:** Docs reviewed
 
 #### Step 5: Add example tests (45 min)
-- [ ] Test each example
-- [ ] Verify generated code
-- [ ] Verify builds
-- [ ] **Validate:** Tests pass
+- [x] Test each example
+- [x] Verify generated code
+- [x] Verify builds
+- [x] **Validate:** Tests pass
 
 **Completion Criteria:**
-- [ ] All examples work
-- [ ] Documentation complete
-- [ ] Tests pass
-- [ ] Update PRD
+- [x] All examples work
+- [x] Documentation complete
+- [x] Tests pass
+- [x] Update PRD
 
 ---
 
