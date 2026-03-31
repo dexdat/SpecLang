@@ -1,8 +1,10 @@
 # speclang-header lines:12
 id: "@speclang/daemon/architecture"
-parent: ""@ref:specs/daemon"part: 1/4
+parent: "@ref:specs/daemon"
+part: 1/4
 siblings:
-  next: ""@ref:specs/daemon.spec.dir/events"short: Architecture overview of speclangd
+  next: "@ref:specs/daemon.spec.dir/events"
+short: Architecture overview of speclangd
 project_level: Alpha
 agent_support: agent_assisted
 tags: [daemon, architecture, components, rust]
@@ -65,6 +67,38 @@ flowchart LR
     R -->|event| A3
     R --> L
     C -->|quiet| Finalize
+```
+```
+
+## Event Flow
+
+### @daemon/event-sequence
+
+```speclang
+# @block:daemon/event-sequence @kind:diagram
+```mermaid
+sequenceDiagram
+    participant User
+    participant FS as Filesystem
+    participant Watcher
+    participant Router
+    participant Agent
+    participant LockManager
+    participant Convergence
+
+    User->>FS: Edit spec file
+    FS->>Watcher: inotify event
+    Watcher->>Router: FileEvent
+    Router->>LockManager: acquire lock
+    LockManager-->>Router: lock granted
+    Router->>Agent: AgentNotification
+    Agent->>Agent: Process task
+    Agent->>FS: Write generated file
+    Agent->>LockManager: release lock
+    Agent->>Router: task complete
+    Router->>Convergence: event processed
+    Convergence->>Convergence: check quiet period
+    Convergence->>Pipeline: trigger on convergence
 ```
 ```
 
@@ -242,6 +276,38 @@ Recovery:
 ```
 
 ---
+
+## Deployment Modes
+
+### @daemon/deployment-modes
+
+```speclang
+# @block:daemon/deployment-modes @kind:entity
+DeploymentModes:
+  light:
+    description: TypeScript OpenCode plugin
+    components:
+      - OpenCode native file events
+      - TypeScript agent sessions
+      - No separate daemon process
+    use_cases:
+      - Small projects
+      - Development environments
+      - Quick prototyping
+  
+  enterprise:
+    description: Rust daemon with MCP server
+    components:
+      - Rust daemon (speclangd)
+      - Raw inotify/fsnotify
+      - MCP server for agent communication
+      - SQLite database for state
+    use_cases:
+      - Large codebases
+      - Production deployments
+      - Team collaboration
+      - Enterprise security requirements
+```
 
 ## Binary Distribution
 

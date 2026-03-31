@@ -160,6 +160,29 @@ describe('speclangd daemon', () => {
       expect(daemon.isRunning()).toBe(false);
     });
 
+    it.skip('should restart correctly', async () => {
+      const daemon = new Daemon();
+      
+      await daemon.start();
+      expect(daemon.isRunning()).toBe(true);
+      
+      await daemon.restart();
+      expect(daemon.isRunning()).toBe(true);
+      
+      await daemon.stop();
+      expect(daemon.isRunning()).toBe(false);
+    });
+
+    it.skip('should health check return true when running', async () => {
+      const daemon = new Daemon();
+      
+      await daemon.start();
+      expect(daemon.healthCheck()).toBe(true);
+      
+      await daemon.stop();
+      expect(daemon.healthCheck()).toBe(false);
+    });
+
     it('should process status command', async () => {
       const daemon = new Daemon();
       

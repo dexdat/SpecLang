@@ -122,6 +122,16 @@ export class Daemon extends EventEmitter {
   }
 
   /**
+   * Restart the daemon
+   */
+  async restart(): Promise<void> {
+    console.log('[Daemon] Restarting...');
+    await this.stop();
+    await this.start();
+    console.log('[Daemon] Restarted');
+  }
+
+  /**
    * Handle a file event
    */
   private handleFileEvent(event: FileEvent): void {
@@ -231,6 +241,13 @@ export class Daemon extends EventEmitter {
    */
   isPaused(): boolean {
     return this.paused;
+  }
+
+  /**
+   * Health check for daemon
+   */
+  healthCheck(): boolean {
+    return this.running && this.watcher !== null && this.convergence !== null;
   }
 
   /**
