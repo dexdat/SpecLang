@@ -783,22 +783,22 @@ Each requires specification, implementation, and tests.
 - [x] **Validate:** Add tests
 
 #### Step 4: Add workflow registry (30 min)
-- [ ] Create workflow registry
-- [ ] Register workflows
-- [ ] Add workflow discovery
-- [ ] **Validate:** Add tests
+- [x] Create workflow registry (TransitionRegistryImpl)
+- [x] Register workflows
+- [x] Add workflow discovery
+- [x] **Validate:** Tests pass
 
 #### Step 5: Add CLI commands (45 min)
-- [ ] Add `speclang upgrade <level>`
-- [ ] Add `speclang downgrade <level>`
-- [ ] Add confirmation prompts
-- [ ] **Validate:** Manual test
+- [x] Add `speclang upgrade <level>`
+- [x] Add `speclang downgrade <level>`
+- [x] Add confirmation prompts
+- [x] **Validate:** Manual test
 
 #### Step 6: Write transition tests (60 min)
-- [ ] Test upgrade paths
-- [ ] Test downgrade paths
-- [ ] Test edge cases
-- [ ] **Validate:** Tests pass
+- [x] Test upgrade paths
+- [x] Test downgrade paths
+- [x] Test edge cases
+- [x] **Validate:** Tests pass
 
 **Completion Criteria:**
 - [ ] Transitions work
