@@ -245,65 +245,65 @@ npm run build && npm test
 **Baby Steps:**
 
 #### Step 1: Create mermaid lens spec (45 min)
-- [ ] Create specs/lens/mermaid.spec.md
-- [ ] Add header with proper metadata
-- [ ] Define input format (spec blocks)
-- [ ] Define output format (Mermaid diagram)
-- [ ] Add examples (flowchart, sequence, class)
-- [ ] **Validate:** Spec validates
+- [x] Create specs/lens/mermaid.spec.md
+- [x] Add header with proper metadata
+- [x] Define input format (spec blocks)
+- [x] Define output format (Mermaid diagram)
+- [x] Add examples (flowchart, sequence, class)
+- [x] **Validate:** Spec validates
 
 #### Step 2: Generate lens interface (30 min)
-- [ ] Run cascade on mermaid spec
-- [ ] Verify src/lenses/mermaid.ts generated
-- [ ] Check interface matches spec
-- [ ] **Validate:** Build passes
+- [x] Run cascade on mermaid spec
+- [x] Verify src/lenses/mermaid.ts generated
+- [x] Check interface matches spec
+- [x] **Validate:** Build passes
 
 #### Step 3: Implement flowchart renderer (60 min)
-- [ ] Edit src/lenses/mermaid/flowchart.ts
-- [ ] Parse spec structure
-- [ ] Generate flowchart syntax
-- [ ] Handle nodes, edges, styles
-- [ ] **Validate:** Add test, test passes
+- [x] Edit src/lenses/mermaid/flowchart.ts
+- [x] Parse spec structure
+- [x] Generate flowchart syntax
+- [x] Handle nodes, edges, styles
+- [x] **Validate:** Add test, test passes
 
 #### Step 4: Implement sequence renderer (60 min)
-- [ ] Edit src/lenses/mermaid/sequence.ts
-- [ ] Parse operation flow
-- [ ] Generate sequence diagram
-- [ ] Handle participants, messages, loops
-- [ ] **Validate:** Add test
+- [x] Edit src/lenses/mermaid/sequence.ts
+- [x] Parse operation flow
+- [x] Generate sequence diagram
+- [x] Handle participants, messages, loops
+- [x] **Validate:** Add test
 
 #### Step 5: Implement class renderer (45 min)
-- [ ] Edit src/lenses/mermaid/classDiagram.ts
-- [ ] Parse entity definitions
-- [ ] Generate class diagram
-- [ ] Handle relationships
-- [ ] **Validate:** Add test
+- [x] Edit src/lenses/mermaid/classDiagram.ts
+- [x] Parse entity definitions
+- [x] Generate class diagram
+- [x] Handle relationships
+- [x] **Validate:** Add test
 
 #### Step 6: Add lens registry (30 min)
-- [ ] Edit src/lenses/index.ts
-- [ ] Register mermaid lens
-- [ ] Add lens detection logic
-- [ ] Add format selection
-- [ ] **Validate:** Lens discoverable
+- [x] Edit src/lenses/index.ts
+- [x] Register mermaid lens
+- [x] Add lens detection logic
+- [x] Add format selection
+- [x] **Validate:** Lens discoverable
 
 #### Step 7: Add CLI support (30 min)
-- [ ] Add `speclang lens <spec> --format mermaid`
-- [ ] Output mermaid diagram
-- [ ] Support --output file option
-- [ ] **Validate:** Manual test
+- [x] Add `speclang lens <spec> --format mermaid`
+- [x] Output mermaid diagram
+- [x] Support --output file option
+- [x] **Validate:** Manual test
 
 #### Step 8: Write comprehensive tests (45 min)
-- [ ] Create tests/lenses/mermaid.test.ts
-- [ ] Test each diagram type
-- [ ] Test edge cases
-- [ ] **Validate:** All tests pass
+- [x] Create tests/lenses/mermaid.test.ts
+- [x] Test each diagram type
+- [x] Test edge cases
+- [x] **Validate:** All tests pass
 
 **Completion Criteria:**
-- [ ] All 8 steps complete
-- [ ] Mermaid lens generates diagrams
-- [ ] CLI command works
-- [ ] Tests pass
-- [ ] Update PRD
+- [x] All 8 steps complete
+- [x] Mermaid lens generates diagrams
+- [x] CLI command works
+- [x] Tests pass
+- [x] Update PRD
 
 ---
 
@@ -337,62 +337,62 @@ Each lens requires:
 **Baby Steps:**
 
 #### Step 1: Write layer overview spec (60 min)
-- [ ] Create specs/layer.spec.md
-- [ ] Define 10 layers with purpose
-- [ ] Define abstraction level for each
-- [ ] Add examples per layer
-- [ ] Add layer dependencies
-- [ ] **Validate:** Spec validates
+- [x] Create specs/layer.spec.md
+- [x] Define 10 layers with purpose
+- [x] Define abstraction level for each
+- [x] Add examples per layer
+- [x] Add layer dependencies
+- [x] **Validate:** Spec validates
 
 #### Step 2: Generate layer types (30 min)
-- [ ] Run cascade on layer spec
-- [ ] Verify src/layers/types.ts generated
-- [ ] Check Layer enum correct
-- [ ] **Validate:** Build passes
+- [x] Run cascade on layer spec
+- [x] Verify src/layers/types.ts generated
+- [x] Check Layer enum correct
+- [x] **Validate:** Build passes
 
 #### Step 3: Implement layer validator (45 min)
-- [ ] Implement validateLayer(spec: Spec): boolean
-- [ ] Check spec at correct layer
-- [ ] Check dependencies valid
-- [ ] **Validate:** Add test
+- [x] Implement validateLayer(spec: Spec): boolean
+- [x] Check spec at correct layer
+- [x] Check dependencies valid
+- [x] **Validate:** Add test
 
 #### Step 4: Implement layer resolver (60 min)
-- [ ] Implement resolveLayer(ref: string): Layer
-- [ ] Auto-detect layer from path
-- [ ] Handle special cases
-- [ ] **Validate:** Add test
+- [x] Implement resolveLayer(ref: string): Layer
+- [x] Auto-detect layer from path
+- [x] Handle special cases
+- [x] **Validate:** Add test
 
 #### Step 5: Add layer to header parser (45 min)
-- [ ] Update src/parser/header.ts
-- [ ] Validate layer field
-- [ ] Auto-assign layer if missing
-- [ ] **Validate:** Parser tests pass
+- [x] Update src/parser/header.ts
+- [x] Validate layer field
+- [x] Auto-assign layer if missing
+- [x] **Validate:** Parser tests pass
 
 #### Step 6: Write layer documentation (45 min)
-- [ ] Create docs/layers.md
-- [ ] Document each layer
-- [ ] Add decision tree
-- [ ] Add examples
-- [ ] **Validate:** Doc reviewed
+- [x] Create docs/layers.md
+- [x] Document each layer
+- [x] Add decision tree
+- [x] Add examples
+- [x] **Validate:** Doc reviewed
 
 #### Step 7: Add CLI layer check (30 min)
-- [ ] Add `speclang check --layer <n> <spec>`
-- [ ] Show layer violations
-- [ ] Suggest corrections
-- [ ] **Validate:** Manual test
+- [x] Add `speclang check --layer <n> <spec>`
+- [x] Show layer violations
+- [x] Suggest corrections
+- [x] **Validate:** Manual test
 
 #### Step 8: Integration tests (45 min)
-- [ ] Test layer validation across project
-- [ ] Test all 10 layers
-- [ ] Test error cases
-- [ ] **Test passes**
+- [x] Test layer validation across project
+- [x] Test all 10 layers
+- [x] Test error cases
+- [x] **Test passes**
 
 **Completion Criteria:**
-- [ ] Layer system documented
-- [ ] Validation working
-- [ ] CLI working
-- [ ] Tests pass
-- [ ] Update PRD
+- [x] Layer system documented
+- [x] Validation working
+- [x] CLI working
+- [x] Tests pass
+- [x] Update PRD
 
 ---
 

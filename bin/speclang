@@ -215,10 +215,43 @@ program
   .option('--fix', 'Auto-fix simple issues')
   .option('-v, --verbose', 'Show detailed output')
   .option('-f, --format <format>', 'Output format (text, json)', 'text')
+  .option('-l, --layer <number>', 'Check layer validity (0-9)')
+  .option('-m, --maturity <level>', 'Check max layer for maturity level (POC, MVP, ALPHA, BETA, PRODUCTION)')
   .action(async (files, options) => {
     const projectDir = path.resolve(options.dir);
     
     console.log('🔍 Checking specs...');
+    
+    // Import the layer validation module
+    let layerOptions = {};
+    if (options.layer !== undefined || options.maturity !== undefined) {
+      try {
+        const layers = require('../dist/src/layers/index.js');
+        
+        if (options.maturity) {
+          const maxLayer = layers.getMaxLayerForMaturity(options.maturity);
+          console.log(`   Max layer for ${options.maturity}: ${maxLayer} (${layers.LAYER_NAMES[maxLayer]})`);
+          layerOptions = { maxLayer, maturityLevel: options.maturity };
+        }
+        
+        if (options.layer !== undefined) {
+          const layerNum = parseInt(options.layer);
+          const validation = layers.validateLayer(layerNum);
+          if (!validation.valid) {
+            console.error(`\n❌ Invalid layer: ${layerNum}`);
+            validation.errors.forEach(e => console.error(`   - ${e}`));
+            process.exit(1);
+          }
+          console.log(`   Layer: ${layerNum} (${layers.LAYER_NAMES[layerNum]})`);
+        }
+      } catch (err) {
+        if (err.code === 'MODULE_NOT_FOUND') {
+          console.error('\n❌ SpecLang not built. Run: npm run build\n');
+          process.exit(1);
+        }
+        throw err;
+      }
+    }
     
     try {
       const { validateCommand } = require('../dist/src/validation/cli.js');
