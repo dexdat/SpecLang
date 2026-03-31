@@ -551,22 +551,22 @@ Each requires specification, implementation, and tests.
 - [x] **Validate:** Add tests
 
 #### Step 4: Implement request router (60 min)
-- [ ] Parse MCP requests
-- [ ] Route to handlers
-- [ ] Format responses
-- [ ] **Validate:** Add tests
+- [x] Parse MCP requests
+- [x] Route to handlers
+- [x] Format responses
+- [x] **Validate:** Add tests
 
 #### Step 5: Implement error handling (45 min)
-- [ ] Add error codes
-- [ ] Add error responses
-- [ ] Add recovery logic
-- [ ] **Validate:** Add tests
+- [x] Add error codes
+- [x] Add error responses
+- [x] Add recovery logic
+- [x] **Validate:** Add tests
 
 #### Step 6: Add authentication (60 min)
-- [ ] Implement token auth
-- [ ] Implement API key auth
-- [ ] Add auth middleware
-- [ ] **Validate:** Add tests
+- [x] Implement token auth
+- [x] Implement API key auth
+- [x] Add auth middleware
+- [x] **Validate:** Add tests
 
 #### Step 7: Write integration tests (60 min)
 - [ ] Test all transports
