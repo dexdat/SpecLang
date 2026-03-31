@@ -1,0 +1,1 @@
+../../specs/examples.spec.dir/crud-app/src/crud-app.ts
