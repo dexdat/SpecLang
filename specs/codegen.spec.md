@@ -152,3 +152,94 @@ const GENERATED_HEADER = `// SPECLANG-GENERATED: Do not edit directly
 function formatGeneratedFile(spec: CodeSpec, content: string): string;
 ```
 
+### @block::examples @kind:note
+Examples of code generation from specs.
+
+**Example 1: Interface Generation**
+
+Input spec:
+```markdown
+### @block:user-model @kind:interface
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: Date;
+}
+```
+
+Generated TypeScript:
+```typescript
+// SPECLANG-GENERATED: Do not edit directly
+// Source: specs/user.spec.md#user-model
+// Generated: 2026-03-30T12:00:00Z
+// Edit the spec, not this file.
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: Date;
+}
+```
+
+Generated Go:
+```go
+// SPECLANG-GENERATED: Do not edit directly
+// Source: specs/user.spec.md#user-model
+// Generated: 2026-03-30T12:00:00Z
+// Edit the spec, not this file.
+
+type User struct {
+  ID        string    `json:"id"`
+  Name      string    `json:"name"`
+  Email     string    `json:"email"`
+  CreatedAt time.Time `json:"createdAt"`
+}
+```
+
+**Example 2: Function Generation**
+
+Input spec:
+```markdown
+### @block:create-user @kind:function
+async function createUser(name: string, email: string): Promise<User>
+```
+
+Generated TypeScript:
+```typescript
+export async function createUser(name: string, email: string): Promise<User> {
+  const user = await db.create({ name, email });
+  return user;
+}
+```
+
+**Example 3: Class Generation**
+
+Input spec:
+```markdown
+### @block:user-service @kind:class
+class UserService {
+  async findById(id: string): Promise<User>
+  async update(id: string, data: Partial<User>): Promise<User>
+  async delete(id: string): Promise<void>
+}
+```
+
+Generated TypeScript:
+```typescript
+export class UserService {
+  async findById(id: string): Promise<User> {
+    return this.db.findById('users', id);
+  }
+  
+  async update(id: string, data: Partial<User>): Promise<User> {
+    return this.db.update('users', id, data);
+  }
+  
+  async delete(id: string): Promise<void> {
+    return this.db.delete('users', id);
+  }
+}
+```
+
