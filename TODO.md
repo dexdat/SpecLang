@@ -616,34 +616,34 @@ Each requires specification, implementation, and tests.
 - [x] Define generator interface
 - [x] Define template system
 - [x] Define output format
-- [ ] Add examples
-- [ ] **Validate:** Spec validates
+- [x] Add examples
+- [x] **Validate:** Spec validates
 
 #### Step 2: Implement template engine (90 min)
-- [ ] Create template parser
-- [ ] Add variable substitution
-- [ ] Add conditionals
-- [ ] Add loops
-- [ ] **Validate:** Add tests
+- [x] Create template parser
+- [x] Add variable substitution
+- [x] Add conditionals
+- [x] Add loops
+- [x] **Validate:** Add tests
 
 #### Step 3: Implement AST generator (60 min)
-- [ ] Parse spec blocks
-- [ ] Generate AST nodes
-- [ ] Add type mapping
-- [ ] **Validate:** Add tests
+- [x] Parse spec blocks
+- [x] Generate AST nodes
+- [x] Add type mapping
+- [x] **Validate:** Add tests
 
 #### Step 4: Implement code emitter (60 min)
-- [ ] Walk AST
-- [ ] Emit TypeScript
-- [ ] Add formatting
-- [ ] **Validate:** Add tests
+- [x] Walk AST
+- [x] Emit TypeScript
+- [x] Add formatting
+- [x] **Validate:** Add tests
 
 #### Step 5: Add language targets (90 min)
-- [ ] Add TypeScript target
-- [ ] Add Python target
-- [ ] Add Go target
-- [ ] Add Rust target
-- [ ] **Validate:** Tests for each
+- [x] Add TypeScript target
+- [x] Add Python target
+- [x] Add Go target
+- [x] Add Rust target
+- [x] **Validate:** Tests for each
 
 #### Step 6: Implement type mapping (60 min)
 - [ ] Map stdlib types to targets
