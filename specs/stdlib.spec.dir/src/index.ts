@@ -20,6 +20,7 @@ export * from './strings';
 export * from './collections';
 export * from './math';
 export * from './objects';
+export * from './compose';
 export * from './assertions';
 export * from './validators';
 export * from './utils';
