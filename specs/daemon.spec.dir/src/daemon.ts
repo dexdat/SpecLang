@@ -14,6 +14,7 @@ import { State } from './state';
 import { IPC } from './ipc';
 import { Config } from './config';
 import { LockManager } from './locks';
+import { SessionStore } from './session-store';
 import {
   FileEvent,
   DaemonCommand,
@@ -32,6 +33,7 @@ export class Daemon extends EventEmitter {
   private ipc: IPC;
   private config: Config;
   private lockManager: LockManager;
+  private sessionStore: SessionStore;
   
   private running: boolean;
   private paused: boolean;
@@ -43,6 +45,7 @@ export class Daemon extends EventEmitter {
     this.state = new State();
     this.ipc = new IPC();
     this.lockManager = new LockManager();
+    this.sessionStore = new SessionStore();
     this.convergence = null!; // Initialized in start()
     this.running = false;
     this.paused = false;
@@ -276,6 +279,13 @@ export class Daemon extends EventEmitter {
    */
   getLockManager(): LockManager {
     return this.lockManager;
+  }
+
+  /**
+   * Get session store
+   */
+  getSessionStore(): SessionStore {
+    return this.sessionStore;
   }
 
   /**

@@ -14,7 +14,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { Daemon, FileEventKind, Config, Watcher, Router, ConvergenceDetector, DaemonCommandKind } from '../../src/daemon/index';
+import { Daemon, FileEventKind, Config, Watcher, Router, ConvergenceDetector, DaemonCommandKind, SessionStore } from '../../src/daemon/index';
 
 const TEST_DIR = 'tests/daemon/fixtures/test-project';
 const SPECS_DIR = `${TEST_DIR}/specs`;
@@ -31,6 +31,135 @@ describe('speclangd daemon', () => {
   afterEach(async () => {
     // Cleanup
     await fs.remove(TEST_DIR);
+  });
+
+  describe('SessionStore', () => {
+    it('should create a new session', () => {
+      const store = new SessionStore(300000);
+      
+      const session = store.create('agent-1', 'spec-agent');
+      
+      expect(session).toBeDefined();
+      expect(session.agentId).toBe('agent-1');
+      expect(session.role).toBe('spec-agent');
+      expect(session.status).toBe('idle');
+      expect(session.ownedFiles).toEqual([]);
+    });
+
+    it('should get session by ID', () => {
+      const store = new SessionStore(300000);
+      
+      const created = store.create('agent-1', 'spec-agent');
+      const retrieved = store.get(created.id);
+      
+      expect(retrieved).toBeDefined();
+      expect(retrieved?.agentId).toBe('agent-1');
+    });
+
+    it('should get session by agent ID', () => {
+      const store = new SessionStore(300000);
+      
+      store.create('agent-1', 'spec-agent');
+      const session = store.getByAgent('agent-1');
+      
+      expect(session).toBeDefined();
+      expect(session?.agentId).toBe('agent-1');
+    });
+
+    it('should set session status', () => {
+      const store = new SessionStore(300000);
+      
+      const session = store.create('agent-1', 'spec-agent');
+      store.setStatus(session.id, 'busy');
+      
+      const updated = store.get(session.id);
+      expect(updated?.status).toBe('busy');
+    });
+
+    it('should add owned files', () => {
+      const store = new SessionStore(300000);
+      
+      const session = store.create('agent-1', 'spec-agent');
+      store.addOwnedFile(session.id, 'specs/auth.spec.md');
+      store.addOwnedFile(session.id, 'specs/users.spec.md');
+      
+      const updated = store.get(session.id);
+      expect(updated?.ownedFiles).toContain('specs/auth.spec.md');
+      expect(updated?.ownedFiles).toContain('specs/users.spec.md');
+    });
+
+    it('should check file ownership', () => {
+      const store = new SessionStore(300000);
+      
+      const session = store.create('agent-1', 'spec-agent');
+      store.addOwnedFile(session.id, 'specs/auth.spec.md');
+      
+      expect(store.ownsFile(session.id, 'specs/auth.spec.md')).toBe(true);
+      expect(store.ownsFile(session.id, 'specs/missing.spec.md')).toBe(false);
+    });
+
+    it('should remove owned files', () => {
+      const store = new SessionStore(300000);
+      
+      const session = store.create('agent-1', 'spec-agent');
+      store.addOwnedFile(session.id, 'specs/auth.spec.md');
+      store.removeOwnedFile(session.id, 'specs/auth.spec.md');
+      
+      const updated = store.get(session.id);
+      expect(updated?.ownedFiles).not.toContain('specs/auth.spec.md');
+    });
+
+    it('should end a session', () => {
+      const store = new SessionStore(300000);
+      
+      const session = store.create('agent-1', 'spec-agent');
+      const result = store.end(session.id);
+      
+      expect(result).toBe(true);
+      expect(store.get(session.id)).toBeNull();
+    });
+
+    it('should list all sessions', () => {
+      const store = new SessionStore(300000);
+      
+      store.create('agent-1', 'spec-agent');
+      store.create('agent-2', 'code-agent');
+      
+      const sessions = store.list();
+      expect(sessions).toHaveLength(2);
+    });
+
+    it('should get agent status', () => {
+      const store = new SessionStore(300000);
+      
+      store.create('agent-1', 'spec-agent');
+      const status = store.getAgentStatus('agent-1');
+      
+      expect(status).toBeDefined();
+      expect(status?.id).toBe('agent-1');
+      expect(status?.status).toBe('idle');
+    });
+
+    it('should emit events on session creation', () => {
+      const store = new SessionStore(300000);
+      const handler = vi.fn();
+      
+      store.on('session.created', handler);
+      store.create('agent-1', 'spec-agent');
+      
+      expect(handler).toHaveBeenCalled();
+    });
+
+    it('should emit events on status change', () => {
+      const store = new SessionStore(300000);
+      const handler = vi.fn();
+      
+      const session = store.create('agent-1', 'spec-agent');
+      store.on('status.changed', handler);
+      store.setStatus(session.id, 'busy');
+      
+      expect(handler).toHaveBeenCalledWith('agent-1', 'busy');
+    });
   });
 
   describe('Watcher', () => {
