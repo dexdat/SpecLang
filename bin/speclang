@@ -1425,15 +1425,257 @@ program
           console.log(`  ${descriptions[projectLevel] || 'Unknown'}`);
         }
         
-        if (violations.length > 0) {
-          process.exit(1);
-        }
+      if (violations.length > 0) {
+        process.exit(1);
       }
+    }
     } catch (error) {
       if (options.json) {
         console.log(JSON.stringify({ error: error.message }, null, 2));
       } else {
         console.error(`Error: ${error.message}`);
+      }
+      process.exit(1);
+    }
+  });
+
+program
+  .command('upgrade <spec>')
+  .description('Upgrade a spec to a higher maturity level')
+  .option('--to <level>', 'Target maturity level (Beta, Production, etc.)')
+  .option('--json', 'JSON output')
+  .option('--plan', 'Show upgrade plan without executing')
+  .action(async (spec, options) => {
+    if (!options.to) {
+      console.error('Error: --to <level> is required');
+      console.log('\nUsage: speclang upgrade <spec> --to <level>');
+      console.log('Example: speclang upgrade specs/auth.spec.md --to Beta');
+      process.exit(1);
+    }
+
+    const projectDir = process.cwd();
+    const specsDir = path.join(projectDir, 'specs');
+    let specPath = spec;
+    if (!path.isAbsolute(spec)) {
+      specPath = path.join(specsDir, spec);
+    }
+
+    if (!fs.existsSync(specPath)) {
+      console.error(`❌ Spec file not found: ${specPath}`);
+      process.exit(1);
+    }
+
+    // Read spec header to get current level
+    const content = fs.readFileSync(specPath, 'utf-8');
+    const headerMatch = content.match(/^# speclang-header.*?\n(.*?)^---/ms);
+    let currentLevel = 'POC';
+    if (headerMatch) {
+      const levelMatch = headerMatch[1].match(/project_level:\s*(\w+)/i);
+      if (levelMatch) {
+        currentLevel = levelMatch[1];
+      }
+    }
+
+    const targetLevel = options.to;
+    const validLevels = ['POC', 'MVP', 'Alpha', 'Beta', 'Production', 'Startup', 'SMB', 'MSB', 'Enterprise'];
+    const currentIndex = validLevels.indexOf(currentLevel);
+    const targetIndex = validLevels.indexOf(targetLevel);
+
+    if (currentIndex === -1) {
+      console.error(`❌ Unknown current level: ${currentLevel}`);
+      process.exit(1);
+    }
+    if (targetIndex === -1) {
+      console.error(`❌ Unknown target level: ${targetLevel}`);
+      console.log(`   Valid levels: ${validLevels.join(', ')}`);
+      process.exit(1);
+    }
+    if (targetIndex <= currentIndex) {
+      console.error(`❌ Upgrade must go to a higher level`);
+      console.log(`   Current: ${currentLevel}, Target: ${targetLevel}`);
+      console.log(`   Use 'speclang downgrade' for lowering levels`);
+      process.exit(1);
+    }
+
+    if (options.plan) {
+      if (options.json) {
+        console.log(JSON.stringify({
+          direction: 'upgrade',
+          from: currentLevel,
+          to: targetLevel,
+          spec: path.basename(specPath),
+          steps: [
+            'Run pre-upgrade validation',
+            `Update project_level from ${currentLevel} to ${targetLevel}`,
+            'Run post-upgrade validation',
+            'Update any dependent specs if needed',
+            'Commit changes'
+          ]
+        }, null, 2));
+      } else {
+        console.log(`\n=== Upgrade Plan ===\n`);
+        console.log(`Spec: ${path.basename(specPath)}`);
+        console.log(`From: ${currentLevel}`);
+        console.log(`To: ${targetLevel}`);
+        console.log('\nSteps:');
+        console.log('  1. Run pre-upgrade validation');
+        console.log(`  2. Update project_level from ${currentLevel} to ${targetLevel}`);
+        console.log('  3. Run post-upgrade validation');
+        console.log('  4. Update any dependent specs if needed');
+        console.log('  5. Commit changes');
+      }
+      return;
+    }
+
+    // Execute upgrade - update the spec header
+    const newContent = content.replace(
+      /project_level:\s*(\w+)/i,
+      `project_level: ${targetLevel}`
+    );
+
+    try {
+      fs.writeFileSync(specPath, newContent, 'utf-8');
+      if (options.json) {
+        console.log(JSON.stringify({
+          status: 'success',
+          direction: 'upgrade',
+          from: currentLevel,
+          to: targetLevel,
+          spec: path.basename(specPath)
+        }, null, 2));
+      } else {
+        console.log(`\n✅ Upgrade complete: ${currentLevel} → ${targetLevel}`);
+        console.log(`   Spec: ${path.basename(specPath)}`);
+      }
+    } catch (error) {
+      if (options.json) {
+        console.log(JSON.stringify({
+          status: 'error',
+          error: error.message
+        }, null, 2));
+      } else {
+        console.error(`❌ Upgrade failed: ${error.message}`);
+      }
+      process.exit(1);
+    }
+  });
+
+program
+  .command('downgrade <spec>')
+  .description('Downgrade a spec to a lower maturity level')
+  .option('--to <level>', 'Target maturity level')
+  .option('--json', 'JSON output')
+  .option('--plan', 'Show downgrade plan without executing')
+  .action(async (spec, options) => {
+    if (!options.to) {
+      console.error('Error: --to <level> is required');
+      console.log('\nUsage: speclang downgrade <spec> --to <level>');
+      console.log('Example: speclang downgrade specs/auth.spec.md --to MVP');
+      process.exit(1);
+    }
+
+    const projectDir = process.cwd();
+    const specsDir = path.join(projectDir, 'specs');
+    let specPath = spec;
+    if (!path.isAbsolute(spec)) {
+      specPath = path.join(specsDir, spec);
+    }
+
+    if (!fs.existsSync(specPath)) {
+      console.error(`❌ Spec file not found: ${specPath}`);
+      process.exit(1);
+    }
+
+    // Read spec header to get current level
+    const content = fs.readFileSync(specPath, 'utf-8');
+    const headerMatch = content.match(/^# speclang-header.*?\n(.*?)^---/ms);
+    let currentLevel = 'POC';
+    if (headerMatch) {
+      const levelMatch = headerMatch[1].match(/project_level:\s*(\w+)/i);
+      if (levelMatch) {
+        currentLevel = levelMatch[1];
+      }
+    }
+
+    const targetLevel = options.to;
+    const validLevels = ['POC', 'MVP', 'Alpha', 'Beta', 'Production', 'Startup', 'SMB', 'MSB', 'Enterprise'];
+    const currentIndex = validLevels.indexOf(currentLevel);
+    const targetIndex = validLevels.indexOf(targetLevel);
+
+    if (currentIndex === -1) {
+      console.error(`❌ Unknown current level: ${currentLevel}`);
+      process.exit(1);
+    }
+    if (targetIndex === -1) {
+      console.error(`❌ Unknown target level: ${targetLevel}`);
+      console.log(`   Valid levels: ${validLevels.join(', ')}`);
+      process.exit(1);
+    }
+    if (targetIndex >= currentIndex) {
+      console.error(`❌ Downgrade must go to a lower level`);
+      console.log(`   Current: ${currentLevel}, Target: ${targetLevel}`);
+      console.log(`   Use 'speclang upgrade' for raising levels`);
+      process.exit(1);
+    }
+
+    if (options.plan) {
+      if (options.json) {
+        console.log(JSON.stringify({
+          direction: 'downgrade',
+          from: currentLevel,
+          to: targetLevel,
+          spec: path.basename(specPath),
+          steps: [
+            'Run pre-downgrade validation',
+            `Update project_level from ${currentLevel} to ${targetLevel}`,
+            'Run post-downgrade validation',
+            'Update any dependent specs if needed',
+            'Commit changes'
+          ]
+        }, null, 2));
+      } else {
+        console.log(`\n=== Downgrade Plan ===\n`);
+        console.log(`Spec: ${path.basename(specPath)}`);
+        console.log(`From: ${currentLevel}`);
+        console.log(`To: ${targetLevel}`);
+        console.log('\nSteps:');
+        console.log('  1. Run pre-downgrade validation');
+        console.log(`  2. Update project_level from ${currentLevel} to ${targetLevel}`);
+        console.log('  3. Run post-downgrade validation');
+        console.log('  4. Update any dependent specs if needed');
+        console.log('  5. Commit changes');
+      }
+      return;
+    }
+
+    // Execute downgrade - update the spec header
+    const newContent = content.replace(
+      /project_level:\s*(\w+)/i,
+      `project_level: ${targetLevel}`
+    );
+
+    try {
+      fs.writeFileSync(specPath, newContent, 'utf-8');
+      if (options.json) {
+        console.log(JSON.stringify({
+          status: 'success',
+          direction: 'downgrade',
+          from: currentLevel,
+          to: targetLevel,
+          spec: path.basename(specPath)
+        }, null, 2));
+      } else {
+        console.log(`\n✅ Downgrade complete: ${currentLevel} → ${targetLevel}`);
+        console.log(`   Spec: ${path.basename(specPath)}`);
+      }
+    } catch (error) {
+      if (options.json) {
+        console.log(JSON.stringify({
+          status: 'error',
+          error: error.message
+        }, null, 2));
+      } else {
+        console.error(`❌ Downgrade failed: ${error.message}`);
       }
       process.exit(1);
     }
