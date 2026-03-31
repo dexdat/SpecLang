@@ -1,12 +1,14 @@
-# speclang-header lines:10
+# speclang-header lines:12
 id: "@speclang/project-maturity-levels/criteria"
 version: 0.1.0
 layer: 2
 tags: [project, maturity, levels, criteria, validation]
-parent: ""@ref:specs/project-maturity-levels"part: 2/2
+parent: "@ref:specs/project-maturity-levels"
 project_level: Alpha
 agent_support: agent_autonomous
 short: Detailed criteria and validation rules for project_level
+target: typescript
+produces: src/maturity/criteria.ts
 ---
 # Project Maturity Level Criteria
 
@@ -246,4 +248,15 @@ refs:
   - "@ref:speclang/headers#project_level
   - "@ref:speclang/layer-definitions
   - "@ref:speclang/agent-support-levels
+```
+## TypeScript Interface
+
+```typescript
+export interface Criteria {
+  spec_requirements: string[];
+  testing_requirements: string[];
+  documentation_requirements: string[];
+  deployment_requirements: string[];
+  agent_support: string;
+}
 ```
