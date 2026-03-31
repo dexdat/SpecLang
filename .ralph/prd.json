@@ -396,7 +396,7 @@
             "tests/maturity.test.ts"
           ],
           "priority": 25,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-026",
@@ -413,7 +413,7 @@
             "tests/stdlib/types.test.ts"
           ],
           "priority": 26,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-027",
@@ -434,7 +434,7 @@
             "tests/stdlib/functions.test.ts"
           ],
           "priority": 27,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-028",
@@ -445,7 +445,7 @@
             "specs/lenses.dir/mermaid.spec.md"
           ],
           "priority": 28,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-029",
@@ -456,7 +456,7 @@
             "specs/lenses.dir/code.spec.md"
           ],
           "priority": 29,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-030",
@@ -467,7 +467,7 @@
             "specs/lenses.dir/entity.spec.md"
           ],
           "priority": 30,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-031",
@@ -478,7 +478,7 @@
             "specs/lenses.dir/operation.spec.md"
           ],
           "priority": 31,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-032",
@@ -489,7 +489,7 @@
             "specs/lenses.dir/prose.spec.md"
           ],
           "priority": 32,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-033",
