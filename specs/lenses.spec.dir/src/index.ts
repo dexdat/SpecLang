@@ -15,6 +15,7 @@ import { operationLens } from './operation-lens';
 import { mathLens } from './math-lens';
 import { acceptanceLens } from './acceptance-lens';
 import { diagramLens } from './diagram-lens';
+import { flowchartLens, sequenceLens, classLens } from './mermaid';
 import { tableLens } from './table-lens';
 import { policyLens } from './policy-lens';
 import { questionLens } from './question-lens';
@@ -27,6 +28,9 @@ export function initializeLenses(): { registry: LensRegistry; converter: LensCon
   registry.register(diagramLens);      // 70
   registry.register(acceptanceLens);    // 65
   registry.register(entityLens);       // 60
+  registry.register(flowchartLens);    // 61
+  registry.register(sequenceLens);     // 60
+  registry.register(classLens);        // 59
   registry.register(operationLens);    // 55
   registry.register(codeLens);         // 50
   registry.register(mathLens);         // 45
@@ -55,6 +59,7 @@ export { operationLens } from './operation-lens';
 export { mathLens } from './math-lens';
 export { acceptanceLens } from './acceptance-lens';
 export { diagramLens, detectDiagramType } from './diagram-lens';
+export { flowchartLens, sequenceLens, classLens } from './mermaid';
 export { tableLens } from './table-lens';
 export { policyLens } from './policy-lens';
 export { questionLens } from './question-lens';
