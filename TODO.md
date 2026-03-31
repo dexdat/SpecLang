@@ -532,17 +532,17 @@ Each requires specification, implementation, and tests.
 **Baby Steps:**
 
 #### Step 1: Complete MCP spec (60 min)
-- [ ] Expand specs/mcp/overview.spec.md
-- [ ] Add all tool definitions
-- [ ] Add request/response schemas
-- [ ] Add authentication flows
-- [ ] **Validate:** Spec validates
+- [x] Expand specs/mcp/overview.spec.md
+- [x] Add all tool definitions
+- [x] Add request/response schemas
+- [x] Add authentication flows
+- [x] **Validate:** Spec validates
 
 #### Step 2: Implement MCP transport (60 min)
-- [ ] Implement stdio transport
-- [ ] Implement HTTP transport
-- [ ] Implement SSE transport
-- [ ] **Validate:** Add tests
+- [x] Implement stdio transport
+- [x] Implement HTTP transport
+- [x] Implement SSE transport
+- [x] **Validate:** Add tests
 
 #### Step 3: Implement tool registry (45 min)
 - [ ] Create tool registry
