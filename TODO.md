@@ -162,7 +162,7 @@ npm run build && npm test
 - [x] Build passes
 - [x] Tests pass with stdlib coverage
 - [x] Types available in cascade
-- [ ] Update PRD
+- [x] Update PRD
 
 ---
 
@@ -232,7 +232,7 @@ npm run build && npm test
 - [x] All 8 steps complete
 - [x] Build + tests pass
 - [x] Stdlib usable in specs
-- [ ] Update PRD
+- [x] Update PRD
 
 ---
 
@@ -485,7 +485,7 @@ Each maturity level requires:
 - [x] Events work
 - [x] Watching works
 - [x] Tests pass
-- [ ] Update PRD
+- [x] Update PRD
 
 ---
 
@@ -585,14 +585,14 @@ Each requires specification, implementation, and tests.
 - [x] All tools working
 - [x] Auth working
 - [x] Tests pass
-- [ ] Update PRD
+- [x] Update PRD
 
 **Completion Criteria:**
-- [ ] MCP server complete
-- [ ] All tools working
-- [ ] Auth working
-- [ ] Tests pass
-- [ ] Update PRD
+- [x] MCP server complete
+- [x] All tools working
+- [x] Auth working
+- [x] Tests pass
+- [x] Update PRD
 
 ---
 
@@ -613,7 +613,7 @@ Each requires specification, implementation, and tests.
 **Baby Steps:**
 
 #### Step 1: Define generator spec (60 min)
-- [ ] Define generator interface
+- [x] Define generator interface
 - [ ] Define template system
 - [ ] Define output format
 - [ ] Add examples

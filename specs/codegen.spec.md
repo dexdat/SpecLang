@@ -48,4 +48,54 @@ Python target generator.
 TypeScript target generator.
 
 ### @block::targets/rust @kind:code
+
+### @block::generator-interface @kind:code
+Defines the interface for code generators.
+
+```typescript
+interface TargetGenerator {
+  language: string;
+  extension: string;
+  
+  // Generate code from spec
+  generate(spec: CodeSpec): GeneratedFile[];
+  
+  // Type mapping
+  mapType(stdlibType: string): string;
+  
+  // Import handling
+  formatImports(imports: string[]): string;
+  
+  // File header
+  fileHeader(spec: CodeSpec): string;
+  
+  // File footer
+  fileFooter(spec: CodeSpec): string;
+}
+
+interface GeneratedFile {
+  path: string;
+  content: string;
+  source_block: string;
+}
+
+interface CodeSpec {
+  header: SpecMetadata;
+  target: {
+    language: 'typescript' | 'go' | 'python' | 'rust';
+    outputPath: string;
+  };
+  blocks: CodeBlock[];
+  imports: string[];
+}
+
+interface CodeBlock {
+  id: string;
+  kind: 'code' | 'interface' | 'function' | 'class' | 'type';
+  language: string;
+  content: string;
+  refs: string[];
+  line: number;
+}
+```
 Rust target generator.
