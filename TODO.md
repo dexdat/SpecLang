@@ -615,7 +615,7 @@ Each requires specification, implementation, and tests.
 #### Step 1: Define generator spec (60 min)
 - [x] Define generator interface
 - [x] Define template system
-- [ ] Define output format
+- [x] Define output format
 - [ ] Add examples
 - [ ] **Validate:** Spec validates
 
