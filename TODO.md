@@ -30,19 +30,19 @@ npm run build && npm test
 **Baby Steps:**
 
 #### Step 1: Expand maturity spec (30 min)
-- [ ] Read specs/project-maturity-levels.spec.md
-- [ ] Add @block::levels with 5 maturity levels
-- [ ] Add @block::criteria with criteria definitions
-- [ ] Add @block::validation with validation rules
-- [ ] Expand to 80+ lines with meaningful content
-- [ ] **Validate:** `./bin/speclang validate` passes
+- [x] Read specs/project-maturity-levels.spec.md
+- [x] Add @block::levels with 5 maturity levels
+- [x] Add @block::criteria with criteria definitions
+- [x] Add @block::validation with validation rules
+- [x] Expand to 80+ lines with meaningful content
+- [x] **Validate:** `./bin/speclang validate` passes
 
 #### Step 2: Generate maturity interfaces (45 min)
-- [ ] Run `./bin/speclang cascade specs/project-maturity-levels.spec.md`
-- [ ] Verify src/maturity/levels.ts generated
-- [ ] Verify src/maturity/criteria.ts generated
-- [ ] Check interfaces match spec
-- [ ] **Validate:** Build passes
+- [x] Run `./bin/speclang cascade specs/project-maturity-levels.spec.md`
+- [x] Verify src/maturity/levels.ts generated
+- [x] Verify src/maturity/criteria.ts generated
+- [x] Check interfaces match spec
+- [x] **Validate:** Build passes
 
 #### Step 3: Implement maturity level enum (30 min)
 - [ ] Edit src/maturity/levels.ts

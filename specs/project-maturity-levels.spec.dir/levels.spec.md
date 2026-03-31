@@ -1,12 +1,14 @@
-# speclang-header lines:10
+# speclang-header lines:12
 id: "@speclang/project-maturity-levels/levels"
 version: 0.1.0
 layer: 2
 tags: [project, maturity, levels, definitions]
-parent: ""@ref:specs/project-maturity-levels"part: 1/2
+parent: "@ref:specs/project-maturity-levels"
 project_level: Alpha
 agent_support: agent_autonomous
 short: Definitions for each project_level value
+target: typescript
+produces: src/maturity/levels.ts
 ---
 # Project Maturity Level Definitions
 
@@ -45,4 +47,9 @@ Agents use project_level to:
 | SMB | Small/Medium Business | Established processes, moderate scale | - Established team (10-100)<br>- Defined processes<br>- Compliance beginnings<br>- Moderate scale | Autonomous with compliance checks |
 | MSB | Medium/Large Business | Complex integration, compliance focus | - Large team (100-1000)<br>- Complex integrations<br>- Strict compliance<br>- Enterprise features | Autonomous with strict governance |
 | Enterprise | Maximum Scale | Strict governance, high availability | - Very large team (1000+)<br>- Global scale<br>- Maximum compliance<br>- Highest availability | Fully autonomous with extensive monitoring |
+```
+## TypeScript Interface
+
+```typescript
+export type MaturityLevel = 'POC' | 'MVP' | 'Alpha' | 'Beta' | 'Production' | 'Startup' | 'SMB' | 'MSB' | 'Enterprise';
 ```
