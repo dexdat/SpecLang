@@ -831,7 +831,7 @@ Each requires specification, implementation, and tests.
 - [x] **Validate:** Spec validates
 
 #### Step 2: Setup UI framework (45 min)
-- [ ] Choose framework (React/Vue/etc)
+- [x] Choose framework (React/Vue/etc)
 - [ ] Setup build pipeline
 - [ ] Add TypeScript support
 - [ ] **Validate:** Build works
