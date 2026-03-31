@@ -948,10 +948,10 @@ Each requires specification, implementation, and tests.
 **Baby Steps:**
 
 #### Step 1: Audit existing scripts (30 min)
-- [ ] All Python scripts already exist
-- [ ] Verify each script works
-- [ ] Identify any gaps
-- [ ] **Validate:** Scripts run
+- [x] All Python scripts already exist
+- [x] Verify each script works
+- [x] Identify any gaps
+- [x] **Validate:** Scripts run
 
 #### Step 2: Add missing scripts (60 min)
 - [ ] Add any missing tools
