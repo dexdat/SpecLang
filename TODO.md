@@ -981,34 +981,34 @@ Each requires specification, implementation, and tests.
 **Baby Steps:**
 
 #### Step 1: Define test scenarios (45 min)
-- [ ] List all integration scenarios
-- [ ] Define test data
-- [ ] Define expected outcomes
-- [ ] **Validate:** Plan reviewed
+- [x] List all integration scenarios
+- [x] Define test data
+- [x] Define expected outcomes
+- [x] **Validate:** Plan reviewed
 
 #### Step 2: Write spec-to-code test (60 min)
-- [ ] Create spec → cascade → code test
-- [ ] Add assertions
-- [ ] Add cleanup
-- [ ] **Validate:** Test passes
+- [x] Create spec → cascade → code test
+- [x] Add assertions
+- [x] Add cleanup
+- [x] **Validate:** Test passes
 
 #### Step 3: Write daemon test (60 min)
-- [ ] Create daemon lifecycle test
-- [ ] Add session tests
-- [ ] Add event tests
-- [ ] **Validate:** Test passes
+- [x] Create daemon lifecycle test
+- [x] Add session tests
+- [x] Add event tests
+- [x] **Validate:** Test passes
 
 #### Step 4: Write MCP test (60 min)
-- [ ] Create MCP server test
-- [ ] Add tool tests
-- [ ] Add auth tests
-- [ ] **Validate:** Test passes
+- [x] Create MCP server test
+- [x] Add tool tests
+- [x] Add auth tests
+- [x] **Validate:** Test passes
 
 #### Step 5: Write pipeline test (60 min)
-- [ ] Create pipeline test
-- [ ] Add stage tests
-- [ ] Add hook tests
-- [ ] **Validate:** Test passes
+- [x] Create pipeline test
+- [x] Add stage tests
+- [x] Add hook tests
+- [x] **Validate:** Test passes
 
 #### Step 6: Add CI integration (30 min)
 - [x] Add GitHub Actions workflow
@@ -1020,7 +1020,7 @@ Each requires specification, implementation, and tests.
 - [x] All integration tests pass
 - [x] CI configured
 - [x] Coverage >80%
-- [ ] Update PRD
+- [x] Update PRD
 
 ---
 
@@ -1032,40 +1032,40 @@ Each requires specification, implementation, and tests.
 **Baby Steps:**
 
 #### Step 1: Define benchmarks (45 min)
-- [ ] List performance scenarios
-- [ ] Define SLAs
-- [ ] Define measurement methodology
-- [ ] **Validate:** Plan reviewed
+- [x] List performance scenarios
+- [x] Define SLAs
+- [x] Define measurement methodology
+- [x] **Validate:** Plan reviewed
 
 #### Step 2: Cascade benchmark (60 min)
-- [ ] Create cascade perf test
-- [ ] Measure time vs spec size
-- [ ] Measure memory usage
-- [ ] **Validate:** Baseline established
+- [x] Create cascade perf test
+- [x] Measure time vs spec size
+- [x] Measure memory usage
+- [x] **Validate:** Baseline established
 
 #### Step 3: Daemon benchmark (60 min)
-- [ ] Create daemon perf test
-- [ ] Measure throughput
-- [ ] Measure latency
-- [ ] **Validate:** Baseline established
+- [x] Create daemon perf test
+- [x] Measure throughput
+- [x] Measure latency
+- [x] **Validate:** Baseline established
 
 #### Step 4: MCP benchmark (60 min)
-- [ ] Create MCP perf test
-- [ ] Measure request throughput
-- [ ] Measure concurrent users
-- [ ] **Validate:** Baseline established
+- [x] Create MCP perf test
+- [x] Measure request throughput
+- [x] Measure concurrent users
+- [x] **Validate:** Baseline established
 
 #### Step 5: Add perf monitoring (45 min)
-- [ ] Add performance dashboard
-- [ ] Add regression detection
-- [ ] Add alerts
-- [ ] **Validate:** Monitoring works
+- [x] Add performance dashboard
+- [x] Add regression detection
+- [x] Add alerts
+- [x] **Validate:** Monitoring works
 
 **Completion Criteria:**
-- [ ] Baselines established
-- [ ] No regressions
-- [ ] Monitoring working
-- [ ] Update PRD
+- [x] Baselines established
+- [x] No regressions
+- [x] Monitoring working
+- [x] Update PRD
 
 ---
 
@@ -1146,6 +1146,6 @@ npm run build && npm test
 
 ---
 
-**Last Updated:** 2026-03-30
-**Next Action:** Start with P0-025, Step 1
+**Last Updated:** 2026-03-31
+**Next Action:** Find next incomplete task and continue
 **Command:** `python3 .ralph/ralph_loop.py loop --commit`
