@@ -9,7 +9,7 @@ project_level: Alpha
 agent_support: agent_assisted
 short: Implementation Specs
 children:
-  - ""@ref:speclang/implementation.meta-circular"  - ""@ref:speclang/implementation.validation-system"  - ""@ref:speclang/implementation.ralph-loop"  - ""@ref:speclang/implementation.sqlite-schema"  - ""@ref:speclang/implementation.codegen"  - ""@ref:speclang/implementation.phases"  - ""@ref:speclang/implementation.checklist"---
+  - "@ref:speclang/implementation.meta-circular"  - "@ref:speclang/implementation.validation-system"  - "@ref:speclang/implementation.ralph-loop"  - "@ref:speclang/implementation.sqlite-schema"  - "@ref:speclang/implementation.codegen"  - "@ref:speclang/implementation.phases"  - "@ref:speclang/implementation.checklist"---
 
 # Implementation Specs
 

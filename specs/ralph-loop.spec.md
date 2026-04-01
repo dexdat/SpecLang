@@ -6,7 +6,7 @@ layer: 0
 tags: [ralph, loop, agents, coordination, validation]
 imports: ["@speclang/agent-protocol", "@speclang/cascade", "@speclang/recovery"]
 children:
-  - ""@ref:specs/ralph-loop.spec.dir/workflow"  - ""@ref:specs/ralph-loop.spec.dir/state"status: draft
+  - "@ref:specs/ralph-loop.spec.dir/workflow"  - "@ref:specs/ralph-loop.spec.dir/state"status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Ralph Loop System

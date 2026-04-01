@@ -221,7 +221,12 @@ export function extractMetadataReferences(
   if (metadata.depends_on) {
     for (const dep of metadata.depends_on) {
       if (typeof dep === 'string') {
-        const cleanRef = dep.replace('@ref:', '');
+        // Remove @ref: prefix if present
+        let cleanRef = dep.replace('@ref:', '');
+        // If still starts with @ (domain prefix), remove it
+        if (cleanRef.startsWith('@')) {
+          cleanRef = cleanRef.substring(1);
+        }
         const [specRef = cleanRef, blockRef] = cleanRef.split('#');
         references.push({
           ref: dep.startsWith('@ref:') ? dep : `@ref:${cleanRef}`,
@@ -232,7 +237,10 @@ export function extractMetadataReferences(
         });
       } else if (dep && typeof dep === 'object' && 'ref' in dep) {
         const ref = dep as unknown as { ref: string };
-        const cleanRef = ref.ref.replace('@ref:', '');
+        let cleanRef = ref.ref.replace('@ref:', '');
+        if (cleanRef.startsWith('@')) {
+          cleanRef = cleanRef.substring(1);
+        }
         const [specRef = cleanRef, blockRef] = cleanRef.split('#');
         references.push({
           ref: ref.ref.startsWith('@ref:') ? ref.ref : `@ref:${cleanRef}`,
@@ -266,7 +274,12 @@ export function extractMetadataReferences(
   if (metadata.children) {
     for (const child of metadata.children) {
       if (typeof child === 'string') {
-        const cleanRef = child.replace('@ref:', '');
+        // Remove @ref: prefix if present
+        let cleanRef = child.replace('@ref:', '');
+        // If still starts with @ (domain prefix), remove it
+        if (cleanRef.startsWith('@')) {
+          cleanRef = cleanRef.substring(1);
+        }
         const [specRef = cleanRef, blockRef] = cleanRef.split('#');
         references.push({
           ref: child.startsWith('@ref:') ? child : `@ref:${cleanRef}`,

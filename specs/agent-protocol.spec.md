@@ -6,7 +6,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [agents, protocol, ownership, sessions, guard]
 children:
-  - ""@ref:specs/agent-protocol.spec.dir/types"  - ""@ref:specs/agent-protocol.spec.dir/sessions"  - ""@ref:specs/agent-protocol.spec.dir/ownership"  - ""@ref:specs/agent-protocol.spec.dir/rules"  - ""@ref:specs/agent-protocol.spec.dir/registry"  - ""@ref:specs/agent-protocol.spec.dir/interceptor"  - ""@ref:specs/agent-protocol.spec.dir/violations"short: "Agent Protocol - Ownership, sessions, and write guards"
+  - "@ref:specs/agent-protocol.spec.dir/types"  - "@ref:specs/agent-protocol.spec.dir/sessions"  - "@ref:specs/agent-protocol.spec.dir/ownership"  - "@ref:specs/agent-protocol.spec.dir/rules"  - "@ref:specs/agent-protocol.spec.dir/registry"  - "@ref:@ref:specs/agent-protocol.spec.dir/interceptor"  - "@ref:specs/agent-protocol.spec.dir/violations"
+short: "Agent Protocol - Ownership, sessions, and write guards"
 status: draft
 ---
 

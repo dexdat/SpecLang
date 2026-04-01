@@ -18,7 +18,7 @@ Auto-generated spec for server.ts from cascade.
 
 ## Overview
 
-### @block::mcpserver @kind:class
+### @block::mcpserver @kind:code
 
 ```typescript
 export class MCPServer {
@@ -41,7 +41,7 @@ export class MCPServer {
 }
 ```
 
-### @block::server-options @kind:interface
+### @block::server-options @kind:code
 
 ```typescript
 interface ServerOptions {

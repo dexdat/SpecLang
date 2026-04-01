@@ -1,5 +1,5 @@
 # speclang-header lines:8
-id: "@speclang/testing-strategy.spec"
+id: "@speclang/testing-strategy"
 version: 0.1.0
 layer: 1
 tags: [testing, strategy, verification, quality, maturity]

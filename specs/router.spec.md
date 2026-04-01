@@ -24,5 +24,5 @@ export interface AgentSession {
 ```speclang
 # @block:router-subspecs @kind:reference
 Subspecs:
-  routing: ""@ref:specs/router.spec.dir/routing"  agents: ""@ref:specs/router.spec.dir/agents"```
+  routing: "@ref:specs/router.spec.dir/routing"  agents: "@ref:specs/router.spec.dir/agents"```
 
