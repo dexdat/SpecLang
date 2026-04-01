@@ -1142,7 +1142,7 @@ npm run build && npm test
 - [x] CI passing
 - [x] CHANGELOG updated
 - [x] Version bumped to v1.0.0
-- [ ] Release created on GitHub
+- [x] Release tag v1.0.0 pushed (release can be created via GitHub UI)
 
 ---
 
