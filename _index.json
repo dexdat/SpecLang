@@ -1,6 +1,6 @@
 {
   "version": "0.2.0",
-  "generated": "2026-03-31T19:05:06.445967Z",
+  "generated": "2026-04-01T00:17:46.335562Z",
   "specs": {
     "@unknown/test.spec.md": {
       "id": "@unknown/test.spec.md",
@@ -18,7 +18,7 @@
       "content_refs": [],
       "blocks": [],
       "lines": 7,
-      "modified": "2026-03-31T19:04:16.756771Z",
+      "modified": "2026-04-01T00:14:51.683029Z",
       "header_lines": 0,
       "status": "draft",
       "target": null
@@ -231,19 +231,31 @@
       "status": "generated",
       "target": null
     },
-    "@unknown/core.spec.md": {
-      "id": "@unknown/core.spec.md",
+    "@speclang/core": {
+      "id": "@speclang/core",
       "file": "specs/core.spec.md",
       "version": "0.2.0",
       "layer": 0,
-      "project_level": null,
-      "agent_support": null,
-      "tags": [],
+      "project_level": "Alpha",
+      "agent_support": "agent_autonomous",
+      "tags": [
+        "core",
+        "architecture",
+        "reactive",
+        "meta-circular"
+      ],
       "imports": [],
-      "short": "core.spec.md",
+      "short": "Speclang Core - Reactive multi-agent system",
       "refs": [],
       "depends_on": [],
-      "children": [],
+      "children": [
+        "@ref:specs/core.spec.dir/entities",
+        "@ref:specs/core.spec.dir/cascade",
+        "@ref:specs/core.spec.dir/file-types",
+        "@ref:specs/core.spec.dir/agents",
+        "@ref:specs/core.spec.dir/skills",
+        "@ref:specs/core.spec.dir/concurrency"
+      ],
       "content_refs": [
         "specs/core",
         "specs/core",
@@ -267,8 +279,8 @@
       "blocks": [
         "core/overview"
       ],
-      "lines": 72,
-      "modified": "2026-03-22T23:24:09.269031Z",
+      "lines": 78,
+      "modified": "2026-04-01T00:08:57.788638Z",
       "header_lines": 16,
       "status": "draft",
       "target": null
@@ -409,8 +421,8 @@
         "specs/spec-format"
       ],
       "blocks": [],
-      "lines": 71,
-      "modified": "2026-03-22T23:24:09.291031Z",
+      "lines": 72,
+      "modified": "2026-04-01T00:09:11.904454Z",
       "header_lines": 12,
       "status": "draft",
       "target": null
@@ -546,8 +558,8 @@
         "parser/overview",
         "id"
       ],
-      "lines": 77,
-      "modified": "2026-03-22T23:24:09.325919Z",
+      "lines": 78,
+      "modified": "2026-04-01T00:09:11.905098Z",
       "header_lines": 12,
       "status": "draft",
       "target": null
@@ -575,7 +587,7 @@
         "hello/implementation"
       ],
       "lines": 46,
-      "modified": "2026-03-22T23:24:09.273098Z",
+      "modified": "2026-04-01T00:09:11.905314Z",
       "header_lines": 10,
       "status": "draft",
       "target": null
@@ -730,7 +742,7 @@
       ],
       "blocks": [],
       "lines": 58,
-      "modified": "2026-03-22T23:24:09.353282Z",
+      "modified": "2026-04-01T00:09:11.905994Z",
       "header_lines": 15,
       "status": "draft",
       "target": null
@@ -881,7 +893,7 @@
         "scripts/children"
       ],
       "lines": 33,
-      "modified": "2026-03-22T23:24:09.368268Z",
+      "modified": "2026-04-01T00:09:11.906615Z",
       "header_lines": 12,
       "status": "draft",
       "target": null
@@ -946,7 +958,7 @@
         "router-subspecs"
       ],
       "lines": 28,
-      "modified": "2026-03-22T23:24:09.356349Z",
+      "modified": "2026-04-01T00:09:11.906756Z",
       "header_lines": 9,
       "status": "generated",
       "target": null
@@ -1003,7 +1015,7 @@
         "greeting/localized"
       ],
       "lines": 82,
-      "modified": "2026-03-22T23:24:09.279050Z",
+      "modified": "2026-04-01T00:09:11.906975Z",
       "header_lines": 10,
       "status": "draft",
       "target": null
@@ -1033,7 +1045,7 @@
         ":dual-view"
       ],
       "lines": 72,
-      "modified": "2026-03-22T23:24:09.374235Z",
+      "modified": "2026-04-01T00:09:11.907179Z",
       "header_lines": 12,
       "status": "draft",
       "target": null
@@ -1537,8 +1549,8 @@
         "specs/opencode-plugin"
       ],
       "blocks": [],
-      "lines": 36,
-      "modified": "2026-03-22T23:24:09.323837Z",
+      "lines": 37,
+      "modified": "2026-04-01T00:09:11.908138Z",
       "header_lines": 23,
       "status": "draft",
       "target": null
@@ -1609,7 +1621,7 @@
         "ralph/failure-domains"
       ],
       "lines": 397,
-      "modified": "2026-03-22T23:24:09.333187Z",
+      "modified": "2026-04-01T00:09:11.908956Z",
       "header_lines": 14,
       "status": "draft",
       "target": null
@@ -1802,8 +1814,8 @@
         "pipelineexecutor",
         "createpipelineexecutor"
       ],
-      "lines": 55,
-      "modified": "2026-03-22T23:24:09.281568Z",
+      "lines": 56,
+      "modified": "2026-04-01T00:09:11.909309Z",
       "header_lines": 12,
       "status": "draft",
       "target": null
@@ -2030,7 +2042,7 @@
       ],
       "blocks": [],
       "lines": 16,
-      "modified": "2026-03-22T23:24:09.298530Z",
+      "modified": "2026-04-01T00:09:11.910088Z",
       "header_lines": 18,
       "status": "draft",
       "target": null
@@ -2066,8 +2078,8 @@
         "id",
         "example/user"
       ],
-      "lines": 204,
-      "modified": "2026-03-22T23:24:09.264718Z",
+      "lines": 205,
+      "modified": "2026-04-01T00:09:11.910669Z",
       "header_lines": 13,
       "status": "draft",
       "target": null
@@ -2213,7 +2225,7 @@
       ],
       "blocks": [],
       "lines": 34,
-      "modified": "2026-03-22T23:24:09.280812Z",
+      "modified": "2026-04-01T00:09:11.910959Z",
       "header_lines": 16,
       "status": "draft",
       "target": null
@@ -2610,8 +2622,8 @@
         ":agent-protocol/commit-protocol",
         "agent-protocol/commit-protocol"
       ],
-      "lines": 191,
-      "modified": "2026-03-22T23:24:09.238123Z",
+      "lines": 192,
+      "modified": "2026-04-01T00:09:11.911836Z",
       "header_lines": 17,
       "status": "draft",
       "target": null
@@ -2923,8 +2935,8 @@
       "blocks": [
         "sqlite/overview"
       ],
-      "lines": 94,
-      "modified": "2026-03-22T23:24:09.374481Z",
+      "lines": 95,
+      "modified": "2026-04-01T00:09:11.912267Z",
       "header_lines": 14,
       "status": "draft",
       "target": null
@@ -2952,7 +2964,7 @@
         "config/overview"
       ],
       "lines": 43,
-      "modified": "2026-03-22T23:24:09.266288Z",
+      "modified": "2026-04-01T00:09:11.912432Z",
       "header_lines": 14,
       "status": "draft",
       "target": null
@@ -3047,7 +3059,7 @@
         "api/endpoints"
       ],
       "lines": 144,
-      "modified": "2026-03-22T23:24:09.242570Z",
+      "modified": "2026-04-01T00:09:11.912902Z",
       "header_lines": 10,
       "status": "draft",
       "target": null
@@ -3132,7 +3144,7 @@
         "naming/conventions"
       ],
       "lines": 446,
-      "modified": "2026-03-22T23:24:12.928790Z",
+      "modified": "2026-04-01T00:09:11.913589Z",
       "header_lines": 14,
       "status": "draft",
       "target": null
@@ -3278,7 +3290,7 @@
         ":error-handling"
       ],
       "lines": 82,
-      "modified": "2026-03-22T20:27:13.047051Z",
+      "modified": "2026-04-01T00:10:48.690740Z",
       "header_lines": 12,
       "status": "generated",
       "target": null
@@ -3312,8 +3324,8 @@
       "status": "draft",
       "target": null
     },
-    "@specs/speclangd.ts": {
-      "id": "@specs/speclangd.ts",
+    "@specs/speclangd-ts": {
+      "id": "@specs/speclangd-ts",
       "file": "specs/speclangd.ts.spec.md",
       "version": "1.0.0",
       "layer": 5,
@@ -3341,7 +3353,7 @@
         "speclangd.ts/implementation"
       ],
       "lines": 147,
-      "modified": "2026-03-22T20:27:13.125033Z",
+      "modified": "2026-04-01T00:10:29.353760Z",
       "header_lines": 6,
       "status": "draft",
       "target": null
@@ -3378,8 +3390,8 @@
       "status": "draft",
       "target": null
     },
-    "@speclang/testing-strategy.spec": {
-      "id": "@speclang/testing-strategy.spec",
+    "@speclang/testing-strategy": {
+      "id": "@speclang/testing-strategy",
       "file": "specs/testing-strategy.spec.md",
       "version": "0.1.0",
       "layer": 1,
@@ -3417,7 +3429,7 @@
         "testing-strategy/commands"
       ],
       "lines": 456,
-      "modified": "2026-03-22T23:24:09.379443Z",
+      "modified": "2026-04-01T00:08:40.948816Z",
       "header_lines": 8,
       "status": "draft",
       "target": null
@@ -3593,7 +3605,7 @@
         "transition/common-refs"
       ],
       "lines": 67,
-      "modified": "2026-03-22T23:24:09.380602Z",
+      "modified": "2026-04-01T00:10:09.888197Z",
       "header_lines": 8,
       "status": "draft",
       "target": null
@@ -3747,8 +3759,8 @@
         "specs/external-methodologies"
       ],
       "blocks": [],
-      "lines": 51,
-      "modified": "2026-03-22T23:24:09.286463Z",
+      "lines": 52,
+      "modified": "2026-04-01T00:09:11.914580Z",
       "header_lines": 12,
       "status": "draft",
       "target": null
@@ -3863,8 +3875,8 @@
         "specs/spec-format"
       ],
       "blocks": [],
-      "lines": 18,
-      "modified": "2026-03-22T23:24:09.373528Z",
+      "lines": 19,
+      "modified": "2026-04-01T00:09:11.915010Z",
       "header_lines": 13,
       "status": "draft",
       "target": null
@@ -3929,6 +3941,37 @@
       "modified": "2026-03-22T20:27:13.127644Z",
       "header_lines": 9,
       "status": "generated",
+      "target": null
+    },
+    "@specs/performance": {
+      "id": "@specs/performance",
+      "file": "specs/performance.spec.md",
+      "version": "1.0.0",
+      "layer": 5,
+      "project_level": "Alpha",
+      "agent_support": "agent_autonomous",
+      "tags": [
+        "testing",
+        "performance",
+        "benchmark",
+        "SLA"
+      ],
+      "imports": [],
+      "short": "Performance testing and benchmark specifications",
+      "refs": [],
+      "depends_on": [],
+      "children": [],
+      "content_refs": [],
+      "blocks": [
+        "scenarios",
+        "slas",
+        "thresholds",
+        "completion"
+      ],
+      "lines": 213,
+      "modified": "2026-04-01T00:17:30.859178Z",
+      "header_lines": 10,
+      "status": "draft",
       "target": null
     },
     "@speclang/registry": {
@@ -4170,8 +4213,8 @@
       "blocks": [
         "daemon/overview"
       ],
-      "lines": 63,
-      "modified": "2026-03-22T23:24:09.272229Z",
+      "lines": 64,
+      "modified": "2026-04-01T00:09:11.915357Z",
       "header_lines": 15,
       "status": "draft",
       "target": null
@@ -4316,8 +4359,8 @@
       "refs": [],
       "depends_on": [],
       "children": [
-        "@speclang/test-specs/format",
-        "@speclang/test-specs/examples"
+        "@speclang/test-specs/format.spec",
+        "@speclang/test-specs/examples.spec"
       ],
       "content_refs": [
         "speclang/test-specs/format",
@@ -4327,7 +4370,7 @@
         "tests/philosophy"
       ],
       "lines": 35,
-      "modified": "2026-03-22T23:24:09.378987Z",
+      "modified": "2026-04-01T00:10:24.926098Z",
       "header_lines": 13,
       "status": "draft",
       "target": "src/test-specs/"
@@ -4967,7 +5010,7 @@
         "database"
       ],
       "lines": 22,
-      "modified": "2026-03-31T19:04:16.701476Z",
+      "modified": "2026-04-01T00:14:51.612514Z",
       "header_lines": 10,
       "status": "generated",
       "target": null
@@ -10739,37 +10782,6 @@
       "status": "draft",
       "target": null
     },
-    "@specs/testing/performance": {
-      "id": "@specs/testing/performance",
-      "file": "specs/testing.spec.dir/performance.spec.md",
-      "version": "1.0.0",
-      "layer": 5,
-      "project_level": "Alpha",
-      "agent_support": "agent_autonomous",
-      "tags": [
-        "testing",
-        "performance",
-        "benchmark",
-        "SLA"
-      ],
-      "imports": [],
-      "short": "Performance testing and benchmark specifications",
-      "refs": [],
-      "depends_on": [],
-      "children": [],
-      "content_refs": [],
-      "blocks": [
-        "scenarios",
-        "slas",
-        "thresholds",
-        "completion"
-      ],
-      "lines": 213,
-      "modified": "2026-03-31T19:01:40.118683Z",
-      "header_lines": 10,
-      "status": "draft",
-      "target": null
-    },
     "@speclang/tools/api": {
       "id": "@speclang/tools/api",
       "file": "specs/tools.spec.dir/api.spec.md",
@@ -14556,95 +14568,101 @@
   "graph": {
     "dependencies": {
       "@speclang/autonomous-validation": [
-        "speclang/autonomous-validation/rules",
-        "speclang/headers",
         "speclang/autonomous-validation/scoring",
-        "speclang/validation"
+        "speclang/validation",
+        "speclang/headers",
+        "speclang/autonomous-validation/rules"
       ],
-      "@unknown/core.spec.md": [
-        "@unknown/daemon.spec.md",
+      "@speclang/core": [
+        "@unknown/skills.spec.md",
         "@speclang/test-specs",
-        "@unknown/spec-format.spec.md",
-        "@speclang/skills",
+        "@unknown/agents.spec.md",
+        "@speclang/core",
+        "@speclang/project-layout",
+        "@unknown/file-types.spec.md",
+        "@unknown/cascade.spec.md",
         "@speclang/directory-structure",
-        "@unknown/core.spec.md",
-        "@speclang/project-layout"
+        "@unknown/concurrency.spec.md",
+        "@unknown/daemon.spec.md",
+        "@unknown/spec-format.spec.md",
+        "@unknown/entities.spec.md",
+        "@speclang/skills"
       ],
       "@specs/safety-detection": [
-        "@specs/safety",
-        "speclang/skills"
+        "speclang/skills",
+        "@specs/safety"
       ],
       "@unknown/headers.spec.md": [
-        "specs/other#block",
-        "@unknown/spec-format.spec.md"
+        "@unknown/spec-format.spec.md",
+        "specs/other#block"
       ],
       "@speclang/index/tools": [
-        "speclang/tools",
-        "@specs/indexer"
+        "@specs/indexer",
+        "speclang/tools"
       ],
       "@speclang/agent-support": [
         "speclang/agent-support/human-only"
       ],
       "@unknown/parser.spec.md": [
-        "specs/other#block",
-        "@unknown/parser.spec.md"
+        "@unknown/parser.spec.md",
+        "specs/other#block"
       ],
       "@unknown/demo-slash-hello.spec.md": [
         "@demo/hello",
         "specs/demo"
       ],
       "@speclang/directory-structure": [
-        "speclang/project-layout",
-        "speclang/core",
-        "specs/directory-structure/pattern",
+        "specs/directory-structure/creation",
         "speclang/directory-structure/creation",
         "speclang/directory-structure/pattern",
-        "specs/directory-structure/creation"
+        "speclang/project-layout",
+        "speclang/core",
+        "specs/directory-structure/pattern"
       ],
       "@speclang/speclang": [
-        "@unknown/core.spec.md",
-        "specs/examples/hello-world",
+        "@speclang/core",
         "@speclang/tutorial",
-        "@unknown/bootstrap.spec.md"
+        "@unknown/bootstrap.spec.md",
+        "specs/examples/hello-world"
       ],
       "@speclang/ipc": [
-        "specs/ipc/messages#messages",
-        "specs/ipc/channels#channels",
         "speclang/ipc/messages",
-        "speclang/ipc/channels"
+        "speclang/ipc/channels",
+        "specs/ipc/messages#messages",
+        "specs/ipc/channels#channels"
       ],
       "@unknown/roadmap.spec.md": [
         "@unknown/roadmap.spec.md"
       ],
       "@speclang/mcp-daemon": [
         "speclang/deployment",
-        "speclang/core",
         "speclang/mcp-daemon/architecture",
-        "speclang/daemon",
-        "speclang/mcp-daemon/config"
+        "speclang/mcp-daemon/config",
+        "speclang/core",
+        "speclang/daemon"
       ],
       "@speclang/implementation-path": [
-        "@unknown/spec-format.spec.md",
-        "specs/000-bootstrap",
-        "@unknown/sqlite.spec.md",
-        "@speclang/skills",
-        "@unknown/core.spec.md",
-        "@northstar/speclang",
-        "@unknown/agent-protocol.spec.md",
         "@speclang/git-history",
-        "@specs/indexer",
-        "@speclang/test-specs",
+        "@northstar/speclang",
         "@unknown/parser.spec.md",
-        "specs/validation/rules",
-        "@speclang/mcp",
-        "@unknown/daemon.spec.md",
-        "@unknown/opencode-plugin.spec.md",
-        "@unknown/headers.spec.md",
-        "@unknown/cascade.spec.md",
+        "specs/000-bootstrap",
+        "@unknown/agent-protocol.spec.md",
+        "@unknown/compiler.spec.md",
         "@speclang/pipeline",
-        "@specs/guard",
+        "specs/validation/rules",
+        "@unknown/cascade.spec.md",
+        "@unknown/daemon.spec.md",
         "@speclang/validation",
-        "@unknown/compiler.spec.md"
+        "@speclang/mcp",
+        "@speclang/test-specs",
+        "@specs/indexer",
+        "@unknown/spec-format.spec.md",
+        "@speclang/skills",
+        "@unknown/sqlite.spec.md",
+        "@unknown/headers.spec.md",
+        "@speclang/core",
+        "@specs/guard",
+        "@unknown/opencode-plugin.spec.md"
       ],
       "@speclang/router": [
         "@speclang/router"
@@ -14657,21 +14675,21 @@
         "@unknown/examples.spec.md"
       ],
       "@unknown/split.spec.md": [
-        "@speclang/dynamic-split",
-        "@unknown/core.spec.md"
+        "@speclang/core",
+        "@speclang/dynamic-split"
       ],
       "@specs/meta": [
         "@speclang/validation",
-        "@specs/codegen",
-        "@unknown/compiler.spec.md"
+        "@unknown/compiler.spec.md",
+        "@specs/codegen"
       ],
       "@speclang/project-maturity-levels": [
         "@speclang/project-maturity-levels/criteria",
-        "@speclang/layer-definitions",
-        "@speclang/project-maturity-levels/levels",
         "@speclang/agent-support-levels",
         "specs/headers#project_level",
-        "@speclang/project-maturity-levels"
+        "@speclang/project-maturity-levels",
+        "@speclang/project-maturity-levels/levels",
+        "@speclang/layer-definitions"
       ],
       "@speclang/lenses": [
         "speclang/lenses/mermaid",
@@ -14679,8 +14697,8 @@
         "speclang/lenses/formats"
       ],
       "@speclang/tutorial": [
-        "specs/examples/auth",
         "@unknown/bootstrap.spec.md",
+        "specs/examples/auth",
         "@speclang/speclang"
       ],
       "@speclang/agent-support-levels": [
@@ -14694,135 +14712,135 @@
         "@unknown/ralph-loop.spec.md"
       ],
       "@speclang/layer-definitions": [
-        "speclang/layer-definitions/examples",
-        "speclang/layer-definitions/abstraction"
+        "speclang/layer-definitions/abstraction",
+        "speclang/layer-definitions/examples"
       ],
       "@unknown/executor.spec.md": [
         "@unknown/executor.spec.md"
       ],
       "@speclang/mcp": [
-        "@speclang/mcp",
         "@unknown/run-modes.spec.md",
-        "@speclang/mcp.authentication",
-        "@unknown/error-handling.spec.md",
         "@unknown/sse-stream.spec.md",
-        "@unknown/cli.spec.md",
+        "@speclang/mcp.authentication",
+        "@speclang/mcp-overview",
+        "@unknown/error-handling.spec.md",
         "@unknown/configuration.spec.md",
+        "@speclang/mcp",
         "@unknown/architecture.spec.md",
-        "@speclang/mcp-overview"
+        "@unknown/cli.spec.md"
       ],
       "@specs/maturity": [
-        "@speclang/agents",
-        "@speclang/validation"
+        "@speclang/validation",
+        "@speclang/agents"
       ],
       "@unknown/compiler.spec.md": [
-        "@unknown/parser.spec.md",
-        "@unknown/compiler.spec.md"
+        "@unknown/compiler.spec.md",
+        "@unknown/parser.spec.md"
       ],
       "@speclang/agents": [
         "speclang/agent-protocol"
       ],
       "@speclang/pipeline": [
         "@unknown/hooks.spec.md",
-        "@unknown/recovery.spec.md",
         "@unknown/build.spec.md",
-        "@speclang/pipeline"
+        "@speclang/pipeline",
+        "@unknown/recovery.spec.md"
       ],
       "@speclang/auth": [
-        "speclang/auth/flows",
-        "speclang/auth/entities"
+        "speclang/auth/entities",
+        "speclang/auth/flows"
       ],
       "@unknown/examples.spec.md": [
         "@unknown/examples.spec.md"
       ],
       "@speclang/project-layout": [
         "speclang/project-layout/structure",
-        "specs/project-layout/structure",
         "speclang/project-layout/conventions",
+        "specs/project-layout/structure",
         "specs/project-layout/conventions"
       ],
       "@specs/indexer": [
-        "@unknown/core.spec.md",
-        "@unknown/headers.spec.md",
-        "@unknown/sqlite.spec.md"
+        "@speclang/core",
+        "@unknown/sqlite.spec.md",
+        "@unknown/headers.spec.md"
       ],
       "@speclang/stdlib": [
         "@speclang/stdlib",
+        "speclang/core",
         "@speclang/stdlib/types",
-        "@unknown/mapping.spec.md",
-        "speclang/core"
+        "@unknown/mapping.spec.md"
       ],
       "@speclang/skills": [
-        "@speclang/skills",
-        "speclang/core"
+        "speclang/core",
+        "@speclang/skills"
       ],
       "@specs/agent-behavior": [
-        "@speclang/agent-behavior-matrix",
         "@speclang/agent-support-levels",
+        "@speclang/agent-behavior-matrix",
         "@speclang/project-maturity-levels"
       ],
       "@unknown/index.spec.md": [
-        "@unknown/core.spec.md",
+        "@speclang/core",
         "@unknown/agent-protocol.spec.md",
         "@speclang/ui"
       ],
       "@unknown/agent-protocol.spec.md": [
-        "@speclang/git-history",
-        "@unknown/agent-protocol.spec.md"
+        "@unknown/agent-protocol.spec.md",
+        "@speclang/git-history"
       ],
       "@specs/autonomous": [
-        "@speclang/agents",
-        "@speclang/validation"
+        "@speclang/validation",
+        "@speclang/agents"
       ],
       "@unknown/bootstrap.spec.md": [
         "specs/bootstrap/execution",
         "specs/bootstrap/phases"
       ],
       "@specs/ralph": [
-        "@speclang/agents",
-        "@speclang/validation"
+        "@speclang/validation",
+        "@speclang/agents"
       ],
       "@speclang/opencode": [
+        "speclang/core",
         "speclang/daemon",
-        "speclang/agent-protocol",
-        "speclang/core"
+        "speclang/agent-protocol"
       ],
       "@speclang/mcp-ui-tools": [
-        "speclang/sqlite",
-        "speclang/agent-protocol",
-        "speclang/cascade",
-        "speclang/mcp-ui-tools/ui",
         "speclang/mcp-ui-tools/tools",
-        "speclang/mcp"
+        "speclang/mcp-ui-tools/ui",
+        "speclang/mcp",
+        "speclang/cascade",
+        "speclang/agent-protocol",
+        "speclang/sqlite"
       ],
       "@speclang/workflow": [
         "speclang/workflow/daily-use",
+        "speclang/skills",
         "speclang/cascade",
-        "speclang/core",
-        "speclang/workflow/examples",
-        "speclang/daemon",
         "speclang/workflow/setup",
-        "speclang/skills"
+        "speclang/core",
+        "speclang/daemon",
+        "speclang/workflow/examples"
       ],
       "@speclang/ui": [
-        "speclang/ui/components/event-timeline",
-        "speclang/sqlite",
-        "speclang/agent-protocol",
-        "speclang/ui/overview",
+        "speclang/ui/components/cascade-status",
         "speclang/ui/components/control-panel",
-        "speclang/ui/components/system-metrics",
+        "speclang/ui/components/log-viewer",
+        "speclang/ui/components/event-timeline",
+        "speclang/ui/visual-design",
+        "speclang/ui/overview",
+        "speclang/ui/components/queue-depth",
         "speclang/ui/components/cascade-graph",
+        "speclang/ui/state-management",
+        "speclang/mcp-ui-tools",
+        "speclang/ui/components/agent-health",
+        "speclang/mcp",
         "speclang/cascade",
         "speclang/ui/testing",
-        "speclang/ui/state-management",
-        "speclang/ui/components/cascade-status",
-        "speclang/ui/components/agent-health",
-        "speclang/ui/components/queue-depth",
-        "speclang/mcp-ui-tools",
-        "speclang/ui/components/log-viewer",
-        "speclang/ui/visual-design",
+        "speclang/agent-protocol",
         "speclang/ui/interactions",
-        "speclang/mcp"
+        "speclang/ui/components/system-metrics",
+        "speclang/sqlite"
       ],
       "@unknown/sqlite.spec.md": [
         "@unknown/sqlite.spec.md"
@@ -14834,57 +14852,57 @@
         "specs/quality"
       ],
       "@unknown/api.spec.md": [
-        "@speclang/mcp",
-        "@unknown/api.spec.md",
+        "@unknown/cli.spec.md",
         "@unknown/cascade.spec.md",
         "@speclang/validation",
-        "@unknown/cli.spec.md"
+        "@speclang/mcp",
+        "@unknown/api.spec.md"
       ],
       "@unknown/cli.spec.md": [
-        "@unknown/cli.spec.md",
-        "specs/roadmap/poc"
+        "specs/roadmap/poc",
+        "@unknown/cli.spec.md"
       ],
       "@speclang/file-naming": [
-        "specs/auth#login",
-        "speclang/core"
+        "speclang/core",
+        "specs/auth#login"
       ],
       "@speclang/deployment": [
         "speclang/daemon",
-        "@speclang/deployment",
         "speclang/core",
-        "speclang/opencode"
+        "speclang/opencode",
+        "@speclang/deployment"
       ],
       "@speclang/server": [
-        "speclang/core",
-        "speclang/mcp"
+        "speclang/mcp",
+        "speclang/core"
       ],
       "@speclang/cascade-protocol": [
-        "specs/cascade-protocol/events",
-        "specs/cascade-protocol/flow"
+        "specs/cascade-protocol/flow",
+        "specs/cascade-protocol/events"
       ],
       "@speclang/dynamic-split": [
         "speclang/headers",
-        "speclang/dynamic-split/token-budget",
+        "speclang/core",
         "speclang/dynamic-split/strategy",
-        "speclang/core"
+        "speclang/dynamic-split/token-budget"
       ],
-      "@speclang/testing-strategy.spec": [
+      "@speclang/testing-strategy": [
+        "@speclang/test-specs",
+        "@speclang/project-maturity-levels",
         "@speclang/pipeline",
         "@unknown/cascade.spec.md",
-        "@speclang/validation",
-        "@speclang/project-maturity-levels",
-        "@speclang/test-specs"
+        "@speclang/validation"
       ],
       "@speclang/validation": [
-        "speclang/validation/language-blocks",
+        "speclang/validation/rules",
         "speclang/validation/tool",
-        "speclang/validation/rules"
+        "speclang/validation/language-blocks"
       ],
       "@speclang/git-history": [
-        "speclang/core",
-        "speclang/git-history/rollback",
         "speclang/git-history/commits",
         "specs/git-history/commits",
+        "speclang/git-history/rollback",
+        "speclang/core",
         "specs/git-history/rollback"
       ],
       "@speclang/search": [
@@ -14895,22 +14913,22 @@
         "@unknown/external-methodologies.spec.md"
       ],
       "@speclang/symlinks": [
-        "@speclang/symlinks",
         "speclang/headers",
-        "speclang/core"
+        "speclang/core",
+        "@speclang/symlinks"
       ],
       "@unknown/cascade.spec.md": [
-        "@unknown/cascade.spec.md",
-        "@speclang/cascade-protocol"
+        "@speclang/cascade-protocol",
+        "@unknown/cascade.spec.md"
       ],
       "@unknown/spec-format.spec.md": [
         "@unknown/spec-format.spec.md"
       ],
       "@speclang/registry": [
-        "specs/registry/storage",
-        "speclang/registry/lookup",
         "speclang/registry/storage",
-        "specs/registry/lookup"
+        "specs/registry/lookup",
+        "specs/registry/storage",
+        "speclang/registry/lookup"
       ],
       "@speclang/validation-tool": [
         "speclang/validation-tool/api",
@@ -14927,25 +14945,25 @@
         "@unknown/daemon.spec.md"
       ],
       "@speclang/test-specs": [
+        "speclang/test-specs/examples.spec",
         "speclang/core",
-        "speclang/test-specs/format",
-        "speclang/test-specs/examples"
+        "speclang/test-specs/format.spec"
       ],
       "@specs/dashboard": [
-        "@speclang/ui-dashboard",
-        "specs/react"
+        "specs/react",
+        "@speclang/ui-dashboard"
       ],
       "@bugs/integration-test-template": [
-        "specs/bugs/other-bug",
-        "specs/related-spec"
+        "specs/related-spec",
+        "specs/bugs/other-bug"
       ],
       "@speclang/symlinks/verification": [
-        "speclang/symlinks",
-        "@speclang/symlinks"
+        "@speclang/symlinks",
+        "speclang/symlinks"
       ],
       "@speclang/symlinks/creation": [
-        "speclang/symlinks",
-        "@speclang/symlinks"
+        "@speclang/symlinks",
+        "speclang/symlinks"
       ],
       "@speclang/hooks/handlers": [
         "@unknown/hooks.spec.md"
@@ -15005,28 +15023,28 @@
       ],
       "@speclang/api.spec.dir/openapi": [
         "specs/validation/rules",
-        "@speclang/mcp",
+        "@unknown/cascade.spec.md",
         "specs/cascade/error-handling",
-        "@unknown/api.spec.md",
-        "@unknown/cascade.spec.md"
+        "@speclang/mcp",
+        "@unknown/api.spec.md"
       ],
       "@unknown/production.spec.md": [
         "@unknown/roadmap.spec.md",
-        "specs/project-maturity-levels/levels",
+        "specs/maturity/levels/startup",
         "specs/maturity/levels/beta",
-        "specs/maturity/levels/startup"
+        "specs/project-maturity-levels/levels"
       ],
       "@unknown/alpha.spec.md": [
         "@unknown/roadmap.spec.md",
-        "specs/project-maturity-levels/levels",
         "specs/maturity/levels/mvp",
-        "specs/maturity/levels/poc"
+        "specs/maturity/levels/poc",
+        "specs/project-maturity-levels/levels"
       ],
       "@unknown/beta.spec.md": [
         "@unknown/roadmap.spec.md",
-        "specs/project-maturity-levels/levels",
         "specs/maturity/levels/production",
-        "specs/maturity/levels/alpha"
+        "specs/maturity/levels/alpha",
+        "specs/project-maturity-levels/levels"
       ],
       "@unknown/mvp.spec.md": [
         "@unknown/roadmap.spec.md",
@@ -15045,21 +15063,21 @@
         "@unknown/bootstrap.spec.md"
       ],
       "@speclang/skills/code-gen": [
-        "@speclang/skills",
         "speclang/skills",
-        "specs/spec-format#format"
+        "specs/spec-format#format",
+        "@speclang/skills"
       ],
       "@speclang/skills/test-writer": [
-        "@speclang/skills",
-        "speclang/skills"
+        "speclang/skills",
+        "@speclang/skills"
       ],
       "@speclang/skills/spec-writer": [
-        "@speclang/skills",
-        "speclang/skills"
+        "speclang/skills",
+        "@speclang/skills"
       ],
       "@tests/ui-dashboard": [
-        "implementation/ui-dashboard",
-        "speclang/ui"
+        "speclang/ui",
+        "implementation/ui-dashboard"
       ],
       "@unknown/parser-python.spec.md": [
         "specs/auth#login"
@@ -15068,21 +15086,21 @@
         "@speclang/router"
       ],
       "@unknown/error-handling.spec.md": [
-        "specs/validation/rules",
-        "@speclang/mcp",
         "specs/mcp/error-handling",
-        "specs/cascade/continuous-improvement",
         "specs/roadmap/poc",
-        "@unknown/cascade.spec.md",
+        "specs/cascade/continuous-improvement",
+        "specs/validation/rules",
         "specs/safety-nets/fallback",
+        "@unknown/cascade.spec.md",
+        "@speclang/mcp",
         "specs/git-history/rollback"
       ],
       "@unknown/continuous-improvement.spec.md": [
-        "specs/config/schema",
-        "@unknown/cascade.spec.md",
         "@speclang/git-history",
-        "specs/mcp/messages",
-        "specs/project-maturity-levels/depth-requirements"
+        "specs/config/schema",
+        "specs/project-maturity-levels/depth-requirements",
+        "@unknown/cascade.spec.md",
+        "specs/mcp/messages"
       ],
       "@unknown/poc-vs-mvp.spec.md": [
         "@unknown/roadmap.spec.md"
@@ -15092,8 +15110,8 @@
       ],
       "@unknown/poc.spec.md": [
         "@unknown/roadmap.spec.md",
-        "@unknown/cascade.spec.md",
         "@speclang/agents",
+        "@unknown/cascade.spec.md",
         "@unknown/daemon.spec.md"
       ],
       "@unknown/types.spec.md": [
@@ -15124,16 +15142,16 @@
         "specs/roadmap/poc"
       ],
       "@unknown/integration.spec.md": [
-        "@unknown/cli.spec.md",
-        "specs/roadmap/poc"
+        "specs/roadmap/poc",
+        "@unknown/cli.spec.md"
       ],
       "@unknown/package-json.spec.md": [
         "specs/roadmap/poc"
       ],
       "@unknown/installation.spec.md": [
         "@unknown/roadmap.spec.md",
-        "@unknown/cli.spec.md",
-        "specs/roadmap/poc"
+        "specs/roadmap/poc",
+        "@unknown/cli.spec.md"
       ],
       "@unknown/tsconfig-json.spec.md": [
         "specs/roadmap/poc"
@@ -15142,8 +15160,8 @@
         "specs/roadmap/poc"
       ],
       "@unknown/header-parser.spec.md": [
-        "@speclang/auth",
-        "specs/roadmap/poc"
+        "specs/roadmap/poc",
+        "@speclang/auth"
       ],
       "@unknown/database.spec.md": [
         "specs/roadmap/poc"
@@ -15173,23 +15191,23 @@
         "speclang/lenses"
       ],
       "@speclang/lenses/mermaid": [
-        "@speclang/lenses",
-        "@unknown/agent-protocol.spec.md"
+        "@unknown/agent-protocol.spec.md",
+        "@speclang/lenses"
       ],
       "@specs/lenses": [
         "specs/core#blocks"
       ],
       "@speclang/lenses/prose": [
+        "specs/path#block",
         "specs/perfect-traceability",
+        "specs/context-preservation",
         "specs/getting-started",
         "specs/path",
-        "specs/context-preservation",
-        "specs/path#block",
         "specs/autonomous-agents"
       ],
       "@unknown/validate_refs.py.spec.md": [
-        "@unknown/scripts.spec.md",
         "specs/other/spec",
+        "@unknown/scripts.spec.md",
         "specs/other#block-name"
       ],
       "@unknown/fix-headers.spec.md": [
@@ -15214,25 +15232,25 @@
         "@unknown/scripts.spec.md"
       ],
       "@unknown/packaging.spec.md": [
-        "@unknown/scripts.spec.md",
         "@speclang/deployment",
-        "specs/docs/packaging-strategy"
+        "specs/docs/packaging-strategy",
+        "@unknown/scripts.spec.md"
       ],
       "@speclang/scripts.hard-checks.py": [
         "@unknown/scripts.spec.md"
       ],
       "@unknown/rename-spec-files.spec.md": [
-        "specs/auth#login",
-        "specs/Auth#login"
+        "specs/Auth#login",
+        "specs/auth#login"
       ],
       "@speclang/scripts.verify-system.py": [
         "@unknown/scripts.spec.md"
       ],
       "@unknown/validate-refs.spec.md": [
-        "specs/auth#login",
         "specs/users#model",
+        "specs/old-file",
         "@speclang/auth",
-        "specs/old-file"
+        "specs/auth#login"
       ],
       "@speclang/deployment/enterprise": [
         "speclang/daemon",
@@ -15251,34 +15269,34 @@
         "specs/auth#login"
       ],
       "@speclang/cascade-protocol/events": [
-        "specs/cascade-protocol/flow",
         "specs/users#profile",
+        "specs/cascade-protocol/flow",
         "@speclang/cascade-protocol"
       ],
       "@speclang/cascade-protocol/flow": [
-        "specs/cascade-protocol/events",
-        "@unknown/core.spec.md",
-        "@speclang/cascade-protocol"
+        "@speclang/core",
+        "@speclang/cascade-protocol",
+        "specs/cascade-protocol/events"
       ],
       "@speclang/test-specs/format": [
         "speclang/core"
       ],
       "@speclang/test-specs/examples": [
         "specs/hash#bcrypt",
-        "specs/auth#login",
+        "speclang/core",
         "@speclang/auth",
-        "speclang/core"
+        "specs/auth#login"
       ],
       "@specs/guard": [
         "specs/agents/types",
         "specs/core#agents"
       ],
       "@unknown/depth-requirements.spec.md": [
-        "specs/project-maturity-levels/levels",
-        "@speclang/layer-definitions",
-        "@unknown/cascade.spec.md",
         "@speclang/project-maturity-levels",
-        "specs/project-maturity-levels/criteria"
+        "@unknown/cascade.spec.md",
+        "specs/project-maturity-levels/levels",
+        "specs/project-maturity-levels/criteria",
+        "@speclang/layer-definitions"
       ],
       "@speclang/project-maturity-levels/levels": [
         "@speclang/project-maturity-levels"
@@ -15288,29 +15306,29 @@
       ],
       "@speclang/layer-definitions/examples": [
         "specs/auth/login-implementation",
-        "@speclang/auth",
-        "specs/auth/login-algorithm",
-        "specs/deployment/k8s",
         "specs/auth/login",
-        "specs/auth/entities"
+        "@speclang/auth",
+        "specs/deployment/k8s",
+        "specs/auth/entities",
+        "specs/auth/login-algorithm"
       ],
       "@unknown/interactions.spec.md": [
         "specs/cascade#triggers",
-        "specs/ui-dashboard/spec-editor",
         "@speclang/ui-dashboard",
-        "@speclang/ui"
+        "@speclang/ui",
+        "specs/ui-dashboard/spec-editor"
       ],
       "@unknown/visual-design.spec.md": [
         "@speclang/ui-dashboard",
         "@speclang/ui"
       ],
       "@unknown/testing.spec.md": [
+        "@speclang/test-specs",
         "specs/pipeline#test-stages",
-        "@speclang/ui-dashboard",
-        "@speclang/testing-strategy.spec",
-        "@speclang/mcp-ui-tools",
         "@speclang/ui",
-        "@speclang/test-specs"
+        "@speclang/testing-strategy",
+        "@speclang/mcp-ui-tools",
+        "@speclang/ui-dashboard"
       ],
       "@speclang/tools/api": [
         "speclang/core",
@@ -15360,44 +15378,44 @@
         "@speclang/ui"
       ],
       "@speclang/mcp-ui-tools/ui": [
-        "speclang/sqlite",
-        "@speclang/mcp",
-        "speclang/agent-protocol",
-        "speclang/cascade",
-        "@unknown/cascade.spec.md",
         "@unknown/sqlite.spec.md",
         "@speclang/ui",
+        "speclang/mcp",
         "@unknown/agent-protocol.spec.md",
-        "speclang/mcp"
+        "speclang/cascade",
+        "@unknown/cascade.spec.md",
+        "speclang/agent-protocol",
+        "@speclang/mcp",
+        "speclang/sqlite"
       ],
       "@speclang/mcp-ui-tools/tools": [
-        "speclang/sqlite",
-        "speclang/agent-protocol",
-        "speclang/cascade",
-        "specs/mcp#sse",
         "@unknown/sqlite.spec.md",
-        "speclang/mcp"
+        "speclang/sqlite",
+        "speclang/mcp",
+        "speclang/cascade",
+        "speclang/agent-protocol",
+        "specs/mcp#sse"
       ],
       "@unknown/file-types.spec.md": [
         "specs/auth#login"
       ],
       "@unknown/entities.spec.md": [
-        "@unknown/core.spec.md",
-        "specs/auth#login",
-        "specs/auth#login-handler"
+        "@speclang/core",
+        "specs/auth#login-handler",
+        "specs/auth#login"
       ],
       "@speclang/mcp-daemon/architecture": [
         "speclang/deployment",
-        "speclang/daemon",
-        "speclang/core"
+        "speclang/core",
+        "speclang/daemon"
       ],
       "@speclang/mcp-daemon/config": [
         "speclang/deployment",
-        "speclang/daemon",
-        "speclang/core"
+        "speclang/core",
+        "speclang/daemon"
       ],
       "@specs/split": [
-        "@unknown/core.spec.md"
+        "@speclang/core"
       ],
       "@speclang/stdlib/types": [
         "@speclang/stdlib"
@@ -15415,24 +15433,24 @@
         "@unknown/examples.spec.md"
       ],
       "@unknown/hello-world-cascade.spec.md": [
-        "@demo/hello",
-        "@unknown/cascade.spec.md",
-        "@speclang/pipeline",
-        "@unknown/examples.spec.md",
+        "@unknown/compiler.spec.md",
         "@unknown/agent-protocol.spec.md",
-        "@unknown/compiler.spec.md"
+        "@speclang/pipeline",
+        "@unknown/cascade.spec.md",
+        "@demo/hello",
+        "@unknown/examples.spec.md"
       ],
       "@specs/examples/crud-app": [
-        "@unknown/core.spec.md",
+        "@speclang/core",
         "specs/examples/hello-world",
         "specs/examples/auth"
       ],
       "@specs/examples/auth": [
-        "@unknown/core.spec.md",
+        "@speclang/core",
         "specs/examples/hello-world"
       ],
       "@specs/examples/hello-world": [
-        "@unknown/core.spec.md"
+        "@speclang/core"
       ],
       "@speclang/opencode-plugin.spec.dir/convergence": [
         "speclang/cascade",
@@ -15452,8 +15470,8 @@
         "speclang/opencode-plugin.spec.dir/overview"
       ],
       "@speclang/opencode-plugin.spec.dir/mcp-client": [
-        "speclang/opencode-plugin.spec.dir/architecture",
-        "speclang/mcp"
+        "speclang/mcp",
+        "speclang/opencode-plugin.spec.dir/architecture"
       ],
       "@speclang/opencode-plugin.spec.dir/architecture": [
         "speclang/opencode-plugin.spec.dir/overview"
@@ -15465,8 +15483,8 @@
         "speclang/opencode-plugin.spec.dir/architecture"
       ],
       "@speclang/opencode-plugin.spec.dir/event-system": [
-        "speclang/opencode-plugin.spec.dir/architecture",
-        "speclang/opencode"
+        "speclang/opencode",
+        "speclang/opencode-plugin.spec.dir/architecture"
       ],
       "@speclang/opencode-plugin.spec.dir/plugin-lifecycle": [
         "speclang/opencode-plugin.spec.dir/overview"
@@ -15475,8 +15493,8 @@
         "speclang/opencode-plugin.spec.dir/architecture"
       ],
       "@speclang/opencode-plugin.spec.dir/tools": [
-        "speclang/opencode-plugin.spec.dir/configuration",
-        "speclang/mcp"
+        "speclang/mcp",
+        "speclang/opencode-plugin.spec.dir/configuration"
       ],
       "@unknown/global-options.spec.md": [
         "@unknown/cli.spec.md"
@@ -15506,26 +15524,26 @@
       ],
       "@unknown/adoption-patterns.spec.md": [
         "@speclang/auth",
-        "@unknown/external-methodologies.spec.md",
         "@unknown/sqlite.spec.md",
+        "@unknown/external-methodologies.spec.md",
         "@speclang/go"
       ],
       "@unknown/recommendations.spec.md": [
-        "@speclang/agent-behavior-matrix",
-        "specs/external-methodologies/adoption-patterns",
-        "@unknown/headers.spec.md",
-        "@unknown/api.spec.md",
-        "@speclang/validation",
-        "@unknown/external-methodologies.spec.md",
-        "@speclang/autonomous-validation",
-        "@unknown/core.spec.md",
         "@speclang/test-specs",
-        "@unknown/opencode-plugin.spec.md"
+        "@speclang/autonomous-validation",
+        "@unknown/headers.spec.md",
+        "@speclang/core",
+        "@unknown/opencode-plugin.spec.md",
+        "@speclang/validation",
+        "specs/external-methodologies/adoption-patterns",
+        "@unknown/external-methodologies.spec.md",
+        "@speclang/agent-behavior-matrix",
+        "@unknown/api.spec.md"
       ],
       "@unknown/bmad-comparison.spec.md": [
         "specs/external-methodologies/adoption-patterns",
-        "@unknown/external-methodologies.spec.md",
-        "@unknown/opencode-plugin.spec.md"
+        "@unknown/opencode-plugin.spec.md",
+        "@unknown/external-methodologies.spec.md"
       ],
       "@speclang/git-history/commits": [
         "@speclang/git-history",
@@ -15537,9 +15555,9 @@
       ],
       "@specs/agent-behavior/behavior-matrix": [
         "speclang/agent-support-levels",
-        "@speclang/agent-behavior-matrix",
         "speclang/agent-behavior-matrix",
-        "speclang/project-maturity-levels"
+        "speclang/project-maturity-levels",
+        "@speclang/agent-behavior-matrix"
       ],
       "@speclang/registry/lookup": [
         "@speclang/registry"
@@ -15564,33 +15582,33 @@
         "specs/auth/login"
       ],
       "@speclang/project-layout/structure": [
-        "speclang/project-layout",
-        "@speclang/project-layout"
+        "@speclang/project-layout",
+        "speclang/project-layout"
       ],
       "@speclang/project-layout/conventions": [
-        "speclang/project-layout",
+        "@speclang/project-layout",
         "@speclang/auth",
-        "@speclang/project-layout"
+        "speclang/project-layout"
       ],
       "@unknown/run-modes.spec.md": [
         "@speclang/mcp"
       ],
       "@speclang/mcp-overview": [
-        "@speclang/mcp",
         "@unknown/sqlite.spec.md",
+        "@speclang/mcp",
         "@unknown/daemon.spec.md"
       ],
       "@speclang/mcp/openapi-generation": [
+        "speclang/mcp",
         "speclang/cli.spec",
-        "speclang/tools",
-        "speclang/mcp"
+        "speclang/tools"
       ],
       "@unknown/messages.spec.md": [
-        "@speclang/mcp",
-        "specs/cascade/continuous-improvement",
-        "@unknown/cascade.spec.md",
         "@unknown/sqlite.spec.md",
-        "@unknown/agent-protocol.spec.md"
+        "specs/cascade/continuous-improvement",
+        "@unknown/agent-protocol.spec.md",
+        "@unknown/cascade.spec.md",
+        "@speclang/mcp"
       ],
       "@unknown/sse-stream.spec.md": [
         "@speclang/mcp"
@@ -15599,8 +15617,8 @@
         "@speclang/mcp"
       ],
       "@speclang/mcp-openapi-generation-tests": [
-        "speclang/test-specs",
-        "speclang/mcp/openapi-generation"
+        "speclang/mcp/openapi-generation",
+        "speclang/test-specs"
       ],
       "@speclang/mcp.authentication": [
         "@speclang/mcp"
@@ -15619,36 +15637,36 @@
         "@speclang/directory-structure"
       ],
       "@speclang/directory-structure/creation": [
+        "@speclang/auth",
         "speclang/directory-structure",
-        "@speclang/directory-structure",
-        "@speclang/auth"
+        "@speclang/directory-structure"
       ],
       "@speclang/spec-format/blocks": [
-        "specs/auth#login",
+        "@unknown/spec-format.spec.md",
         "specs/users#User",
-        "@unknown/spec-format.spec.md"
+        "specs/auth#login"
       ],
       "@speclang/spec-format/structure": [
-        "@speclang/auth",
-        "@unknown/spec-format.spec.md"
+        "@unknown/spec-format.spec.md",
+        "@speclang/auth"
       ],
       "@speclang/file-naming/patterns": [
         "speclang/core"
       ],
       "@speclang/file-naming/extensions": [
-        "specs/auth#login",
-        "speclang/core"
+        "speclang/core",
+        "specs/auth#login"
       ],
       "@specs/sample.ts": [
-        "specs/auth/entities",
-        "specs/auth/operations#login"
+        "specs/auth/operations#login",
+        "specs/auth/entities"
       ]
     },
     "dependents": {
       "speclang/headers": [
-        "@speclang/dynamic-split",
+        "@speclang/symlinks",
         "@speclang/autonomous-validation",
-        "@speclang/symlinks"
+        "@speclang/dynamic-split"
       ],
       "speclang/validation": [
         "@speclang/autonomous-validation"
@@ -15659,83 +15677,114 @@
       "speclang/autonomous-validation/scoring": [
         "@speclang/autonomous-validation"
       ],
-      "@unknown/core.spec.md": [
+      "@unknown/entities.spec.md": [
+        "@speclang/core"
+      ],
+      "@unknown/cascade.spec.md": [
+        "@unknown/depth-requirements.spec.md",
+        "@unknown/poc.spec.md",
+        "@speclang/mcp-ui-tools/ui",
+        "@speclang/implementation-path",
+        "@unknown/error-handling.spec.md",
+        "@speclang/testing-strategy",
+        "@speclang/api.spec.dir/openapi",
+        "@speclang/core",
+        "@unknown/cascade.spec.md",
+        "@unknown/build-yaml.spec.md",
+        "@unknown/hello-world-cascade.spec.md",
+        "@unknown/continuous-improvement.spec.md",
+        "@unknown/messages.spec.md",
+        "@unknown/api.spec.md"
+      ],
+      "@unknown/file-types.spec.md": [
+        "@speclang/core"
+      ],
+      "@unknown/agents.spec.md": [
+        "@speclang/core"
+      ],
+      "@unknown/skills.spec.md": [
+        "@speclang/core"
+      ],
+      "@unknown/concurrency.spec.md": [
+        "@speclang/core"
+      ],
+      "@speclang/core": [
+        "@specs/examples/hello-world",
         "@unknown/split.spec.md",
+        "@specs/split",
+        "@speclang/speclang",
+        "@specs/indexer",
+        "@specs/examples/auth",
+        "@speclang/implementation-path",
         "@speclang/cascade-protocol/flow",
+        "@unknown/index.spec.md",
+        "@speclang/core",
         "@specs/examples/crud-app",
         "@unknown/recommendations.spec.md",
-        "@speclang/speclang",
-        "@specs/examples/hello-world",
-        "@specs/split",
-        "@unknown/index.spec.md",
-        "@specs/indexer",
-        "@unknown/entities.spec.md",
-        "@unknown/core.spec.md",
-        "@specs/examples/auth",
-        "@speclang/implementation-path"
+        "@unknown/entities.spec.md"
       ],
       "@speclang/directory-structure": [
-        "@unknown/core.spec.md",
+        "@speclang/core",
         "@speclang/directory-structure/pattern",
         "@speclang/directory-structure/creation"
       ],
       "@speclang/project-layout": [
-        "@unknown/core.spec.md",
-        "@speclang/project-layout/conventions",
-        "@speclang/project-layout/structure"
+        "@speclang/core",
+        "@speclang/project-layout/structure",
+        "@speclang/project-layout/conventions"
       ],
       "@unknown/daemon.spec.md": [
-        "@unknown/convergence.spec.md",
-        "@unknown/poc.spec.md",
-        "@speclang/mcp-overview",
-        "@unknown/daemon.spec.md",
-        "@speclang/daemon/architecture",
-        "@unknown/routing.spec.md",
-        "@unknown/core.spec.md",
-        "@unknown/rust.spec.md",
         "@unknown/events.spec.md",
-        "@speclang/implementation-path"
+        "@unknown/routing.spec.md",
+        "@unknown/poc.spec.md",
+        "@unknown/rust.spec.md",
+        "@speclang/implementation-path",
+        "@speclang/daemon/architecture",
+        "@speclang/mcp-overview",
+        "@speclang/core",
+        "@unknown/convergence.spec.md",
+        "@unknown/daemon.spec.md"
       ],
       "@speclang/skills": [
-        "@speclang/skills/test-writer",
-        "@speclang/skills/spec-writer",
         "@speclang/skills",
-        "@unknown/core.spec.md",
-        "@speclang/skills/code-gen",
-        "@speclang/implementation-path"
+        "@speclang/implementation-path",
+        "@speclang/skills/spec-writer",
+        "@speclang/core",
+        "@speclang/skills/test-writer",
+        "@speclang/skills/code-gen"
       ],
       "@speclang/test-specs": [
         "@unknown/testing.spec.md",
-        "@speclang/testing-strategy.spec",
-        "@unknown/recommendations.spec.md",
-        "@unknown/core.spec.md",
-        "@speclang/implementation-path"
+        "@speclang/implementation-path",
+        "@speclang/testing-strategy",
+        "@speclang/core",
+        "@unknown/recommendations.spec.md"
       ],
       "@unknown/spec-format.spec.md": [
-        "@unknown/headers.spec.md",
-        "@unknown/spec-format.spec.md",
         "@speclang/spec-format/blocks",
-        "@unknown/core.spec.md",
+        "@speclang/implementation-path",
+        "@unknown/headers.spec.md",
+        "@speclang/core",
         "@speclang/spec-format/structure",
-        "@speclang/implementation-path"
+        "@unknown/spec-format.spec.md"
       ],
       "@specs/safety": [
         "@specs/safety-detection"
       ],
       "speclang/skills": [
-        "@speclang/skills/test-writer",
         "@speclang/skills/spec-writer",
+        "@speclang/workflow",
+        "@speclang/skills/test-writer",
         "@specs/safety-detection",
-        "@speclang/skills/code-gen",
-        "@speclang/workflow"
+        "@speclang/skills/code-gen"
       ],
       "specs/other#block": [
-        "@unknown/headers.spec.md",
-        "@unknown/parser.spec.md"
+        "@unknown/parser.spec.md",
+        "@unknown/headers.spec.md"
       ],
       "@specs/indexer": [
-        "@speclang/index/tools",
-        "@speclang/implementation-path"
+        "@speclang/implementation-path",
+        "@speclang/index/tools"
       ],
       "speclang/tools": [
         "@speclang/mcp/openapi-generation",
@@ -15746,8 +15795,8 @@
       ],
       "@unknown/parser.spec.md": [
         "@unknown/compiler.spec.md",
-        "@unknown/parser.spec.md",
-        "@speclang/implementation-path"
+        "@speclang/implementation-path",
+        "@unknown/parser.spec.md"
       ],
       "specs/demo": [
         "@unknown/demo-slash-hello.spec.md"
@@ -15763,35 +15812,35 @@
         "@speclang/directory-structure"
       ],
       "speclang/core": [
-        "@speclang/file-naming/extensions",
-        "@speclang/lenses",
-        "@speclang/skills",
-        "@speclang/deployment",
-        "@speclang/deployment/enterprise",
-        "@speclang/file-naming",
-        "@speclang/test-specs/examples",
-        "@speclang/deployment/light",
         "@speclang/git-history",
-        "@speclang/directory-structure",
-        "@speclang/stdlib",
-        "@speclang/test-specs",
-        "@speclang/test-specs/format",
-        "@speclang/mcp-daemon",
-        "@speclang/mcp-daemon/config",
-        "@speclang/opencode",
-        "@speclang/tools/implementations",
-        "@speclang/tools/api",
-        "@speclang/mcp-daemon/architecture",
+        "@speclang/workflow",
         "@speclang/server",
-        "@speclang/dynamic-split",
+        "@speclang/directory-structure",
+        "@speclang/lenses",
+        "@speclang/stdlib",
         "@speclang/symlinks",
+        "@speclang/tools/api",
+        "@speclang/test-specs/format",
+        "@speclang/tools/implementations",
+        "@speclang/deployment/light",
+        "@speclang/test-specs/examples",
+        "@speclang/dynamic-split",
+        "@speclang/file-naming",
+        "@speclang/deployment/enterprise",
+        "@speclang/test-specs",
+        "@speclang/deployment",
         "@speclang/file-naming/patterns",
-        "@speclang/workflow"
+        "@speclang/mcp-daemon/architecture",
+        "@speclang/skills",
+        "@speclang/opencode",
+        "@speclang/file-naming/extensions",
+        "@speclang/mcp-daemon",
+        "@speclang/mcp-daemon/config"
       ],
       "speclang/project-layout": [
-        "@speclang/directory-structure",
         "@speclang/project-layout/conventions",
-        "@speclang/project-layout/structure"
+        "@speclang/project-layout/structure",
+        "@speclang/directory-structure"
       ],
       "specs/directory-structure/pattern": [
         "@speclang/directory-structure"
@@ -15800,8 +15849,8 @@
         "@speclang/directory-structure"
       ],
       "@unknown/bootstrap.spec.md": [
-        "@speclang/tutorial",
         "@speclang/bootstrap/execution",
+        "@speclang/tutorial",
         "@speclang/bootstrap/phases",
         "@speclang/speclang"
       ],
@@ -15826,15 +15875,15 @@
         "@speclang/ipc"
       ],
       "@unknown/roadmap.spec.md": [
-        "@unknown/production.spec.md",
-        "@unknown/installation.spec.md",
-        "@unknown/poc-vs-mvp.spec.md",
-        "@unknown/alpha.spec.md",
         "@unknown/poc.spec.md",
+        "@unknown/alpha.spec.md",
         "@unknown/beta.spec.md",
+        "@unknown/installation.spec.md",
         "@unknown/roadmap.spec.md",
+        "@unknown/poc-vs-mvp.spec.md",
         "@unknown/poc-audit.spec.md",
-        "@unknown/mvp.spec.md"
+        "@unknown/mvp.spec.md",
+        "@unknown/production.spec.md"
       ],
       "speclang/mcp-daemon/architecture": [
         "@speclang/mcp-daemon"
@@ -15843,123 +15892,108 @@
         "@speclang/mcp-daemon"
       ],
       "speclang/daemon": [
-        "@speclang/mcp-daemon",
-        "@speclang/mcp-daemon/config",
-        "@speclang/opencode",
         "@speclang/deployment",
-        "@speclang/deployment/enterprise",
+        "@speclang/opencode",
         "@speclang/mcp-daemon/architecture",
-        "@speclang/workflow"
+        "@speclang/mcp-daemon",
+        "@speclang/workflow",
+        "@speclang/deployment/enterprise",
+        "@speclang/mcp-daemon/config"
       ],
       "speclang/deployment": [
-        "@speclang/mcp-daemon/config",
         "@speclang/mcp-daemon",
-        "@speclang/mcp-daemon/architecture"
+        "@speclang/mcp-daemon/architecture",
+        "@speclang/mcp-daemon/config"
       ],
       "@speclang/mcp": [
-        "@speclang/mcp",
-        "@speclang/mcp-ui-tools/ui",
         "@unknown/run-modes.spec.md",
-        "@unknown/search.spec.md",
+        "@unknown/sse-stream.spec.md",
+        "@speclang/mcp-ui-tools/ui",
         "@speclang/mcp.authentication",
+        "@unknown/commands.spec.md",
+        "@speclang/mcp-overview",
+        "@speclang/implementation-path",
+        "@unknown/error-handling.spec.md",
+        "@unknown/search.spec.md",
+        "@speclang/api.spec.dir/openapi",
+        "@unknown/messages.spec.md",
+        "@unknown/configuration.spec.md",
+        "@unknown/architecture.spec.md",
         "@unknown/specs.spec.md",
         "@unknown/locks.spec.md",
-        "@unknown/api.spec.md",
-        "@unknown/error-handling.spec.md",
-        "@unknown/sse-stream.spec.md",
-        "@unknown/configuration.spec.md",
-        "@unknown/commands.spec.md",
-        "@unknown/messages.spec.md",
-        "@speclang/mcp-overview",
-        "@speclang/api.spec.dir/openapi",
-        "@unknown/architecture.spec.md",
-        "@speclang/implementation-path"
+        "@speclang/mcp",
+        "@unknown/api.spec.md"
       ],
       "@speclang/validation": [
-        "@speclang/testing-strategy.spec",
-        "@unknown/api.spec.md",
-        "@specs/ralph",
+        "@specs/autonomous",
+        "@speclang/implementation-path",
+        "@speclang/testing-strategy",
         "@specs/maturity",
         "@unknown/recommendations.spec.md",
         "@specs/meta",
         "@specs/directory",
-        "@specs/autonomous",
-        "@speclang/implementation-path"
+        "@specs/ralph",
+        "@unknown/api.spec.md"
       ],
       "@unknown/compiler.spec.md": [
-        "@unknown/hello-world-cascade.spec.md",
-        "@speclang/implementation-path",
+        "@unknown/go.spec.md",
         "@unknown/compiler.spec.md",
-        "@specs/meta",
+        "@speclang/implementation-path",
         "@unknown/python.spec.md",
-        "@unknown/go.spec.md"
+        "@unknown/hello-world-cascade.spec.md",
+        "@specs/meta"
       ],
       "@unknown/sqlite.spec.md": [
-        "@speclang/mcp-ui-tools/ui",
-        "@unknown/adoption-patterns.spec.md",
-        "@speclang/mcp-ui-tools/tools",
-        "@speclang/mcp-overview",
         "@unknown/sqlite.spec.md",
-        "@unknown/messages.spec.md",
-        "@specs/indexer",
-        "@speclang/implementation-path"
-      ],
-      "@unknown/cascade.spec.md": [
         "@speclang/mcp-ui-tools/ui",
-        "@unknown/continuous-improvement.spec.md",
-        "@speclang/testing-strategy.spec",
-        "@unknown/build-yaml.spec.md",
-        "@unknown/poc.spec.md",
-        "@unknown/api.spec.md",
-        "@unknown/cascade.spec.md",
-        "@unknown/error-handling.spec.md",
-        "@unknown/hello-world-cascade.spec.md",
-        "@unknown/depth-requirements.spec.md",
-        "@unknown/messages.spec.md",
-        "@speclang/api.spec.dir/openapi",
-        "@speclang/implementation-path"
+        "@specs/indexer",
+        "@speclang/mcp-overview",
+        "@speclang/implementation-path",
+        "@speclang/mcp-ui-tools/tools",
+        "@unknown/adoption-patterns.spec.md",
+        "@unknown/messages.spec.md"
       ],
       "@specs/guard": [
         "@speclang/implementation-path"
       ],
       "@speclang/pipeline": [
-        "@speclang/testing-strategy.spec",
-        "@unknown/build-yaml.spec.md",
-        "@unknown/hello-world-cascade.spec.md",
+        "@speclang/implementation-path",
+        "@speclang/testing-strategy",
         "@speclang/pipeline",
-        "@speclang/implementation-path"
+        "@unknown/build-yaml.spec.md",
+        "@unknown/hello-world-cascade.spec.md"
       ],
       "@unknown/headers.spec.md": [
-        "@unknown/recommendations.spec.md",
         "@specs/indexer",
-        "@speclang/implementation-path"
+        "@speclang/implementation-path",
+        "@unknown/recommendations.spec.md"
       ],
       "specs/validation/rules": [
+        "@speclang/implementation-path",
         "@speclang/api.spec.dir/openapi",
-        "@unknown/error-handling.spec.md",
-        "@speclang/implementation-path"
+        "@unknown/error-handling.spec.md"
       ],
       "@unknown/opencode-plugin.spec.md": [
-        "@unknown/bmad-comparison.spec.md",
         "@unknown/recommendations.spec.md",
-        "@unknown/opencode-plugin.spec.md",
-        "@speclang/implementation-path"
+        "@unknown/bmad-comparison.spec.md",
+        "@speclang/implementation-path",
+        "@unknown/opencode-plugin.spec.md"
       ],
       "@unknown/agent-protocol.spec.md": [
         "@speclang/mcp-ui-tools/ui",
-        "@unknown/hello-world-cascade.spec.md",
-        "@unknown/agent-protocol.spec.md",
+        "@speclang/implementation-path",
         "@unknown/index.spec.md",
-        "@unknown/messages.spec.md",
+        "@unknown/agent-protocol.spec.md",
+        "@unknown/hello-world-cascade.spec.md",
         "@speclang/lenses/mermaid",
-        "@speclang/implementation-path"
+        "@unknown/messages.spec.md"
       ],
       "@speclang/git-history": [
+        "@speclang/git-history/commits",
         "@speclang/git-history/rollback",
-        "@unknown/continuous-improvement.spec.md",
         "@speclang/implementation-path",
         "@unknown/agent-protocol.spec.md",
-        "@speclang/git-history/commits"
+        "@unknown/continuous-improvement.spec.md"
       ],
       "specs/000-bootstrap": [
         "@speclang/implementation-path"
@@ -15969,22 +16003,22 @@
       ],
       "@speclang/router": [
         "@speclang/router",
-        "@unknown/agents.spec.md",
-        "@unknown/routing.spec.md"
+        "@unknown/routing.spec.md",
+        "@unknown/agents.spec.md"
       ],
       "@speclang/stdlib": [
+        "@speclang/stdlib",
         "@speclang/stdlib/types",
-        "@unknown/mapping.spec.md",
         "@specs/directory",
-        "@speclang/stdlib"
+        "@unknown/mapping.spec.md"
       ],
       "@unknown/examples.spec.md": [
+        "@speclang/examples/auth",
+        "@speclang/examples/api",
         "@unknown/examples-slash-greeting.spec.md",
         "@unknown/hello-world-cascade.spec.md",
-        "@speclang/examples/auth",
-        "@unknown/examples.spec.md",
-        "@speclang/examples/api",
-        "@speclang/examples/hello-world"
+        "@speclang/examples/hello-world",
+        "@unknown/examples.spec.md"
       ],
       "@speclang/dynamic-split": [
         "@unknown/split.spec.md"
@@ -15999,12 +16033,12 @@
         "@speclang/project-maturity-levels"
       ],
       "@speclang/project-maturity-levels": [
-        "@specs/agent-behavior",
-        "@speclang/project-maturity-levels/criteria",
-        "@speclang/testing-strategy.spec",
-        "@speclang/project-maturity-levels/levels",
         "@unknown/depth-requirements.spec.md",
-        "@speclang/project-maturity-levels"
+        "@speclang/project-maturity-levels/criteria",
+        "@speclang/project-maturity-levels",
+        "@speclang/testing-strategy",
+        "@speclang/project-maturity-levels/levels",
+        "@specs/agent-behavior"
       ],
       "specs/headers#project_level": [
         "@speclang/project-maturity-levels"
@@ -16038,8 +16072,8 @@
       ],
       "@unknown/ralph-loop.spec.md": [
         "@unknown/ralph-loop.spec.md",
-        "@unknown/state.spec.md",
-        "@unknown/workflow.spec.md"
+        "@unknown/workflow.spec.md",
+        "@unknown/state.spec.md"
       ],
       "speclang/layer-definitions/abstraction": [
         "@speclang/layer-definitions"
@@ -16048,9 +16082,9 @@
         "@speclang/layer-definitions"
       ],
       "@unknown/executor.spec.md": [
-        "@speclang/executor/execution",
+        "@unknown/executor.spec.md",
         "@speclang/executor/scheduling",
-        "@unknown/executor.spec.md"
+        "@speclang/executor/execution"
       ],
       "@speclang/mcp-overview": [
         "@speclang/mcp"
@@ -16062,19 +16096,19 @@
         "@speclang/mcp"
       ],
       "@unknown/cli.spec.md": [
-        "@speclang/mcp",
         "@unknown/global-options.spec.md",
-        "@unknown/check-command.spec.md",
-        "@unknown/integration.spec.md",
-        "@unknown/installation.spec.md",
-        "@unknown/interactive-mode.spec.md",
-        "@unknown/search-command.spec.md",
-        "@unknown/api.spec.md",
-        "@unknown/exit-codes.spec.md",
         "@unknown/commands.spec.md",
-        "@unknown/cli.spec.md",
+        "@unknown/search-command.spec.md",
+        "@unknown/interactive-mode.spec.md",
+        "@unknown/installation.spec.md",
+        "@unknown/exit-codes.spec.md",
         "@unknown/configuration.spec.md",
-        "@unknown/output-formats.spec.md"
+        "@unknown/integration.spec.md",
+        "@speclang/mcp",
+        "@unknown/check-command.spec.md",
+        "@unknown/output-formats.spec.md",
+        "@unknown/cli.spec.md",
+        "@unknown/api.spec.md"
       ],
       "@unknown/configuration.spec.md": [
         "@speclang/mcp"
@@ -16089,27 +16123,27 @@
         "@speclang/mcp"
       ],
       "@speclang/agents": [
-        "@specs/ralph",
+        "@specs/autonomous",
         "@unknown/poc.spec.md",
-        "@specs/maturity",
-        "@specs/autonomous"
+        "@specs/ralph",
+        "@specs/maturity"
       ],
       "speclang/agent-protocol": [
         "@speclang/mcp-ui-tools/ui",
-        "@speclang/mcp-ui-tools/tools",
+        "@speclang/ui",
         "@speclang/opencode",
-        "@speclang/agents",
         "@speclang/mcp-ui-tools",
-        "@speclang/ui"
+        "@speclang/mcp-ui-tools/tools",
+        "@speclang/agents"
       ],
       "@unknown/build.spec.md": [
         "@speclang/pipeline"
       ],
       "@unknown/hooks.spec.md": [
-        "@unknown/hooks.spec.md",
         "@speclang/hooks/handlers",
         "@speclang/pipeline",
-        "@speclang/hooks/lifecycle"
+        "@speclang/hooks/lifecycle",
+        "@unknown/hooks.spec.md"
       ],
       "@unknown/recovery.spec.md": [
         "@speclang/pipeline"
@@ -16139,9 +16173,9 @@
         "@speclang/stdlib"
       ],
       "@speclang/agent-behavior-matrix": [
-        "@specs/agent-behavior",
+        "@unknown/recommendations.spec.md",
         "@specs/agent-behavior/behavior-matrix",
-        "@unknown/recommendations.spec.md"
+        "@specs/agent-behavior"
       ],
       "specs/bootstrap/phases": [
         "@unknown/bootstrap.spec.md"
@@ -16156,35 +16190,35 @@
         "@speclang/mcp-ui-tools"
       ],
       "speclang/mcp": [
-        "@speclang/opencode-plugin.spec.dir/tools",
         "@speclang/mcp-ui-tools/ui",
-        "@speclang/server",
+        "@speclang/ui",
         "@speclang/mcp/openapi-generation",
-        "@speclang/mcp-ui-tools/tools",
-        "@speclang/mcp-ui-tools",
         "@speclang/opencode-plugin.spec.dir/mcp-client",
-        "@speclang/ui"
+        "@speclang/server",
+        "@speclang/mcp-ui-tools",
+        "@speclang/mcp-ui-tools/tools",
+        "@speclang/opencode-plugin.spec.dir/tools"
       ],
       "speclang/sqlite": [
-        "@speclang/sqlite/vectors",
-        "@speclang/sqlite/fts",
+        "@speclang/mcp-ui-tools/ui",
+        "@speclang/ui",
+        "@speclang/mcp-ui-tools/tools",
+        "@speclang/sqlite/schema",
         "@speclang/sqlite/search",
         "@speclang/sqlite/graph",
-        "@speclang/mcp-ui-tools/ui",
-        "@speclang/sqlite/migrations",
-        "@speclang/sqlite/schema",
-        "@speclang/mcp-ui-tools/tools",
+        "@speclang/sqlite/fts",
         "@speclang/mcp-ui-tools",
-        "@speclang/ui",
-        "@speclang/sqlite/types"
+        "@speclang/sqlite/migrations",
+        "@speclang/sqlite/types",
+        "@speclang/sqlite/vectors"
       ],
       "speclang/cascade": [
         "@speclang/mcp-ui-tools/ui",
-        "@speclang/opencode-plugin.spec.dir/convergence",
-        "@speclang/mcp-ui-tools/tools",
-        "@speclang/mcp-ui-tools",
         "@speclang/ui",
-        "@speclang/workflow"
+        "@speclang/workflow",
+        "@speclang/opencode-plugin.spec.dir/convergence",
+        "@speclang/mcp-ui-tools",
+        "@speclang/mcp-ui-tools/tools"
       ],
       "speclang/workflow/setup": [
         "@speclang/workflow"
@@ -16244,42 +16278,42 @@
         "@speclang/compliance"
       ],
       "@unknown/api.spec.md": [
+        "@unknown/recommendations.spec.md",
         "@speclang/api.spec.dir/openapi",
-        "@unknown/api.spec.md",
-        "@unknown/recommendations.spec.md"
+        "@unknown/api.spec.md"
       ],
       "specs/auth#login": [
-        "@unknown/parsing.spec.md",
-        "@speclang/file-naming",
-        "@speclang/file-naming/extensions",
-        "@speclang/test-specs/examples",
-        "@unknown/file-types.spec.md",
+        "@unknown/validate-refs.spec.md",
         "@speclang/spec-format/blocks",
         "@unknown/rename-spec-files.spec.md",
-        "@unknown/entities.spec.md",
+        "@speclang/test-specs/examples",
+        "@speclang/file-naming/extensions",
+        "@speclang/file-naming",
+        "@unknown/file-types.spec.md",
         "@unknown/parser-python.spec.md",
-        "@unknown/validate-refs.spec.md"
+        "@unknown/parsing.spec.md",
+        "@unknown/entities.spec.md"
       ],
       "speclang/opencode": [
-        "@speclang/deployment/light",
+        "@speclang/tools/api",
         "@speclang/opencode-plugin.spec.dir/overview",
         "@speclang/tools/implementations",
         "@speclang/deployment",
+        "@speclang/deployment/light",
         "@speclang/deployment/enterprise",
-        "@speclang/tools/api",
         "@speclang/opencode-plugin.spec.dir/event-system"
       ],
       "@speclang/deployment": [
-        "@unknown/packaging.spec.md",
-        "@speclang/deployment"
+        "@speclang/deployment",
+        "@unknown/packaging.spec.md"
       ],
       "specs/cascade-protocol/events": [
         "@speclang/cascade-protocol/flow",
         "@speclang/cascade-protocol"
       ],
       "specs/cascade-protocol/flow": [
-        "@speclang/cascade-protocol",
-        "@speclang/cascade-protocol/events"
+        "@speclang/cascade-protocol/events",
+        "@speclang/cascade-protocol"
       ],
       "speclang/dynamic-split/strategy": [
         "@speclang/dynamic-split"
@@ -16306,8 +16340,8 @@
         "@speclang/git-history"
       ],
       "specs/git-history/rollback": [
-        "@speclang/git-history",
-        "@unknown/error-handling.spec.md"
+        "@unknown/error-handling.spec.md",
+        "@speclang/git-history"
       ],
       "speclang/search/queries": [
         "@speclang/search"
@@ -16316,20 +16350,20 @@
         "@speclang/search"
       ],
       "@unknown/external-methodologies.spec.md": [
+        "@unknown/adoption-patterns.spec.md",
         "@unknown/bmad-comparison.spec.md",
         "@unknown/external-methodologies.spec.md",
-        "@unknown/adoption-patterns.spec.md",
         "@unknown/recommendations.spec.md"
       ],
       "@speclang/symlinks": [
-        "@speclang/symlinks/creation",
         "@speclang/symlinks",
+        "@speclang/symlinks/creation",
         "@speclang/symlinks/verification"
       ],
       "@speclang/cascade-protocol": [
         "@speclang/cascade-protocol/flow",
-        "@unknown/cascade.spec.md",
-        "@speclang/cascade-protocol/events"
+        "@speclang/cascade-protocol/events",
+        "@unknown/cascade.spec.md"
       ],
       "speclang/registry/storage": [
         "@speclang/registry"
@@ -16355,15 +16389,15 @@
       "@specs/safety-confidence": [
         "@specs/safety"
       ],
-      "speclang/test-specs/format": [
+      "speclang/test-specs/format.spec": [
         "@speclang/test-specs"
       ],
-      "speclang/test-specs/examples": [
+      "speclang/test-specs/examples.spec": [
         "@speclang/test-specs"
       ],
       "@speclang/ui-dashboard": [
-        "@unknown/visual-design.spec.md",
         "@unknown/testing.spec.md",
+        "@unknown/visual-design.spec.md",
         "@specs/dashboard",
         "@unknown/interactions.spec.md"
       ],
@@ -16387,19 +16421,19 @@
         "@specs/pipeline"
       ],
       "specs/cascade/continuous-improvement": [
-        "@unknown/schema.spec.md",
         "@unknown/error-handling.spec.md",
-        "@unknown/messages.spec.md"
+        "@unknown/messages.spec.md",
+        "@unknown/schema.spec.md"
       ],
       "specs/cascade/error-handling": [
         "@speclang/api.spec.dir/openapi"
       ],
       "specs/project-maturity-levels/levels": [
-        "@unknown/production.spec.md",
+        "@unknown/depth-requirements.spec.md",
         "@unknown/alpha.spec.md",
         "@unknown/beta.spec.md",
-        "@unknown/depth-requirements.spec.md",
-        "@unknown/mvp.spec.md"
+        "@unknown/mvp.spec.md",
+        "@unknown/production.spec.md"
       ],
       "specs/maturity/levels/beta": [
         "@unknown/production.spec.md"
@@ -16444,44 +16478,44 @@
         "@unknown/continuous-improvement.spec.md"
       ],
       "specs/roadmap/poc": [
-        "@unknown/demo-workflow.spec.md",
-        "@unknown/user-flows.spec.md",
-        "@unknown/path-utils.spec.md",
-        "@unknown/poc-daemon.spec.md",
-        "@unknown/config-loader.spec.md",
-        "@unknown/block-parser.spec.md",
-        "@unknown/error-handling.spec.md",
-        "@unknown/types.spec.md",
-        "@unknown/package-json.spec.md",
-        "@unknown/events.spec.md",
-        "@unknown/installation.spec.md",
-        "@unknown/integration.spec.md",
-        "@unknown/database.spec.md",
-        "@unknown/templates.spec.md",
-        "@unknown/convergence.spec.md",
-        "@unknown/tsconfig-json.spec.md",
-        "@unknown/cli.spec.md",
-        "@unknown/code-generator.spec.md",
-        "@unknown/build-integration.spec.md",
-        "@unknown/troubleshooting.spec.md",
-        "@unknown/simple-agent.spec.md",
-        "@unknown/header-parser.spec.md",
-        "@unknown/code-generation.spec.md",
-        "@unknown/template-registry.spec.md",
-        "@unknown/file-watcher.spec.md",
         "@unknown/event-routing.spec.md",
-        "@unknown/tests.spec.md"
+        "@unknown/integration.spec.md",
+        "@unknown/types.spec.md",
+        "@unknown/cli.spec.md",
+        "@unknown/config-loader.spec.md",
+        "@unknown/template-registry.spec.md",
+        "@unknown/tsconfig-json.spec.md",
+        "@unknown/demo-workflow.spec.md",
+        "@unknown/build-integration.spec.md",
+        "@unknown/block-parser.spec.md",
+        "@unknown/code-generation.spec.md",
+        "@unknown/file-watcher.spec.md",
+        "@unknown/database.spec.md",
+        "@unknown/installation.spec.md",
+        "@unknown/templates.spec.md",
+        "@unknown/poc-daemon.spec.md",
+        "@unknown/package-json.spec.md",
+        "@unknown/path-utils.spec.md",
+        "@unknown/user-flows.spec.md",
+        "@unknown/simple-agent.spec.md",
+        "@unknown/events.spec.md",
+        "@unknown/header-parser.spec.md",
+        "@unknown/error-handling.spec.md",
+        "@unknown/convergence.spec.md",
+        "@unknown/tests.spec.md",
+        "@unknown/troubleshooting.spec.md",
+        "@unknown/code-generator.spec.md"
       ],
       "@speclang/auth": [
+        "@unknown/validate-refs.spec.md",
         "@unknown/header-parser.spec.md",
         "@speclang/test-specs/examples",
-        "@speclang/directory-structure/creation",
-        "@speclang/layer-definitions/examples",
-        "@unknown/adoption-patterns.spec.md",
+        "@speclang/project-layout/conventions",
         "@speclang/dynamic-split/strategy",
-        "@unknown/validate-refs.spec.md",
+        "@speclang/directory-structure/creation",
         "@speclang/spec-format/structure",
-        "@speclang/project-layout/conventions"
+        "@unknown/adoption-patterns.spec.md",
+        "@speclang/layer-definitions/examples"
       ],
       "speclang/lenses": [
         "@speclang/lenses/formats"
@@ -16511,16 +16545,16 @@
         "@speclang/lenses/prose"
       ],
       "@unknown/scripts.spec.md": [
-        "@unknown/symlink_manager.py.spec.md",
-        "@unknown/packaging.spec.md",
-        "@unknown/check_compliance.py.spec.md",
-        "@unknown/validate_refs.py.spec.md",
-        "@unknown/generate_index.py.spec.md",
+        "@unknown/verify-system.spec.md",
+        "@speclang/scripts.hard-checks.py",
         "@unknown/hard-checks.spec.md",
         "@speclang/scripts.packaging.py",
+        "@unknown/symlink_manager.py.spec.md",
+        "@unknown/generate_index.py.spec.md",
+        "@unknown/check_compliance.py.spec.md",
         "@speclang/scripts.verify-system.py",
-        "@unknown/verify-system.spec.md",
-        "@speclang/scripts.hard-checks.py"
+        "@unknown/validate_refs.py.spec.md",
+        "@unknown/packaging.spec.md"
       ],
       "specs/other#block-name": [
         "@unknown/validate_refs.py.spec.md"
@@ -16565,8 +16599,8 @@
         "@unknown/depth-requirements.spec.md"
       ],
       "specs/auth/entities": [
-        "@speclang/layer-definitions/examples",
-        "@specs/sample.ts"
+        "@specs/sample.ts",
+        "@speclang/layer-definitions/examples"
       ],
       "specs/auth/login-algorithm": [
         "@speclang/layer-definitions/examples"
@@ -16587,7 +16621,7 @@
       "specs/cascade#triggers": [
         "@unknown/interactions.spec.md"
       ],
-      "@speclang/testing-strategy.spec": [
+      "@speclang/testing-strategy": [
         "@unknown/testing.spec.md"
       ],
       "specs/pipeline#test-stages": [
@@ -16598,22 +16632,22 @@
         "@speclang/recovery/retry"
       ],
       "@speclang/ui": [
-        "@speclang/mcp-ui-tools/ui",
-        "@unknown/system-metrics.spec.md",
         "@unknown/testing.spec.md",
-        "@unknown/cascade-status.spec.md",
-        "@unknown/interactions.spec.md",
-        "@unknown/event-timeline.spec.md",
-        "@unknown/state-management.spec.md",
-        "@unknown/overview.spec.md",
-        "@unknown/log-viewer.spec.md",
-        "@unknown/control-panel.spec.md",
-        "@unknown/queue-depth.spec.md",
-        "@unknown/cascade-graph.spec.md",
-        "@unknown/index.spec.md",
         "@unknown/visual-design.spec.md",
+        "@speclang/mcp-ui-tools/ui",
+        "@unknown/event-timeline.spec.md",
+        "@unknown/queue-depth.spec.md",
+        "@unknown/control-panel.spec.md",
+        "@unknown/index.spec.md",
+        "@unknown/system-metrics.spec.md",
+        "@unknown/overview.spec.md",
+        "@unknown/cascade-graph.spec.md",
+        "@unknown/cascade-status.spec.md",
         "@unknown/app.spec.md",
-        "@unknown/agent-health.spec.md"
+        "@unknown/log-viewer.spec.md",
+        "@unknown/state-management.spec.md",
+        "@unknown/agent-health.spec.md",
+        "@unknown/interactions.spec.md"
       ],
       "@speclang/mcp-ui-tools": [
         "@unknown/testing.spec.md"
@@ -16625,21 +16659,21 @@
         "@unknown/entities.spec.md"
       ],
       "speclang/opencode-plugin.spec.dir/architecture": [
-        "@speclang/opencode-plugin.spec.dir/error-handling",
-        "@speclang/opencode-plugin.spec.dir/git-integration",
-        "@speclang/opencode-plugin.spec.dir/convergence",
         "@speclang/opencode-plugin.spec.dir/mcp-client",
+        "@speclang/opencode-plugin.spec.dir/configuration",
+        "@speclang/opencode-plugin.spec.dir/error-handling",
+        "@speclang/opencode-plugin.spec.dir/convergence",
         "@speclang/opencode-plugin.spec.dir/session-manager",
         "@speclang/opencode-plugin.spec.dir/event-system",
-        "@speclang/opencode-plugin.spec.dir/configuration"
+        "@speclang/opencode-plugin.spec.dir/git-integration"
       ],
       "speclang/opencode-plugin": [
         "@speclang/opencode-plugin.spec.dir/overview"
       ],
       "speclang/opencode-plugin.spec.dir/overview": [
-        "@speclang/opencode-plugin.spec.dir/checklist",
+        "@speclang/opencode-plugin.spec.dir/plugin-lifecycle",
         "@speclang/opencode-plugin.spec.dir/architecture",
-        "@speclang/opencode-plugin.spec.dir/plugin-lifecycle"
+        "@speclang/opencode-plugin.spec.dir/checklist"
       ],
       "speclang/opencode-plugin.spec.dir/session-manager": [
         "@speclang/opencode-plugin.spec.dir/ownership-guard"
@@ -16654,12 +16688,12 @@
         "@unknown/recommendations.spec.md"
       ],
       "specs/external-methodologies/adoption-patterns": [
-        "@unknown/bmad-comparison.spec.md",
-        "@unknown/recommendations.spec.md"
+        "@unknown/recommendations.spec.md",
+        "@unknown/bmad-comparison.spec.md"
       ],
       "speclang/git-history": [
-        "@speclang/git-history/rollback",
-        "@speclang/git-history/commits"
+        "@speclang/git-history/commits",
+        "@speclang/git-history/rollback"
       ],
       "speclang/project-maturity-levels": [
         "@specs/agent-behavior/behavior-matrix"
@@ -16696,223 +16730,216 @@
     }
   },
   "orphans": [
-    "@specs/mcp/server",
-    "@speclang/opencode/integration",
-    "@specs/mcp.guide",
-    "@implementation/ui-dashboard",
-    "@speclang/mapper",
-    "@speclang/ownership",
-    "@speclang/scripts.analyze-completeness.py",
-    "@speclang/safety-nets/analysis",
-    "@speclang/speclang/parser",
-    "@unknown/detection.spec.md",
-    "@unknown/sessions.spec.md",
-    "@speclang/opencode/events",
-    "@speclang/scripts.generate-validation-system.py",
-    "@speclang/rules",
-    "@speclang/scripts.generate-opencode-plugin.py",
-    "@speclang/lenses/entity",
-    "@codegen/typescript",
-    "@unknown/checklist.spec.md",
-    "@specs/mcp/sse",
-    "@speclang/ipc/messages",
-    "@unknown/ralph-loop-implementation.spec.md",
-    "@speclang/parser/index",
-    "@specs/safety/types",
-    "@specs/validation/rules/header",
-    "@unknown/generate-validation-system.spec.md",
-    "@specs/compiler/phases",
-    "@unknown/compute-header-lines.spec.md",
-    "@speclang/scripts.generate-sqlite-schema.py",
-    "@specs/mcp/config/index",
-    "@specs/safety/fallback",
-    "@unknown/indexing.spec.md",
-    "@speclang/python",
-    "@speclang/agent-support-levels/levels",
-    "@unknown/generate.spec.md",
-    "@speclang/scripts.generate-todo.py",
-    "@speclang/interceptor",
-    "@unknown/targets.spec.md",
-    "@test/example",
-    "@speclang/yaml-schema",
-    "@speclang/scripts.run-all-checks",
-    "@specs/validation/reporter",
-    "@speclang/scripts.generate-mcp-server.py",
-    "@speclang/config/impl",
-    "@speclang/dynamic-split/token-budget",
-    "@unknown/generate-sqlite-schema.spec.md",
-    "@speclang/templates",
-    "@speclang/types",
-    "@specs/safety/peer-review",
-    "@speclang/validation-tool/implementation",
-    "@specs/workflow",
-    "@specs/validation/rules/autonomous",
-    "@specs/validation/cli",
-    "@specs/validation/rules/blocks",
-    "@specs/mcp/auth",
-    "@speclang/agent-behavior-matrix/transitions",
-    "@speclang/scripts.generate-ralph-loop.py",
-    "@speclang/rust",
-    "@speclang/ipc/channels",
-    "@unknown/validation-system.spec.md",
-    "@specs/mcp/errors/index",
-    "@specs/mcp/index",
-    "@speclang/state",
-    "@unknown/analyze-completeness.spec.md",
-    "@speclang/autonomous-validation/scoring",
-    "@specs/mcp/tools/handlers",
-    "@specs/validation/engine",
-    "@speclang/scripts.validate-autonomous.py",
-    "@unknown/triggers.spec.md",
-    "@unknown/flows.spec.md",
-    "@speclang/header",
-    "@codegen/go",
-    "@speclang/sse",
-    "@speclang/violations",
-    "@speclang/writer",
-    "@unknown/fallback-protocol.spec.md",
-    "@speclang/scripts.rename-spec-files.py",
-    "@specs/validation/rules/id",
-    "@unknown/concurrency.spec.md",
-    "@speclang/transition-workflows/upgrade",
     "@speclang/layer-definitions/abstraction",
-    "@speclang/speclangd",
-    "@examples/greeting",
-    "@specs/safety/detection",
-    "@speclang/agent-behavior-matrix/matrix",
-    "@speclang/scripts.validate-refs.py",
-    "@speclang/workflow/daily-use",
-    "@speclang/session",
-    "@specs/compiler",
-    "@speclang/semantic-definitions/layer-mapping",
-    "@unknown/skills.spec.md",
-    "@speclang/scripts.add-missing-fields.py",
+    "@unknown/compute-header-lines.spec.md",
     "@speclang/typescript",
-    "@unknown/generate-todo.spec.md",
-    "@speclang/scripts.compute-header-lines.py",
-    "@unknown/generate-ralph-loop.spec.md",
-    "@unknown/validate-autonomous.spec.md",
-    "@speclang/workflow/setup",
-    "@unknown/validation.spec.md",
-    "@specs/mcp/config",
-    "@speclang/ui-visual-design",
-    "@speclang/workflow/examples",
-    "@unknown/generate-index.spec.md",
-    "@speclang/safety-nets/fallback",
-    "@speclang/semantic-definitions",
-    "@specs/safety-confidence/confidence-scorer",
-    "@speclang/mcp-openapi-generation-cli",
-    "@speclang/specs",
-    "@speclang/lenses/code",
-    "@speclang/scripts.generate-from-spec.py",
-    "@specs/mcp/types",
-    "@specs/mcp/tools",
-    "@specs/safety/notification",
-    "@specs/symlinks",
-    "@unknown/codegen.spec.md",
-    "@speclang/tools",
-    "@unknown/defaults.spec.md",
-    "@speclang/watcher",
-    "@unknown/generate-mcp-server.spec.md",
-    "@unknown/test.spec.md",
-    "@unknown/db-python.spec.md",
-    "@speclang/agent-protocol/registry",
-    "@speclang/bugs",
-    "@speclang/stages",
-    "@speclang/scripts.generate-index.py",
-    "@speclang/speclang/db",
-    "@speclang/project-maturity",
-    "@specs/maturity/validation",
-    "@speclang/scripts.fix-headers.py",
-    "@speclang/validator",
-    "@specs/transition",
-    "@unknown/validate-specs.spec.md",
-    "@test/greeting",
-    "@speclang/recovery",
-    "@speclang/scripts.fallback-protocol.py",
-    "@speclang/semantic-definitions/project-levels",
-    "@bugs/cli-missing-generate-command",
-    "@specs/testing/performance",
-    "@unknown/phases.spec.md",
-    "@unknown/add-missing-fields.spec.md",
-    "@unknown/meta-circular.spec.md",
     "@speclang/lenses/operation",
-    "@unknown/validate.spec.md",
-    "@test/test",
-    "@specs/validation/rules/index",
+    "@specs/mcp/index",
+    "@specs/compiler",
+    "@unknown/sessions.spec.md",
+    "@specs/mcp/types",
+    "@examples/greeting",
+    "@unknown/checklist.spec.md",
+    "@speclang/scripts.compute-header-lines.py",
+    "@specs/mcp/config",
     "@specs/validation/rules/refs",
-    "@unknown/generate-opencode-plugin.spec.md",
-    "@specs/safety/quarantine",
-    "@speclang/layer",
-    "@unknown/management.spec.md",
-    "@speclang/agent-support-levels/behaviors",
-    "@speclang/index",
-    "@speclang/transition-workflows",
-    "@unknown/generate-from-spec.spec.md",
-    "@specs/validation/types",
-    "@speclang/stdlib/USAGE",
-    "@speclang/validation-tool/api",
-    "@unknown/implementation.spec.md",
-    "@speclang/scripts.cleanup-temp",
-    "@bugs/cascade-generates-zero-files",
-    "@unknown/queries.spec.md",
-    "@specs/speclangd.ts",
-    "@specs/validation/index",
-    "@speclang/autonomous-validation/rules",
     "@speclang/migrations",
+    "@unknown/generate-sqlite-schema.spec.md",
+    "@speclang/agent-behavior-matrix/transitions",
+    "@speclang/workflow/daily-use",
+    "@bugs/cascade-generates-zero-files",
+    "@speclang/rust",
+    "@specs/mcp/errors/index",
+    "@specs/validation/reporter",
+    "@specs/validation/types",
+    "@speclang/state",
+    "@codegen/go",
+    "@speclang/opencode/events",
+    "@test/example",
+    "@specs/safety/detection",
+    "@speclang/scripts.fix-headers.py",
+    "@specs/safety/types",
+    "@specs/safety/peer-review",
+    "@speclang/scripts.cleanup-temp",
+    "@speclang/semantic-definitions/layer-mapping",
+    "@unknown/analyze-completeness.spec.md",
+    "@speclang/transition-workflows/downgrade",
+    "@speclang/scripts.generate-index.py",
+    "@speclang/project-maturity",
+    "@speclang/semantic-definitions/project-levels",
+    "@speclang/templates",
+    "@unknown/queries.spec.md",
+    "@speclang/mcp-openapi-generation-cli",
+    "@speclang/speclang/db",
+    "@unknown/codegen.spec.md",
+    "@speclang/scripts.validate-refs.py",
+    "@speclang/specs",
+    "@specs/validation/rules/id",
+    "@bugs/cli-missing-generate-command",
+    "@speclang/scripts.generate-sqlite-schema.py",
+    "@specs/validation/cli",
+    "@speclang/bugs",
+    "@speclang/scripts.generate-validation-system.py",
+    "@speclang/tools",
+    "@speclang/agent-protocol/registry",
+    "@speclang/parser/index",
+    "@speclang/scripts.generate-mcp-server.py",
+    "@specs/validation/index",
+    "@unknown/add-missing-fields.spec.md",
+    "@specs/mcp.guide",
+    "@unknown/generate-from-spec.spec.md",
+    "@speclang/autonomous-validation/scoring",
+    "@specs/safety/notification",
+    "@unknown/triggers.spec.md",
+    "@unknown/phases.spec.md",
+    "@speclang/ipc/channels",
+    "@speclang/workflow/examples",
+    "@speclang/scripts.generate-todo.py",
+    "@test/test",
+    "@unknown/detection.spec.md",
+    "@unknown/generate-todo.spec.md",
+    "@unknown/test.spec.md",
+    "@unknown/fallback-protocol.spec.md",
+    "@speclang/recovery",
+    "@unknown/implementation.spec.md",
+    "@specs/workflow",
+    "@speclang/opencode/integration",
+    "@speclang/validator",
+    "@speclang/python",
+    "@unknown/generate-validation-system.spec.md",
+    "@speclang/scripts.generate-from-spec.py",
+    "@speclang/stages",
+    "@unknown/generate.spec.md",
+    "@speclang/stdlib/USAGE",
+    "@unknown/validate-specs.spec.md",
+    "@speclang/ui-visual-design",
+    "@speclang/workflow/setup",
+    "@speclang/lenses/entity",
+    "@speclang/watcher",
+    "@test/greeting",
+    "@specs/mcp/server",
+    "@unknown/ralph-loop-implementation.spec.md",
+    "@speclang/scripts.analyze-completeness.py",
+    "@speclang/ownership",
+    "@unknown/management.spec.md",
+    "@specs/validation/rules/header",
+    "@speclang/config/impl",
+    "@speclang/safety-nets/fallback",
+    "@speclang/agent-behavior-matrix/matrix",
+    "@speclang/types",
+    "@speclang/agent-support-levels/levels",
+    "@specs/safety/quarantine",
+    "@implementation/ui-dashboard",
+    "@speclang/scripts.generate-ralph-loop.py",
+    "@speclang/lenses/code",
+    "@speclang/layer",
+    "@specs/safety-confidence/confidence-scorer",
+    "@speclang/header",
+    "@unknown/validation.spec.md",
+    "@specs/speclangd-ts",
+    "@unknown/db-python.spec.md",
     "@northstar",
-    "@speclang/transition-workflows/downgrade"
+    "@speclang/interceptor",
+    "@speclang/yaml-schema",
+    "@unknown/generate-index.spec.md",
+    "@speclang/writer",
+    "@speclang/scripts.validate-autonomous.py",
+    "@specs/validation/rules/autonomous",
+    "@specs/performance",
+    "@unknown/targets.spec.md",
+    "@unknown/generate-ralph-loop.spec.md",
+    "@specs/compiler/phases",
+    "@unknown/generate-mcp-server.spec.md",
+    "@speclang/mapper",
+    "@speclang/rules",
+    "@speclang/speclangd",
+    "@speclang/speclang/parser",
+    "@specs/safety/fallback",
+    "@specs/transition",
+    "@specs/mcp/config/index",
+    "@unknown/indexing.spec.md",
+    "@speclang/validation-tool/api",
+    "@speclang/autonomous-validation/rules",
+    "@specs/mcp/auth",
+    "@specs/mcp/sse",
+    "@specs/validation/rules/blocks",
+    "@speclang/scripts.add-missing-fields.py",
+    "@speclang/dynamic-split/token-budget",
+    "@speclang/violations",
+    "@speclang/transition-workflows",
+    "@unknown/defaults.spec.md",
+    "@speclang/index",
+    "@speclang/validation-tool/implementation",
+    "@specs/validation/rules/index",
+    "@speclang/transition-workflows/upgrade",
+    "@specs/symlinks",
+    "@speclang/scripts.run-all-checks",
+    "@speclang/scripts.rename-spec-files.py",
+    "@unknown/validate-autonomous.spec.md",
+    "@codegen/typescript",
+    "@specs/mcp/tools",
+    "@speclang/semantic-definitions",
+    "@unknown/validation-system.spec.md",
+    "@unknown/generate-opencode-plugin.spec.md",
+    "@specs/validation/engine",
+    "@specs/maturity/validation",
+    "@unknown/validate.spec.md",
+    "@speclang/sse",
+    "@speclang/scripts.generate-opencode-plugin.py",
+    "@unknown/meta-circular.spec.md",
+    "@speclang/scripts.fallback-protocol.py",
+    "@speclang/session",
+    "@unknown/flows.spec.md",
+    "@speclang/agent-support-levels/behaviors",
+    "@specs/mcp/tools/handlers",
+    "@speclang/ipc/messages",
+    "@speclang/safety-nets/analysis"
   ],
   "cycles": [
     [
-      "@unknown/daemon.spec.md",
-      "@unknown/daemon.spec.md"
+      "@speclang/router",
+      "@speclang/router"
     ],
     [
       "@unknown/spec-format.spec.md",
       "@unknown/spec-format.spec.md"
     ],
     [
-      "@unknown/core.spec.md",
-      "@unknown/daemon.spec.md",
+      "@speclang/core",
+      "@unknown/agents.spec.md",
+      "@speclang/router",
       "@unknown/headers.spec.md",
       "@unknown/spec-format.spec.md",
       "@speclang/index/tools",
       "@specs/indexer",
-      "@unknown/core.spec.md"
+      "@speclang/core"
     ],
     [
       "@unknown/parser.spec.md",
       "@unknown/parser.spec.md"
     ],
     [
-      "@unknown/core.spec.md",
-      "@unknown/daemon.spec.md",
+      "@speclang/core",
+      "@unknown/agents.spec.md",
+      "@speclang/router",
       "@unknown/headers.spec.md",
       "@unknown/spec-format.spec.md",
       "@speclang/index/tools",
       "@specs/indexer",
       "@unknown/parser.spec.md",
       "@speclang/speclang",
-      "@unknown/core.spec.md"
+      "@speclang/core"
     ],
     [
       "@unknown/roadmap.spec.md",
       "@unknown/roadmap.spec.md"
     ],
     [
-      "@unknown/spec-format.spec.md",
-      "@speclang/index/tools",
-      "@specs/indexer",
       "@unknown/parser.spec.md",
       "@speclang/speclang",
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@unknown/spec-format.spec.md"
-    ],
-    [
-      "@speclang/router",
-      "@speclang/router"
+      "@unknown/parser.spec.md"
     ],
     [
       "@speclang/stdlib",
@@ -16923,8 +16950,9 @@
       "@unknown/examples.spec.md"
     ],
     [
-      "@unknown/core.spec.md",
-      "@unknown/daemon.spec.md",
+      "@speclang/core",
+      "@unknown/agents.spec.md",
+      "@speclang/router",
       "@unknown/headers.spec.md",
       "@unknown/spec-format.spec.md",
       "@speclang/index/tools",
@@ -16933,28 +16961,16 @@
       "@speclang/speclang",
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
       "@unknown/examples.spec.md",
       "@unknown/split.spec.md",
-      "@unknown/core.spec.md"
+      "@speclang/core"
     ],
     [
-      "@unknown/parser.spec.md",
-      "@speclang/speclang",
-      "@unknown/roadmap.spec.md",
-      "@speclang/implementation-path",
-      "@speclang/router",
-      "@specs/directory",
-      "@speclang/stdlib",
-      "@unknown/examples-slash-greeting.spec.md",
-      "@unknown/examples.spec.md",
-      "@unknown/split.spec.md",
-      "@specs/meta",
       "@unknown/compiler.spec.md",
-      "@unknown/parser.spec.md"
+      "@unknown/compiler.spec.md"
     ],
     [
       "@speclang/project-maturity-levels",
@@ -16965,7 +16981,6 @@
       "@speclang/speclang",
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -16992,6 +17007,7 @@
     ],
     [
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/mcp"
     ],
     [
@@ -17010,6 +17026,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -17017,8 +17034,9 @@
       "@speclang/project-maturity-levels"
     ],
     [
-      "@unknown/core.spec.md",
-      "@unknown/daemon.spec.md",
+      "@speclang/core",
+      "@unknown/agents.spec.md",
+      "@speclang/router",
       "@unknown/headers.spec.md",
       "@unknown/spec-format.spec.md",
       "@speclang/index/tools",
@@ -17027,7 +17045,6 @@
       "@speclang/speclang",
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -17042,12 +17059,13 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
       "@specs/agent-behavior",
       "@unknown/index.spec.md",
-      "@unknown/core.spec.md"
+      "@speclang/core"
     ],
     [
       "@unknown/agent-protocol.spec.md",
@@ -17062,19 +17080,6 @@
       "@unknown/config.spec.md"
     ],
     [
-      "@speclang/mcp",
-      "@speclang/pipeline",
-      "@unknown/hooks.spec.md",
-      "@speclang/skills",
-      "@specs/agent-behavior",
-      "@unknown/index.spec.md",
-      "@unknown/agent-protocol.spec.md",
-      "@unknown/sqlite.spec.md",
-      "@unknown/config.spec.md",
-      "@unknown/api.spec.md",
-      "@speclang/mcp"
-    ],
-    [
       "@unknown/cli.spec.md",
       "@unknown/cli.spec.md"
     ],
@@ -17083,6 +17088,14 @@
       "@speclang/deployment"
     ],
     [
+      "@speclang/project-maturity-levels",
+      "@speclang/project-maturity-levels/criteria",
+      "@speclang/tutorial",
+      "@unknown/opencode-plugin.spec.md",
+      "@unknown/ralph-loop.spec.md",
+      "@unknown/executor.spec.md",
+      "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -17094,8 +17107,8 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
-      "@speclang/pipeline"
+      "@speclang/testing-strategy",
+      "@speclang/project-maturity-levels"
     ],
     [
       "@unknown/external-methodologies.spec.md",
@@ -17110,14 +17123,20 @@
       "@unknown/cascade.spec.md"
     ],
     [
+      "@unknown/daemon.spec.md",
+      "@unknown/daemon.spec.md"
+    ],
+    [
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks"
     ],
     [
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/symlinks"
@@ -17133,10 +17152,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17153,10 +17173,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17165,44 +17186,6 @@
     ],
     [
       "@unknown/daemon.spec.md",
-      "@unknown/headers.spec.md",
-      "@unknown/spec-format.spec.md",
-      "@speclang/index/tools",
-      "@specs/indexer",
-      "@unknown/parser.spec.md",
-      "@speclang/speclang",
-      "@unknown/roadmap.spec.md",
-      "@speclang/implementation-path",
-      "@speclang/router",
-      "@specs/directory",
-      "@speclang/stdlib",
-      "@unknown/examples-slash-greeting.spec.md",
-      "@unknown/examples.spec.md",
-      "@unknown/split.spec.md",
-      "@specs/meta",
-      "@unknown/compiler.spec.md",
-      "@speclang/project-maturity-levels",
-      "@speclang/project-maturity-levels/criteria",
-      "@speclang/tutorial",
-      "@unknown/opencode-plugin.spec.md",
-      "@unknown/ralph-loop.spec.md",
-      "@unknown/executor.spec.md",
-      "@speclang/mcp",
-      "@speclang/pipeline",
-      "@unknown/hooks.spec.md",
-      "@speclang/skills",
-      "@specs/agent-behavior",
-      "@unknown/index.spec.md",
-      "@unknown/agent-protocol.spec.md",
-      "@unknown/sqlite.spec.md",
-      "@unknown/config.spec.md",
-      "@unknown/api.spec.md",
-      "@unknown/cli.spec.md",
-      "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
-      "@unknown/external-methodologies.spec.md",
-      "@speclang/symlinks",
-      "@unknown/cascade.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17212,44 +17195,6 @@
     ],
     [
       "@unknown/daemon.spec.md",
-      "@unknown/headers.spec.md",
-      "@unknown/spec-format.spec.md",
-      "@speclang/index/tools",
-      "@specs/indexer",
-      "@unknown/parser.spec.md",
-      "@speclang/speclang",
-      "@unknown/roadmap.spec.md",
-      "@speclang/implementation-path",
-      "@speclang/router",
-      "@specs/directory",
-      "@speclang/stdlib",
-      "@unknown/examples-slash-greeting.spec.md",
-      "@unknown/examples.spec.md",
-      "@unknown/split.spec.md",
-      "@specs/meta",
-      "@unknown/compiler.spec.md",
-      "@speclang/project-maturity-levels",
-      "@speclang/project-maturity-levels/criteria",
-      "@speclang/tutorial",
-      "@unknown/opencode-plugin.spec.md",
-      "@unknown/ralph-loop.spec.md",
-      "@unknown/executor.spec.md",
-      "@speclang/mcp",
-      "@speclang/pipeline",
-      "@unknown/hooks.spec.md",
-      "@speclang/skills",
-      "@specs/agent-behavior",
-      "@unknown/index.spec.md",
-      "@unknown/agent-protocol.spec.md",
-      "@unknown/sqlite.spec.md",
-      "@unknown/config.spec.md",
-      "@unknown/api.spec.md",
-      "@unknown/cli.spec.md",
-      "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
-      "@unknown/external-methodologies.spec.md",
-      "@speclang/symlinks",
-      "@unknown/cascade.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17260,6 +17205,14 @@
     ],
     [
       "@speclang/router",
+      "@unknown/headers.spec.md",
+      "@unknown/spec-format.spec.md",
+      "@speclang/index/tools",
+      "@specs/indexer",
+      "@unknown/parser.spec.md",
+      "@speclang/speclang",
+      "@unknown/roadmap.spec.md",
+      "@speclang/implementation-path",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -17274,6 +17227,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -17285,10 +17239,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17300,44 +17255,6 @@
     ],
     [
       "@unknown/daemon.spec.md",
-      "@unknown/headers.spec.md",
-      "@unknown/spec-format.spec.md",
-      "@speclang/index/tools",
-      "@specs/indexer",
-      "@unknown/parser.spec.md",
-      "@speclang/speclang",
-      "@unknown/roadmap.spec.md",
-      "@speclang/implementation-path",
-      "@speclang/router",
-      "@specs/directory",
-      "@speclang/stdlib",
-      "@unknown/examples-slash-greeting.spec.md",
-      "@unknown/examples.spec.md",
-      "@unknown/split.spec.md",
-      "@specs/meta",
-      "@unknown/compiler.spec.md",
-      "@speclang/project-maturity-levels",
-      "@speclang/project-maturity-levels/criteria",
-      "@speclang/tutorial",
-      "@unknown/opencode-plugin.spec.md",
-      "@unknown/ralph-loop.spec.md",
-      "@unknown/executor.spec.md",
-      "@speclang/mcp",
-      "@speclang/pipeline",
-      "@unknown/hooks.spec.md",
-      "@speclang/skills",
-      "@specs/agent-behavior",
-      "@unknown/index.spec.md",
-      "@unknown/agent-protocol.spec.md",
-      "@unknown/sqlite.spec.md",
-      "@unknown/config.spec.md",
-      "@unknown/api.spec.md",
-      "@unknown/cli.spec.md",
-      "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
-      "@unknown/external-methodologies.spec.md",
-      "@speclang/symlinks",
-      "@unknown/cascade.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17350,44 +17267,6 @@
     ],
     [
       "@unknown/daemon.spec.md",
-      "@unknown/headers.spec.md",
-      "@unknown/spec-format.spec.md",
-      "@speclang/index/tools",
-      "@specs/indexer",
-      "@unknown/parser.spec.md",
-      "@speclang/speclang",
-      "@unknown/roadmap.spec.md",
-      "@speclang/implementation-path",
-      "@speclang/router",
-      "@specs/directory",
-      "@speclang/stdlib",
-      "@unknown/examples-slash-greeting.spec.md",
-      "@unknown/examples.spec.md",
-      "@unknown/split.spec.md",
-      "@specs/meta",
-      "@unknown/compiler.spec.md",
-      "@speclang/project-maturity-levels",
-      "@speclang/project-maturity-levels/criteria",
-      "@speclang/tutorial",
-      "@unknown/opencode-plugin.spec.md",
-      "@unknown/ralph-loop.spec.md",
-      "@unknown/executor.spec.md",
-      "@speclang/mcp",
-      "@speclang/pipeline",
-      "@unknown/hooks.spec.md",
-      "@speclang/skills",
-      "@specs/agent-behavior",
-      "@unknown/index.spec.md",
-      "@unknown/agent-protocol.spec.md",
-      "@unknown/sqlite.spec.md",
-      "@unknown/config.spec.md",
-      "@unknown/api.spec.md",
-      "@unknown/cli.spec.md",
-      "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
-      "@unknown/external-methodologies.spec.md",
-      "@speclang/symlinks",
-      "@unknown/cascade.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17411,10 +17290,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17428,22 +17308,8 @@
       "@speclang/pipeline"
     ],
     [
-      "@speclang/mcp",
-      "@speclang/pipeline",
-      "@unknown/hooks.spec.md",
-      "@speclang/skills",
-      "@specs/agent-behavior",
-      "@unknown/index.spec.md",
-      "@unknown/agent-protocol.spec.md",
-      "@unknown/sqlite.spec.md",
-      "@unknown/config.spec.md",
-      "@unknown/api.spec.md",
-      "@unknown/cli.spec.md",
-      "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
-      "@unknown/external-methodologies.spec.md",
-      "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17455,12 +17321,11 @@
       "@speclang/daemon/architecture",
       "@unknown/build-yaml.spec.md",
       "@speclang/api.spec.dir/openapi",
-      "@speclang/mcp"
+      "@unknown/cascade.spec.md"
     ],
     [
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -17475,6 +17340,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -17486,10 +17352,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17507,7 +17374,6 @@
     [
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -17522,6 +17388,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -17533,10 +17400,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17555,7 +17423,6 @@
     [
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -17570,6 +17437,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -17581,10 +17449,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17604,7 +17473,6 @@
     [
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -17619,6 +17487,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -17630,10 +17499,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17660,6 +17530,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -17671,10 +17542,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17702,6 +17574,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -17713,10 +17586,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17746,10 +17620,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17780,10 +17655,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17815,10 +17691,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17842,36 +17719,8 @@
       "@speclang/skills"
     ],
     [
-      "@speclang/router",
-      "@specs/directory",
-      "@speclang/stdlib",
-      "@unknown/examples-slash-greeting.spec.md",
-      "@unknown/examples.spec.md",
-      "@unknown/split.spec.md",
-      "@specs/meta",
-      "@unknown/compiler.spec.md",
-      "@speclang/project-maturity-levels",
-      "@speclang/project-maturity-levels/criteria",
-      "@speclang/tutorial",
-      "@unknown/opencode-plugin.spec.md",
-      "@unknown/ralph-loop.spec.md",
-      "@unknown/executor.spec.md",
-      "@speclang/mcp",
-      "@speclang/pipeline",
-      "@unknown/hooks.spec.md",
-      "@speclang/skills",
-      "@specs/agent-behavior",
-      "@unknown/index.spec.md",
-      "@unknown/agent-protocol.spec.md",
-      "@unknown/sqlite.spec.md",
-      "@unknown/config.spec.md",
-      "@unknown/api.spec.md",
-      "@unknown/cli.spec.md",
-      "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
-      "@unknown/external-methodologies.spec.md",
-      "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17892,52 +17741,12 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
-      "@speclang/router"
-    ],
-    [
-      "@speclang/mcp",
-      "@speclang/pipeline",
-      "@unknown/hooks.spec.md",
-      "@speclang/skills",
-      "@specs/agent-behavior",
-      "@unknown/index.spec.md",
-      "@unknown/agent-protocol.spec.md",
-      "@unknown/sqlite.spec.md",
-      "@unknown/config.spec.md",
-      "@unknown/api.spec.md",
-      "@unknown/cli.spec.md",
-      "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
-      "@unknown/external-methodologies.spec.md",
-      "@speclang/symlinks",
-      "@unknown/cascade.spec.md",
-      "@speclang/symlinks/verification",
-      "@speclang/symlinks/creation",
-      "@speclang/hooks/handlers",
-      "@speclang/hooks/lifecycle",
-      "@unknown/rust.spec.md",
-      "@unknown/convergence.spec.md",
-      "@unknown/routing.spec.md",
-      "@unknown/events.spec.md",
-      "@speclang/daemon/architecture",
-      "@unknown/build-yaml.spec.md",
-      "@speclang/api.spec.dir/openapi",
-      "@unknown/production.spec.md",
-      "@unknown/alpha.spec.md",
-      "@unknown/beta.spec.md",
-      "@unknown/mvp.spec.md",
-      "@unknown/go.spec.md",
-      "@unknown/python.spec.md",
-      "@speclang/skills/code-gen",
-      "@speclang/skills/test-writer",
-      "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
-      "@speclang/mcp"
+      "@unknown/cascade.spec.md"
     ],
     [
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -17958,7 +17767,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/cascade.spec.md"
@@ -17966,7 +17774,6 @@
     [
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -17981,6 +17788,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -17992,10 +17800,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -18016,7 +17825,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -18025,7 +17833,6 @@
     [
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -18040,6 +17847,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -18051,10 +17859,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -18075,7 +17884,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -18085,7 +17893,6 @@
     [
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -18100,6 +17907,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -18111,10 +17919,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -18135,7 +17944,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -18146,10 +17954,11 @@
     [
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -18170,7 +17979,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -18182,7 +17990,6 @@
     [
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -18197,6 +18004,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -18208,10 +18016,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -18232,7 +18041,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -18249,10 +18057,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -18273,7 +18082,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -18286,10 +18094,11 @@
     ],
     [
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -18310,7 +18119,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -18323,8 +18131,9 @@
       "@speclang/deployment"
     ],
     [
-      "@unknown/core.spec.md",
-      "@unknown/daemon.spec.md",
+      "@speclang/core",
+      "@unknown/agents.spec.md",
+      "@speclang/router",
       "@unknown/headers.spec.md",
       "@unknown/spec-format.spec.md",
       "@speclang/index/tools",
@@ -18333,7 +18142,6 @@
       "@speclang/speclang",
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -18348,6 +18156,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -18359,10 +18168,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -18383,7 +18193,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -18394,10 +18203,33 @@
       "@speclang/lenses/mermaid",
       "@unknown/packaging.spec.md",
       "@speclang/cascade-protocol/flow",
-      "@unknown/core.spec.md"
+      "@speclang/core"
     ],
     [
+      "@speclang/project-maturity-levels",
+      "@speclang/project-maturity-levels/criteria",
+      "@speclang/tutorial",
+      "@unknown/opencode-plugin.spec.md",
+      "@unknown/ralph-loop.spec.md",
+      "@unknown/executor.spec.md",
+      "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
+      "@speclang/pipeline",
+      "@unknown/hooks.spec.md",
+      "@speclang/skills",
+      "@specs/agent-behavior",
+      "@unknown/index.spec.md",
+      "@unknown/agent-protocol.spec.md",
+      "@unknown/sqlite.spec.md",
+      "@unknown/config.spec.md",
+      "@unknown/api.spec.md",
+      "@unknown/cli.spec.md",
+      "@speclang/deployment",
+      "@speclang/testing-strategy",
+      "@unknown/external-methodologies.spec.md",
+      "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -18418,7 +18250,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -18430,7 +18261,7 @@
       "@unknown/packaging.spec.md",
       "@speclang/cascade-protocol/flow",
       "@unknown/depth-requirements.spec.md",
-      "@unknown/cascade.spec.md"
+      "@speclang/project-maturity-levels"
     ],
     [
       "@speclang/project-maturity-levels",
@@ -18440,6 +18271,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -18451,10 +18283,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -18475,7 +18308,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -18491,10 +18323,11 @@
       "@speclang/project-maturity-levels"
     ],
     [
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -18515,7 +18348,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -18529,25 +18361,19 @@
       "@unknown/depth-requirements.spec.md",
       "@speclang/project-maturity-levels/levels",
       "@unknown/testing.spec.md",
-      "@speclang/testing-strategy.spec"
+      "@speclang/testing-strategy"
     ],
     [
-      "@speclang/mcp",
-      "@speclang/pipeline",
-      "@unknown/hooks.spec.md",
-      "@speclang/skills",
-      "@specs/agent-behavior",
-      "@unknown/index.spec.md",
-      "@unknown/agent-protocol.spec.md",
       "@unknown/sqlite.spec.md",
       "@unknown/config.spec.md",
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -18568,7 +18394,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -18583,7 +18408,7 @@
       "@speclang/project-maturity-levels/levels",
       "@unknown/testing.spec.md",
       "@speclang/mcp-ui-tools/ui",
-      "@speclang/mcp"
+      "@unknown/sqlite.spec.md"
     ],
     [
       "@unknown/sqlite.spec.md",
@@ -18591,10 +18416,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -18615,7 +18441,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -18634,8 +18459,9 @@
       "@unknown/sqlite.spec.md"
     ],
     [
-      "@unknown/core.spec.md",
-      "@unknown/daemon.spec.md",
+      "@speclang/core",
+      "@unknown/agents.spec.md",
+      "@speclang/router",
       "@unknown/headers.spec.md",
       "@unknown/spec-format.spec.md",
       "@speclang/index/tools",
@@ -18644,7 +18470,6 @@
       "@speclang/speclang",
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -18659,6 +18484,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -18670,10 +18496,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -18694,7 +18521,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -18711,11 +18537,12 @@
       "@speclang/mcp-ui-tools/ui",
       "@speclang/mcp-ui-tools/tools",
       "@unknown/entities.spec.md",
-      "@unknown/core.spec.md"
+      "@speclang/core"
     ],
     [
-      "@unknown/core.spec.md",
-      "@unknown/daemon.spec.md",
+      "@speclang/core",
+      "@unknown/agents.spec.md",
+      "@speclang/router",
       "@unknown/headers.spec.md",
       "@unknown/spec-format.spec.md",
       "@speclang/index/tools",
@@ -18724,7 +18551,6 @@
       "@speclang/speclang",
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -18739,6 +18565,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -18750,10 +18577,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -18774,7 +18602,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -18792,7 +18619,7 @@
       "@speclang/mcp-ui-tools/tools",
       "@unknown/entities.spec.md",
       "@specs/split",
-      "@unknown/core.spec.md"
+      "@speclang/core"
     ],
     [
       "@speclang/stdlib",
@@ -18808,6 +18635,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -18819,10 +18647,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -18843,7 +18672,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -18878,6 +18706,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -18889,10 +18718,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -18913,7 +18743,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -18947,6 +18776,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -18958,10 +18788,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -18982,7 +18813,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -19017,6 +18847,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -19028,10 +18859,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -19052,7 +18884,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -19088,6 +18919,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -19099,10 +18931,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -19123,7 +18956,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -19149,7 +18981,31 @@
       "@unknown/examples.spec.md"
     ],
     [
+      "@unknown/compiler.spec.md",
+      "@speclang/project-maturity-levels",
+      "@speclang/project-maturity-levels/criteria",
+      "@speclang/tutorial",
+      "@unknown/opencode-plugin.spec.md",
+      "@unknown/ralph-loop.spec.md",
+      "@unknown/executor.spec.md",
+      "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
+      "@speclang/pipeline",
+      "@unknown/hooks.spec.md",
+      "@speclang/skills",
+      "@specs/agent-behavior",
+      "@unknown/index.spec.md",
+      "@unknown/agent-protocol.spec.md",
+      "@unknown/sqlite.spec.md",
+      "@unknown/config.spec.md",
+      "@unknown/api.spec.md",
+      "@unknown/cli.spec.md",
+      "@speclang/deployment",
+      "@speclang/testing-strategy",
+      "@unknown/external-methodologies.spec.md",
+      "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -19170,7 +19026,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -19194,11 +19049,12 @@
       "@speclang/examples/auth",
       "@speclang/examples/api",
       "@unknown/hello-world-cascade.spec.md",
-      "@unknown/cascade.spec.md"
+      "@unknown/compiler.spec.md"
     ],
     [
-      "@unknown/core.spec.md",
-      "@unknown/daemon.spec.md",
+      "@speclang/core",
+      "@unknown/agents.spec.md",
+      "@speclang/router",
       "@unknown/headers.spec.md",
       "@unknown/spec-format.spec.md",
       "@speclang/index/tools",
@@ -19207,7 +19063,6 @@
       "@speclang/speclang",
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -19222,6 +19077,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -19233,10 +19089,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -19257,7 +19114,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -19282,11 +19138,12 @@
       "@speclang/examples/api",
       "@unknown/hello-world-cascade.spec.md",
       "@specs/examples/crud-app",
-      "@unknown/core.spec.md"
+      "@speclang/core"
     ],
     [
-      "@unknown/core.spec.md",
-      "@unknown/daemon.spec.md",
+      "@speclang/core",
+      "@unknown/agents.spec.md",
+      "@speclang/router",
       "@unknown/headers.spec.md",
       "@unknown/spec-format.spec.md",
       "@speclang/index/tools",
@@ -19295,7 +19152,6 @@
       "@speclang/speclang",
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -19310,6 +19166,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -19321,10 +19178,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -19345,7 +19203,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -19371,11 +19228,12 @@
       "@unknown/hello-world-cascade.spec.md",
       "@specs/examples/crud-app",
       "@specs/examples/auth",
-      "@unknown/core.spec.md"
+      "@speclang/core"
     ],
     [
-      "@unknown/core.spec.md",
-      "@unknown/daemon.spec.md",
+      "@speclang/core",
+      "@unknown/agents.spec.md",
+      "@speclang/router",
       "@unknown/headers.spec.md",
       "@unknown/spec-format.spec.md",
       "@speclang/index/tools",
@@ -19384,7 +19242,6 @@
       "@speclang/speclang",
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -19399,6 +19256,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -19410,10 +19268,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -19434,7 +19293,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -19461,15 +19319,16 @@
       "@specs/examples/crud-app",
       "@specs/examples/auth",
       "@specs/examples/hello-world",
-      "@unknown/core.spec.md"
+      "@speclang/core"
     ],
     [
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -19490,7 +19349,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -19522,6 +19380,7 @@
     ],
     [
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -19533,10 +19392,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -19557,7 +19417,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -19591,10 +19450,11 @@
     [
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -19615,7 +19475,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -19650,10 +19509,11 @@
     [
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -19674,7 +19534,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -19710,10 +19569,11 @@
     [
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -19734,7 +19594,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -19771,10 +19630,11 @@
     [
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -19795,7 +19655,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -19833,10 +19692,11 @@
     [
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -19857,7 +19717,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -19895,6 +19754,7 @@
     ],
     [
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -19906,10 +19766,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -19930,7 +19791,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -19968,9 +19828,16 @@
       "@speclang/mcp"
     ],
     [
+      "@unknown/sqlite.spec.md",
+      "@unknown/config.spec.md",
+      "@unknown/api.spec.md",
+      "@unknown/cli.spec.md",
+      "@speclang/deployment",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -19991,7 +19858,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -20027,7 +19893,7 @@
       "@unknown/exit-codes.spec.md",
       "@unknown/configuration.spec.md",
       "@unknown/adoption-patterns.spec.md",
-      "@unknown/external-methodologies.spec.md"
+      "@unknown/sqlite.spec.md"
     ],
     [
       "@unknown/headers.spec.md",
@@ -20038,7 +19904,6 @@
       "@speclang/speclang",
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -20053,6 +19918,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -20064,10 +19930,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -20088,7 +19955,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -20128,9 +19994,27 @@
       "@unknown/headers.spec.md"
     ],
     [
+      "@unknown/opencode-plugin.spec.md",
+      "@unknown/ralph-loop.spec.md",
+      "@unknown/executor.spec.md",
+      "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
+      "@speclang/pipeline",
+      "@unknown/hooks.spec.md",
+      "@speclang/skills",
+      "@specs/agent-behavior",
+      "@unknown/index.spec.md",
+      "@unknown/agent-protocol.spec.md",
+      "@unknown/sqlite.spec.md",
+      "@unknown/config.spec.md",
+      "@unknown/api.spec.md",
+      "@unknown/cli.spec.md",
+      "@speclang/deployment",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -20151,7 +20035,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -20189,12 +20072,13 @@
       "@unknown/adoption-patterns.spec.md",
       "@unknown/recommendations.spec.md",
       "@unknown/bmad-comparison.spec.md",
-      "@unknown/external-methodologies.spec.md"
+      "@unknown/opencode-plugin.spec.md"
     ],
     [
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -20206,10 +20090,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -20230,7 +20115,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -20275,6 +20159,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -20286,10 +20171,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -20310,7 +20196,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -20355,6 +20240,7 @@
     [
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -20366,10 +20252,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -20390,7 +20277,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -20436,6 +20322,7 @@
     [
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -20447,10 +20334,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -20471,7 +20359,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -20516,22 +20403,16 @@
       "@unknown/executor.spec.md"
     ],
     [
-      "@speclang/mcp",
-      "@speclang/pipeline",
-      "@unknown/hooks.spec.md",
-      "@speclang/skills",
-      "@specs/agent-behavior",
-      "@unknown/index.spec.md",
-      "@unknown/agent-protocol.spec.md",
       "@unknown/sqlite.spec.md",
       "@unknown/config.spec.md",
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -20552,7 +20433,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -20594,109 +20474,20 @@
       "@unknown/state.spec.md",
       "@speclang/executor/execution",
       "@speclang/executor/scheduling",
-      "@unknown/run-modes.spec.md",
-      "@speclang/mcp"
-    ],
-    [
-      "@speclang/mcp",
-      "@speclang/pipeline",
-      "@unknown/hooks.spec.md",
-      "@speclang/skills",
-      "@specs/agent-behavior",
-      "@unknown/index.spec.md",
-      "@unknown/agent-protocol.spec.md",
-      "@unknown/sqlite.spec.md",
-      "@unknown/config.spec.md",
-      "@unknown/api.spec.md",
-      "@unknown/cli.spec.md",
-      "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
-      "@unknown/external-methodologies.spec.md",
-      "@speclang/symlinks",
-      "@unknown/cascade.spec.md",
-      "@speclang/symlinks/verification",
-      "@speclang/symlinks/creation",
-      "@speclang/hooks/handlers",
-      "@speclang/hooks/lifecycle",
-      "@unknown/rust.spec.md",
-      "@unknown/convergence.spec.md",
-      "@unknown/routing.spec.md",
-      "@unknown/events.spec.md",
-      "@speclang/daemon/architecture",
-      "@unknown/build-yaml.spec.md",
-      "@speclang/api.spec.dir/openapi",
-      "@unknown/production.spec.md",
-      "@unknown/alpha.spec.md",
-      "@unknown/beta.spec.md",
-      "@unknown/mvp.spec.md",
-      "@unknown/go.spec.md",
-      "@unknown/python.spec.md",
-      "@speclang/skills/code-gen",
-      "@speclang/skills/test-writer",
-      "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
-      "@unknown/error-handling.spec.md",
-      "@unknown/continuous-improvement.spec.md",
-      "@unknown/poc-vs-mvp.spec.md",
-      "@unknown/poc-audit.spec.md",
-      "@unknown/poc.spec.md",
-      "@unknown/integration.spec.md",
-      "@unknown/installation.spec.md",
-      "@speclang/lenses/mermaid",
-      "@unknown/packaging.spec.md",
-      "@speclang/cascade-protocol/flow",
-      "@unknown/depth-requirements.spec.md",
-      "@speclang/project-maturity-levels/levels",
-      "@unknown/testing.spec.md",
-      "@speclang/mcp-ui-tools/ui",
-      "@speclang/mcp-ui-tools/tools",
-      "@unknown/entities.spec.md",
-      "@specs/split",
-      "@speclang/stdlib/types",
-      "@unknown/mapping.spec.md",
-      "@speclang/examples/hello-world",
-      "@speclang/examples/auth",
-      "@speclang/examples/api",
-      "@unknown/hello-world-cascade.spec.md",
-      "@specs/examples/crud-app",
-      "@specs/examples/auth",
-      "@specs/examples/hello-world",
-      "@unknown/global-options.spec.md",
-      "@unknown/commands.spec.md",
-      "@unknown/check-command.spec.md",
-      "@unknown/interactive-mode.spec.md",
-      "@unknown/search-command.spec.md",
-      "@unknown/output-formats.spec.md",
-      "@unknown/exit-codes.spec.md",
-      "@unknown/configuration.spec.md",
-      "@unknown/adoption-patterns.spec.md",
-      "@unknown/recommendations.spec.md",
-      "@unknown/bmad-comparison.spec.md",
-      "@unknown/workflow.spec.md",
-      "@unknown/state.spec.md",
-      "@speclang/executor/execution",
-      "@speclang/executor/scheduling",
-      "@unknown/run-modes.spec.md",
       "@speclang/mcp-overview",
-      "@speclang/mcp"
+      "@unknown/sqlite.spec.md"
     ],
     [
-      "@speclang/mcp",
-      "@speclang/pipeline",
-      "@unknown/hooks.spec.md",
-      "@speclang/skills",
-      "@specs/agent-behavior",
-      "@unknown/index.spec.md",
-      "@unknown/agent-protocol.spec.md",
       "@unknown/sqlite.spec.md",
       "@unknown/config.spec.md",
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -20717,7 +20508,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -20759,13 +20549,13 @@
       "@unknown/state.spec.md",
       "@speclang/executor/execution",
       "@speclang/executor/scheduling",
-      "@unknown/run-modes.spec.md",
       "@speclang/mcp-overview",
       "@unknown/messages.spec.md",
-      "@speclang/mcp"
+      "@unknown/sqlite.spec.md"
     ],
     [
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -20777,10 +20567,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -20801,7 +20592,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -20843,7 +20633,6 @@
       "@unknown/state.spec.md",
       "@speclang/executor/execution",
       "@speclang/executor/scheduling",
-      "@unknown/run-modes.spec.md",
       "@speclang/mcp-overview",
       "@unknown/messages.spec.md",
       "@unknown/sse-stream.spec.md",
@@ -20851,6 +20640,7 @@
     ],
     [
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -20862,10 +20652,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -20886,7 +20677,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -20928,7 +20718,6 @@
       "@unknown/state.spec.md",
       "@speclang/executor/execution",
       "@speclang/executor/scheduling",
-      "@unknown/run-modes.spec.md",
       "@speclang/mcp-overview",
       "@unknown/messages.spec.md",
       "@unknown/sse-stream.spec.md",
@@ -20937,6 +20726,7 @@
     ],
     [
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -20948,10 +20738,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -20972,7 +20763,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -21014,7 +20804,6 @@
       "@unknown/state.spec.md",
       "@speclang/executor/execution",
       "@speclang/executor/scheduling",
-      "@unknown/run-modes.spec.md",
       "@speclang/mcp-overview",
       "@unknown/messages.spec.md",
       "@unknown/sse-stream.spec.md",
@@ -21024,6 +20813,7 @@
     ],
     [
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -21035,10 +20825,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -21059,7 +20850,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -21101,7 +20891,6 @@
       "@unknown/state.spec.md",
       "@speclang/executor/execution",
       "@speclang/executor/scheduling",
-      "@unknown/run-modes.spec.md",
       "@speclang/mcp-overview",
       "@unknown/messages.spec.md",
       "@unknown/sse-stream.spec.md",
@@ -21112,6 +20901,7 @@
     ],
     [
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -21123,10 +20913,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -21147,7 +20938,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -21189,7 +20979,6 @@
       "@unknown/state.spec.md",
       "@speclang/executor/execution",
       "@speclang/executor/scheduling",
-      "@unknown/run-modes.spec.md",
       "@speclang/mcp-overview",
       "@unknown/messages.spec.md",
       "@unknown/sse-stream.spec.md",
@@ -21201,6 +20990,7 @@
     ],
     [
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -21212,10 +21002,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -21236,7 +21027,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -21278,7 +21068,6 @@
       "@unknown/state.spec.md",
       "@speclang/executor/execution",
       "@speclang/executor/scheduling",
-      "@unknown/run-modes.spec.md",
       "@speclang/mcp-overview",
       "@unknown/messages.spec.md",
       "@unknown/sse-stream.spec.md",
@@ -21297,7 +21086,6 @@
       "@speclang/speclang",
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -21312,6 +21100,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -21323,10 +21112,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -21347,7 +21137,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -21389,7 +21178,6 @@
       "@unknown/state.spec.md",
       "@speclang/executor/execution",
       "@speclang/executor/scheduling",
-      "@unknown/run-modes.spec.md",
       "@speclang/mcp-overview",
       "@unknown/messages.spec.md",
       "@unknown/sse-stream.spec.md",
@@ -21409,7 +21197,6 @@
       "@speclang/speclang",
       "@unknown/roadmap.spec.md",
       "@speclang/implementation-path",
-      "@speclang/router",
       "@specs/directory",
       "@speclang/stdlib",
       "@unknown/examples-slash-greeting.spec.md",
@@ -21424,6 +21211,7 @@
       "@unknown/ralph-loop.spec.md",
       "@unknown/executor.spec.md",
       "@speclang/mcp",
+      "@unknown/run-modes.spec.md",
       "@speclang/pipeline",
       "@unknown/hooks.spec.md",
       "@speclang/skills",
@@ -21435,10 +21223,11 @@
       "@unknown/api.spec.md",
       "@unknown/cli.spec.md",
       "@speclang/deployment",
-      "@speclang/testing-strategy.spec",
+      "@speclang/testing-strategy",
       "@unknown/external-methodologies.spec.md",
       "@speclang/symlinks",
       "@unknown/cascade.spec.md",
+      "@unknown/daemon.spec.md",
       "@speclang/symlinks/verification",
       "@speclang/symlinks/creation",
       "@speclang/hooks/handlers",
@@ -21459,7 +21248,6 @@
       "@speclang/skills/code-gen",
       "@speclang/skills/test-writer",
       "@speclang/skills/spec-writer",
-      "@unknown/agents.spec.md",
       "@unknown/error-handling.spec.md",
       "@unknown/continuous-improvement.spec.md",
       "@unknown/poc-vs-mvp.spec.md",
@@ -21501,7 +21289,6 @@
       "@unknown/state.spec.md",
       "@speclang/executor/execution",
       "@speclang/executor/scheduling",
-      "@unknown/run-modes.spec.md",
       "@speclang/mcp-overview",
       "@unknown/messages.spec.md",
       "@unknown/sse-stream.spec.md",
@@ -21519,22 +21306,15 @@
     "missing_refs": [
       "@speclang/autonomous-validation -> @speclang/headers (depends_on)",
       "@speclang/agent-support -> @speclang/agent-support/human-only (children)",
-      "@speclang/directory-structure -> @speclang/core (imports)",
-      "@speclang/mcp-daemon -> @speclang/core (imports)",
       "@speclang/mcp-daemon -> @speclang/daemon (imports)",
-      "@speclang/lenses -> @speclang/core (imports)",
       "@speclang/agents -> @speclang/agent-protocol (depends_on)",
       "@speclang/auth -> @speclang/auth/entities (children)",
       "@speclang/auth -> @speclang/auth/flows (children)",
-      "@speclang/stdlib -> @speclang/core (imports)",
-      "@speclang/skills -> @speclang/core (imports)",
-      "@speclang/opencode -> @speclang/core (imports)",
       "@speclang/opencode -> @speclang/daemon (imports)",
       "@speclang/opencode -> @speclang/agent-protocol (imports)",
       "@speclang/mcp-ui-tools -> @speclang/sqlite (imports)",
       "@speclang/mcp-ui-tools -> @speclang/cascade (imports)",
       "@speclang/mcp-ui-tools -> @speclang/agent-protocol (imports)",
-      "@speclang/workflow -> @speclang/core (imports)",
       "@speclang/workflow -> @speclang/daemon (imports)",
       "@speclang/workflow -> @speclang/cascade (imports)",
       "@speclang/ui -> @speclang/ui/overview (children)",
@@ -21553,21 +21333,16 @@
       "@speclang/ui -> @speclang/cascade (imports)",
       "@speclang/ui -> @speclang/agent-protocol (imports)",
       "@speclang/ui -> @speclang/sqlite (imports)",
-      "@speclang/file-naming -> @speclang/core (imports)",
-      "@speclang/deployment -> @speclang/core (imports)",
       "@speclang/deployment -> @speclang/daemon (imports)",
-      "@speclang/server -> @speclang/core (depends_on)",
-      "@speclang/dynamic-split -> @speclang/core (imports)",
       "@speclang/dynamic-split -> @speclang/headers (imports)",
       "@speclang/validation -> @speclang/validation/rules (children)",
       "@speclang/validation -> @speclang/validation/tool (children)",
       "@speclang/validation -> @speclang/validation/language-blocks (children)",
-      "@speclang/git-history -> @speclang/core (imports)",
       "@speclang/search -> @speclang/search/queries (children)",
       "@speclang/search -> @speclang/search/indexing (children)",
-      "@speclang/symlinks -> @speclang/core (imports)",
       "@speclang/symlinks -> @speclang/headers (imports)",
-      "@speclang/test-specs -> @speclang/core (imports)",
+      "@speclang/test-specs -> @speclang/test-specs/format.spec (children)",
+      "@speclang/test-specs -> @speclang/test-specs/examples.spec (children)",
       "@speclang/sqlite/types -> @speclang/sqlite (imports)",
       "@speclang/sqlite/schema -> @speclang/sqlite (imports)",
       "@speclang/sqlite/fts -> @speclang/sqlite (imports)",
@@ -21575,28 +21350,18 @@
       "@speclang/sqlite/search -> @speclang/sqlite (imports)",
       "@speclang/sqlite/graph -> @speclang/sqlite (imports)",
       "@speclang/sqlite/migrations -> @speclang/sqlite (imports)",
-      "@speclang/deployment/enterprise -> @speclang/core (imports)",
       "@speclang/deployment/enterprise -> @speclang/daemon (imports)",
-      "@speclang/deployment/light -> @speclang/core (imports)",
-      "@speclang/test-specs/format -> @speclang/core (imports)",
-      "@speclang/test-specs/examples -> @speclang/core (imports)",
-      "@speclang/tools/api -> @speclang/core (imports)",
-      "@speclang/tools/implementations -> @speclang/core (imports)",
       "@speclang/mcp-ui-tools/ui -> @speclang/sqlite (imports)",
       "@speclang/mcp-ui-tools/ui -> @speclang/cascade (imports)",
       "@speclang/mcp-ui-tools/ui -> @speclang/agent-protocol (imports)",
       "@speclang/mcp-ui-tools/tools -> @speclang/sqlite (imports)",
       "@speclang/mcp-ui-tools/tools -> @speclang/cascade (imports)",
       "@speclang/mcp-ui-tools/tools -> @speclang/agent-protocol (imports)",
-      "@speclang/mcp-daemon/architecture -> @speclang/core (imports)",
       "@speclang/mcp-daemon/architecture -> @speclang/daemon (imports)",
-      "@speclang/mcp-daemon/config -> @speclang/core (imports)",
       "@speclang/mcp-daemon/config -> @speclang/daemon (imports)",
       "@speclang/opencode-plugin.spec.dir/convergence -> @speclang/cascade (imports)",
       "@speclang/opencode-plugin.spec.dir/overview -> @speclang/opencode-plugin (imports)",
-      "@speclang/mcp/openapi-generation -> @speclang/cli.spec (imports)",
-      "@speclang/file-naming/patterns -> @speclang/core (imports)",
-      "@speclang/file-naming/extensions -> @speclang/core (imports)"
+      "@speclang/mcp/openapi-generation -> @speclang/cli.spec (imports)"
     ],
     "valid_refs": [
       "@speclang/autonomous-validation -> @speclang/validation",
@@ -21604,24 +21369,30 @@
       "@speclang/autonomous-validation -> @speclang/autonomous-validation/scoring",
       "@speclang/autonomous-validation -> speclang/autonomous-validation/rules (content)",
       "@speclang/autonomous-validation -> speclang/autonomous-validation/scoring (content)",
-      "@unknown/core.spec.md -> specs/core (content)",
-      "@unknown/core.spec.md -> specs/core (content)",
-      "@unknown/core.spec.md -> specs/core (content)",
-      "@unknown/core.spec.md -> specs/core (content)",
-      "@unknown/core.spec.md -> specs/core (content)",
-      "@unknown/core.spec.md -> specs/core (content)",
-      "@unknown/core.spec.md -> specs/core (content)",
-      "@unknown/core.spec.md -> specs/core (content)",
-      "@unknown/core.spec.md -> specs/core (content)",
-      "@unknown/core.spec.md -> specs/core (content)",
-      "@unknown/core.spec.md -> specs/core (content)",
-      "@unknown/core.spec.md -> specs/core (content)",
-      "@unknown/core.spec.md -> specs/directory-structure (content)",
-      "@unknown/core.spec.md -> specs/project-layout (content)",
-      "@unknown/core.spec.md -> specs/daemon (content)",
-      "@unknown/core.spec.md -> specs/skills (content)",
-      "@unknown/core.spec.md -> specs/test-specs (content)",
-      "@unknown/core.spec.md -> specs/spec-format (content)",
+      "@speclang/core -> @ref:specs/core.spec.dir/entities",
+      "@speclang/core -> @ref:specs/core.spec.dir/cascade",
+      "@speclang/core -> @ref:specs/core.spec.dir/file-types",
+      "@speclang/core -> @ref:specs/core.spec.dir/agents",
+      "@speclang/core -> @ref:specs/core.spec.dir/skills",
+      "@speclang/core -> @ref:specs/core.spec.dir/concurrency",
+      "@speclang/core -> specs/core (content)",
+      "@speclang/core -> specs/core (content)",
+      "@speclang/core -> specs/core (content)",
+      "@speclang/core -> specs/core (content)",
+      "@speclang/core -> specs/core (content)",
+      "@speclang/core -> specs/core (content)",
+      "@speclang/core -> specs/core (content)",
+      "@speclang/core -> specs/core (content)",
+      "@speclang/core -> specs/core (content)",
+      "@speclang/core -> specs/core (content)",
+      "@speclang/core -> specs/core (content)",
+      "@speclang/core -> specs/core (content)",
+      "@speclang/core -> specs/directory-structure (content)",
+      "@speclang/core -> specs/project-layout (content)",
+      "@speclang/core -> specs/daemon (content)",
+      "@speclang/core -> specs/skills (content)",
+      "@speclang/core -> specs/test-specs (content)",
+      "@speclang/core -> specs/spec-format (content)",
       "@specs/transition -> speclang/transition-workflows/upgrade (content)",
       "@specs/transition -> speclang/transition-workflows/downgrade (content)",
       "@specs/transition -> speclang/project-maturity-levels (content)",
@@ -21645,6 +21416,7 @@
       "@unknown/demo-slash-hello.spec.md -> specs/hello (content)",
       "@speclang/directory-structure -> @speclang/directory-structure/pattern",
       "@speclang/directory-structure -> @speclang/directory-structure/creation",
+      "@speclang/directory-structure -> @speclang/core",
       "@speclang/directory-structure -> @speclang/project-layout",
       "@speclang/speclang -> specs/core (content)",
       "@speclang/speclang -> specs/bootstrap (content)",
@@ -21659,6 +21431,7 @@
       "@unknown/roadmap.spec.md -> specs/roadmap (content)",
       "@speclang/mcp-daemon -> @speclang/mcp-daemon/architecture",
       "@speclang/mcp-daemon -> @speclang/mcp-daemon/config",
+      "@speclang/mcp-daemon -> @speclang/core",
       "@speclang/mcp-daemon -> @speclang/deployment",
       "@speclang/implementation-path -> specs/indexer (content)",
       "@speclang/implementation-path -> specs/parser (content)",
@@ -21718,6 +21491,7 @@
       "@speclang/project-maturity-levels -> specs/agent-support-levels (content)",
       "@speclang/lenses -> @speclang/lenses/formats",
       "@speclang/lenses -> @speclang/lenses/mermaid",
+      "@speclang/lenses -> @speclang/core",
       "@speclang/tutorial -> speclang/auth (content)",
       "@speclang/tutorial -> specs/speclang (content)",
       "@speclang/tutorial -> specs/bootstrap (content)",
@@ -21726,6 +21500,7 @@
       "@speclang/agent-support-levels -> @speclang/agent-support-levels/behaviors",
       "@speclang/agent-support-levels -> speclang/agent-support-levels/levels (content)",
       "@speclang/agent-support-levels -> speclang/agent-support-levels/behaviors (content)",
+      "@northstar/speclang -> speclang/core (content)",
       "@northstar/speclang -> speclang/skills (content)",
       "@northstar/speclang -> speclang/pipeline (content)",
       "@northstar/speclang -> speclang/recovery (content)",
@@ -21845,10 +21620,12 @@
       "@specs/indexer -> specs/headers (content)",
       "@speclang/stdlib -> @ref:specs/stdlib.spec.dir/types",
       "@speclang/stdlib -> @ref:specs/stdlib.spec.dir/mapping",
+      "@speclang/stdlib -> @speclang/core",
       "@speclang/stdlib -> specs/stdlib (content)",
       "@speclang/stdlib -> specs/stdlib (content)",
       "@speclang/stdlib -> specs/stdlib (content)",
       "@speclang/stdlib -> specs/stdlib (content)",
+      "@speclang/skills -> @speclang/core",
       "@speclang/skills -> specs/skills (content)",
       "@speclang/skills -> specs/skills (content)",
       "@speclang/skills -> specs/skills (content)",
@@ -21873,8 +21650,10 @@
       "@unknown/agent-protocol.spec.md -> specs/git-history (content)",
       "@specs/autonomous -> specs/agents (content)",
       "@specs/autonomous -> specs/validation (content)",
+      "@unknown/bootstrap.spec.md -> speclang/core (content)",
       "@specs/ralph -> specs/agents (content)",
       "@specs/ralph -> specs/validation (content)",
+      "@speclang/opencode -> @speclang/core",
       "@speclang/opencode -> speclang/opencode/events (content)",
       "@speclang/opencode -> speclang/opencode/integration (content)",
       "@speclang/mcp-ui-tools -> @speclang/mcp-ui-tools/tools",
@@ -21883,6 +21662,7 @@
       "@speclang/workflow -> @speclang/workflow/setup",
       "@speclang/workflow -> @speclang/workflow/daily-use",
       "@speclang/workflow -> @speclang/workflow/examples",
+      "@speclang/workflow -> @speclang/core",
       "@speclang/workflow -> @speclang/skills",
       "@speclang/ui -> @speclang/mcp-ui-tools",
       "@speclang/ui -> @speclang/mcp",
@@ -21911,8 +21691,10 @@
       "@unknown/cli.spec.md -> specs/cli (content)",
       "@unknown/cli.spec.md -> specs/cli (content)",
       "@unknown/cli.spec.md -> specs/cli (content)",
+      "@speclang/file-naming -> @speclang/core",
       "@speclang/file-naming -> speclang/file-naming/extensions (content)",
       "@speclang/file-naming -> speclang/file-naming/patterns (content)",
+      "@speclang/deployment -> @speclang/core",
       "@speclang/deployment -> @speclang/opencode",
       "@speclang/deployment -> specs/deployment (content)",
       "@speclang/deployment -> specs/deployment (content)",
@@ -21921,15 +21703,18 @@
       "@speclang/layer -> speclang/layer-definitions (content)",
       "@speclang/layer -> speclang/validation (content)",
       "@speclang/server -> @speclang/mcp",
+      "@speclang/server -> @speclang/core",
       "@speclang/dynamic-split -> @speclang/dynamic-split/strategy",
       "@speclang/dynamic-split -> @speclang/dynamic-split/token-budget",
-      "@speclang/testing-strategy.spec -> specs/test-specs (content)",
-      "@speclang/testing-strategy.spec -> specs/validation (content)",
-      "@speclang/testing-strategy.spec -> specs/cascade (content)",
-      "@speclang/testing-strategy.spec -> specs/project-maturity-levels (content)",
-      "@speclang/testing-strategy.spec -> specs/pipeline (content)",
+      "@speclang/dynamic-split -> @speclang/core",
+      "@speclang/testing-strategy -> specs/test-specs (content)",
+      "@speclang/testing-strategy -> specs/validation (content)",
+      "@speclang/testing-strategy -> specs/cascade (content)",
+      "@speclang/testing-strategy -> specs/project-maturity-levels (content)",
+      "@speclang/testing-strategy -> specs/pipeline (content)",
       "@speclang/git-history -> @speclang/git-history/commits",
       "@speclang/git-history -> @speclang/git-history/rollback",
+      "@speclang/git-history -> @speclang/core",
       "@speclang/transition-workflows -> speclang/transition-workflows/upgrade (content)",
       "@speclang/transition-workflows -> speclang/transition-workflows/downgrade (content)",
       "@speclang/transition-workflows -> speclang/transition-workflows/upgrade (content)",
@@ -21947,6 +21732,7 @@
       "@unknown/external-methodologies.spec.md -> specs/external-methodologies (content)",
       "@unknown/external-methodologies.spec.md -> specs/external-methodologies (content)",
       "@unknown/external-methodologies.spec.md -> specs/external-methodologies (content)",
+      "@speclang/symlinks -> @speclang/core",
       "@speclang/symlinks -> specs/symlinks (content)",
       "@speclang/symlinks -> specs/symlinks (content)",
       "@unknown/cascade.spec.md -> specs/cascade (content)",
@@ -21985,8 +21771,7 @@
       "@speclang/safety-nets -> speclang/transition-workflows (content)",
       "@speclang/safety-nets -> speclang/agent-behavior-matrix (content)",
       "@speclang/safety-nets -> speclang/agent-support-levels (content)",
-      "@speclang/test-specs -> @speclang/test-specs/format",
-      "@speclang/test-specs -> @speclang/test-specs/examples",
+      "@speclang/test-specs -> @speclang/core",
       "@speclang/test-specs -> speclang/test-specs/format (content)",
       "@speclang/test-specs -> speclang/test-specs/examples (content)",
       "@specs/dashboard -> specs/ui-dashboard (content)",
@@ -22252,7 +22037,9 @@
       "@unknown/validate-refs.spec.md -> northstar (content)",
       "@unknown/validate-refs.spec.md -> specs/auth (content)",
       "@unknown/validate-refs.spec.md -> northstar (content)",
+      "@speclang/deployment/enterprise -> @speclang/core",
       "@speclang/deployment/enterprise -> @speclang/opencode",
+      "@speclang/deployment/light -> @speclang/core",
       "@speclang/deployment/light -> @speclang/opencode",
       "@specs/docs/changelog -> specs/docs (content)",
       "@unknown/validation.spec.md -> speclang/layer-definitions (content)",
@@ -22262,7 +22049,9 @@
       "@speclang/cascade-protocol/flow -> specs/cascade-protocol (content)",
       "@speclang/cascade-protocol/flow -> specs/core (content)",
       "@speclang/cascade-protocol/flow -> specs/core (content)",
+      "@speclang/test-specs/format -> @speclang/core",
       "@speclang/test-specs/format -> speclang/test-specs/examples (content)",
+      "@speclang/test-specs/examples -> @speclang/core",
       "@speclang/test-specs/examples -> speclang/test-specs/format (content)",
       "@speclang/test-specs/examples -> specs/auth (content)",
       "@unknown/depth-requirements.spec.md -> specs/project-maturity-levels (content)",
@@ -22280,7 +22069,9 @@
       "@unknown/visual-design.spec.md -> specs/ui-dashboard (content)",
       "@unknown/testing.spec.md -> specs/ui-dashboard (content)",
       "@unknown/testing.spec.md -> specs/testing-strategy (content)",
+      "@speclang/tools/api -> @speclang/core",
       "@speclang/tools/api -> @speclang/opencode",
+      "@speclang/tools/implementations -> @speclang/core",
       "@speclang/tools/implementations -> @speclang/opencode",
       "@speclang/recovery/retry -> @speclang/recovery",
       "@speclang/recovery/rollback -> @speclang/recovery",
@@ -22335,21 +22126,30 @@
       "@speclang/mcp-ui-tools/ui -> specs/ui (content)",
       "@speclang/mcp-ui-tools/tools -> @speclang/mcp",
       "@speclang/mcp-ui-tools/tools -> specs/sqlite (content)",
+      "@unknown/concurrency.spec.md -> speclang/core (content)",
+      "@unknown/file-types.spec.md -> speclang/core (content)",
+      "@unknown/agents.spec.md -> speclang/core (content)",
+      "@unknown/skills.spec.md -> speclang/core (content)",
       "@unknown/entities.spec.md -> specs/core (content)",
+      "@unknown/cascade.spec.md -> speclang/core (content)",
       "@unknown/flows.spec.md -> speclang/auth (content)",
       "@unknown/flows.spec.md -> speclang/mcp (content)",
       "@unknown/flows.spec.md -> speclang/examples/auth (content)",
       "@unknown/entities.spec.md -> speclang/auth (content)",
       "@unknown/entities.spec.md -> speclang/mcp (content)",
       "@unknown/entities.spec.md -> speclang/examples/auth (content)",
+      "@speclang/mcp-daemon/architecture -> @speclang/core",
       "@speclang/mcp-daemon/architecture -> @speclang/deployment",
+      "@speclang/mcp-daemon/config -> @speclang/core",
       "@speclang/mcp-daemon/config -> @speclang/deployment",
       "@specs/split -> specs/core (content)",
       "@speclang/stdlib/types -> specs/stdlib (content)",
       "@unknown/mapping.spec.md -> specs/stdlib (content)",
       "@speclang/examples/hello-world -> specs/examples (content)",
       "@speclang/examples/auth -> specs/examples (content)",
+      "@speclang/examples/auth -> speclang/core (content)",
       "@speclang/examples/api -> specs/examples (content)",
+      "@speclang/examples/api -> speclang/core (content)",
       "@unknown/hello-world-cascade.spec.md -> specs/examples (content)",
       "@unknown/hello-world-cascade.spec.md -> specs/hello (content)",
       "@unknown/hello-world-cascade.spec.md -> specs/hello (content)",
@@ -22540,14 +22340,18 @@
       "@speclang/spec-format/structure -> specs/auth (content)",
       "@speclang/spec-format/structure -> specs/auth (content)",
       "@speclang/spec-format/structure -> specs/auth (content)",
+      "@speclang/file-naming/patterns -> @speclang/core",
       "@speclang/file-naming/patterns -> speclang/file-naming (content)",
+      "@speclang/file-naming/extensions -> @speclang/core",
       "@speclang/file-naming/extensions -> speclang/file-naming (content)",
       "@speclang/examples/hello-world -> specs/examples (content)",
       "@speclang/examples/auth -> specs/examples (content)",
-      "@speclang/examples/api -> specs/examples (content)"
+      "@speclang/examples/auth -> speclang/core (content)",
+      "@speclang/examples/api -> specs/examples (content)",
+      "@speclang/examples/api -> speclang/core (content)"
     ],
     "total_specs": 476,
-    "total_refs": 946,
-    "missing_ref_count": 80
+    "total_refs": 985,
+    "missing_ref_count": 58
   }
 }
