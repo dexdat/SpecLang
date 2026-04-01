@@ -6,7 +6,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [typescript, generated, auto-generated]
 children:
-  - ""@ref:specs/hooks.spec.dir/lifecycle"  - ""@ref:specs/hooks.spec.dir/handlers"short: "Hook execution system for pipeline - lifecycle and built-in handlers"
+  - "@ref:@ref:specs/hooks.spec.dir/lifecycle"  - "@ref:specs/hooks.spec.dir/handlers"
+short: "Hook execution system for pipeline - lifecycle and built-in handlers"
 ---
 # Hook Execution System
 

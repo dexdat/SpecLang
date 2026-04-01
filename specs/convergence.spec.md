@@ -7,7 +7,7 @@ agent_support: agent_autonomous
 tags: [convergence, core, reactive]
 short: "Convergence detection and triggers for reactive cascade"
 children:
-  - ""@ref:speclang/convergence/detection"  - ""@ref:speclang/convergence/triggers"---
+  - "@ref:speclang/convergence/detection"  - "@ref:speclang/convergence/triggers"---
 # Convergence
 
 Convergence is the point at which the reactive cascade stops because no more changes are occurring. The system detects convergence through signals like quiet periods and agent idle states, then triggers post‑convergence actions (pipeline, commit, etc.).

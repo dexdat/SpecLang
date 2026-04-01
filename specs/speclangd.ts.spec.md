@@ -1,5 +1,5 @@
 # speclang-header lines:6
-id: "@specs/speclangd.ts"
+id: "@specs/speclangd-ts"
 version: 1.0.0
 layer: 5
 short: Speclang daemon TypeScript implementation

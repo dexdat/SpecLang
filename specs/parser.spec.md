@@ -6,7 +6,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [parser, typescript, validation, headers]
 children:
-  - ""@ref:specs/parser.spec.dir/parsing"  - ""@ref:specs/parser.spec.dir/validation"short: "Parser - Header parsing and spec validation"
+  - "@ref:@ref:specs/parser.spec.dir/parsing"  - "@ref:specs/parser.spec.dir/validation"
+short: "Parser - Header parsing and spec validation"
 status: draft
 ---
 

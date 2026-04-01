@@ -16,6 +16,8 @@ const VALID_BLOCK_KINDS = [
   'diagram',
   'code',
   'note',
+  'prose',
+  'function',
   'question',
   'decision',
 ];

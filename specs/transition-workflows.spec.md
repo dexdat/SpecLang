@@ -21,11 +21,11 @@ This directory contains detailed specifications for transition workflows:
 DirectoryIndex:
   
   upgrade:
-    - "@ref:speclang/transition-workflows/upgrade
+    - "@ref:speclang/transition-workflows/upgrade"
     - Contains: Upgrade checklists, validation gates, orchestration, examples
   
   downgrade:
-    - "@ref:speclang/transition-workflows/downgrade
+    - "@ref:speclang/transition-workflows/downgrade"
     - Contains: Downgrade triggers, rollback procedures, emergency workflows
   
   relationship:
@@ -51,12 +51,12 @@ DirectoryIndex:
 ```speclang
 # @block:transition/common-refs @kind:refs
 refs:
-  - "@ref:speclang/project-maturity-levels
-  - "@ref:speclang/agent-support-levels
-  - "@ref:speclang/autonomous-validation
-  - "@ref:speclang/agent-behavior-matrix
-  - "@ref:speclang/transition-workflows/upgrade
-  - "@ref:speclang/transition-workflows/downgrade
+  - "@ref:speclang/project-maturity-levels"
+  - "@ref:speclang/agent-support-levels"
+  - "@ref:speclang/autonomous-validation"
+  - "@ref:speclang/agent-behavior-matrix"
+  - "@ref:speclang/transition-workflows/upgrade"
+  - "@ref:speclang/transition-workflows/downgrade"
 ```
 
 ## Maintenance Notes

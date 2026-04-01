@@ -7,7 +7,7 @@ agent_support: agent_assisted
 tags: [example, greeting, demo]
 short: Greeting example directory
 status: draft
-parent: ""@ref:specs/examples"---
+parent: "@ref:specs/examples"---
 
 # Greeting Examples Directory
 

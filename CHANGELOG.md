@@ -7,20 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-03-31
+
 ### Added
-- Initial release preparation tasks
+- Complete SpecLang implementation with 95 stories
+- 736 baby steps executed
 - Hard checks verification system
 - Database schema migrations
-- CLI command suite
+- CLI command suite (15 commands)
+- GitHub Actions CI workflow
+- Performance benchmarks
+- Examples: hello-world, auth, CRUD
+- Scripts for validation, generation, and compliance
+- Project maturity levels (POC to Enterprise)
+- Layer system with 10 abstraction levels
+- Standard library with types and functions
+- Lens system for multiple content formats
+- Mermaid diagram lens
+- MCP server with authentication and tools
+- Code generation framework for TypeScript, Go, Python, Rust
+- Pipeline executor with build, test, lint, deploy stages
+- Guard system for file ownership
+- Ralph Loop autonomous agent system
+- UI dashboard for system monitoring
+- Transition workflows for maturity level upgrades
+- Safety systems and recovery mechanisms
+- Integration tests and performance tests
 
 ### Changed
 - Fixed broken spec references (13 references)
 - Improved hard checks script regex
 - Updated package.json for packaging
+- Bootstrap from POC to Alpha maturity
+- Migrated from UUIDs to git commit hashes for causality
+- Enhanced validation system with autonomous agent support
+- Improved error handling with rollback mechanisms
+- Dual-view pattern fully implemented with 392 symlinks
+- All specs follow header format with required fields
+- Test suite expanded to 1478 passing tests (8 skipped)
 
 ### Fixed
 - Reference validation errors
-- Test suite passes (1229 tests)
+- Test suite passes consistently
+- Build compiles without errors
+- All critical checks pass (9/9)
+- No broken references
 
 ## [0.1.0] - 2026-03-22
 

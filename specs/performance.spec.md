@@ -1,5 +1,5 @@
 # speclang-header lines:10
-id: "@specs/testing/performance"
+id: "@specs/performance"
 version: 1.0.0
 layer: 5
 project_level: Alpha

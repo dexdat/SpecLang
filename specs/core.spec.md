@@ -6,7 +6,13 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [core, architecture, reactive, meta-circular]
 children:
-  - ""@ref:specs/core.spec.dir/entities"  - ""@ref:specs/core.spec.dir/cascade"  - ""@ref:specs/core.spec.dir/file-types"  - ""@ref:specs/core.spec.dir/agents"  - ""@ref:specs/core.spec.dir/skills"  - ""@ref:specs/core.spec.dir/concurrency"short: "Speclang Core - Reactive multi-agent system"
+  - "@ref:specs/core.spec.dir/entities"
+  - "@ref:specs/core.spec.dir/cascade"
+  - "@ref:specs/core.spec.dir/file-types"
+  - "@ref:specs/core.spec.dir/agents"
+  - "@ref:specs/core.spec.dir/skills"
+  - "@ref:specs/core.spec.dir/concurrency"
+short: "Speclang Core - Reactive multi-agent system"
 status: draft
 ---
 
