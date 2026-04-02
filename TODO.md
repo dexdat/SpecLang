@@ -41,14 +41,14 @@ npm run build && npm test
 
 ### P0-025: Implement Project Maturity Levels
 
-**Status:** ❌ NOT STARTED
+**Status:** ✅ COMPLETE
 **Dependencies:** None
-**Spec:** specs/project-maturity-levels.spec.md (needs expansion from 23 lines)
+**Spec:** specs/project-maturity-levels.spec.md (expanded)
 **Target:** src/maturity/
 
 **Baby Steps:**
 
-- [ ] **Step 1:** Expand maturity spec (30 min)
+- [x] **Step 1:** Expand maturity spec (30 min)
   - Read specs/project-maturity-levels.spec.md
   - Add @block::levels with 5 maturity levels
   - Add @block::criteria with criteria definitions
@@ -56,43 +56,43 @@ npm run build && npm test
   - Expand to 100+ lines
   - Validate: `./bin/speclang validate` passes
 
-- [ ] **Step 2:** Generate interfaces (45 min)
+- [x] **Step 2:** Generate interfaces (45 min)
   - Run cascade on spec
   - Verify src/maturity/ TypeScript generated
   - Check interfaces match spec
   - Validate: build passes
 
-- [ ] **Step 3:** Implement maturity enum (30 min)
+- [x] **Step 3:** Implement maturity enum (30 min)
   - Implement MaturityLevel enum
   - Add level descriptions
   - Add level metadata
   - Validate: tests pass
 
-- [ ] **Step 4:** Implement criteria checker (60 min)
+- [x] **Step 4:** Implement criteria checker (60 min)
   - Implement checkCriteria()
   - Add criteria for each level
   - Add pass/fail logic
   - Validate: add test, test passes
 
-- [ ] **Step 5:** Implement validation (45 min)
+- [x] **Step 5:** Implement validation (45 min)
   - Implement validateMaturity()
   - Check spec requirements
   - Return violations
   - Validate: add test
 
-- [ ] **Step 6:** Add CLI command (45 min)
+- [x] **Step 6:** Add CLI command (45 min)
   - Add `speclang maturity <spec>` command
   - Show maturity level
   - Show criteria results
   - Validate: manual test
 
-- [ ] **Step 7:** Write tests (45 min)
+- [x] **Step 7:** Write tests (45 min)
   - Create tests/maturity.test.ts
   - Test each level
   - Test validation
   - Validate: all tests pass
 
-- [ ] **Step 8:** Update docs (30 min)
+- [x] **Step 8:** Update docs (30 min)
   - Update spec with examples
   - Add usage examples
   - Validate: build + tests pass
