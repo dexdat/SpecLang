@@ -178,7 +178,7 @@
           "prompt": "docs/prompts/p4_001.md",
           "outputs": [],
           "priority": 1,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P4-002",
@@ -187,7 +187,7 @@
           "prompt": "docs/prompts/p4_002.md",
           "outputs": [],
           "priority": 2,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P4-003",
@@ -196,7 +196,7 @@
           "prompt": "docs/prompts/p4_003.md",
           "outputs": [],
           "priority": 3,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P4-004",
@@ -205,7 +205,7 @@
           "prompt": "docs/prompts/p4_004.md",
           "outputs": [],
           "priority": 4,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P4-005",
@@ -214,7 +214,7 @@
           "prompt": "docs/prompts/p4_005.md",
           "outputs": [],
           "priority": 5,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P4-006",
@@ -223,7 +223,7 @@
           "prompt": "docs/prompts/p4_006.md",
           "outputs": [],
           "priority": 6,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P4-007",
@@ -232,7 +232,7 @@
           "prompt": "docs/prompts/p4_007.md",
           "outputs": [],
           "priority": 7,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P4-008",
@@ -241,7 +241,7 @@
           "prompt": "docs/prompts/p4_008.md",
           "outputs": [],
           "priority": 8,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P4-009",
@@ -250,7 +250,7 @@
           "prompt": "docs/prompts/p4_009.md",
           "outputs": [],
           "priority": 9,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P4-010",
@@ -259,7 +259,7 @@
           "prompt": "docs/prompts/p4_010.md",
           "outputs": [],
           "priority": 10,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P4-011",
@@ -268,7 +268,7 @@
           "prompt": "docs/prompts/p4_011.md",
           "outputs": [],
           "priority": 11,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P4-012",
@@ -277,7 +277,7 @@
           "prompt": "docs/prompts/p4_012.md",
           "outputs": [],
           "priority": 12,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P4-013",
@@ -286,7 +286,7 @@
           "prompt": "docs/prompts/p4_013.md",
           "outputs": [],
           "priority": 13,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P4-014",
@@ -295,7 +295,7 @@
           "prompt": "docs/prompts/p4_014.md",
           "outputs": [],
           "priority": 14,
-          "passes": false
+          "passes": true
         }
       ]
     },
@@ -310,7 +310,7 @@
           "prompt": "docs/prompts/p5_003.md",
           "outputs": [],
           "priority": 3,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P5-004",
@@ -319,7 +319,7 @@
           "prompt": "docs/prompts/p5_004.md",
           "outputs": [],
           "priority": 4,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P5-005",
@@ -328,7 +328,7 @@
           "prompt": "docs/prompts/p5_005.md",
           "outputs": [],
           "priority": 5,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P5-006",
@@ -337,7 +337,7 @@
           "prompt": "docs/prompts/p5_006.md",
           "outputs": [],
           "priority": 6,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P5-007",
@@ -346,7 +346,7 @@
           "prompt": "docs/prompts/p5_007.md",
           "outputs": [],
           "priority": 7,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P5-008",
@@ -355,7 +355,7 @@
           "prompt": "docs/prompts/p5_008.md",
           "outputs": [],
           "priority": 8,
-          "passes": false
+          "passes": true
         }
       ]
     },
@@ -370,7 +370,7 @@
           "prompt": "docs/prompts/p6_001.md",
           "outputs": [],
           "priority": 1,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P6-002",
@@ -379,7 +379,7 @@
           "prompt": "docs/prompts/p6_002.md",
           "outputs": [],
           "priority": 2,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P6-003",
@@ -388,7 +388,7 @@
           "prompt": "docs/prompts/p6_003.md",
           "outputs": [],
           "priority": 3,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P6-004",
@@ -397,7 +397,7 @@
           "prompt": "docs/prompts/p6_004.md",
           "outputs": [],
           "priority": 4,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P6-005",
@@ -406,7 +406,7 @@
           "prompt": "docs/prompts/p6_005.md",
           "outputs": [],
           "priority": 5,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P6-006",
@@ -415,7 +415,7 @@
           "prompt": "docs/prompts/p6_006.md",
           "outputs": [],
           "priority": 6,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P6-007",
@@ -424,7 +424,7 @@
           "prompt": "docs/prompts/p6_007.md",
           "outputs": [],
           "priority": 7,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P6-008",
@@ -433,7 +433,7 @@
           "prompt": "docs/prompts/p6_008.md",
           "outputs": [],
           "priority": 8,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P6-009",
@@ -442,7 +442,7 @@
           "prompt": "docs/prompts/p6_009.md",
           "outputs": [],
           "priority": 9,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P6-010",
@@ -451,7 +451,7 @@
           "prompt": "docs/prompts/p6_010.md",
           "outputs": [],
           "priority": 10,
-          "passes": false
+          "passes": true
         }
       ]
     },
@@ -481,7 +481,7 @@
           "prompt": "docs/prompts/p8_001.md",
           "outputs": [],
           "priority": 1,
-          "passes": false
+          "passes": true
         }
       ]
     },
@@ -496,7 +496,7 @@
           "prompt": "docs/prompts/p9_001.md",
           "outputs": [],
           "priority": 1,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P9-002",
@@ -505,7 +505,7 @@
           "prompt": "docs/prompts/p9_002.md",
           "outputs": [],
           "priority": 2,
-          "passes": false
+          "passes": true
         }
       ]
     }
