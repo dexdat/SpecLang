@@ -122,12 +122,12 @@ npm run build && npm test
 ### P0-027 to P0-041: Remaining Foundation Stories
 
 - [x] **P0-027:** Standard Library Functions
-- [ ] **P0-028:** Mermaid Diagram Lens
-- [ ] **P0-029:** Code Lens
-- [ ] **P0-030:** Entity Lens
-- [ ] **P0-031:** Operation Lens
-- [ ] **P0-032:** Prose Lens
-- [ ] **P0-033:** Layer System Overview
+- [x] **P0-028:** Mermaid Diagram Lens ✅ (implemented in specs/lenses.spec.dir/src/mermaid.ts, tests pass)
+- [x] **P0-029:** Code Lens ✅ (implemented in specs/lenses.spec.dir/src/code-lens.ts, tests pass)
+- [x] **P0-030:** Entity Lens ✅ (implemented in specs/lenses.spec.dir/src/entity-lens.ts, tests pass)
+- [x] **P0-031:** Operation Lens ✅ (implemented in specs/lenses.spec.dir/src/operation-lens.ts, tests pass)
+- [x] **P0-032:** Prose Lens ✅ (implemented in specs/lenses.spec.dir/src/prose-lens.ts, tests pass)
+- [x] **P0-033:** Layer System Overview ✅ (implemented in specs/layer.spec.md and src/layers/)
 - [ ] **P0-037:** Alpha Maturity Level
 - [ ] **P0-038:** Beta Maturity Level
 - [ ] **P0-039:** Production Maturity Level
