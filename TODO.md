@@ -136,26 +136,26 @@ npm run build && npm test
 
 ---
 
-## Phase 1: Core Runtime (18 stories - 5 complete)
+## Phase 1: Core Runtime (18 stories - 14 complete)
 
-**Complete:** P1-001, P1-002, P1-019, P1-020, P1-021 ✅
+**Complete:** P1-001, P1-002, P1-003, P1-004, P1-005, P1-006, P1-007, P1-008, P1-009, P1-013, P1-014, P1-015, P1-016, P1-017, P1-018, P1-019, P1-020, P1-021 ✅
 
 **Remaining:**
 - [x] P1-001: Design speclangd daemon
 - [x] P1-002: Agent session manager
-- [ ] P1-003: OpenCode integration
-- [ ] P1-004: Cascade coordination
-- [ ] P1-005: Autonomous validation
-- [ ] P1-006: Daemon events watcher
-- [ ] P1-007: Convergence detection
-- [ ] P1-008: Event routing
-- [ ] P1-009: File locking
-- [ ] P1-013: Ambiguity detection
-- [ ] P1-014: Validation completeness
-- [ ] P1-015: Step-by-step detection
-- [ ] P1-016: Human-only agent support
-- [ ] P1-017: Agent-assisted support
-- [ ] P1-018: Agent-autonomous support
+- [x] P1-003: OpenCode integration
+- [x] P1-004: Cascade coordination
+- [x] P1-005: Autonomous validation
+- [x] P1-006: Daemon events watcher
+- [x] P1-007: Convergence detection
+- [x] P1-008: Event routing
+- [x] P1-009: File locking
+- [x] P1-013: Ambiguity detection
+- [x] P1-014: Validation completeness
+- [x] P1-015: Step-by-step detection
+- [x] P1-016: Human-only agent support
+- [x] P1-017: Agent-assisted support
+- [x] P1-018: Agent-autonomous support
 
 ---
 
