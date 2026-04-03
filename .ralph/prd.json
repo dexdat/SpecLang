@@ -11,7 +11,7 @@
           "prompt": "docs/prompts/p0_025.md",
           "outputs": [],
           "priority": 25,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-026",
@@ -20,7 +20,7 @@
           "prompt": "docs/prompts/p0_026.md",
           "outputs": [],
           "priority": 26,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-027",
@@ -29,7 +29,7 @@
           "prompt": "docs/prompts/p0_027.md",
           "outputs": [],
           "priority": 27,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-028",
@@ -38,7 +38,7 @@
           "prompt": "docs/prompts/p0_028.md",
           "outputs": [],
           "priority": 28,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-029",
@@ -47,7 +47,7 @@
           "prompt": "docs/prompts/p0_029.md",
           "outputs": [],
           "priority": 29,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-030",
@@ -56,7 +56,7 @@
           "prompt": "docs/prompts/p0_030.md",
           "outputs": [],
           "priority": 30,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-031",
@@ -65,7 +65,7 @@
           "prompt": "docs/prompts/p0_031.md",
           "outputs": [],
           "priority": 31,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-032",
@@ -74,7 +74,7 @@
           "prompt": "docs/prompts/p0_032.md",
           "outputs": [],
           "priority": 32,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-033",
@@ -83,7 +83,7 @@
           "prompt": "docs/prompts/p0_033.md",
           "outputs": [],
           "priority": 33,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-037",
@@ -92,7 +92,7 @@
           "prompt": "docs/prompts/p0_037.md",
           "outputs": [],
           "priority": 37,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-038",
@@ -101,7 +101,7 @@
           "prompt": "docs/prompts/p0_038.md",
           "outputs": [],
           "priority": 38,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-039",
@@ -110,7 +110,7 @@
           "prompt": "docs/prompts/p0_039.md",
           "outputs": [],
           "priority": 39,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-040",
@@ -119,7 +119,7 @@
           "prompt": "docs/prompts/p0_040.md",
           "outputs": [],
           "priority": 40,
-          "passes": false
+          "passes": true
         },
         {
           "id": "P0-041",
@@ -128,254 +128,19 @@
           "prompt": "docs/prompts/p0_041.md",
           "outputs": [],
           "priority": 41,
-          "passes": false
+          "passes": true
         }
       ]
     },
     {
       "id": "P1",
       "name": "Phase P1",
-      "stories": [
-        {
-          "id": "P1-001",
-          "title": "P1-001",
-          "spec": "specs/p1/001.spec.md",
-          "prompt": "docs/prompts/p1_001.md",
-          "outputs": [],
-          "priority": 1,
-          "passes": false
-        },
-        {
-          "id": "P1-002",
-          "title": "P1-002",
-          "spec": "specs/p1/002.spec.md",
-          "prompt": "docs/prompts/p1_002.md",
-          "outputs": [],
-          "priority": 2,
-          "passes": false
-        },
-        {
-          "id": "P1-003",
-          "title": "P1-003",
-          "spec": "specs/p1/003.spec.md",
-          "prompt": "docs/prompts/p1_003.md",
-          "outputs": [],
-          "priority": 3,
-          "passes": false
-        },
-        {
-          "id": "P1-004",
-          "title": "P1-004",
-          "spec": "specs/p1/004.spec.md",
-          "prompt": "docs/prompts/p1_004.md",
-          "outputs": [],
-          "priority": 4,
-          "passes": false
-        },
-        {
-          "id": "P1-005",
-          "title": "P1-005",
-          "spec": "specs/p1/005.spec.md",
-          "prompt": "docs/prompts/p1_005.md",
-          "outputs": [],
-          "priority": 5,
-          "passes": false
-        },
-        {
-          "id": "P1-006",
-          "title": "P1-006",
-          "spec": "specs/p1/006.spec.md",
-          "prompt": "docs/prompts/p1_006.md",
-          "outputs": [],
-          "priority": 6,
-          "passes": false
-        },
-        {
-          "id": "P1-007",
-          "title": "P1-007",
-          "spec": "specs/p1/007.spec.md",
-          "prompt": "docs/prompts/p1_007.md",
-          "outputs": [],
-          "priority": 7,
-          "passes": false
-        },
-        {
-          "id": "P1-008",
-          "title": "P1-008",
-          "spec": "specs/p1/008.spec.md",
-          "prompt": "docs/prompts/p1_008.md",
-          "outputs": [],
-          "priority": 8,
-          "passes": false
-        },
-        {
-          "id": "P1-009",
-          "title": "P1-009",
-          "spec": "specs/p1/009.spec.md",
-          "prompt": "docs/prompts/p1_009.md",
-          "outputs": [],
-          "priority": 9,
-          "passes": false
-        },
-        {
-          "id": "P1-013",
-          "title": "P1-013",
-          "spec": "specs/p1/013.spec.md",
-          "prompt": "docs/prompts/p1_013.md",
-          "outputs": [],
-          "priority": 13,
-          "passes": false
-        },
-        {
-          "id": "P1-014",
-          "title": "P1-014",
-          "spec": "specs/p1/014.spec.md",
-          "prompt": "docs/prompts/p1_014.md",
-          "outputs": [],
-          "priority": 14,
-          "passes": false
-        },
-        {
-          "id": "P1-015",
-          "title": "P1-015",
-          "spec": "specs/p1/015.spec.md",
-          "prompt": "docs/prompts/p1_015.md",
-          "outputs": [],
-          "priority": 15,
-          "passes": false
-        },
-        {
-          "id": "P1-016",
-          "title": "P1-016",
-          "spec": "specs/p1/016.spec.md",
-          "prompt": "docs/prompts/p1_016.md",
-          "outputs": [],
-          "priority": 16,
-          "passes": false
-        },
-        {
-          "id": "P1-017",
-          "title": "P1-017",
-          "spec": "specs/p1/017.spec.md",
-          "prompt": "docs/prompts/p1_017.md",
-          "outputs": [],
-          "priority": 17,
-          "passes": false
-        },
-        {
-          "id": "P1-018",
-          "title": "P1-018",
-          "spec": "specs/p1/018.spec.md",
-          "prompt": "docs/prompts/p1_018.md",
-          "outputs": [],
-          "priority": 18,
-          "passes": false
-        },
-        {
-          "id": "P1-019",
-          "title": "P1-019",
-          "spec": "specs/p1/019.spec.md",
-          "prompt": "docs/prompts/p1_019.md",
-          "outputs": [],
-          "priority": 19,
-          "passes": true
-        },
-        {
-          "id": "P1-020",
-          "title": "P1-020",
-          "spec": "specs/p1/020.spec.md",
-          "prompt": "docs/prompts/p1_020.md",
-          "outputs": [],
-          "priority": 20,
-          "passes": true
-        },
-        {
-          "id": "P1-021",
-          "title": "P1-021",
-          "spec": "specs/p1/021.spec.md",
-          "prompt": "docs/prompts/p1_021.md",
-          "outputs": [],
-          "priority": 21,
-          "passes": true
-        }
-      ]
+      "stories": []
     },
     {
       "id": "P2",
       "name": "Phase P2",
       "stories": [
-        {
-          "id": "P2-001",
-          "title": "P2-001",
-          "spec": "specs/p2/001.spec.md",
-          "prompt": "docs/prompts/p2_001.md",
-          "outputs": [],
-          "priority": 1,
-          "passes": false
-        },
-        {
-          "id": "P2-002",
-          "title": "P2-002",
-          "spec": "specs/p2/002.spec.md",
-          "prompt": "docs/prompts/p2_002.md",
-          "outputs": [],
-          "priority": 2,
-          "passes": false
-        },
-        {
-          "id": "P2-003",
-          "title": "P2-003",
-          "spec": "specs/p2/003.spec.md",
-          "prompt": "docs/prompts/p2_003.md",
-          "outputs": [],
-          "priority": 3,
-          "passes": false
-        },
-        {
-          "id": "P2-004",
-          "title": "P2-004",
-          "spec": "specs/p2/004.spec.md",
-          "prompt": "docs/prompts/p2_004.md",
-          "outputs": [],
-          "priority": 4,
-          "passes": false
-        },
-        {
-          "id": "P2-005",
-          "title": "P2-005",
-          "spec": "specs/p2/005.spec.md",
-          "prompt": "docs/prompts/p2_005.md",
-          "outputs": [],
-          "priority": 5,
-          "passes": false
-        },
-        {
-          "id": "P2-006",
-          "title": "P2-006",
-          "spec": "specs/p2/006.spec.md",
-          "prompt": "docs/prompts/p2_006.md",
-          "outputs": [],
-          "priority": 6,
-          "passes": false
-        },
-        {
-          "id": "P2-007",
-          "title": "P2-007",
-          "spec": "specs/p2/007.spec.md",
-          "prompt": "docs/prompts/p2_007.md",
-          "outputs": [],
-          "priority": 7,
-          "passes": false
-        },
-        {
-          "id": "P2-008",
-          "title": "P2-008",
-          "spec": "specs/p2/008.spec.md",
-          "prompt": "docs/prompts/p2_008.md",
-          "outputs": [],
-          "priority": 8,
-          "passes": false
-        },
         {
           "id": "P2-009",
           "title": "P2-009",
@@ -384,96 +149,6 @@
           "outputs": [],
           "priority": 9,
           "passes": true
-        },
-        {
-          "id": "P2-010",
-          "title": "P2-010",
-          "spec": "specs/p2/010.spec.md",
-          "prompt": "docs/prompts/p2_010.md",
-          "outputs": [],
-          "priority": 10,
-          "passes": false
-        },
-        {
-          "id": "P2-011",
-          "title": "P2-011",
-          "spec": "specs/p2/011.spec.md",
-          "prompt": "docs/prompts/p2_011.md",
-          "outputs": [],
-          "priority": 11,
-          "passes": false
-        },
-        {
-          "id": "P2-012",
-          "title": "P2-012",
-          "spec": "specs/p2/012.spec.md",
-          "prompt": "docs/prompts/p2_012.md",
-          "outputs": [],
-          "priority": 12,
-          "passes": false
-        },
-        {
-          "id": "P2-013",
-          "title": "P2-013",
-          "spec": "specs/p2/013.spec.md",
-          "prompt": "docs/prompts/p2_013.md",
-          "outputs": [],
-          "priority": 13,
-          "passes": false
-        },
-        {
-          "id": "P2-014",
-          "title": "P2-014",
-          "spec": "specs/p2/014.spec.md",
-          "prompt": "docs/prompts/p2_014.md",
-          "outputs": [],
-          "priority": 14,
-          "passes": false
-        },
-        {
-          "id": "P2-015",
-          "title": "P2-015",
-          "spec": "specs/p2/015.spec.md",
-          "prompt": "docs/prompts/p2_015.md",
-          "outputs": [],
-          "priority": 15,
-          "passes": false
-        },
-        {
-          "id": "P2-016",
-          "title": "P2-016",
-          "spec": "specs/p2/016.spec.md",
-          "prompt": "docs/prompts/p2_016.md",
-          "outputs": [],
-          "priority": 16,
-          "passes": false
-        },
-        {
-          "id": "P2-017",
-          "title": "P2-017",
-          "spec": "specs/p2/017.spec.md",
-          "prompt": "docs/prompts/p2_017.md",
-          "outputs": [],
-          "priority": 17,
-          "passes": false
-        },
-        {
-          "id": "P2-018",
-          "title": "P2-018",
-          "spec": "specs/p2/018.spec.md",
-          "prompt": "docs/prompts/p2_018.md",
-          "outputs": [],
-          "priority": 18,
-          "passes": false
-        },
-        {
-          "id": "P2-019",
-          "title": "P2-019",
-          "spec": "specs/p2/019.spec.md",
-          "prompt": "docs/prompts/p2_019.md",
-          "outputs": [],
-          "priority": 19,
-          "passes": false
         }
       ]
     },
@@ -482,42 +157,6 @@
       "name": "Phase P3",
       "stories": [
         {
-          "id": "P3-001",
-          "title": "P3-001",
-          "spec": "specs/p3/001.spec.md",
-          "prompt": "docs/prompts/p3_001.md",
-          "outputs": [],
-          "priority": 1,
-          "passes": false
-        },
-        {
-          "id": "P3-002",
-          "title": "P3-002",
-          "spec": "specs/p3/002.spec.md",
-          "prompt": "docs/prompts/p3_002.md",
-          "outputs": [],
-          "priority": 2,
-          "passes": false
-        },
-        {
-          "id": "P3-003",
-          "title": "P3-003",
-          "spec": "specs/p3/003.spec.md",
-          "prompt": "docs/prompts/p3_003.md",
-          "outputs": [],
-          "priority": 3,
-          "passes": false
-        },
-        {
-          "id": "P3-004",
-          "title": "P3-004",
-          "spec": "specs/p3/004.spec.md",
-          "prompt": "docs/prompts/p3_004.md",
-          "outputs": [],
-          "priority": 4,
-          "passes": false
-        },
-        {
           "id": "P3-005",
           "title": "P3-005",
           "spec": "specs/p3/005.spec.md",
@@ -525,51 +164,6 @@
           "outputs": [],
           "priority": 5,
           "passes": true
-        },
-        {
-          "id": "P3-006",
-          "title": "P3-006",
-          "spec": "specs/p3/006.spec.md",
-          "prompt": "docs/prompts/p3_006.md",
-          "outputs": [],
-          "priority": 6,
-          "passes": false
-        },
-        {
-          "id": "P3-007",
-          "title": "P3-007",
-          "spec": "specs/p3/007.spec.md",
-          "prompt": "docs/prompts/p3_007.md",
-          "outputs": [],
-          "priority": 7,
-          "passes": false
-        },
-        {
-          "id": "P3-008",
-          "title": "P3-008",
-          "spec": "specs/p3/008.spec.md",
-          "prompt": "docs/prompts/p3_008.md",
-          "outputs": [],
-          "priority": 8,
-          "passes": false
-        },
-        {
-          "id": "P3-009",
-          "title": "P3-009",
-          "spec": "specs/p3/009.spec.md",
-          "prompt": "docs/prompts/p3_009.md",
-          "outputs": [],
-          "priority": 9,
-          "passes": false
-        },
-        {
-          "id": "P3-010",
-          "title": "P3-010",
-          "spec": "specs/p3/010.spec.md",
-          "prompt": "docs/prompts/p3_010.md",
-          "outputs": [],
-          "priority": 10,
-          "passes": false
         }
       ]
     },
