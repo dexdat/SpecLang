@@ -1,8 +1,8 @@
 # SpecLang Implementation Master TODO
-**Status:** ⚠️ CORRECTED - 80 stories remaining
+**Status:** ⚠️ CORRECTED - 79 stories remaining
 **Methodology:** Baby Steps (15-120 min atomic steps)
 **Last Updated:** 2026-04-02
-**Total Stories:** 80 remaining (false completion fixed)
+**Total Stories:** 79 remaining (false completion fixed)
 
 ---
 
@@ -12,7 +12,7 @@ The TODO.md and PRD were incorrectly marked as complete. All stories from P0-025
 
 **Actual Completion:**
 - Phase P0: 14/14 passing
-- Phase P1: 4/18 passing (P1-001, P1-019, P1-020, P1-021)
+- Phase P1: 5/18 passing (P1-001, P1-002, P1-019, P1-020, P1-021)
 - Phase P2: 1/19 passing (P2-009)
 - Phase P3: 1/10 passing (P3-005)
 - Phase P4: 0/14 passing
@@ -136,13 +136,13 @@ npm run build && npm test
 
 ---
 
-## Phase 1: Core Runtime (18 stories - 4 complete)
+## Phase 1: Core Runtime (18 stories - 5 complete)
 
-**Complete:** P1-001, P1-019, P1-020, P1-021 ✅
+**Complete:** P1-001, P1-002, P1-019, P1-020, P1-021 ✅
 
 **Remaining:**
 - [x] P1-001: Design speclangd daemon
-- [ ] P1-002: Agent session manager
+- [x] P1-002: Agent session manager
 - [ ] P1-003: OpenCode integration
 - [ ] P1-004: Cascade coordination
 - [ ] P1-005: Autonomous validation
