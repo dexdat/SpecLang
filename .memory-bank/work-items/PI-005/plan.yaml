@@ -1,0 +1,77 @@
+# PI-005: Wire Existing Compiler into Cascade Pipeline
+id: PI-005
+title: Integrate the existing TypeScript compiler with the cascade pipeline
+status: pending
+phase: 2
+depends_on:
+  - PI-004
+specs:
+  - specs/compiler.spec.md
+  - specs/compiler.spec.dir/phases.spec.md
+  - specs/compiler.spec.dir/targets.spec.md
+target: .speclang/pipeline.ts
+
+steps:
+  - step: 1
+    action: Audit existing src/ compiler to understand public API
+    verify: Map of all compiler entry points, their inputs and outputs
+    notes: |
+      Read src/ directory structure. Identify:
+      - Compiler entry point(s): src/codegen.ts, src/compiler/, src/parser/
+      - Public API: what functions can be imported?
+      - Existing exports: parseSpec(), validateSpec(), generateCode()
+      - Dependencies: what src/ modules does the compiler import?
+      Catalog every public function signature.
+
+  - step: 2
+    action: Create compiler library wrapper
+    verify: Importable from cascade router
+    notes: |
+      Create .speclang/compiler-wrapper.ts that re-exports the compiler's public API.
+      Handle import path resolution for the existing src/ code.
+      Add TypeScript type exports for CompilerInput, CompilerOutput, CompileResult.
+
+  - step: 3
+    action: Implement pipeline stage executors
+    verify: Each stage can run independently
+    notes: |
+      Stages from build.yaml:
+      - install: npm install (if package.json changed)
+      - typecheck: npx tsc --noEmit
+      - test: npx vitest run
+      - lint: npx eslint src/
+      Each stage returns { passed: boolean, output: string, duration: number }
+
+  - step: 4
+    action: Implement pipeline runner
+    verify: Runs all stages and reports pass/fail
+    notes: |
+      On ConvergenceEvent:
+      1. Read build.yaml
+      2. Build stage dependency graph
+      3. Execute stages in order (respect depends_on)
+      4. If stage fails: trigger recovery (rollback, retry, notify)
+      5. If all pass: git add + git commit with cascade_id as message
+
+  - step: 5
+    action: Implement git commit step with cascade metadata
+    verify: Commit message includes cascade UUID
+    notes: |
+      Format: 'speclang: cascade <cascade_id>'
+      Also check for git config, handle dirty working tree.
+      If commit fails (merge conflict, etc.), report to user, don't crash.
+
+  - step: 6
+    action: Wire cascade router to pipeline runner
+    verify: ConvergenceEvent triggers pipeline
+    notes: |
+      CascadeCompleteEvent from router triggers pipeline.run(cascade_id, affectedFiles).
+      Pipeline reads build.yaml, executes stages, reports results.
+
+  - step: 7
+    action: Write integration tests
+    verify: 'Full end-to-end: spec change triggers cascade pipeline and commit'
+    notes: |
+      Test in a temp directory with a test spec and build.yaml.
+      Full end-to-end: create spec file, daemon detects, cascade dispatches,
+      agents run, convergence, pipeline executes, commit.

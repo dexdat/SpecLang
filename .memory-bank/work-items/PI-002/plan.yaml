@@ -1,0 +1,73 @@
+# PI-002: Build speclangd — Chokidar File Watcher Daemon
+id: PI-002
+title: Build the chokidar-based spec file watcher daemon
+status: pending
+phase: 1
+depends_on:
+  - PI-001
+specs:
+  - specs/daemon.spec.md
+  - specs/daemon.spec.dir/architecture.spec.md
+  - specs/daemon.spec.dir/events.spec.md
+  - specs/daemon.spec.dir/convergence.spec.md
+target: .speclang/daemon.ts
+
+steps:
+  - step: 1
+    action: Implement FileChangeEvent type
+    verify: TypeScript compiles
+    notes: |
+      Types needed:
+      - FileChangeEvent with path, kind (create|modify|delete), header (SpecHeader), timestamp
+      - ConvergenceEvent with lastChange timestamp, quietPeriodMs
+      - CascadeEvent as union of file_change | convergence | error types
+
+  - step: 2
+    action: Implement chokidar watcher
+    verify: Watcher detects file create/modify/delete in specs/
+    notes: |
+      Watch specs/ recursively. Ignore node_modules/, .git/, dist/.
+      Emit FileChangeEvent for each change.
+      Debounce rapid successive changes with 100ms window.
+
+  - step: 3
+    action: Implement speclang-header parser for changed files
+    verify: Parser extracts all header fields
+    notes: |
+      Read first N lines (from speclang-header lines:N), parse as YAML.
+      Extract: id, version, layer, agent_support, tags, depends_on, children.
+      If header is invalid or missing, emit warning but don't crash.
+
+  - step: 4
+    action: Implement convergence detector
+    verify: 30s after last FileChangeEvent, emits ConvergenceEvent
+    notes: |
+      Timer-based design. Each new file change resets the timer.
+      Configurable quiet period (default 30s, from build.yaml convergence.quiet_period).
+
+  - step: 5
+    action: Implement event emitter API
+    verify: Subscribers can subscribe to event types
+    notes: |
+      API surface:
+      - speclangd.on('file_change', handler)
+      - speclangd.on('convergence', handler)
+      - speclangd.start(watchPath)
+      - speclangd.stop()
+
+  - step: 6
+    action: Implement file lock manager
+    verify: Two concurrent edits to same file are serialized
+    notes: |
+      Simple in-memory Map<path, lock>. Lock acquired when FileChangeEvent emitted,
+      released when agent session completes or timeout (5 min).
+
+  - step: 7
+    action: Write unit tests
+    verify: 'npx vitest run .speclang/__tests__/daemon.test.ts'
+    notes: |
+      Tests needed:
+      - Watcher detects new file in specs/
+      - Convergence fires after 30s quiet
+      - File lock prevents concurrent access
+      - Invalid header emits warning, not crash

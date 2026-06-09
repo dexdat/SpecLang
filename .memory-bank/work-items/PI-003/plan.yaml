@@ -1,0 +1,82 @@
+# PI-003: Build Pi Extension — Guard System + Custom Tools
+id: PI-003
+title: Build SpecLang Pi extension with guard system and custom tools
+status: pending
+phase: 1
+depends_on:
+  - PI-001
+specs:
+  - specs/agent-protocol.spec.md
+  - specs/pi-extension-examples.spec.md
+target: .pi/extensions/speclang-guard.ts
+
+steps:
+  - step: 1
+    action: Implement pi.registerTool('create_spec_file')
+    verify: Pi session can call create_spec_file tool
+    notes: |
+      Creates new .spec.md file with valid speclang-header.
+      Parameters: file_path, id, version, layer, agent_support, tags, content.
+      Validates: file_path ends in .spec.md or .scl, id format matches @domain/path.
+      Auto-generates: header lines count, timestamp.
+
+  - step: 2
+    action: Implement pi.registerTool('validate_specs')
+    verify: Pi session can validate spec files
+    notes: |
+      Reads a spec file, validates:
+      - Header has all required fields (id, version, layer, agent_support, short)
+      - All @ref: targets exist in specs/
+      - Layer is numeric 0-100
+      - Returns structured validation result with per-field pass/fail.
+
+  - step: 3
+    action: Implement pi.registerTool('run_cascade')
+    verify: Triggers cascade for a specific spec change
+    notes: |
+      Triggers the cascade router for a given spec file.
+      Parameters: spec_path, reason (optional).
+      Returns: cascade_id for tracking.
+
+  - step: 4
+    action: Implement pi.registerTool('check_ownership')
+    verify: Returns which agent owns a given file pattern
+    notes: |
+      Parameters: file_path.
+      Returns: owning agent role, match type (pattern|explicit|inherited), rules matched.
+
+  - step: 5
+    action: Implement onToolCall interceptor for write guards
+    verify: Unauthorized writes are blocked
+    notes: |
+      Before any tool writes to a file, check:
+      - Does the current agent own this file? (by pattern match)
+      - Is this a user session? (always allowed)
+      - Is this file in an exempt path? (.pi/, node_modules/)
+      Block with ViolationReport if unauthorized.
+
+  - step: 6
+    action: Implement onSessionEvent listener for cascade tracking
+    verify: Session events are logged with cascade UUIDs
+    notes: |
+      Listen to session create/complete/error events.
+      Stamp cascade_id on all session outputs via pi.appendEntry().
+      Report session completion to cascade router.
+
+  - step: 7
+    action: Register all tools in extension entry point
+    verify: Hot-reload with /reload works
+    notes: |
+      Single entry point .pi/extensions/speclang-guard.ts that registers all tools.
+      Support hot-reload: Pi detects file change, reloads extension.
+
+  - step: 8
+    action: Write unit tests
+    verify: 'npx vitest run .pi/__tests__/guard.test.ts'
+    notes: |
+      Tests needed:
+      - create_spec_file produces valid header
+      - validate_specs detects missing fields
+      - Guard blocks unauthorized write
+      - Guard allows authorized write
+      - Ownership resolves by pattern

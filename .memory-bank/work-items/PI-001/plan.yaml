@@ -1,0 +1,48 @@
+# PI-001: Install Dependencies + Project Structure
+id: PI-001
+title: Install Pi Agent SDK and set up project structure
+status: pending
+phase: 1
+depends_on: []
+specs:
+  - specs/pi-integration.spec.md
+  - specs/daemon-setup.spec.md
+target: .speclang/
+
+steps:
+  - step: 1
+    action: npm install @earendil-works/pi-coding-agent chokidar better-sqlite3 express
+    verify: ls node_modules/@earendil-works/pi-coding-agent/package.json
+    notes: Pi SDK + chokidar file watcher + SQLite context store + Express for MCP
+
+  - step: 2
+    action: Create .speclang/ directory structure
+    verify: ls .speclang/
+    files:
+      - .speclang/daemon.ts
+      - .speclang/cascade-router.ts
+      - .speclang/guard.ts
+      - .speclang/pipeline.ts
+      - .speclang/mcp-server.ts
+      - .speclang/config.ts
+
+  - step: 3
+    action: Create .pi/extensions/speclang-guard.ts
+    verify: cat .pi/extensions/speclang-guard.ts
+    notes: Pi extension entry point — loads guard, tools, and event interceptors
+
+  - step: 4
+    action: Create .pi/skills/ directory with SpecLang skill definitions
+    verify: ls .pi/skills/
+    files:
+      - .pi/skills/spec-writer.md
+      - .pi/skills/codegen.md
+      - .pi/skills/test-writer.md
+      - .pi/skills/cascade-coordinator.md
+      - .pi/skills/pipeline.md
+
+  - step: 5
+    action: Create speclangd CLI entry point
+    verify: ./speclangd --help
+    target: bin/speclangd
+    notes: Thin CLI wrapper that starts the daemon, cascade router, and MCP server

@@ -1,0 +1,62 @@
+# PI-006: Build MCP Server for External Agent Access
+id: PI-006
+title: Build MCP server exposing SpecLang tools to Hermes / Claude / Codex
+status: pending
+phase: 2
+depends_on:
+  - PI-004
+specs:
+  - specs/mcp.spec.md
+  - specs/mcp.spec.dir/server.spec.md
+  - specs/mcp.spec.dir/tools.spec.md
+target: .speclang/mcp-server.ts
+
+steps:
+  - step: 1
+    action: Define MCP tool schemas
+    verify: Valid JSON Schema for each tool
+    notes: |
+      Tools to expose:
+      - create_spec_file: Create new spec with valid header
+      - validate_specs: Validate one or all spec files
+      - run_cascade: Trigger cascade for a spec change
+      - get_status: Show system status (spec count, cascade history, agent states)
+      - get_cascade_history: List recent cascades with status
+      - get_spec_graph: Show dependency graph for a spec
+
+  - step: 2
+    action: Implement MCP server using stdio transport
+    verify: MCP client can connect and list tools
+    notes: |
+      Use @modelcontextprotocol/sdk for stdio transport.
+      JSON-RPC 2.0 protocol.
+      Initialize: return server capabilities + tool list.
+      Call tool: dispatch to function, return result as JSON.
+
+  - step: 3
+    action: Implement each tool handler
+    verify: Each tool returns correct output
+    notes: |
+      Handlers:
+      - create_spec_file: delegates to .speclang/guard.ts create_spec_file
+      - validate_specs: delegates to .speclang/guard.ts validate_specs
+      - run_cascade: delegates to .speclang/cascade-router.ts
+      - get_status: reads .speclang/cascade-state.json + spec count
+      - get_cascade_history: reads .speclang/cascade-state.json history
+      - get_spec_graph: reads spec headers, builds dependency graph
+
+  - step: 4
+    action: Wire cascade events to MCP notification stream
+    verify: Connected clients receive real-time cascade events
+    notes: |
+      Subscribe to speclangd events.
+      Forward FileChangeEvent and CascadeCompleteEvent to connected clients
+      via MCP notifications (JSON-RPC notifications, not requests).
+
+  - step: 5
+    action: Write integration tests
+    verify: MCP client can invoke all tools
+    notes: |
+      Start MCP server in test mode.
+      Connect with StdioClientParameters.
+      List tools, call each tool, verify response format.

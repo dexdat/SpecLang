@@ -1,0 +1,55 @@
+# PI-007: Bootstrap Moment — Compiler Generates Its Own Code
+id: PI-007
+title: Close the meta-circular loop — compiler generates SpecLang source from its own spec
+status: pending
+phase: 3
+depends_on:
+  - PI-005
+  - PI-006
+specs:
+  - specs/core.spec.md
+  - specs/compiler.spec.dir/phases.spec.md
+target: self (meta-circular)
+
+steps:
+  - step: 1
+    action: Run compiler on specs/compiler.spec.dir/phases.spec.md
+    verify: Generates valid TypeScript source matching existing src/compiler/phases.ts
+    notes: |
+      Target: generate .speclang/generated/compiler/phases.ts
+      Compare generated output vs existing src/compiler/ code.
+      Run diff to measure similarity.
+      Fix any compilation errors in generated output.
+
+  - step: 2
+    action: Run full cascade on a single spec from project.scl
+    verify: Full spec → cascade → agents → generated code → pipeline → commit
+    notes: |
+      Trigger on specs/000-bootstrap.md or specs/project.scl.
+      Observe cascade coordinator dispatch spec_writer, codegen, test_writer.
+      Verify each agent produces valid output.
+      Pipeline runs build + test on outputs.
+
+  - step: 3
+    action: Replace hand-written src/compiler/ with generated version
+    verify: 'npm run build && npm test still pass'
+    notes: |
+      THIS IS THE BOOTSTRAP MOMENT.
+      Replace src/compiler/ contents with .speclang/generated/compiler/ contents.
+      Run full build + test. If anything fails, report exact diff and revert.
+
+  - step: 4
+    action: SpecLang now generates its OWN compiler from its own specs
+    verify: Edit specs/compiler.spec.md → cascade runs → compiler regenerates itself
+    notes: |
+      True meta-circular bootstrap achieved.
+      SpecLang is self-hosting. Axiom/OpenCode no longer needed for development.
+      Update all documentation to reflect self-hosting status.
+
+  - step: 5
+    action: Add GitReins import as new spec module
+    verify: specs/gitreins/ directory with converted specs
+    notes: |
+      Convert GitReins 11 spec files to SpecLang .spec.md format.
+      Create specs/gitreins/ directory with headers and block markers.
+      Import GitReins MCP tools as SpecLang pipeline verification stages.

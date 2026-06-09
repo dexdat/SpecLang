@@ -1,0 +1,86 @@
+# PI-004: Build Cascade Router — Event to Agent Dispatcher
+id: PI-004
+title: Build the cascade event router that dispatches file changes to Pi agent sessions
+status: pending
+phase: 1
+depends_on:
+  - PI-001
+  - PI-002
+  - PI-003
+specs:
+  - specs/cascade.spec.md
+  - specs/cascade.spec.dir/triggers.spec.md
+  - specs/cascade.spec.dir/convergence.spec.md
+  - specs/core.spec.dir/cascade.spec.md
+target: .speclang/cascade-router.ts
+
+steps:
+  - step: 1
+    action: Implement CascadeUUID generator
+    verify: cascade-YYYYMMDD-NNN format
+    notes: |
+      Format: cascade-YYYYMMDD-NNN (zero-padded sequence per day).
+      Reads last cascade_id from .speclang/cascade-state.json.
+      Stores current cascade_id in memory + persists after each cascade.
+
+  - step: 2
+    action: Implement dependency graph builder from spec headers
+    verify: 'Reads depends_on, children, ref links from spec headers'
+    notes: |
+      For each FileChangeEvent, read the changed spec's header.
+      Extract depends_on (upstream deps) and children (sub-specs).
+      Parse ref links from header and block content.
+      Build directed graph with affected specs as nodes.
+      Topological sort for execution order.
+
+  - step: 3
+    action: Implement agent role resolver
+    verify: Maps file patterns to agent roles
+    notes: |
+      Pattern rules from agent-protocol spec:
+      - specs/**/*.spec.md -> spec_writer
+      - specs/**/*.scl -> northstar
+      - src/**/*.ts -> codegen
+      - tests/**/*.test.ts -> test_writer
+      - Header field 'owned-by:' overrides pattern
+
+  - step: 4
+    action: Implement Pi agent session spawner
+    verify: Creates Pi agent sessions for each affected role
+    notes: |
+      For each affected spec file and its owning agent role:
+      - Call Pi SDK createAgentSession()
+      - Load the agent's skill file (.pi/skills/<role>.md)
+      - Pass the spec context (spec path, header, cascade_id, change_id)
+      - Execute: session.prompt(task_instruction)
+      - Subscribe to session events (on.finished, on.error)
+
+  - step: 5
+    action: Implement cascade UUID stamping on outputs
+    verify: Every output file has change_id, caused_by, part_of in header
+    notes: |
+      After agent session completes, for each file the agent touched:
+      - Read the file header
+      - Add/update: change_id (@change:uuid), caused_by (@change:parent_uuid), part_of (@cascade:id)
+      - Write the updated header back
+
+  - step: 6
+    action: Implement convergence signaling
+    verify: When all agents finish, signals convergence to pipeline
+    notes: |
+      Track pending agent sessions. When count reaches 0:
+      - Emit CascadeCompleteEvent with cascade_id
+      - Cascade router signals pipeline runner
+      - If any agent errored: emit CascadeErrorEvent with error details
+
+  - step: 7
+    action: Write unit tests
+    verify: 'npx vitest run .speclang/__tests__/cascade-router.test.ts'
+    notes: |
+      Tests needed:
+      - Dependency graph resolves correct order
+      - Agent role maps correctly by pattern
+      - Pi session created for each affected agent
+      - Cascade UUIDs stamped on outputs
+      - Convergence signaled when all agents done
+      - Error cascade handled correctly
