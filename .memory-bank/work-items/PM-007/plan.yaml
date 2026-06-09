@@ -1,0 +1,31 @@
+id: PM-007
+title: Update pipeline.spec.md for Pi runtime
+status: in_progress
+priority: high
+
+description: >
+  Remove OpenCode-specific convergence hooks. Pipeline triggered by
+  cascade router's convergence detector.
+
+actions:
+  - file: specs/pipeline.spec.md
+    action: review
+    finding: >
+      No direct OpenCode references found in pipeline.spec.md.
+      The pipeline spec is already runtime-agnostic - it describes
+      stages, hooks, conditions, and recovery in a generic way.
+      No changes needed.
+
+  - file: specs/pipeline.spec.dir/hooks.spec.md
+    action: review
+    finding: >
+      No OpenCode references found. Describes generic hook system.
+      No changes needed.
+
+  - file: specs/convergence.spec.md
+    action: edit
+    change: Update see-also reference
+    oldText: "- @ref:speclang/opencode-plugin.spec.dir/convergence – OpenCode plugin integration"
+    newText: "- @ref:specs/pi-extension-examples – Pi extension convergence detection"
+
+verification: no OpenCode references remain in pipeline specs.

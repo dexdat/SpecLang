@@ -1,0 +1,31 @@
+id: PM-004
+title: Rewrite daemon.spec.md for chokidar
+status: in_progress
+priority: high
+
+description: >
+  Replace OpenCode plugin implementation with chokidar-based TypeScript daemon.
+
+actions:
+  - file: specs/daemon.spec.md
+    action: edit
+    changes:
+      - Replace "typescript: OpenCode plugin for light mode" with "typescript: chokidar/fs.watch based daemon (standard mode)"
+      - Replace "light: OpenCode plugin only (TypeScript)" with "standard: TypeScript daemon with chokidar"
+      - Remove "uses OpenCode's native file events"
+      - Replace "Light mode: TypeScript OpenCode plugin" with "Standard: TypeScript daemon using chokidar"
+      - Keep Rust enterprise mode
+
+  - file: specs/daemon.spec.dir/architecture.spec.md
+    action: edit
+    changes:
+      - Replace OpenCode plugin deployment mode with Pi-based TypeScript daemon
+      - Update DeploymentModes.light description and components
+
+  - file: specs/daemon.spec.dir/_index.md
+    action: edit
+    change: Update OpenCode reference
+    oldText: "Light mode: TypeScript OpenCode plugin (uses OpenCode events)"
+    newText: "Standard mode: TypeScript daemon using chokidar for cross-platform file watching"
+
+verification: spec describes chokidar/fs.watch, not OpenCode plugin.

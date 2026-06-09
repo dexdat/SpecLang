@@ -149,7 +149,7 @@ BMAD is an AI-driven development framework that provides:
 | AI agent workflows | BMAD | Mature agent system |
 | Document standards | SpecLang | Explicit, referenceable |
 | Development methodology | BMAD | Complete four-phase system |
-| IDE plugin specs | SpecLang | See @ref:specs/opencode-plugin |
+| IDE plugin specs | SpecLang | See @ref:specs/pi-extension-examples |
 | Code generation | Both | SpecLang format + BMAD workflow |
 ```
 

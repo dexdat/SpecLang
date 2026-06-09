@@ -46,7 +46,7 @@ Install Steps:
 3. Verify binary integrity and permissions
 4. Download skills pack using speclang skills download
 5. Verify skills pack integrity
-6. Copy skills to OpenCode directory
+6. Copy skills to .pi/skills/ directory
 7. Copy skills to Cursor directory
 8. Copy skills to Claude Code directory
 9. Verify installation with speclang --version

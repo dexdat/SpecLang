@@ -1,0 +1,20 @@
+id: PM-005
+title: Rewrite agent-protocol.spec.md for Pi extensions
+status: in_progress
+priority: high
+
+description: >
+  Replace OpenCode plugin guard with Pi extension guard using
+  onToolCall interceptor and pi.registerTool().
+
+actions:
+  - file: specs/agent-protocol.spec.md
+    action: edit
+    changes:
+      - Guard system: "plugin: OpenCode plugin intercepts write attempts" → "extension: Pi extension intercepts write attempts via pi.registerTool() + onToolCall"
+      - "Integration with OpenCode" section → "Integration with Pi Agent"
+      - "The agent protocol is enforced via an OpenCode plugin (speclang-guard)" → "The agent protocol is enforced via a Pi extension that intercepts file writes via pi.registerTool() + onToolCall event handlers"
+      - "Agents can create new files via a dedicated tool (available in OpenCode plugin)" → "Agents can create new files via a dedicated tool (available as a Pi extension)"
+      - "OpenCode plugin provides git wrapper" → "Pi extension provides git wrapper"
+
+verification: spec describes pi.registerTool() and onToolCall, not OpenCode plugin.

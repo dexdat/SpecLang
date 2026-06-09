@@ -285,9 +285,9 @@ Recovery:
 # @block:daemon/deployment-modes @kind:entity
 DeploymentModes:
   light:
-    description: TypeScript OpenCode plugin
+    description: TypeScript daemon using chokidar
     components:
-      - OpenCode native file events
+      - chokidar cross-platform file events
       - TypeScript agent sessions
       - No separate daemon process
     use_cases:

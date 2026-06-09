@@ -22,7 +22,7 @@ status: active
 - `generate-from-spec.spec.md`
 - `generate-index.spec.md`
 - `generate-mcp-server.spec.md`
-- `generate-opencode-plugin.spec.md`
+- `generate-pi-extension.spec.md`
 - `generate-ralph-loop.spec.md`
 - `generate-sqlite-schema.spec.md`
 - `generate-todo.spec.md`

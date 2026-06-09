@@ -22,8 +22,8 @@ The reactive file watcher daemon that powers the SpecLang cascade. Watches for f
 # @block:daemon/overview @kind:entity
 speclangd:
   implementations:
-    - rust: Primary daemon for scale (enterprise)
-    - typescript: OpenCode plugin for light mode
+    - typescript: chokidar/fs.watch based daemon (standard mode)
+    - rust: High-performance daemon with inotify (enterprise)
   
   responsibilities:
     - Watch filesystem for spec changes
@@ -33,7 +33,7 @@ speclangd:
     - Trigger pipeline execution
   
   modes:
-    - light: OpenCode plugin only (TypeScript)
+    - standard: TypeScript daemon using chokidar for cross-platform file watching
     - enterprise: Rust daemon + MCP server
 ```
 
@@ -57,7 +57,7 @@ See @ref:specs/daemon.spec.dir/convergence for quiet period detection and pipeli
 
 Based on project needs:
 
-- **Light mode**: TypeScript OpenCode plugin (uses OpenCode's native file events)
+- **Standard mode**: TypeScript daemon using chokidar for cross-platform file watching
 - **Enterprise mode**: Rust daemon with raw inotify/fsnotify + MCP server
 
 The daemon is the heart of SpecLang's reactive cascade system.

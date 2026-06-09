@@ -169,7 +169,7 @@ Phase2:
        - Detect 30-second quiet period
        - Trigger pipeline on convergence
        
-    4. OpenCode Plugin Integration (src/opencode-plugin/)
+    4. Pi Agent Integration (src/pi-integration/)
        - Native file event subscription
        - Event queuing for cascade
        
@@ -184,7 +184,7 @@ Phase2:
     - "@ref:specs/daemon.spec.dir/events
     - "@ref:specs/daemon.spec.dir/routing
     - "@ref:specs/daemon.spec.dir/convergence
-    - "@ref:specs/opencode-plugin
+    - "@ref:specs/pi-integration
 ```
 
 ### Phase 3: Agents & Cascade (Week 5-6)

@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:10
 id: "@speclang/cascade-protocol"
 version: 1.0.0
 layer: 1
@@ -11,7 +11,7 @@ short: Explicit Cascade Coordination Protocol
 
 # SpecLang Cascade Protocol
 
-Explicit coordination protocol for the reactive cascade within OpenCode constraints.
+Explicit coordination protocol for the reactive cascade within single-agent constraints.
 
 This spec has been split into sub‑specs for clarity:
 
@@ -25,7 +25,7 @@ This spec has been split into sub‑specs for clarity:
 
 ## Overview
 
-The cascade protocol coordinates the reactive generation of specs, code, tests, and docs across multiple dependency trees. Because OpenCode lacks automatic file watching and agent triggering, the protocol uses explicit coordination via the `@speclang‑coordinator` agent.
+The cascade protocol coordinates the reactive generation of specs, code, tests, and docs across multiple dependency trees. Because the protocol targets single-agent environments without automatic file watching, the protocol uses explicit coordination via the `@speclang‑coordinator` agent.
 
 **Key principle**: Explicit > automatic when automation is unreliable.
 

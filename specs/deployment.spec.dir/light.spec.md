@@ -3,7 +3,7 @@ id: "@speclang/deployment/light"
 version: 0.1.0
 layer: 2
 tags: [deployment, light, scale]
-imports: ["@speclang/core", "@speclang/opencode"]
+imports: ["@speclang/core", "@speclang/pi-integration"]
 status: draft
 parent: "@speclang/deployment"
 part: "1/2"
@@ -15,15 +15,15 @@ short: Light Deployment Mode
 
 # Light Mode
 
-Light mode is the minimal deployment profile for OpenCode + Speclang plugin only.
+Light mode is the minimal deployment profile for Pi Agent + Speclang daemon only.
 
 ## Overview
 
 ```speclang
 # @block:deploy/light-overview @kind:note
 Light Mode provides:
-- Just OpenCode + Speclang plugin
-- Uses OpenCode's native file watching
+- Just Pi Agent + chokidar daemon
+- Uses chokidar for cross-platform file watching
 - Good for <500 files, solo/small teams
 - Zero extra processes
 ```
@@ -38,11 +38,11 @@ LightMode:
   start: speclang init --mode=light
   
   components:
-    - OpenCode server (opencode serve --mode=build)
-    - Speclang plugin (hooks into OpenCode events)
+    - Pi Agent daemon (speclangd with chokidar)
+    - Speclang daemon (hooks into chokidar events)
     
   file_watching:
-    provider: OpenCode native
+    provider: chokidar
     events: file.edited, agent.finished, session.idle
     latency: ~100ms
     
@@ -66,9 +66,9 @@ LightMode:
 # @block:deploy/light-arch @kind:diagram
 ```mermaid
 flowchart LR
-    U[User] --> O[OpenCode<br/>serve --mode=build]
+    U[User] --> O[speclangd<br/>--watch specs/]
     O --> P[Speclang Plugin]
-    P --> E[OpenCode Events<br/>file.edited, session.idle]
+    P --> E[chokidar Events<br/>change, add, unlink]
     E --> S[SQLite + Vector]
     S --> A[Agents via Skills]
     A --> F[File Writes]

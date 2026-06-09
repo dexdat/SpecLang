@@ -37,12 +37,12 @@ MCPServer:
     - prompts: Generate spec expansions, code generation
   
   run_modes:
-    - local: Stdio communication with OpenCode
+    - local: Stdio communication with Pi Agent
     - remote: HTTP/SSE server for team collaboration
     - embedded: Part of speclangd (enterprise)
   
   clients:
-    - OpenCode editor (primary)
+    - Pi Agent (primary)
     - CLI tools
     - Custom agents
     - External integrations

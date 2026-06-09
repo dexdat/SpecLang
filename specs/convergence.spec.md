@@ -36,5 +36,5 @@ Convergence ensures that:
 
 - "@ref:speclang/cascade/convergence – cascade‑specific convergence
 - @ref:speclang/daemon/convergence – daemon implementation
-- @ref:speclang/opencode-plugin.spec.dir/convergence – OpenCode plugin integration
+- @ref:specs/pi-extension-examples – Pi extension convergence detection
 

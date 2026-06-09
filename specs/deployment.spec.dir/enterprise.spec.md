@@ -3,7 +3,7 @@ id: "@speclang/deployment/enterprise"
 version: 0.1.0
 layer: 2
 tags: [deployment, enterprise, scale, compliance]
-imports: ["@speclang/core", "@speclang/opencode", "@speclang/daemon"]
+imports: ["@speclang/core", "@speclang/pi-integration", "@speclang/daemon"]
 status: draft
 parent: "@speclang/deployment"
 part: "2/2"
@@ -22,7 +22,7 @@ Enterprise mode adds the MCP daemon for observability, control, and scale.
 ```speclang
 # @block:deploy/enterprise-overview @kind:note
 Enterprise Mode provides:
-- OpenCode + Speclang plugin + MCP daemon
+- Pi Agent daemon (chokidar) + MCP daemon
 - Dedicated inotify watcher + HTTP/SSE server
 - Queue visibility, worktree isolation
 - Good for 500+ files, multiple teams, compliance
@@ -38,7 +38,7 @@ EnterpriseMode:
   start: speclang init --mode=enterprise
   
   components:
-    - OpenCode server (opencode serve --mode=build)
+    - Pi Agent daemon (speclangd chokidar)
     - Speclang plugin
     - speclangd MCP daemon
     
@@ -63,7 +63,7 @@ EnterpriseMode:
 # @block:deploy/enterprise-arch @kind:diagram
 ```mermaid
 flowchart TD
-    U[User] --> O[OpenCode Server]
+    U[User] --> O[Pi Agent Daemon]
     O --> P[Speclang Plugin]
     
     subgraph Daemon[speclangd MCP Daemon]

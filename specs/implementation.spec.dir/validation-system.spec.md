@@ -485,14 +485,14 @@ export async function validateCommand(args: string[]) {
 
 ---
 
-## Integration with OpenCode Plugin
+## Integration with Pi Extension
 
-### @implementation/validation/opencode-integration
+### @implementation/validation/pi-integration
 
 ```speclang
-# @block:implementation/validation/opencode-integration @kind:code
+# @block:implementation/validation/pi-integration @kind:code
 ```typescript
-// Integration with OpenCode plugin guard system
+// Integration with Pi extension guard system
 import { writeFile, unlink } from 'fs/promises';
 
 export class ValidationGuard {
@@ -520,7 +520,7 @@ export class ValidationGuard {
   }
 
   private sendValidationErrors(errors: ValidationError[]) {
-    // Send errors via MCP or OpenCode event system
+    // Send errors via MCP or Pi extension event system
     errors.forEach(error => {
       console.error(`Validation error in ${error.filePath}: ${error.message}`);
     });

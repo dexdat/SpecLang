@@ -26,7 +26,7 @@ Part 2 of 2: Flow, process, and multi‑tree spanning generation.
 - Convergence detected automatically
 - Fully autonomous cascade
 
-**OpenCode reality:**
+**Single-agent reality:**
 - ❌ No file watching
 - ❌ No automatic agent triggering
 - ❌ No background processes
@@ -440,7 +440,7 @@ The user can control cascade at multiple points:
 
 ### Future Enhancement
 
-If OpenCode adds file watching:
+If Pi Agent adds multi-agent orchestration:
 1. Coordinator monitors file changes
 2. Auto-triggers cascade on change
 3. Still uses explicit agent invocation

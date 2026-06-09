@@ -55,7 +55,7 @@ status: active
 ### Supporting Specs
 - `stdlib.spec.md` - Standard library (index to stdlib.dir/)
 - `skills.spec.md` - AI skills pack
-- `opencode.spec.md` - OpenCode integration
+- `pi-integration.spec.md` - Pi Agent integration
 - `test-specs.spec.md` - Test specification format
 - `directory-structure.spec.md` - Project layout
 - `file-naming.spec.md` - File naming conventions

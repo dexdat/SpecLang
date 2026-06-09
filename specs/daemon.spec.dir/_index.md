@@ -95,7 +95,7 @@ The Daemon directory defines:
 
 ## Implementation Modes
 
-1. **Light mode**: TypeScript OpenCode plugin (uses OpenCode events)
+1. **Standard mode**: TypeScript daemon using chokidar for cross-platform file watching
 2. **Enterprise mode**: Rust daemon (raw inotify + MCP server)
 
 ## Notes

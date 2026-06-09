@@ -41,7 +41,7 @@ We are building Speclang using Speclang:
 3. Manually emulate Speclang with your help
 4. Use Ralph Loop to complete expansion
 5. Build actual Speclang code
-6. Test in OpenCode
+6. Test with Pi Agent
 7. Use built Speclang to build new projects
 8. Use each version to improve the next
 
@@ -135,12 +135,12 @@ File Change → speclangd → Router → Agent → Write → Trigger → Repeat
 
 Based on discussion with human:
 
-1. **OpenCode plugin first** (POC/MVP), Rust daemon later (v1)
+1. **Pi Agent daemon first** (POC/MVP), Rust daemon later (v1)
 2. **Both TS and Go** from start
 3. **Mixed interaction**: chat + file edits
 4. **Layered embedding config**: project.scl → .speclangrc → env vars
 5. **Plugin + MCP server** architecture
-6. **Use OpenCode's SQLite** (not separate DB)
+6. **Use Pi Agent's SQLite** (not separate DB)
 7. **Symlinks default**, copy/hardlink fallback
 8. **Dynamic concurrency limits** by model provider
 
@@ -161,7 +161,7 @@ Based on discussion with human:
    - Begin Phase 1: Manual Emulation
 
 2. **Process first todo items**:
-   - OpenCode plugin implementation spec (layer 3+)
+   - Pi Agent daemon implementation spec (layer 3+)
    - MCP server implementation spec (layer 3+)
    - SQLite schema implementation spec (layer 3+)
    - Ralph Loop implementation spec (layer 3+)

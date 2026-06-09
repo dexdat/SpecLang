@@ -1,0 +1,92 @@
+id: PM-001
+title: Spec audit & catalog - OpenCode references
+status: completed
+priority: high
+
+description: >
+  Read every .spec.md file in specs/, find every reference to "OpenCode",
+  "opencode", "plugin" that relates to OpenCode, produce a catalog of
+  every file + line + what needs to change.
+
+findings:
+  total_opencode_references: 208
+  total_opencode_files: 54
+
+  files_with_references:
+    - specs/000-bootstrap.md (4 refs)
+    - specs/_index.md (1 ref)
+    - specs/agent-protocol.spec.md (4 refs)
+    - specs/agent-protocol.spec.dir/interceptor.spec.md (auto-generated, no OpenCode)
+    - specs/agents.spec.dir/agents/README.md (2 refs)
+    - specs/agents.spec.dir/agents/speclang-coordinator.md (1 ref)
+    - specs/agents.spec.dir/agents/speclang-simulator.md (11 refs)
+    - specs/cascade-protocol.spec.dir/events.spec.md (3 refs)
+    - specs/cascade-protocol.spec.dir/flow.spec.md (2 refs)
+    - specs/cascade-protocol.spec.md (2 refs)
+    - specs/cascade.spec.dir/triggers.spec.md (1 ref - "OpenCode style")
+    - specs/cascade.spec.md (4 refs)
+    - specs/compliance.spec.md (9 refs)
+    - specs/convergence.spec.md (1 ref)
+    - specs/core.spec.dir/_index.md (1 ref)
+    - specs/daemon.spec.dir/_index.md (1 ref)
+    - specs/daemon.spec.dir/architecture.spec.md (2 refs)
+    - specs/daemon.spec.md (4 refs)
+    - specs/deployment.spec.dir/enterprise.spec.md (3 refs)
+    - specs/deployment.spec.dir/light.spec.md (8 refs)
+    - specs/deployment.spec.md (10 refs)
+    - specs/docs.spec.dir/docs/* (multiple files)
+    - specs/external-methodologies.spec.dir/ (2 refs)
+    - specs/implementation-path.spec.md (2 refs)
+    - specs/implementation.spec.dir/meta-circular.spec.md (5 refs)
+    - specs/implementation.spec.dir/validation-system.spec.md (4 refs)
+    - specs/mcp-daemon.spec.dir/architecture.spec.md (1 ref)
+    - specs/mcp.spec.dir/architecture.spec.md (1 ref)
+    - specs/mcp.spec.dir/guide.spec.md (3 refs)
+    - specs/mcp.spec.dir/overview.spec.md (1 ref)
+    - specs/mcp.spec.md (3 refs)
+    - specs/opencode-plugin.spec.dir/* (14 files, ~80 refs total)
+    - specs/opencode-plugin.spec.md (16 refs)
+    - specs/opencode.spec.dir/* (4 files, ~60 refs total)
+    - specs/opencode.spec.md (15 refs)
+    - specs/project-maturity-levels.spec.dir/depth-requirements.spec.md (2 refs)
+    - specs/scripts.spec.dir/_index.md (1 ref)
+    - specs/scripts.spec.dir/generate-mcp-server.spec.md (2 refs)
+    - specs/scripts.spec.dir/generate-opencode-plugin.spec.md (18 refs)
+    - specs/scripts.spec.dir/generate-ralph-loop.spec.md (2 refs)
+    - specs/scripts.spec.dir/generate.spec.md (2 refs)
+    - specs/skills.spec.dir/skills/* (multiple SIP files)
+    - specs/skills.spec.md (2 refs)
+    - specs/tools.spec.dir/api.spec.md (1 ref)
+    - specs/tools.spec.dir/implementations.spec.md (1 ref)
+    - specs/tools.spec.dir/tools/README.md (2 refs)
+    - specs/ui.spec.dir/overview.spec.md (1 ref)
+    - specs/workflow.spec.dir/daily-use.spec.md (1 ref)
+    - specs/workflow.spec.dir/setup.spec.md (1 ref)
+
+  core_specs_that_need_change:
+    - specs/opencode.spec.md → REPLACE with pi-integration.spec.md
+    - specs/opencode.spec.dir/* → REPLACE with pi-integration.spec.dir/*
+    - specs/opencode-plugin.spec.md → REPLACE with pi-extension spec
+    - specs/opencode-plugin.spec.dir/* → REPLACE with pi-extension spec.dir/*
+    - specs/daemon.spec.md → REWRITE implementation strategy
+    - specs/daemon.spec.dir/architecture.spec.md → UPDATE deployment modes
+    - specs/agent-protocol.spec.md → REWRITE guard system
+    - specs/cascade.spec.md → UPDATE agent dispatch
+    - specs/pipeline.spec.md → REMOVE OpenCode hooks
+    - specs/skills.spec.md → UPDATE loading mechanism
+    - specs/deployment.spec.md → UPDATE architecture
+    - specs/deployment.spec.dir/light.spec.md → REWRITE for Pi
+    - specs/deployment.spec.dir/enterprise.spec.md → UPDATE architecture
+    - specs/convergence.spec.md → UPDATE see-also refs
+
+  core_specs_that_are_fine:
+    - specs/core.spec.md (runtime-agnostic, no OpenCode refs)
+    - specs/compiler.spec.md (runtime-agnostic, no OpenCode refs)
+    - specs/daemon.spec.dir/events.spec.md (uses notify crate, no OpenCode refs)
+    - specs/spec-format.spec.md (no OpenCode refs)
+    - specs/headers.spec.md (no OpenCode refs)
+    - specs/go.spec.md, specs/typescript.spec.md, specs/python.spec.md (no OpenCode refs)
+
+verification: >
+  Count of OpenCode references found: 208 across 54 files.
+  Core changes needed in ~20 files. Full replacement of opencode*.spec* files.

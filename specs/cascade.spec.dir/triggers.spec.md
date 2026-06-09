@@ -339,7 +339,7 @@ LoopPrevention:
   description: "Prevent infinite cascades"
   
   watcher_ignores:
-    # Respect .gitignore (OpenCode style)
+    # Respect .gitignore
     - Uses: .gitignore patterns
     - Plus: [".speclang/", "*.log", "reports/", ".git/"]
     - Support negation: !path/to/spec

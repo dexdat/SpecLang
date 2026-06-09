@@ -1,0 +1,24 @@
+id: PM-006
+title: Update cascade.spec.md for Pi agent dispatch
+status: in_progress
+priority: high
+
+description: >
+  Replace OpenCode Task tool with Pi SDK createAgentSession().
+
+actions:
+  - file: specs/cascade.spec.md
+    action: edit
+    changes:
+      - "trigger: File change (inotify or OpenCode event)" → "trigger: File change (inotify or chokidar event)"
+      - "File change detected (speclangd or OpenCode plugin)" → "File change detected (speclangd or chokidar watcher)"
+      - "The Cascade Protocol (@ref:specs/cascade-protocol) is the explicit coordination implementation for OpenCode constraints." → Update to reference Pi agent session coordination
+      - "In OpenCode-only mode, the cascade protocol provides explicit coordination." → "When the daemon is not available, agents coordinate via explicit session handoff."
+
+  - file: specs/cascade.spec.dir/triggers.spec.md
+    action: edit
+    change: Remove "OpenCode style" comment
+    oldText: "# Respect .gitignore (OpenCode style)"
+    newText: "# Respect .gitignore"
+
+verification: spec describes Pi SDK session creation, not OpenCode Task tool.

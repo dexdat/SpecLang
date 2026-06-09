@@ -1,0 +1,25 @@
+id: PM-003
+title: Update core.spec.md - remove OpenCode references
+status: completed
+priority: high
+
+description: >
+  Remove any OpenCode-specific references from core.spec.md.
+  Keep runtime-agnostic architecture.
+
+findings:
+  - specs/core.spec.md: No OpenCode references found
+  - specs/core.spec.dir/_index.md: 1 reference (line 40: "Skills for Claude Code, Cursor, OpenCode, etc.")
+
+actions:
+  - file: specs/core.spec.md
+    action: no_change_needed
+    reason: Already runtime-agnostic
+
+  - file: specs/core.spec.dir/_index.md
+    action: edit
+    change: Update "OpenCode" reference to include Pi Agent
+    oldText: "Skills for Claude Code, Cursor, OpenCode, etc."
+    newText: "Skills for Pi Agent, Claude Code, Cursor, etc."
+
+verification: grep for "OpenCode" returns 0 matches in core.spec.md.

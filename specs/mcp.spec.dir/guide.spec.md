@@ -14,7 +14,7 @@ This guide covers how to use the SpecLang MCP server for programmatic access to 
 
 ## Quick Start
 
-### Start Server in Stdio Mode (for OpenCode)
+### Start Server in Stdio Mode (for Pi Agent or OpenCode)
 
 ```bash
 npx speclang-mcp start
@@ -70,9 +70,9 @@ npx speclang-mcp start --http --port 3000
 | `speclang_index_stats` | Get index stats |
 | `speclang_index_validate` | Validate index |
 
-## Using with OpenCode
+## Using with Pi Agent
 
-1. Configure MCP in `.opencode/mcp.json`:
+1. Configure MCP in `.pi/mcp.json`:
 ```json
 {
   "command": "npx",
@@ -80,7 +80,7 @@ npx speclang-mcp start --http --port 3000
 }
 ```
 
-2. OpenCode will automatically connect to the MCP server and provide tool access.
+2. Pi Agent (or OpenCode) will automatically connect to the MCP server and provide tool access.
 
 ## Using with HTTP API
 

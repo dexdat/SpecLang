@@ -128,7 +128,7 @@ def generate_mcp_server(spec_path: str, output_dir: str, options: dict) -> dict:
 # @block:transport @kind:entity
 TransportModes:
   stdio:
-    description: Local communication with OpenCode
+    description: Local communication with Pi Agent
     protocol: JSON-RPC over stdio
     use_case: Editor integration
   

@@ -5,7 +5,7 @@ layer: 2
 parent: "@speclang/tools"
 part: 1/2
 tags: [tools, api, functions]
-imports: ["@speclang/core", "@speclang/opencode"]
+imports: ["@speclang/core", "@speclang/pi-integration"]
 status: draft
 project_level: Alpha
 agent_support: agent_assisted

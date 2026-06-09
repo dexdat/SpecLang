@@ -37,7 +37,7 @@ This directory contains sub-specs for the Core architecture of SpecLang.
    - Layer: 2, Part: 4/6
 
 5. **`skills.spec.md`** - Skills pack: AI editor skills for SpecLang
-   - Skills for Claude Code, Cursor, OpenCode, etc.
+   - Skills for Pi Agent, Claude Code, Cursor, etc.
    - Layer: 2, Part: 5/6
 
 6. **`concurrency.spec.md`** - Concurrency model: locks, sessions, parallel execution

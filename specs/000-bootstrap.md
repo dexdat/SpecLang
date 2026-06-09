@@ -109,7 +109,7 @@ specs/
 3. **Final spec before code** is always YAML (`{name}.{ext}.spec`) for precise schema
 
 ### How Cascade Works
-1. **File watcher** (`speclangd` Rust daemon or OpenCode plugin) detects file change
+1. **File watcher** (`speclangd` Rust daemon or chokidar watcher) detects file change
 2. **Reads headers** to understand dependencies (`depends_on`, `children`, `imports`)
 3. **Updates queue** with:
    - Trigger file (what changed)
@@ -126,7 +126,7 @@ specs/
 ### Agent Constraints
 - **Read any file**: Agents can read any spec to understand context
 - **Write only owned file**: Each agent can edit only its assigned file
-- **OpenCode plugin enforces**: Attempts to edit other files are rejected
+- **Pi extension guard enforces**: Attempts to edit other files are rejected
 - **Create new files**: Agents can create new files via tool/command with filename and headers
 - **Single file focus**: Each agent session works on exactly one file
 
@@ -168,12 +168,12 @@ depends_on:
 ### 3. Agent Rules
 - **One agent per file** - Each file has single owning agent (pattern-based)
 - **Read any, write owned** - Agents can read any file, write only owned files
-- **OpenCode plugin enforcement** - Attempts to edit other files are rejected
+- **Pi extension guard enforcement** - Attempts to edit other files are rejected
 - **File creation via tool** - Agents create new files with `create_spec_file` tool
 - **Single-file focus** - Each agent session works on exactly one file at a time
 
 ### 4. Cascade System
-1. **Trigger**: File change detected by `speclangd` (Rust) or OpenCode plugin
+1. **Trigger**: File change detected by `speclangd` (Rust) or chokidar watcher
 2. **Dependency resolution**: Read headers to find `depends_on`, `children`, `imports`
 3. **Queue update**: Add trigger file and all affected files to queue
 4. **Agent assignment**: Assign owning agent to each file based on pattern

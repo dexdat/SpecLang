@@ -9,7 +9,7 @@ status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: "Speclang Skills Pack"
-target: .opencode/skills/
+target: .pi/skills/
 ---
 
 # Speclang Skills Pack
@@ -22,7 +22,7 @@ AI editor skills that drive the reactive system.
 # @block:skills/overview @kind:entity
 SkillsPack:
   description: "Collection of skills for AI editors"
-  targets: Claude Code, Cursor, Windsurf, OpenCode
+  targets: Pi Agent, Claude Code, Cursor, Windsurf
   
   structure:
     speclang-skills/

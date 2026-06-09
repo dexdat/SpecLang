@@ -18,7 +18,7 @@ short: Daily Usage Workflow
 ```speclang
 # @block:workflow/conversation @kind:entity
 UserConversation:
-  location: AI editor (OpenCode, Cursor, etc.)
+  location: AI editor (Pi Agent, Cursor, etc.)
   partner: Orchestrator agent (via skills)
   
   what_user_says:

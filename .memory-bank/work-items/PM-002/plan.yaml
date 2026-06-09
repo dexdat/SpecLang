@@ -1,0 +1,59 @@
+id: PM-002
+title: Rewrite opencode.spec.md → pi-integration.spec.md
+status: in_progress
+priority: high
+
+description: >
+  Delete specs/opencode.spec.md. Create specs/pi-integration.spec.md
+  with the new Pi Agent runtime architecture.
+
+actions:
+  - file: specs/opencode.spec.md
+    action: delete
+    reason: Replaced by pi-integration.spec.md
+
+  - file: specs/opencode.spec.dir/
+    action: delete_directory
+    reason: All OpenCode integration specs replaced by Pi integration specs
+
+  - file: specs/opencode-plugin.spec.md
+    action: delete
+    reason: Replaced by pi-extension-examples.spec.md
+
+  - file: specs/opencode-plugin.spec.dir/
+    action: delete_directory
+    reason: All OpenCode plugin specs replaced by Pi extension specs
+
+  - file: specs/pi-integration.spec.md
+    action: create
+    content: >
+      Overview: Speclang's runtime on Pi Agent.
+      Pi SDK usage: createAgentSession, AgentSession.prompt, event subscriptions.
+      Extension architecture: pi.registerTool for custom SpecLang tools.
+      File watching: chokidar setup for specs/ directory.
+      Guard system: onToolCall interceptor for file ownership.
+      Agent routing: how cascade events map to Pi sessions.
+      Convergence detection: 30s quiet period implementation.
+      Pipeline trigger: on convergence, run build.yaml stages.
+      MCP server: standalone or Pi RPC mode for external access.
+
+  - file: specs/pi-extension-examples.spec.md
+    action: create
+    content: >
+      How to write Pi extensions for SpecLang:
+      - pi.registerTool("create_spec_file", ...)
+      - pi.registerTool("validate_specs", ...)
+      - pi.registerTool("run_cascade", ...)
+      - pi.registerCommand("/speclang:status")
+      - Event interceptor for file ownership
+
+  - file: specs/daemon-setup.spec.md
+    action: create
+    content: >
+      How to set up and run the Pi-based Speclang daemon:
+      1. npm install @earendil-works/pi-coding-agent
+      2. npm install chokidar
+      3. Start daemon: speclangd --watch specs/ --pipeline build.yaml
+      4. Daemon starts Pi agent sessions when file changes detected
+
+verification: speclang validate passes. No bare opencode.spec.md left.

@@ -33,7 +33,7 @@ database schemas, tool configurations, and other implementation artifacts.
 | generate_sqlite_schema | Generate SQLite schema from entity specs |
 | generate_validation_system | Generate validation system code |
 | generate_mcp_server | Generate MCP server implementation |
-| generate_opencode_plugin | Generate OpenCode plugin |
+| generate_pi_extension | Generate Pi Agent extension |
 | add_missing_fields | Add missing fields to specs |
 | compute_header_lines | Compute header line counts |
 | fix_headers | Fix header formatting |

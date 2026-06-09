@@ -22,7 +22,7 @@ The reactive loop at the heart of SpecLang. File changes trigger agent reactions
 # @block:cascade/overview @kind:entity
 Cascade:
   concept: Reactive multi-agent file system organism
-  trigger: File change (inotify or OpenCode event)
+  trigger: File change (inotify or chokidar event)
   response: Owning agent reacts, creates/updates files
   propagation: New changes trigger more agents
   convergence: Quiet period detection → pipeline execution
@@ -103,7 +103,7 @@ QueueSystem:
       dependencies: "Files this depends on"
   
   algorithm:
-    1. File change detected (speclangd or OpenCode plugin)
+    1. File change detected (speclangd or chokidar watcher)
     2. Read header dependencies (depends_on, children, imports)
     3. Find all affected files (transitive closure)
     4. Add to queue with trigger file and affected files
@@ -171,6 +171,6 @@ The orchestrator has **temporary write access** to multiple files during recover
 
 ## Relationship to Cascade Protocol
 
-The **Cascade** is the conceptual reactive loop. The **Cascade Protocol** (@ref:specs/cascade-protocol) is the explicit coordination implementation for OpenCode constraints.
+The **Cascade** is the conceptual reactive loop. The **Cascade Protocol** (@ref:specs/cascade-protocol) is the explicit coordination implementation for Pi agent session coordination.
 
-In ideal setup (with speclangd Rust daemon), the cascade is fully automatic via inotify. In OpenCode-only mode, the cascade protocol provides explicit coordination.
+In ideal setup (with speclangd Rust daemon), the cascade is fully automatic via inotify. When the daemon is not available, agents coordinate via explicit session handoff.

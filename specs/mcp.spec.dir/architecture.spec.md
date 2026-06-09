@@ -20,7 +20,7 @@ flowchart LR
     subgraph Editors["Any MCP-Compatible Editor"]
         C[Cursor]
         CC[Claude Code]
-        OC[OpenCode]
+        PI[Pi Agent]
         Z[Zed]
         W[Windsurf]
     end

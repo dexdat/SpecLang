@@ -4,7 +4,7 @@ version: 0.1.0
 target: src/deployment/
 layer: 0
 tags: [deployment, modes, light, enterprise, scale]
-imports: ["@speclang/core", "@speclang/opencode", "@speclang/daemon"]
+imports: ["@speclang/core", "@speclang/pi-integration", "@speclang/daemon"]
 status: draft
 
 project_level: Alpha
@@ -14,7 +14,7 @@ short: Deployment Modes
 
 # Deployment Modes
 
-Users choose between light (OpenCode only) or enterprise (with MCP daemon).
+Users choose between light (Pi Agent only) or enterprise (with MCP daemon).
 
 ## Overview
 
@@ -23,13 +23,13 @@ Users choose between light (OpenCode only) or enterprise (with MCP daemon).
 Two deployment profiles:
 
 Light Mode:
-- Just OpenCode + Speclang plugin
-- Uses OpenCode's native file watching
+- Just Pi Agent + chokidar daemon
+- Uses chokidar for cross-platform file watching
 - Good for <500 files, solo/small teams
 - Zero extra processes
 
 Enterprise Mode:
-- OpenCode + Speclang plugin + MCP daemon
+- Pi Agent + chokidar daemon + MCP daemon
 - Dedicated inotify watcher + HTTP/SSE server
 - Queue visibility, worktree isolation
 - Good for 500+ files, multiple teams, compliance
@@ -61,13 +61,13 @@ ModeSelection:
   
   light:
     description: "Minimal setup"
-    processes: 1 (opencode serve)
-    file_watcher: OpenCode native
+    processes: 1 (speclangd)
+    file_watcher: chokidar
     features: basic cascade, convergence, commit
     
   enterprise:
     description: "Full observability"
-    processes: 2 (opencode serve + speclangd)
+    processes: 2 (speclangd + speclangd enterprise)
     file_watcher: dedicated inotify daemon
     features: queue visibility, worktrees, agent control, compliance
 ```
@@ -78,7 +78,7 @@ ModeSelection:
 # @block:deploy/comparison @kind:table
 | Feature | Light | Enterprise |
 |---------|-------|------------|
-| File watching | OpenCode native | Dedicated inotify |
+| File watching | chokidar | Dedicated inotify |
 | Processes | 1 | 2 |
 | Queue visibility | No | Yes |
 | Worktree isolation | No | Yes |
@@ -108,7 +108,7 @@ steps:
   3. If switching to light:
      - stop daemon
      - remove daemon config
-  4. Restart OpenCode server
+  4. Restart speclangd daemon
 
 note: specs and database remain the same
 ```

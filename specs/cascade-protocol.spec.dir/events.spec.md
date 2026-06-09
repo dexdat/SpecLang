@@ -227,7 +227,7 @@ To resume:
 
 ## Comparison: Fantasy vs Reality
 
-| Feature | Original Vision | OpenCode Reality | This Protocol |
+| Feature | Original Vision | Single-Agent Reality | This Protocol |
 |---------|----------------|------------------|---------------|
 | File watching | inotify daemon | ❌ Not available | Manual trigger |
 | Agent triggering | Automatic | ❌ Not available | Explicit Task invocation |
@@ -251,12 +251,12 @@ A cascade is successful when:
 
 ### Why Explicit Coordination?
 
-**Automatic cascade was fantasy.** OpenCode doesn't support:
+**Automatic cascade was fantasy.** Single-agent setup doesn't support:
 - Background file watching
 - Automatic agent spawning
 - Event-driven reactivity
 
-**Explicit coordination is reliable.** OpenCode supports:
+**Explicit coordination is reliable.** Explicit tool invocation supports:
 - Task tool for agent invocation
 - Bash for verification
 - Structured state tracking

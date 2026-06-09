@@ -23,7 +23,7 @@ Speclang is built using Speclang. This spec describes the meta-circular developm
 3. Manually emulate Speclang with that agent
 4. Use Ralph Loop to complete expansion
 5. Build actual Speclang code
-6. Test in OpenCode
+6. Test with Pi Agent
 7. Use built Speclang to build new projects
 8. Use each version to improve the next
 
@@ -40,7 +40,7 @@ flowchart TD
     A --> M[Manual Emulation]
     M --> R[Ralph Loop Expansion]
     R --> B[Build Speclang Code]
-    B --> T[Test in OpenCode]
+    B --> T[Test with Pi Agent]
     T --> U[Use Speclang to build projects]
     U --> I[Improve Speclang with itself]
     I --> S
@@ -73,7 +73,7 @@ Phase1:
 Phase2:
   tasks:
     - Build core templates manually
-    - Create OpenCode plugin skeleton
+    - Create Pi Agent extension skeleton
     - Create TypeScript MCP server skeleton
     - Implement basic SQLite schema
   
@@ -115,7 +115,7 @@ Phase4:
   
   workflow:
     1. Build Speclang v0.1 from specs
-    2. Test v0.1 in OpenCode
+    2. Test v0.1 with Pi Agent
     3. Use v0.1 to build v0.2 specs
     4. Generate v0.2 code
     5. Test v0.2

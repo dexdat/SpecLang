@@ -122,7 +122,7 @@ id: "@speclang/agent-behavior-matrix"
 - **To SpecLang**: `@ref:speclang/opencode-plugin`
 
 **Adoption**:
-Already implemented in @ref:specs/opencode-plugin.spec.md with:
+Already implemented in @ref:specs/pi-extension-examples.spec.md with:
 - IDE-specific command files
 - Agent activation blocks
 - Context engineering patterns

@@ -52,7 +52,7 @@ flowchart TD
         M[MCP Server]
     end
     
-    subgraph OpenCode
+    subgraph Pi Agent
         P[Speclang Plugin]
         E[Editor UI]
     end

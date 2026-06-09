@@ -41,7 +41,7 @@ AgentProtocol:
     - inheritance: Sub-specs inherit parent's owner
   
   guard_system:
-    - plugin: OpenCode plugin intercepts write attempts
+    - extension: Pi extension intercepts write attempts via pi.registerTool() + onToolCall
     - validation: Checks ownership before allowing write
     - logging: Records violations for debugging
     - override: User session can write anywhere
@@ -57,9 +57,9 @@ AgentProtocol:
 - **Interceptor**: @ref:specs/agent-protocol.spec.dir/interceptor - Write interception implementation
 - **Violations**: @ref:specs/agent-protocol.spec.dir/violations - Violation tracking and reporting
 
-## Integration with OpenCode
+## Integration with Pi Agent
 
-The agent protocol is enforced via an OpenCode plugin (`speclang-guard`) that:
+The agent protocol is enforced via a Pi extension that intercepts file writes via pi.registerTool() + onToolCall event handlers:
 
 1. Intercepts file write attempts
 2. Checks if the agent owns the file (by pattern or header)
@@ -71,7 +71,7 @@ This prevents agents from stepping on each other's files during concurrent casca
 
 ## File Creation Tool
 
-Agents can create new files via a dedicated tool (available in OpenCode plugin):
+Agents can create new files via a dedicated tool (available as a Pi extension):
 
 ### @block::agent-protocol/file-creation-tool @kind:tool
 ```speclang
@@ -175,7 +175,7 @@ CommitProtocol:
     
   tool_requirement:
     - Agents must have access to git CLI
-    - OpenCode plugin provides git wrapper
+    - Pi extension provides git wrapper
     - Commit happens automatically after successful write
 ```
 

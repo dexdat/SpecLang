@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:10
 id: "@specs/maturity/validation"
 version: 1.0.0
 layer: 5
@@ -6,6 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [maturity, validation]
 target: src/maturity/validation.ts
+short: Maturity validation rules
 ---
 
 # Maturity Validation Spec

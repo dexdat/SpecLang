@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/compliance"
 description: Dual-view compliance verification system
 version: 1.0.0
@@ -53,9 +53,9 @@ specs/{category}.spec.dir/     ← SOURCE OF TRUTH
 **Working Locations:**
 - `src/` - TypeScript implementation
 - `scripts/` - Python tooling
-- `.opencode/skills/` - AI skills
-- `.opencode/agents/` - Agent definitions
-- `.opencode/tools/` - MCP tools
+- `.pi/skills/` - AI skills
+- `.pi/agents/` - Agent definitions
+- `.pi/tools/` - MCP tools
 - `docs/` - Documentation
 - `tests/` - Test files
 - `config/` - Configuration
@@ -156,9 +156,9 @@ from typing import Dict, List, Tuple
 WORKING_LOCATIONS = [
     ('src/', 'specs/implementation.spec.dir/src/', '.ts'),
     ('scripts/', 'specs/scripts.spec.dir/', '.py'),
-    ('.opencode/skills/', 'specs/skills.spec.dir/', '.md'),
-    ('.opencode/agents/', 'specs/agents.spec.dir/', '.md'),
-    ('.opencode/tools/', 'specs/tools.spec.dir/', '.md'),
+    ('.pi/skills/', 'specs/skills.spec.dir/', '.md'),
+    ('.pi/agents/', 'specs/agents.spec.dir/', '.md'),
+    ('.pi/tools/', 'specs/tools.spec.dir/', '.md'),
     ('docs/', 'specs/docs.spec.dir/', '.md'),
 ]
 
@@ -342,7 +342,7 @@ python3 scripts/check_compliance.py || exit 1
 
 **Phase 2: Skills (P1)**
 - [ ] Create specs/skills.spec.dir/ files for all 148 skills
-- [ ] Symlink .opencode/skills/ to specs/
+- [ ] Symlink .pi/skills/ to specs/
 - [ ] Update pre-commit hook to handle skills
 
 **Phase 3: Documentation (P2)**
@@ -351,8 +351,8 @@ python3 scripts/check_compliance.py || exit 1
 - [ ] Archive old documentation
 
 **Phase 4: Agents & Tools (P3)**
-- [ ] Create specs for .opencode/agents/
-- [ ] Create specs for .opencode/tools/
+- [ ] Create specs for .pi/agents/
+- [ ] Create specs for .pi/tools/
 - [ ] Create specs for config/
 
 **Phase 5: Verification (P4)**
@@ -368,8 +368,8 @@ python3 scripts/check_compliance.py || exit 1
 |-----------|-------|-----------|------|
 | src/ | ~45 | 7 | 15% |
 | scripts/ | 36 | 20 | 55% |
-| .opencode/skills/ | 148 | 0 | 0% |
-| .opencode/agents/ | 8 | 0 | 0% |
+| .pi/skills/ | 148 | 0 | 0% |
+| .pi/agents/ | 8 | 0 | 0% |
 | docs/ | 11 | 0 | 0% |
 | tests/ | ~60 | ? | ? |
 | **Total** | **~308** | **~27** | **~9%** |
