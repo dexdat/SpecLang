@@ -3,6 +3,9 @@ pipeline:
     - name: assemble
       run: npm run assemble
       timeout: 30000
+    - name: compile
+      run: npm run compile
+      timeout: 120000
     - name: gitreins-track
       run: ./bin/gitreins-track 2>&1
       timeout: 15000

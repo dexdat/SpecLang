@@ -1,3 +1,5 @@
+// @spec: @speclang/assembler/assembler v1.0.0
+// @source: specs/assembler/assembler.spec.ts.md:57-275
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as yaml from 'js-yaml';

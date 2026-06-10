@@ -1,3 +1,5 @@
+// @spec: @speclang/assembler/pipeline v1.0.0
+// @source: specs/assembler/pipeline.spec.ts.md:63-287
 import { ConvergenceEvent } from './daemon.spec';
 import { execSync, exec } from 'child_process';
 import * as fs from 'fs/promises';

@@ -1,3 +1,5 @@
+// @spec: @speclang/assembler/daemon v1.0.0
+// @source: specs/assembler/daemon.spec.ts.md:65-323
 import chokidar from 'chokidar';
 import { EventEmitter } from 'events';
 import * as fs from 'fs/promises';

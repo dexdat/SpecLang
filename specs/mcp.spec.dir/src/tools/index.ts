@@ -7,6 +7,9 @@ import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import type { SpecLangDB } from '../../../sqlite.spec.dir/src/index.js';
 import type { MCPServerConfig } from '../types.js';
+import { parse, validate, resolve, transform, codegen, getTarget, getAllTargets, compileIncremental, invalidateCache } from '../../../../src/compiler/index.js';
+import { readFileSync, existsSync, mkdirSync, writeFileSync } from 'fs';
+import { resolve as resolvePath } from 'path';
 
 import { SearchToolHandler } from './search.js';
 import { SpecsToolHandler } from './specs.js';
@@ -143,6 +146,14 @@ export class MCPToolRegistry {
           // Status tool
           case 'speclang_get_status':
             result = await this.handleGetStatus();
+            break;
+            
+          // Compiler tools
+          case 'speclang_compile':
+            result = await this.handleCompile(args as unknown as { spec_path: string; target?: string; output_dir?: string });
+            break;
+          case 'speclang_codegen_status':
+            result = await this.handleCodegenStatus(args as unknown as { spec_id?: string; spec_path?: string });
             break;
             
           // Dashboard/UI tools
@@ -369,6 +380,153 @@ export class MCPToolRegistry {
       active_cascades: activeCascades.count,
       converged: activeSessions.count === 0 && pendingCommands.count === 0 && activeCascades.count === 0
     };
+  }
+
+  /**
+   * Handle speclang_compile - Run the multi-target compiler
+   */
+  private async handleCompile(args: { spec_path: string; target?: string; output_dir?: string }): Promise<Record<string, unknown>> {
+    const { spec_path, target = 'typescript', output_dir } = args;
+
+    const resolvedPath = resolvePath(this.config.specsDir, spec_path);
+    if (!existsSync(resolvedPath)) {
+      throw new Error(`Spec file not found: ${resolvedPath}`);
+    }
+
+    const targetDef = getTarget(target);
+    if (!targetDef) {
+      throw new Error(`Unknown target language: ${target}. Available: ${getAllTargets().map(t => t.id).join(', ')}`);
+    }
+
+    const content = readFileSync(resolvedPath, 'utf-8');
+    const specHeaders = this.parseHeaderBlocks(content, resolvedPath);
+
+    const graph = parse([resolvedPath]);
+
+    if (graph.errors.length > 0) {
+      const error = graph.errors[0];
+      return {
+        success: false,
+        phase: 'parse',
+        errors: graph.errors.map(e => ({ code: e.code, message: e.message, location: e.location })),
+        message: `Parse failed: ${error.message}`,
+      };
+    }
+
+    const validationResult = validate(graph);
+    if (!validationResult.valid) {
+      return {
+        success: false,
+        phase: 'validate',
+        errors: validationResult.errors.map(e => ({ code: e.code, message: e.message, location: e.location })),
+        warnings: validationResult.warnings.map(w => ({ code: w.code, message: w.message })),
+        message: `Validation failed with ${validationResult.errors.length} errors`,
+      };
+    }
+
+    const resolved = resolve(graph);
+    const ir = transform(resolved.graph);
+    const artifacts = codegen(ir, target);
+
+    if (output_dir) {
+      const outDir = resolvePath(output_dir);
+      mkdirSync(outDir, { recursive: true });
+      const written: string[] = [];
+      for (const artifact of artifacts) {
+        const outPath = resolvePath(outDir, artifact.path);
+        const outDirPath = resolvePath(outDir, artifact.path.replace(/[^/]+$/, ''));
+        mkdirSync(outDirPath, { recursive: true });
+        writeFileSync(outPath, artifact.content, 'utf-8');
+        written.push(outPath);
+      }
+      return {
+        success: true,
+        target: targetDef.name,
+        artifacts_count: artifacts.length,
+        files_written: written,
+        artifact_paths: artifacts.map(a => a.path),
+        spec_path: resolvedPath,
+      };
+    }
+
+    return {
+      success: true,
+      target: targetDef.name,
+      artifacts_count: artifacts.length,
+      artifacts: artifacts.map(a => ({
+        path: a.path,
+        content: a.content,
+        markers: a.markers,
+        target: a.target,
+      })),
+      spec_path: resolvedPath,
+    };
+  }
+
+  /**
+   * Handle speclang_codegen_status - Show code generation status
+   */
+  private async handleCodegenStatus(args: { spec_id?: string; spec_path?: string }): Promise<Record<string, unknown>> {
+    const { spec_id, spec_path } = args;
+
+    const allTargets = getAllTargets();
+    const targetInfo = allTargets.map(t => ({
+      id: t.id,
+      name: t.name,
+      file_ext: t.fileExt,
+    }));
+
+    if (spec_id) {
+      const db = this.db.getDatabase();
+      const spec = db.prepare('SELECT * FROM specs WHERE id = ? OR file_path = ?').get(spec_id, spec_id) as Record<string, unknown> | undefined;
+      if (!spec) {
+        throw new Error(`Spec not found: ${spec_id}`);
+      }
+
+      const dependsOn = db.prepare('SELECT target.id, target.file_path FROM specs target JOIN spec_deps sd ON target.rowid = sd.dst_spec_pk JOIN specs src ON sd.src_spec_pk = src.rowid WHERE src.id = ? OR src.file_path = ?').all(spec_id, spec_id) as Array<{ id: string; file_path: string }>;
+      const dependents = db.prepare('SELECT target.id, target.file_path FROM specs target JOIN spec_deps sd ON target.rowid = sd.src_spec_pk JOIN specs src ON sd.dst_spec_pk = src.rowid WHERE src.id = ? OR src.file_path = ?').all(spec_id, spec_id) as Array<{ id: string; file_path: string }>;
+
+      return {
+        spec_id,
+        supported_targets: targetInfo,
+        dependency_count: dependsOn.length,
+        dependencies: dependsOn.map(d => d.id || d.file_path),
+        dependent_count: dependents.length,
+        dependents: dependents.map(d => d.id || d.file_path),
+        has_codegen_header: this.parseHeaderBlocks(
+          readFileSync(resolvePath(this.config.specsDir, spec_path || spec.file_path as string), 'utf-8'),
+          spec_path || spec.file_path as string
+        ).length > 0,
+      };
+    }
+
+    const db = this.db.getDatabase();
+    const specCount = db.prepare('SELECT COUNT(*) as count FROM specs').get() as { count: number };
+    const specsWithCodegen = 0;
+
+    return {
+      supported_targets: targetInfo,
+      total_specs: specCount.count,
+      specs_with_codegen_blocks: specsWithCodegen,
+      message: 'Codegen status retrieved. Use spec_id for detailed per-spec status.',
+    };
+  }
+
+  /**
+   * Parse header blocks from spec content (looks for @block: markers)
+   */
+  private parseHeaderBlocks(content: string, filepath: string): Array<{ id: string; kind: string; line: number }> {
+    const lines = content.split('\n');
+    const blocks: Array<{ id: string; kind: string; line: number }> = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      const match = lines[i].match(/#\s*@block:(\S+)\s*@kind:(\S+)/);
+      if (match) {
+        blocks.push({ id: match[1], kind: match[2], line: i + 1 });
+      }
+    }
+
+    return blocks;
   }
 }
 
@@ -624,7 +782,38 @@ export function getToolDefinitions() {
         properties: {}
       }
     },
-    
+
+    // Compiler tools
+    {
+      name: 'speclang_compile',
+      description: 'Run the multi-target compiler on a spec file. Supports typescript, go, rust, and python targets.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          spec_path: { type: 'string', description: 'Path to the spec file to compile (relative to specsDir)' },
+          target: {
+            type: 'string',
+            description: 'Target language for code generation',
+            enum: ['typescript', 'go', 'rust', 'python'],
+            default: 'typescript'
+          },
+          output_dir: { type: 'string', description: 'Optional directory to write generated files to' }
+        },
+        required: ['spec_path']
+      }
+    },
+    {
+      name: 'speclang_codegen_status',
+      description: 'Show code generation status. Returns available targets and per-spec dependency/codegen info.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          spec_id: { type: 'string', description: 'Optional spec ID for detailed per-spec status' },
+          spec_path: { type: 'string', description: 'Optional spec file path for detailed per-spec status' }
+        }
+      }
+    },
+
     // Dashboard/UI tools
     {
       name: 'speclang_query_events',

@@ -6,6 +6,7 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
+import { ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import express, { Request, Response, NextFunction } from 'express';
 import { randomUUID } from 'crypto';
 
@@ -236,15 +237,10 @@ export class MCPServer {
       this.toolRegistry.registerTools(server);
     }
     
-    // Register tool definitions
-    const tools = getToolDefinitions();
-    for (const tool of tools) {
-      // @ts-expect-error - MCP SDK has different type definitions
-      server.registerTool(tool.name, {
-        description: tool.description,
-        inputSchema: tool.inputSchema
-      });
-    }
+    // Register tool definitions via ListToolsRequestSchema
+    server.setRequestHandler(ListToolsRequestSchema, async () => {
+      return { tools: getToolDefinitions() };
+    });
     
     return server;
   }
@@ -303,6 +299,10 @@ export class MCPServer {
         if (toolName === 'speclang_cascade_abort') return await registry.cascade.handleCascadeAbort();
         if (toolName === 'speclang_cascade_converge') return await registry.cascade.handleCascadeConverge(args as unknown as { cascade_id: string });
         break;
+      case toolName.startsWith('speclang_compile'):
+        return await this.handleCompilerTool(toolName, args);
+      case toolName.startsWith('speclang_codegen'):
+        return await this.handleCompilerTool(toolName, args);
       case toolName.startsWith('speclang_index'):
         if (toolName === 'speclang_index_refresh') return await registry.index.handleIndexRefresh(args as unknown as { specsDir?: string }) as unknown as Record<string, unknown>;
         if (toolName === 'speclang_index_stats') return await registry.index.handleIndexStats() as unknown as Record<string, unknown>;
@@ -345,6 +345,96 @@ export class MCPServer {
         return await registry.dashboard.handleSubscribeEvents(args as unknown as { types?: string[] });
       default:
         return { error: `Unknown dashboard tool: ${toolName}` };
+    }
+  }
+
+  /**
+   * Handle compiler tool queries
+   */
+  private async handleCompilerTool(toolName: string, args: Record<string, unknown>): Promise<Record<string, unknown>> {
+    if (!this.toolRegistry) {
+      throw new Error('Tool registry not initialized');
+    }
+    
+    const { parse, validate, resolve, transform, codegen, getTarget, getAllTargets } = await import('../../compiler/index.js');
+    const { readFileSync, existsSync, mkdirSync, writeFileSync } = await import('fs');
+    const { resolve: resolvePath } = await import('path');
+    
+    switch (toolName) {
+      case 'speclang_compile': {
+        const compileArgs = args as unknown as { spec_path: string; target?: string; output_dir?: string };
+        const { spec_path, target = 'typescript', output_dir } = compileArgs;
+        
+        const resolvedPath = resolvePath(this.config.specsDir, spec_path);
+        if (!existsSync(resolvedPath)) {
+          return { error: `Spec file not found: ${resolvedPath}` };
+        }
+        
+        const targetDef = getTarget(target);
+        if (!targetDef) {
+          return { error: `Unknown target language: ${target}` };
+        }
+        
+        const graph = parse([resolvedPath]);
+        if (graph.errors.length > 0) {
+          return { success: false, phase: 'parse', errors: graph.errors.map(e => e.message) };
+        }
+        
+        const validationResult = validate(graph);
+        if (!validationResult.valid) {
+          return { success: false, phase: 'validate', errors: validationResult.errors.map(e => e.message) };
+        }
+        
+        const resolved = resolve(graph);
+        const ir = transform(resolved.graph);
+        const artifacts = codegen(ir, target);
+        
+        if (output_dir) {
+          const outDir = resolvePath(output_dir);
+          mkdirSync(outDir, { recursive: true });
+          const written: string[] = [];
+          for (const artifact of artifacts) {
+            const outPath = resolvePath(outDir, artifact.path);
+            mkdirSync(resolvePath(outDir, artifact.path.replace(/[^/]+$/, '')), { recursive: true });
+            writeFileSync(outPath, artifact.content, 'utf-8');
+            written.push(outPath);
+          }
+          return { success: true, artifacts_count: artifacts.length, files_written: written };
+        }
+        
+        return {
+          success: true,
+          target: targetDef.name,
+          artifacts_count: artifacts.length,
+          artifacts: artifacts.map(a => ({ path: a.path, content: a.content, markers: a.markers, target: a.target })),
+        };
+      }
+      
+      case 'speclang_codegen_status': {
+        const statusArgs = args as unknown as { spec_id?: string; spec_path?: string };
+        const allTargets = getAllTargets();
+        
+        const db = this.db!.getDatabase();
+        const specCount = db.prepare('SELECT COUNT(*) as count FROM specs').get() as { count: number };
+        
+        let specInfo = null;
+        if (statusArgs.spec_id || statusArgs.spec_path) {
+          const id = statusArgs.spec_id || statusArgs.spec_path;
+          const spec = db.prepare('SELECT * FROM specs WHERE id = ? OR file_path = ?').get(id!, id!) as Record<string, unknown> | undefined;
+          if (spec) {
+            specInfo = { id: spec.id, file_path: spec.file_path, layer: spec.layer, version: spec.version };
+          }
+        }
+        
+        return {
+          supported_targets: allTargets.map(t => ({ id: t.id, name: t.name, file_ext: t.fileExt })),
+          total_specs: specCount.count,
+          spec_info: specInfo,
+        };
+      }
+      
+      default:
+        return { error: `Unknown compiler tool: ${toolName}` };
     }
   }
 }

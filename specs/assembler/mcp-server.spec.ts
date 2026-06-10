@@ -1,3 +1,5 @@
+// @spec: @speclang/assembler/mcp-server v1.0.0
+// @source: specs/assembler/mcp-server.spec.ts.md:39-187
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {

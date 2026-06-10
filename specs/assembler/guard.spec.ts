@@ -1,3 +1,5 @@
+// @spec: @speclang/assembler/guard v1.0.0
+// @source: specs/assembler/guard.spec.ts.md:56-221
 import type { ExtensionContext } from '@earendil-works/pi-coding-agent';
 
 // ---- Ownership Rules ----

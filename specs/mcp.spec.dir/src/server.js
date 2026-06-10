@@ -13,6 +13,7 @@ const stdio_js_1 = require("@modelcontextprotocol/sdk/server/stdio.js");
 const sse_js_1 = require("@modelcontextprotocol/sdk/server/sse.js");
 const express_1 = __importDefault(require("express"));
 const crypto_1 = require("crypto");
+const types_js_1 = require("@modelcontextprotocol/sdk/types.js");
 const index_js_2 = require("../../sqlite.spec.dir/src/index.js");
 const index_js_3 = require("./tools/index.js");
 const config_js_1 = require("./config.js");
@@ -123,15 +124,10 @@ class MCPServer {
             this.toolRegistry = new index_js_3.MCPToolRegistry(this.db, this.config);
             this.toolRegistry.registerTools(server);
         }
-        // Register tool definitions
-        const tools = (0, index_js_3.getToolDefinitions)();
-        for (const tool of tools) {
-            // @ts-expect-error - MCP SDK has different type definitions
-            server.registerTool(tool.name, {
-                description: tool.description,
-                inputSchema: tool.inputSchema
-            });
-        }
+        // Register tool definitions via ListToolsRequestSchema
+        server.setRequestHandler(types_js_1.ListToolsRequestSchema, async () => {
+            return { tools: (0, index_js_3.getToolDefinitions)() };
+        });
         return server;
     }
     /**

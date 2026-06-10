@@ -1,3 +1,5 @@
+// @spec: @speclang/assembler/cascade-router v1.0.0
+// @source: specs/assembler/cascade-router.spec.ts.md:63-340
 // ---- Lazy PI SDK Import (ESM-only package — falls back to mock for CJS/testing) ----
 
 let _createAgentSession: ((opts: Record<string, unknown>) => Promise<{ session: { prompt: (msg: string) => Promise<void>; dispose: () => void } }>) | null = null;

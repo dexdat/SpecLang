@@ -1,0 +1,33 @@
+# WI-002: Add compiler stage to build.yaml pipeline
+
+## Problem
+The build.yaml pipeline has assemble → gitreins-track → build → verify-self-host → test → gitreins-guard → lint stages. But the multi-target compiler in `src/compiler/` (which generates code in TS/Go/Python/Rust from spec IR) is not invoked as a pipeline stage.
+
+## Required Changes
+
+### 1. Modify `build.yaml` — add `compile` stage after `assemble`
+
+Add a compile stage between `assemble` and `build`:
+
+```yaml
+    - name: compile
+      run: npm run compile
+      timeout: 120000
+```
+
+Also add an `npm run compile` script to `package.json` if it doesn't exist.
+
+### 2. Check `package.json` for compile script
+
+Look at the `scripts` section of `package.json`. If there's already a `compile` or `generate` script, use it. If not, add:
+```json
+    "compile": "npx tsx .speclang/assemble-all.ts && npx tsx src/compiler/index.ts --target all --output src/generated",
+```
+
+But first read `src/compiler/index.ts` to understand the correct CLI interface.
+
+## Scope
+- ONLY modify `build.yaml` and possibly `package.json`
+- Do NOT create new files
+- Do NOT modify compiler source code
+- The compile stage should run AFTER assemble but BEFORE build
