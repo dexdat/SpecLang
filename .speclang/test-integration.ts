@@ -43,7 +43,7 @@ id: "@specs/main"
 version: 1.0.0
 layer: 2
 owned_by: pipeline
-model: gpt-4
+model: deepseek/deepseek-v4-flash
 dependsOn:
   - "lib.spec.md"
 status: draft
@@ -62,6 +62,7 @@ id: "@specs/lib"
 version: 1.0.0
 layer: 1
 owned_by: spec-writer
+model: deepseek/deepseek-v4-flash
 watch:
   files:
     - "specs/**/*.yaml"
