@@ -213,27 +213,88 @@ The header always wins. An individual spec can override the default model for it
 | Handles cross-file deps via `@ref:` | Handles import/module resolution |
 | `owned-by` + `model` controls who writes | No concept of "who writes" |
 
-## Bootstrap Path to Self-Hosting
+## Bootstrap Path — The Go Way
 
-Everything we build during bootstrap is in SpecLang format so SpecLang can take over:
+We build SpecLang the same way Go bootstrapped itself:
 
 ```
-Bootstrap phase (right now):
-  1. Hermes writes specs/assembler/*.spec.md   ← source of truth
-  2. Hermes hand-writes .speclang/*.ts          ← placeholder (hand-generated)
-  3. Symlink: specs/assembler/*.spec.dir/src/*.ts → .speclang/*.ts
+Go 1.0:    Go compiler written in C    (Plan 9 C compiler)
+           "The compiler code lives in .c files, compiled by cc"
+Go 1.5+:   Go compiler written in Go   (self-hosting)
+           "The compiler code lives in .go files, compiled by gc"
 
-Bootstrap moment:
-  4. SpecLang reads specs/assembler/daemon.spec.md
-  5. SpecLang generates .speclang/daemon.ts
-  6. Verify: generated code matches hand-written
-
-Self-hosting:
-  7. Edit specs/assembler/daemon.spec.md
-  8. SpecLang regenerates everything
-  9. Delete hand-written .ts files
-  10. SpecLang builds SpecLang forever
-  11. Throw away Hermes, Axiom, OpenCode — all external tools
+SpecLang bootstrap:
+  Now:     SpecLang framework written INSIDE .spec.md @kind:code blocks
+           "The code lives IN the spec files. We extract it by hand."
+  Later:   SpecLang framework written INSIDE .spec.md @kind:code blocks
+           "The code lives IN the spec files. SpecLang extracts it."
 ```
 
-No `.ts` file without a `.spec.md` that describes it. Every file we produce during bootstrap is a hand-generated placeholder that SpecLang will regenerate from specs.
+**There are no separate `.ts` files.** Every line of implementation code lives inside a `@kind:code` block in a `.spec.md` file. The spec file IS the implementation.
+
+```
+specs/assembler/daemon.spec.md
+  │
+  ├── # speclang-header lines:42
+  │   id: "@speclang/assembler/daemon"
+  │   target: .speclang/daemon.ts          ← where SpecLang writes the code
+  │   layer: 1
+  │   owned-by: assembler
+  │
+  ├── @block:daemon/overview @kind:entity  ← spec metadata (what it is)
+  │
+  ├── @block:daemon/implementation @kind:code  ← THE ACTUAL CODE
+  │   ```typescript
+  │   import { watch } from 'chokidar';
+  │   export class SpeclangDaemon {
+  │     // ... full implementation
+  │   }
+  │   ```
+  │
+  └── @block:daemon/convergence @kind:code ← MORE ACTUAL CODE
+      ```typescript
+      export class ConvergenceDetector {
+        // ... full implementation
+      }
+      ```
+```
+
+### During Bootstrap
+
+**Step 1:** We write the spec files WITH the full implementation inside `@kind:code` blocks. We structure them exactly as SpecLang would generate them — proper headers, proper blocks, proper refs.
+
+**Step 2:** We manually copy the code from each `@kind:code` block to the location specified in `target:` field. This is the hand-extraction step — equivalent to Go 1.0's C compiler compiling the Go compiler source.
+
+**Step 3:** SpecLang reads spec files, extracts `@kind:code` blocks, writes them to `target:` paths. Verify the output matches our hand-extracted version.
+
+**Step 4:** Delete all hand-extracted files. SpecLang now generates its own framework code from its own spec files. SpecLang builds SpecLang.
+
+### The Analogy
+
+| Go bootstrap | SpecLang bootstrap |
+|---|---|
+| Go compiler source in `.go` files | SpecLang framework in `.spec.md` `@kind:code` blocks |
+| C compiler compiled the `.go` → `6g` binary | We hand-extract `@kind:code` → `.ts` files |
+| `6g` compiled Go compiler → self-hosting | SpecLang extracts `@kind:code` → `.ts` files |
+| Delete Plan 9 C compiler | Delete hand-extraction, delete Hermes/Axiom |
+
+### What This Means for Our Build Process
+
+Every PI work item produces ONE thing: a `.spec.md` file with the full implementation inside `@kind:code` blocks. No separate `.ts` files. The `target:` header field tells SpecLang where to extract the code.
+
+```
+PI-002: specs/assembler/daemon.spec.md
+          header: target: .speclang/daemon.ts
+          @block:daemon/implementation @kind:code → daemon code
+          @block:daemon/convergence @kind:code    → convergence code
+
+PI-003: specs/assembler/guard.spec.md
+          header: target: .pi/extensions/speclang-guard.ts
+          @block:guard/implementation @kind:code → guard extension code
+
+PI-004: specs/assembler/cascade-router.spec.md
+          header: target: .speclang/cascade-router.ts
+          @block:cascade/implementation @kind:code → cascade code
+```
+
+When we need to RUN the code during bootstrap (to test it), we extract it manually. When SpecLang is ready, it reads the same spec files and extracts the same code — just automatically.
