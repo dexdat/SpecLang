@@ -30,11 +30,26 @@ npm-debug.log*
 coverage/
 .nyc_output/
 
-# Speclang simulator state
-.speclang/
+# Speclang simulator state (track .spec.ts source, ignore generated/state files)
 .speclang_depth
 .speclang_last_change
 .speclang_last_check
+.speclang/_index.json
+.speclang/cascade-state.json
+.speclang/daemon-state.json
+.speclang/speclang.db
+.speclang/symlinks.json
+.speclang/errors/
+.speclang/locks/
+.speclang/tmp/
+.speclang/test-sessions/
+.speclang/test-output.ts
+
+# Speclang debug files
+.speclang/debug*
+.speclang/extract*
+.speclang/gen*
+.speclang/_test*
 
 # Backup files
 .backup_spec_files/
@@ -58,9 +73,6 @@ validation_results.json
 
 # Archive (old reports, keep locally but don't track)
 # docs/archive/
-
-# Symlink tracking
-.speclang/symlinks.json
 
 # Ralph loop state (generated)
 .ralph/loop-state.json

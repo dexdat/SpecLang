@@ -1,59 +1,3 @@
----
-id: "@speclang/assembler/assembler"
-version: 1.0.0
-layer: 2
-target_lang: ts
-output: .speclang/assembler.spec.ts
-owned-by: assembler
-model_pool: code-gen
-max_concurrent: 1
-seed: false
-tags: [assembler, core, codegen, extract]
-short: "Core assembler engine — reads .spec.{lang}.md and writes .spec.{lang}"
-depends_on:
-  - "@ref:specs/core"
-status: draft
----
-
-# Assembler Engine
-
-## Overview
-
-The core assembler engine reads `.spec.{lang}.md` files and produces `.spec.{lang}` source code files. During bootstrap, the code is extracted by hand. After bootstrap, SpecLang uses this module to regenerate its own framework.
-
-### Architecture
-
-```
-.spec.ts.md file
-       |
-       v
-+------------------+
-| Header Parser    |  Extract front matter: target_lang, output, owned-by
-+------------------+
-       |
-       v
-+------------------+
-| Ref Resolver     |  Resolve @ref: links, read referenced specs
-+------------------+
-       |
-       v
-+------------------+
-| Context Builder  |  Gather folder context, sibling specs, dependency tree
-+------------------+
-       |
-       v
-+------------------+
-| Code Extractor   |  Extract code from ## Implementation blocks
-| (bootstrap)      |  OR call LLM to assemble from full spec context (self-host)
-+------------------+
-       |
-       v
-.spec.{lang} file
-```
-
-## Implementation
-
-```typescript
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as yaml from 'js-yaml';
@@ -272,15 +216,3 @@ if (require.main === module) {
     });
   }
 }
-```
-
-## Verification
-
-```bash
-# Test the assembler on its own spec (bootstrap moment)
-npx tsx .speclang/assembler.spec.ts specs/assembler/assembler.spec.ts.md
-# Should produce .speclang/assembler.spec.ts
-
-# Test assembly of all code-pair specs
-npx tsx .speclang/assembler.spec.ts
-```

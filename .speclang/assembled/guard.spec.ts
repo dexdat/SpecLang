@@ -1,58 +1,3 @@
----
-id: "@speclang/assembler/guard"
-version: 1.0.0
-layer: 2
-target_lang: ts
-output: .speclang/guard.spec.ts
-owned-by: assembler
-model_pool: code-gen
-max_concurrent: 1
-seed: false
-tags: [assembler, guard, pi-extension, ownership, interceptor]
-short: "Pi extension — file ownership guard, custom tools, onToolCall interceptor"
-depends_on:
-  - "@ref:specs/agent-protocol"
-status: draft
----
-
-# Guard Extension — Pi Agent Extension
-
-## Overview
-
-The guard extension is a Pi extension that enforces file ownership and exposes SpecLang tools to Pi agent sessions. It intercepts write attempts via `onToolCall`, checks ownership rules, and provides custom tools for spec creation and validation.
-
-### Architecture
-
-```
-Pi Agent Session
-       |
-       v
-+------------------+
-| onToolCall       |  Intercepts every tool call
-| Interceptor      |
-+------------------+
-       |
-       v
-+------------------+
-| Ownership        |  Checks: does the agent own this file?
-| Checker          |  Pattern-based + header field override
-+------------------+
-       |
-       v
-    ALLOW or BLOCK
-       |
-       v
-+------------------+
-| Custom Tools     |  create_spec_file
-|                  |  validate_specs
-|                  |  check_ownership
-|                  |  run_cascade
-+------------------+
-```
-
-## Implementation
-
-```typescript
 import { createAgentSession, ExtensionContext } from '@earendil-works/pi-coding-agent';
 
 // ---- Ownership Rules ----
@@ -65,7 +10,6 @@ interface OwnershipRule {
 
 const DEFAULT_OWNERSHIP_RULES: OwnershipRule[] = [
   { pattern: 'project.scl', role: 'northstar', priority: 10 },
-  { pattern: '**/*.test.spec.md', role: 'test-writer', priority: 6 },
   { pattern: 'specs/**/*.spec.md', role: 'spec-writer', priority: 5 },
   { pattern: 'specs/**/*.spec.{lang}.md', role: 'assembler', priority: 5 },
   { pattern: '**/*.spec.{lang}', role: 'codegen', priority: 5 },
@@ -219,17 +163,3 @@ export function registerGuardExtension(api: {
     return true; // Allow
   });
 }
-```
-
-## Verification
-
-```bash
-# Test ownership resolution
-npx tsx -e "
-const { OwnershipChecker } = require('./.speclang/guard.spec.ts');
-const c = new OwnershipChecker();
-console.log(c.getOwner('specs/auth.spec.md')); // spec-writer
-console.log(c.getOwner('specs/auth.spec.go.md')); // assembler
-console.log(c.getOwner('internal/auth.spec.go')); // codegen
-"
-```
