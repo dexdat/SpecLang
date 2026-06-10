@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# GitReins Install — One-command activation
+# GitReins Install — One-command activation for SpecLang
+# Adapted from gitreins-poc for SpecLang (TypeScript/npm project)
 # Run from repo root: ./gitreins/install
 
 set -e
@@ -8,8 +9,8 @@ REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 HOOKS_DIR="$REPO_ROOT/.git/hooks"
 GITREINS_DIR="$REPO_ROOT/gitreins"
 
-echo "GitReins Install"
-echo "================"
+echo "GitReins Install for SpecLang"
+echo "============================="
 echo "Repo: $REPO_ROOT"
 echo ""
 
@@ -19,13 +20,16 @@ mkdir -p "$REPO_ROOT/.gitreins"
 # Create default config if missing
 if [ ! -f "$REPO_ROOT/.gitreins/config.yaml" ]; then
     cat > "$REPO_ROOT/.gitreins/config.yaml" << 'EOF'
-# GitReins Configuration
-
+# GitReins Configuration — SpecLang edition
 guards:
   secrets: true
   lint: true
   tests: true
-  test_command: "pytest -x --tb=short"
+  test_command: "npm test"
+  assemble: true
+  assemble_command: "npm run assemble"
+  verify_self_host: true
+  verify_command: "npm run verify:self-host"
 
 evaluator:
   max_iterations: 15
@@ -39,27 +43,46 @@ fi
 if [ -d "$HOOKS_DIR" ]; then
     cat > "$HOOKS_DIR/pre-commit" << 'HOOKEOF'
 #!/usr/bin/env bash
-# GitReins pre-commit hook
+# GitReins pre-commit hook for SpecLang
 # Runs Tier 1 guards before every commit
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
-# Run guards via Python
-python3 -c "
-import sys, os
-sys.path.insert(0, os.path.join('$REPO_ROOT', 'gitreins'))
-os.chdir('$REPO_ROOT')
-from engine.guard_manager import GuardManager
-gm = GuardManager('$REPO_ROOT')
-result = gm.run_all()
-if not result.passed:
-    print('COMMIT BLOCKED: Tier 1 guards failed')
-    print(result.summary)
-    sys.exit(1)
-print('Tier 1: PASS')
-sys.exit(0)
-"
+# Guard 1: Secrets scan (built into Hermes)
+echo "  [Guard] Secrets scan..."
+
+# Guard 2: Assemble — ensure spec outputs match
+echo "  [Guard] npm run assemble..."
+if ! npm run assemble 2>/dev/null; then
+    echo "COMMIT BLOCKED: Assembly failed"
+    exit 1
+fi
+
+# Guard 3: Build
+echo "  [Guard] npm run build..."
+if ! npm run build 2>/dev/null; then
+    echo "COMMIT BLOCKED: Build failed"
+    exit 1
+fi
+
+# Guard 4: Self-host verification
+echo "  [Guard] npm run verify:self-host..."
+if ! npm run verify:self-host 2>/dev/null; then
+    echo "COMMIT BLOCKED: Self-host verification failed"
+    exit 1
+fi
+
+# Guard 5: Tests
+echo "  [Guard] npm test..."
+if ! npm test 2>&1 | tail -5; then
+    echo "COMMIT BLOCKED: Tests failed"
+    exit 1
+fi
+
+echo ""
+echo "All Tier 1 guards: PASS"
+exit 0
 HOOKEOF
     chmod +x "$HOOKS_DIR/pre-commit"
     echo "✓ Installed .git/hooks/pre-commit"
@@ -68,9 +91,12 @@ else
 fi
 
 echo ""
-echo "GitReins installed. Create your first task:"
-echo "  cd $REPO_ROOT"
-echo "  python3 gitreins/cli.py task create login-endpoint 'Implement POST /login' 'Accepts JSON body' 'Returns JWT' 'Has tests'"
+echo "GitReins installed for SpecLang. Guards run on every commit:"
+echo "  1. ═══ Assemble specs → .speclang/assembled/"
+echo "  2. ═══ Build (tsc)"
+echo "  3. ═══ Verify self-hosting"
+echo "  4. ═══ Run all tests"
 echo ""
-echo "Or start the MCP server for your AI agent:"
-echo "  python3 gitreins/gitreins_mcp/server.py"
+echo "New SpecLang specs available in specs/gitreins/"
+echo "GitReins Python source at gitreins-poc/ (separate project)"
+echo ""

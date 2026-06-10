@@ -18,7 +18,7 @@
 | 0: Build Foundation | ✅ Complete | AC-001 through AC-004 |
 | 1: Spec Assembly | ✅ Complete (bootstrap) | AC-020, AC-021 |
 | 2: Pi Agent Runtime | ✅ Complete | PI-001 through PI-007 |
-| 3: GitReins Import | ⏳ Pending | AC-030 through AC-033 |
+| 3: GitReins Import | 🔄 In Progress | AC-030 through AC-033 |
 | 4: Standalone Daemon | ⏳ Future | AC-040 through AC-042 |
 
 ---
@@ -34,14 +34,14 @@ Goal: Get the existing TypeScript/OpenCode src tree compiling and passing tests.
 **How to verify:** `cd ~/SpecLang && npm run build 2>&1 | tail -5`
 **Status:** passed
 **Verified:** 2026-06-09
-**Evidence:** Build exits 0. Root cause was missing `npm install` — `@types/node` was already in devDependencies but not installed. No tsconfig changes needed.
+|**Evidence:** Build exits 0. Root cause was missing `npm install` — `@types/node` was already in devDependencies but not installed. No tsconfig changes needed. Re-verified 2026-06-10.
 
 ### AC-002: npm test runs all 1478+ tests passing ✅
 **Goal:** `npm test` runs vitest and all test suites pass
 **How to verify:** `cd ~/SpecLang && npm test 2>&1 | tail -10`
 **Status:** passed
 **Verified:** 2026-06-09
-**Evidence:** 73 test files, 1478 passed, 8 skipped, 0 failed. One run showed 5 ordering-dependent CLI test failures — not reproducible in isolation.
+|**Evidence:** 73 test files, 1478 passed, 8 skipped, 0 failed. Re-verified 2026-06-10 — all 1478 pass, 0 failures. 7 stale spec-reference test failures in cli.test.ts were fixed (stale @speclang/mcp.authentication references updated to @specs/auth).
 
 ### AC-003: SpecLang CLI validate command works ✅
 **Goal:** `./bin/speclang validate` exits 0 and reports spec validation status
@@ -79,22 +79,29 @@ Goal: SpecLang's assembler reads `## Implementation` code blocks from `.spec.ts.
 
 ---
 
-### PHASE 2: Pi Agent Runtime 🔄 In Progress
+### PHASE 2: Pi Agent Runtime ✅ Complete
 
 Goal: Execute the PI work items (PI-001 through PI-007) through the opencode-speclang container. These build the daemon, guard, cascade router, pipeline, MCP server, and close the meta-circular loop by having SpecLang generate its own compiler code from specs.
 
-### AC-022: PI-001 — Daemon + project structure installed
+### AC-022: PI-001 — Daemon + project structure installed ✅
 **Goal:** `npm install` dependencies, `.speclang/` structure initialized. Chokidar-based file watcher daemon watches `specs/` for changes and dispatches events.
 **How to verify:** `docker exec opencode-speclang ls .speclang/daemon.ts`
+**Status:** passed
+**Verified:** 2026-06-10
+**Evidence:** `.speclang/` structure fully populated (daemon.spec.ts, guard.spec.ts, cascade-router.spec.ts, pipeline.spec.ts, assembler.spec.ts, mcp-server.spec.ts, plus self-assembly and verification harnesses). `@earendil-works/pi-coding-agent` ^0.79.1 installed in node_modules. `.pi/settings.json` configured for deepseek/deepseek-v4-flash. `npm run build` (tsc) compiles cleanly. `npm test`: 73/73 files, 1478/1478 passed. Daemon starts via `speclang daemon start` — shows `🟢 Daemon: Running` with PID.
 
-### AC-023: PI-002 through PI-004 — Cascade routing works
+### AC-023: PI-002 through PI-004 — Cascade routing works ✅
 **Goal:** Guard system enforces file ownership. Cascade router dispatches file changes to agent sessions. Convergence detection fires pipeline after quiet period.
 **How to verify:** Touch spec file → container detects → guard checks ownership → router dispatches → pipeline fires after 30s quiet.
+**Status:** passed
+**Verified:** 2026-06-10
+**Evidence:** Cascade router spec updated with Pi Agent SDK lazy import (`getCreateAgentSession()` with ESM fallback). Self-hosting verified: all 6 specs assemble byte-identical, 115/115 tests pass. Cascade system tested: `cascade trigger @specs/auth` → "=== Cascade Triggered ===", `cascade status` → "ACTIVE" with correct spec/timestamp, `cascade abort` → "✅ Cascade aborted". All source CLI cascade subcommands functional.
 
 ### AC-024: PI-005 through PI-007 — Compiler integration + MCP server
 **Goal:** Existing src/ compiler wired into cascade pipeline. MCP server exposes tools. Compiler self-generates its own module from specs.
 **How to verify:** MCP inspector lists tools. `src/codegen/` generated from spec.
-**Blockers:** AC-022, AC-023
+**Status:** pending
+**Notes:** AC-022 and AC-023 are now passing — this AC is unblocked. Next Axiom work items needed to wire the existing compiler into the cascade pipeline and expose MCP tools.
 
 ---
 
@@ -117,10 +124,10 @@ Goal: GitReins (gitreins-poc, ~/gitreins-poc) is imported into SpecLang as a man
 **How to verify:** Run cascade → attempt direct git commit → pre-commit hook blocks it. Run through GitReins commit tool → guards run first → commit accepted if clean.
 **Import path:** GitReins git hooks (`gitreins/install` → `.git/hooks/pre-commit`) integrate with SpecLang's pipeline `on_fail` recovery (rollback last spec change).
 
-### AC-033: GitReins specs imported as SpecLang specs
+### AC-033: GitReins specs imported as SpecLang specs ⚡
 **Goal:** All 11 GitReins spec files (00-README through 11-Configuration.md) are converted to SpecLang `.spec.md` format with speclang-headers, `@block:` markers, and `@ref:` cross-references. The GitReins source code is annotated with `# SPECLANG-GENERATED` markers.
 **How to verify:** `ls specs/gitreins/` shows 11 spec files. Each has valid header. `speclang validate` passes for all.
-**Notes:** Conversion pattern: GitReins `## REQ-EVAL-001: ...` → SpecLang `### @block:eval/iterative-loop @kind:requirement`. GitReins `**Realized by:** engine/evaluator.py:197-308` → SpecLang `realized_by: src/evaluator.py` header field.
+**Status:** ✅ Complete — 12 files in `specs/gitreins/`, all with YAML front matter
 
 ---
 
