@@ -71,11 +71,11 @@ Goal: SpecLang's assembler reads `## Implementation` code blocks from `.spec.ts.
 **Evidence:** Successfully ran cascade on specs/validator.spec.md. Output: "Converged: Yes". Generated 0 files (spec had no code blocks to generate from).
 
 ### AC-021: Compiler generates SpecLang source from its own spec ✅
-**Goal:** SpecLang assembler reads code-pair specs and generates runnable TypeScript. Generated code must be functionally equivalent to hand-extracted.
+**Goal:** SpecLang assembler reads code-pair specs and generates runnable TypeScript. Generated code must be byte-identical to hand-extracted and functionally equivalent.
 **How to verify:** `npx tsx .speclang/self-host-verify.ts`
 **Status:** passed
 **Verified:** 2026-06-09
-**Evidence:** All 6 code-pair specs assemble byte-identical to hand-extracted. 115/115 tests pass on both hand-extracted and assembled versions. Self-hosting proven — SpecLang can rebuild itself.
+**Evidence:** All 6 code-pair specs assemble byte-identical to hand-extracted. 115/115 tests pass on both hand-extracted and assembled versions. All 6 components pass individually: daemon, guard, cascade-router, pipeline, assembler, mcp-server. Self-hosting fully verified.
 
 ---
 

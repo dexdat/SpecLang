@@ -1,6 +1,6 @@
 ---
 description: "SpecLang Verifier Agent - Validates cascade output, checks code quality, and creates accurate steering packets with real verification results"
-model: minimax/MiniMax-M2.5
+model: deepseek/deepseek-v4-flash
 mode: subagent
 temperature: 0.1
 tools:

@@ -1,6 +1,6 @@
 ---
 description: "SpecLang Code Generation Agent - Extracts code blocks from specs and generates working implementation code with compilation verification"
-model: minimax/MiniMax-M2.5
+model: deepseek/deepseek-v4-flash
 mode: subagent
 temperature: 0.1
 tools:
