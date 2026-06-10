@@ -18,6 +18,8 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "start": "node bin/speclang start",
+    "assemble": "npx tsx .speclang/self-assembly.ts",
+    "verify:self-host": "npx tsx .speclang/self-host-verify.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",

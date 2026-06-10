@@ -1,7 +1,13 @@
 pipeline:
   on_converge:
+    - name: assemble
+      run: npm run assemble
+      timeout: 30000
     - name: build
       run: npm run build
+      timeout: 60000
+    - name: verify-self-host
+      run: npm run verify:self-host
       timeout: 60000
     - name: test
       run: npm test
@@ -11,4 +17,4 @@ pipeline:
 recovery:
   max_attempts: 2
   on_fail:
-    - "echo 'Pipeline failed'"
+    - "echo 'Pipeline failed at $PREVIOUS_STEP'"

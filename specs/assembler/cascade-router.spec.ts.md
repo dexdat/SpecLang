@@ -303,7 +303,8 @@ export class CascadeRouter {
 
     try {
       // Spawn Pi agent session
-      const { session } = await createAgentSession({
+      const sessionFn = await getCreateAgentSession();
+      const { session } = await sessionFn({
         model: resolved.model || undefined,
         tools: ['read', 'edit', 'bash', 'glob'],
       });
@@ -324,6 +325,7 @@ export class CascadeRouter {
         timestamp: Date.now(),
       });
     } catch (err) {
+      console.error(`  [cascade] error detail: ${err instanceof Error ? err.message : err}`);
       this.runningSessions--;
       this.emit({
         type: 'error',

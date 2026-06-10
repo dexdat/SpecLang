@@ -17,7 +17,7 @@
 |-------|--------|---------|
 | 0: Build Foundation | ✅ Complete | AC-001 through AC-004 |
 | 1: Spec Assembly | ✅ Complete (bootstrap) | AC-020, AC-021 |
-| 2: Pi Agent Runtime | 🔄 In Progress | PI-001 through PI-007 |
+| 2: Pi Agent Runtime | ✅ Complete | PI-001 through PI-007 |
 | 3: GitReins Import | ⏳ Pending | AC-030 through AC-033 |
 | 4: Standalone Daemon | ⏳ Future | AC-040 through AC-042 |
 

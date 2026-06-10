@@ -1,45 +1,49 @@
 #!/usr/bin/env node
 
 /**
- * Speclangd CLI - Command-line interface for the chokidar daemon
+ * Speclangd CLI - Command-line interface for the SpecLang daemon
+ *
+ * Generated from: @speclang/speclangd
  */
 
 import { Command } from 'commander';
-import { SpeclangDaemon, FileChangeEvent, ConvergenceEvent } from './daemon/index.js';
+import * as path from 'path';
+import { Daemon, DaemonStatus, ConvergenceResult, DaemonStatusKind } from './daemon/index.js';
 
 const program = new Command();
 
 program
   .name('speclangd')
-  .description('Speclang reactive file watcher daemon')
+  .description('SpecLang reactive file watcher daemon')
   .version('0.1.0');
 
 program
   .command('start')
   .description('Start the daemon')
   .option('-d, --daemon', 'Run in background')
-  .option('-w, --watch <path>', 'Path to watch', 'specs/')
+  .option('-c, --config <path>', 'Path to daemon config')
   .action(async (options) => {
-    const daemon = new SpeclangDaemon(options.watch);
+    const configPath = options.config;
+    const daemon = new Daemon(configPath);
 
     daemon.on('started', () => {
-      console.log('[CLI] Daemon started');
+      console.log('[speclangd] Daemon started');
     });
 
-    daemon.on('file_change', (e: FileChangeEvent) => {
-      console.log(`[speclangd] ${e.kind}: ${e.path} (${e.dependentSpecs.length} dependents)`);
+    daemon.on('converged', (result: ConvergenceResult) => {
+      console.log(`[speclangd] Converged: ${result.filesChanged} files, ${result.cascadeDepth} steps, ${result.duration}ms`);
     });
 
-    daemon.on('convergence', (e: ConvergenceEvent) => {
-      console.log(`[speclangd] Convergence: ${e.queueDepth} items in queue`);
+    daemon.on('task', (task) => {
+      console.log(`[speclangd] Task: ${task.kind} - ${task.trigger}`);
     });
 
     await daemon.start();
 
     if (!options.daemon) {
-      console.log('[CLI] Running in foreground. Press Ctrl+C to stop.');
+      console.log('[speclangd] Running in foreground. Press Ctrl+C to stop.');
       process.on('SIGINT', async () => {
-        console.log('\\n[CLI] Shutting down...');
+        console.log('\n[speclangd] Shutting down...');
         await daemon.stop();
         process.exit(0);
       });
@@ -50,8 +54,8 @@ program
   .command('status')
   .description('Show daemon status')
   .action(async () => {
-    console.log('Status: chokidar daemon (SpeclangDaemon)');
-    console.log('  Run with: speclangd start -w <watch-path>');
+    console.log('[speclangd] Status: SpecLang Daemon');
+    console.log('  Run with: speclangd start');
   });
 
 program.parse(process.argv);

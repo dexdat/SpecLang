@@ -63,7 +63,7 @@ describe('CLI Commands', () => {
     it('should find specs matching query', async () => {
       const { stdout } = await execAsync(`${CLI} search auth`);
       expect(stdout).toContain('Found');
-      expect(stdout).toContain('@speclang/mcp.authentication');
+      expect(stdout).toContain('@specs/auth');
     });
 
     it('should support --json output', async () => {
@@ -83,7 +83,7 @@ describe('CLI Commands', () => {
     });
 
     it('should filter by layer', async () => {
-      const { stdout } = await execAsync(`${CLI} search mcp --layer 3`);
+      const { stdout } = await execAsync(`${CLI} search auth --layer 3`);
       expect(stdout).toContain('layer 3');
     });
 
@@ -120,20 +120,20 @@ describe('CLI Commands', () => {
 
   describe('get', () => {
     it('should get spec by ID', async () => {
-      const { stdout } = await execAsync(`${CLI} get @speclang/mcp.authentication`);
-      expect(stdout).toContain('@speclang/mcp.authentication');
+      const { stdout } = await execAsync(`${CLI} get @specs/auth`);
+      expect(stdout).toContain('@specs/auth');
       expect(stdout).toContain('Version:');
       expect(stdout).toContain('Layer:');
     });
 
     it('should support --json output', async () => {
-      const { stdout } = await execAsync(`${CLI} get @speclang/mcp.authentication --json`);
+      const { stdout } = await execAsync(`${CLI} get @specs/auth --json`);
       const result = JSON.parse(stdout);
-      expect(result.id).toBe('@speclang/mcp.authentication');
+      expect(result.id).toBe('@specs/auth');
     });
 
     it('should show blocks with --blocks flag', async () => {
-      const { stdout } = await execAsync(`${CLI} get @speclang/mcp.authentication --blocks`);
+      const { stdout } = await execAsync(`${CLI} get @specs/auth --blocks`);
       expect(stdout).toContain('Blocks:');
     });
 
@@ -221,7 +221,7 @@ describe('CLI Commands', () => {
     });
 
     it('should trigger cascade', async () => {
-      const { stdout } = await execAsync(`${CLI} cascade trigger @speclang/mcp`);
+      const { stdout } = await execAsync(`${CLI} cascade trigger @specs/auth`);
       expect(stdout).toContain('=== Cascade Triggered ===');
     });
 
