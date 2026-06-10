@@ -1,10 +1,16 @@
 #!/bin/bash
 # GitReins Track — called by build.yaml on convergence
-# Runs cascade→task tracking and optional guard checks
-# Uses tsx via exec since env shebang can't handle "npx tsx"
+# Loads .speclang/.env for evaluator API keys
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Load evaluator env vars
+if [ -f "$PROJECT_DIR/.speclang/.env" ]; then
+  set -a
+  source "$PROJECT_DIR/.speclang/.env"
+  set +a
+fi
 
 ARGS=""
 if [[ "$*" == *"--guard-only"* ]]; then

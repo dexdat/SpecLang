@@ -19,6 +19,7 @@
     "dev": "tsc --watch",
     "start": "node bin/speclang start",
     "assemble": "npx tsx .speclang/self-assembly.ts",
+    "assemble:all": "npx tsx .speclang/assemble-all.ts",
     "verify:self-host": "npx tsx .speclang/self-host-verify.ts",
     "test": "vitest run",
     "test:watch": "vitest",
