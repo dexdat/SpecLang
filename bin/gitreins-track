@@ -1,0 +1,14 @@
+#!/bin/bash
+# GitReins Track — called by build.yaml on convergence
+# Runs cascade→task tracking and optional guard checks
+# Uses tsx via exec since env shebang can't handle "npx tsx"
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+ARGS=""
+if [[ "$*" == *"--guard-only"* ]]; then
+  ARGS="--guard-only"
+fi
+
+cd "$PROJECT_DIR" && exec npx tsx .speclang/cascade-tracker.spec $ARGS

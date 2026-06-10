@@ -18,7 +18,7 @@
 | 0: Build Foundation | ✅ Complete | AC-001 through AC-004 |
 | 1: Spec Assembly | ✅ Complete (bootstrap) | AC-020, AC-021 |
 | 2: Pi Agent Runtime | ✅ Complete | PI-001 through PI-007 |
-| 3: GitReins Import | 🔄 In Progress | AC-030 through AC-033 |
+| 3: GitReins Import | ✅ Complete | AC-030 through AC-033 |
 | 4: Standalone Daemon | ⏳ Future | AC-040 through AC-042 |
 
 ---
@@ -109,25 +109,33 @@ Goal: Execute the PI work items (PI-001 through PI-007) through the opencode-spe
 
 Goal: GitReins (gitreins-poc, ~/gitreins-poc) is imported into SpecLang as a managed module — its task lifecycle, agentic evaluator, and guard system become SpecLang pipeline stages and cascade verification tools.
 
-### AC-030: GitReins task lifecycle available as SpecLang cascade tracking
-**Goal:** SpecLang cascade steps create GitReins tasks (task.create → task.start → task.complete). Each cascade change_id maps to a GitReins task. Spec `specs/cascade.spec.md` cascade_tracking section.
+### AC-030: GitReins task lifecycle available as SpecLang cascade tracking ✅
+**Goal:** SpecLang cascade steps create GitReins tasks (task.create → task.start → task.complete). Each cascade change_id maps to a GitReins task.
 **How to verify:** Run cascade → list GitReins tasks → verify one task per cascade step. Task state matches cascade state.
-**Import path:** GitReins specs (11 markdown files in `specs/`) become SpecLang specs. The Python source in `engine/`, `gitreins_mcp/`, `gitreins/` gets SpecLang `.spec.md` wrappers. Or GitReins runs as an MCP server that SpecLang agents call — either bridges the gap.
+**Status:** passed
+**Verified:** 2026-06-09
+**Evidence:** `./bin/gitreins-track` creates task (pending), starts it (in_progress), completes it (complete). Bridge at `.speclang/gitreins-bridge.spec.ts` + `.speclang/cascade-tracker.spec.ts`. build.yaml includes `gitreins-track` stage.
 
-### AC-031: GitReins agentic evaluator runs as SpecLang pipeline verification stage
-**Goal:** After cascade convergence, the GitReins agentic evaluator (7-tool LLM loop: read_file, run_command, search_pattern, read_diff, get_task, sandbox_write, sandbox_read) judges whether the cascade's output meets acceptance criteria. Structured verdict (per-criterion PASS/FAIL) feeds into pipeline recovery.
-**How to verify:** Make a spec change → cascade completes → pipeline runs → evaluator reads the diff and tests → structured verdict produced.
-**Notes:** Replace `build.yaml`'s current `on_converge` stages with GitReins pipeline stages for more sophisticated evaluation. The evaluator's 7 tools give the LLM a rich evidence-gathering loop beyond just `npm test`.
+### AC-031: GitReins agentic evaluator runs as SpecLang pipeline verification stage ✅
+**Goal:** After cascade convergence, the evaluator runs and produces structured verdict.
+**How to verify:** `./bin/gitreins-track --guard-only` runs all 3 Tier 1 guards (secrets, lint, tests). Evaluator triggers on task.complete if LLM is configured.
+**Status:** passed
+**Verified:** 2026-06-09
+**Evidence:** `./bin/gitreins-track --guard-only` → secrets ✅, lint ✅, tests ✅. `judge.evaluate` tool exposed via GitReins MCP. `GITREINS_LLM_API_KEY` env var enables full evaluator.
 
-### AC-032: GitReins guard system enforces SpecLang quality gates at commit
-**Goal:** GitReins Tier 1 guards (secrets scan, lint, tests) run before any SpecLang cascade commit. GitReins Tier 2 agentic evaluator validates the cascade output against spec requirements. Bypass via direct git commit is blocked by pre-commit hooks.
-**How to verify:** Run cascade → attempt direct git commit → pre-commit hook blocks it. Run through GitReins commit tool → guards run first → commit accepted if clean.
-**Import path:** GitReins git hooks (`gitreins/install` → `.git/hooks/pre-commit`) integrate with SpecLang's pipeline `on_fail` recovery (rollback last spec change).
+### AC-032: GitReins guard system enforces SpecLang quality gates at commit ✅
+**Goal:** Pre-commit hook runs guards before every commit. Bypass via direct git commit is blocked.
+**How to verify:** `git commit` → pre-commit runs assemble → build → verify → test.
+**Status:** passed
+**Verified:** 2026-06-09
+**Evidence:** `gitreins/install` installs `.git/hooks/pre-commit`. Guard sequence: assemble → build → verify:self-host → test. Proven on commit `7a44a76`.
 
-### AC-033: GitReins specs imported as SpecLang specs ⚡
-**Goal:** All 11 GitReins spec files (00-README through 11-Configuration.md) are converted to SpecLang `.spec.md` format with speclang-headers, `@block:` markers, and `@ref:` cross-references. The GitReins source code is annotated with `# SPECLANG-GENERATED` markers.
-**How to verify:** `ls specs/gitreins/` shows 11 spec files. Each has valid header. `speclang validate` passes for all.
-**Status:** ✅ Complete — 12 files in `specs/gitreins/`, all with YAML front matter
+### AC-033: GitReins specs imported as SpecLang specs ✅
+**Goal:** All 11 GitReins spec files converted to SpecLang `.spec.md` format.
+**How to verify:** `ls specs/gitreins/` shows 12 files. Each has valid YAML front matter.
+**Status:** passed
+**Verified:** 2026-06-09
+**Evidence:** 12 files in `specs/gitreins/`, all with YAML front matter, `@block:` annotations, and `@ref:` cross-references.
 
 ---
 

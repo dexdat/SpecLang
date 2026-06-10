@@ -3,6 +3,9 @@ pipeline:
     - name: assemble
       run: npm run assemble
       timeout: 30000
+    - name: gitreins-track
+      run: ./bin/gitreins-track 2>&1
+      timeout: 15000
     - name: build
       run: npm run build
       timeout: 60000
@@ -12,7 +15,10 @@ pipeline:
     - name: test
       run: npm test
       timeout: 120000
-    - name: lint (optional - skip if no eslint config)
+    - name: gitreins-guard
+      run: ./bin/gitreins-track --guard-only 2>&1
+      timeout: 130000
+    - name: lint
       run: npm run lint 2>/dev/null || true
 recovery:
   max_attempts: 2
