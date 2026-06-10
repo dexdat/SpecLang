@@ -1,6 +1,6 @@
 ---
 description: "Speclang simulator that autonomously writes spec files, commits per‑file, simulates reactive cascade, mimics multi‑agent behavior, and self‑improves within OpenCode constraints"
-model: deepseek/deepseek-v4-flash
+model: minimax/MiniMax-M2.5
 mode: primary
 temperature: 0.1
 tools:

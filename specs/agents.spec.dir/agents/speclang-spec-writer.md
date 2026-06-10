@@ -1,6 +1,6 @@
 ---
 description: "SpecLang Spec Writer Agent - Creates and updates spec files with proper headers, references, and structure"
-model: deepseek/deepseek-v4-flash
+model: minimax/MiniMax-M2.5
 mode: subagent
 temperature: 0.2
 tools:

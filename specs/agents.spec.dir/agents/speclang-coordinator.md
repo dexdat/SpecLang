@@ -1,6 +1,6 @@
 ---
 description: "SpecLang Cascade Coordinator - Explicitly orchestrates the reactive cascade by invoking subagents step-by-step with verification gates"
-model: deepseek/deepseek-v4-flash
+model: minimax/MiniMax-M2.5
 mode: primary
 temperature: 0.1
 tools:

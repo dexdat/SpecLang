@@ -1,6 +1,6 @@
 ---
 description: "Speclang verifier agent that validates work done by the Builder, runs validation pipelines, and creates steering packets for the Ralph Loop"
-model: deepseek/deepseek-v4-flash
+model: synthetic/hf:deepseek-ai/DeepSeek-V3.2
 mode: primary
 temperature: 0.1
 tools:
