@@ -4,16 +4,22 @@ version: 0.2.0
 layer: 1
 project_level: Alpha
 agent_support: agent_autonomous
-tags: [agents, protocol, ownership, sessions, guard]
+tags: [agents, protocol, ownership, sessions, guard, model-resolution, rate-limit]
 children:
-  - "@ref:specs/agent-protocol.spec.dir/types"  - "@ref:specs/agent-protocol.spec.dir/sessions"  - "@ref:specs/agent-protocol.spec.dir/ownership"  - "@ref:specs/agent-protocol.spec.dir/rules"  - "@ref:specs/agent-protocol.spec.dir/registry"  - "@ref:@ref:specs/agent-protocol.spec.dir/interceptor"  - "@ref:specs/agent-protocol.spec.dir/violations"
-short: "Agent Protocol - Ownership, sessions, and write guards"
+  - "@ref:specs/agent-protocol.spec.dir/types"
+  - "@ref:specs/agent-protocol.spec.dir/sessions"
+  - "@ref:specs/agent-protocol.spec.dir/ownership"
+  - "@ref:specs/agent-protocol.spec.dir/rules"
+  - "@ref:specs/agent-protocol.spec.dir/registry"
+  - "@ref:specs/agent-protocol.spec.dir/interceptor"
+  - "@ref:specs/agent-protocol.spec.dir/violations"
+short: "Agent Protocol - Ownership, sessions, write guards, model resolution"
 status: draft
 ---
 
 # Agent Protocol
 
-Protocol defining agent roles, file ownership, session management, and write guards to prevent conflicts in the reactive cascade.
+Protocol defining agent roles, file ownership, session management, write guards, model resolution, and rate limit enforcement to prevent conflicts in the reactive cascade.
 
 ## Overview
 
@@ -25,27 +31,82 @@ AgentProtocol:
     - read_any_write_owned: Agents can read any file, write only owned files
     - session_persistence: Agent sessions survive interruptions
     - guard_enforcement: Write attempts are intercepted and validated
-  
+
   agent_roles:
     - northstar: Owns project.scl, high-level direction
     - spec_writer: Expands high-level specs into detailed specs
     - code_gen: Generates target language code from specs
     - test_writer: Creates tests from natural language test specs
     - back_sync: Syncs code changes back to specs (bidirectional)
+    - assembler: Reads .spec.{lang}.md files and produces .spec.{lang} files
     - pipeline: Executes build/test/deploy after convergence
-  
+
   ownership_rules:
     - pattern_based: "specs/**/*.spec.md" → spec_writer
+    - pattern_based: "specs/**/*.spec.{lang}.md" → assembler
     - pattern_based: "src/**/*.go" → code_gen
-    - explicit: Header field `owned-by:` overrides pattern
+    - explicit: Header field `owned-by:` overrides pattern-based ownership
+    - header_field_wins: Header `owned-by:` always takes precedence
     - inheritance: Sub-specs inherit parent's owner
-  
+
   guard_system:
     - extension: Pi extension intercepts write attempts via pi.registerTool() + onToolCall
     - validation: Checks ownership before allowing write
     - logging: Records violations for debugging
     - override: User session can write anywhere
 ```
+
+## Model Resolution
+
+### @block:agent-protocol/model-resolution @kind:entity
+```speclang
+ModelResolution:
+  description: "Three-layer model resolution for agent sessions (first match wins)"
+
+  layers:
+    1. header_model:
+       source: "Header `model:` field"
+       example: "openai/gpt-4o, openrouter/claude-3-opus"
+       priority: "Highest — explicit override per spec"
+
+    2. header_model_pool:
+       source: "Header `model_pool:` field"
+       example: "code-gen, spec-writer, fast-track"
+       behavior: "Named pool of models with this capability"
+       priority: "Medium — pool-based selection"
+
+    3. file_pattern_default:
+       source: "File pattern → owned-by role's default model"
+       example: "specs/**/*.spec.{lang}.md" → owned-by role default
+       priority: "Lowest — fallback when no header override"
+```
+
+## Rate Limit Enforcement
+
+### @block:agent-protocol/rate-limit-enforcement @kind:entity
+```speclang
+RateLimitEnforcement:
+  description: "Rate limiting for cascade triggers and agent sessions"
+
+  header_fields:
+    - max_concurrent: "Max concurrent agent sessions for this spec"
+    - rate_limit: "Rate limit per minute for cascade triggers"
+
+  enforcement:
+    - spec_level: "max_concurrent and rate_limit from spec header"
+    - pool_level: "Pool-level limits from model pool configuration"
+    - cascade_router: "Enforces all limits before dispatching work"
+
+  resolution:
+    - Effective limit = min(spec.header.value, pool_config.value)
+    - Both must pass for dispatch to proceed
+```
+
+## Ownership with owned-by Field
+
+The `owned-by` header field is the explicit owner of a spec file. Pattern-based ownership (e.g., `specs/**/*.spec.md` → spec_writer) serves as the fallback. If both a pattern match and an `owned-by` header exist, the header field wins.
+
+Owned-by values: `northstar`, `spec-writer`, `codegen`, `test-writer`, `back-sync`, `assembler`, `pipeline`
 
 ## Components
 
@@ -79,13 +140,13 @@ Agents can create new files via a dedicated tool (available as a Pi extension):
 FileCreationTool:
   name: "create_spec_file"
   purpose: "Create new spec file with proper headers"
-  
+
   parameters:
     file_path:
       type: string
       description: "Full path to new file (e.g., specs/auth/handler.go.spec)"
       required: true
-      
+
     headers:
       type: object
       description: "YAML header content for new file"
@@ -96,19 +157,19 @@ FileCreationTool:
         layer: {type: integer, minimum: 0, maximum: 100}
         agent_support: {type: string, enum: ["human_only", "agent_assisted", "agent_autonomous"]}
         short: {type: string, maxLength: 100}
-        
+
     content:
       type: string
       description: "Initial file content (after header)"
       required: false
       default: ""
-  
+
   validation:
     - File must not already exist
     - Path must be within project bounds
     - Headers must be valid YAML
     - Agent must have permission to create files in that location
-  
+
   result:
     - Creates file with speclang-header
     - Returns success/failure with details
@@ -144,35 +205,35 @@ Agents must follow the commit protocol after writing files:
 # @block:agent-protocol/commit-protocol @kind:protocol
 CommitProtocol:
   requirement: "Every agent write = one git commit"
-  
+
   steps:
     1. Generate UUID for this change
     2. Include parent UUID from trigger context
     3. Write file with optional causality headers
     4. Generate commit message from work summary
     5. Execute: git commit --only <file> -m "speclang: {summary} [change_id:{uuid} parent:{parent_uuid}]"
-    
+
   uuid_generation:
     - Use cryptographically secure UUID v4
     - Store in agent session context
     - Pass to dependent agents as parent UUID
-    
+
   commit_message_generation:
     - Extract key phrase from agent work summary
     - Format: "speclang: {action} {target}"
     - Add UUID metadata in brackets
     - Keep under 72 characters for git best practices
-    
+
   causality_headers:
     - Optional: add `caused_by: "@change:{parent_uuid}"` to spec headers
     - Optional: add `change_id: "@change:{uuid}"` to spec headers
     - Helps reconstruct flow even if commits are out of order
-    
+
   example:
     - Agent writes: specs/auth.scl
     - UUID: a1b2c3d, Parent: e4f5g6h
     - Commit: git commit --only specs/auth.scl -m "speclang: added auth entities [change_id:a1b2c3d parent:e4f5g6h]"
-    
+
   tool_requirement:
     - Agents must have access to git CLI
     - Pi extension provides git wrapper
@@ -189,4 +250,3 @@ The commit protocol integrates with @ref:specs/git-history to provide:
 - Rollback capability per file
 
 This makes git the system's memory, replacing separate memory-bank systems.
-

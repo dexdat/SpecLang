@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:13
 id: "@speclang/headers"
 version: 0.2.0
 layer: 1
@@ -6,7 +6,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [headers, format, universal, metadata]
 children:
-  - "@ref:@ref:specs/spec-format.spec.dir/structure"  - "@ref:specs/spec-format.spec.dir/blocks"
+  - "@ref:specs/spec-format.spec.dir/structure"
+  - "@ref:specs/spec-format.spec.dir/blocks"
 short: "Universal Headers - Metadata format for all SpecLang files"
 status: draft
 ---
@@ -20,7 +21,7 @@ Standard header format for all SpecLang files. Provides metadata, dependencies, 
 Every SpecLang file begins with a universal header that declares:
 
 ```yaml
-# speclang-header lines:15
+# speclang-header lines:28
 id: "@specs/example"
 version: 1.0.0
 layer: 0
@@ -28,10 +29,25 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [example, docs]
 short: Brief description
+target_lang: go
+output: generated/example/example.spec.go
+owned-by: codegen
+model: openai/gpt-4o
+model_pool: code-gen
+max_concurrent: 3
+rate_limit: 5
+quality: production
+seed: false
 depends_on:
-  - "@ref:specs/other#block"caused_by: "@commit:abc123def"    # optional: commit hash that triggered this
-change_id: "@commit:def456ghi"    # optional: this commit's hash
-part_of: "@cascade:20250222-001" # optional: cascade this belongs to
+  - "@ref:specs/other#block"
+caused_by: "@commit:abc123def"
+change_id: "@commit:def456ghi"
+part_of: "@cascade:20250222-001"
+watch:
+  files:
+    - "specs/other/*.spec.md"
+  exclude:
+    - "specs/other/legacy.spec.md"
 ---
 ```
 
@@ -46,6 +62,18 @@ part_of: "@cascade:20250222-001" # optional: cascade this belongs to
 | `agent_support` | Yes | human_only, agent_assisted, agent_autonomous |
 | `tags` | No | Keywords for search and categorization |
 | `short` | Yes | One-line description |
+| `target_lang` | Yes (for code-pair specs) | Target programming language (go, ts, py, rs, java, etc.) |
+| `output` | Yes (for code-pair specs) | Output path for generated code file |
+| `owned-by` | Yes (for code-pair specs) | Agent role responsible (northstar, spec-writer, codegen, test-writer, back-sync, assembler) |
+| `model` | No | Explicit model override (e.g., openai/gpt-4o, openrouter/claude-3-opus) |
+| `model_pool` | No | Named capability pool for model selection |
+| `max_concurrent` | No | Max concurrent agent sessions for this spec |
+| `rate_limit` | No | Rate limit per minute for cascade triggers |
+| `quality` | No | production, downgrade (providers with reduced context/quality) |
+| `seed` | No | true = human-written source, false = agent-generated |
+| `watch` | No | File patterns to watch for changes |
+| `watch.files` | No | List of file paths/globs to watch |
+| `watch.exclude` | No | List of paths/globs to exclude from watch |
 | `depends_on` | No | List of `@ref:` dependencies |
 | `children` | No | List of child spec IDs (for index specs) |
 | `parent` | No | Parent spec ID (for sub-specs) |

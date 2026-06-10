@@ -3,7 +3,7 @@ id: "@speclang/pi-integration"
 version: 0.1.0
 target: src/pi-integration/
 layer: 0
-tags: [pi, integration, runtime, agents]
+tags: [pi, integration, runtime, agents, assembler, watch-system]
 imports: ["@speclang/core", "@speclang/daemon", "@speclang/agent-protocol"]
 status: draft
 
@@ -27,6 +27,17 @@ Pi Agent provides the ideal foundation for Speclang's reactive cascade system:
 - RPC mode for external programmatic control
 - Minimal footprint — system prompt under 1000 tokens
 
+**Pi SDK is used for agent sessions (model calls) only.** The watch system, notification graph, and cascade routing are our own implementations (chokidar + notification graph logic).
+
+## Role of the Assembler
+
+The **assembler** is a core SpecLang module (not part of Pi) that:
+1. Reads `.spec.{lang}.md` files (code-pair specs)
+2. Reads all `@ref:` dependencies and folder context
+3. Uses Pi SDK agent sessions for model calls (via `createAgentSession()`)
+4. Produces `.spec.{lang}` generated source files
+5. The **cascade router** owns the notification graph — not Pi
+
 ## Sub-Specifications
 
 This high-level spec is expanded into detailed sub-specs:
@@ -38,8 +49,10 @@ This high-level spec is expanded into detailed sub-specs:
 ```
 
 ### 1. Daemon Setup (`@speclang/daemon-setup`)
-- File watching with chokidar
-- Cascade event routing
+- File watching with chokidar (our own, not Pi's)
+- Watch pattern matching from spec headers (watch.files/watch.exclude)
+- Notification graph construction and maintenance
+- Cascade event routing via notification graph
 - Pi agent session lifecycle
 - Convergence detection
 
@@ -57,12 +70,15 @@ speclangd --watch specs/ --pipeline build.yaml
 ```
 
 The daemon will:
-1. Watch `specs/` directory for file changes via chokidar
+1. Watch `specs/` directory for file changes via chokidar (our own watcher)
 2. Parse headers and determine owning agent
-3. Create Pi agent sessions via `createAgentSession()`
-4. Enforce file-ownership rules via guard interceptor
-5. Detect convergence after 30 seconds of inactivity
-6. Run the pipeline (build, test, commit) when converged
+3. Query notification graph for dependent specs
+4. Create Pi agent sessions for model calls via `createAgentSession()`
+5. Enforce file-ownership rules via guard interceptor
+6. Apply squash (100ms debounce) and throttle (fairness queue)
+7. Dispatch to model pools based on header model/model_pool fields
+8. Detect convergence after 30 seconds of inactivity
+9. Run the pipeline: assembler produces .spec.{lang} files, then target compiler builds
 
 ## Architecture Summary
 
@@ -70,14 +86,18 @@ The daemon will:
 # @block:pi-integration/architecture-summary @kind:diagram
 ```mermaid
 flowchart TD
-    chokidar[chokidar Watcher] --> Router[Cascade Router]
-    Router --> P1[Pi Session: SpecWriter]
-    Router --> P2[Pi Session: CodeGen]
-    Router --> P3[Pi Session: TestWriter]
+    chokidar[chokidar Watcher] --> NG[Notification Graph]
+    NG --> Router[Cascade Router with Squash + Throttle]
+    Router --> Disp[Model Pool Dispatcher]
+    Disp --> P1[Pi Session: SpecWriter]
+    Disp --> P2[Pi Session: CodeGen (Assembler)]
+    Disp --> P3[Pi Session: TestWriter]
     P1 & P2 & P3 --> Guard[Guard Interceptor]
     Guard --> FS[Filesystem]
     FS --> Convergence[Convergence Detector]
-    Convergence --> Pipeline[build.yaml Pipeline]
+    Convergence --> Assembler[SpecLang Assembler]
+    Assembler --> TargetCompiler[Target Compiler: gcc/tsc/go build]
+    TargetCompiler --> Pipeline[build.yaml Pipeline]
 ```
 ```
 
@@ -87,5 +107,7 @@ flowchart TD
 - Install chokidar: `npm install chokidar`
 - Configure daemon watcher paths
 - Write guard extension using `pi.registerTool()` + `onToolCall`
+- Implement notification graph in cascade router
+- Implement squash and throttle logic
 
 For full details, see the sub-specs in `specs/pi-integration.spec.dir/`.

@@ -4,18 +4,18 @@ version: 0.2.0
 layer: 1
 project_level: Alpha
 agent_support: agent_autonomous
-tags: [pipeline, build, hooks, recovery, convergence]
+tags: [pipeline, build, hooks, recovery, convergence, git-hooks, assembler]
 children:
   - "@ref:specs/pipeline.spec.dir/build"
   - "@ref:specs/pipeline.spec.dir/hooks"
   - "@ref:specs/pipeline.spec.dir/recovery"
-short: "Pipeline - Build, test, deploy execution after convergence"
+short: "Pipeline - Build, test, deploy execution after convergence with git hook validation"
 status: draft
 ---
 
 # Pipeline
 
-Execution pipeline that runs after cascade convergence. Builds generated code, runs tests, deploys artifacts, and handles recovery on failure.
+Execution pipeline that runs after cascade convergence. Builds generated code, runs tests, deploys artifacts, handles recovery on failure, and validates specs before commits.
 
 ## Overview
 
@@ -30,16 +30,71 @@ Pipeline:
     - lint: Code quality checks
     - deploy: Deployment (optional)
     - notify: Report results
-  
+
   recovery:
     - on_failure: Rollback last spec change
     - max_attempts: 3
     - notify_northstar: Alert user
-  
+
   hooks:
     - pre_build: Setup environment
     - post_test: Generate reports
     - on_failure: Recovery actions
+```
+
+## Assembler-to-Compiler Handoff
+
+### @block:pipeline/assembler-compiler-handoff @kind:entity
+```speclang
+AssemblerCompilerHandoff:
+  description: "The pipeline runs the target language compiler AFTER SpecLang assembler produces .spec.{lang} files"
+
+  flow:
+    1. Cascade converges (quiet period detected)
+    2. Pipeline triggers
+    3. Assembler runs: reads .spec.{lang}.md → produces .spec.{lang} source files
+    4. Target language compiler runs: gcc, rustc, tsc, go build, etc.
+    5. Tests run against compiled artifacts
+    6. Lint checks
+    7. Deploy (if configured)
+
+  separation:
+    - SpecLang assembler: .spec.{lang}.md → .spec.{lang} (code generation)
+    - Target compiler: .spec.{lang} → binary/library (compilation)
+    - Pipeline orchestrates both steps
+```
+
+## Git Hook Validation
+
+### @block:pipeline/git-hook-validation @kind:entity
+```speclang
+GitHookValidation:
+  description: "Pre-commit git hook that validates spec headers on every commit"
+
+  hook_type: "pre-commit"
+
+  validation_checks:
+    - header_format: "Every .spec.md and .spec.{lang}.md must have valid YAML header"
+    - required_fields: "id, version, layer present on all spec files"
+    - code_pair_fields: "If .spec.{lang}.md: target_lang, output, owned-by must be present"
+    - link_resolution: "@ref: links must resolve to existing files"
+    - yaml_validity: "Header must parse as valid YAML"
+
+  installation:
+    - Installed by speclangd setup
+    - Symlinked to .git/hooks/pre-commit
+    - Updated when pipeline spec changes
+
+  rejection:
+    - If any spec has a broken header, commit is rejected
+    - Error message lists all failing specs and their issues
+    - User must fix headers before committing
+
+  example_output:
+    ERROR: Pre-commit hook rejected
+    specs/auth.spec.md: missing required field 'version'
+    specs/handler.spec.go.md: code-pair spec missing 'target_lang'
+    @ref:specs/missing resolves to non-existent file
 ```
 
 ## Build Stages
@@ -122,10 +177,10 @@ function resolveStageOrder(stages: PipelineStage[]): string[] {
   for (const stage of stages) {
     graph.set(stage.name, stage.depends_on || []);
   }
-  
+
   const order: string[] = [];
   const visited = new Set<string>();
-  
+
   function visit(name: string) {
     if (visited.has(name)) return;
     visited.add(name);
@@ -134,7 +189,7 @@ function resolveStageOrder(stages: PipelineStage[]): string[] {
     }
     order.push(name);
   }
-  
+
   for (const stage of stages) {
     visit(stage.name);
   }
@@ -192,4 +247,3 @@ pipeline:
     - run: npm test
     - run: docker build -t myapp .
       condition: deployment-requested
-```
