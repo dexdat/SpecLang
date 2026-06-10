@@ -14,7 +14,6 @@ const DEFAULT_OWNERSHIP_RULES: OwnershipRule[] = [
   { pattern: 'specs/**/*.spec.md', role: 'spec-writer', priority: 5 },
   { pattern: 'specs/**/*.spec.{lang}.md', role: 'assembler', priority: 5 },
   { pattern: '**/*.spec.{lang}', role: 'codegen', priority: 5 },
-  { pattern: '**/*.test.spec.md', role: 'test-writer', priority: 5 },
   { pattern: 'build.yaml', role: 'pipeline', priority: 10 },
 ];
 
