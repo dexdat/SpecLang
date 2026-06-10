@@ -158,7 +158,7 @@ export class NotificationGraph {
       if (edge.matchType === 'literal' && edge.sourcePath === changedPath) {
         result.add(edge.dependentSpecId);
       } else if (edge.matchType === 'glob') {
-        const minimatch = require('minimatch');
+        const { minimatch } = require('minimatch');
         if (minimatch(changedPath, edge.sourcePath)) {
           result.add(edge.dependentSpecId);
         }

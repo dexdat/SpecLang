@@ -3,7 +3,7 @@ id: "@speclang/assembler/assembler"
 version: 1.0.0
 layer: 2
 target_lang: ts
-output: .speclang/assembler.spec.ts
+output: .speclang/assembler-out.spec.ts
 owned-by: assembler
 model_pool: code-gen
 max_concurrent: 1

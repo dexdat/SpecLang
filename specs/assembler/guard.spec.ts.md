@@ -103,8 +103,10 @@ export class OwnershipChecker {
 
   private matchPattern(filePath: string, pattern: string): boolean {
     try {
-      const minimatch = require('minimatch');
-      return minimatch(filePath, pattern);
+      const { minimatch } = require('minimatch');
+      // Replace {lang} placeholder which minimatch interprets as brace expansion
+      const cleanPattern = pattern.replace(/\{lang\}/g, '*');
+      return minimatch(filePath, cleanPattern);
     } catch {
       return false;
     }
