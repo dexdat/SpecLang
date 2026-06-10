@@ -53,7 +53,7 @@ Pi Agent Session
 ## Implementation
 
 ```typescript
-import { createAgentSession, ExtensionContext } from '@earendil-works/pi-coding-agent';
+import type { ExtensionContext } from '@earendil-works/pi-coding-agent';
 
 // ---- Ownership Rules ----
 

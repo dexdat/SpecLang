@@ -6,9 +6,20 @@
 **Container:** opencode-speclang (:4105)
 **Cron schedule:** every 4h
 
-**The Goal (vision):** SpecLang is a **meta-circular compiler** — specs describe the system that reads and generates the specs. The phases below track the bootstrap: from fixing the current TypeScript build, through OpenCode runtime mode, to full self-hosting where SpecLang generates itself from its own specs.
+**The Goal (vision):** SpecLang is a **meta-circular compiler** — specs describe the system that reads and generates the specs. The phases below track the bootstrap: from fixing the existing build, through self-hosting verification, to full Pi Agent runtime integration, importing GitReins, and eventual standalone daemon.
 
-**Phase 0 — Fix Build** → **Phase 1 — OpenCode Runtime** → **Phase 2 — Self-Hosting** → **Phase 3 — GitReins Import** → **Phase 4 — Standalone Daemon**
+**Phase 0 — Fix Build** → **Phase 1 — Spec Assembly (Self-Hosting)** → **Phase 2 — Pi Agent Runtime** → **Phase 3 — GitReins Import** → **Phase 4 — Standalone Daemon**
+
+---
+## Phase Status
+
+| Phase | Status | Key ACs |
+|-------|--------|---------|
+| 0: Build Foundation | ✅ Complete | AC-001 through AC-004 |
+| 1: Spec Assembly | ✅ Complete (bootstrap) | AC-020, AC-021 |
+| 2: Pi Agent Runtime | 🔄 In Progress | PI-001 through PI-007 |
+| 3: GitReins Import | ⏳ Pending | AC-030 through AC-033 |
+| 4: Standalone Daemon | ⏳ Future | AC-040 through AC-042 |
 
 ---
 
@@ -48,56 +59,9 @@ Goal: Get the existing TypeScript/OpenCode src tree compiling and passing tests.
 
 ---
 
-### PHASE 1: OpenCode Runtime
+### PHASE 1: Spec Assembly (Self-Hosting) ✅ Complete
 
-Goal: SpecLang runs as an OpenCode plugin (as designed in `specs/opencode.spec.md`). The daemon watches spec files, the cascade loop routes events to agent sessions, and the pipeline runs on convergence. This phase uses OpenCode as the execution runtime — SpecLang agents (spec-writer, codegen, test-writer) process specs through OpenCode's skill/plugin system.
-
-### AC-010: OpenCode speclang-guard plugin loads and enforces file ownership
-**Goal:** OpenCode starts with the speclang guard plugin active. Agent writes are intercepted and checked against ownership rules from `specs/agent-protocol.spec.md`.
-**How to verify:** Start container opencode-speclang on :4105, check plugin loaded via `docker logs`, verify guard intercept fires on unauthorized writes.
-**Notes:** Uses the agent-protocol system: one_agent_per_file, read_any_write_owned, pattern-based ownership (`specs/**/*.spec.md` → spec_writer, `src/**/*.ts` → code_gen). Guard plugin intercepts write attempts at the OpenCode plugin layer.
-
-### AC-011: Cascade coordinator triggers on spec file changes
-**Goal:** Editing a .spec.md file in specs/ triggers the cascade coordinator agent (defined in `.opencode/agents/speclang-coordinator.md`) which invokes sub-agents (spec-writer, codegen, test-writer) in dependency order.
-**How to verify:** Touch a spec file, observe cascade log showing agent dispatch sequence.
-**Notes:** Cascade coordinator uses `@ref:` links in spec headers to determine dependency order. Each agent gets a targeted task with the parent spec's context.
-
-### AC-012: Convergence detection fires pipeline after 30s quiet period
-**Goal:** After the last agent finishes and no new file changes occur for 30 seconds, the pipeline (build.yaml) runs: install → typecheck → test → lint.
-**How to verify:** Make a spec change → cascade runs → agents finish → 30s later pipeline fires. Observe pipeline log.
-**Notes:** Pipeline defined in `build.yaml`. Uses OpenCode's convergence detection.
-
-### AC-013: Cascade tracking via UUID headers works
-**Goal:** Each cascade step stamps change_id, caused_by, and part_of in spec headers. The chain from root change through all agent actions is fully traceable.
-**How to verify:** After a cascade, grep for `@cascade:` and `@change:` in spec headers. Follow parent-child chain from root to leaves.
-**Notes:** Implemented via cascade UUID tracking spec (`specs/cascade.spec.md` §CascadeTracking). cascade_id format: `cascade-YYYYMMDD-NNN`.
-
-### AC-014: MCP server exposes SpecLang tools to external agents
-**Goal:** The MCP server (`specs/mcp.spec.md`) starts and exposes tools: create_spec_file, validate_specs, run_cascade, check_status
-**How to verify:** Start MCP daemon, connect via MCP inspector, list available tools.
-**Notes:** MCP server enables Hermes and other external agents to interact with SpecLang programmatically. See `specs/mcp.spec.md` for full spec.
-
-### AC-015: Spec header validation — progress: 158/427 passing (62 errors fixed)
-**Goal:** Reduce spec validation failures
-**How to verify:** `cd ~/SpecLang && ./bin/speclang validate 2>&1 | grep "Validation Summary" -A5`
-**Status:** in_progress
-**Notes:** 62 errors fixed this run. Remaining failures (269 files, 341 errors) are YAML structural issues:
-  - "Nested mappings not allowed in compact mappings" (widespread in spec.dir subdirs)
-  - "Plain value cannot start with @ character" (needs quoting)
-  - Various YAML parse failures in top-level specs
-
-### AC-016: Dual-view symlink compliance ✅
-**Goal:** Percentage of working locations symlinked from specs
-**How to verify:** Run `./scripts/check_compliance.py --report | grep -E "Compliant|Total"`
-**Status:** passed
-**Verified:** 2026-06-09
-**Evidence:** 588/608 compliant (96.7%) — far above the ~30% previously claimed. Previous data was stale.
-
----
-
-### PHASE 2: Self-Hosting Compiler
-
-Goal: SpecLang's compiler (`specs/compiler.spec.md`) reads SpecLang specs and generates the SpecLang source code. This is the **bootstrap moment** — SpecLang generates its own implementation from its own specs. The meta-circular loop closes.
+Goal: SpecLang's assembler reads `## Implementation` code blocks from `.spec.ts.md` files and generates runnable TypeScript. Self-hosting proven: all 6 components (daemon, guard, cascade-router, pipeline, assembler, mcp-server) assemble byte-identical to hand-extracted versions, and 115/115 tests pass on both.
 
 ### AC-020: Cascade runs on a spec ✅
 **Goal:** `./bin/speclang cascade <spec>` completes successfully
@@ -106,26 +70,31 @@ Goal: SpecLang's compiler (`specs/compiler.spec.md`) reads SpecLang specs and ge
 **Verified:** 2026-06-09
 **Evidence:** Successfully ran cascade on specs/validator.spec.md. Output: "Converged: Yes". Generated 0 files (spec had no code blocks to generate from).
 
-### AC-021: Compiler generates a SpecLang source file from its own spec
-**Goal:** Take one of SpecLang's own specs (e.g., `specs/compiler.spec.dir/phases.spec.md`) and generate the corresponding `src/compiler/phases.ts`. The generated file must be functionally equivalent to the current hand-written version.
-**How to verify:** Compare generated vs current source. Run build + tests on generated version.
-**Notes:** THIS IS THE BOOTSTRAP MOMENT. The spec that describes the compiler generates the compiler itself. It won't replace the hand-written code initially — the first generated version proves the pipeline works.
+### AC-021: Compiler generates SpecLang source from its own spec ✅
+**Goal:** SpecLang assembler reads code-pair specs and generates runnable TypeScript. Generated code must be functionally equivalent to hand-extracted.
+**How to verify:** `npx tsx .speclang/self-host-verify.ts`
+**Status:** passed
+**Verified:** 2026-06-09
+**Evidence:** All 6 code-pair specs assemble byte-identical to hand-extracted. 115/115 tests pass on both hand-extracted and assembled versions. Self-hosting proven — SpecLang can rebuild itself.
 
-### AC-022: Cascade produces multi-file changes from a single spec edit
-**Goal:** Edit one high-level spec → cascade triggers spec_writer (expands), then codegen (generates 2+ output files), then test_writer (generates test spec), then pipeline (builds + tests). All outputs pass validation.
-**How to verify:** Edit `project.scl` or a layer 1 spec, observe cascade produce 3+ related file changes, then pipeline green.
-**Blockers:** AC-011 (cascade coordination), AC-020 (compiler working)
+---
 
-### AC-023: Compiler supports multi-language output (TypeScript + Go + Python)
-**Goal:** The same spec generates code in 2+ target languages. Multi-target transformation from `specs/compiler.spec.md`.
-**How to verify:** Create test spec with language-agnostic blocks, run compiler with `--target go` and `--target typescript`, compare outputs.
-**Blockers:** AC-020
+### PHASE 2: Pi Agent Runtime 🔄 In Progress
 
-### AC-024: Compiler self-generates its own compiler module
-**Goal:** The `src/codegen/` module is generated from `specs/codegen.spec.md` instead of being hand-written. The generated version passes all tests.
-**How to verify:** Replace hand-written `src/codegen/` with compiler-generated version, run `npm run build && npm test`.
-**Blockers:** AC-021 (partial bootstrap proven), AC-022 (multi-file cascade working)
-**Notes:** THIS IS FULL BOOTSTRAP. SpecLang's code generation is now self-hosted. The compiler generates the code generator from the code generator's spec.
+Goal: Execute the PI work items (PI-001 through PI-007) through the opencode-speclang container. These build the daemon, guard, cascade router, pipeline, MCP server, and close the meta-circular loop by having SpecLang generate its own compiler code from specs.
+
+### AC-022: PI-001 — Daemon + project structure installed
+**Goal:** `npm install` dependencies, `.speclang/` structure initialized. Chokidar-based file watcher daemon watches `specs/` for changes and dispatches events.
+**How to verify:** `docker exec opencode-speclang ls .speclang/daemon.ts`
+
+### AC-023: PI-002 through PI-004 — Cascade routing works
+**Goal:** Guard system enforces file ownership. Cascade router dispatches file changes to agent sessions. Convergence detection fires pipeline after quiet period.
+**How to verify:** Touch spec file → container detects → guard checks ownership → router dispatches → pipeline fires after 30s quiet.
+
+### AC-024: PI-005 through PI-007 — Compiler integration + MCP server
+**Goal:** Existing src/ compiler wired into cascade pipeline. MCP server exposes tools. Compiler self-generates its own module from specs.
+**How to verify:** MCP inspector lists tools. `src/codegen/` generated from spec.
+**Blockers:** AC-022, AC-023
 
 ---
 

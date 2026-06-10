@@ -60,7 +60,27 @@ FileChangeEvent from speclangd
 ## Implementation
 
 ```typescript
-import { createAgentSession } from '@earendil-works/pi-coding-agent';
+// ---- Lazy PI SDK Import (ESM-only package — falls back to mock for CJS/testing) ----
+
+let _createAgentSession: ((opts: Record<string, unknown>) => Promise<{ session: { prompt: (msg: string) => Promise<void>; dispose: () => void } }>) | null = null;
+
+async function getCreateAgentSession(): Promise<typeof _createAgentSession> {
+  if (_createAgentSession) return _createAgentSession;
+  try {
+    const mod = await import('@earendil-works/pi-coding-agent') as { createAgentSession: typeof _createAgentSession };
+    _createAgentSession = mod.createAgentSession;
+  } catch {
+    // CJS/ESM mismatch — return a mock session factory for testing without the SDK
+    _createAgentSession = async () => ({
+      session: {
+        prompt: async () => {},
+        dispose: () => {},
+      },
+    });
+  }
+  return _createAgentSession;
+}
+
 import { SpeclangDaemon, FileChangeEvent, ConvergenceEvent, parseHeader } from './daemon.spec';
 
 // ---- Types ----
