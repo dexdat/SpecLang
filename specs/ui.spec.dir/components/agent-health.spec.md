@@ -1,4 +1,4 @@
-# speclang-header lines:13
+---
 id: "@speclang/ui.components.agent-health"
 parent: ""@ref:specs/ui"part: 4/14
 siblings:

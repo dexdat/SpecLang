@@ -1,4 +1,4 @@
-# speclang-header lines:12
+---
 id: "@speclang/ui.overview"
 parent: ""@ref:specs/ui"part: 1/14
 siblings:

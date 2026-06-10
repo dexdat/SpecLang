@@ -1,4 +1,4 @@
-# speclang-header lines:15
+---
 id: "@speclang/daemon"
 version: 0.2.0
 target: src/daemon/

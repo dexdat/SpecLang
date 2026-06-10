@@ -1,4 +1,4 @@
-# speclang-header lines:44
+---
 id: "@speclang/roadmap/poc"
 parent: ""@ref:specs/roadmap"version: 1.0.0
 layer: 1
@@ -406,7 +406,6 @@ POC is complete when:
 - [ ] Tests pass (`npm test`)
 - [ ] Demo video recorded
 - [ ] Documentation updated
-
 ---
 
 **Next Phase**: [MVP](mvp.spec.md)

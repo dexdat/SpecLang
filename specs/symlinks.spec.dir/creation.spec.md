@@ -1,4 +1,4 @@
-# speclang-header lines:11
+---
 id: "@speclang/symlinks/creation"
 version: 0.1.0
 layer: 2

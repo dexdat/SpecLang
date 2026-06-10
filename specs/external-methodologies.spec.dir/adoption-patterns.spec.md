@@ -1,4 +1,4 @@
-# speclang-header lines:13
+---
 id: "@speclang/external-methodologies/adoption-patterns"
 version: 0.1.0
 layer: 2

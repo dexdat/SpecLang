@@ -1,4 +1,4 @@
-# speclang-header lines:12
+---
 id: "@speclang/compiler.spec.dir/templates"
 version: 0.1.0
 layer: 2
@@ -8,7 +8,6 @@ project_level: Alpha
 agent_support: agent_assisted
 parent: ""@ref:speclang/compiler"part: 3/3
 short: Code generation templates and markers
-
 ---
 # Code Generation Templates
 

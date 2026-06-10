@@ -1,4 +1,4 @@
-# speclang-header lines:9
+---
 id: "@specs/safety-confidence/confidence-scorer"
 version: 1.0.0
 layer: 5

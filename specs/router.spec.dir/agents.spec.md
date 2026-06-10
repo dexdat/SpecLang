@@ -1,4 +1,4 @@
-# speclang-header lines:12
+---
 id: "@speclang/router/agents"
 parent: ""@ref:specs/router"part: 2/2
 siblings:

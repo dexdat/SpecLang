@@ -1,4 +1,4 @@
-# speclang-header lines:12
+---
 id: "@speclang/mcp.authentication"
 parent: "@ref:speclang/mcp"
 siblings:

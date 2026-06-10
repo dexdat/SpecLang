@@ -1,4 +1,4 @@
-# speclang-header lines:16
+---
 id: "@speclang/core"
 version: 0.2.0
 layer: 0

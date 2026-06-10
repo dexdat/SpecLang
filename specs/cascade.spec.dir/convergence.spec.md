@@ -1,4 +1,4 @@
-# speclang-header lines:14
+---
 id: "@speclang/cascade/convergence"
 version: 0.1.0
 layer: 2
@@ -31,7 +31,6 @@ How the cascade ends and what happens after.
 
 Cascade happens first, then build runs on converged state.
 ```
-
 ---
 
 ## Debugging Cascades

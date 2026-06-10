@@ -1,4 +1,4 @@
-# speclang-header lines:9
+---
 id: "@speclang/ui-dashboard/interactions"
 parent: ""@ref:specs/ui-dashboard"short: "UI interaction handlers and event management"
 project_level: Alpha

@@ -1,4 +1,4 @@
-# speclang-header lines:13
+---
 id: "@speclang/daemon/rust"
 parent: ""@ref:specs/daemon"part: 5/5
 siblings:

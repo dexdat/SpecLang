@@ -1,4 +1,4 @@
-# speclang-header lines:13
+---
 id: "@speclang/ui.interactions"
 parent: ""@ref:specs/ui"part: 11/14
 siblings:

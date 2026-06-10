@@ -1,4 +1,4 @@
-# speclang-header lines:13
+---
 id: "@speclang/daemon/routing"
 parent: ""@ref:specs/daemon"part: 3/4
 siblings:

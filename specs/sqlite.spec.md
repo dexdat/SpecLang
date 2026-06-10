@@ -1,4 +1,4 @@
-# speclang-header lines:14
+---
 id: "@speclang/sqlite"
 version: 0.2.0
 layer: 1

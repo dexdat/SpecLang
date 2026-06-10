@@ -1,4 +1,4 @@
-# speclang-header lines:10
+---
 id: "@specs/maturity/validation"
 version: 1.0.0
 layer: 5

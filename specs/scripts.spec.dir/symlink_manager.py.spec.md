@@ -1,4 +1,4 @@
-# speclang-header lines:7
+---
 id: "@speclang/scripts/symlink-manager"
 parent: ""@ref:specs/scripts"version: 0.1.0
 layer: 3

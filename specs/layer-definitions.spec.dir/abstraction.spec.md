@@ -1,4 +1,4 @@
-# speclang-header lines:11
+---
 id: "@speclang/layer-definitions/abstraction"
 version: 0.1.0
 layer: 2

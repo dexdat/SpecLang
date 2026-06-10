@@ -1,4 +1,4 @@
-# speclang-header lines:12
+---
 id: "@speclang/daemon/convergence"
 parent: ""@ref:specs/daemon"part: 4/4
 siblings:

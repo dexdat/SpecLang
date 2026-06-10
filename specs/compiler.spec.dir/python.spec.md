@@ -1,4 +1,4 @@
-# speclang-header lines:16
+---
 id: "@speclang/compiler.spec.dir/python"
 version: 0.1.0
 layer: 5

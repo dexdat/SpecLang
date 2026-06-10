@@ -1,4 +1,4 @@
-# speclang-header lines:14
+---
 id: "@speclang/ralph-loop"
 version: 0.1.0
 target: src/ralph-loop/

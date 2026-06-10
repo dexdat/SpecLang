@@ -1,4 +1,4 @@
-# speclang-header lines:12
+---
 id: "@speclang/daemon/architecture"
 parent: "@ref:specs/daemon"
 part: 1/4

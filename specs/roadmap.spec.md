@@ -1,4 +1,4 @@
-# speclang-header lines:15
+---
 id: "@speclang/roadmap"
 version: 1.0.0
 layer: 0
@@ -52,7 +52,6 @@ Each phase document contains:
 **In Progress**: POC Phase
 **Next Milestone**: Working file watcher + cascade
 **Target Date**: TBD
-
 ---
 
 *This roadmap is a living document. Update as priorities shift.*

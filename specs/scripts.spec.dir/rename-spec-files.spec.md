@@ -1,4 +1,4 @@
-# speclang-header lines:11
+---
 id: "@speclang/scripts.rename-spec-files"
 version: 0.1.0
 layer: 2

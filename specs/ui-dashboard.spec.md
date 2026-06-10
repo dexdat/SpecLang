@@ -1,4 +1,4 @@
-# speclang-header lines:12
+---
 id: "@speclang/ui-dashboard"
 version: 1.0.0
 layer: 5

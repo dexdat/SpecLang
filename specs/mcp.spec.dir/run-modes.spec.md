@@ -1,4 +1,4 @@
-# speclang-header lines:12
+---
 id: "@speclang/mcp.run-modes"
 version: 0.1.0
 layer: 3

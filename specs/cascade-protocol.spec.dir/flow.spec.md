@@ -1,4 +1,4 @@
-# speclang-header lines:11
+---
 id: "@speclang/cascade-protocol/flow"
 version: 1.0.0
 layer: 2

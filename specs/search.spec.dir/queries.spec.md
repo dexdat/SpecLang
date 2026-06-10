@@ -1,4 +1,4 @@
-# speclang-header lines:12
+---
 id: "@speclang/search/queries"
 version: 0.1.0
 layer: 2

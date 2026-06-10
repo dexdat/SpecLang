@@ -1,4 +1,4 @@
-# speclang-header lines:10
+---
 id: "@speclang/mcp.cli"
 parent: ""@ref:speclang/mcp"part: 12/12
 short: Command-line interface for MCP server

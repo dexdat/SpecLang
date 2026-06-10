@@ -1,4 +1,4 @@
-# speclang-header lines:9
+---
 id: "@specs/compiler/phases"
 version: 1.0.0
 layer: 4

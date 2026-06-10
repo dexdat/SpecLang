@@ -1,4 +1,4 @@
-# speclang-header lines:15
+---
 id: "@speclang/mcp-daemon/config"
 version: 0.1.0
 layer: 2

@@ -1,4 +1,4 @@
-# speclang-header lines:11
+---
 id: "@speclang/lenses/mermaid"
 parent: "@ref:specs/lenses"
 depends_on: ["@ref:specs/lenses"]

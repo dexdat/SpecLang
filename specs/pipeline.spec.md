@@ -1,4 +1,4 @@
-# speclang-header lines:13
+---
 id: "@speclang/pipeline"
 version: 0.2.0
 layer: 1

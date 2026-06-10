@@ -1,4 +1,4 @@
-# speclang-header lines:13
+---
 id: "@speclang/ui.components.cascade-status"
 parent: ""@ref:specs/ui"part: 3/14
 siblings:

@@ -1,4 +1,4 @@
-# speclang-header lines:12
+---
 id: "@speclang/mcp.sse-stream"
 parent: ""@ref:speclang/mcp"part: 10/12
 siblings:

@@ -1,4 +1,4 @@
-# speclang-header lines:11
+---
 id: "@speclang/examples/hello-world"
 version: 1.0.0
 layer: 10

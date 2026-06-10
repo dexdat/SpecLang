@@ -1,4 +1,4 @@
-# speclang-header lines:10
+---
 id: "@speclang/semantic-definitions/layer-mapping"
 version: 0.1.0
 layer: 2

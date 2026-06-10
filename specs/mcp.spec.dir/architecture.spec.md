@@ -1,4 +1,4 @@
-# speclang-header lines:12
+---
 id: "@speclang/mcp.architecture"
 parent: ""@ref:speclang/mcp"part: 2/12
 siblings:

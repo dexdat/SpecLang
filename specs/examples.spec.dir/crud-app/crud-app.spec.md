@@ -1,4 +1,4 @@
-# speclang-header lines:15
+---
 id: @specs/examples/crud-app
 version: 1.0.0
 layer: 1

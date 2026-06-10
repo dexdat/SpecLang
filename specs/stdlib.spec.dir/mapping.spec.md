@@ -1,4 +1,4 @@
-# speclang-header lines:10
+---
 id: "@speclang/stdlib/mapping"
 parent: "@ref:specs/stdlib"
 short: "Type mappings between languages"

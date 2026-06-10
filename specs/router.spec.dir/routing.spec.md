@@ -1,4 +1,4 @@
-# speclang-header lines:12
+---
 id: "@speclang/router/routing"
 parent: ""@ref:specs/router"part: 1/2
 siblings:

@@ -1,4 +1,4 @@
-# speclang-header lines:14
+---
 id: "@speclang/spec-format/blocks"
 version: 0.1.0
 layer: 2

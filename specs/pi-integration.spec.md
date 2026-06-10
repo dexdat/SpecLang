@@ -1,4 +1,4 @@
-# speclang-header lines:12
+---
 id: "@speclang/pi-integration"
 version: 0.1.0
 target: src/pi-integration/

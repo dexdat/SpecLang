@@ -1,4 +1,4 @@
-# speclang-header lines:10
+---
 id: "@speclang/project-maturity-levels/depth-requirements"
 version: 0.1.0
 layer: 2

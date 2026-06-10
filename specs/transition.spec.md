@@ -1,4 +1,4 @@
-# speclang-header lines:9
+---
 id: "@specs/transition"
 version: 1.0.0
 layer: 2

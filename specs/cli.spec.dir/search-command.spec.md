@@ -1,4 +1,4 @@
-# speclang-header lines:11
+---
 id: "@speclang/cli.spec.dir/search-command"
 version: 0.1.0
 layer: 1
@@ -7,7 +7,6 @@ project_level: Alpha
 agent_support: agent_assisted
 parent: ""@ref:specs/cli.spec.dir/commands"part: 1/1
 short: CLI search command
-
 ---
 
 ### @cli/search

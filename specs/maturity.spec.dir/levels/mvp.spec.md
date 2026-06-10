@@ -1,4 +1,4 @@
-# speclang-header lines:10
+---
 id: "@speclang/maturity/levels/mvp"
 version: 0.1.0
 layer: 3

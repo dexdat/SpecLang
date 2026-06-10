@@ -1,4 +1,4 @@
-# speclang-header lines:13
+---
 id: "@speclang/ui.components.queue-depth"
 parent: ""@ref:specs/ui"part: 6/14
 siblings:

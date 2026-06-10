@@ -1,4 +1,4 @@
-# speclang-header lines:12
+---
 id: "@speclang/parser"
 version: 0.2.0
 layer: 1

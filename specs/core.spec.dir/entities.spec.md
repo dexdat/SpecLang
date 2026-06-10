@@ -1,4 +1,4 @@
-# speclang-header lines:10
+---
 id: "@speclang/core/entities"
 version: 0.2.0
 layer: 2

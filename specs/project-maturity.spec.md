@@ -1,4 +1,4 @@
-# speclang-header lines:6
+---
 id: "@speclang/project-maturity"
 version: 1.0.0
 layer: 1

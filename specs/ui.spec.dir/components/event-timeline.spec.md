@@ -1,4 +1,4 @@
-# speclang-header lines:13
+---
 id: "@speclang/ui.components.event-timeline"
 parent: ""@ref:specs/ui"part: 5/14
 siblings:

@@ -1,4 +1,4 @@
-# speclang-header lines:13
+---
 id: "@speclang/pi-extension-examples"
 version: 0.1.0
 target: src/pi-extension/

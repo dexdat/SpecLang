@@ -1,4 +1,4 @@
-# speclang-header lines:7
+---
 id: "@speclang/roadmap/poc/types"
 parent: ""@ref:specs/roadmap/poc"version: 0.1.0
 layer: 2

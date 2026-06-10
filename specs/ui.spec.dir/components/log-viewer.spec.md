@@ -1,4 +1,4 @@
-# speclang-header lines:13
+---
 id: "@speclang/ui.components.log-viewer"
 parent: ""@ref:specs/ui"part: 10/14
 siblings:

@@ -1,4 +1,4 @@
-# speclang-header lines:20
+---
 id: "@speclang/mcp"
 version: 0.2.0
 target: src/mcp/

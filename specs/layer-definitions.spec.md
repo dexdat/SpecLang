@@ -1,4 +1,4 @@
-# speclang-header lines:10
+---
 id: "@speclang/layer-definitions"
 version: 0.2.0
 layer: 1

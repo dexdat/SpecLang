@@ -1,4 +1,4 @@
-# speclang-header lines:15
+---
 id: "@speclang/cascade"
 version: 0.2.0
 target: src/cascade/

@@ -1,4 +1,4 @@
-# speclang-header lines:10
+---
 id: "@speclang/registry/lookup"
 version: 0.0.1
 layer: 2

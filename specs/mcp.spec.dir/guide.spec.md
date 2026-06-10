@@ -1,4 +1,4 @@
-# speclang-header lines:15
+---
 id: "@specs/mcp.guide"
 version: 1.0.0
 layer: 5

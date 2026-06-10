@@ -1,4 +1,4 @@
-# speclang-header lines:13
+---
 id: "@speclang/pipeline/build"
 parent: ""@ref:speclang/pipeline"part: 1/3
 siblings:

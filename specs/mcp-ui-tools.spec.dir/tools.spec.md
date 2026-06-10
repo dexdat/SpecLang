@@ -1,4 +1,4 @@
-# speclang-header lines:14
+---
 id: "@speclang/mcp-ui-tools/tools"
 version: 0.1.0
 layer: 2

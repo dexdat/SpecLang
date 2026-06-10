@@ -1,4 +1,4 @@
-# speclang-header lines:10
+---
 id: "@speclang/file-naming/extensions"
 version: 0.1.0
 layer: 2

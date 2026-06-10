@@ -1,4 +1,4 @@
-# speclang-header lines:12
+---
 id: "@speclang/mcp.error-handling"
 parent: ""@ref:speclang/mcp"part: 9/12
 siblings:

@@ -1,4 +1,4 @@
-# speclang-header lines:9
+---
 id: "@speclang/ui-dashboard/visual-design"
 parent: ""@ref:specs/ui-dashboard"short: "Visual design system and component styling"
 project_level: Alpha

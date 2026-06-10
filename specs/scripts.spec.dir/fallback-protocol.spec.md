@@ -1,4 +1,4 @@
-# speclang-header lines:11
+---
 id: "@speclang/scripts.fallback-protocol"
 version: 0.1.0
 layer: 2

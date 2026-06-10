@@ -1,4 +1,4 @@
-# speclang-header lines:13
+---
 id: "@speclang/ui.state-management"
 parent: ""@ref:specs/ui"part: 12/14
 siblings:

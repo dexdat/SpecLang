@@ -1,4 +1,4 @@
-# speclang-header lines:13
+---
 id: "@speclang/daemon/events"
 parent: ""@ref:specs/daemon"part: 2/4
 siblings:

@@ -1,4 +1,4 @@
-# speclang-header lines:9
+---
 id: "@speclang/state"
 version: 0.1.0
 layer: 5

@@ -1,4 +1,4 @@
-# speclang-header lines:13
+---
 id: "@speclang/ui.components.control-panel"
 parent: ""@ref:specs/ui"part: 8/14
 siblings:

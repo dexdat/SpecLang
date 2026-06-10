@@ -1,4 +1,4 @@
-# speclang-header lines:9
+---
 id: "@specs/validation/rules/autonomous"
 version: 1.1.0
 layer: 5

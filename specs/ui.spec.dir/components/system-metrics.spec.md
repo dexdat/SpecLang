@@ -1,4 +1,4 @@
-# speclang-header lines:13
+---
 id: "@speclang/ui.components.system-metrics"
 parent: ""@ref:specs/ui"part: 7/14
 siblings:
