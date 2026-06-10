@@ -248,27 +248,21 @@ SpecLang bootstrap:
 **There are no separate `.ts` files.** Every line of implementation code lives inside a `@kind:code` block in a `.spec.md` file. The spec file IS the implementation.
 
 ```
-specs/assembler/daemon.spec.md
+specs/assembler/daemon.spec.ts.md
   │
-  ├── # speclang-header lines:42
+  ├── ---
   │   id: "@speclang/assembler/daemon"
-  │   target: .speclang/daemon.ts          ← where SpecLang writes the code
+  │   target: .speclang/daemon.spec.ts
   │   layer: 1
   │   owned-by: assembler
+  │   ---
   │
-  ├── @block:daemon/overview @kind:entity  ← spec metadata (what it is)
+  ├── ## Overview
   │
-  ├── @block:daemon/implementation @kind:code  ← THE ACTUAL CODE
-  │   ```typescript
-  │   import { watch } from 'chokidar';
-  │   export class SpeclangDaemon {
-  │     // ... full implementation
-  │   }
-  │   ```
-  │
-  └── @block:daemon/convergence @kind:code ← MORE ACTUAL CODE
+  └── ## Implementation
       ```typescript
-      export class ConvergenceDetector {
+      import { watch } from 'chokidar';
+      export class SpeclangDaemon {
         // ... full implementation
       }
       ```
