@@ -137,13 +137,28 @@ Multiple rapid changes to the same spec file are squashed into a single cascade.
 
 At the cascade level: if cascade N is still running when cascade N+1 triggers for overlapping specs, the second cascade waits and squashes its work into the first where possible.
 
-### Throttle
+### Throttle — Fairness-Based Queue with Deferral
 
-Prevent runaway cascade multiplication:
-- **Max cascade depth**: configurable (default 5). A cascade deeper than 5 levels triggers a throttle warning.
-- **Max concurrent cascades**: per-pool and global limits. If 50 cascades are running, queue.
-- **Rate limit**: max N cascades per minute globally.
-- **Circuit breaker**: if cascades produce errors (pipeline failures, agent timeouts) at >50% rate, throttle to 1 cascade per 5 minutes and notify the user.
+The throttle prevents **file contention** from clogging the pipeline. When the same file or group of files keeps getting hammered by rapid cascades, they block other files from making progress.
+
+**The mechanism:**
+
+1. **Detect contention** — Cascade router tracks how many times each file has been queued in the last N seconds. If a file exceeds the threshold (e.g., 5 cascades in 60s), it's flagged as "hot."
+
+2. **Defer** — Hot files are moved to the back of the queue. Their pending cascade is deferred, not cancelled. The deferral marks them with `deferred: true` in the cascade state.
+
+3. **Unblock others** — While the hot file waits, other files in the queue get processed. Sometimes processing those other files updates dependencies that fix the root cause of the hot file's churn — the hot file naturally stabilizes.
+
+4. **One more chance** — When the queue cycles back to the deferred file, it gets ONE more cascade attempt. If contention continues (file still hot), it's deferred again with an escalating backoff (2x, 4x, 8x).
+
+5. **Escalation** — If a file has been deferred 3+ times, the cascade router notifies the user: "File X has been deferred 3 times due to contention. This may indicate a circular dependency or excessive churn."
+
+**Why this works:**
+
+- A single hot file can't starve the rest of the system
+- Other files' cascades often resolve the hot file's dependencies naturally
+- The user is notified only when deferral becomes pathological (3+ rounds)
+- No cascade is ever cancelled — only postponed
 
 ## Model Pools and Rate Limits
 
