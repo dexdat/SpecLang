@@ -94,20 +94,30 @@ export function getFolderContext(specPath: string): {
 // ---- Code Extractor (Bootstrap Mode) ----
 
 export function extractImplementationBlocks(body: string, targetLang: string): string {
-  // Find ## Implementation sections and extract code fences for the target language
+  // Find ## Implementation and ## @block: sections, extract code fences for the target language
   const blocks: string[] = [];
-  const sectionPattern = /^##\s+Implementation\s*\r?\n([\s\S]*?)(?=^\s*##\s+(?!Implementation)\w|(?![\s\S]))/gm;
-  let match;
 
+  // Match both ## Implementation and ## @block:<name> section headers
+  const sectionPattern = /^##\s+(?:Implementation|@block:\s*(\S+))\s*\r?\n([\s\S]*?)(?=^\s*##\s+(?:\w|@block)|(?![\s\S]))/gm;
+
+  let match: RegExpExecArray | null;
   while ((match = sectionPattern.exec(body)) !== null) {
-    const section = match[1];
+    const blockName = match[1] || null; // null for ## Implementation sections without a name
+    const section = match[2];
+
     // Extract code blocks with matching language
     const tryLang = (lang: string): boolean => {
-      const codePattern = new RegExp(`\`\`\`${lang}\n([\\s\\S]*?)\`\`\``, 'g');
-      let codeMatch;
+      const escapedLang = lang.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const codePattern = new RegExp(`\`\`\`${escapedLang}\n([\\s\\S]*?)\`\`\``, 'g');
+      let codeMatch: RegExpExecArray | null;
       let found = false;
       while ((codeMatch = codePattern.exec(section)) !== null) {
-        blocks.push(codeMatch[1].trim());
+        let code = codeMatch[1].trim();
+        // Prepend block traceability comment for named @block: sections
+        if (blockName) {
+          code = `// @block: ${blockName}\n${code}`;
+        }
+        blocks.push(code);
         found = true;
       }
       return found;

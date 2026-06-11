@@ -1,5 +1,5 @@
 // @spec: @speclang/assembler/daemon v1.0.0
-// @source: specs/assembler/daemon.spec.ts.md:65-323
+// @source: specs/assembler/daemon.spec.ts.md:65-446
 import chokidar from 'chokidar';
 import { EventEmitter } from 'events';
 import * as fs from 'fs/promises';
@@ -20,6 +20,66 @@ export interface ConvergenceEvent {
   quietPeriodMs: number;
   queueDepth: number;
 }
+
+// ---- Structured Logger ----
+
+export type LogLevel = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
+
+export interface LogEntry {
+  ts: string;
+  level: LogLevel;
+  tag: string;
+  message: string;
+  cascadeId?: string;
+  specPath?: string;
+  elapsedMs?: number;
+  meta?: Record<string, unknown>;
+}
+
+export class Logger {
+  private tag: string;
+  private startTime: number;
+
+  constructor(tag: string) {
+    this.tag = tag;
+    this.startTime = Date.now();
+  }
+
+  private write(level: LogLevel, message: string, meta?: Record<string, unknown>): void {
+    const entry: LogEntry = {
+      ts: new Date().toISOString(),
+      level,
+      tag: this.tag,
+      message,
+      elapsedMs: Date.now() - this.startTime,
+      ...(meta || {}),
+    };
+    const metaStr = meta ? ' ' + JSON.stringify(meta) : '';
+    const pid = process?.pid ?? 0;
+    const prefix = `${entry.ts} [${pid}] ${level.padEnd(5)} [${this.tag}]`;
+    switch (level) {
+      case 'ERROR': console.error(`${prefix} ${message}${metaStr}`); break;
+      case 'WARN':  console.warn(`${prefix} ${message}${metaStr}`); break;
+      default:      console.log(`${prefix} ${message}${metaStr}`);
+    }
+  }
+
+  info(msg: string, meta?: Record<string, unknown>): void { this.write('INFO', msg, meta); }
+  warn(msg: string, meta?: Record<string, unknown>): void { this.write('WARN', msg, meta); }
+  error(msg: string, meta?: Record<string, unknown>): void { this.write('ERROR', msg, meta); }
+  debug(msg: string, meta?: Record<string, unknown>): void { this.write('DEBUG', msg, meta); }
+
+  /**
+   * Create a child logger that inherits the parent's tag with a suffix.
+   */
+  child(suffix: string): Logger {
+    const child = new Logger(`${this.tag}:${suffix}`);
+    child.startTime = this.startTime;
+    return child;
+  }
+}
+
+export default Logger;
 
 export interface SpecHeader {
   id?: string;
@@ -169,20 +229,37 @@ export class SpeclangDaemon extends EventEmitter {
   private watcher: chokidar.FSWatcher | null = null;
   private graph = new NotificationGraph();
   private convergence: ConvergenceDetector | null = null;
+  private log: Logger;
+  private graphLog: Logger;
+  private convergenceLog: Logger;
 
   constructor(
     private readonly watchPath: string = 'specs/',
     quietPeriod: number = 30000
   ) {
     super();
+    this.log = new Logger('speclangd');
+    this.graphLog = this.log.child('graph');
+    this.convergenceLog = this.log.child('convergence');
+
+    this.log.info('daemon constructed', { watchPath, quietPeriod });
+
     this.convergence = new ConvergenceDetector(quietPeriod, (event) => {
+      this.convergenceLog.info('convergence detected', {
+        lastChange: new Date(event.lastChange).toISOString(),
+        quietPeriodMs: event.quietPeriodMs,
+        queueDepth: event.queueDepth,
+      });
       this.emit('convergence', event);
     });
   }
 
   async start(): Promise<void> {
+    this.log.info('daemon starting', { watchPath: this.watchPath });
+
     // Initialize graph from existing specs
     await this.indexExistingSpecs();
+    this.log.info('graph initialized', { edgeCount: this.graph.getSize() });
 
     this.watcher = chokidar.watch(this.watchPath, {
       ignored: /(node_modules|\.git|dist)/,
@@ -191,17 +268,28 @@ export class SpeclangDaemon extends EventEmitter {
     });
 
     this.watcher
-      .on('add', (p) => this.handleChange(p, 'create'))
-      .on('change', (p) => this.handleChange(p, 'modify'))
-      .on('unlink', (p) => this.handleChange(p, 'delete'));
+      .on('add', (p) => {
+        this.log.debug('watcher:add', { path: p });
+        this.handleChange(p, 'create');
+      })
+      .on('change', (p) => {
+        this.log.debug('watcher:change', { path: p });
+        this.handleChange(p, 'modify');
+      })
+      .on('unlink', (p) => {
+        this.log.debug('watcher:unlink', { path: p });
+        this.handleChange(p, 'delete');
+      });
 
     this.emit('started', { watchPath: this.watchPath });
   }
 
   stop(): void {
+    this.log.info('daemon stopping');
     if (this.watcher) this.watcher.close();
     if (this.convergence) this.convergence.stop();
     this.emit('stopped');
+    this.log.info('daemon stopped');
   }
 
   getGraphSize(): number {
@@ -211,26 +299,49 @@ export class SpeclangDaemon extends EventEmitter {
   private async indexExistingSpecs(): Promise<void> {
     const { default: glob } = await import('fast-glob');
     const specFiles = await glob('**/*.spec.md', { cwd: this.watchPath });
+    this.log.info('indexing existing specs', { count: specFiles.length });
+    let indexed = 0, skipped = 0;
     for (const file of specFiles) {
       const fullPath = path.join(this.watchPath, file);
       const header = await parseHeader(fullPath);
       if (header) {
         this.graph.addSpec(fullPath, header);
+        this.graphLog.debug('indexed spec', { file, specId: header.id });
+        indexed++;
+      } else {
+        skipped++;
+        this.graphLog.debug('skipped spec (no header)', { file });
       }
     }
+    this.log.info('indexing complete', { indexed, skipped, totalEdges: this.graph.getSize() });
   }
 
   private async handleChange(filePath: string, kind: 'create' | 'modify' | 'delete'): Promise<void> {
+    this.log.info('file event', { kind, path: filePath });
+
     if (kind === 'delete') {
       this.graph.removeSpec(filePath);
+      this.graphLog.info('spec removed from graph', { path: filePath });
     } else {
       const header = await parseHeader(filePath);
       if (header) {
         this.graph.addSpec(filePath, header);
+        this.graphLog.info('spec added/updated in graph', {
+          path: filePath,
+          specId: header.id,
+          dependsOn: header.dependsOn,
+        });
       }
     }
 
     const dependents = this.graph.getDependents(filePath);
+    this.log.info('dependents resolved', {
+      path: filePath,
+      kind,
+      dependentCount: dependents.length,
+      dependents,
+    });
+
     const event: FileChangeEvent = {
       path: filePath,
       kind,
@@ -248,13 +359,25 @@ export class SpeclangDaemon extends EventEmitter {
 // ---- Main Entry ----
 
 if (require.main === module) {
+  const log = new Logger('speclangd:main');
   const daemon = new SpeclangDaemon(process.argv[2] || 'specs/');
   daemon.on('file_change', (e: FileChangeEvent) => {
-    console.log(`[speclangd] ${e.kind}: ${e.path} (${e.dependentSpecs.length} dependents)`);
+    log.info('file change emitted', {
+      kind: e.kind,
+      path: e.path,
+      dependentCount: e.dependentSpecs.length,
+      dependents: e.dependentSpecs,
+      timestamp: new Date(e.timestamp).toISOString(),
+    });
   });
   daemon.on('convergence', (e: ConvergenceEvent) => {
-    console.log(`[speclangd] Convergence: ${e.queueDepth} items in queue`);
+    log.info('convergence emitted', {
+      queueDepth: e.queueDepth,
+      quietPeriodMs: e.quietPeriodMs,
+      lastChangeAgo: `${Date.now() - e.lastChange}ms`,
+    });
   });
-  daemon.on('started', () => console.log('[speclangd] Started'));
-  daemon.start().catch(console.error);
+  daemon.on('started', (meta) => log.info('daemon started', meta as Record<string, unknown>));
+  daemon.on('stopped', () => log.info('daemon stopped'));
+  daemon.start().catch((err) => log.error('daemon startup failed', { error: err.message }));
 }

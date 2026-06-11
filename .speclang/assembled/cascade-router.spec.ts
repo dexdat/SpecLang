@@ -19,7 +19,7 @@ async function getCreateAgentSession(): Promise<typeof _createAgentSession> {
   return _createAgentSession;
 }
 
-import { SpeclangDaemon, FileChangeEvent, ConvergenceEvent, parseHeader } from './daemon.spec';
+import { SpeclangDaemon, FileChangeEvent, ConvergenceEvent, parseHeader, Logger } from './daemon.spec';
 
 // ---- Types ----
 
@@ -60,26 +60,55 @@ export class CascadeIdGenerator {
 export class SquashBuffer {
   private buffer = new Map<string, { item: CascadeItem; timer: ReturnType<typeof setTimeout> }>();
   private readonly windowMs: number;
+  private log: Logger;
+  private squashedCount = 0;
+  private flushCount = 0;
 
   constructor(windowMs: number = 100) {
     this.windowMs = windowMs;
+    this.log = new Logger('cascade:squash');
+    this.log.info('squash buffer initialized', { windowMs });
   }
 
   push(item: CascadeItem, onFlush: (item: CascadeItem) => void): void {
     const existing = this.buffer.get(item.specPath);
     if (existing) {
       clearTimeout(existing.timer);
+      this.squashedCount++;
+      this.log.debug('squashed duplicate', {
+        specPath: item.specPath,
+        cascadeId: item.cascadeId,
+        previousId: existing.item.cascadeId,
+        totalSquashed: this.squashedCount,
+      });
       existing.item = item; // Keep latest
       existing.timer = setTimeout(() => {
         this.buffer.delete(item.specPath);
+        this.flushCount++;
+        this.log.info('flushed from squash buffer', {
+          specPath: item.specPath,
+          cascadeId: existing.item.cascadeId,
+          totalFlushed: this.flushCount,
+        });
         onFlush(existing.item);
       }, this.windowMs);
     } else {
       const timer = setTimeout(() => {
         this.buffer.delete(item.specPath);
+        this.flushCount++;
+        this.log.info('flushed from squash buffer', {
+          specPath: item.specPath,
+          cascadeId: item.cascadeId,
+          totalFlushed: this.flushCount,
+        });
         onFlush(item);
       }, this.windowMs);
       this.buffer.set(item.specPath, { item, timer });
+      this.log.debug('queued in squash buffer', {
+        specPath: item.specPath,
+        cascadeId: item.cascadeId,
+        bufferSize: this.buffer.size,
+      });
     }
   }
 
@@ -101,10 +130,13 @@ export class ThrottleController {
   private deferralCount = new Map<string, number>();
   private readonly hotThreshold: number;
   private readonly windowSeconds: number;
+  private log: Logger;
 
   constructor(hotThreshold: number = 5, windowSeconds: number = 60) {
     this.hotThreshold = hotThreshold;
     this.windowSeconds = windowSeconds;
+    this.log = new Logger('cascade:throttle');
+    this.log.info('throttle controller initialized', { hotThreshold, windowSeconds });
   }
 
   isHot(specPath: string): boolean {
@@ -118,11 +150,14 @@ export class ThrottleController {
     const entries = this.queueCount.get(specPath) || [];
     entries.push(now);
     this.queueCount.set(specPath, entries);
+    const recentCount = entries.filter(t => now - t < this.windowSeconds * 1000).length;
+    this.log.debug('queue recorded', { specPath, recentCount, threshold: this.hotThreshold });
   }
 
   recordDeferral(specPath: string): number {
     const count = (this.deferralCount.get(specPath) || 0) + 1;
     this.deferralCount.set(specPath, count);
+    this.log.warn('file deferred', { specPath, deferralCount: count, backoffMs: this.getBackoffMs(specPath) });
     return count;
   }
 
@@ -176,6 +211,10 @@ export class CascadeRouter {
   private idGen: CascadeIdGenerator;
   private runningSessions = 0;
   private listeners: Array<(event: CascadeEvent) => void> = [];
+  private log: Logger;
+  private cascadeLog: Logger;
+  private sessionsLaunched = 0;
+  private errorsLogged = 0;
 
   constructor(daemon: SpeclangDaemon) {
     this.daemon = daemon;
@@ -183,14 +222,29 @@ export class CascadeRouter {
     this.throttle = new ThrottleController();
     this.idGen = new CascadeIdGenerator();
     this.modelResolver = new ModelPoolResolver();
+    this.log = new Logger('cascade');
+    this.cascadeLog = this.log.child('dispatch');
+
+    this.log.info('cascade router initialized');
 
     daemon.on('file_change', (event: FileChangeEvent) => {
+      this.log.info('routing file change', {
+        kind: event.kind,
+        path: event.path,
+        dependentCount: event.dependentSpecs.length,
+        dependents: event.dependentSpecs,
+      });
       for (const spec of event.dependentSpecs) {
+        const cascadeId = this.idGen.next();
+        this.log.info('queuing cascade item', {
+          cascadeId,
+          specPath: spec,
+        });
         this.squash.push(
           {
             specPath: spec,
             timestamp: event.timestamp,
-            cascadeId: this.idGen.next(),
+            cascadeId,
             depth: 0,
           },
           (item) => this.processItem(item)
@@ -210,12 +264,31 @@ export class CascadeRouter {
   }
 
   private async processItem(item: CascadeItem): Promise<void> {
+    this.cascadeLog.info('processing cascade item', {
+      cascadeId: item.cascadeId,
+      specPath: item.specPath,
+      depth: item.depth,
+      runningSessions: this.runningSessions,
+    });
+
     // Throttle check
     this.throttle.recordQueue(item.specPath);
     if (this.throttle.isHot(item.specPath)) {
       const deferrals = this.throttle.recordDeferral(item.specPath);
       const backoff = this.throttle.getBackoffMs(item.specPath);
+      this.cascadeLog.warn('throttled: file too hot', {
+        cascadeId: item.cascadeId,
+        specPath: item.specPath,
+        deferrals,
+        backoffMs: backoff,
+      });
       if (deferrals >= 3) {
+        this.errorsLogged++;
+        this.cascadeLog.error('cascade abort: circular dependency suspected', {
+          cascadeId: item.cascadeId,
+          specPath: item.specPath,
+          deferrals,
+        });
         this.emit({
           type: 'error',
           cascadeId: item.cascadeId,
@@ -231,6 +304,20 @@ export class CascadeRouter {
     // Resolve model
     const header = await parseHeader(item.specPath);
     const resolved = this.modelResolver.resolve(header || {});
+    this.cascadeLog.info('model resolved', {
+      cascadeId: item.cascadeId,
+      specPath: item.specPath,
+      model: resolved.model || resolved.pool || 'default',
+    });
+
+    this.sessionsLaunched++;
+    this.runningSessions++;
+    this.cascadeLog.info('spawning pi session', {
+      cascadeId: item.cascadeId,
+      specPath: item.specPath,
+      sessionNumber: this.sessionsLaunched,
+      runningsSessions: this.runningSessions,
+    });
 
     this.emit({
       type: 'started',
@@ -242,11 +329,19 @@ export class CascadeRouter {
     try {
       // Spawn Pi agent session
       const sessionFn = await getCreateAgentSession();
+      const sessionStart = Date.now();
       const { session } = await sessionFn({
         model: resolved.model || undefined,
         tools: ['read', 'edit', 'bash', 'glob'],
       });
 
+      this.cascadeLog.info('pi session spawned, running prompt', {
+        cascadeId: item.cascadeId,
+        specPath: item.specPath,
+        setupMs: Date.now() - sessionStart,
+      });
+
+      const promptStart = Date.now();
       await session.prompt(
         `You are the ${header?.ownedBy || 'codegen'} agent. ` +
         `Read the spec at ${item.specPath} and assemble the output. ` +
@@ -256,6 +351,13 @@ export class CascadeRouter {
       session.dispose();
       this.runningSessions--;
 
+      this.cascadeLog.info('cascade item completed', {
+        cascadeId: item.cascadeId,
+        specPath: item.specPath,
+        durationMs: Date.now() - promptStart,
+        totalDurationMs: Date.now() - sessionStart,
+      });
+
       this.emit({
         type: 'completed',
         cascadeId: item.cascadeId,
@@ -263,14 +365,21 @@ export class CascadeRouter {
         timestamp: Date.now(),
       });
     } catch (err) {
-      console.error(`  [cascade] error detail: ${err instanceof Error ? err.message : err}`);
+      this.errorsLogged++;
       this.runningSessions--;
+      const errMsg = err instanceof Error ? err.message : String(err);
+      this.cascadeLog.error('cascade item failed', {
+        cascadeId: item.cascadeId,
+        specPath: item.specPath,
+        error: errMsg,
+        totalErrors: this.errorsLogged,
+      });
       this.emit({
         type: 'error',
         cascadeId: item.cascadeId,
         specPath: item.specPath,
         timestamp: Date.now(),
-        error: String(err),
+        error: errMsg,
       });
     }
   }
