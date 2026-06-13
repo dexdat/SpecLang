@@ -291,8 +291,118 @@ export class GoCodeGenerator {
   }
 }
 
+// ============================================================================
+// PACKAGE GENERATOR
+// ============================================================================
+
+export interface GoPackageFile {
+  filename: string;
+  content: string;
+}
+
+export interface GoPackageOptions {
+  module?: string;
+  goVersion?: string;
+  packageName?: string;
+  addGoMod?: boolean;
+}
+
+export class GoPackageGenerator {
+  private files: Map<string, string> = new Map();
+  private generator: GoCodeGenerator;
+  private options: GoPackageOptions;
+
+  constructor(options: GoPackageOptions = {}) {
+    this.options = {
+      module: 'github.com/user/project',
+      goVersion: '1.21',
+      packageName: 'generated',
+      addGoMod: true,
+      ...options,
+    };
+    this.generator = new GoCodeGenerator({
+      packageName: this.options.packageName,
+    });
+  }
+
+  addBlock(block: SpecBlock): void {
+    const result = this.generator.generate(block);
+    const filename = `${toSnakeCase(block.name)}.go`;
+    this.files.set(filename, result.code);
+  }
+
+  addStruct(name: string, fields: SpecField[], pkg?: string): void {
+    const block: SpecBlock = {
+      name,
+      package: pkg || this.options.packageName,
+      fields,
+    };
+    this.addBlock(block);
+  }
+
+  addInterface(name: string, methods: SpecMethod[], pkg?: string): void {
+    const block: SpecBlock = {
+      name: `${name}Interface`,
+      package: pkg || this.options.packageName,
+      interfaces: [{ name, methods }],
+    };
+    this.addBlock(block);
+  }
+
+  addFile(filename: string, content: string): void {
+    this.files.set(filename, content);
+  }
+
+  hasFile(filename: string): boolean {
+    return this.files.has(filename);
+  }
+
+  removeFile(filename: string): boolean {
+    return this.files.delete(filename);
+  }
+
+  generateGoMod(): string {
+    if (!this.options.addGoMod) return '';
+    const lines: string[] = [
+      `module ${this.options.module}`,
+      '',
+      `go ${this.options.goVersion}`,
+    ];
+    return lines.join('\n') + '\n';
+  }
+
+  generateAll(): GoPackageFile[] {
+    const result: GoPackageFile[] = [];
+    for (const [filename, content] of this.files) {
+      result.push({ filename, content });
+    }
+    if (this.options.addGoMod) {
+      result.push({ filename: 'go.mod', content: this.generateGoMod() });
+    }
+    return result.sort((a, b) => a.filename.localeCompare(b.filename));
+  }
+
+  getGenerator(): GoCodeGenerator {
+    return this.generator;
+  }
+
+  clear(): void {
+    this.files.clear();
+  }
+
+  get fileCount(): number {
+    return this.files.size;
+  }
+}
+
 export function createGoCodeGenerator(
   options?: GoGeneratorOptions
 ): GoCodeGenerator {
   return new GoCodeGenerator(options);
+}
+
+export function createGoPackageGenerator(
+  options?: GoPackageOptions
+): GoPackageGenerator {
+  return new GoPackageGenerator(options);
 }

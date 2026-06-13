@@ -1,0 +1,65 @@
+You are tower-axiom. You are enhancing the Go code generator in the SpecLang project.
+
+## Context
+
+The project is `/workspace` (SpecLang — a TypeScript project using tsc + vitest). 
+
+Two Go generators exist:
+1. `src/compiler/go/generator.ts` — `GoCodeGenerator` class (rich, 298 lines). Has proper field resolution, constructors, interfaces.
+2. `src/compiler/targets/go.ts` — `GoGenerator` class (325 lines). Has struct/interface/function/enum generation, already returns `GeneratedFile[]`.
+
+Both currently produce a single `.go` file per call. The task is to add multi-file package generation.
+
+## Your Task: Add GoPackageGenerator
+
+Add a `GoPackageGenerator` class to `src/compiler/go/generator.ts` that:
+
+1. Takes an array of `SpecBlock`s (the existing interface)
+2. Groups blocks by kind:
+   - `@kind:entity` or fields present → `models.go` 
+   - `@kind:interface` or interfaces present → `interfaces.go`
+   - `@kind:operation` or methods present → `service.go`
+   - `@kind:error` or name contains "Error" → `errors.go`
+   - Everything else → `main.go`
+3. Generates each file using the existing `GoCodeGenerator.generate(block)` method
+4. Returns `GeneratedGoCode[]` — one per output file, each with proper package declaration
+
+## Interface
+
+```typescript
+export interface GoPackageResult {
+  files: GeneratedGoCode[];
+  pkgName: string;
+}
+
+export class GoPackageGenerator {
+  constructor(options?: GoGeneratorOptions);
+  generateFromBlocks(blocks: SpecBlock[], pkgName?: string): GoPackageResult;
+}
+
+export function createGoPackageGenerator(options?: GoGeneratorOptions): GoPackageGenerator;
+```
+
+## Tests
+
+Add a test file `tests/codegen/go-package.test.ts` with:
+
+1. **"should generate 3 files from 3 block kinds"** — blocks for User (entity), UserRepository (interface), CreateUser (operation) → produces models.go, interfaces.go, service.go. Each file has correct package declaration and compiles.
+2. **"should compile with go build"** — write generated files to temp dir, run `go mod init` + `go build`, verify exit 0.
+
+## Rules
+
+- CRITICAL: Container has NO Python, no Node, no Go compiler. Just WRITE TypeScript files. Do NOT try to run `go build` or `npm test`.
+- CRITICAL: Do NOT create or switch git branches.
+- CRITICAL: Add NO new features. NO new function blocks beyond GoPackageGenerator.
+- Use the EXISTING GoCodeGenerator internally — do not reimplement struct/interface generation.
+- Re-export GoPackageGenerator from `src/compiler/go/index.ts`.
+
+## Files to modify
+
+1. `src/compiler/go/generator.ts` — add GoPackageGenerator class + export
+2. `src/compiler/go/index.ts` — add export
+3. `tests/codegen/go-package.test.ts` — NEW FILE — 2 tests
+
+Build verification: `npm run build` on the host must pass (tsc compiles).
+Test verification: `npx vitest run tests/codegen/go-package.test.ts` on the host must pass.
