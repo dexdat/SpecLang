@@ -196,19 +196,19 @@ Re-verified 2026-06-13 02:43 UTC
 Re-verified 2026-06-13 06:49 UTC
 **Evidence:** `grep -c '@block:' specs/health/assembled/health-core.spec.ts` returns 11 (>= 5). Traceability comments present in assembled output linking each code block to its source spec section. Verified via the updated assembler.
 
-### AC-043: Dashboard spec assembles and Vite build succeeds 🟡
-**Goal:** The dashboard spec at `specs/dashboard.spec.md` has implementation blocks. Axiom writes the implementation → `npm run build` includes dashboard → Vite produces a working build.
-**How to verify:** `ls dist/dashboard/index.html` exists. Vite built output with JS bundle.
-**Status:** passed (stub)
-**Verified:** 2026-06-11 (Axiom), 2026-06-13 (manual re-verify)
-**Evidence:** `dist/dashboard/index.html` (465B) with `<div id="root">` + Vite JS bundle `assets/main-8pvBNDl4.js`. Real build output but minimal — needs full component implementation. dist/ permissions issue noted (container writes to host filesystem).
+### AC-043: Dashboard spec assembles and Vite build succeeds ✅
+**Goal:** The dashboard spec at `specs/dashboard.spec.md` has implementation blocks. Vite produces a working build with React components.
+**How to verify:** `ls src/dashboard/components/SpecList.tsx` exists. `npm run build` clean with dashboard in dist/.
+**Status:** passed
+**Verified:** 2026-06-13 CDT (Axiom built + host verified)
+**Evidence:** 5 React components (SpecList, CascadeStatus, HealthGauge, LayerChart), useDashboardState hook, 6 CSS files + 3 themes, Vite build (159KB JS + 11.6KB CSS). 143 dashboard tests pass. All 20 go-generator-v2 tests pass.
 
-### AC-044: Compiler generates Go code from a spec block 🟡
-**Goal:** The compiler spec (`specs/compiler.spec.dir/`) has Go target definitions. Axiom implements a Go code generator that reads a spec block and produces idiomatic Go code.
-**How to verify:** `npm run build` exits 0 with Go compiler module. `npx vitest run tests/codegen/go-generator-v2.test.ts` >= 0 failures (test WIP).
-**Status:** partial
-**Verified:** 2026-06-13 10:12 CDT (manual re-verify)
-**Evidence:** GoCodeGenerator class (generator.ts: 299 lines) with generate, generateStruct, generateConstructor, generateInterface, generateMethods. Templates (templates.ts: 194 lines) with renderStruct, renderInterface, renderImports, renderFile, toPascalCase, toCamelCase, toSnakeCase. Build clean (tsc). 19 test failures in go-generator-v2.test.ts due to vitest import path resolution issue — functions exist but test can't find them at runtime. Needs Axiom fix: convert test to use direct imports or fix vitest module resolution.
+### AC-044: Compiler generates Go code from a spec block ✅
+**Goal:** Go code generator reads a spec block and produces idiomatic Go code.
+**How to verify:** `npx vitest run tests/codegen/go-generator-v2.test.ts` — 20/20 pass. `npm run build` clean.
+**Status:** passed
+**Verified:** 2026-06-13 CDT (Axiom fix + host verified)
+**Evidence:** GoCodeGenerator class (299 lines), templates (210 lines) with Go initialism-aware naming (toPascalCase/toCamelCase), renderStruct, renderInterface, renderConstructor (GoFieldDef[]), renderImports, renderFile. 20/20 tests pass. Build clean. Functions handle camelCase boundaries and Go conventions (id→ID, uuid→UUID).
 
 ### AC-045: Enterprise Rust daemon stub compiles ✅
 **Goal:** The Rust daemon spec (`specs/daemon.spec.dir/rust.spec.md`) has a Cargo.toml. Axiom creates the Rust project, runs `cargo check`.
