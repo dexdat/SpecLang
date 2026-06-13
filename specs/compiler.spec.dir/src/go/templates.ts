@@ -131,9 +131,12 @@ export function renderInterface(name: string, methods: GoMethodDef[]): string {
 
 export function renderConstructor(
   name: string,
-  params: string,
-  fieldInits: string
+  fields: GoFieldDef[]
 ): string {
+  const params = fields.map(f => `${toCamelCase(f.name)} ${f.type}`).join(', ');
+  const fieldInits = fields
+    .map(f => `    ${f.name}: ${toCamelCase(f.name)},`)
+    .join('\n');
   return renderGoTemplate(GO_TEMPLATES.constructor, {
     name,
     params,
@@ -153,10 +156,10 @@ export function renderImports(packages: string[]): string {
 }
 
 export function renderFile(
-  source: string,
   pkg: string,
-  imports: string[],
-  body: string
+  imports: string | string[],
+  body: string,
+  source: string
 ): string {
   const timestamp = new Date().toISOString();
   const header = renderGoTemplate(GO_TEMPLATES.fileHeader, {
@@ -164,22 +167,45 @@ export function renderFile(
     timestamp,
     package: pkg,
   });
-  const impBlock = renderImports(imports);
+  const impBlock = typeof imports === 'string' ? imports : renderImports(imports);
   return [header, impBlock, body].filter(Boolean).join('\n\n');
 }
 
 // ---- Naming utilities ----
 
-export function toPascalCase(name: string): string {
+const GO_INITIALISMS = new Set([
+  'id', 'url', 'http', 'https', 'json', 'xml', 'api', 'sql', 'uuid',
+  'tcp', 'udp', 'ip', 'dns', 'ssh', 'tls', 'ssl', 'os', 'db', 'io',
+  'ui', 'ok', 'rpc', 'gql', 'orm',
+]);
+
+function splitWords(name: string): string[] {
   return name
+    .replace(/([a-z])([A-Z])/g, '$1_$2')
     .split(/[_\-\s]+/)
-    .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .filter(Boolean);
+}
+
+export function toPascalCase(name: string): string {
+  return splitWords(name)
+    .map(part => {
+      const lower = part.toLowerCase();
+      if (GO_INITIALISMS.has(lower)) return lower.toUpperCase();
+      return part.charAt(0).toUpperCase() + part.slice(1);
+    })
     .join('');
 }
 
 export function toCamelCase(name: string): string {
-  const pascal = toPascalCase(name);
-  return pascal.charAt(0).toLowerCase() + pascal.slice(1);
+  const words = splitWords(name);
+  return words
+    .map((part, i) => {
+      if (i === 0) return part.toLowerCase();
+      const lower = part.toLowerCase();
+      if (GO_INITIALISMS.has(lower)) return lower.toUpperCase();
+      return part.charAt(0).toUpperCase() + part.slice(1);
+    })
+    .join('');
 }
 
 export function toSnakeCase(name: string): string {
@@ -189,3 +215,4 @@ export function toSnakeCase(name: string): string {
     .toLowerCase()
     .replace(/^_/, '');
 }
+// test write Sat Jun 13 15:41:42 UTC 2026

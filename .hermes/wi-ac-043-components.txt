@@ -1,0 +1,29 @@
+# AC-043: Build full dashboard UI from specs/dashboard.spec.md
+
+## Current state
+dist/dashboard/index.html exists (465B stub) with a basic Vite build and <div id="root">. The JS bundle is minimal. Full components not implemented.
+
+## The spec (specs/dashboard.spec.md)
+The dashboard spec defines four component groups:
+- handlers/ — event handlers for dashboard interactions
+- hooks/ — React hooks for dashboard state  
+- interactions/ — user interaction components
+- styles/ — dashboard styling
+
+## What to build
+1. Read specs/dashboard.spec.md thoroughly — understand the full component requirements
+2. Check the cascade status spec (@ref:specs/cascade) for the data model to display
+3. Build React components for:
+   a. SpecList — list all specs with their status (draft/active/generated/etc)
+   b. CascadeStatus — show current cascade state (running/idle/converged)
+   c. HealthGauge — visual health metrics (total specs, implementation ratio, layers)
+   d. LayerChart — bar chart of specs per layer
+4. Use the health monitor module (specs/health/assembled/health-core.spec.ts) for data — it already scans 445 specs and computes metrics
+5. Wire into Vite (vitest.config.ts already includes the test)
+6. After build, dist/dashboard/ should have index.html + JS bundle with interactive dashboard
+
+## Verification
+- `npm run build` must be clean
+- dist/dashboard/index.html exists with JS bundle
+- Opening it in a browser shows a functional dashboard (spec count, health metrics, cascade status)
+- `npm test` — all 1518+ regression tests still pass

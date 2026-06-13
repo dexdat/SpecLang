@@ -199,7 +199,7 @@ export class GoCodeGenerator {
     }
 
     const body = parts.join('\n');
-    const code = renderFile(block.name, pkg, allImports, body);
+    const code = renderFile(pkg, allImports, body, block.name);
 
     return {
       code,

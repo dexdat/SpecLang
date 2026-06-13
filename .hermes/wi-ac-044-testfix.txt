@@ -1,0 +1,23 @@
+# AC-044: Fix go-generator-v2.test.ts — 19 test failures
+
+## Problem
+19 tests in tests/codegen/go-generator-v2.test.ts fail with "renderStruct is not a function", "toPascalCase is not a function", etc. The functions exist in src/compiler/go/templates.ts and src/compiler/go/generator.ts, build with tsc, but vitest can't resolve them at runtime.
+
+## Investigation
+The test imports from relative paths (../../src/compiler/go/templates) which resolve correctly on disk. The issue is likely vitest's esbuild transpilation stripping exports or module resolution.
+
+## Fix
+1. Read tests/codegen/go-generator-v2.test.ts — understand what it imports and tests
+2. Read src/compiler/go/templates.ts — verify exports (renderStruct, renderInterface, renderConstructor, renderImports, renderFile, toPascalCase, toCamelCase, toSnakeCase)
+3. Read src/compiler/go/generator.ts — verify exports (GoCodeGenerator, createGoCodeGenerator)
+4. Fix one of:
+   a. Change test imports to use direct barrel export from a single index.ts (create src/compiler/go/index.ts that re-exports everything)
+   b. Or use vitest's inline test pattern — move the template function tests into the templates file itself
+   c. Or fix vitest config to resolve the paths correctly
+5. Run `npx vitest run tests/codegen/go-generator-v2.test.ts` — all 19 tests must pass
+6. Run `npm test` — confirm no regressions introduced
+
+## Verification
+- `npm run build` must be clean
+- `npx vitest run tests/codegen/go-generator-v2.test.ts` — 0 failures
+- `npm test` — 1518+ tests pass (no regression)
