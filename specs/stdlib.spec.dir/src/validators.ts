@@ -10,32 +10,62 @@ import { Primitives } from './primitives';
 import { isString, isNumber, isBoolean, isArray, isObject, isNull, isUndefined, isFunction } from './primitives';
 import { Result, Results } from './results';
 
-/**
- * Validation result type
- */
 export type ValidationResult<T = void> = Result<T, ValidationError>;
 
-/**
- * Validation error
- */
 export type ValidationError = {
   field?: string;
   message: string;
   code: string;
 };
 
-/**
- * Validator function type
- */
 export type Validator<T> = (value: unknown) => ValidationResult<T>;
 
-/**
- * Schema validator interface
- */
 export interface SchemaValidator<T> {
   validate: (value: unknown) => ValidationResult<T>;
   parse: (value: unknown) => T;
   isValid: (value: unknown) => boolean;
+}
+
+export class ValidatorClass<T> {
+  private rules: Array<{
+    validate: (value: T) => boolean;
+    message: string;
+    code: string;
+  }> = [];
+
+  static create<T>(): ValidatorClass<T> {
+    return new ValidatorClass<T>();
+  }
+
+  addRule(
+    validate: (value: T) => boolean,
+    message: string,
+    code: string
+  ): ValidatorClass<T> {
+    this.rules.push({ validate, message, code });
+    return this;
+  }
+
+  validate(value: T): Result<T, ValidationError[]> {
+    const errors: ValidationError[] = [];
+    for (const rule of this.rules) {
+      if (!rule.validate(value)) {
+        errors.push({ message: rule.message, code: rule.code });
+      }
+    }
+    if (errors.length > 0) {
+      return Results.failure<ValidationError[]>(errors);
+    }
+    return Results.success(value);
+  }
+
+  isValid(value: T): boolean {
+    return Results.isOk(this.validate(value));
+  }
+
+  getRuleCount(): number {
+    return this.rules.length;
+  }
 }
 
 /**

@@ -1,0 +1,19 @@
+# AC-054: Go codegen roundtrip — spec block → compilable .go file
+
+## Goal
+The GoCodeGenerator (20/20 unit tests pass) must produce a real `.go` file from a spec block that compiles with `go build`.
+
+## Implementation
+1. Read `src/compiler/go/generator.ts` — understand GoCodeGenerator API
+2. Create a test spec block (simulating a User struct with ID, Email, Name fields)
+3. Feed to GoCodeGenerator → get output string
+4. Verify output contains: `package main`, `import (...)`, `type User struct`, constructor function
+5. Write output to `/tmp/test-output/main.go`
+6. Run `go build -o /tmp/test-output/user /tmp/test-output/main.go` — must exit 0
+7. Add this as a test: `tests/codegen/go-roundtrip.test.ts`
+8. Run `npm test` — must pass
+
+## Verification
+- `npx vitest run tests/codegen/go-roundtrip.test.ts` passes
+- `/tmp/test-output/user` binary exists and is valid Go executable
+- `npm test` passes (1518+ tests)

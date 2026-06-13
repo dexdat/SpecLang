@@ -200,3 +200,119 @@ export function range(start: number, end?: number, step: number = 1): number[] {
   }
   return result;
 }
+export class CollectionClass<T> {
+  constructor(private _items: T[] = []) {}
+
+  static of<T>(...items: T[]): CollectionClass<T> {
+    return new CollectionClass<T>(items);
+  }
+
+  static from<T>(items: T[]): CollectionClass<T> {
+    return new CollectionClass<T>([...items]);
+  }
+
+  get items(): T[] {
+    return [...this._items];
+  }
+
+  get length(): number {
+    return this._items.length;
+  }
+
+  filter(predicate: (value: T, index: number) => boolean): CollectionClass<T> {
+    return new CollectionClass(this._items.filter(predicate));
+  }
+
+  map<U>(fn: (value: T, index: number) => U): CollectionClass<U> {
+    return new CollectionClass(this._items.map(fn));
+  }
+
+  reduce<U>(fn: (acc: U, value: T, index: number) => U, initialValue: U): U {
+    return this._items.reduce(fn, initialValue);
+  }
+
+  find(predicate: (value: T, index: number) => boolean): T | undefined {
+    return this._items.find(predicate);
+  }
+
+  every(predicate: (value: T, index: number) => boolean): boolean {
+    return this._items.every(predicate);
+  }
+
+  some(predicate: (value: T, index: number) => boolean): boolean {
+    return this._items.some(predicate);
+  }
+
+  forEach(fn: (value: T, index: number) => void): void {
+    this._items.forEach(fn);
+  }
+
+  includes(value: T): boolean {
+    return this._items.includes(value);
+  }
+
+  indexOf(value: T): number {
+    return this._items.indexOf(value);
+  }
+
+  slice(start: number, end?: number): CollectionClass<T> {
+    return new CollectionClass(this._items.slice(start, end));
+  }
+
+  concat(other: CollectionClass<T>): CollectionClass<T> {
+    return new CollectionClass(this._items.concat(other._items));
+  }
+
+  reverse(): CollectionClass<T> {
+    return new CollectionClass([...this._items].reverse());
+  }
+
+  sort(comparator?: (a: T, b: T) => number): CollectionClass<T> {
+    return new CollectionClass([...this._items].sort(comparator));
+  }
+
+  first(): T | undefined {
+    return this._items[0];
+  }
+
+  last(): T | undefined {
+    return this._items[this._items.length - 1];
+  }
+
+  toArray(): T[] {
+    return [...this._items];
+  }
+
+  isEmpty(): boolean {
+    return this._items.length === 0;
+  }
+
+  count(predicate: (value: T) => boolean): number {
+    return this._items.filter(predicate).length;
+  }
+
+  distinct(): CollectionClass<T> {
+    return new CollectionClass([...new Set(this._items)]);
+  }
+
+  take(n: number): CollectionClass<T> {
+    return new CollectionClass(this._items.slice(0, n));
+  }
+
+  skip(n: number): CollectionClass<T> {
+    return new CollectionClass(this._items.slice(n));
+  }
+
+  [Symbol.iterator](): Iterator<T> {
+    let index = 0;
+    const items = this._items;
+    return {
+      next(): IteratorResult<T> {
+        if (index < items.length) {
+          return { value: items[index++], done: false };
+        }
+        return { value: undefined as any, done: true };
+      }
+    };
+  }
+}

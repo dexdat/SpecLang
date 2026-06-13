@@ -1,0 +1,58 @@
+{
+  "cascade_id": "full-cascade-test",
+  "current_depth": 8,
+  "files_changed": 8,
+  "started_at": "2026-06-13T12:00:06.150Z",
+  "last_activity": "2026-06-13T12:00:06.150Z",
+  "depth_history": [
+    {
+      "depth": 1,
+      "file": "project.scl",
+      "agent": "user",
+      "timestamp": "2026-06-13T12:00:06.150Z"
+    },
+    {
+      "depth": 2,
+      "file": "specs/auth.scl",
+      "agent": "spec-writer",
+      "timestamp": "2026-06-13T12:00:06.150Z"
+    },
+    {
+      "depth": 3,
+      "file": "specs/auth/entities.scl",
+      "agent": "spec-writer",
+      "timestamp": "2026-06-13T12:00:06.150Z"
+    },
+    {
+      "depth": 4,
+      "file": "specs/auth/operations.scl",
+      "agent": "spec-writer",
+      "timestamp": "2026-06-13T12:00:06.150Z"
+    },
+    {
+      "depth": 5,
+      "file": "generated/auth.go.spec",
+      "agent": "code-gen",
+      "timestamp": "2026-06-13T12:00:06.150Z"
+    },
+    {
+      "depth": 6,
+      "file": "generated/go/auth.go",
+      "agent": "code-gen",
+      "timestamp": "2026-06-13T12:00:06.150Z"
+    },
+    {
+      "depth": 7,
+      "file": "tests/auth.test.spec.scl",
+      "agent": "test-writer",
+      "timestamp": "2026-06-13T12:00:06.150Z"
+    },
+    {
+      "depth": 8,
+      "file": "tests/auth_test.go",
+      "agent": "test-writer",
+      "timestamp": "2026-06-13T12:00:06.150Z"
+    }
+  ],
+  "converged_at": "2026-06-13T12:00:06.287Z"
+}

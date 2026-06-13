@@ -1,8 +1,4 @@
-/* SPECLANG-GENERATED: @speclang/ui.visual-design */
-/* DO NOT EDIT MANUALLY */
-/* Source: specs/ui.dir/visual-design.spec.md */
-
-:root[data-theme="high-contrast"] {
+[data-theme='high-contrast'] {
   --color-primary: #ffffff;
   --color-secondary: #000000;
   --color-accent: #ffff00;
@@ -13,20 +9,4 @@
   --color-text-muted: #cccccc;
   --color-text-dimmed: #888888;
   --grid-color: rgba(255, 255, 255, 0.2);
-  --border-width: 2px;
-}
-
-/* High contrast specific overrides */
-:root[data-theme="high-contrast"] .brutalist-button {
-  padding: var(--space-3) var(--space-5);
-}
-
-:root[data-theme="high-contrast"] .brutalist-input {
-  border-bottom-width: 2px;
-}
-
-/* Enhanced focus indicators for high contrast */
-:root[data-theme="high-contrast"] :focus-visible {
-  outline: 3px solid var(--color-accent);
-  outline-offset: 3px;
 }

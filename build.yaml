@@ -23,6 +23,9 @@ pipeline:
       timeout: 130000
     - name: lint
       run: npm run lint 2>/dev/null || true
+    - name: smoke-test
+      run: npx tsx bin/speclang-smoke-test.ts
+      timeout: 300000
 recovery:
   max_attempts: 2
   on_fail:

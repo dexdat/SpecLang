@@ -1,8 +1,4 @@
-/* SPECLANG-GENERATED: @speclang/ui.visual-design */
-/* DO NOT EDIT MANUALLY */
-/* Source: specs/ui.dir/visual-design.spec.md */
-
-:root[data-theme="brutalist-light"] {
+[data-theme='brutalist-light'] {
   --color-primary: #000000;
   --color-secondary: #ffffff;
   --color-accent: #cc0000;

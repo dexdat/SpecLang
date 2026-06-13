@@ -31,7 +31,8 @@
     "clean": "rm -rf dist/",
     "prepublishOnly": "npm run build",
     "build:dashboard": "vite build",
-    "dev:dashboard": "vite dev"
+    "dev:dashboard": "vite dev",
+    "smoke-test": "npx tsx bin/speclang-smoke-test.ts"
   },
   "repository": {
     "type": "git",

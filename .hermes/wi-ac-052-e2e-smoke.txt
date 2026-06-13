@@ -1,0 +1,25 @@
+# AC-052: E2E smoke test — spec change → assemble → build → live verification
+
+## Goal
+Create `./bin/speclang smoke-test` that proves the full pipeline end-to-end:
+spec change → cascade triggers → assembler runs → build succeeds → integration test passes against live output.
+
+## Implementation
+1. Read existing pipeline stages in `build.yaml` — understand current flow
+2. Create `bin/speclang-smoke-test` (TypeScript) that:
+   a. Creates a temp spec file with a simple `## Implementation` block
+   b. Runs assembler: `npm run assemble:all`
+   c. Verifies the assembled output contains the new code
+   d. Runs `npm run build` — must pass
+   e. Runs `npm test` — must pass
+   f. Starts a health check server from assembled output (like Todo API pattern)
+   g. `curl` the health endpoint — expects 200
+   h. Kills server, cleans up temp files
+   i. Prints summary: "✅ E2E smoke test: PASSED (N stages)"
+3. Wire into `build.yaml` as `smoke-test` stage
+4. Verify by running `npx tsx bin/speclang-smoke-test`
+
+## Verification
+- `npx tsx bin/speclang-smoke-test` exits 0 with summary
+- Each stage shows ✅ or ❌
+- Cleanup works (no temp files left behind)

@@ -1,0 +1,22 @@
+# AC-051: Wire dashboard to live health/cascade data
+
+## Goal
+The dashboard's 142KB JS bundle currently renders static React components. Wire `useDashboardState` hook to fetch from a real health monitor HTTP API and display live data.
+
+## Implementation
+1. Read `src/dashboard/hooks/useDashboardState.ts` — understand current data flow
+2. Create a simple health API endpoint (Express or built-in HTTP server) that returns:
+   ```json
+   {"totalSpecs": 445, "byLayer": {...}, "byStatus": {...}, "cascadeActive": false}
+   ```
+3. Update `useDashboardState` to `fetch()` from this endpoint on mount and every 30s
+4. Update `SpecList` component to display actual spec counts (not hardcoded)
+5. Update `HealthGauge` to show real metrics
+6. Update `CascadeStatus` to show real cascade state
+7. Rebuild dashboard: `npm run build:dashboard`
+8. Verify: start health API → serve dist/dashboard/ → curl the API → response matches dashboard display
+
+## Verification
+- `npm run build:dashboard` produces updated bundle
+- Start server → dashboard shows real numbers matching `find specs -name "*.spec.md" | wc -l`
+- `npm test` passes (1518+ tests)

@@ -1681,4 +1681,29 @@ program
     }
   });
 
+// Smoke Test command
+program
+  .command('smoke-test')
+  .description('Run E2E smoke test: spec change → assemble → build → live verification')
+  .option('-v, --verbose', 'Show detailed output')
+  .action(async (options) => {
+    const { execSync } = require('child_process');
+    const smokeScript = path.join(__dirname, 'speclang-smoke-test.ts');
+
+    console.log('🧪 Running E2E smoke test...\n');
+
+    try {
+      execSync(`npx tsx "${smokeScript}"`, {
+        cwd: path.resolve(__dirname, '..'),
+        stdio: options.verbose ? 'inherit' : 'pipe',
+        timeout: 300_000,
+      });
+    } catch (err) {
+      if (!options.verbose) {
+        console.error('   Run with -v for details');
+      }
+      process.exit(1);
+    }
+  });
+
 program.parse();

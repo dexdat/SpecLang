@@ -80,12 +80,13 @@ export function useDashboardState(): DashboardState & DashboardActions {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const [health, specs] = await Promise.all([
+      const [health, specs, cascade] = await Promise.all([
         fetchJSON<HealthReport>(`${API_BASE}/health`).catch(() => null),
         fetchJSON<SpecInfo[]>(`${API_BASE}/specs`).catch(() => []),
+        fetchJSON<CascadeState & { depth?: number; currentFile?: string | null }>(`${API_BASE}/cascade`).catch(() => null),
       ]);
 
-      if (!health) {
+      if (!health && specs.length > 0) {
         const totalSpecs = specs.length;
         const withHeader = specs.filter(s => s.hasHeader).length;
         const withImpl = specs.filter(s => s.hasImplementation).length;
@@ -110,7 +111,7 @@ export function useDashboardState(): DashboardState & DashboardActions {
           }, {}),
           metrics: [
             { name: 'Total Specs', value: totalSpecs, status: totalSpecs > 0 ? 'good' : 'critical' },
-            { name: 'With Header', value: withHeader, status: 'good' },
+            { name: 'With Header', value: withHeader, status: withHeader === totalSpecs ? 'good' : 'warn' },
             { name: 'With Implementation', value: withImpl, status: 'good' },
             { name: 'Implementation Ratio', value: `${Math.round((withImpl / Math.max(totalSpecs, 1)) * 100)}%`, status: 'good' },
           ],
@@ -119,42 +120,27 @@ export function useDashboardState(): DashboardState & DashboardActions {
           ...prev,
           health: computedHealth,
           specs,
+          cascadeStatus: (cascade?.status as CascadeState) ?? prev.cascadeStatus,
+          cascadeDepth: cascade?.depth ?? prev.cascadeDepth,
+          cascadeCurrentFile: cascade?.currentFile ?? prev.cascadeCurrentFile,
           isLoading: false,
           lastRefresh: new Date(),
         }));
       } else {
         setState(prev => ({
           ...prev,
-          health,
+          health: health ?? prev.health,
           specs,
+          cascadeStatus: (cascade?.status as CascadeState) ?? prev.cascadeStatus,
+          cascadeDepth: cascade?.depth ?? prev.cascadeDepth,
+          cascadeCurrentFile: cascade?.currentFile ?? prev.cascadeCurrentFile,
           isLoading: false,
           lastRefresh: new Date(),
         }));
       }
     } catch (err) {
-      const defaultHealth: HealthReport = {
-        totalSpecs: 445,
-        withHeader: 400,
-        withImplementation: 320,
-        missingHeader: 45,
-        noId: 15,
-        noVersion: 20,
-        byLayer: { 0: 3, 1: 8, 2: 15, 3: 30, 4: 55, 5: 120, 6: 80, 7: 60, 8: 30, 9: 25, 10: 19 },
-        byStatus: { draft: 125, active: 200, generated: 80, review: 25, deprecated: 15 },
-        byOwner: { core: 120, agents: 80, ui: 65, infra: 45, docs: 35 },
-        metrics: [
-          { name: 'Total Specs', value: 445, status: 'good' },
-          { name: 'With Header', value: 400, status: 'good' },
-          { name: 'With Implementation', value: 320, status: 'good' },
-          { name: 'Implementation Ratio', value: '72%', status: 'good' },
-          { name: 'Missing Header', value: 45, status: 'warn' },
-          { name: 'Missing ID', value: 15, status: 'warn' },
-        ],
-      };
       setState(prev => ({
         ...prev,
-        health: defaultHealth,
-        specs: [],
         isLoading: false,
         error: (err as Error).message,
         lastRefresh: new Date(),
@@ -163,6 +149,7 @@ export function useDashboardState(): DashboardState & DashboardActions {
   }, []);
 
   const triggerCascade = useCallback(() => {
+    fetch(`${API_BASE}/cascade/trigger`, { method: 'POST' }).catch(() => {});
     setState(prev => ({
       ...prev,
       cascadeStatus: 'running',
@@ -172,14 +159,17 @@ export function useDashboardState(): DashboardState & DashboardActions {
   }, []);
 
   const pauseCascade = useCallback(() => {
+    fetch(`${API_BASE}/cascade/pause`, { method: 'POST' }).catch(() => {});
     setState(prev => ({ ...prev, cascadeStatus: 'paused' }));
   }, []);
 
   const resumeCascade = useCallback(() => {
+    fetch(`${API_BASE}/cascade/resume`, { method: 'POST' }).catch(() => {});
     setState(prev => ({ ...prev, cascadeStatus: 'running' }));
   }, []);
 
   const abortCascade = useCallback(() => {
+    fetch(`${API_BASE}/cascade/abort`, { method: 'POST' }).catch(() => {});
     setState(prev => ({
       ...prev,
       cascadeStatus: 'idle',
@@ -189,6 +179,7 @@ export function useDashboardState(): DashboardState & DashboardActions {
   }, []);
 
   const finalizeCascade = useCallback(() => {
+    fetch(`${API_BASE}/cascade/finalize`, { method: 'POST' }).catch(() => {});
     setState(prev => ({
       ...prev,
       cascadeStatus: 'finalizing',

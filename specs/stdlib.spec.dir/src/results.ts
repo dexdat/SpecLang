@@ -250,3 +250,152 @@ export const Options = {
   unwrapOrElse: <T>(option: Option<T>, fn: () => T): T =>
     option.some ? option.value : fn()
 };
+
+export class ResultClass<T, E = Error> {
+  private constructor(
+    private readonly _ok: boolean,
+    private readonly _value?: T,
+    private readonly _error?: E
+  ) {}
+
+  static ok<T, E = Error>(value: T): ResultClass<T, E> {
+    return new ResultClass<T, E>(true, value, undefined);
+  }
+
+  static err<T, E = Error>(error: E): ResultClass<T, E> {
+    return new ResultClass<T, E>(false, undefined, error);
+  }
+
+  static fromTry<T, E = Error>(fn: () => T): ResultClass<T, E> {
+    try {
+      return ResultClass.ok<T, E>(fn());
+    } catch (e) {
+      return ResultClass.err<T, E>(e instanceof Error ? e as unknown as E : e as E);
+    }
+  }
+
+  isOk(): boolean {
+    return this._ok;
+  }
+
+  isErr(): boolean {
+    return !this._ok;
+  }
+
+  unwrap(): T {
+    if (this._ok) return this._value as T;
+    throw this._error;
+  }
+
+  unwrapOr(defaultValue: T): T {
+    return this._ok ? (this._value as T) : defaultValue;
+  }
+
+  unwrapOrElse(fn: (error: E) => T): T {
+    return this._ok ? (this._value as T) : fn(this._error as E);
+  }
+
+  map<U>(fn: (value: T) => U): ResultClass<U, E> {
+    return this._ok
+      ? ResultClass.ok<U, E>(fn(this._value as T))
+      : ResultClass.err<U, E>(this._error as E);
+  }
+
+  mapError<F>(fn: (error: E) => F): ResultClass<T, F> {
+    return this._ok
+      ? ResultClass.ok<T, F>(this._value as T)
+      : ResultClass.err<T, F>(fn(this._error as E));
+  }
+
+  andThen<U>(fn: (value: T) => ResultClass<U, E>): ResultClass<U, E> {
+    return this._ok
+      ? fn(this._value as T)
+      : ResultClass.err<U, E>(this._error as E);
+  }
+
+  ok(): T | undefined {
+    return this._ok ? this._value : undefined;
+  }
+
+  err(): E | undefined {
+    return this._ok ? undefined : this._error;
+  }
+
+  match<U>(patterns: { ok: (value: T) => U; err: (error: E) => U }): U {
+    return this._ok
+      ? patterns.ok(this._value as T)
+      : patterns.err(this._error as E);
+  }
+}
+
+export class OptionClass<T> {
+  private constructor(
+    private readonly _some: boolean,
+    private readonly _value?: T
+  ) {}
+
+  static some<T>(value: T): OptionClass<T> {
+    return new OptionClass<T>(true, value);
+  }
+
+  static none<T>(): OptionClass<T> {
+    return new OptionClass<T>(false, undefined);
+  }
+
+  static of<T>(value: T | null | undefined): OptionClass<T> {
+    return value !== null && value !== undefined
+      ? OptionClass.some(value)
+      : OptionClass.none<T>();
+  }
+
+  isSome(): boolean {
+    return this._some;
+  }
+
+  isNone(): boolean {
+    return !this._some;
+  }
+
+  unwrap(): T {
+    if (this._some) return this._value as T;
+    throw new Error('Option is None');
+  }
+
+  unwrapOr(defaultValue: T): T {
+    return this._some ? (this._value as T) : defaultValue;
+  }
+
+  unwrapOrElse(fn: () => T): T {
+    return this._some ? (this._value as T) : fn();
+  }
+
+  map<U>(fn: (value: T) => U): OptionClass<U> {
+    return this._some
+      ? OptionClass.some(fn(this._value as T))
+      : OptionClass.none<U>();
+  }
+
+  andThen<U>(fn: (value: T) => OptionClass<U>): OptionClass<U> {
+    return this._some
+      ? fn(this._value as T)
+      : OptionClass.none<U>();
+  }
+
+  filter(predicate: (value: T) => boolean): OptionClass<T> {
+    return this._some && predicate(this._value as T)
+      ? this
+      : OptionClass.none<T>();
+  }
+
+  match<U>(patterns: { some: (value: T) => U; none: () => U }): U {
+    return this._some
+      ? patterns.some(this._value as T)
+      : patterns.none();
+  }
+
+  toResult<E>(error: E): ResultClass<T, E> {
+    return this._some
+      ? ResultClass.ok<T, E>(this._value as T)
+      : ResultClass.err<T, E>(error);
+  }
+}

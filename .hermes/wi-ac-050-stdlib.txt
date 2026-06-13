@@ -1,0 +1,23 @@
+# AC-050: Build real stdlib (collections, Result helpers, validation)
+
+## Goal
+Expand `specs/stdlib.spec.dir/types.spec.ts.md` from 51 lines of brand type aliases to 200+ lines with:
+- `Result<T, E>` class with `.unwrap()`, `.map()`, `.andThen()`, `.unwrapOr()`, `.isOk()`, `.isErr()`
+- `Option<T>` class with `.unwrap()`, `.map()`, `.andThen()`, `.unwrapOr()`, `.isSome()`, `.isNone()`
+- `Validator<T>` class with chainable `.addRule()`, `.validate()` returning `Result<T, ValidationError[]>`
+- `Collection<T>` with `.filter()`, `.map()`, `.reduce()`, `.find()`, `.every()`, `.some()`
+
+## Implementation
+1. Read current `specs/stdlib.spec.dir/types.spec.ts.md` — understand existing structure
+2. Add `@block:result` — full Result implementation with all helpers
+3. Add `@block:option` — full Option implementation
+4. Add `@block:validation` — Validator pattern
+5. Add `@block:collection` — Collection with iterator methods
+6. Write tests at `tests/stdlib/stdlib.test.ts` — 20+ test cases across all blocks
+7. Run `npm test` — must be clean (1518+ tests pass)
+8. Verify `wc -l specs/stdlib.spec.dir/types.spec.ts.md` >= 200
+
+## Verification
+- `npx vitest run tests/stdlib/stdlib.test.ts` — 20+ pass, 0 fail
+- `npm run build` clean
+- `wc -l specs/stdlib.spec.dir/types.spec.ts.md` >= 200

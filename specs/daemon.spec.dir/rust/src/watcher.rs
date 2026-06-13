@@ -64,20 +64,24 @@ impl Watcher {
         match event.kind {
             EventKind::Create(_) => {
                 for path in event.paths {
+                    info!("FileEvent::Create {:?}", path);
                     let _ = self.event_tx.blocking_send(FileEvent::Create(path));
                 }
             }
             EventKind::Modify(_) => {
                 for path in event.paths {
+                    info!("FileEvent::Modify {:?}", path);
                     let _ = self.event_tx.blocking_send(FileEvent::Modify(path));
                 }
             }
             EventKind::Remove(_) => {
                 for path in event.paths {
+                    info!("FileEvent::Delete {:?}", path);
                     let _ = self.event_tx.blocking_send(FileEvent::Delete(path));
                 }
             }
-            EventKind::Rename(_, _) => {
+            EventKind::Any => {
+                // Handle rename events by checking path count (notify v6 merged Rename into Any)
                 if event.paths.len() >= 2 {
                     let old_path = event.paths[0].clone();
                     let new_path = event.paths[1].clone();

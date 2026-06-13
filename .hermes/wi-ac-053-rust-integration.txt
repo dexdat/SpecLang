@@ -1,0 +1,23 @@
+# AC-053: Rust daemon integration test — starts, watches, detects
+
+## Goal
+Prove the Rust daemon (AC-045 only proved compilation) actually WORKS at runtime — starts, watches a directory, detects file changes, logs events.
+
+## Implementation
+1. Read `specs/daemon.spec.dir/rust/src/main.rs` — understand CLI args and config loading
+2. Add a simple CLI: `speclangd --watch <dir>` that starts the watcher
+3. Add signal handling (SIGTERM/SIGINT) for clean shutdown
+4. Write integration test script `specs/daemon.spec.dir/rust/tests/integration_test.rs`:
+   a. Creates temp directory
+   b. Starts daemon binary pointing at temp dir
+   c. Touches a file in temp dir
+   d. Waits 2 seconds
+   e. Checks daemon stdout for FileEvent::Modify log line
+   f. Kills daemon
+   g. Asserts clean exit
+5. Run `cargo test` — integration test passes
+6. Run `cargo build` — release binary produced
+
+## Verification
+- `cd specs/daemon.spec.dir/rust && cargo test` exits 0 (unit + integration)
+- `./target/debug/speclangd --watch /tmp/test-dir &` — touch file → log shows FileEvent
