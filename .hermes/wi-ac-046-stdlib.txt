@@ -1,0 +1,24 @@
+AC-046: Create Assembled Stdlib Types
+
+TASK: Create a code-pair spec file for the stdlib types so the assembler can generate importable TypeScript.
+
+CONTEXT:
+- `specs/stdlib.spec.dir/types.spec.md` defines Primitive Types (String, Number, Boolean, Date, UUID, Path), Composite Types (SpecRef, Layer, MaturityLevel, AgentRole), and Utility Types (Optional<T>, List<T>, Map<K,V>, Result<T,E>)
+- The assembler at `.speclang/assemble-all.ts` processes `.spec.ts.md` files (NOT `.spec.md` files)
+- It looks for `## Implementation` heading followed by ` ```typescript ` code blocks
+- The current spec has inline code samples under `@kind:code` blocks but doesn't have the `## Implementation` pattern
+
+WHAT TO CREATE:
+1. Create `specs/stdlib.spec.dir/types.spec.ts.md` — a code-pair spec that:
+   - Has proper YAML front matter matching the original spec
+   - Has `## Implementation` sections with ` ```typescript ` blocks containing the actual type definitions
+   - Uses `### @block:primitives @kind:implementation`, `### @block:composite @kind:implementation`, `### @block:utility @kind:implementation` annotations
+   - The type definitions should be the SAME as what's in types.spec.md
+   - Add `export` keywords to all types so they're importable
+
+2. Run `npx tsx .speclang/assemble-all.ts` to verify the new spec gets assembled
+
+3. Verify the assembled output imports correctly:
+   - `npx tsx -e "import './specs/stdlib.spec.dir/types.spec.ts'"` should exit without errors
+
+CRITICAL: Container has NO Node runtime or Python. DO NOT install anything. Just write the spec file and output file. Testing happens on the host.

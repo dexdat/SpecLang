@@ -1,0 +1,25 @@
+AC-045: Scaffold Enterprise Rust Daemon
+
+TASK: Create a standalone Cargo project for the speclangd Rust daemon based on the spec at `specs/daemon.spec.dir/rust.spec.md`.
+
+CONTEXT FROM SPEC (`specs/daemon.spec.dir/rust.spec.md`):
+- Cargo.toml with dependencies: notify 6.0, serde 1.0 (with derive), serde_json 1.0, tokio 1.0 (full), tracing 0.1, tracing-subscriber 0.3, chrono 0.4 (with serde), anyhow 1.0, thiserror 1.0
+- Dev dependencies: tempfile 3.0, assert_fs 1.0
+- Modules: config, watcher, router, convergence, ipc, state
+- Main: tokio::main with select across watcher.run(), router.run(), convergence.run()
+- Full Rust code for main.rs, watcher.rs (FileEvent enum with Create/Modify/Delete/Rename), and config types
+
+WHAT TO CREATE at `specs/daemon.spec.dir/rust/`:
+1. `Cargo.toml` — matching the spec exactly
+2. `src/main.rs` — tokio::main entry point with tracing setup, config loading, watcher+router+convergence initialization, tokio::select!
+3. `src/config.rs` — WatchConfig struct, load() function
+4. `src/watcher.rs` — FileEvent enum (Create, Modify, Delete, Rename with PathBuf), Watcher struct with new() and run() methods, WatcherError enum
+5. `src/router.rs` — Router struct with new() and run() methods
+6. `src/convergence.rs` — ConvergenceDetector struct
+7. `src/ipc.rs` — IPC module stub
+8. `src/state.rs` — DaemonState struct
+
+VERIFICATION (on host, NOT in container):
+- `cargo check --manifest-path specs/daemon.spec.dir/rust/Cargo.toml` should succeed
+
+CRITICAL: Container has NO Rust installed. DO NOT try to run cargo. Just WRITE the files. Testing happens on the host.

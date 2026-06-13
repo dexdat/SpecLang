@@ -86,3 +86,106 @@ export function renderGoTemplate(
   }
   return result;
 }
+
+// ---- Type definitions ----
+
+export interface GoFieldDef {
+  name: string;
+  type: string;
+  tag?: string;
+}
+
+export interface GoMethodDef {
+  name: string;
+  params: string;
+  returns: string;
+}
+
+// ---- Renderers ----
+
+export function renderStruct(name: string, fields: GoFieldDef[]): string {
+  const fieldLines = fields.map(f => {
+    const parts = [`\t${f.name} ${f.type}`];
+    if (f.tag) parts.push(f.tag);
+    return parts.join(' ');
+  });
+  return renderGoTemplate(GO_TEMPLATES.struct, {
+    name,
+    fields: fieldLines.join('\n'),
+  });
+}
+
+export function renderInterface(name: string, methods: GoMethodDef[]): string {
+  const methodLines = methods.map(m =>
+    renderGoTemplate(GO_TEMPLATES.interfaceMethod, {
+      name: m.name,
+      params: m.params,
+      returns: m.returns,
+    })
+  );
+  return renderGoTemplate(GO_TEMPLATES.interface, {
+    name,
+    methods: methodLines.join('\n'),
+  });
+}
+
+export function renderConstructor(
+  name: string,
+  params: string,
+  fieldInits: string
+): string {
+  return renderGoTemplate(GO_TEMPLATES.constructor, {
+    name,
+    params,
+    fieldInits,
+  });
+}
+
+export function renderImports(packages: string[]): string {
+  if (packages.length === 0) return '';
+  if (packages.length === 1) {
+    return renderGoTemplate(GO_TEMPLATES.importSingle, {
+      package: packages[0],
+    });
+  }
+  const lines = packages.map(p => `\t"${p}"`).join('\n');
+  return renderGoTemplate(GO_TEMPLATES.importBlock, { imports: lines });
+}
+
+export function renderFile(
+  source: string,
+  pkg: string,
+  imports: string[],
+  body: string
+): string {
+  const timestamp = new Date().toISOString();
+  const header = renderGoTemplate(GO_TEMPLATES.fileHeader, {
+    source,
+    timestamp,
+    package: pkg,
+  });
+  const impBlock = renderImports(imports);
+  return [header, impBlock, body].filter(Boolean).join('\n\n');
+}
+
+// ---- Naming utilities ----
+
+export function toPascalCase(name: string): string {
+  return name
+    .split(/[_\-\s]+/)
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join('');
+}
+
+export function toCamelCase(name: string): string {
+  const pascal = toPascalCase(name);
+  return pascal.charAt(0).toLowerCase() + pascal.slice(1);
+}
+
+export function toSnakeCase(name: string): string {
+  return name
+    .replace(/([A-Z])/g, '_$1')
+    .replace(/[_\-\s]+/g, '_')
+    .toLowerCase()
+    .replace(/^_/, '');
+}

@@ -1,0 +1,21 @@
+Fix stale compiled JS artifacts breaking tests
+
+BUG: `tests/codegen/go-generator.test.ts` (old test) fails with:
+```
+Error: Cannot find module '../go/types'
+Require stack: specs/compiler.spec.dir/src/targets/go.js
+```
+
+ROOT CAUSE: The `specs/compiler.spec.dir/src/targets/go.js` file is a stale compiled artifact from a previous build. It imports `../go/types` expecting a compiled `types.js`, but only `types.ts` exists (new source written by Axiom's codegen work).
+
+TASK:
+1. Remove ALL compiled `.js`, `.d.ts`, `.d.ts.map`, `.js.map` artifacts from `specs/compiler.spec.dir/src/targets/` 
+2. Also check `specs/compiler.spec.dir/src/go/` for stale `.js` files
+3. Run `npx vitest run tests/codegen/go-generator.test.ts` to verify the old test now loads TypeScript source directly
+
+Use find to locate and remove:
+```
+find specs/compiler.spec.dir/src -name '*.js' -o -name '*.d.ts' -o -name '*.js.map' -o -name '*.d.ts.map' -delete
+```
+
+CRITICAL: Do NOT remove `.ts` files. Only remove compiled output.

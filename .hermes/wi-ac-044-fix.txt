@@ -1,0 +1,23 @@
+Fix TypeScript compilation error in src/compiler/go/generator.ts
+
+BUG: Line 291-294 has:
+```
+generateFile(pkg: string, block: SpecBlock): string {
+    const result = this.generate({ ...block, package: pkg });
+    return result.code;
+}
+```
+
+ERROR: `package` is a TypeScript reserved keyword. Using it as a property name in object literal spread syntax causes TS1005 error.
+
+FIX: Use string key syntax:
+```
+generateFile(pkg: string, block: SpecBlock): string {
+    const result = this.generate({ ...block, 'package': pkg });
+    return result.code;
+}
+```
+
+Then run `npx tsc --noEmit` to verify the fix compiles cleanly.
+
+CRITICAL: ONLY change this one line. Do NOT modify anything else.

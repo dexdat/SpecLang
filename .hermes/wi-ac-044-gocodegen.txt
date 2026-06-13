@@ -1,0 +1,32 @@
+AC-044: Implement Go Code Generator
+
+TASK: Implement a Go code generator in TypeScript that reads SpecLang spec blocks and produces idiomatic Go source files.
+
+CONTEXT:
+- `src/compiler/go/types.ts` already has complete Go type mappings (289 lines) — GO_TYPE_MAPPINGS array with stdlib→Go type mappings, imports, zero values
+- `src/compiler/go/templates.ts` should contain Go template strings (struct, interface, function, method, import blocks)
+- The spec at `specs/compiler.spec.dir/go.spec.md` defines type mappings and templates
+
+WHAT TO CREATE:
+1. Create `src/compiler/go/generator.ts` — the main code generator that:
+   - Takes a SpecBlock (with name, fields, methods, interfaces)
+   - Maps stdlib types to Go types using the existing GO_TYPE_MAPPINGS
+   - Generates Go structs with JSON tags
+   - Generates constructor functions (NewXxx)
+   - Generates interface implementations
+   - Manages imports (stdlib + third-party)
+   - Uses idiomatic Go naming: PascalCase for exported, camelCase for private
+   
+2. Update `src/compiler/go/templates.ts` to export Go template functions:
+   - renderStruct(name, fields, tags) → struct definition
+   - renderInterface(name, methods) → interface definition
+   - renderConstructor(name, fields) → NewXxx function
+   - renderImports(imports) → import block
+   - renderFile(pkg, imports, body) → complete .go file
+
+3. Add proper exports to the index so the rest of the system can import the generator.
+
+4. Test by creating a simple test that feeds a spec block and verifies the output compiles to valid Go:
+   - Create `src/compiler/go/__tests__/generator.test.ts` with at least 3 test cases
+
+CRITICAL: Container has NO Go compiler. DO NOT try to run `go build`. Just write TypeScript files and verify with `npx tsc --noEmit src/compiler/go/generator.ts`. Test that the generated Go code LOOKS syntactically valid (proper braces, proper type references).
