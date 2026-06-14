@@ -1,0 +1,50 @@
+You are working on SpecLang's Rust daemon (speclangd). Production deployment: signal handling + systemd unit.
+
+## Context
+
+The Rust daemon lives at `specs/daemon.spec.dir/rust/`. It currently:
+- Has a working scaffold: main.rs, config.rs, watcher.rs, router.rs, convergence.rs, ipc.rs, state.rs
+- `cargo build` and `cargo test` pass (3 unit + 2 integration tests)
+- `main.rs` uses `tokio::select!` which exits immediately if ANY component returns — no graceful shutdown
+
+## What to Build
+
+### 1. Signal handling in main.rs (CRITICAL)
+Add SIGTERM and SIGINT handling using `tokio::signal`:
+```rust
+use tokio::signal;
+```
+- On SIGTERM or SIGINT: log "shutting down", drain the event channel (drop the sender to close the receiver), save daemon state via `state::DaemonState::save()`, wait up to 5 seconds for clean shutdown, then exit 0
+- Wrap the existing `tokio::select!` in a `tokio::select!` with the signal handler as an additional arm
+- Keep the existing `--watch` CLI flag behavior working — integration tests rely on it
+
+### 2. Systemd unit file
+Create `specs/daemon.spec.dir/rust/deploy/speclangd.service`:
+- Description: "SpecLang Reactive Cascade Daemon"
+- ExecStart: path to release binary
+- Restart=on-failure, RestartSec=5
+- User/Group placeholders
+- ProtectSystem=strict with appropriate ReadWritePaths
+- StandardOutput=journal, StandardError=journal
+- WantedBy=multi-user.target
+
+### 3. Update Cargo.toml if needed
+Add `tokio` signal feature if not already present (check if `signal` is in tokio features).
+
+## Constraints
+- CRITICAL: Container has NO Rust toolchain. DO NOT try to install anything or run `cargo build`/`cargo test`. Just WRITE files.
+- ALL 5 existing tests MUST still pass — do not break any existing test
+- The `--watch` CLI flag behavior MUST still work
+- Keep changes minimal — add signal handling, don't rewrite the architecture
+- Add NO new features beyond signal handling + systemd unit
+- Only modify files in `specs/daemon.spec.dir/rust/`
+
+## Files to modify
+1. `src/main.rs` — add signal handling
+2. `deploy/speclangd.service` — new file, systemd unit
+3. `Cargo.toml` — add tokio signal feature if missing
+
+## Verification (will be done on host)
+1. `cargo build --release` succeeds
+2. `cargo test` — all 5 existing tests pass
+3. Systemd unit file is valid YAML-ish syntax

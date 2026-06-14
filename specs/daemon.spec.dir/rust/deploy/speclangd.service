@@ -1,0 +1,39 @@
+[Unit]
+Description=SpecLang Reactive Cascade Daemon
+Documentation=https://github.com/speclang/speclang
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/speclangd
+Restart=on-failure
+RestartSec=5
+User=speclang
+Group=speclang
+WorkingDirectory=/opt/speclang
+
+# Security hardening
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/speclang/.speclang /opt/speclang/specs
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+MemoryDenyWriteExecute=true
+RestrictRealtime=true
+RestrictNamespaces=true
+LockPersonality=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=speclangd
+
+# Resource limits
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

@@ -36,11 +36,38 @@ async fn main() -> Result<()> {
 
     info!("Daemon initialized, watching {}", config.watch.paths.iter().map(|p| p.display().to_string()).collect::<Vec<_>>().join(", "));
 
+    // Main work loop wrapped with signal handling for graceful shutdown
+    let main_loop = async {
+        tokio::select! {
+            _ = watcher.run() => error!("Watcher stopped unexpectedly"),
+            _ = router.run(rx) => error!("Router stopped unexpectedly"),
+            _ = convergence.run() => info!("Convergence detected"),
+        }
+    };
+
     tokio::select! {
-        _ = watcher.run() => error!("Watcher stopped unexpectedly"),
-        _ = router.run(rx) => error!("Router stopped unexpectedly"),
-        _ = convergence.run() => info!("Convergence detected"),
+        _ = main_loop => {},
+        _ = tokio::signal::ctrl_c() => {
+            info!("Received SIGINT, shutting down gracefully");
+        }
+        _ = async {
+            #[cfg(unix)]
+            {
+                let mut sigterm = tokio::signal::unix::signal(
+                    tokio::signal::unix::SignalKind::terminate()
+                ).expect("Failed to install SIGTERM handler");
+                sigterm.recv().await;
+            }
+            #[cfg(not(unix))]
+            std::future::pending::<()>().await;
+        } => {
+            info!("Received SIGTERM, shutting down gracefully");
+        }
     }
 
+    // Graceful shutdown: close channel, save state, exit cleanly
+    drop(tx);
+    state.save().unwrap_or_else(|e| error!("Failed to save daemon state: {}", e));
+    info!("speclangd shut down cleanly");
     Ok(())
 }

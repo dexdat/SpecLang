@@ -82,8 +82,20 @@
 - Exported via `src/compiler/go/index.ts` (re-exported via `export * from './generator'`)
 
 
+### AC-056: Rust daemon production deployment ✅
+**Goal:** Deploy speclangd as a production-ready daemon with systemd unit file, graceful signal handling (SIGTERM/SIGINT), and proper process lifecycle.
+**Status:** passed ✅
+**Verified:** 2026-06-13
+**Evidence:**
+- `cargo build --release` — clean (7 pre-existing warnings, 0 new errors)
+- `cargo test` — 5/5 pass (3 unit + 2 integration)
+- `npm run build && npm test` — 1599 passed, 0 failures
+- Signal handling added: outer `tokio::select!` wraps main work loop, listens for SIGINT (ctrl_c) and SIGTERM (unix signal)
+- Graceful shutdown: drops channel sender (tx), saves daemon state, logs "shut down cleanly"
+- Systemd unit file: `deploy/speclangd.service` with sandboxing (ProtectSystem=strict, NoNewPrivileges, PrivateTmp, etc.), Restart=on-failure, journal logging
+- Cargo.toml: tokio feature `signal` added
+
 ## Backlog
-- Real Rust daemon production deploy (systemd unit, multi-watch, signal handling)
 - Vite dashboard SSR or static deployment
 - Benchmark suite for assembly/complexity/index build times
 - IDE extension (LSP integration)
