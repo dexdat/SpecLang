@@ -15,7 +15,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc -p src/lsp/tsconfig.json",
     "dev": "tsc --watch",
     "start": "node bin/speclang start",
     "compile": "node -e \"require('./specs/compiler.spec.dir/src/index.js')\" && echo 'Compiler module loaded - codegen available'",
@@ -67,8 +67,8 @@
     "fast-glob": "^3.3.3",
     "fs-extra": "^11.3.3",
     "glob": "^13.0.6",
-    "minimatch": "^10.2.5",
     "js-yaml": "^4.1.1",
+    "minimatch": "^10.2.5",
     "yaml": "^2.8.2"
   },
   "devDependencies": {
@@ -93,6 +93,8 @@
     "typescript": "^5.9.3",
     "vite": "^5.4.21",
     "vitest": "^4.0.18",
+    "vscode-languageserver": "^10.0.0",
+    "vscode-languageserver-textdocument": "^1.0.12",
     "zustand": "^4.5.7"
   }
 }

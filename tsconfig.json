@@ -39,6 +39,7 @@
     "node_modules",
     "dist",
     "src/dashboard/**/*",
+    "src/lsp/**/*",
     "**/*.spec.ts",
     "**/*.test.ts",
     "src/codegen.ts",
