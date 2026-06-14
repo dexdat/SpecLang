@@ -107,6 +107,17 @@
 - `npm run build` — clean; `npm test` — 1599 passed, 0 failures
 - Command placed between `stop` and `daemon` in CLI, uses `npx tsx` (dashboard excluded from tsc per tsconfig.json line 41)
 
+### AC-058: Benchmark suite for assembly/complexity/index build times ✅
+**Goal:** Real benchmark tests that measure actual performance of the indexer, graph analysis, and assembler — using real project modules, not simulated workloads.
+**Status:** passed ✅
+**Verified:** 2026-06-14
+**Evidence:**
+- `tests/performance/benchmark.test.ts` — 372 lines, 16 tests
+- Uses real imports: `generateIndex()` from `src/indexer/index.js`, graph analysis from `src/indexer/graph.js`, `Assembler` from `.speclang/assembler.spec.ts`
+- 4 benchmark groups: Index Build (469 specs, 83ms mean), Graph Analysis (351 nodes/812 edges, 0.8ms), Assembly (2863 blocks/sec), CLI Index Build (66ms)
+- All 16 tests pass with `RUN_BENCHMARKS=1`
+- Skipped by default (via `describe.skipIf`); CI runs without performance overhead
+- `npm run build` clean, `npm test` — 1599 pass, 0 fail
+
 ## Backlog
-- Benchmark suite for assembly/complexity/index build times
 - IDE extension (LSP integration)

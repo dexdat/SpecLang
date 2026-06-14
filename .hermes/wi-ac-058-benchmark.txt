@@ -1,0 +1,52 @@
+You are tower-axiom. Your task: create a real benchmark test suite for SpecLang that measures actual performance of the assembly, complexity analysis, and index build pipelines.
+
+**CRITICAL: This MUST use real project modules — NOT simulated/mock workloads.** The existing tests in tests/performance/ (daemon.test.ts, mcp.test.ts) use fake/simulated workloads (creating empty arrays, JSON.parse). The new benchmarks must import and call the REAL indexer, assembler, and analyzer.
+
+**WHAT TO BUILD:**
+
+Create exactly ONE file: `tests/performance/benchmark.test.ts`
+
+This file must:
+
+1. **Index Build Benchmark** — Use the real indexer:
+   - `import { generateIndex } from '../../src/indexer/index.js'`
+   - Measure `generateIndex({ rootDir: '.' })` (or a subset) multiple times
+   - Report: mean, median, p90, p95, p99 in milliseconds
+   - Target: build completes, no crash, outputs stats
+
+2. **Assembly Benchmark** — Use the real assembler:
+   - Execute `npm run assemble:all` via child_process.execSync
+   - Measure end-to-end assembly time
+   - Report: total time, files assembled, blocks per second
+
+3. **Complexity/Graph Analysis Benchmark** — Use the real graph module:
+   - Import from `../../src/indexer/graph.js`
+   - Build a dependency graph, measure cycle detection, transitive closure
+   - Test on the real spec set (index.json from generateIndex)
+
+4. **CLI index build Benchmark** — Use the real CLI:
+   - Execute `npx tsx bin/speclang index --stats` (or equivalent)
+   - Measure wall-clock time
+
+**Structure the test file like the existing performance tests:**
+- Use vitest describe/it
+- Use the same BenchmarkResult interface and calculateStats function (from existing tests)
+- Each benchmark is a vitest test with specific assertions (e.g., "should complete in under N ms")
+- Skip benchmarks with `it.skip` if the data set is too large for CI, but still runnable with `RUN_BENCHMARKS=1`
+
+**DO NOT:**
+- Write simulated workloads
+- Create fake data
+- Mock modules
+- Write stubs
+
+**DO:**
+- Use real imports from ../../src/indexer/index.js and ../../src/indexer/graph.js
+- Use real child_process.execSync for CLI commands
+- Reference the real specs/ directory for index data
+- Add a SKIP guard: `describe.skipIf(!process.env.RUN_BENCHMARKS)('...')` for expensive tests
+
+**Verification:** After writing, the file must:
+1. Import cleanly (no "module not found")
+2. Be found by vitest: `npx vitest run tests/performance/benchmark.test.ts` (tests may skip)
+3. When run with `RUN_BENCHMARKS=1 npx vitest run tests/performance/benchmark.test.ts`, actually execute and produce timing data
