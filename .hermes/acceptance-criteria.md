@@ -119,5 +119,23 @@
 - Skipped by default (via `describe.skipIf`); CI runs without performance overhead
 - `npm run build` clean, `npm test` — 1599 pass, 0 fail
 
+### Phase 6: IDE Integration (Active)
+
+| ID | Feature | Verification | Status |
+|----|---------|-------------|--------|
+| **6.1** | **LSP server scaffold** — initialize, validate headers, resolve refs | 5+ tests pass, `npm run build` clean | 🔄 in_progress |
+
+## Active Criteria
+
+### AC-060: LSP server scaffold — basic language server for .spec.md files
+**Goal:** Language server starts on stdio, handles initialize/shutdown, provides diagnostics for spec header validity and @ref resolution.
+**Status:** in_progress
+**Axiom work item:** wi-ac-060-lsp-scaffold.txt
+**How to verify:**
+  1. `npm run build` — clean
+  2. `npx vitest run tests/lsp/server.test.ts` — 5+ tests pass
+  3. `node bin/speclang-lsp --help` — shows usage
+
 ## Backlog
-- IDE extension (LSP integration)
+- VSCode extension packaging (gated on AC-060)
+- Advanced LSP features: go-to-definition, hover info, autocomplete, block outline
