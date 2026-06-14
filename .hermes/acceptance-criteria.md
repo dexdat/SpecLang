@@ -140,6 +140,19 @@
 - Dependencies: vscode-languageserver@10.0.0, vscode-languageserver-textdocument@1.0.12
 - Container issue: opencode-speclang hung (zombie opencode from pro-model run). Hermes wrote files directly per delegation-infrastructure-broken exception.
 
+## Active Criteria
+
+### AC-061: VSCode Extension Packaging ✅
+**Goal:** Package the SpecLang LSP server as a VSCode extension so users can install it and get language support for .spec.md files.
+**Status:** passed ✅
+**Verified:** 2026-06-14
+**Evidence:**
+- `cd extensions/vscode && npm install` — 186 packages, 0 vulnerabilities
+- `npm run compile` — tsc exit 0, produces dist/extension.js + .d.ts + .js.map
+- `npx vsce package` — produces speclang-0.1.0.vsix (9 files, 5.26 KB)
+- 7 files created: package.json, tsconfig.json, .vscodeignore, src/extension.ts, language-configuration.json, speclang.tmLanguage.json, snippets.json
+- `npm run build && npm test` — 1609 passed, 0 failures
+- Container issue: opencode-speclang zombie processes stalled Axiom submission. Hermes wrote files directly per delegation-infrastructure-broken exception (same pattern as AC-060).
+
 ## Backlog
-- VSCode extension packaging (gated on AC-060)
 - Advanced LSP features: go-to-definition, hover info, autocomplete, block outline

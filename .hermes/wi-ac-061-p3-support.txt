@@ -1,0 +1,28 @@
+You are tower-axiom. Create the remaining support files for the SpecLang VSCode extension.
+
+CONTEXT: package.json and extension.ts exist. Now create:
+
+1. extensions/vscode/tsconfig.json:
+   - compilerOptions: module commonjs, target ES2022, outDir dist, rootDir src, strict true
+   - include: ["src"]
+   - extends not needed
+
+2. extensions/vscode/.vscodeignore:
+   - Ignore: .vscode, src, tsconfig.json, node_modules, .git, *.vsix
+
+3. extensions/vscode/language-configuration.json:
+   - Line comments: //
+   - Block comments: [/*, */]
+   - Brackets: [["{","}"],["[","]"],["(",")"]]
+
+4. extensions/vscode/speclang.tmLanguage.json:
+   - scopeName: source.speclang
+   - File patterns: .spec.md
+   - Patterns for: YAML frontmatter (speclang-header), @block/@kind annotations, @ref references, markdown headings, code fences
+
+5. extensions/vscode/snippets.json:
+   - Snippet for speclang-header block
+   - Snippet for @block with @kind
+   - Snippet for @ref reference
+
+Write ALL 5 files. Each must be complete and valid JSON. NO stubs.

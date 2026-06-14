@@ -1,0 +1,20 @@
+You are tower-axiom. Create the VSCode extension activation script for SpecLang.
+
+CONTEXT: The LSP server is at bin/speclang-lsp (compiled to dist/lsp/server.js). The server communicates over stdio using LSP. The package.json defines speclang language for .spec.md files.
+
+WRITE THIS FILE: extensions/vscode/src/extension.ts
+
+Requirements:
+- Import vscode and vscode-languageclient
+- activate() function: registers for .spec.md files, creates LanguageClient with:
+  - id: speclang
+  - name: SpecLang
+  - serverOptions: spawn speclang-lsp from config path or PATH
+  - documentSelector: [{ scheme: 'file', language: 'speclang' }]
+  - Register onDidChangeConfiguration handler
+- deactivate() function: stops the client if running
+- Export activate and deactivate
+
+Use vscode-languageclient's LanguageClient class. The server path should be read from vscode.workspace.getConfiguration('speclang.lsp').get('path', 'speclang-lsp').
+
+Write REAL TypeScript, not stubs. Every import must resolve.

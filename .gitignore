@@ -81,3 +81,4 @@ validation_results.json
 .ralph/state/
 .ralph/backups/
 target/
+extensions/vscode/*.vsix

@@ -1,0 +1,50 @@
+You are tower-axiom. Build a VSCode extension that packages the SpecLang LSP server.
+
+CONTEXT: SpecLang already has a working LSP server at src/lsp/server.ts, compiled to dist/lsp/server.js. The server handles initialize/shutdown and provides diagnostics for spec header validity and @ref resolution. 10 tests pass. The binary entry point is bin/speclang-lsp.
+
+YOUR JOB: Create a VSCode extension under extensions/vscode/ that packages this LSP server.
+
+DELIVERABLES:
+1. extensions/vscode/package.json — VSCode extension manifest
+   - name: speclang
+   - displayName: SpecLang
+   - description: Language support for SpecLang .spec.md files
+   - activationEvents: onLanguage:speclang
+   - contributes.languages: speclang (.spec.md files)
+   - contributes.configuration: speclang.lsp.path (path to speclang-lsp binary)
+   - engines.vscode: ^1.85.0
+   - main: ./dist/extension.js
+
+2. extensions/vscode/tsconfig.json — TypeScript config for the extension
+   - Compile extension.ts to dist/
+
+3. extensions/vscode/src/extension.ts — Extension activation script
+   - Activates on .spec.md files
+   - Spawns the Speclang LSP server as a child process
+   - Uses vscode.languages.LanguageClient
+   - Handles configuration changes
+   - Graceful deactivation
+
+4. extensions/vscode/.vscodeignore — Files to exclude from .vsix
+
+5. extensions/vscode/language-configuration.json — Brackets, comments, etc.
+
+6. extensions/vscode/snippets.json — Useful snippets for .spec.md files
+
+7. extensions/vscode/speclang.tmLanguage.json — Basic TextMate grammar for .spec.md files
+   - Highlight: speclang-header blocks, @block/@kind annotations, @ref references
+
+CRITICAL RULES:
+- Use TypeScript. Compile with tsc.
+- LSP server path should default to 'speclang-lsp' (resolved from PATH) with a config override
+- The extension MUST work with the existing LSP server - do NOT modify src/lsp/server.ts
+- Use vscode-languageclient@9.0.1 for the client library
+- Write REAL code, not stubs. Every import must resolve.
+- Add NO new features beyond packaging. This is packaging ONLY.
+- Container has NO Node.js package manager. Just WRITE the files. Testing and npm install happen on the host.
+
+After writing all files, verify:
+- All 7 files exist
+- package.json has all required fields
+- extension.ts imports resolve correctly
+- No syntax errors visible

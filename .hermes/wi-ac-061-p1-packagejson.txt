@@ -1,0 +1,22 @@
+You are tower-axiom. Create the package.json for the SpecLang VSCode extension.
+
+CONTEXT: SpecLang has a working LSP server at bin/speclang-lsp (compiled to dist/lsp/server.js). We're packaging it as a VSCode extension.
+
+WRITE THIS FILE: extensions/vscode/package.json
+
+The extension:
+- name: speclang
+- displayName: SpecLang
+- description: Language support for SpecLang .spec.md files — diagnostics, header validation, and @ref resolution
+- version: 0.1.0
+- publisher: nousresearch
+- engines.vscode: ^1.85.0
+- activationEvents: ["onLanguage:speclang"]
+- main: ./dist/extension.js
+- contributes.languages: [{id: "speclang", extensions: [".spec.md"], aliases: ["SpecLang"]}]
+- contributes.configuration: speclang.lsp.path (string, default "speclang-lsp", description "Path to the speclang-lsp binary")
+- scripts: compile (tsc -p ./), watch, package (vsce package)
+- devDependencies: @types/vscode ^1.85.0, typescript ^5.3.0, @vscode/vsce ^2.22.0
+- dependencies: vscode-languageclient ^9.0.1
+
+Write a complete, valid package.json. NO stubs. All fields must be real.
