@@ -1,0 +1,39 @@
+You are tower-axiom working on SpecLang. IMPORTANT: This is a TypeScript project. Pin your Node version via .node-version.
+
+GOAL: Add a `speclang dashboard` CLI command that serves the SpecLang web dashboard.
+
+CONTEXT:
+- The dashboard server already exists at `src/dashboard/server.ts` — it exports `startServer(port, projectDir)` which starts an Express server on the given port serving:
+  - `/api/health` — scans specs, returns health report (totalSpecs, withHeader, withImplementation, metrics)
+  - `/api/specs` — lists all spec files with metadata
+  - `/api/cascade` — cascade status (idle/running/paused)
+  - Static files from `dist/dashboard/` (the Vite-built SPA)
+  - The server auto-serves `dist/dashboard/index.html` for the SPA
+
+- The CLI entrypoint is `bin/speclang` (Commander.js, plain JS with require()). 
+- The `start` command already has dashboard options: `-p, --port`, `--no-dashboard`
+- The `daemon start` subcommand similarly has `--dashboard` and `-p, --port`
+
+WHAT TO DO:
+1. Add a `dashboard` subcommand to `bin/speclang` that:
+   - Takes `-p, --port <port>` option (default 3000)
+   - Takes `-d, --dir <directory>` option (default cwd)
+   - Calls `startServer(port, projectDir)` from `src/dashboard/server.ts`
+   - Shows the startup banner ("SpecLang Dashboard Server" with project dir and URLs)
+
+2. The code pattern should follow existing commands in `bin/speclang` — use `require()` for dist modules, handle `MODULE_NOT_FOUND` gracefully.
+
+3. Add the command to the `--help` output naturally (Commander handles this).
+
+4. CRITICAL: ONLY add the dashboard command. Do NOT modify any other commands. Do NOT add new features. Do NOT touch the daemon or start commands.
+
+VERIFICATION:
+- `npm run build` must pass
+- `npm test` must pass (0 failures)
+- `node bin/speclang dashboard --help` must show dashboard command help
+- `node bin/speclang --help` must list dashboard in the commands
+
+PLACE THE COMMAND near the other top-level commands (after 'stop', before 'validate').
+
+DO NOT create or switch branches. Work on the current branch.
+DO NOT run git commands. Just make the code change.

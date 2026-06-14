@@ -95,7 +95,18 @@
 - Systemd unit file: `deploy/speclangd.service` with sandboxing (ProtectSystem=strict, NoNewPrivileges, PrivateTmp, etc.), Restart=on-failure, journal logging
 - Cargo.toml: tokio feature `signal` added
 
+### AC-057: `speclang dashboard` CLI command ✅
+**Goal:** Users can run `speclang dashboard` to serve the web dashboard with live health data, spec listing, and cascade controls.
+**Status:** passed ✅
+**Verified:** 2026-06-14
+**Evidence:**
+- `node bin/speclang dashboard --port 3099` starts server, serves dashboard SPA at `http://localhost:3099/` (HTTP 200)
+- `/api/health` returns live data: 501 specs, 491 with header, 192 with implementation
+- `/api/specs`, `/api/cascade` endpoints operational
+- `node bin/speclang --help` shows dashboard command; `speclang dashboard --help` shows options
+- `npm run build` — clean; `npm test` — 1599 passed, 0 failures
+- Command placed between `stop` and `daemon` in CLI, uses `npx tsx` (dashboard excluded from tsc per tsconfig.json line 41)
+
 ## Backlog
-- Vite dashboard SSR or static deployment
 - Benchmark suite for assembly/complexity/index build times
 - IDE extension (LSP integration)

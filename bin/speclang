@@ -174,6 +174,33 @@ program
     }
   });
 
+// Dashboard command
+program
+  .command('dashboard')
+  .description('Start the SpecLang web dashboard')
+  .option('-p, --port <port>', 'Dashboard port', '3000')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .action(async (options) => {
+    const projectDir = path.resolve(options.dir);
+    const port = parseInt(options.port, 10);
+
+    // Dashboard server runs via tsx (excluded from tsc build — see tsconfig.json)
+    const { execSync } = require('child_process');
+    const env = { ...process.env, PORT: String(port), PROJECT_DIR: projectDir };
+    const serverPath = path.join(__dirname, '..', 'src', 'dashboard', 'server.ts');
+
+    console.log('🚀 SpecLang Dashboard Server');
+    console.log(`   Project: ${projectDir}`);
+    console.log(`   Dashboard: http://localhost:${port}`);
+    console.log(`   API: http://localhost:${port}/api/health`);
+
+    try {
+      execSync(`npx tsx "${serverPath}"`, { env, stdio: 'inherit' });
+    } catch (err) {
+      process.exit(err.status || 1);
+    }
+  });
+
 // Daemon subcommands
 const daemon = program
   .command('daemon')
