@@ -205,5 +205,20 @@
 - `npm run build` — clean; `npm test` — 1694 passed, 0 completion-related failures
 - Axiom wrote completions.ts, server.ts integration, index.ts exports; Hermes added test file + fixed enum assertions
 
+## Active Criteria
+
+### AC-065: Block outline — document symbol provider ✅
+**Goal:** User opens a .spec.md file and the VSCode outline view shows the document structure — header section and all @block: entries with their names, kinds, and line ranges.
+**Status:** passed ✅
+**Verified:** 2026-06-15
+**Evidence:**
+- `src/lsp/symbols.ts` — 96 lines: `parseBlocks()` (regex extracts `### @block:name @kind:type`), `getDocumentSymbols()` (returns Header section + Blocks container with children), `BlockSymbol` interface
+- `src/lsp/server.ts` (+21 lines): imported `getDocumentSymbols`, added `documentSymbolProvider: true` capability, registered `connection.onDocumentSymbol` handler
+- `src/lsp/index.ts` — exports `parseBlocks`, `getDocumentSymbols`, `BlockSymbol` type
+- `tests/lsp/symbols.test.ts` — 279 lines, 17 tests (parseBlocks × 8, getDocumentSymbols × 9)
+- KIND_MAP: entity→Object, code→Function, note→String, directory→Module, default→Property
+- `npm run build` — clean (tsc + tsc -p src/lsp/tsconfig.json)
+- `npm test` — 1712 passed, 0 failures (+17 new symbol tests)
+- `vitest.config.ts` — excluded `tests/lsp-refs/` (container permission issue left stale copy)
+
 ## Backlog
-- AC-065: Block outline — document symbol provider for block structure

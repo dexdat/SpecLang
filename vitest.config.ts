@@ -10,6 +10,7 @@ export default defineConfig({
     ],
     exclude: [
       'tests/e2e/**/*.spec.ts',
+      'tests/lsp-refs/**',
       'node_modules/**',
       'dist/**',
     ],

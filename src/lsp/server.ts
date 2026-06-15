@@ -28,6 +28,7 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { parseReferences, resolveReference, resolveFileRef } from './references.js';
 import { getSpecCompletions, getBlockCompletions, detectCompletionContext } from './completions.js';
+import { getDocumentSymbols } from './symbols.js';
 
 export interface SpecHeader {
   id?: string;
@@ -167,6 +168,7 @@ export function startServer(): void {
           interFileDependencies: false,
           workspaceDiagnostics: false,
         },
+        documentSymbolProvider: true,
       },
     };
   });
@@ -286,6 +288,15 @@ export function startServer(): void {
     }
 
     return [];
+  });
+
+  // Document symbols — outline of blocks in the spec
+  connection.onDocumentSymbol((params) => {
+    const doc = documents.get(params.textDocument.uri);
+    if (!doc) return [];
+
+    const text = doc.getText();
+    return getDocumentSymbols(text);
   });
 
   connection.onShutdown(() => {

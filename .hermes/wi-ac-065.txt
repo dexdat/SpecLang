@@ -1,0 +1,59 @@
+You are tower-axiom. Build the DocumentSymbol provider for the SpecLang LSP.
+
+## Context
+The SpecLang LSP server (src/lsp/server.ts) currently supports: diagnostics, go-to-definition, hover, and completions. The next feature is AC-065: Document Symbols.
+
+## What to build
+
+### 1. Create src/lsp/symbols.ts
+Implement these exported functions:
+
+```typescript
+export interface BlockSymbol {
+  name: string;
+  kind: string;
+  line: number;        // 0-indexed line of the `### @block:` header
+  endLine: number;     // 0-indexed line where this block's content ends (next block or EOF)
+}
+
+/**
+ * Parse all blocks from a spec document.
+ * Blocks are lines matching: ### @block:<name> @kind:<kind>
+ * A block spans from its `### @block:` line until the next `### @block:` line or EOF.
+ */
+export function parseBlocks(text: string): BlockSymbol[]
+
+/**
+ * Build DocumentSymbol[] from a spec document's blocks for the LSP outline.
+ * Includes:
+ * - A SECTION symbol for the header (line 1 to closing ---)
+ * - Each @block: as a child under a "Blocks" container, with kind mapped to SymbolKind:
+ *   entity→Object, code→Function, note→String, directory→Module, default→Property
+ */
+export function getDocumentSymbols(text: string): DocumentSymbol[]
+```
+
+### 2. Integrate into src/lsp/server.ts
+- Import `{ getDocumentSymbols }` from `./symbols.js`
+- Add `documentSymbolProvider: true` to the capabilities
+- Register `connection.onDocumentSymbol` handler:
+  - Get the document text
+  - Call `getDocumentSymbols(text)`
+  - Return the symbols array
+
+### 3. Export from src/lsp/index.ts
+- Add: `export { parseBlocks, getDocumentSymbols } from './symbols';`
+- Add: `export type { BlockSymbol } from './symbols';`
+
+### 4. Create tests/lsp/symbols.test.ts
+Test these cases:
+- parseBlocks: empty doc returns [], doc with no blocks returns [], single block, multiple blocks, blocks with different kinds
+- getDocumentSymbols: returns header section symbol + blocks container, each block has correct name/kind/range, block without @kind gets default "property" kind
+- Test with realistic spec content: header YAML followed by several blocks
+
+Use vitest with describe/it/expect. Import from '../../src/lsp/symbols.js' and `vscode-languageserver-types` for DocumentSymbol, SymbolKind.
+
+CRITICAL: Container has NO npm/node runtime. Just WRITE the files. Testing happens on the host.
+DO NOT run npm install, npm test, or any build commands. DO NOT create or switch git branches.
+
+After writing all three files, state exactly what files you created and their line counts.
