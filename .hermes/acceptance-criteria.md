@@ -182,7 +182,17 @@
 - `npm run build` — clean; `npm test` — 1623 passed, 0 failures
 - Container model prefix bug discovered: `opencode-go/` deadlocks on v1.15.13; `deepseek/` prefix works for SpecLang container
 
+## Active Criteria
+
+### AC-063: Hover info — show spec metadata on hover ✅
+**Goal:** When user hovers over a .spec.md file in VSCode, the LSP server shows spec metadata (id, version, layer, tags, agent_support, short description).
+**Status:** passed ✅
+**Verified:** 2026-06-15
+**Evidence:**
+- `src/lsp/server.ts` (+51 lines): exported `SpecHeader` interface (tags, agent_support, short, project_level fields), exported `parseHeader()`, added `hoverProvider: true` capability, registered `connection.onHover` handler with markdown-formatted metadata
+- `tests/lsp/hover.test.ts` (+148 lines): 7 tests (full metadata, partial fields, outside header, on --- markers, no header, any header line, markdown formatting)
+- `npm run build` — clean; `npm test` — 1649 passed (+7), 0 failures
+
 ## Backlog
-- AC-063: Hover info — show spec metadata on hover
 - AC-064: Autocomplete — suggest @ref: completions
 - AC-065: Block outline — document symbol provider for block structure

@@ -18,22 +18,29 @@ import {
   InitializeResult,
   Diagnostic,
   DiagnosticSeverity,
+  Hover,
+  MarkupContent,
+  MarkupKind,
 } from 'vscode-languageserver/node';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { parseReferences, resolveReference } from './references.js';
 
-interface SpecHeader {
+export interface SpecHeader {
   id?: string;
   version?: string;
   layer?: string | number;
+  tags?: string;
+  agent_support?: string;
+  short?: string;
+  project_level?: string;
 }
 
 /**
  * Parse YAML-like frontmatter from a spec document.
  * SpecLang headers use simple YAML between --- markers at the top of the file.
  */
-function parseHeader(text: string): { header: SpecHeader; bodyStart: number } {
+export function parseHeader(text: string): { header: SpecHeader; bodyStart: number } {
   const header: SpecHeader = {};
   let bodyStart = 0;
 
@@ -64,6 +71,18 @@ function parseHeader(text: string): { header: SpecHeader; bodyStart: number } {
           break;
         case 'layer':
           header.layer = value;
+          break;
+        case 'tags':
+          header.tags = value;
+          break;
+        case 'agent_support':
+          header.agent_support = value;
+          break;
+        case 'short':
+          header.short = value;
+          break;
+        case 'project_level':
+          header.project_level = value;
           break;
       }
     }
@@ -135,6 +154,7 @@ export function startServer(): void {
     return {
       capabilities: {
         textDocumentSync: TextDocumentSyncKind.Full,
+        hoverProvider: true,
         diagnosticProvider: {
           documentSelector: [{ language: 'speclang', pattern: '**/*.spec.md' }],
           interFileDependencies: false,
@@ -183,6 +203,37 @@ export function startServer(): void {
       range: {
         start: { line: location.line, character: location.character },
         end: { line: location.line, character: location.character },
+      },
+    };
+  });
+
+  // Hover — show spec metadata when hovering over the header area
+  connection.onHover((params): Hover | null => {
+    const doc = documents.get(params.textDocument.uri);
+    if (!doc) return null;
+
+    const text = doc.getText();
+    const { header, bodyStart } = parseHeader(text);
+
+    if (bodyStart === 0) return null;
+
+    const line = params.position.line;
+    if (line < 1 || line > bodyStart - 2) return null;
+
+    const parts: string[] = ['**SpecLang Spec**'];
+
+    if (header.id !== undefined) parts.push(`- **ID:** ${header.id}`);
+    if (header.version !== undefined) parts.push(`- **Version:** ${header.version}`);
+    if (header.layer !== undefined) parts.push(`- **Layer:** ${header.layer}`);
+    if (header.tags !== undefined) parts.push(`- **Tags:** ${header.tags.replace(/^\[|\]$/g, '')}`);
+    if (header.agent_support !== undefined) parts.push(`- **Agent Support:** ${header.agent_support}`);
+    if (header.short !== undefined) parts.push(`- **Short:** ${header.short}`);
+    if (header.project_level !== undefined) parts.push(`- **Project Level:** ${header.project_level}`);
+
+    return {
+      contents: {
+        kind: MarkupKind.Markdown,
+        value: parts.join('\n'),
       },
     };
   });

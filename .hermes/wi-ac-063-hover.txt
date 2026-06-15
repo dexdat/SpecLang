@@ -1,0 +1,68 @@
+You are tower-axiom. Implement AC-063: Hover info for SpecLang LSP server.
+
+## Goal
+When a user hovers over a .spec.md file in VSCode, the LSP server shows spec metadata (id, version, layer, tags, agent_support, short description) as a hover tooltip.
+
+## What exists
+- `src/lsp/server.ts` — LSP server with diagnostics, go-to-definition
+- `src/lsp/references.ts` — @ref: resolver (parseReferences, resolveReference, findBlockInFile)
+- `tests/lsp/server.test.ts` — 10 tests for header parsing + diagnostics
+- `tests/lsp/references.test.ts` — 17 tests for references
+
+## What to do
+
+### 1. Add `parseHeader` export to `src/lsp/server.ts`
+The `parseHeader()` function is currently private. Make it exported so it can be imported by tests and the hover module.
+- Add proper types for the full header (id, version, layer, tags, agent_support, short, project_level)
+- Export `parseHeader` and the `SpecHeader` interface
+
+### 2. Add hover handler to `src/lsp/server.ts`
+In the `startServer()` function:
+- Add `hoverProvider: true` to the capabilities returned by `onInitialize`
+- Register `connection.onHover` handler
+- When user hovers within the header area (lines between --- markers), show ALL parsed header fields as formatted markdown:
+  ```
+  **SpecLang Spec**
+  - **ID:** @specs/test-spec
+  - **Version:** 1.0.0
+  - **Layer:** 5
+  - **Tags:** example, feature
+  - **Agent Support:** agent_assonomous
+  ```
+  If a field is present in the header, show it. Skip undefined fields.
+- If the user hovers outside the header area (past the closing ---), return null (no hover)
+- If the document has no valid header, return null
+
+### 3. Write tests in `tests/lsp/hover.test.ts`
+Test:
+- Hover over header area returns metadata with all fields
+- Hover over header area with partial fields shows only present fields
+- Hover outside header area returns null
+- Hover over file with no header returns null
+- Hover over specific line within header (e.g., line 1 = id) still returns the full metadata
+- The returned hover content uses MarkupContent with kind='markdown'
+
+### 4. Build and test
+After implementing:
+- `npm run build` MUST pass (tsc + tsc -p src/lsp/tsconfig.json)
+- `npx vitest run tests/lsp/hover.test.ts` MUST pass all tests
+- `npm test` MUST still pass (0 new failures)
+
+## Constraints
+- DO NOT modify go-to-definition or diagnostics behavior
+- DO NOT change the test framework
+- DO NOT create new npm dependencies
+- Import from `vscode-languageserver` for Hover, MarkupContent, MarkupKind types
+- Use `MarkupContent` with `kind: MarkupKind.Markdown` for hover content
+- Keep the implementation under 80 new lines of code
+- CRITICAL: ONLY modify files in src/lsp/ and tests/lsp/. Do NOT touch any other files.
+
+## Verification
+After you write the code, run:
+```bash
+npm run build 2>&1
+npx vitest run tests/lsp/hover.test.ts 2>&1
+npm test 2>&1 | tail -5
+```
+
+If all three commands succeed, report "DONE". If any fail, fix and retry.
