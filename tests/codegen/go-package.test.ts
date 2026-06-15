@@ -3,243 +3,235 @@
  * Source: @speclang/compiler.spec.dir/go
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   GoPackageGenerator,
   createGoPackageGenerator,
-  type GoPackageFile,
-  type GoPackageOptions,
+  type GoPackageResult,
+  type GoGeneratorOptions,
 } from '../../src/compiler/go/generator';
-import type { SpecField, SpecMethod } from '../../src/compiler/go/generator';
+import type { SpecBlock, SpecField, SpecMethod, SpecInterface } from '../../src/compiler/go/generator';
 
 describe('GoPackageGenerator', () => {
-  let pkgGen: GoPackageGenerator;
+  const defaultOptions: GoGeneratorOptions = {
+    packageName: 'testpkg',
+    addJsonTags: true,
+    addConstructor: true,
+    addInterfaces: true,
+  };
 
-  beforeEach(() => {
-    pkgGen = createGoPackageGenerator({
-      module: 'github.com/test/mypackage',
-      goVersion: '1.22',
-      packageName: 'mypackage',
-    });
-  });
+  describe('generateFromBlocks', () => {
+    it('should generate 3 files from 3 block kinds', () => {
+      const gen = createGoPackageGenerator(defaultOptions);
 
-  describe('createGoPackageGenerator', () => {
-    it('should create a GoPackageGenerator with default options', () => {
-      const gen = createGoPackageGenerator();
-      expect(gen).toBeInstanceOf(GoPackageGenerator);
-      expect(gen.fileCount).toBe(0);
-    });
-
-    it('should create with custom module options', () => {
-      const gen = createGoPackageGenerator({
-        module: 'github.com/foo/bar',
-        goVersion: '1.23',
-        packageName: 'bar',
-      });
-      expect(gen.fileCount).toBe(0);
-    });
-
-    it('should create without go.mod generation', () => {
-      const gen = createGoPackageGenerator({ addGoMod: false });
-      const files = gen.generateAll();
-      const hasGoMod = files.some(f => f.filename === 'go.mod');
-      expect(hasGoMod).toBe(false);
-    });
-  });
-
-  describe('addBlock', () => {
-    it('should add a struct block as a .go file', () => {
-      const fields: SpecField[] = [
-        { name: 'id', type: 'UUID' },
-        { name: 'name', type: 'String' },
+      const userFields: SpecField[] = [
+        { name: 'ID', type: 'UUID' },
+        { name: 'Name', type: 'String' },
+        { name: 'Email', type: 'String' },
       ];
 
-      pkgGen.addBlock({
-        name: 'User',
-        package: 'mypackage',
-        fields,
+      const repoMethods: SpecMethod[] = [
+        {
+          name: 'FindByID',
+          params: [{ name: 'id', type: 'String' }],
+          returns: ['*User', 'error'],
+        },
+        {
+          name: 'Save',
+          params: [{ name: 'user', type: 'User' }],
+          returns: ['error'],
+        },
+      ];
+
+      const serviceMethods: SpecMethod[] = [
+        {
+          name: 'Execute',
+          params: [{ name: 'input', type: 'String' }],
+          returns: ['*User', 'error'],
+        },
+      ];
+
+      const blocks: SpecBlock[] = [
+        {
+          name: 'User',
+          kind: 'entity',
+          fields: userFields,
+        },
+        {
+          name: 'UserRepository',
+          kind: 'interface',
+          interfaces: [{ name: 'UserRepository', methods: repoMethods }],
+        },
+        {
+          name: 'CreateUser',
+          kind: 'operation',
+          methods: serviceMethods,
+        },
+      ];
+
+      const result: GoPackageResult = gen.generateFromBlocks(blocks, 'testpkg');
+
+      expect(result.pkgName).toBe('testpkg');
+      expect(result.files).toHaveLength(3);
+
+      const filenames = result.files.map(f => {
+        // Extract filename hint from the generated code's Source comment
+        const match = f.code.match(/Source:\s*(.+)/);
+        return match ? match[1] : '';
       });
 
-      expect(pkgGen.fileCount).toBe(1);
-      const files = pkgGen.generateAll();
-      const goFiles = files.filter(f => f.filename.endsWith('.go'));
-      expect(goFiles.length).toBe(1);
-      expect(goFiles[0].filename).toBe('user.go');
-      expect(goFiles[0].content).toContain('package mypackage');
-      expect(goFiles[0].content).toContain('type User struct');
+      const modelsFile = result.files.find(f => f.code.includes('Source: models.go'));
+      const interfacesFile = result.files.find(f => f.code.includes('Source: interfaces.go'));
+      const serviceFile = result.files.find(f => f.code.includes('Source: service.go'));
+
+      expect(modelsFile).toBeDefined();
+      expect(interfacesFile).toBeDefined();
+      expect(serviceFile).toBeDefined();
+
+      // models.go should have User struct
+      expect(modelsFile!.code).toContain('package testpkg');
+      expect(modelsFile!.code).toContain('type User struct');
+      expect(modelsFile!.code).toContain('ID');
+      expect(modelsFile!.code).toContain('Name');
+      expect(modelsFile!.code).toContain('Email');
+
+      // interfaces.go should have UserRepository interface
+      expect(interfacesFile!.code).toContain('package testpkg');
+      expect(interfacesFile!.code).toContain('type UserRepository interface');
+      expect(interfacesFile!.code).toContain('FindByID');
+      expect(interfacesFile!.code).toContain('Save');
+      expect(interfacesFile!.code).toContain('UserRepository interface');
+
+      // service.go should have CreateUser methods
+      expect(serviceFile!.code).toContain('package testpkg');
+      expect(serviceFile!.code).toContain('func (r *CreateUser) Execute');
+      expect(serviceFile!.code).toContain('input string');
     });
 
-    it('should add multiple blocks as separate files', () => {
-      pkgGen.addBlock({
-        name: 'User',
-        package: 'mypackage',
-        fields: [{ name: 'name', type: 'String' }],
-      });
-      pkgGen.addBlock({
-        name: 'Product',
-        package: 'mypackage',
-        fields: [{ name: 'price', type: 'Float64' }],
-      });
+    it('should produce compilable Go files with correct structure', () => {
+      const gen = createGoPackageGenerator(defaultOptions);
 
-      expect(pkgGen.fileCount).toBe(2);
-      const files = pkgGen.generateAll();
-      const filenames = files.map(f => f.filename);
-      expect(filenames).toContain('user.go');
-      expect(filenames).toContain('product.go');
-    });
+      const fields: SpecField[] = [
+        { name: 'ID', type: 'Int64' },
+        { name: 'Title', type: 'String' },
+      ];
 
-    it('should handle blocks with methods', () => {
       const methods: SpecMethod[] = [
         {
-          name: 'GetName',
+          name: 'GetTitle',
           params: [],
           returns: ['string'],
         },
       ];
 
-      pkgGen.addBlock({
-        name: 'Widget',
-        package: 'mypackage',
-        fields: [{ name: 'name', type: 'String' }],
-        methods,
-      });
-
-      const files = pkgGen.generateAll();
-      const widgetFile = files.find(f => f.filename === 'widget.go');
-      expect(widgetFile).toBeDefined();
-      expect(widgetFile!.content).toContain('func (r *Widget) GetName() string');
-    });
-  });
-
-  describe('addStruct', () => {
-    it('should add a struct directly', () => {
-      const fields: SpecField[] = [
-        { name: 'email', type: 'String' },
-        { name: 'age', type: 'Int' },
-      ];
-
-      pkgGen.addStruct('Person', fields);
-
-      expect(pkgGen.fileCount).toBe(1);
-      const files = pkgGen.generateAll();
-      const personFile = files.find(f => f.filename === 'person.go');
-      expect(personFile).toBeDefined();
-      expect(personFile!.content).toContain('type Person struct');
-      expect(personFile!.content).toContain('Email string');
-      expect(personFile!.content).toContain('Age int');
-    });
-
-    it('should use custom package name', () => {
-      pkgGen.addStruct('Config', [], 'configpkg');
-      const files = pkgGen.generateAll();
-      const configFile = files.find(f => f.filename === 'config.go');
-      expect(configFile!.content).toContain('package configpkg');
-    });
-  });
-
-  describe('addInterface', () => {
-    it('should add an interface as a file', () => {
-      const methods: SpecMethod[] = [
+      const blocks: SpecBlock[] = [
         {
-          name: 'FindByID',
-          params: [{ name: 'id', type: 'Int64' }],
-          returns: ['string', 'error'],
+          name: 'Todo',
+          kind: 'entity',
+          fields,
+          methods,
+        },
+        {
+          name: 'UserError',
+          kind: 'error',
+          fields: [
+            { name: 'Code', type: 'String' },
+            { name: 'Message', type: 'String' },
+          ],
         },
       ];
 
-      pkgGen.addInterface('UserRepository', methods);
+      const result = gen.generateFromBlocks(blocks, 'testpkg');
 
-      expect(pkgGen.fileCount).toBe(1);
-      const files = pkgGen.generateAll();
-      const ifaceFile = files.find(f => f.filename === 'user_repository_interface.go');
-      expect(ifaceFile).toBeDefined();
-      expect(ifaceFile!.content).toContain('type UserRepository interface');
-      expect(ifaceFile!.content).toContain('FindByID(id int64) (string, error)');
+      expect(result.files.length).toBeGreaterThanOrEqual(2);
+
+      for (const file of result.files) {
+        // Every Go file must have a package declaration
+        expect(file.code).toMatch(/^\/\/ Code generated by SpecLang/);
+        expect(file.code).toContain('package testpkg');
+        expect(file.code).toContain('DO NOT EDIT');
+
+        // Must not have duplicate package declarations
+        const pkgMatches = (file.code.match(/^package /gm) || []);
+        expect(pkgMatches.length).toBe(1);
+
+        // Must have properly closed braces
+        const openBraces = (file.code.match(/\{/g) || []).length;
+        const closeBraces = (file.code.match(/\}/g) || []).length;
+        expect(openBraces).toBe(closeBraces);
+
+        // Verify GeneratedGoCode interface
+        expect(file).toHaveProperty('code');
+        expect(file).toHaveProperty('imports');
+        expect(file).toHaveProperty('package');
+        expect(file.package).toBe('testpkg');
+      }
     });
   });
 
-  describe('addFile', () => {
-    it('should add a raw file', () => {
-      pkgGen.addFile('helpers.go', 'package mypackage\n\nfunc Help() string {\n  return "help"\n}\n');
-      expect(pkgGen.fileCount).toBe(1);
-      expect(pkgGen.hasFile('helpers.go')).toBe(true);
+  describe('classifyBlock', () => {
+    it('should route error blocks to errors.go', () => {
+      const gen = createGoPackageGenerator(defaultOptions);
+
+      const blocks: SpecBlock[] = [
+        {
+          name: 'ValidationError',
+          kind: 'error',
+          fields: [
+            { name: 'Field', type: 'String' },
+            { name: 'Message', type: 'String' },
+          ],
+        },
+      ];
+
+      const result = gen.generateFromBlocks(blocks, 'testpkg');
+      expect(result.files).toHaveLength(1);
+      expect(result.files[0].code).toContain('Source: errors.go');
+      expect(result.files[0].code).toContain('type ValidationError struct');
     });
 
-    it('should overwrite existing file', () => {
-      pkgGen.addFile('same.go', '// version 1\n');
-      pkgGen.addFile('same.go', '// version 2\n');
-      const files = pkgGen.generateAll();
-      const sameFile = files.find(f => f.filename === 'same.go');
-      expect(sameFile!.content).toContain('version 2');
-    });
-  });
+    it('should route blocks with name containing Error to errors.go', () => {
+      const gen = createGoPackageGenerator(defaultOptions);
 
-  describe('hasFile / removeFile', () => {
-    it('should check file existence', () => {
-      pkgGen.addFile('test.go', '');
-      expect(pkgGen.hasFile('test.go')).toBe(true);
-      expect(pkgGen.hasFile('missing.go')).toBe(false);
+      const blocks: SpecBlock[] = [
+        { name: 'ParseError', fields: [{ name: 'Msg', type: 'String' }] },
+      ];
+
+      const result = gen.generateFromBlocks(blocks, 'testpkg');
+      expect(result.files).toHaveLength(1);
+      expect(result.files[0].code).toContain('Source: errors.go');
     });
 
-    it('should remove a file', () => {
-      pkgGen.addFile('remove_me.go', '');
-      expect(pkgGen.fileCount).toBe(1);
-      const removed = pkgGen.removeFile('remove_me.go');
-      expect(removed).toBe(true);
-      expect(pkgGen.fileCount).toBe(0);
-    });
+    it('should combine multiple blocks of the same kind into one file', () => {
+      const gen = createGoPackageGenerator(defaultOptions);
 
-    it('should return false when removing non-existent file', () => {
-      expect(pkgGen.removeFile('nope.go')).toBe(false);
-    });
-  });
+      const blocks: SpecBlock[] = [
+        { name: 'User', kind: 'entity', fields: [{ name: 'Name', type: 'String' }] },
+        { name: 'Product', kind: 'entity', fields: [{ name: 'SKU', type: 'String' }] },
+      ];
 
-  describe('generateGoMod', () => {
-    it('should generate valid go.mod content', () => {
-      const mod = pkgGen.generateGoMod();
-      expect(mod).toContain('module github.com/test/mypackage');
-      expect(mod).toContain('go 1.22');
-    });
-  });
+      const result = gen.generateFromBlocks(blocks, 'testpkg');
 
-  describe('generateAll', () => {
-    it('should include go.mod by default', () => {
-      pkgGen.addStruct('Empty', []);
-      const files = pkgGen.generateAll();
-      const goMod = files.find(f => f.filename === 'go.mod');
-      expect(goMod).toBeDefined();
-      expect(goMod!.content).toContain('module github.com/test/mypackage');
-    });
-
-    it('should return files sorted by filename', () => {
-      pkgGen.addStruct('Zebra', []);
-      pkgGen.addStruct('Alpha', []);
-      const files = pkgGen.generateAll();
-      const filenames = files.map(f => f.filename);
-      expect(filenames.indexOf('alpha.go')).toBeLessThan(filenames.indexOf('zebra.go'));
-    });
-
-    it('should return empty array when no files added', () => {
-      const gen = createGoPackageGenerator({ addGoMod: false });
-      expect(gen.generateAll()).toEqual([]);
+      expect(result.files).toHaveLength(1);
+      expect(result.files[0].code).toContain('Source: models.go');
+      expect(result.files[0].code).toContain('type User struct');
+      expect(result.files[0].code).toContain('type Product struct');
     });
   });
 
-  describe('getGenerator', () => {
-    it('should return the underlying GoCodeGenerator', () => {
-      const gen = pkgGen.getGenerator();
-      expect(gen.language).toBe('go');
-      expect(gen.extension).toBe('.go');
+  describe('createGoPackageGenerator', () => {
+    it('should create instance with default options', () => {
+      const gen = createGoPackageGenerator();
+      expect(gen).toBeInstanceOf(GoPackageGenerator);
     });
-  });
 
-  describe('clear', () => {
-    it('should remove all files', () => {
-      pkgGen.addStruct('A', []);
-      pkgGen.addStruct('B', []);
-      expect(pkgGen.fileCount).toBe(2);
-      pkgGen.clear();
-      expect(pkgGen.fileCount).toBe(0);
+    it('should create instance with custom options', () => {
+      const gen = createGoPackageGenerator({
+        packageName: 'custom',
+        addJsonTags: false,
+        addConstructor: false,
+      });
+      expect(gen).toBeInstanceOf(GoPackageGenerator);
     });
   });
 });
