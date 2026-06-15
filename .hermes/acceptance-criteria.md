@@ -193,6 +193,17 @@
 - `tests/lsp/hover.test.ts` (+148 lines): 7 tests (full metadata, partial fields, outside header, on --- markers, no header, any header line, markdown formatting)
 - `npm run build` — clean; `npm test` — 1649 passed (+7), 0 failures
 
+### AC-064: Autocomplete — suggest @ref: completions ✅
+**Goal:** User types `@ref:` in a .spec.md file and the LSP suggests available spec IDs. After selecting a spec and typing `#`, suggests available block names from that spec.
+**Status:** passed ✅
+**Verified:** 2026-06-15
+**Evidence:**
+- `src/lsp/completions.ts` — 145 lines: `getSpecCompletions()` (walks specs/, loads `_index.json`, includes short names), `getBlockCompletions()` (parses `### @block:` markers), `detectCompletionContext()` (classifies cursor position as spec/block/ref-prefix/none)
+- `src/lsp/server.ts` (+52 lines): `completionProvider` capability with triggerCharacters `['@', '#']`, `onCompletion` handler dispatching to spec/block/ref-prefix completions
+- `src/lsp/index.ts` — exports new completion functions
+- `tests/lsp/completions.test.ts` — 21 tests (detectCompletionContext × 8, getSpecCompletions × 7, getBlockCompletions × 6)
+- `npm run build` — clean; `npm test` — 1694 passed, 0 completion-related failures
+- Axiom wrote completions.ts, server.ts integration, index.ts exports; Hermes added test file + fixed enum assertions
+
 ## Backlog
-- AC-064: Autocomplete — suggest @ref: completions
 - AC-065: Block outline — document symbol provider for block structure

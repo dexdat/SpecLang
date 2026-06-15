@@ -21,10 +21,13 @@ import {
   Hover,
   MarkupContent,
   MarkupKind,
+  CompletionItemKind,
+  InsertTextFormat,
 } from 'vscode-languageserver/node';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { parseReferences, resolveReference } from './references.js';
+import { parseReferences, resolveReference, resolveFileRef } from './references.js';
+import { getSpecCompletions, getBlockCompletions, detectCompletionContext } from './completions.js';
 
 export interface SpecHeader {
   id?: string;
@@ -155,6 +158,10 @@ export function startServer(): void {
       capabilities: {
         textDocumentSync: TextDocumentSyncKind.Full,
         hoverProvider: true,
+        completionProvider: {
+          triggerCharacters: ['@', '#'],
+          resolveProvider: false,
+        },
         diagnosticProvider: {
           documentSelector: [{ language: 'speclang', pattern: '**/*.spec.md' }],
           interFileDependencies: false,
@@ -236,6 +243,49 @@ export function startServer(): void {
         value: parts.join('\n'),
       },
     };
+  });
+
+  // Completion — autocomplete @ref: annotations
+  connection.onCompletion((params) => {
+    const doc = documents.get(params.textDocument.uri);
+    if (!doc) return [];
+
+    const text = doc.getText();
+    const lines = text.split('\n');
+    const lineText = lines[params.position.line] || '';
+    const textBeforeCursor = lineText.substring(0, params.position.character);
+
+    const ctx = detectCompletionContext(textBeforeCursor);
+
+    if (ctx.type === 'block') {
+      const filePath = resolveFileRef(ctx.specId, workspaceRoot);
+      if (!filePath) return [];
+      const blocks = getBlockCompletions(filePath);
+      if (ctx.partialBlock) {
+        return blocks.filter((b) => b.label.startsWith(ctx.partialBlock));
+      }
+      return blocks;
+    }
+
+    if (ctx.type === 'spec') {
+      const specs = getSpecCompletions(workspaceRoot);
+      if (ctx.partialId) {
+        return specs.filter((s) => s.label.startsWith(ctx.partialId));
+      }
+      return specs;
+    }
+
+    if (ctx.type === 'ref-prefix') {
+      return [{
+        label: '@ref:',
+        kind: CompletionItemKind.Snippet,
+        detail: 'Spec reference annotation',
+        insertText: '@ref:',
+        insertTextFormat: InsertTextFormat.PlainText,
+      }];
+    }
+
+    return [];
   });
 
   connection.onShutdown(() => {

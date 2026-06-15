@@ -1,0 +1,89 @@
+You are a SpecLang LSP developer. Add completion (autocomplete) support for @ref: annotations in .spec.md files.
+
+## WHAT TO BUILD
+
+Add an `onCompletion` handler to the LSP server that suggests completions when the user types @ref: annotations.
+
+### 1. Create `src/lsp/completions.ts` (~150 lines)
+
+```typescript
+import * as fs from 'fs';
+import * as path from 'path';
+import { CompletionItem, CompletionItemKind, InsertTextFormat } from 'vscode-languageserver/node';
+
+// Get all known spec IDs from the workspace
+export function getSpecCompletions(workspaceRoot: string): CompletionItem[] { ... }
+// Get blocks from a specific spec file
+export function getBlockCompletions(specFilePath: string): CompletionItem[] { ... }
+```
+
+**getSpecCompletions(workspaceRoot: string):**
+- Walk `specs/` directory recursively for `*.spec.md` and `*.scl` files
+- Also load `_index.json` entries
+- Also include short names (northstar, etc.)
+- Convert each to a relative path like `specs/core`, `specs/core.spec.dir/entities`
+- Return CompletionItems with kind=CompletionItemKind.Reference, detail showing the file path
+- Sort by name
+
+**getBlockCompletions(specFilePath: string):**
+- Read the spec file, find all `### @block:blockname` markers
+- Return CompletionItems with kind=CompletionItemKind.Struct, detail showing "@block:blockname"
+
+### 2. Add completion handler in `src/lsp/server.ts`
+
+Add `completionProvider` to capabilities (triggerCharacters: ['@', '#'], resolveProvider: false).
+
+Register `connection.onCompletion` that:
+1. Gets current line text and cursor position
+2. If cursor is after `@ref:` but before any `#` → return spec completions (filter by what's already typed after `@ref:`)
+3. If cursor is after `@ref:something#` → resolve the `something` to a file, then return block completions from that file
+4. If typing `@ref` or `@re` or `@r` (prefix of @ref:) → suggest `@ref:` as a snippet completion
+5. Otherwise return empty
+
+Add `completionItem` to imports from 'vscode-languageserver/node'.
+
+### 3. Write `tests/lsp/completions.test.ts` (~120 lines)
+
+Test getSpecCompletions:
+- Returns completions from specs/ directory
+- Returns completions from _index.json
+- Returns empty list when no specs exist
+- Each item has kind=Reference
+
+Test getBlockCompletions:
+- Extracts blocks from spec file
+- Returns empty for file with no blocks
+- Returns null for nonexistent file
+
+Test completion trigger detection (via a helper function):
+- `@ref:` triggers spec completions
+- `@ref:specs/core#` triggers block completions  
+- `@r` triggers @ref: snippet
+- Non-@ref text returns empty
+
+### 4. Export new functions from `src/lsp/index.ts`
+
+## CRITICAL RULES
+
+- Follow existing code style: import order (stdlib → third-party → local), explicit types, camelCase
+- Use the existing `resolveFileRef()` from references.ts for resolving spec IDs to file paths — don't duplicate file resolution logic
+- Use the existing `findBlockInFile()` for block discovery
+- The trigger character '#' fires completions. Filter: only handle when preceded by @ref:
+- The trigger character '@' fires completions. Only handle when it's at start of @ref pattern
+- Add NO new features beyond completions
+- Container has NO TypeScript runtime. Only WRITE files. Testing happens on the host.
+- Use `CompletionItemKind.Reference` for spec completions, `CompletionItemKind.Struct` for block completions
+
+## AFTER WRITING FILES
+
+Run this verification on the host (we'll do it):
+```bash
+cd /home/kara/SpecLang
+npm run build && npm test
+```
+
+## FILE PATHS
+- src/lsp/completions.ts (NEW)
+- src/lsp/server.ts (MODIFY — add completion handler + capabilities)
+- src/lsp/index.ts (MODIFY — export new functions)
+- tests/lsp/completions.test.ts (NEW)
