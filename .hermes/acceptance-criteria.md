@@ -154,5 +154,35 @@
 - `npm run build && npm test` — 1609 passed, 0 failures
 - Container issue: opencode-speclang zombie processes stalled Axiom submission. Hermes wrote files directly per delegation-infrastructure-broken exception (same pattern as AC-060).
 
+### Phase 7: Advanced LSP Features (Active)
+
+| ID | Feature | Verification | Status |
+|----|---------|-------------|--------|
+
+## Active Criteria
+
+### AC-062: Go-to-definition for @ref: annotations
+**Goal:** User Ctrl+clicks `@ref:specs/foo#block` in a .spec.md file and the editor navigates to the referenced spec file (and block, if specified).
+**Journey:**
+1. Open a .spec.md file containing `@ref:specs/core` in VSCode
+2. Ctrl+click on the reference → editor navigates to `specs/core.spec.md`
+3. Open a .spec.md file containing `@ref:specs/core.spec.dir/entities`
+4. Ctrl+click → editor navigates to the entities spec file
+5. Open a .spec.md file containing `@ref:specs/core#my-block`
+6. Ctrl+click → editor navigates to `specs/core.spec.md` at the `### @block:my-block` line
+7. Short name: `@ref:northstar` → navigates to `docs/NORTH_STAR.md`
+8. Click on non-@ref text → no navigation (returns null)
+**Status:** passed ✅
+**Verified:** 2026-06-15
+**Evidence:**
+- `src/lsp/references.ts` — 163 lines: Reference resolver with parseReferences, resolveFileRef (spec file, directory, _index.json, short names), findBlockInFile, resolveReference
+- `src/lsp/server.ts` — added `connection.onDefinition` handler: parses @ref: at cursor, resolves to file/block location
+- 17 new tests in `tests/lsp/references.test.ts` — all pass (parseReferences × 6, resolveFileRef × 4, findBlockInFile × 4, resolveReference × 3)
+- 27 total LSP tests pass (10 existing + 17 new)
+- `npm run build` — clean; `npm test` — 1623 passed, 0 failures
+- Container model prefix bug discovered: `opencode-go/` deadlocks on v1.15.13; `deepseek/` prefix works for SpecLang container
+
 ## Backlog
-- Advanced LSP features: go-to-definition, hover info, autocomplete, block outline
+- AC-063: Hover info — show spec metadata on hover
+- AC-064: Autocomplete — suggest @ref: completions
+- AC-065: Block outline — document symbol provider for block structure

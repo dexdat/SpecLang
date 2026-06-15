@@ -1,0 +1,116 @@
+Implement go-to-definition for @ref: annotations in the SpecLang LSP server.
+
+**Context:** The LSP server at `src/lsp/server.ts` currently provides diagnostics for spec headers. It needs go-to-definition support so users can Ctrl+click `@ref:specs/foo#block` annotations and jump to the referenced location.
+
+**Reference format in .spec.md files:**
+- File reference: `@ref:specs/core.spec.dir/entities` → resolves to `specs/core.spec.dir/entities.spec.md` or `specs/core.spec.dir/entities/`
+- Block reference: `@ref:specs/core.spec.dir/entities#my-block` → resolves to the `### @block:my-block` block inside the spec
+- Project reference: `@ref:northstar` → resolves to `docs/NORTH_STAR.md`
+
+**Existing infrastructure:**
+- `_index.json` (22,356 lines) in the project root maps spec IDs to file paths. Format:
+  ```json
+  { "specs": { "@specs/core": { "file": "specs/core.spec.md", "id": "@specs/core", "version": "...", "layer": 0 } } }
+  ```
+- The indexer at `src/indexer/index.ts` generates this and includes types in `src/indexer/types.ts`
+- The LSP server lsp tsconfig at `src/lsp/tsconfig.json` with `"module": "Node16"` and `"moduleResolution": "node16"`
+
+**Files to create/modify:**
+1. **NEW: `src/lsp/references.ts`** — Reference resolver module:
+   - `parseReferences(text: string): Reference[]` — extract all @ref: annotations with their positions (line, character, resolved path/block)
+   - `resolveReference(ref: Reference, workspaceRoot: string): ResolvedLocation | null` — resolve to file + line/character
+   - `resolveFileRef(refId: string, workspaceRoot: string): string | null` — e.g. `specs/foo` → `specs/foo.spec.md` or `specs/foo/index.spec.md`
+   - `findBlockInFile(filePath: string, blockName: string): { line: number; character: number } | null` — find `### @block:blockName` in a file
+
+2. **MODIFY: `src/lsp/server.ts`** — Add textDocument/definition handler:
+   - Import `parseReferences`, `resolveReference` from `./references`
+   - Add `connection.onDefinition(params)` handler
+   - At the cursor position, find the nearest `@ref:` annotation
+   - Resolve it and return the Location
+   - Workspace root: `params.textDocument.uri` → resolve relative paths from the project root (cwd or INITIALIZED workspace folders)
+
+3. **NEW: `tests/lsp/references.test.ts`** — Tests for the reference resolver:
+   - Test parseReferences extracts @ref: annotations with correct positions
+   - Test resolveFileRef resolves spec IDs to file paths
+   - Test findBlockInFile finds block markers
+
+4. **MODIFY: `tests/lsp/server.test.ts`** — Add go-to-definition tests:
+   - Define a mock connection that captures definition requests
+   - Test that clicking on `@ref:specs/foo` returns the correct file location
+   - Test that clicking on `@ref:specs/foo#bar` returns the block location
+
+**Implementation details:**
+
+```typescript
+// references.ts — key types
+interface Reference {
+  fullMatch: string;        // e.g. "@ref:specs/core#hello"
+  refId: string;            // e.g. "specs/core"
+  block?: string;           // e.g. "hello" (undefined for file refs)
+  line: number;             // 0-based line in document
+  startChar: number;        // 0-based character where @ref: starts
+  endChar: number;          // 0-based character where @ref: ends
+}
+
+// Reference regex — matches @ref:path[#block]
+const REF_REGEX = /@ref:([a-zA-Z0-9_\-/.]+)(?:#([a-zA-Z0-9_\-]+))?/g;
+
+// File resolution rules:
+// @ref:specs/core → specs/core.spec.md (check existence)
+// @ref:specs/core.spec.dir/entities → specs/core.spec.dir/entities.spec.md
+// @ref:northstar → docs/NORTH_STAR.md (hardcoded short names)
+```
+
+**The definition handler:**
+```typescript
+connection.onDefinition((params) => {
+  const doc = documents.get(params.textDocument.uri);
+  if (!doc) return null;
+  
+  const text = doc.getText();
+  const line = params.position.line;
+  const lineText = text.split('\n')[line] || '';
+  
+  // Find @ref: at or before cursor
+  const refs = parseReferences(text);
+  const target = refs.find(r => 
+    r.line === line && 
+    params.position.character >= r.startChar && 
+    params.position.character <= r.endChar
+  );
+  
+  if (!target) return null;
+  
+  const location = resolveReference(target, workspaceRoot);
+  if (!location) return null;
+  
+  return {
+    uri: `file://${location.filePath}`,
+    range: {
+      start: { line: location.line, character: location.character },
+      end: { line: location.line, character: location.character }
+    }
+  };
+});
+```
+
+**CRITICAL CONSTRAINTS:**
+- Use `TextDocumentSyncKind.Full` for text sync (already configured)
+- Workspace root: use `process.cwd()` as fallback, prefer `workspaceFolders` from initialize params
+- The `_index.json` at project root is the authority for spec ID → file path mapping
+- Handle both `specs/foo.spec.md` and `specs/foo/` (directory with `index.spec.md`) patterns
+- Short names like `@ref:northstar` → lookup in a hardcoded map: `{ northstar: 'docs/NORTH_STAR.md' }`
+- Return `null` (not error) for unresolvable references — no crash
+- Add NO new npm dependencies
+- Do NOT modify tsconfig.json
+- Do NOT install any packages
+- The build command is: `npx tsc -p src/lsp/tsconfig.json`
+- Run tests with: `npx vitest run tests/lsp/`
+- Full project build: `npm run build`
+- Full project tests: `npm test`
+
+**After implementation, verify:**
+1. `npx tsc -p src/lsp/tsconfig.json` — LSP compiles clean
+2. `npx vitest run tests/lsp/references.test.ts` — all new tests pass
+3. `npm run build` — full project builds clean
+4. `npm test` — all 1606+ tests still pass

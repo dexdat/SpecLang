@@ -4,6 +4,7 @@
  * Provides:
  *  - Diagnostic validation of spec headers (required fields: id, version, layer)
  *  - Full document sync (re-validates on open/change)
+ *  - Go-to-definition for @ref: annotations
  *  - Initialize/shutdown lifecycle
  */
 
@@ -20,6 +21,7 @@ import {
 } from 'vscode-languageserver/node';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { parseReferences, resolveReference } from './references.js';
 
 interface SpecHeader {
   id?: string;
@@ -124,8 +126,12 @@ function validateDiagnostics(textDocument: TextDocument): Diagnostic[] {
 export function startServer(): void {
   const connection = createConnection(ProposedFeatures.all);
   const documents = new TextDocuments(TextDocument);
+  let workspaceRoot: string = process.cwd();
 
-  connection.onInitialize((_params: InitializeParams): InitializeResult => {
+  connection.onInitialize((params: InitializeParams): InitializeResult => {
+    if (params.workspaceFolders && params.workspaceFolders.length > 0) {
+      workspaceRoot = new URL(params.workspaceFolders[0].uri).pathname;
+    }
     return {
       capabilities: {
         textDocumentSync: TextDocumentSyncKind.Full,
@@ -151,6 +157,34 @@ export function startServer(): void {
   documents.onDidChangeContent((event) => {
     const diagnostics = validateDiagnostics(event.document);
     connection.sendDiagnostics({ uri: event.document.uri, diagnostics });
+  });
+
+  // Go-to-definition for @ref: annotations
+  connection.onDefinition((params) => {
+    const doc = documents.get(params.textDocument.uri);
+    if (!doc) return null;
+
+    const text = doc.getText();
+    const refs = parseReferences(text);
+
+    const target = refs.find(r =>
+      r.line === params.position.line &&
+      params.position.character >= r.startChar &&
+      params.position.character <= r.endChar
+    );
+
+    if (!target) return null;
+
+    const location = resolveReference(target, workspaceRoot);
+    if (!location) return null;
+
+    return {
+      uri: `file://${location.filePath}`,
+      range: {
+        start: { line: location.line, character: location.character },
+        end: { line: location.line, character: location.character },
+      },
+    };
   });
 
   connection.onShutdown(() => {
