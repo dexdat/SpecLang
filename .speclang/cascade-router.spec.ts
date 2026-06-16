@@ -86,6 +86,21 @@ async function writeChecksums(checksums: Record<string, string>): Promise<void> 
   }
 }
 
+// ---- Output File Filter (project-agnostic: exclude noise, accept everything) ----
+
+/**
+ * Returns true if a file should be tracked as cascade output.
+ * Blacklist: exclude known noise, accept everything else.
+ * SpecLang targets any language — we can't predict extensions.
+ */
+function isTrackableOutput(filename: string, fullPath: string): boolean {
+  if (filename.startsWith('.')) return false;
+  if (filename.endsWith('.pyc')) return false;
+  if (fullPath.includes('node_modules')) return false;
+  if (fullPath.includes('__pycache__')) return false;
+  return true;
+}
+
 // ---- Spec Pre-processor ----
 
 const ASSEMBLED_DIR = path.join(process.cwd(), '.speclang', 'assembled');
@@ -109,37 +124,37 @@ async function preProcessSpec(specPath: string, targetLang: string): Promise<str
     for (const line of lines) {
       const trimmed = line.trim();
 
-      // Track speclang code fences
+      // Track speclang code fences — collect content, strip DSL annotations
       if (trimmed.startsWith('```speclang')) {
         inSpeclangFence = true;
         continue;
       }
       if (inSpeclangFence && trimmed === '```') {
         inSpeclangFence = false;
+        codeBlocks.push(''); // separator between blocks
         continue;
       }
 
-      // Track target-language code fences
+      // Track target-language code fences — skip clean code (already processed)
       if (trimmed.startsWith(targetLangFence)) {
         inTargetFence = true;
         continue;
       }
       if (inTargetFence && trimmed === '```') {
         inTargetFence = false;
-        codeBlocks.push(''); // separator
         continue;
       }
 
-      // Inside target-language fence: collect code (strip DSL annotations)
-      if (inTargetFence) {
-        if (!trimmed.startsWith('@speclang') && !trimmed.startsWith('@kind:') && !trimmed.startsWith('@block:')) {
+      // Inside speclang fence: collect code, strip DSL annotations
+      if (inSpeclangFence) {
+        if (!trimmed.startsWith('@speclang') && !trimmed.startsWith('@dataclass') && !trimmed.startsWith('@pydantic') && !trimmed.startsWith('@kind:') && !trimmed.startsWith('@block:')) {
           codeBlocks.push(line);
         }
         continue;
       }
 
-      // Skip speclang fence content
-      if (inSpeclangFence) continue;
+      // Skip target-language fence content (already clean code)
+      if (inTargetFence) continue;
     }
 
     const cleanCode = codeBlocks.join('\n').trim();
@@ -174,6 +189,55 @@ async function collectOutputFiles(specPath: string): Promise<string[]> {
   }
 }
 
+// ---- Thinker Coverage Checker ----
+
+async function checkThinkerCoverage(projectRoot: string, metaSpecPath: string): Promise<string[]> {
+  const unresolved: string[] = [];
+  try {
+    // Read project.scl to find required components
+    const projectSclPath = path.join(projectRoot, 'project.scl');
+    let requiredComponents: string[] = [];
+    try {
+      const sclContent = await fs.readFile(projectSclPath, 'utf-8');
+      const parsed = JSON.parse(sclContent);
+      if (parsed.components) {
+        requiredComponents = parsed.components.map((c: any) => c.name || c);
+      }
+    } catch { /* no project.scl */ }
+
+    // Check each component has a corresponding .spec.{lang}.md in specs/
+    const specsDir = path.join(projectRoot, 'specs');
+    let specFiles: string[] = [];
+    try {
+      specFiles = await fs.readdir(specsDir);
+    } catch { /* no specs dir */ }
+
+    for (const comp of requiredComponents) {
+      const hasSpec = specFiles.some(f => f.startsWith(comp) && f.endsWith('.spec.md'));
+      if (!hasSpec) unresolved.push(`component:${comp}`);
+    }
+
+    // Check @ref: links in the meta spec resolve
+    try {
+      const metaContent = await fs.readFile(metaSpecPath, 'utf-8');
+      const refRegex = /@ref:(\S+)/g;
+      let match: RegExpExecArray | null;
+      while ((match = refRegex.exec(metaContent)) !== null) {
+        const ref = match[1];
+        const refPath = ref.startsWith('specs/')
+          ? path.join(projectRoot, ref)
+          : path.join(specsDir, ref);
+        try {
+          await fs.access(refPath);
+        } catch {
+          unresolved.push(`ref:${ref}`);
+        }
+      }
+    } catch { /* cannot read meta spec */ }
+  } catch { /* general failure */ }
+  return unresolved;
+}
+
 // ---- Types ----
 
 interface CascadeItem {
@@ -181,7 +245,7 @@ interface CascadeItem {
   timestamp: number;
   cascadeId: string;
   depth: number;
-  stage: 'assembler' | 'codegen' | 'testwriter';
+  stage: 'thinker' | 'assembler' | 'codegen' | 'testwriter';
   header?: Record<string, unknown>;
 }
 
@@ -367,9 +431,9 @@ export class ModelPoolResolver {
 
 // ---- Stage Order for Multi-stage Cascade Chaining ----
 
-const STAGE_ORDER: Array<'assembler' | 'codegen' | 'testwriter'> = ['assembler', 'codegen', 'testwriter'];
+const STAGE_ORDER: Array<'thinker' | 'assembler' | 'codegen' | 'testwriter'> = ['thinker', 'assembler', 'codegen', 'testwriter'];
 
-function getNextStage(current: 'assembler' | 'codegen' | 'testwriter'): 'assembler' | 'codegen' | 'testwriter' | null {
+function getNextStage(current: 'thinker' | 'assembler' | 'codegen' | 'testwriter'): 'thinker' | 'assembler' | 'codegen' | 'testwriter' | null {
   const idx = STAGE_ORDER.indexOf(current);
   if (idx < 0 || idx >= STAGE_ORDER.length - 1) return null;
   return STAGE_ORDER[idx + 1];
@@ -410,7 +474,7 @@ export class CascadeRouter {
       }
     });
 
-    daemon.on('file_change', (event: FileChangeEvent) => {
+    daemon.on('file_change', async (event: FileChangeEvent) => {
       this.log.info('routing file change', {
         kind: event.kind,
         path: event.path,
@@ -431,13 +495,23 @@ export class CascadeRouter {
           cascadeId,
           specPath: spec,
         });
+        // Determine starting stage based on spec type
+        let startStage: 'thinker' | 'assembler' = 'assembler';
+        try {
+          const hdr = await parseHeader(spec);
+          const tl = (hdr?.targetLang || hdr?.target_lang || '') as string;
+          if (['meta', 'plan', 'decision', 'context'].includes(tl)) {
+            startStage = 'thinker';
+          }
+        } catch {}
+
         this.squash.push(
           {
             specPath: spec,
             timestamp: event.timestamp,
             cascadeId,
             depth: 0,
-            stage: 'assembler',
+            stage: startStage,
           },
           (item) => this.processItem(item)
         );
@@ -516,8 +590,18 @@ export class CascadeRouter {
       return;
     }
 
+    // Resolve spec ID to file path if needed (e.g. @spec/chimera/rewriter → actual path)
+    let resolvedPath = item.specPath;
+    if (item.specPath.startsWith('@')) {
+      const found = this.daemon.getSpecById(item.specPath);
+      if (found) {
+        resolvedPath = found;
+        this.cascadeLog.info('resolved spec id to path', { specId: item.specPath, path: found });
+      }
+    }
+
     // Resolve model
-    const header = await parseHeader(item.specPath);
+    const header = await parseHeader(resolvedPath);
     const resolved = this.modelResolver.resolve(header || {});
     this.cascadeLog.info('model resolved', {
       cascadeId: item.cascadeId,
@@ -526,14 +610,20 @@ export class CascadeRouter {
       model: resolved.model || resolved.pool || 'default',
     });
 
+    // Resolve project root (parent of specs directory) and output dirs
+    const specDir = path.dirname(resolvedPath);
+    const projectRoot = path.resolve(specDir, '..');
+    const projectSclPath = path.join(projectRoot, 'project.scl');
+    const outputDir = path.join(projectRoot, 'src');
+
     // ---- Pre-process spec: strip DSL and extract code blocks ----
     let cleanSpecPath: string | null = null;
     let targetLang = 'py';
     try {
-      const hdr = await parseHeader(item.specPath);
+      const hdr = await parseHeader(resolvedPath);
       targetLang = (hdr?.targetLang as string) || (hdr?.target_lang as string) || 'py';
     } catch { /* no header */ }
-    cleanSpecPath = await preProcessSpec(item.specPath, targetLang);
+    cleanSpecPath = await preProcessSpec(resolvedPath, targetLang);
     if (cleanSpecPath) {
       this.cascadeLog.info('pre-processed spec', {
         cascadeId: item.cascadeId,
@@ -578,23 +668,7 @@ export class CascadeRouter {
         });
       }
 
-      // Resolve spec ID to file path if needed (e.g. @spec/chimera/rewriter → actual path)
-      let resolvedPath = item.specPath;
-      if (item.specPath.startsWith('@')) {
-        const found = this.daemon.getSpecById(item.specPath);
-        if (found) {
-          resolvedPath = found;
-          this.cascadeLog.info('resolved spec id to path', { specId: item.specPath, path: found });
-        }
-      }
-
-      // Resolve project root (parent of specs directory)
-      const specDir = path.dirname(resolvedPath);
-      const projectRoot = path.resolve(specDir, '..');
-      const projectSclPath = path.join(projectRoot, 'project.scl');
-      const outputDir = path.join(projectRoot, 'src');
-
-      // Read spec body and project context for prompt assembly
+      // Read spec body for prompt assembly
       let specBody = '';
       let projectContext = '';
       try {
@@ -632,7 +706,7 @@ export class CascadeRouter {
       try {
         const entries = await fs.readdir(outputDir, { recursive: true, withFileTypes: true });
         const codeFiles = entries
-          .filter((e: any) => e.isFile() && /\\.(ts|py|go|rs|js)$/.test(e.name) && !e.name.includes('node_modules'))
+          .filter((e: any) => e.isFile() && isTrackableOutput(e.name, path.join(e.parentPath || e.path, e.name)))
           .map((e: any) => `  ${path.relative(outputDir, path.join(e.parentPath || e.path, e.name))}`)
           .slice(0, 50);
         if (codeFiles.length > 0) {
@@ -645,8 +719,8 @@ export class CascadeRouter {
       try {
         const before = await fs.readdir(outputDir, { recursive: true, withFileTypes: true });
         for (const e of before) {
-          if (e.isFile() && /\.(ts|py|go|rs|js)$/.test(e.name)) {
-            const fp = path.join(e.parentPath || e.path, e.name);
+          const fp = path.join(e.parentPath || e.path, e.name);
+          if (e.isFile() && isTrackableOutput(e.name, fp)) {
             try { const s = await fs.stat(fp); beforeMtimes.set(fp, s.mtimeMs); } catch {}
           }
         }
@@ -656,7 +730,7 @@ export class CascadeRouter {
         try {
           const entries = await fs.readdir(outputDir, { recursive: true, withFileTypes: true });
           return entries
-            .filter((e: any) => e.isFile() && /\.(ts|py|go|rs|js)$/.test(e.name) && !e.name.includes('node_modules'))
+            .filter((e: any) => e.isFile() && isTrackableOutput(e.name, path.join(e.parentPath || e.path, e.name)))
             .map((e: any) => path.join(e.parentPath || e.path, e.name));
         } catch { return []; }
       };
@@ -680,6 +754,16 @@ export class CascadeRouter {
 
       // ---- Stage-specific instructions ----
       const stageInstructions: Record<string, string> = {
+        thinker: [
+          'Read the meta spec carefully. Understand the WHY — problem space, design philosophy, stakeholders.',
+          `Also read ${projectSclPath} for the full component tree, architecture, and constraints.`,
+          'Generate these expanded specs in the project specs/ directory:',
+          '  1. {name}.spec.plan.md — implementation plan with phases, ADRs, approach',
+          '  2. One .spec.{lang}.md per component in the architecture — with full @kind:operation blocks',
+          'Each generated spec MUST have proper YAML headers with @ref: backlinks to the meta spec.',
+          'Output: write files to specs/ (the project specs directory).',
+          'After writing, report: what files were created, and what @ref: links remain unresolved.',
+        ].join('\n'),
         assembler: [
           `Read the pre-processed spec at: ${cleanSpecPath || '(fallback to raw spec)'}`,
           `Extract code blocks from the spec.`,
@@ -707,7 +791,7 @@ export class CascadeRouter {
         `## Task`,
         `Read the spec and generate the corresponding ${targetLang} code.`,
         `Spec file: ${path.basename(resolvedPath)}`,
-        `Output directory: ${item.stage === 'assembler' ? ASSEMBLED_DIR : outputDir}`,
+        `Output directory: ${item.stage === 'thinker' ? path.join(projectRoot, 'specs') : item.stage === 'assembler' ? ASSEMBLED_DIR : outputDir}`,
         `Project root: ${projectRoot}`,
         ``,
         `## Stage: ${item.stage}`,
@@ -799,6 +883,33 @@ export class CascadeRouter {
         timestamp: Date.now(),
         stage: item.stage,
       });
+
+      // ---- Coverage check after thinker completes ----
+      if (item.stage === 'thinker') {
+        const unresolved = await checkThinkerCoverage(projectRoot, item.specPath);
+        if (unresolved.length > 0) {
+          this.cascadeLog.warn('thinker coverage gaps found, queueing another pass', {
+            cascadeId: item.cascadeId,
+            specPath: item.specPath,
+            unresolved,
+          });
+          setTimeout(() => {
+            this.processItem({
+              specPath: item.specPath,
+              timestamp: Date.now(),
+              cascadeId: item.cascadeId,
+              depth: item.depth + 1,
+              stage: 'thinker',
+            });
+          }, 100);
+          // Don't chain to next stage — coverage not complete
+          return;
+        }
+        this.cascadeLog.info('thinker coverage complete, chaining to assembler', {
+          cascadeId: item.cascadeId,
+          specPath: item.specPath,
+        });
+      }
 
       // ---- Multi-stage chaining: queue next stage if applicable ----
       const nextStage = getNextStage(item.stage);
