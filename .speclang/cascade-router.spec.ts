@@ -475,10 +475,23 @@ export class CascadeRouter {
       } catch { /* no output dir */ }
 
       // Track output directory before session to detect generated files
+      let beforeMtimes = new Map<string, number>();
+      try {
+        const before = await fs.readdir(outputDir, { recursive: true, withFileTypes: true });
+        for (const e of before) {
+          if (e.isFile() && /\.(ts|py|go|rs|js)$/.test(e.name)) {
+            const fp = path.join(e.parentPath || e.path, e.name);
+            try { const s = await fs.stat(fp); beforeMtimes.set(fp, s.mtimeMs); } catch {}
+          }
+        }
+      } catch { /* no output dir */ }
+
       const getOutputFiles = async () => {
         try {
-          const entries = await fs.readdir(outputDir, { recursive: true });
-          return entries.filter((f: string) => /\.(ts|py|go|rs|js)$/.test(f) && !f.includes('node_modules'));
+          const entries = await fs.readdir(outputDir, { recursive: true, withFileTypes: true });
+          return entries
+            .filter((e: any) => e.isFile() && /\.(ts|py|go|rs|js)$/.test(e.name) && !e.name.includes('node_modules'))
+            .map((e: any) => path.join(e.parentPath || e.path, e.name));
         } catch { return []; }
       };
       const beforeFiles = await getOutputFiles();
@@ -564,10 +577,21 @@ export class CascadeRouter {
       const durationMs = Date.now() - promptStart;
       const totalDurationMs = Date.now() - sessionStart;
 
-      // Check if any files were generated
+      // Check if any files were generated or modified
       const afterFiles = await getOutputFiles();
+      // Check for new files AND modified files (mtime changed)
       const newFiles = afterFiles.filter(f => !beforeFiles.includes(f));
-      const generatedCount = newFiles.length;
+      let modifiedCount = 0;
+      for (const f of afterFiles) {
+        if (beforeFiles.includes(f)) {
+          try {
+            const s = await fs.stat(f);
+            const beforeMs = beforeMtimes.get(f) || 0;
+            if (s.mtimeMs > beforeMs + 1000) modifiedCount++;
+          } catch {}
+        }
+      }
+      const generatedCount = newFiles.length + modifiedCount;
 
       if (generatedCount === 0 && _piSdkMocked) {
         this.cascadeLog.warn('cascade completed but 0 files generated (mock SDK)', {
@@ -588,6 +612,8 @@ export class CascadeRouter {
           specPath: item.specPath,
           durationMs,
           totalDurationMs,
+          newFiles: newFiles.length,
+          modifiedFiles: modifiedCount,
           generatedFiles: generatedCount,
         });
       }
