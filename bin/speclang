@@ -181,29 +181,65 @@ const daemon = program
 
 daemon
   .command('start')
-  .description('Start the daemon')
+  .description('Start the daemon with cascade router')
   .option('-p, --port <port>', 'Dashboard port', '3000')
   .option('-d, --dir <directory>', 'Project directory', '.')
   .option('--dashboard', 'Enable web dashboard')
+  .option('--no-cascade', 'Start daemon without cascade router (watch only)')
   .action(async (options) => {
     const projectDir = path.resolve(options.dir);
+    const specsDir = path.join(projectDir, 'specs');
     console.log('🚀 Starting SpecLang Daemon...');
     console.log(`   Project: ${projectDir}`);
-    console.log(`   Port: ${options.port}`);
-    
+    console.log(`   Specs: ${specsDir}`);
+
+    // Use the TypeScript daemon from .speclang/ (not compiled dist/)
+    let SpeclangDaemon, CascadeRouter;
     try {
-      const { startDaemon } = require('../dist/src/daemon/index.js');
-      await startDaemon({
-        projectDir,
-        port: parseInt(options.port),
-        dashboard: options.dashboard
-      });
-    } catch (err) {
-      if (err.code === 'MODULE_NOT_FOUND') {
-        console.error('\n❌ SpecLang not built. Run: npm run build\n');
-        process.exit(1);
+      const daemonMod = require(path.join(__dirname, '..', '.speclang', 'daemon.spec'));
+      SpeclangDaemon = daemonMod.SpeclangDaemon;
+      if (!options.noCascade) {
+        const cascadeMod = require(path.join(__dirname, '..', '.speclang', 'cascade-router.spec'));
+        CascadeRouter = cascadeMod.CascadeRouter;
       }
-      throw err;
+    } catch (err) {
+      console.error('\n❌ SpecLang engine not found. Run from SpecLang installation directory.\n');
+      process.exit(1);
+    }
+
+    const daemon = new SpeclangDaemon(specsDir);
+
+    if (CascadeRouter) {
+      const router = new CascadeRouter(daemon);
+      router.on('cascade', (event) => {
+        if (event.type === 'error') {
+          console.error(`[cascade] ${event.type}: ${event.specPath} — ${event.error || 'unknown'}`);
+        } else {
+          console.log(`[cascade] ${event.type}: ${event.specPath}`);
+        }
+      });
+      daemon.on('file_change', (e) => {
+        console.log(`[daemon] change: ${e.path} → ${e.dependentSpecs.length} dependents`);
+        if (e.dependentSpecs.length > 0) {
+          console.log(`         → ${e.dependentSpecs.join(', ')}`);
+        }
+      });
+      daemon.on('convergence', () => console.log('[daemon] cascade converged'));
+      console.log('   Cascade: wired ✅');
+    } else {
+      console.log('   Cascade: disabled (--no-cascade)');
+    }
+
+    try {
+      await daemon.start();
+      console.log('   Dashboard: http://localhost:' + options.port);
+
+      // Keep process alive
+      process.on('SIGINT', () => { daemon.stop(); process.exit(0); });
+      process.on('SIGTERM', () => { daemon.stop(); process.exit(0); });
+    } catch (err) {
+      console.error('Failed to start daemon:', err);
+      process.exit(1);
     }
   });
 
