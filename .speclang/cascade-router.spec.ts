@@ -440,6 +440,40 @@ export class CascadeRouter {
         projectContext = await fs.readFile(projectSclPath, 'utf-8');
       } catch { /* no project.scl */ }
 
+      // Load skill content for the target language
+      let skillContext = '';
+      const skillDir = path.join(path.dirname(import.meta.url.replace('file://', '')), '..', 'specs', 'skills.spec.dir');
+      const skillFiles = [`code-gen-${targetLang}.spec.md`, `test-writer-${targetLang}.spec.md`];
+      for (const sf of skillFiles) {
+        try {
+          const skillPath = path.join(skillDir, sf);
+          const skillContent = await fs.readFile(skillPath, 'utf-8');
+          skillContext += `\n## Skill: ${sf}\n${skillContent.slice(0, 4000)}\n`;
+        } catch { /* skill not found */ }
+      }
+
+      // Get git diff for the changed spec (what changed)
+      let specDiff = '';
+      try {
+        const { execSync } = await import('child_process');
+        specDiff = execSync(`git -C ${projectRoot} diff -- "${resolvedPath}"`, {
+          encoding: 'utf-8', timeout: 5000, maxBuffer: 50 * 1024,
+        }).trim();
+      } catch { /* no git or no diff */ }
+
+      // Inventory existing output files
+      let existingCode = '';
+      try {
+        const entries = await fs.readdir(outputDir, { recursive: true, withFileTypes: true });
+        const codeFiles = entries
+          .filter((e: any) => e.isFile() && /\\.(ts|py|go|rs|js)$/.test(e.name) && !e.name.includes('node_modules'))
+          .map((e: any) => `  ${path.relative(outputDir, path.join(e.parentPath || e.path, e.name))}`)
+          .slice(0, 50);
+        if (codeFiles.length > 0) {
+          existingCode = `Existing output files (update these, don't regenerate from scratch):\n${codeFiles.join('\n')}`;
+        }
+      } catch { /* no output dir */ }
+
       // Track output directory before session to detect generated files
       const getOutputFiles = async () => {
         try {
@@ -478,18 +512,27 @@ export class CascadeRouter {
         projectContext.slice(0, 8000),
         `\`\`\``,
         ``,
-        `## Spec: ${path.basename(item.specPath)}`,
+        skillContext ? `## Skills (HOW to generate correct ${targetLang} code)` : '',
+        skillContext,
+        ``,
+        specDiff ? `## What Changed (git diff of spec)` : '',
+        specDiff ? `\`\`\`diff\n${specDiff.slice(0, 4000)}\n\`\`\`` : '',
+        ``,
+        existingCode,
+        ``,
+        `## Spec: ${path.basename(resolvedPath)}`,
         `\`\`\`markdown`,
         specBody.slice(0, 12000),
         `\`\`\``,
         ``,
         `## Instructions`,
-        `1. Read the spec above and the project.scl context`,
-        `2. Generate ${targetLang} code that implements every @block in the spec`,
-        `3. Write output files to ${outputDir}/ (following the language conventions: src/chimera/ for Python, src/ for TypeScript)`,
-        `4. After writing code, run any available tests or build commands to verify`,
-        `5. Report: which files you created and whether they compile/test correctly`,
-      ].join('\n');
+        `1. Read the spec above, the project.scl context, and the skills for ${targetLang} conventions`,
+        `2. Read the existing output files listed above to understand what's already built`,
+        `3. If a git diff is shown above, it tells you EXACTLY what changed in the spec — only update code affected by those changes`,
+        `4. Generate/update ${targetLang} code in ${outputDir}/ following the skill conventions`,
+        `5. Run tests: \`cd ${projectRoot} && ${targetLang === 'py' ? 'pip install -e . && pytest' : targetLang === 'ts' ? 'npm test' : 'make test'}\``,
+        `6. Report: which files you created/modified, test results, any issues`,
+      ].filter(Boolean).join('\n');
 
       await session.prompt(prompt);
 
