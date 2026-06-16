@@ -193,36 +193,35 @@ async function collectOutputFiles(specPath: string): Promise<string[]> {
 
 async function checkThinkerCoverage(projectRoot: string, metaSpecPath: string): Promise<string[]> {
   const unresolved: string[] = [];
+  const specsDir = path.join(projectRoot, 'specs');
+
+  let specFiles: string[] = [];
   try {
-    // Read project.scl to find required components
-    const projectSclPath = path.join(projectRoot, 'project.scl');
-    let requiredComponents: string[] = [];
-    try {
-      const sclContent = await fs.readFile(projectSclPath, 'utf-8');
-      const parsed = JSON.parse(sclContent);
-      if (parsed.components) {
-        requiredComponents = parsed.components.map((c: any) => c.name || c);
+    specFiles = await fs.readdir(specsDir);
+  } catch { /* no specs dir */ }
+
+  // Read project.scl for required components
+  const projectSclPath = path.join(projectRoot, 'project.scl');
+  try {
+    const sclContent = await fs.readFile(projectSclPath, 'utf-8');
+    const parsed = JSON.parse(sclContent);
+    if (parsed.components) {
+      const requiredComponents = parsed.components.map((c: any) => c.name || c);
+      for (const comp of requiredComponents) {
+        const hasSpec = specFiles.some(f => f.startsWith(comp) && f.endsWith('.spec.md'));
+        if (!hasSpec) unresolved.push(`component:${comp}`);
       }
-    } catch { /* no project.scl */ }
-
-    // Check each component has a corresponding .spec.{lang}.md in specs/
-    const specsDir = path.join(projectRoot, 'specs');
-    let specFiles: string[] = [];
-    try {
-      specFiles = await fs.readdir(specsDir);
-    } catch { /* no specs dir */ }
-
-    for (const comp of requiredComponents) {
-      const hasSpec = specFiles.some(f => f.startsWith(comp) && f.endsWith('.spec.md'));
-      if (!hasSpec) unresolved.push(`component:${comp}`);
     }
+  } catch { /* no project.scl */ }
 
-    // Check @ref: links in the meta spec resolve
+  // Scan ALL spec files in specs/ for @ref: links
+  const specMdFiles = specFiles.filter(f => f.endsWith('.spec.md'));
+  for (const specFile of specMdFiles) {
     try {
-      const metaContent = await fs.readFile(metaSpecPath, 'utf-8');
+      const sContent = await fs.readFile(path.join(specsDir, specFile), 'utf-8');
       const refRegex = /@ref:(\S+)/g;
       let match: RegExpExecArray | null;
-      while ((match = refRegex.exec(metaContent)) !== null) {
+      while ((match = refRegex.exec(sContent)) !== null) {
         const ref = match[1];
         const refPath = ref.startsWith('specs/')
           ? path.join(projectRoot, ref)
@@ -230,11 +229,13 @@ async function checkThinkerCoverage(projectRoot: string, metaSpecPath: string): 
         try {
           await fs.access(refPath);
         } catch {
-          unresolved.push(`ref:${ref}`);
+          const label = `ref:${ref}`;
+          if (!unresolved.includes(label)) unresolved.push(label);
         }
       }
-    } catch { /* cannot read meta spec */ }
-  } catch { /* general failure */ }
+    } catch { /* cannot read spec file */ }
+  }
+
   return unresolved;
 }
 
@@ -696,6 +697,10 @@ export class CascadeRouter {
       let specDiff = '';
       try {
         const { execSync } = await import('child_process');
+        // Verify this is a git repo before attempting diff (avoids git usage page spew)
+        execSync(`git -C ${projectRoot} rev-parse --git-dir`, {
+          encoding: 'utf-8', timeout: 5000,
+        });
         specDiff = execSync(`git -C ${projectRoot} diff -- "${resolvedPath}"`, {
           encoding: 'utf-8', timeout: 5000, maxBuffer: 50 * 1024,
         }).trim();
@@ -812,6 +817,7 @@ export class CascadeRouter {
         `- Use proper imports and type hints`,
         `- Read existing files before editing — never regenerate from scratch`,
         ``,
+        (item.stage === 'thinker' && projectContext ? `## Project Context (project.scl)\n\`\`\`json\n${projectContext.slice(0, 4000)}\n\`\`\`` : ''),
         `## Verify`,
         `Run: \`cd ${projectRoot} && ${targetLang === 'py' ? 'python -m pytest tests/ -x -q 2>&1 | tail -10' : targetLang === 'ts' ? 'npm test 2>&1 | tail -10' : 'make test 2>&1 | tail -10'}\``,
       ].filter(Boolean).join('\n');
