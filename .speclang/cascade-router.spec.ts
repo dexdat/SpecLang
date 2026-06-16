@@ -719,27 +719,36 @@ export class CascadeRouter {
         }
       } catch { /* no output dir */ }
 
-      // Track output directory before session to detect generated files
-      let beforeMtimes = new Map<string, number>();
-      try {
-        const before = await fs.readdir(outputDir, { recursive: true, withFileTypes: true });
-        for (const e of before) {
-          const fp = path.join(e.parentPath || e.path, e.name);
-          if (e.isFile() && isTrackableOutput(e.name, fp)) {
-            try { const s = await fs.stat(fp); beforeMtimes.set(fp, s.mtimeMs); } catch {}
-          }
-        }
-      } catch { /* no output dir */ }
-
-      const getOutputFiles = async () => {
+      // Track files across whole project before session to detect generated/modified files
+      const scanProjectFiles = async (): Promise<string[]> => {
+        const { glob } = await import('glob');
         try {
-          const entries = await fs.readdir(outputDir, { recursive: true, withFileTypes: true });
-          return entries
-            .filter((e: any) => e.isFile() && isTrackableOutput(e.name, path.join(e.parentPath || e.path, e.name)))
-            .map((e: any) => path.join(e.parentPath || e.path, e.name));
+          const entries = await glob('**/*', {
+            cwd: projectRoot,
+            nodir: true,
+            ignore: [
+              '**/node_modules/**',
+              '**/.git/**',
+              '**/__pycache__/**',
+              '**/*.pyc',
+              '**/.speclang/assembled/**',
+              '**/dist/**',
+              '**/coverage/**',
+              '**/.ralph/**',
+              '**/.opencode/**',
+            ],
+          });
+          return entries.filter(f => !f.startsWith('.'));
         } catch { return []; }
       };
-      const beforeFiles = await getOutputFiles();
+
+      let beforeMtimes = new Map<string, number>();
+      for (const relPath of await scanProjectFiles()) {
+        const fp = path.join(projectRoot, relPath);
+        try { const s = await fs.stat(fp); beforeMtimes.set(fp, s.mtimeMs); } catch {}
+      }
+
+      const beforeFiles = Array.from(beforeMtimes.keys());
 
       const sessionStart = Date.now();
       const { session } = await sessionFn({
@@ -820,6 +829,15 @@ export class CascadeRouter {
         (item.stage === 'thinker' && projectContext ? `## Project Context (project.scl)\n\`\`\`json\n${projectContext.slice(0, 4000)}\n\`\`\`` : ''),
         `## Verify`,
         `Run: \`cd ${projectRoot} && ${targetLang === 'py' ? 'python -m pytest tests/ -x -q 2>&1 | tail -10' : targetLang === 'ts' ? 'npm test 2>&1 | tail -10' : 'make test 2>&1 | tail -10'}\``,
+        ``,
+        `## HOW TO WORK`,
+        `You have these tools: read, edit, write, bash, glob.`,
+        `DO NOT describe what you would do. USE the tools.`,
+        `- Use write(filePath, content) to create each file`,
+        `- Use edit(filePath, oldStr, newStr) to update existing files`,
+        `- Read existing files first with read() before editing`,
+        `- After all files are written, report what you created`,
+        `IMPORTANT: Write files NOW. Do not plan. Do not describe. Execute.`,
       ].filter(Boolean).join('\n');
 
       await session.prompt(prompt);
@@ -831,7 +849,7 @@ export class CascadeRouter {
       const totalDurationMs = Date.now() - sessionStart;
 
       // Check if any files were generated or modified
-      const afterFiles = await getOutputFiles();
+      const afterFiles = await scanProjectFiles();
       // Check for new files AND modified files (mtime changed)
       const newFiles = afterFiles.filter(f => !beforeFiles.includes(f));
       let modifiedCount = 0;
