@@ -51,6 +51,110 @@ export async function checkPiAgentHealth(): Promise<{ ok: boolean; reason?: stri
 import { SpeclangDaemon, FileChangeEvent, ConvergenceEvent, parseHeader, Logger } from './daemon.spec';
 import * as path from 'path';
 import * as fs from 'fs/promises';
+import * as crypto from 'crypto';
+
+// ---- Checksum Helpers ----
+
+const CHECKSUMS_PATH = path.join(process.cwd(), '.speclang', 'checksums.json');
+
+async function computeChecksum(filePath: string): Promise<string | null> {
+  try {
+    let content = await fs.readFile(filePath, 'utf-8');
+    // Normalize: strip trailing whitespace, normalize line endings
+    content = content.replace(/\r\n/g, '\n').replace(/[ \t]+$/gm, '').trimEnd();
+    return crypto.createHash('sha256').update(content, 'utf-8').digest('hex');
+  } catch {
+    return null;
+  }
+}
+
+async function readChecksums(): Promise<Record<string, string>> {
+  try {
+    const raw = await fs.readFile(CHECKSUMS_PATH, 'utf-8');
+    return JSON.parse(raw);
+  } catch {
+    return {};
+  }
+}
+
+async function writeChecksums(checksums: Record<string, string>): Promise<void> {
+  try {
+    await fs.mkdir(path.dirname(CHECKSUMS_PATH), { recursive: true });
+    await fs.writeFile(CHECKSUMS_PATH, JSON.stringify(checksums, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Failed to write checksums:', err);
+  }
+}
+
+// ---- Spec Pre-processor ----
+
+const ASSEMBLED_DIR = path.join(process.cwd(), '.speclang', 'assembled');
+
+/**
+ * Pre-process a spec file:
+ * 1. Strip DSL annotations (@speclang, @kind:, @block:)
+ * 2. Extract only target-language code blocks
+ * 3. Write clean output to .speclang/assembled/{name}.code.{lang}
+ * Returns the path to the clean output file, or null on failure.
+ */
+async function preProcessSpec(specPath: string, targetLang: string): Promise<string | null> {
+  try {
+    const content = await fs.readFile(specPath, 'utf-8');
+    const lines = content.split('\n');
+    const codeBlocks: string[] = [];
+    let inSpeclangFence = false;
+    let inTargetFence = false;
+    const targetLangFence = '```' + targetLang;
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+
+      // Track speclang code fences
+      if (trimmed.startsWith('```speclang')) {
+        inSpeclangFence = true;
+        continue;
+      }
+      if (inSpeclangFence && trimmed === '```') {
+        inSpeclangFence = false;
+        continue;
+      }
+
+      // Track target-language code fences
+      if (trimmed.startsWith(targetLangFence)) {
+        inTargetFence = true;
+        continue;
+      }
+      if (inTargetFence && trimmed === '```') {
+        inTargetFence = false;
+        codeBlocks.push(''); // separator
+        continue;
+      }
+
+      // Inside target-language fence: collect code (strip DSL annotations)
+      if (inTargetFence) {
+        if (!trimmed.startsWith('@speclang') && !trimmed.startsWith('@kind:') && !trimmed.startsWith('@block:')) {
+          codeBlocks.push(line);
+        }
+        continue;
+      }
+
+      // Skip speclang fence content
+      if (inSpeclangFence) continue;
+    }
+
+    const cleanCode = codeBlocks.join('\n').trim();
+    const baseName = path.basename(specPath).replace(/\.spec\..*$/, '').replace(/\.spec$/, '');
+    const outputPath = path.join(ASSEMBLED_DIR, `${baseName}.code.${targetLang}`);
+
+    await fs.mkdir(ASSEMBLED_DIR, { recursive: true });
+    await fs.writeFile(outputPath, cleanCode, 'utf-8');
+
+    return outputPath;
+  } catch (err) {
+    console.error(`Pre-process failed for ${specPath}:`, err);
+    return null;
+  }
+}
 
 // ---- Helper: Collect files generated from a spec ----
 
@@ -77,6 +181,7 @@ interface CascadeItem {
   timestamp: number;
   cascadeId: string;
   depth: number;
+  stage: 'assembler' | 'codegen' | 'testwriter';
   header?: Record<string, unknown>;
 }
 
@@ -85,6 +190,7 @@ export interface CascadeEvent {
   cascadeId: string;
   specPath: string;
   timestamp: number;
+  stage?: string;
   error?: string;
 }
 
@@ -259,6 +365,16 @@ export class ModelPoolResolver {
   }
 }
 
+// ---- Stage Order for Multi-stage Cascade Chaining ----
+
+const STAGE_ORDER: Array<'assembler' | 'codegen' | 'testwriter'> = ['assembler', 'codegen', 'testwriter'];
+
+function getNextStage(current: 'assembler' | 'codegen' | 'testwriter'): 'assembler' | 'codegen' | 'testwriter' | null {
+  const idx = STAGE_ORDER.indexOf(current);
+  if (idx < 0 || idx >= STAGE_ORDER.length - 1) return null;
+  return STAGE_ORDER[idx + 1];
+}
+
 // ---- Cascade Router ----
 
 export class CascadeRouter {
@@ -321,6 +437,7 @@ export class CascadeRouter {
             timestamp: event.timestamp,
             cascadeId,
             depth: 0,
+            stage: 'assembler',
           },
           (item) => this.processItem(item)
         );
@@ -343,8 +460,30 @@ export class CascadeRouter {
       cascadeId: item.cascadeId,
       specPath: item.specPath,
       depth: item.depth,
+      stage: item.stage,
       runningSessions: this.runningSessions,
     });
+
+    // ---- Checksum check: skip if file unchanged ----
+    const newHash = await computeChecksum(item.specPath);
+    const checksums = await readChecksums();
+    const oldHash = checksums[item.specPath] || null;
+    if (newHash && oldHash === newHash) {
+      this.cascadeLog.info('checksum unchanged, skipping cascade', {
+        cascadeId: item.cascadeId,
+        specPath: item.specPath,
+        stage: item.stage,
+      });
+      // Still emit 'completed' so downstream knows this item was processed (no-op)
+      this.emit({
+        type: 'completed',
+        cascadeId: item.cascadeId,
+        specPath: item.specPath,
+        timestamp: Date.now(),
+        stage: item.stage,
+      });
+      return;
+    }
 
     // Throttle check
     this.throttle.recordQueue(item.specPath);
@@ -369,6 +508,7 @@ export class CascadeRouter {
           cascadeId: item.cascadeId,
           specPath: item.specPath,
           timestamp: Date.now(),
+          stage: item.stage,
           error: `File deferred ${deferrals}x. Possible circular dependency.`,
         });
       }
@@ -382,14 +522,39 @@ export class CascadeRouter {
     this.cascadeLog.info('model resolved', {
       cascadeId: item.cascadeId,
       specPath: item.specPath,
+      stage: item.stage,
       model: resolved.model || resolved.pool || 'default',
     });
+
+    // ---- Pre-process spec: strip DSL and extract code blocks ----
+    let cleanSpecPath: string | null = null;
+    let targetLang = 'py';
+    try {
+      const hdr = await parseHeader(item.specPath);
+      targetLang = (hdr?.targetLang as string) || (hdr?.target_lang as string) || 'py';
+    } catch { /* no header */ }
+    cleanSpecPath = await preProcessSpec(item.specPath, targetLang);
+    if (cleanSpecPath) {
+      this.cascadeLog.info('pre-processed spec', {
+        cascadeId: item.cascadeId,
+        specPath: item.specPath,
+        cleanOutput: cleanSpecPath,
+        stage: item.stage,
+      });
+    } else {
+      this.cascadeLog.warn('pre-process produced no output, falling back to raw spec', {
+        cascadeId: item.cascadeId,
+        specPath: item.specPath,
+        stage: item.stage,
+      });
+    }
 
     this.sessionsLaunched++;
     this.runningSessions++;
     this.cascadeLog.info('spawning pi session', {
       cascadeId: item.cascadeId,
       specPath: item.specPath,
+      stage: item.stage,
       sessionNumber: this.sessionsLaunched,
       runningsSessions: this.runningSessions,
     });
@@ -399,6 +564,7 @@ export class CascadeRouter {
       cascadeId: item.cascadeId,
       specPath: item.specPath,
       timestamp: Date.now(),
+      stage: item.stage,
     });
 
     try {
@@ -408,6 +574,7 @@ export class CascadeRouter {
         this.cascadeLog.warn('using mock pi session (SDK not available)', {
           cascadeId: item.cascadeId,
           specPath: item.specPath,
+          stage: item.stage,
         });
       }
 
@@ -430,7 +597,6 @@ export class CascadeRouter {
       // Read spec body and project context for prompt assembly
       let specBody = '';
       let projectContext = '';
-      let targetLang = 'py';
       try {
         specBody = await fs.readFile(resolvedPath, 'utf-8');
         const header = await parseHeader(resolvedPath);
@@ -499,42 +665,72 @@ export class CascadeRouter {
       const sessionStart = Date.now();
       const { session } = await sessionFn({
         cwd: projectRoot,
-        tools: ['read', 'edit', 'write', 'bash', 'glob'],
+        tools: ['read', 'edit', 'bash', 'glob', 'write'],
       });
 
       const modelInfo = resolved.model ? ` using model ${resolved.model}` : '';
       this.cascadeLog.info('pi session spawned, running prompt', {
         cascadeId: item.cascadeId,
         specPath: item.specPath,
+        stage: item.stage,
         projectRoot,
         targetLang,
         setupMs: Date.now() - sessionStart,
       });
 
+      // ---- Stage-specific instructions ----
+      const stageInstructions: Record<string, string> = {
+        assembler: [
+          `Read the pre-processed spec at: ${cleanSpecPath || '(fallback to raw spec)'}`,
+          `Extract code blocks from the spec.`,
+          `Write clean code files to ${ASSEMBLED_DIR}/`,
+          `Do NOT write to ${outputDir}/ — that is the codegen stage's job.`,
+        ].join('\n'),
+        codegen: [
+          `Read the assembled code at ${ASSEMBLED_DIR}/`,
+          `Write actual .${targetLang} files to ${outputDir}/.`,
+          `Do NOT regenerate from scratch — update existing files.`,
+          `Read existing files first, then apply targeted updates.`,
+        ].join('\n'),
+        testwriter: [
+          `Read the generated code at ${outputDir}/`,
+          `Write tests for the generated code.`,
+          `Run ${targetLang === 'py' ? 'pytest' : targetLang === 'ts' ? 'npm test' : 'the test suite'} after writing.`,
+          `Report results in your response.`,
+        ].join('\n'),
+      };
+
       const promptStart = Date.now();
       const prompt = [
-        `You are the SpecLang codegen agent. Cascade: ${item.cascadeId}`,
+        `You are generating ${targetLang} code from a SpecLang spec.`,
         ``,
-        `## Job`,
-        `Read the spec file and generate ${targetLang} code.`,
+        `## Task`,
+        `Read the spec and generate the corresponding ${targetLang} code.`,
+        `Spec file: ${path.basename(resolvedPath)}`,
+        `Output directory: ${item.stage === 'assembler' ? ASSEMBLED_DIR : outputDir}`,
+        `Project root: ${projectRoot}`,
         ``,
-        `## Context files (read these to understand what to do)`,
-        `1. Spec: ${resolvedPath}`,
-        `2. Project north star: ${projectSclPath}`,
-        `3. Skills guide: read the file at specs/skills.spec.dir/code-gen-${targetLang}.spec.md`,
-        `4. Existing output: browse ${outputDir}/ to see what's already built`,
+        `## Stage: ${item.stage}`,
+        stageInstructions[item.stage] || '',
+        ``,
+        specDiff ? `## What Changed\n\`\`\`diff\n${specDiff.slice(0, 2000)}\n\`\`\`` : '',
+        ``,
+        `## Spec`,
+        `\`\`\`markdown`,
+        specBody.slice(0, 8000),
+        `\`\`\``,
         ``,
         `## Rules`,
-        `- Each \\\`\\\`\\\`speclang block with @block and @kind → implement it`,
-        `- Strip @speclang and @dataclass — they're DSL, not ${targetLang}`,
-        `- Write code to ${outputDir}/ following existing directory conventions`,
-        `- Use edit tool for existing files, write tool for new files`,
+        `- STRIP @speclang and @dataclass annotations (SpecLang DSL, not real ${targetLang})`,
+        `- @kind:operation → implementation code`,
+        `- @kind:code → content IS code, just strip annotations`,
+        `- @kind:note → docstrings only`,
+        `- Use proper imports and type hints`,
+        `- Read existing files before editing — never regenerate from scratch`,
         ``,
         `## Verify`,
-        `After writing code, run: cd ${projectRoot} && ${targetLang === 'py' ? 'python -m pytest tests/ -x -q 2>&1 | tail -10' : 'make test 2>&1 | tail -10'}`,
-        ``,
-        `Start now — read the spec file first.`,
-      ].join('\n');
+        `Run: \`cd ${projectRoot} && ${targetLang === 'py' ? 'python -m pytest tests/ -x -q 2>&1 | tail -10' : targetLang === 'ts' ? 'npm test 2>&1 | tail -10' : 'make test 2>&1 | tail -10'}\``,
+      ].filter(Boolean).join('\n');
 
       await session.prompt(prompt);
 
@@ -564,12 +760,14 @@ export class CascadeRouter {
         this.cascadeLog.warn('cascade completed but 0 files generated (mock SDK)', {
           cascadeId: item.cascadeId,
           specPath: item.specPath,
+          stage: item.stage,
           durationMs,
         });
       } else if (generatedCount === 0) {
         this.cascadeLog.warn('cascade completed but 0 files were generated', {
           cascadeId: item.cascadeId,
           specPath: item.specPath,
+          stage: item.stage,
           durationMs,
           hint: 'Check: (1) Pi Agent SDK installed, (2) API keys in env vars, (3) spec has @speclang blocks with @kind:operation or @kind:code annotations.',
         });
@@ -577,6 +775,7 @@ export class CascadeRouter {
         this.cascadeLog.info('cascade item completed', {
           cascadeId: item.cascadeId,
           specPath: item.specPath,
+          stage: item.stage,
           durationMs,
           totalDurationMs,
           newFiles: newFiles.length,
@@ -585,12 +784,41 @@ export class CascadeRouter {
         });
       }
 
+      // ---- Update checksum after successful processing ----
+      const finalHash = await computeChecksum(item.specPath);
+      if (finalHash) {
+        const updatedChecksums = await readChecksums();
+        updatedChecksums[item.specPath] = finalHash;
+        await writeChecksums(updatedChecksums);
+      }
+
       this.emit({
         type: 'completed',
         cascadeId: item.cascadeId,
         specPath: item.specPath,
         timestamp: Date.now(),
+        stage: item.stage,
       });
+
+      // ---- Multi-stage chaining: queue next stage if applicable ----
+      const nextStage = getNextStage(item.stage);
+      if (nextStage) {
+        this.cascadeLog.info('chaining to next cascade stage', {
+          cascadeId: item.cascadeId,
+          specPath: item.specPath,
+          fromStage: item.stage,
+          toStage: nextStage,
+        });
+        setTimeout(() => {
+          this.processItem({
+            specPath: item.specPath,
+            timestamp: Date.now(),
+            cascadeId: item.cascadeId,
+            depth: item.depth + 1,
+            stage: nextStage,
+          });
+        }, 100);
+      }
     } catch (err) {
       this.errorsLogged++;
       this.runningSessions--;
@@ -598,6 +826,7 @@ export class CascadeRouter {
       this.cascadeLog.error('cascade item failed', {
         cascadeId: item.cascadeId,
         specPath: item.specPath,
+        stage: item.stage,
         error: errMsg,
         totalErrors: this.errorsLogged,
       });
@@ -606,8 +835,10 @@ export class CascadeRouter {
         cascadeId: item.cascadeId,
         specPath: item.specPath,
         timestamp: Date.now(),
+        stage: item.stage,
         error: errMsg,
       });
+      // Do NOT chain to next stage on failure
     }
   }
 }
