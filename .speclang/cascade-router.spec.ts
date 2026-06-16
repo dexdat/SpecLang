@@ -695,7 +695,7 @@ export class CascadeRouter {
         try {
           const skillPath = path.join(skillDir, sf);
           const skillContent = await fs.readFile(skillPath, 'utf-8');
-          skillContext += `\n## Skill: ${sf}\n${skillContent.slice(0, 8000)}\n`;
+          skillContext += `\n## Skill: ${sf}\n${skillContent}\n`;
         } catch { /* skill not found */ }
       }
 
@@ -708,7 +708,7 @@ export class CascadeRouter {
           encoding: 'utf-8', timeout: 5000,
         });
         specDiff = execSync(`git -C ${projectRoot} diff -- "${resolvedPath}"`, {
-          encoding: 'utf-8', timeout: 5000, maxBuffer: 50 * 1024,
+          encoding: 'utf-8', timeout: 5000, maxBuffer: 500 * 1024,
         }).trim();
       } catch { /* no git or no diff */ }
 
@@ -719,9 +719,9 @@ export class CascadeRouter {
         const codeFiles = entries
           .filter((e: any) => e.isFile() && isTrackableOutput(e.name, path.join(e.parentPath || e.path, e.name)))
           .map((e: any) => `  ${path.relative(outputDir, path.join(e.parentPath || e.path, e.name))}`)
-          .slice(0, 50);
+          .slice(0, 200);
         if (codeFiles.length > 0) {
-          existingCode = `Existing output files (update these, don't regenerate from scratch):\n${codeFiles.join('\n')}`;
+          existingCode = `Existing output files in ${outputDir} (update these, don't regenerate from scratch):\n${codeFiles.join('\n')}`;
         }
       } catch { /* no output dir */ }
 
@@ -818,11 +818,11 @@ export class CascadeRouter {
         `Triggered by cascade: ${item.cascadeId}`,
         stageInstructions[item.stage] || '',
         ``,
-        specDiff ? `## What Changed (triggered this cascade)\n\`\`\`diff\n${specDiff.slice(0, 2000)}\n\`\`\`` : '',
+        specDiff ? `## What Changed (triggered this cascade)\n\`\`\`diff\n${specDiff}\n\`\`\`` : '',
         ``,
         `## Spec`,
         `\`\`\`markdown`,
-        specBody.slice(0, 8000),
+        specBody,
         `\`\`\``,
         ``,
         `## Referenced Files (MUST READ)`,
@@ -844,7 +844,7 @@ export class CascadeRouter {
         `# SPECLANG-GENERATED: DO NOT EDIT`,
         `# SPECLANG-CHECKSUM: {sha256 of spec}`,
         ``,
-        (item.stage === 'thinker' && projectContext ? `## Project Context (project.scl)\n\`\`\`json\n${projectContext.slice(0, 4000)}\n\`\`\`` : ''),
+        (item.stage === 'thinker' && projectContext ? `## Project Context (project.scl)\n\`\`\`json\n${projectContext}\n\`\`\`` : ''),
         `## Verify`,
         `Run: \`cd ${projectRoot} && ${targetLang === 'py' ? 'python -m pytest tests/ -x -q 2>&1 | tail -10' : targetLang === 'ts' ? 'npm test 2>&1 | tail -10' : 'make test 2>&1 | tail -10'}\``,
         ``,
