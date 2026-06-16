@@ -1,0 +1,17 @@
+/* SPECLANG-GENERATED: @speclang/ui-dashboard/visual-design */
+/* DO NOT EDIT MANUALLY */
+/* Source: specs/ui-dashboard.spec.dir/visual-design.spec.md */
+
+/* Brutalist Design System - Combined Styles */
+
+/* Core variables */
+@import './variables.css';
+
+/* Component styles */
+@import './components.css';
+
+/* Accessibility utilities */
+@import './accessibility.css';
+
+/* Theme-specific overrides are loaded via data-theme attribute */
+/* See themes/ directory for brutalist-dark.css, brutalist-light.css, high-contrast.css */

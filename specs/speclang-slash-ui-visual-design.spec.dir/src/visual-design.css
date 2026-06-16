@@ -1,0 +1,117 @@
+/* CSS Custom Properties - Brutalist Design System */
+:root {
+  /* Colors */
+  --color-primary: #000000;
+  --color-secondary: #ffffff;
+  --color-accent: #ff0000;
+  --color-background: #1a1a1a;
+  --color-surface: #2a2a2a;
+  --color-text: #ffffff;
+  --color-text-muted: #888888;
+  --color-success: #00ff00;
+  --color-warning: #ffff00;
+  --color-error: #ff0000;
+  
+  /* Typography */
+  --font-display: 'Courier New', Courier, monospace;
+  --font-body: 'IBM Plex Mono', 'Courier New', monospace;
+  --font-mono: 'Courier New', Courier, monospace;
+  
+  /* Spacing */
+  --space-unit: 8px;
+  --space-0: 0;
+  --space-1: calc(var(--space-unit) * 0.5);  /* 4px */
+  --space-2: var(--space-unit);              /* 8px */
+  --space-3: calc(var(--space-unit) * 1.5);  /* 12px */
+  --space-4: calc(var(--space-unit) * 2);    /* 16px */
+  --space-5: calc(var(--space-unit) * 3);    /* 24px */
+  --space-6: calc(var(--space-unit) * 4);    /* 32px */
+  --space-7: calc(var(--space-unit) * 6);    /* 48px */
+  --space-8: calc(var(--space-unit) * 8);    /* 64px */
+  --space-9: calc(var(--space-unit) * 12);   /* 96px */
+  --space-10: calc(var(--space-unit) * 16);  /* 128px */
+  
+  /* Motion */
+  --ease-linear: linear;
+  --duration-instant: 50ms;
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  --duration-slow: 400ms;
+  --duration-dramatic: 600ms;
+  
+  /* Borders */
+  --border-width: 1px;
+  --border-radius: 0px;
+  
+  /* Grid */
+  --grid-size: 8px;
+  --grid-color: rgba(255, 255, 255, 0.05);
+  --grid-line-width: 1px;
+  
+  /* Shadows */
+  --shadow-harsh: 2px 2px 0px rgba(0, 0, 0, 0.8);
+  --shadow-none: none;
+}
+
+/* Grid background texture */
+.grid-background {
+  background-image: 
+    linear-gradient(var(--grid-color) var(--grid-line-width), transparent var(--grid-line-width)),
+    linear-gradient(90deg, var(--grid-color) var(--grid-line-width), transparent var(--grid-line-width));
+  background-size: var(--grid-size) var(--grid-size);
+  background-position: calc(var(--grid-size) * -0.5) calc(var(--grid-size) * -0.5);
+}
+
+/* Brutalist utility classes */
+.brutalist-card {
+  background-color: var(--color-surface);
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--border-radius);
+  font-family: var(--font-body);
+}
+
+.brutalist-button {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  border: var(--border-width) solid transparent;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  padding: var(--space-2) var(--space-4);
+  transition: border-color var(--duration-fast) var(--ease-linear);
+}
+
+.brutalist-button:hover {
+  border-color: var(--color-accent);
+}
+
+.brutalist-input {
+  font-family: var(--font-mono);
+  background-color: transparent;
+  border: none;
+  border-bottom: var(--border-width) solid var(--color-text-muted);
+  border-radius: var(--border-radius);
+  padding: var(--space-2) 0;
+  color: var(--color-text);
+}
+
+.brutalist-input:focus {
+  border-bottom-color: var(--color-accent);
+  outline: none;
+}
+
+/* Animation keyframes */
+@keyframes brutalist-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes brutalist-slide {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes brutalist-blink {
+  0%, 100% { background-color: var(--color-surface); }
+  50% { background-color: var(--color-accent); }
+}
+```

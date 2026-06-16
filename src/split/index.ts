@@ -1,0 +1,1 @@
+../../specs/split.spec.dir/src/index.ts

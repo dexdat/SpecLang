@@ -1,0 +1,1 @@
+../../../specs/validation.spec.dir/src/rules/index.ts

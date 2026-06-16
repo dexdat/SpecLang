@@ -1,0 +1,25 @@
+# WI-004: Wire MCP server start through ./bin/speclang CLI
+
+## Problem
+The `./bin/speclang mcp start` command fails with "SpecLang not built" when trying to start the MCP server. But the compiled MCP server module at `specs/mcp.spec.dir/src/server.js` works directly (when the server.registerTool bug is fixed).
+
+## Required Changes
+
+### 1. Fix the `./bin/speclang` CLI script
+
+The `./bin/speclang` script has NO `mcp` subcommand. The `mcp start`, `mcp status`, `mcp stop` commands shown in help come from the compiled CLI at `specs/cli.spec.dir/src/index.ts`.
+
+Two options:
+**Option A**: Wire the compiled CLI as the main entry point (modify ./bin/speclang to delegate to the compiled CLI for subcommands)
+**Option B**: Add mcp subcommand support to the existing ./bin/speclang
+
+Read `./bin/speclang` to understand its current structure, then implement Option A if feasible (swap the entry point to `specs/cli.spec.dir/src/index.js`) or Option B if not.
+
+## Verified State
+- `node specs/mcp.spec.dir/src/server.js` starts the MCP server in stdio mode (after WI-001 fix)
+- `specs/cli.spec.dir/src/index.ts` has complete mcp commands (start, status, stop, test, generate-openapi)
+
+## Scope
+- ONLY modify `./bin/speclang`
+- Do NOT modify the MCP server code
+- Restore all existing command behavior

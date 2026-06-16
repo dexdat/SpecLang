@@ -1,0 +1,1 @@
+../../../specs/validation.spec.dir/src/step-detection/patterns.ts

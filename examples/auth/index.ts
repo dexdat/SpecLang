@@ -1,0 +1,1 @@
+../../specs/examples.spec.dir/auth/src/auth.ts

@@ -1,0 +1,24 @@
+[Unit]
+Description=SpecLang Reactive Cascade Daemon
+Documentation=https://github.com/speclang/speclang
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/speclangd
+Restart=on-failure
+RestartSec=5
+User=speclang
+Group=speclang
+ProtectSystem=strict
+ReadWritePaths=/var/lib/speclangd /run/speclangd
+StandardOutput=journal
+StandardError=journal
+Environment=RUST_LOG=info
+WorkingDirectory=/var/lib/speclangd
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectHome=yes
+
+[Install]
+WantedBy=multi-user.target

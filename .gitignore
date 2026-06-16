@@ -1,0 +1,70 @@
+# Generated code - review the spec, not this
+generated/
+
+# Dependencies
+node_modules/
+
+# Build artifacts
+dist/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Speclang simulator state
+.speclang/
+.speclang_depth
+.speclang_last_change
+.speclang_last_check
+
+# Backup files
+.backup_spec_files/
+*.backup
+
+# Temporary files
+temp_*.md
+__pycache__/
+*.pyc
+
+# Python test cache
+.pytest_cache/
+
+# Runtime state files
+.speclang_simulator.log
+ralph_todo.json
+
+# Generated files
+# _index.json - actually keep this, it's needed
+validation_results.json
+
+# Archive (old reports, keep locally but don't track)
+# docs/archive/
+
+# Symlink tracking
+.speclang/symlinks.json
+
+# Ralph loop state (generated)
+.ralph/loop-state.json
+.ralph/logs/
+.ralph/monitor/
+.ralph/state/
+.ralph/backups/

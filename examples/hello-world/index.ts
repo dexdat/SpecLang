@@ -1,0 +1,1 @@
+../../specs/examples.spec.dir/hello-world/src/hello-world.ts

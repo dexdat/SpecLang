@@ -1,0 +1,1 @@
+../../specs/lenses.spec.dir/src/table-lens.ts

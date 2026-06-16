@@ -1,0 +1,37 @@
+# WI-003: Add compiler/codegen tools to MCP server tool registry
+
+## Problem
+The MCP server at `specs/mcp.spec.dir/src/server.ts` exposes 20+ tools across search, specs, locks, cascade, index, dashboard, and commands categories. But there are NO compiler or code generation tools.
+
+## Required Changes
+
+### 1. Add compiler tools to `specs/mcp.spec.dir/src/tools/index.ts`
+
+The `MCPToolRegistry` class handles all tool requests. Add at least these tools:
+
+**a) `speclang_compile`** — Run the multi-target compiler on specs
+- Input: target language (typescript|go|python|rust), optional spec filter
+- Output: compiled files
+
+**b) `speclang_codegen_status`** — Show status of code generation
+- Input: none
+- Output: pending/running/done status, last run timestamp
+
+### 2. Add handler implementations
+
+Create compiler-related handler methods in the `MCPToolRegistry` class. Import the compiler from `src/compiler/` using a relative path like `../../../../src/compiler/index.js`.
+
+### 3. Update getToolDefinitions()
+
+Add the new tools to the `getToolDefinitions()` function so they appear in `tools/list` responses.
+
+## Important
+- Import the existing compiler from `src/compiler/index.ts` (relative path from specs/mcp.spec.dir/src/tools/)
+- Do NOT rewrite the compiler — just wire it through MCP
+- Keep the same error handling pattern as other tools (try/catch, return result objects)
+- Add the tool names to the switch statement in registerTools()
+
+## Scope
+- Modify `specs/mcp.spec.dir/src/tools/index.ts` to add the new tool definitions and handlers
+- Do NOT modify the compiler itself
+- Do NOT modify server.ts

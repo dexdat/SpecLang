@@ -1,0 +1,1 @@
+../../specs/config.spec.dir/src/validator.ts

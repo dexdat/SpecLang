@@ -1,0 +1,1 @@
+../../specs/directory.spec.dir/src/index.ts

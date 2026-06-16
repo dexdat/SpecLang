@@ -1,0 +1,1 @@
+../../specs/transition-workflows.spec.dir/src/registry.ts

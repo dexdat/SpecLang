@@ -1,0 +1,1 @@
+../specs/docs.spec.dir/docs/NORTH_STAR.md

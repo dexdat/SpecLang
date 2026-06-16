@@ -1,0 +1,75 @@
+{
+  "name": "speclang",
+  "displayName": "SpecLang",
+  "description": "Language support for SpecLang .spec.md files — diagnostics, header validation, and @ref resolution",
+  "version": "0.1.0",
+  "publisher": "nousresearch",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nousresearch/speclang"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters"
+  ],
+  "activationEvents": [
+    "onLanguage:speclang"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "speclang",
+        "extensions": [
+          ".spec.md"
+        ],
+        "aliases": [
+          "SpecLang"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "speclang",
+        "scopeName": "source.speclang",
+        "path": "./speclang.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "speclang",
+        "path": "./snippets.json"
+      }
+    ],
+    "configuration": {
+      "title": "SpecLang",
+      "properties": {
+        "speclang.lsp.path": {
+          "type": "string",
+          "default": "speclang-lsp",
+          "description": "Path to the speclang-lsp binary"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.0",
+    "@vscode/vsce": "^2.22.0"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  }
+}

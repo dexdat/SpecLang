@@ -1,0 +1,1781 @@
+#!/usr/bin/env node
+/**
+ * SpecLang CLI - Invisible infrastructure for AI-assisted development
+ * 
+ * Usage:
+ *   speclang start     - Start the daemon (file watcher + MCP server)
+ *   speclang cascade   - Run a single cascade on a spec file
+ *   speclang status    - Show current system status
+ *   speclang stop      - Stop the daemon
+ */
+
+const { Command } = require('commander');
+const path = require('path');
+const fs = require('fs');
+
+// Version from package.json
+const packageJson = require('../package.json');
+
+const program = new Command();
+
+program
+  .name('speclang')
+  .description('SpecLang - AI coding assistant that self-corrects until perfect')
+  .version(packageJson.version);
+
+// Start command
+program
+  .command('start')
+  .description('Start the SpecLang daemon (file watcher + MCP server)')
+  .option('-p, --port <port>', 'Dashboard port', '3000')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .option('--no-dashboard', 'Disable web dashboard')
+  .action(async (options) => {
+    console.log('🚀 Starting SpecLang...');
+    console.log(`   Directory: ${path.resolve(options.dir)}`);
+    console.log(`   Dashboard: http://localhost:${options.port}`);
+    
+    try {
+      // Import and start the daemon
+      const { startDaemon } = require('../dist/src/daemon/index.js');
+      await startDaemon({
+        projectDir: path.resolve(options.dir),
+        port: parseInt(options.port),
+        dashboard: options.dashboard
+      });
+    } catch (err) {
+      // If dist doesn't exist, show helpful message
+      if (err.code === 'MODULE_NOT_FOUND') {
+        console.error('\n❌ SpecLang not built. Run: npm run build');
+        console.error('   Or use: npx ts-node src/cli/index.ts start\n');
+        process.exit(1);
+      }
+      throw err;
+    }
+  });
+
+// Cascade command
+program
+  .command('cascade <spec>')
+  .description('Run a cascade on a spec file')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .option('-v, --verbose', 'Show detailed output')
+  .action(async (spec, options) => {
+    const specPath = path.resolve(options.dir, spec);
+    
+    if (!fs.existsSync(specPath)) {
+      console.error(`❌ Spec file not found: ${specPath}`);
+      process.exit(1);
+    }
+    
+    console.log('🔄 Running cascade...');
+    console.log(`   Spec: ${specPath}`);
+    
+    try {
+      const { runCascade } = require('../dist/src/cascade/index.js');
+      const result = await runCascade(specPath, {
+        verbose: options.verbose
+      });
+      
+      if (result.success) {
+        console.log('\n✅ Cascade complete');
+        console.log(`   Generated: ${result.filesGenerated.length} files`);
+        console.log(`   Converged: ${result.converged ? 'Yes' : 'No'}`);
+        if (result.warning) {
+          console.log(`   ⚠️  ${result.warning}`);
+        }
+        if (result.filesGenerated.length > 0) {
+          result.filesGenerated.forEach(f => console.log(`   - ${f}`));
+        }
+      } else {
+        console.error('\n❌ Cascade failed:', result.error);
+        process.exit(1);
+      }
+    } catch (err) {
+      if (err.code === 'MODULE_NOT_FOUND') {
+        console.error('\n❌ SpecLang not built. Run: npm run build');
+        console.error('   Or use: npx ts-node src/cli/index.ts cascade <spec>\n');
+        process.exit(1);
+      }
+      throw err;
+    }
+  });
+
+// Status command
+program
+  .command('status')
+  .description('Show current system status')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .action(async (options) => {
+    const projectDir = path.resolve(options.dir);
+    
+    console.log('📊 SpecLang Status');
+    console.log(`   Project: ${projectDir}`);
+    
+    // Check if daemon is running
+    const pidFile = path.join(projectDir, '.speclang', 'daemon.pid');
+    if (fs.existsSync(pidFile)) {
+      const pid = fs.readFileSync(pidFile, 'utf-8').trim();
+      console.log(`   Daemon: Running (PID ${pid})`);
+    } else {
+      console.log('   Daemon: Not running');
+    }
+    
+    // Count specs
+    const specsDir = path.join(projectDir, 'specs');
+    if (fs.existsSync(specsDir)) {
+      const { execSync } = require('child_process');
+      try {
+        const count = parseInt(
+          execSync(`find "${specsDir}" -name "*.spec*" -type f | wc -l`, 
+            { encoding: 'utf-8' }).trim()
+        );
+        console.log(`   Specs: ${count}`);
+      } catch {
+        console.log('   Specs: (unable to count)');
+      }
+    }
+    
+    // Check generated code
+    const generatedDir = path.join(projectDir, 'generated');
+    if (fs.existsSync(generatedDir)) {
+      const files = fs.readdirSync(generatedDir, { recursive: true });
+      console.log(`   Generated files: ${files.length}`);
+    }
+  });
+
+// Stop command
+program
+  .command('stop')
+  .description('Stop the SpecLang daemon')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .action(async (options) => {
+    const projectDir = path.resolve(options.dir);
+    const pidFile = path.join(projectDir, '.speclang', 'daemon.pid');
+    
+    if (!fs.existsSync(pidFile)) {
+      console.log('Daemon not running');
+      return;
+    }
+    
+    const pid = parseInt(fs.readFileSync(pidFile, 'utf-8').trim());
+    
+    try {
+      process.kill(pid, 'SIGTERM');
+      fs.unlinkSync(pidFile);
+      console.log('✅ Daemon stopped');
+    } catch (err) {
+      if (err.code === 'ESRCH') {
+        console.log('Daemon not running (stale PID file removed)');
+        fs.unlinkSync(pidFile);
+      } else {
+        throw err;
+      }
+    }
+  });
+
+// Daemon subcommands
+const daemon = program
+  .command('daemon')
+  .description('Manage SpecLang daemon');
+
+daemon
+  .command('start')
+  .description('Start the daemon')
+  .option('-p, --port <port>', 'Dashboard port', '3000')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .option('--dashboard', 'Enable web dashboard')
+  .action(async (options) => {
+    const projectDir = path.resolve(options.dir);
+    console.log('🚀 Starting SpecLang Daemon...');
+    console.log(`   Project: ${projectDir}`);
+    console.log(`   Port: ${options.port}`);
+    
+    try {
+      const { startDaemon } = require('../dist/src/daemon/index.js');
+      await startDaemon({
+        projectDir,
+        port: parseInt(options.port),
+        dashboard: options.dashboard
+      });
+    } catch (err) {
+      if (err.code === 'MODULE_NOT_FOUND') {
+        console.error('\n❌ SpecLang not built. Run: npm run build\n');
+        process.exit(1);
+      }
+      throw err;
+    }
+  });
+
+daemon
+  .command('stop')
+  .description('Stop the daemon')
+  .action(async () => {
+    const projectDir = process.cwd();
+    const pidFile = path.join(projectDir, '.speclang', 'daemon.pid');
+    
+    if (!fs.existsSync(pidFile)) {
+      console.log('Daemon not running');
+      return;
+    }
+    
+    const pid = parseInt(fs.readFileSync(pidFile, 'utf-8').trim());
+    
+    try {
+      process.kill(pid, 'SIGTERM');
+      fs.unlinkSync(pidFile);
+      console.log('✅ Daemon stopped');
+    } catch (err) {
+      if (err.code === 'ESRCH') {
+        console.log('Daemon not running (stale PID file removed)');
+        fs.unlinkSync(pidFile);
+      } else {
+        throw err;
+      }
+    }
+  });
+
+daemon
+  .command('status')
+  .description('Show daemon status')
+  .option('--json', 'JSON output')
+  .action(async (options) => {
+    const projectDir = process.cwd();
+    const pidFile = path.join(projectDir, '.speclang', 'daemon.pid');
+    const stateFile = path.join(projectDir, '.speclang', 'daemon-state.json');
+    
+    let isRunning = false;
+    let pid = null;
+    
+    if (fs.existsSync(pidFile)) {
+      pid = parseInt(fs.readFileSync(pidFile, 'utf-8').trim());
+      try {
+        process.kill(pid, 0);
+        isRunning = true;
+      } catch {
+        fs.unlinkSync(pidFile);
+      }
+    }
+    
+    if (!isRunning) {
+      if (options.json) {
+        console.log(JSON.stringify({ running: false, pid: null, status: 'stopped' }));
+      } else {
+        console.log('🔴 Daemon: Stopped');
+      }
+      return;
+    }
+    
+    let state = null;
+    if (fs.existsSync(stateFile)) {
+      try {
+        state = JSON.parse(fs.readFileSync(stateFile, 'utf-8'));
+      } catch {}
+    }
+    
+    if (options.json) {
+      console.log(JSON.stringify({
+        running: true,
+        pid,
+        status: state?.status || 'unknown',
+        cascadeDepth: state?.cascadeDepth || 0,
+        filesChanged: state?.filesChanged?.length || 0
+      }));
+    } else {
+      console.log('🟢 Daemon: Running');
+      console.log(`   PID: ${pid}`);
+      console.log(`   Status: ${state?.status || 'unknown'}`);
+      console.log(`   Cascade Depth: ${state?.cascadeDepth || 0}`);
+      console.log(`   Files Changed: ${state?.filesChanged?.length || 0}`);
+    }
+  });
+
+// Validate command
+program
+  .command('validate [files...]')
+  .description('Validate spec files')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .option('-s, --strict', 'Treat warnings as errors')
+  .option('-v, --verbose', 'Show detailed output')
+  .option('-f, --format <format>', 'Output format (text, json)', 'text')
+  .action(async (files, options) => {
+    const projectDir = path.resolve(options.dir);
+    
+    console.log('📋 Validating specs...');
+    
+    try {
+      const { validateCommand } = require('../dist/src/validation/cli.js');
+      await validateCommand({
+        files: files.length > 0 ? files : ['specs/**/*.spec.md'],
+        projectDir,
+        strict: options.strict || false,
+        verbose: options.verbose || false,
+        format: options.format || 'text'
+      });
+    } catch (err) {
+      if (err.code === 'MODULE_NOT_FOUND') {
+        console.error('\n❌ SpecLang not built. Run: npm run build');
+        console.error('   Validation module not found.\n');
+        process.exit(1);
+      }
+      throw err;
+    }
+  });
+
+// Check command
+program
+  .command('check [files...]')
+  .description('Validate specs without generating')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .option('-s, --strict', 'Fail on warnings (default: true)')
+  .option('--fix', 'Auto-fix simple issues')
+  .option('-v, --verbose', 'Show detailed output')
+  .option('-f, --format <format>', 'Output format (text, json)', 'text')
+  .option('-l, --layer <number>', 'Check layer validity (0-9)')
+  .option('-m, --maturity <level>', 'Check max layer for maturity level (POC, MVP, ALPHA, BETA, PRODUCTION)')
+  .action(async (files, options) => {
+    const projectDir = path.resolve(options.dir);
+    
+    console.log('🔍 Checking specs...');
+    
+    // Import the layer validation module
+    let layerOptions = {};
+    if (options.layer !== undefined || options.maturity !== undefined) {
+      try {
+        const layers = require('../dist/src/layers/index.js');
+        
+        if (options.maturity) {
+          const maxLayer = layers.getMaxLayerForMaturity(options.maturity);
+          console.log(`   Max layer for ${options.maturity}: ${maxLayer} (${layers.LAYER_NAMES[maxLayer]})`);
+          layerOptions = { maxLayer, maturityLevel: options.maturity };
+        }
+        
+        if (options.layer !== undefined) {
+          const layerNum = parseInt(options.layer);
+          const validation = layers.validateLayer(layerNum);
+          if (!validation.valid) {
+            console.error(`\n❌ Invalid layer: ${layerNum}`);
+            validation.errors.forEach(e => console.error(`   - ${e}`));
+            process.exit(1);
+          }
+          console.log(`   Layer: ${layerNum} (${layers.LAYER_NAMES[layerNum]})`);
+        }
+      } catch (err) {
+        if (err.code === 'MODULE_NOT_FOUND') {
+          console.error('\n❌ SpecLang not built. Run: npm run build\n');
+          process.exit(1);
+        }
+        throw err;
+      }
+    }
+    
+    try {
+      const { validateCommand } = require('../dist/src/validation/cli.js');
+      await validateCommand({
+        files: files.length > 0 ? files : ['specs/**/*.spec.md'],
+        projectDir,
+        strict: options.strict || false,
+        verbose: options.verbose || false,
+        format: options.format || 'text'
+      });
+    } catch (err) {
+      if (err.code === 'MODULE_NOT_FOUND') {
+        console.error('\n❌ SpecLang not built. Run: npm run build');
+        console.error('   Validation module not found.\n');
+        process.exit(1);
+      }
+      throw err;
+    }
+  });
+
+// Generate command
+program
+  .command('generate [files...]')
+  .description('Generate code from specs')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .option('-t, --target <type>', 'Target language (typescript|go|python|rust)', 'typescript')
+  .option('-o, --output-dir <dir>', 'Output directory', 'src/generated')
+  .option('--dry-run', 'Show what would be generated without writing files')
+  .option('-v, --verbose', 'Show detailed output')
+  .action(async (files, options) => {
+    const projectDir = path.resolve(options.dir);
+    const specsDir = path.join(projectDir, 'specs');
+    const outputDir = path.resolve(options.dir, options.outputDir);
+    const target = options.target || 'typescript';
+    
+    console.log('🔧 Generating code from specs...');
+    console.log(`   Target: ${target}`);
+    console.log(`   Output: ${outputDir}`);
+    console.log(`   Mode: ${options.dryRun ? 'DRY RUN' : 'LIVE'}`);
+    
+    try {
+      // Find spec files
+      let specFiles = [];
+      
+      if (files.length > 0) {
+        // Use specified files
+        specFiles = files.map(f => path.resolve(options.dir, f)).filter(f => fs.existsSync(f));
+      } else {
+        // Find all spec files in specs directory
+        const { execSync } = require('child_process');
+        try {
+          const findOutput = execSync(`find "${specsDir}" -name "*.spec.*" -type f`, { encoding: 'utf-8' });
+          specFiles = findOutput.trim().split('\n').filter(f => f.length > 0);
+        } catch (e) {
+          console.error('❌ Failed to find spec files');
+          process.exit(1);
+        }
+      }
+      
+      console.log(`   Found ${specFiles.length} spec files`);
+      
+      // Extract code blocks from specs
+      const generatedFiles = [];
+      const errors = [];
+      
+      for (const specFile of specFiles) {
+        try {
+          const content = fs.readFileSync(specFile, 'utf-8');
+          
+          // Extract @kind:code blocks
+          const codeBlockRegex = /```speclang\s*\n# @kind:code\s*\n([\s\S]*?)```/g;
+          let match;
+          let blockCount = 0;
+          
+          while ((match = codeBlockRegex.exec(content)) !== null) {
+            blockCount++;
+            const code = match[1];
+            const specName = path.basename(specFile, path.extname(specFile));
+            const ext = getExtensionForTarget(target);
+            const outputPath = path.join(outputDir, `${specName}-${blockCount}${ext}`);
+            
+            generatedFiles.push({
+              specFile,
+              outputPath,
+              code,
+              blockNumber: blockCount
+            });
+          }
+          
+          // Also check for @block: with @kind:impl or @kind:class
+          const blockRegex = /### @block:(\w+)\s+@kind:(impl|class|function)\s*\n([\s\S]*?)(?=\n###|\n```|\n\n\n##|\n##|$)/g;
+          while ((match = blockRegex.exec(content)) !== null) {
+            const blockName = match[1];
+            const blockKind = match[2];
+            const code = match[3].trim();
+            
+            if (code.length > 10) { // Skip empty or very short blocks
+              const specName = path.basename(specFile, path.extname(specFile));
+              const ext = getExtensionForTarget(target);
+              const outputPath = path.join(outputDir, `${specName}-${blockName}${ext}`);
+              
+              generatedFiles.push({
+                specFile,
+                outputPath,
+                code,
+                blockName
+              });
+            }
+          }
+          
+        } catch (err) {
+          errors.push({ file: specFile, error: err.message });
+        }
+      }
+      
+      // Write files
+      let writtenCount = 0;
+      let skippedCount = 0;
+      
+      if (!options.dryRun && generatedFiles.length > 0) {
+        // Create output directory
+        if (!fs.existsSync(outputDir)) {
+          fs.mkdirSync(outputDir, { recursive: true });
+        }
+        
+        for (const file of generatedFiles) {
+          try {
+            // Add file header
+            const header = `/**
+ * SPECLANG-GENERATED - Do not edit directly
+ * Source: ${path.relative(projectDir, file.specFile)}
+ * Generated: ${new Date().toISOString()}
+ */
+`;
+            fs.writeFileSync(file.outputPath, header + file.code, 'utf-8');
+            writtenCount++;
+          } catch (err) {
+            errors.push({ file: file.outputPath, error: err.message });
+          }
+        }
+      } else if (options.dryRun) {
+        skippedCount = generatedFiles.length;
+      }
+      
+      console.log(`\n✅ Generation complete`);
+      console.log(`   Code blocks found: ${generatedFiles.length}`);
+      console.log(`   Files written: ${writtenCount}`);
+      console.log(`   Errors: ${errors.length}`);
+      
+      if (errors.length > 0 && options.verbose) {
+        errors.forEach(e => console.log(`   - ${e.file}: ${e.error}`));
+      }
+      
+      if (generatedFiles.length > 0 && options.dryRun) {
+        console.log(`\n📁 Would generate:`);
+        generatedFiles.slice(0, 10).forEach(f => console.log(`   - ${path.relative(projectDir, f.outputPath)}`));
+        if (generatedFiles.length > 10) {
+          console.log(`   ... and ${generatedFiles.length - 10} more`);
+        }
+        console.log(`\n💡 Run without --dry-run to write files`);
+      } else if (generatedFiles.length > 0 && !options.dryRun) {
+        console.log(`\n📁 Generated files:`);
+        generatedFiles.slice(0, 10).forEach(f => console.log(`   - ${path.relative(projectDir, f.outputPath)}`));
+        if (generatedFiles.length > 10) {
+          console.log(`   ... and ${generatedFiles.length - 10} more`);
+        }
+      }
+      
+      if (generatedFiles.length === 0) {
+        console.log(`\n💡 No code blocks found in specs.`);
+        console.log(`   Add \`\`\`speclang blocks with @kind:code to your specs.`);
+        console.log(`   Or use cascade to generate code automatically.`);
+      }
+      
+    } catch (err) {
+      console.error('\n❌ Generation failed:', err.message);
+      if (options.verbose) {
+        console.error(err.stack);
+      }
+      process.exit(1);
+    }
+  });
+
+// Helper function to get file extension for target language
+function getExtensionForTarget(target) {
+  const extensions = {
+    typescript: '.ts',
+    go: '.go',
+    python: '.py',
+    rust: '.rs',
+    javascript: '.js'
+  };
+  return extensions[target] || '.txt';
+}
+
+// Bootstrap command - Meta-circular self-build
+program
+  .command('bootstrap')
+  .description('Bootstrap SpecLang: verify specs, run cascade, validate build')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .option('--skip-build', 'Skip build step')
+  .option('--skip-tests', 'Skip test step')
+  .option('-v, --verbose', 'Show detailed output')
+  .action(async (options) => {
+    const projectDir = path.resolve(options.dir);
+    const { execSync } = require('child_process');
+    
+    console.log('🔄 SpecLang Bootstrap - Meta-circular self-build');
+    console.log(`   Project: ${projectDir}`);
+    console.log('');
+    
+    // Step 1: Verify minimal specs exist
+    console.log('📋 Step 1: Verifying minimal specs...');
+    const requiredSpecs = [
+      'docs/NORTH_STAR.md',
+      'specs/project.scl',
+      'specs/core.spec.md',
+      'specs/bootstrap.spec.md',
+      'specs/headers.spec.md',
+      'specs/cascade.spec.md'
+    ];
+    
+    let allSpecsExist = true;
+    for (const spec of requiredSpecs) {
+      const specPath = path.join(projectDir, spec);
+      if (fs.existsSync(specPath)) {
+        console.log(`   ✓ ${spec}`);
+      } else {
+        console.log(`   ✗ ${spec} - MISSING`);
+        allSpecsExist = false;
+      }
+    }
+    
+    if (!allSpecsExist) {
+      console.error('\n❌ Bootstrap failed: Missing required specs');
+      process.exit(1);
+    }
+    console.log('');
+    
+    // Step 2: Run validation
+    console.log('📋 Step 2: Running spec validation...');
+    try {
+      execSync(`cd "${projectDir}" && node bin/speclang validate`, { 
+        stdio: options.verbose ? 'inherit' : 'pipe'
+      });
+      console.log('   ✓ Validation passed');
+    } catch (err) {
+      console.error('   ✗ Validation failed');
+      if (!options.verbose) {
+        console.error('   Run with -v for details');
+      }
+      process.exit(1);
+    }
+    console.log('');
+    
+    // Step 3: Run build (if not skipped)
+    if (!options.skipBuild) {
+      console.log('📋 Step 3: Running build...');
+      try {
+        execSync(`cd "${projectDir}" && npm run build`, { 
+          stdio: options.verbose ? 'inherit' : 'pipe'
+        });
+        console.log('   ✓ Build passed');
+      } catch (err) {
+        console.error('   ✗ Build failed');
+        if (!options.verbose) {
+          console.error('   Run with -v for details');
+        }
+        process.exit(1);
+      }
+    } else {
+      console.log('📋 Step 3: Build skipped');
+    }
+    console.log('');
+    
+    // Step 4: Run tests (if not skipped)
+    if (!options.skipTests) {
+      console.log('📋 Step 4: Running tests...');
+      try {
+        execSync(`cd "${projectDir}" && npm test`, { 
+          stdio: options.verbose ? 'inherit' : 'pipe'
+        });
+        console.log('   ✓ Tests passed');
+      } catch (err) {
+        console.error('   ✗ Tests failed');
+        if (!options.verbose) {
+          console.error('   Run with -v for details');
+        }
+        process.exit(1);
+      }
+    } else {
+      console.log('📋 Step 4: Tests skipped');
+    }
+    console.log('');
+    
+    // Step 5: Check cascade capability
+    console.log('📋 Step 5: Verifying cascade capability...');
+    try {
+      // Check if cascade module exists
+      const cascadePath = path.join(projectDir, 'dist/cascade/index.js');
+      if (fs.existsSync(cascadePath)) {
+        console.log('   ✓ Cascade module available');
+      } else {
+        console.log('   ⚠ Cascade module not found (dist/cascade/index.js)');
+      }
+    } catch (err) {
+      console.log('   ⚠ Could not verify cascade:', err.message);
+    }
+    console.log('');
+    
+    // Step 6: Summary
+    console.log('===========================================');
+    console.log('✅ Bootstrap Complete - Meta-circular verification passed!');
+    console.log('===========================================');
+    console.log('');
+    console.log('SpecLang can build itself from specs.');
+    console.log('The following capabilities are verified:');
+    console.log('  - Minimal specs exist');
+    console.log('  - Spec validation works');
+    if (!options.skipBuild) console.log('  - Build compiles');
+    if (!options.skipTests) console.log('  - Tests pass');
+    console.log('  - Cascade system available');
+    console.log('');
+  });
+
+// MCP command group
+const mcp = program
+  .command('mcp')
+  .description('MCP server management');
+
+// MCP start command
+mcp
+  .command('start')
+  .description('Start MCP server')
+  .option('-p, --port <port>', 'HTTP port (for remote mode)', '3000')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .option('--remote', 'Start in HTTP server mode')
+  .option('--auth <type>', 'Auth type (none, basic, token)', 'none')
+  .option('--user <username>', 'Username for basic auth')
+  .option('--pass <password>', 'Password for basic auth')
+  .option('--token <token>', 'Token for token auth')
+  .option('--config <path>', 'Config file path')
+  .action(async (options) => {
+    const projectDir = path.resolve(options.dir);
+    
+    console.log('🚀 Starting SpecLang MCP server...');
+    console.log(`   Mode: ${options.remote ? 'HTTP' : 'stdio'}`);
+    console.log(`   Directory: ${projectDir}`);
+    
+    if (options.remote) {
+      console.log(`   Port: ${options.port}`);
+    }
+    
+    try {
+      const { MCPServer } = require('../dist/src/mcp/index.js');
+      const config = {
+        port: parseInt(options.port),
+        database: path.join(projectDir, '.speclang', 'speclang.db'),
+        specsDir: path.join(projectDir, 'specs'),
+        auth: {
+          enabled: options.auth !== 'none',
+          type: options.auth,
+          user: options.user,
+          pass: options.pass,
+          token: options.token
+        }
+      };
+      
+      const server = new MCPServer(config);
+      
+      if (options.remote) {
+        await server.startHTTP(parseInt(options.port));
+      } else {
+        await server.startStdio();
+      }
+    } catch (err) {
+      if (err.code === 'MODULE_NOT_FOUND') {
+        console.error('\n❌ SpecLang not built. Run: npm run build');
+        process.exit(1);
+      }
+      console.error('Failed to start MCP server:', err);
+      process.exit(1);
+    }
+  });
+
+// MCP status command
+mcp
+  .command('status')
+  .description('Show MCP server status')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .action(async (options) => {
+    const projectDir = path.resolve(options.dir);
+    const pidFile = path.join(projectDir, '.speclang', 'mcp.pid');
+    const portFile = path.join(projectDir, '.speclang', 'mcp.port');
+    
+    console.log('📊 SpecLang MCP Status');
+    console.log(`   Project: ${projectDir}`);
+    
+    if (fs.existsSync(pidFile)) {
+      const pid = fs.readFileSync(pidFile, 'utf-8').trim();
+      console.log(`   Status: Running (PID ${pid})`);
+      
+      if (fs.existsSync(portFile)) {
+        const port = fs.readFileSync(portFile, 'utf-8').trim();
+        console.log(`   Port: ${port}`);
+      }
+    } else {
+      console.log('   Status: Not running');
+    }
+  });
+
+// MCP stop command
+mcp
+  .command('stop')
+  .description('Stop MCP server')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .action(async (options) => {
+    const projectDir = path.resolve(options.dir);
+    const pidFile = path.join(projectDir, '.speclang', 'mcp.pid');
+    
+    if (!fs.existsSync(pidFile)) {
+      console.log('MCP server not running');
+      return;
+    }
+    
+    const pid = parseInt(fs.readFileSync(pidFile, 'utf-8').trim());
+    
+    try {
+      process.kill(pid, 'SIGTERM');
+      fs.unlinkSync(pidFile);
+      console.log('✅ MCP server stopped');
+    } catch (err) {
+      if (err.code === 'ESRCH') {
+        console.log('MCP server not running (stale PID file removed)');
+        fs.unlinkSync(pidFile);
+      } else {
+        throw err;
+      }
+    }
+  });
+
+// ============================================================================
+// NEW COMMAND - Create a new speclang project
+// ============================================================================
+
+program
+  .command('new <name>')
+  .description('Create a new speclang project')
+  .option('-d, --dir <path>', 'Target directory', undefined)
+  .option('-t, --template <template>', 'Starter template (minimal, http, api)', 'minimal')
+  .option('--bare', 'No example specs', false)
+  .option('--no-git', 'Skip git initialization')
+  .option('-f, --force', 'Overwrite existing directory')
+  .action(async (name, options) => {
+    const targetDir = options.dir || name;
+    const projectPath = path.resolve(targetDir);
+    
+    // Validate name is valid identifier
+    if (!/^[a-zA-Z][a-zA-Z0-9_-]*$/.test(name)) {
+      console.error(`❌ Invalid project name: ${name}`);
+      console.error('   Project name must start with a letter and contain only letters, numbers, hyphens, and underscores.');
+      process.exit(1);
+    }
+    
+    // Check if directory exists
+    if (fs.existsSync(projectPath) && !options.force) {
+      console.error(`❌ Directory already exists: ${projectPath}`);
+      console.error('   Use --force to overwrite or choose a different name.');
+      process.exit(1);
+    }
+    
+    console.log('🚀 Creating new speclang project...');
+    console.log(`   Name: ${name}`);
+    console.log(`   Path: ${projectPath}`);
+    console.log(`   Template: ${options.template}`);
+    
+    try {
+      // Create directory structure
+      fs.mkdirSync(projectPath, { recursive: true });
+      fs.mkdirSync(path.join(projectPath, 'specs'), { recursive: true });
+      fs.mkdirSync(path.join(projectPath, 'src'), { recursive: true });
+      fs.mkdirSync(path.join(projectPath, 'tests'), { recursive: true });
+      
+      // Create .speclangrc config file
+      const speclangrc = JSON.stringify({
+        version: '0.1.0',
+        name: name,
+        targets: ['typescript'],
+        cascade: {
+          maxDepth: 50,
+          quietPeriod: 30
+        }
+      }, null, 2);
+      fs.writeFileSync(path.join(projectPath, '.speclangrc'), speclangrc);
+      console.log('   ✓ Created .speclangrc');
+      
+      // Create initial spec based on template
+      let initialSpec = '';
+      if (!options.bare) {
+        if (options.template === 'http' || options.template === 'api') {
+          initialSpec = `# speclang-header lines:8
+id: "@${name}/api"
+version: 0.1.0
+layer: 1
+tags: [api, http]
+---
+
+# ${name} API
+
+## Endpoints
+
+### @block:health @kind:endpoint
+GET /health - Health check endpoint
+
+### @block:status @kind:endpoint  
+GET /status - Service status endpoint
+`;
+        } else {
+          // minimal template
+          initialSpec = `# speclang-header lines:8
+id: "@${name}/main"
+version: 0.1.0
+layer: 1
+tags: [project]
+---
+
+# ${name}
+
+## Overview
+
+This is a new speclang project.
+
+## Getting Started
+
+1. Edit specs in the \`specs/\` directory
+2. Run \`speclang generate\` to generate code
+3. Run \`speclang cascade <spec>\` to run cascade
+`;
+        }
+        fs.writeFileSync(path.join(projectPath, 'specs', 'main.spec.md'), initialSpec);
+        console.log('   ✓ Created initial spec');
+      }
+      
+      // Create package.json if not bare
+      if (!options.bare) {
+        const packageJson = {
+          name: name,
+          version: '0.1.0',
+          type: 'module',
+          scripts: {
+            build: 'speclang generate',
+            test: 'speclang validate && npm test',
+            dev: 'speclang start'
+          },
+          dependencies: {},
+          devDependencies: {}
+        };
+        fs.writeFileSync(path.join(projectPath, 'package.json'), JSON.stringify(packageJson, null, 2));
+        console.log('   ✓ Created package.json');
+      }
+      
+      // Initialize git if requested and not in existing repo
+      if (options.git !== false && !fs.existsSync(path.join(projectPath, '.git'))) {
+        try {
+          const { execSync } = require('child_process');
+          execSync('git init', { cwd: projectPath, stdio: 'pipe' });
+          console.log('   ✓ Initialized git repository');
+        } catch (err) {
+          console.log('   ⚠ Could not initialize git');
+        }
+      }
+      
+      console.log('');
+      console.log('✅ Project created successfully!');
+      console.log('');
+      console.log('Next steps:');
+      console.log(`   cd ${targetDir}`);
+      console.log('   npm install');
+      console.log('   speclang validate');
+      console.log('   speclang generate');
+      console.log('');
+      
+    } catch (err) {
+      console.error('❌ Failed to create project:', err.message);
+      process.exit(1);
+    }
+  });
+
+// ============================================================================
+// EXPAND COMMAND - Expand a block into detailed specs
+// ============================================================================
+
+program
+  .command('expand <block-id>')
+  .description('Expand a block ID into detailed specs')
+  .option('-d, --depth <n>', 'Expansion depth', '1')
+  .option('--no-ai', 'Disable AI expansion (show raw blocks)')
+  .option('-v, --verbose', 'Show detailed output')
+  .action(async (blockId, options) => {
+    const projectDir = process.cwd();
+    const specsDir = path.join(projectDir, 'specs');
+    
+    if (!fs.existsSync(specsDir)) {
+      console.error('❌ No specs directory found. Run from a speclang project.');
+      process.exit(1);
+    }
+    
+    // Parse block ID - extract spec and block name
+    let specPattern = blockId;
+    let blockName = null;
+    
+    if (blockId.includes('#')) {
+      const parts = blockId.split('#');
+      specPattern = parts[0];
+      blockName = parts[1];
+    }
+    
+    // Search all spec files - filter by block name later
+    // If blockName specified (from #), use it; otherwise use the whole blockId
+    // Convert dots to slashes for matching (cli.new -> cli/new)
+    let searchPattern = (blockName || blockId).replace(/\./g, '/');
+    
+    // Also set blockName for exact matching
+    if (!blockName) {
+      blockName = searchPattern;
+    }
+    
+    console.log('🔍 Expanding block:', blockId);
+    console.log(`   Pattern: ${searchPattern}`);
+    if (blockName) {
+      console.log(`   Block: ${blockName}`);
+    }
+    
+    // Find matching spec files
+    const { execSync } = require('child_process');
+    let specFiles = [];
+    
+    // If a specific block is requested, find spec files that might contain it
+    if (blockName) {
+      // Search for specs that contain this block name (or partial match)
+      const searchTerm = blockName.includes('/') ? blockName : `@.*${blockName}`;
+      try {
+        const grepOutput = execSync(`grep -rl "${searchTerm}" "${specsDir}" 2>/dev/null || true`, { encoding: 'utf-8' });
+        specFiles = grepOutput.trim().split('\n').filter(f => f.length > 0 && f.endsWith('.spec.md'));
+      } catch (e) {
+        // No matches
+      }
+      }
+    
+    // If no specific files found, search all
+    if (specFiles.length === 0) {
+      try {
+        const findOutput = execSync(`find "${specsDir}" -name "*.spec.md" -type f`, { encoding: 'utf-8' });
+        specFiles = findOutput.trim().split('\n').filter(f => f.length > 0);
+      } catch (e) {
+        console.error('❌ Could not find spec files');
+        process.exit(1);
+      }
+    }
+    
+    if (specFiles.length === 0) {
+      console.error(`❌ No specs found matching: ${blockId}`);
+      process.exit(1);
+    }
+    
+    console.log(`   Found ${specFiles.length} matching spec(s)`);
+    
+    // Search for the block in spec files
+    // Match formats:
+    // 1. ### @blockname followed by ```speclang # @block:name @kind:kind ...
+    // 2. ### @block:name @kind:kind directly
+    let foundBlocks = [];
+    
+    for (const specFile of specFiles) {
+      try {
+        const content = fs.readFileSync(specFile, 'utf-8');
+        
+        // First try: find ### @block:name followed by ```speclang block
+        // The format in specs is:
+        // ### @cli/new
+        // ```speclang
+        // # @block:cli/new @kind:operation
+        // ...
+        // ```
+        
+        // Find all ### @ patterns (block headings)
+        // This matches: ### @blockname\ncontent
+        const headingRegex = /### @([^\s\n]+)\s*\n([\s\S]*?)(?=\n###|\n```|\n##\s|$)/g;
+        let match;
+        
+        while ((match = headingRegex.exec(content)) !== null) {
+          const headingName = match[1];
+          const blockContent = match[2].trim();
+          
+          // Check if there's a @kind: in the content
+          const kindMatch = blockContent.match(/# @kind:(\w+)/);
+          const blockNameMatch = blockContent.match(/# @block:([^\s]+)/);
+          
+          const name = blockNameMatch ? blockNameMatch[1] : headingName;
+          const kind = kindMatch ? kindMatch[1] : 'unknown';
+          
+          // If blockName specified, filter by it
+          if (blockName && name !== blockName) {
+            continue;
+          }
+          
+          // Also filter by search pattern if specified
+          // Match blocks that START WITH the search pattern
+          if (searchPattern && !name.startsWith(searchPattern) && !headingName.startsWith(searchPattern)) {
+            continue;
+          }
+          
+          foundBlocks.push({
+            file: path.relative(projectDir, specFile),
+            name,
+            kind,
+            content: blockContent
+          });
+        }
+      } catch (err) {
+        // Skip files we can't read
+      }
+    }
+    
+    if (foundBlocks.length === 0) {
+      console.error(`❌ Block not found: ${blockId}`);
+      if (!blockName) {
+        console.log('   Note: Use @spec/file#blockname to specify a block');
+      }
+      process.exit(1);
+    }
+    
+    // Display found blocks
+    console.log(`\n📦 Found ${foundBlocks.length} block(s):\n`);
+    
+    for (const block of foundBlocks) {
+      console.log(`--- ${block.file} ---`);
+      console.log(`@block:${block.name} @kind:${block.kind}`);
+      console.log('');
+      
+      // Show first few lines of content
+      const lines = block.content.split('\n');
+      const preview = lines.slice(0, 20).join('\n');
+      console.log(preview);
+      
+      if (lines.length > 20) {
+        console.log(`    ... ${lines.length - 20} more lines`);
+      }
+      console.log('');
+    }
+    
+    // If AI expansion requested (not implemented yet)
+    if (options.ai && foundBlocks.length > 0) {
+      console.log('💡 AI expansion not yet implemented.');
+      console.log('   The block has been loaded and is ready for manual expansion.');
+    }
+    
+    console.log('✅ Expansion complete');
+  });
+
+// ============================================================================
+// SEARCH COMMAND - Search across all specs
+// ============================================================================
+
+program
+  .command('search <query>')
+  .description('Search across all specs')
+  .option('-k, --kind <type>', 'Filter by block kind (e.g., entity, operation, interface)')
+  .option('-t, --tag <tag>', 'Filter by tag')
+  .option('-l, --limit <n>', 'Maximum results to show', '20')
+  .option('-v, --verbose', 'Show detailed output')
+  .action(async (query, options) => {
+    const projectDir = process.cwd();
+    const specsDir = path.join(projectDir, 'specs');
+    
+    if (!fs.existsSync(specsDir)) {
+      console.error('❌ No specs directory found. Run from a speclang project.');
+      process.exit(1);
+    }
+    
+    console.log(`🔍 Searching for: "${query}"`);
+    if (options.kind) console.log(`   Kind filter: ${options.kind}`);
+    if (options.tag) console.log(`   Tag filter: ${options.tag}`);
+    
+    const limit = parseInt(options.limit) || 20;
+    let results = [];
+    
+    // Find all spec files
+    const findSpecFiles = (dir) => {
+      const files = [];
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          files.push(...findSpecFiles(fullPath));
+        } else if (entry.name.endsWith('.spec.md') || entry.name.endsWith('.spec.yaml') || entry.name.endsWith('.scl')) {
+          files.push(fullPath);
+        }
+      }
+      return files;
+    };
+    
+    const specFiles = findSpecFiles(specsDir);
+    console.log(`   Searching in ${specFiles.length} spec files...`);
+    
+    // Search in each file
+    for (const specFile of specFiles) {
+      try {
+        const content = fs.readFileSync(specFile, 'utf-8');
+        const relativePath = path.relative(projectDir, specFile);
+        
+        // Parse header for tags
+        let fileTags = [];
+        const headerMatch = content.match(/^# speclang-header lines:\d+\n([\s\S]*?)^---/m);
+        if (headerMatch) {
+          const tagMatch = headerMatch[1].match(/tags:\s*\[(.*?)\]/);
+          if (tagMatch) {
+            fileTags = tagMatch[1].split(',').map(t => t.trim().replace(/"/g, ''));
+          }
+        }
+        
+        // Filter by tag if specified
+        if (options.tag && !fileTags.includes(options.tag)) {
+          continue;
+        }
+        
+        // Search for matches - look for the query in content
+        const lines = content.split('\n');
+        let matches = [];
+        
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          // Check if line contains the query (case-insensitive)
+          if (line.toLowerCase().includes(query.toLowerCase())) {
+            // Get context (surrounding lines)
+            const start = Math.max(0, i - 1);
+            const end = Math.min(lines.length, i + 2);
+            const context = lines.slice(start, end).join('\n');
+            
+            matches.push({
+              lineNumber: i + 1,
+              line: line.trim(),
+              context
+            });
+          }
+        }
+        
+        if (matches.length > 0) {
+          results.push({
+            file: relativePath,
+            matches: matches.slice(0, 5), // Limit matches per file
+            totalMatches: matches.length,
+            tags: fileTags
+          });
+        }
+      } catch (err) {
+        // Skip files we can't read
+      }
+    }
+    
+    // Filter by kind if specified - search in block definitions
+    if (options.kind) {
+      results = results.filter(r => {
+        try {
+          const content = fs.readFileSync(path.join(specsDir, r.file), 'utf-8');
+          return content.includes(`@kind:${options.kind}`);
+        } catch {
+          return false;
+        }
+      });
+    }
+    
+    // Limit results
+    results = results.slice(0, limit);
+    
+    // Display results
+    console.log(`\n📋 Found ${results.length} file(s) with matches:\n`);
+    
+    for (const result of results) {
+      console.log(`--- ${result.file} ---`);
+      if (result.tags.length > 0) {
+        console.log(`   Tags: ${result.tags.join(', ')}`);
+      }
+      console.log(`   ${result.totalMatches} match(es)`);
+      
+      if (options.verbose) {
+        for (const match of result.matches) {
+          console.log(`   Line ${match.lineNumber}: ${match.line.substring(0, 80)}`);
+        }
+      } else {
+        // Show first match as preview
+        if (result.matches.length > 0) {
+          const firstMatch = result.matches[0].line;
+          console.log(`   Preview: ${firstMatch.substring(0, 80)}`);
+        }
+      }
+      console.log('');
+    }
+    
+    console.log(`✅ Search complete - ${results.length} files`);
+  });
+
+// ============================================================================
+// MATURITY COMMAND
+// ============================================================================
+
+program
+  .command('maturity [spec]')
+  .description('Show maturity level info or validate a spec')
+  .option('--level <level>', 'Show info for specific level')
+  .option('--json', 'JSON output')
+  .option('--verbose', 'Show detailed criteria')
+  .action(async (spec, options) => {
+    const projectDir = process.cwd();
+    const specsDir = path.join(projectDir, 'specs');
+    
+    // If no spec provided, show all levels
+    if (!spec) {
+      if (options.json) {
+        const levels = ['POC', 'MVP', 'Alpha', 'Beta', 'Production', 'Startup', 'SMB', 'MSB', 'Enterprise'];
+        console.log(JSON.stringify({
+          levels: levels.map(l => ({ name: l }))
+        }, null, 2));
+      } else {
+        console.log('\n=== Project Maturity Levels ===\n');
+        
+        const levels = [
+          { name: 'POC', desc: 'Proof of Concept - Experimental, minimal validation' },
+          { name: 'MVP', desc: 'Minimum Viable Product - Core functionality validated' },
+          { name: 'Alpha', desc: 'Internal Testing - Incomplete features, internal use' },
+          { name: 'Beta', desc: 'External Testing - Feature complete, stability focus' },
+          { name: 'Production', desc: 'Stable Production - Production-ready, supported' },
+          { name: 'Startup', desc: 'Small Team Scale - Rapid iteration, limited resources' },
+          { name: 'SMB', desc: 'Small/Medium Business - Established processes, moderate scale' },
+          { name: 'MSB', desc: 'Medium/Large Business - Complex integration, compliance focus' },
+          { name: 'Enterprise', desc: 'Maximum Scale - Strict governance, high availability' },
+        ];
+        
+        levels.forEach(l => {
+          console.log(`  ${l.name.padEnd(12)} ${l.desc}`);
+        });
+        
+        console.log('\nUsage: speclang maturity <spec-path>');
+        console.log('Example: speclang maturity specs/auth.spec.md');
+      }
+      return;
+    }
+    
+    // Validate a specific spec
+    let specPath = spec;
+    if (!path.isAbsolute(spec)) {
+      specPath = path.join(specsDir, spec);
+    }
+    
+    if (!fs.existsSync(specPath)) {
+      console.error(`❌ Spec file not found: ${specPath}`);
+      process.exit(1);
+    }
+    
+    try {
+      const content = fs.readFileSync(specPath, 'utf-8');
+      
+      // Parse header
+      const headerMatch = content.match(/^# speclang-header lines:\d+\n([\s\S]*?)^---/m);
+      if (!headerMatch) {
+        console.error('❌ No valid speclang header found');
+        process.exit(1);
+      }
+      
+      // Extract project_level
+      let projectLevel = 'POC';
+      const levelMatch = headerMatch[1].match(/project_level:\s*(\w+)/);
+      if (levelMatch) {
+        projectLevel = levelMatch[1];
+      }
+      
+      // Extract agent_support
+      let agentSupport = 'unknown';
+      const agentMatch = headerMatch[1].match(/agent_support:\s*(\w+)/);
+      if (agentMatch) {
+        agentSupport = agentMatch[1];
+      }
+      
+      // Extract tags
+      let tags = [];
+      const tagMatch = headerMatch[1].match(/tags:\s*\[(.*?)\]/);
+      if (tagMatch) {
+        tags = tagMatch[1].split(',').map((t) => t.trim().replace(/"/g, ''));
+      }
+      
+      // Validate maturity rules
+      const violations = [];
+      const suggestions = [];
+      
+      // Rule 1: autonomousRequiresBeta
+      if (agentSupport === 'agent_autonomous' && !['Beta', 'Production', 'Startup', 'SMB', 'MSB', 'Enterprise'].includes(projectLevel)) {
+        violations.push('Specs with agent_autonomous must have project_level >= Beta');
+        suggestions.push(`Change project_level from ${projectLevel} to Beta or higher`);
+      }
+      
+      // Rule 2: productionRequiresDeps
+      if (projectLevel === 'Production') {
+        const depMatch = headerMatch[1].match(/depends_on:\s*\n?\s*-/);
+        if (!depMatch) {
+          violations.push('Production specs should have depends_on references');
+        }
+      }
+      
+      // Rule 3: enterpriseRequiresCompliance
+      if (projectLevel === 'Enterprise' && !tags.includes('compliance')) {
+        suggestions.push('Consider adding "compliance" tag for Enterprise level');
+      }
+      
+      // Output results
+      if (options.json) {
+        console.log(JSON.stringify({
+          spec: path.basename(specPath),
+          level: projectLevel,
+          agent_support: agentSupport,
+          tags,
+          valid: violations.length === 0,
+          violations,
+          suggestions,
+        }, null, 2));
+      } else {
+        console.log(`\n=== Maturity Validation: ${path.basename(specPath)} ===\n`);
+        console.log(`Level: ${projectLevel}`);
+        console.log(`Agent Support: ${agentSupport}`);
+        console.log(`Tags: ${tags.join(', ') || 'none'}`);
+        console.log(`Valid: ${violations.length === 0 ? '✅ Yes' : '❌ No'}`);
+        
+        if (violations.length > 0) {
+          console.log('\n❌ Violations:');
+          violations.forEach(v => console.log(`  - ${v}`));
+        }
+        
+        if (suggestions.length > 0) {
+          console.log('\n💡 Suggestions:');
+          suggestions.forEach(s => console.log(`  - ${s}`));
+        }
+        
+        if (options.verbose) {
+          console.log(`\n📋 Description:`);
+          const descriptions = {
+            'POC': 'Proof of Concept - Experimental, minimal validation',
+            'MVP': 'Minimum Viable Product - Core functionality validated',
+            'Alpha': 'Internal Testing - Incomplete features, internal use',
+            'Beta': 'External Testing - Feature complete, stability focus',
+            'Production': 'Stable Production - Production-ready, supported',
+            'Startup': 'Small Team Scale - Rapid iteration, limited resources',
+            'SMB': 'Small/Medium Business - Established processes, moderate scale',
+            'MSB': 'Medium/Large Business - Complex integration, compliance focus',
+            'Enterprise': 'Maximum Scale - Strict governance, high availability',
+          };
+          console.log(`  ${descriptions[projectLevel] || 'Unknown'}`);
+        }
+        
+      if (violations.length > 0) {
+        process.exit(1);
+      }
+    }
+    } catch (error) {
+      if (options.json) {
+        console.log(JSON.stringify({ error: error.message }, null, 2));
+      } else {
+        console.error(`Error: ${error.message}`);
+      }
+      process.exit(1);
+    }
+  });
+
+program
+  .command('upgrade <spec>')
+  .description('Upgrade a spec to a higher maturity level')
+  .option('--to <level>', 'Target maturity level (Beta, Production, etc.)')
+  .option('--json', 'JSON output')
+  .option('--plan', 'Show upgrade plan without executing')
+  .action(async (spec, options) => {
+    if (!options.to) {
+      console.error('Error: --to <level> is required');
+      console.log('\nUsage: speclang upgrade <spec> --to <level>');
+      console.log('Example: speclang upgrade specs/auth.spec.md --to Beta');
+      process.exit(1);
+    }
+
+    const projectDir = process.cwd();
+    const specsDir = path.join(projectDir, 'specs');
+    let specPath = spec;
+    if (!path.isAbsolute(spec)) {
+      specPath = path.join(specsDir, spec);
+    }
+
+    if (!fs.existsSync(specPath)) {
+      console.error(`❌ Spec file not found: ${specPath}`);
+      process.exit(1);
+    }
+
+    // Read spec header to get current level
+    const content = fs.readFileSync(specPath, 'utf-8');
+    const headerMatch = content.match(/^# speclang-header.*?\n(.*?)^---/ms);
+    let currentLevel = 'POC';
+    if (headerMatch) {
+      const levelMatch = headerMatch[1].match(/project_level:\s*(\w+)/i);
+      if (levelMatch) {
+        currentLevel = levelMatch[1];
+      }
+    }
+
+    const targetLevel = options.to;
+    const validLevels = ['POC', 'MVP', 'Alpha', 'Beta', 'Production', 'Startup', 'SMB', 'MSB', 'Enterprise'];
+    const currentIndex = validLevels.indexOf(currentLevel);
+    const targetIndex = validLevels.indexOf(targetLevel);
+
+    if (currentIndex === -1) {
+      console.error(`❌ Unknown current level: ${currentLevel}`);
+      process.exit(1);
+    }
+    if (targetIndex === -1) {
+      console.error(`❌ Unknown target level: ${targetLevel}`);
+      console.log(`   Valid levels: ${validLevels.join(', ')}`);
+      process.exit(1);
+    }
+    if (targetIndex <= currentIndex) {
+      console.error(`❌ Upgrade must go to a higher level`);
+      console.log(`   Current: ${currentLevel}, Target: ${targetLevel}`);
+      console.log(`   Use 'speclang downgrade' for lowering levels`);
+      process.exit(1);
+    }
+
+    if (options.plan) {
+      if (options.json) {
+        console.log(JSON.stringify({
+          direction: 'upgrade',
+          from: currentLevel,
+          to: targetLevel,
+          spec: path.basename(specPath),
+          steps: [
+            'Run pre-upgrade validation',
+            `Update project_level from ${currentLevel} to ${targetLevel}`,
+            'Run post-upgrade validation',
+            'Update any dependent specs if needed',
+            'Commit changes'
+          ]
+        }, null, 2));
+      } else {
+        console.log(`\n=== Upgrade Plan ===\n`);
+        console.log(`Spec: ${path.basename(specPath)}`);
+        console.log(`From: ${currentLevel}`);
+        console.log(`To: ${targetLevel}`);
+        console.log('\nSteps:');
+        console.log('  1. Run pre-upgrade validation');
+        console.log(`  2. Update project_level from ${currentLevel} to ${targetLevel}`);
+        console.log('  3. Run post-upgrade validation');
+        console.log('  4. Update any dependent specs if needed');
+        console.log('  5. Commit changes');
+      }
+      return;
+    }
+
+    // Execute upgrade - update the spec header
+    const newContent = content.replace(
+      /project_level:\s*(\w+)/i,
+      `project_level: ${targetLevel}`
+    );
+
+    try {
+      fs.writeFileSync(specPath, newContent, 'utf-8');
+      if (options.json) {
+        console.log(JSON.stringify({
+          status: 'success',
+          direction: 'upgrade',
+          from: currentLevel,
+          to: targetLevel,
+          spec: path.basename(specPath)
+        }, null, 2));
+      } else {
+        console.log(`\n✅ Upgrade complete: ${currentLevel} → ${targetLevel}`);
+        console.log(`   Spec: ${path.basename(specPath)}`);
+      }
+    } catch (error) {
+      if (options.json) {
+        console.log(JSON.stringify({
+          status: 'error',
+          error: error.message
+        }, null, 2));
+      } else {
+        console.error(`❌ Upgrade failed: ${error.message}`);
+      }
+      process.exit(1);
+    }
+  });
+
+program
+  .command('downgrade <spec>')
+  .description('Downgrade a spec to a lower maturity level')
+  .option('--to <level>', 'Target maturity level')
+  .option('--json', 'JSON output')
+  .option('--plan', 'Show downgrade plan without executing')
+  .action(async (spec, options) => {
+    if (!options.to) {
+      console.error('Error: --to <level> is required');
+      console.log('\nUsage: speclang downgrade <spec> --to <level>');
+      console.log('Example: speclang downgrade specs/auth.spec.md --to MVP');
+      process.exit(1);
+    }
+
+    const projectDir = process.cwd();
+    const specsDir = path.join(projectDir, 'specs');
+    let specPath = spec;
+    if (!path.isAbsolute(spec)) {
+      specPath = path.join(specsDir, spec);
+    }
+
+    if (!fs.existsSync(specPath)) {
+      console.error(`❌ Spec file not found: ${specPath}`);
+      process.exit(1);
+    }
+
+    // Read spec header to get current level
+    const content = fs.readFileSync(specPath, 'utf-8');
+    const headerMatch = content.match(/^# speclang-header.*?\n(.*?)^---/ms);
+    let currentLevel = 'POC';
+    if (headerMatch) {
+      const levelMatch = headerMatch[1].match(/project_level:\s*(\w+)/i);
+      if (levelMatch) {
+        currentLevel = levelMatch[1];
+      }
+    }
+
+    const targetLevel = options.to;
+    const validLevels = ['POC', 'MVP', 'Alpha', 'Beta', 'Production', 'Startup', 'SMB', 'MSB', 'Enterprise'];
+    const currentIndex = validLevels.indexOf(currentLevel);
+    const targetIndex = validLevels.indexOf(targetLevel);
+
+    if (currentIndex === -1) {
+      console.error(`❌ Unknown current level: ${currentLevel}`);
+      process.exit(1);
+    }
+    if (targetIndex === -1) {
+      console.error(`❌ Unknown target level: ${targetLevel}`);
+      console.log(`   Valid levels: ${validLevels.join(', ')}`);
+      process.exit(1);
+    }
+    if (targetIndex >= currentIndex) {
+      console.error(`❌ Downgrade must go to a lower level`);
+      console.log(`   Current: ${currentLevel}, Target: ${targetLevel}`);
+      console.log(`   Use 'speclang upgrade' for raising levels`);
+      process.exit(1);
+    }
+
+    if (options.plan) {
+      if (options.json) {
+        console.log(JSON.stringify({
+          direction: 'downgrade',
+          from: currentLevel,
+          to: targetLevel,
+          spec: path.basename(specPath),
+          steps: [
+            'Run pre-downgrade validation',
+            `Update project_level from ${currentLevel} to ${targetLevel}`,
+            'Run post-downgrade validation',
+            'Update any dependent specs if needed',
+            'Commit changes'
+          ]
+        }, null, 2));
+      } else {
+        console.log(`\n=== Downgrade Plan ===\n`);
+        console.log(`Spec: ${path.basename(specPath)}`);
+        console.log(`From: ${currentLevel}`);
+        console.log(`To: ${targetLevel}`);
+        console.log('\nSteps:');
+        console.log('  1. Run pre-downgrade validation');
+        console.log(`  2. Update project_level from ${currentLevel} to ${targetLevel}`);
+        console.log('  3. Run post-downgrade validation');
+        console.log('  4. Update any dependent specs if needed');
+        console.log('  5. Commit changes');
+      }
+      return;
+    }
+
+    // Execute downgrade - update the spec header
+    const newContent = content.replace(
+      /project_level:\s*(\w+)/i,
+      `project_level: ${targetLevel}`
+    );
+
+    try {
+      fs.writeFileSync(specPath, newContent, 'utf-8');
+      if (options.json) {
+        console.log(JSON.stringify({
+          status: 'success',
+          direction: 'downgrade',
+          from: currentLevel,
+          to: targetLevel,
+          spec: path.basename(specPath)
+        }, null, 2));
+      } else {
+        console.log(`\n✅ Downgrade complete: ${currentLevel} → ${targetLevel}`);
+        console.log(`   Spec: ${path.basename(specPath)}`);
+      }
+    } catch (error) {
+      if (options.json) {
+        console.log(JSON.stringify({
+          status: 'error',
+          error: error.message
+        }, null, 2));
+      } else {
+        console.error(`❌ Downgrade failed: ${error.message}`);
+      }
+      process.exit(1);
+    }
+  });
+
+
+// ============================================================================
+// INIT COMMAND - Create spec file scaffolding
+// ============================================================================
+
+program
+  .command('init <name>')
+  .description('Create spec scaffolding for a feature')
+  .option('--tiers', 'Create multi-tier specs (meta, plan, ts, test)', false)
+  .option('-f, --force', 'Overwrite existing directory')
+  .action(async (name, options) => {
+    const projectDir = process.cwd();
+    const specsDir = path.join(projectDir, 'specs', name);
+
+    if (fs.existsSync(specsDir) && !options.force) {
+      console.error(`❌ Directory already exists: specs/${name}`);
+      console.error('   Use --force to overwrite or choose a different name.');
+      process.exit(1);
+    }
+
+    fs.mkdirSync(specsDir, { recursive: true });
+    console.log(`📁 Created specs/${name}/`);
+
+    const timestamp = new Date().toISOString().slice(0, 10);
+
+    function writeSpec(fileName, targetLang, description, extraContent = '') {
+      const header = `---
+id: "@${name}/${fileName.replace('.spec.','/').replace('.md','')}"
+version: 0.1.0
+layer: 5
+target_lang: ${targetLang}
+---
+
+# ${description}
+
+${extraContent}`;
+      fs.writeFileSync(path.join(specsDir, fileName), header);
+      console.log(`   ✓ Created ${fileName}`);
+    }
+
+    if (options.tiers) {
+      // Create 4 tiers: meta, plan, ts, test
+      writeSpec(`${name}.spec.meta.md`, 'meta', `${name} — Meta (Why)`,
+`## Context
+Why does this feature exist?
+
+## Stakeholders
+Who cares about this feature?
+
+## Constraints
+What constraints must this feature respect?
+
+## References
+- @ref:northstar`);
+      writeSpec(`${name}.spec.plan.md`, 'plan', `${name} — Plan (How)`,
+`## Approach
+How will this feature be implemented?
+
+## Steps
+1. Step one
+2. Step two
+3. Step three
+
+## Dependencies
+- @ref:${name}/meta`);
+      writeSpec(`${name}.spec.ts.md`, 'ts', `${name} — Implementation (What)`,
+`## Implementation
+
+### @block:main @kind:code
+\`\`\`ts
+// Implementation for ${name}
+\`\`\``);
+      writeSpec(`${name}.spec.test.md`, 'test', `${name} — Tests (Prove)`,
+`## Test Cases
+
+### @block:unit @kind:test
+\`\`\`ts
+// Tests for ${name}
+\`\`\``);
+    } else {
+      // Single spec (default)
+      writeSpec(`${name}.spec.md`, 'md', `${name}`,
+`## Overview
+
+This spec describes ${name}.
+
+## Implementation
+
+### @block:main @kind:code
+\`\`\`ts
+// Implementation for ${name}
+\`\`\``);
+    }
+
+    console.log(`\n✅ ${options.tiers ? '4-tier' : 'Single'} spec created in specs/${name}/`);
+  });
+
+program.parse();

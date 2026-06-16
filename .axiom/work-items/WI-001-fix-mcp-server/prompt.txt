@@ -1,0 +1,41 @@
+# WI-001: Fix MCP Server stdio mode — remove server.registerTool() calls
+
+## Problem
+The MCP server at `specs/mcp.spec.dir/src/server.ts` crashes in stdio mode with:
+```
+TypeError: server.registerTool is not a function
+```
+
+## Root Cause
+The `createServer()` method (lines 220-249) has two conflicting approaches mixed together:
+
+1. Line 236: `this.toolRegistry.registerTools(server)` — THIS is correct. Uses `server.setRequestHandler(CallToolRequestSchema, ...)` which is the proper MCP SDK v1 API.
+2. Lines 240-247: A loop calling `server.registerTool(tool.name, ...)` — THIS does NOT exist in @modelcontextprotocol/sdk v1+. It's a v0.x API that was removed.
+
+## Required Changes
+
+### 1. Fix `specs/mcp.spec.dir/src/server.ts` — `createServer()` method (lines 239-247)
+
+REMOVE the `server.registerTool()` loop (lines 239-247) AND add proper `ListToolsRequestSchema` handler.
+
+The method should:
+- Keep `this.toolRegistry.registerTools(server)` at line 236 (already correct — handles CallToolRequestSchema)
+- After line 236, add: `server.setRequestHandler(ListToolsRequestSchema, ...)` that returns the tool definitions from `getToolDefinitions()`
+- Remove the `server.registerTool()` for-loop (lines 240-247)
+
+Import `ListToolsRequestSchema` from `@modelcontextprotocol/sdk/types.js` if not already imported.
+
+### 2. Verify
+After changes, the following should work:
+```bash
+node specs/mcp.spec.dir/src/server.js 2>&1 | tail -1
+# Expected: "SpecLang MCP server running on stdio"
+```
+
+## Scope
+ONLY modify `specs/mcp.spec.dir/src/server.ts`. 
+- Delete the for-loop at lines 240-247
+- Add ListToolsRequestSchema handler
+- Add the missing import
+- Do NOT add new features, tools, or endpoints
+- Do NOT touch other files

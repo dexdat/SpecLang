@@ -1,0 +1,1 @@
+../../specs/deployment.spec.dir/src/index.ts

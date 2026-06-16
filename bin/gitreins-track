@@ -1,0 +1,20 @@
+#!/bin/bash
+# GitReins Track — called by build.yaml on convergence
+# Loads .speclang/.env for evaluator API keys
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Load evaluator env vars
+if [ -f "$PROJECT_DIR/.speclang/.env" ]; then
+  set -a
+  source "$PROJECT_DIR/.speclang/.env"
+  set +a
+fi
+
+ARGS=""
+if [[ "$*" == *"--guard-only"* ]]; then
+  ARGS="--guard-only"
+fi
+
+cd "$PROJECT_DIR" && exec npx tsx .speclang/cascade-tracker.spec $ARGS

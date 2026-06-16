@@ -1,0 +1,1 @@
+../../specs/pipeline.spec.dir/src/config.ts

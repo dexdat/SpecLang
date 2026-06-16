@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+/**
+ * SpecLang LSP Server — Language Server Protocol implementation.
+ *
+ * Start with: speclang-lsp
+ * Communicates over stdio using the LSP protocol.
+ * Intended to be launched by editors (VS Code, Neovim, etc.).
+ */
+
+const { startServer } = require('../dist/lsp/server');
+
+startServer();
+
+process.on('uncaughtException', (err) => {
+  console.error('LSP server error:', err.message);
+  process.exit(1);
+});

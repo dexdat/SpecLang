@@ -1,0 +1,1 @@
+../specs/scripts.spec.dir/run_all_checks.py

@@ -1,0 +1,44 @@
+{
+  "name": "SpecLang",
+  "scopeName": "source.speclang",
+  "fileTypes": [".spec.md"],
+  "patterns": [
+    {
+      "name": "comment.line.speclang",
+      "match": "^# speclang-header.*$"
+    },
+    {
+      "name": "markup.heading.speclang",
+      "match": "^###\\s+.*$"
+    },
+    {
+      "name": "keyword.control.speclang",
+      "match": "@block:\\S+|@kind:\\S+"
+    },
+    {
+      "name": "string.other.link.speclang",
+      "match": "@ref:\\S+"
+    },
+    {
+      "name": "entity.name.tag.speclang",
+      "match": "@[a-zA-Z_][a-zA-Z0-9_]*"
+    },
+    {
+      "name": "markup.raw.block.speclang",
+      "begin": "```",
+      "end": "```"
+    },
+    {
+      "name": "markup.bold.speclang",
+      "match": "\\*\\*[^*]+\\*\\*"
+    },
+    {
+      "name": "markup.italic.speclang",
+      "match": "_([^_]+)_"
+    },
+    {
+      "name": "markup.underline.link.speclang",
+      "match": "\\[([^\\]]+)\\]\\(([^)]+)\\)"
+    }
+  ]
+}

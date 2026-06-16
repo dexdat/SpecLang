@@ -1,0 +1,13 @@
+# GitReins Configuration — SpecLang edition
+guards:
+  secrets: true
+  lint: true
+  tests: true
+  test_command: "npm test"
+  assemble: true
+  assemble_command: "npm run assemble"
+  verify_self_host: true
+  verify_command: "npm run verify:self-host"
+
+evaluator:
+  max_iterations: 15

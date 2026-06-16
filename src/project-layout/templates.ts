@@ -1,0 +1,1 @@
+../../specs/project-layout.spec.dir/src/templates.ts

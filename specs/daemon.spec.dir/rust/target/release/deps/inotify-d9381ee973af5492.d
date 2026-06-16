@@ -1,0 +1,12 @@
+/home/kara/SpecLang/specs/daemon.spec.dir/rust/target/release/deps/inotify-d9381ee973af5492.d: /home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/lib.rs /home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/events.rs /home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/fd_guard.rs /home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/inotify.rs /home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/util.rs /home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/watches.rs
+
+/home/kara/SpecLang/specs/daemon.spec.dir/rust/target/release/deps/libinotify-d9381ee973af5492.rlib: /home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/lib.rs /home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/events.rs /home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/fd_guard.rs /home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/inotify.rs /home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/util.rs /home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/watches.rs
+
+/home/kara/SpecLang/specs/daemon.spec.dir/rust/target/release/deps/libinotify-d9381ee973af5492.rmeta: /home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/lib.rs /home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/events.rs /home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/fd_guard.rs /home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/inotify.rs /home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/util.rs /home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/watches.rs
+
+/home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/lib.rs:
+/home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/events.rs:
+/home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/fd_guard.rs:
+/home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/inotify.rs:
+/home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/util.rs:
+/home/kara/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/inotify-0.9.6/src/watches.rs:

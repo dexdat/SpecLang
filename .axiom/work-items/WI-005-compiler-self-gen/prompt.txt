@@ -1,0 +1,23 @@
+# WI-005: Generate compiler module from compiler spec files
+
+## Problem
+The compiler at `src/compiler/` is hand-written source code. But the specs in `specs/compiler.spec.dir/` describe the compiler architecture. For the meta-circular bootstrap to work, the compiler should be generated from its own specs.
+
+## Required Changes
+
+### 1. Read compiler specs
+Read the spec files in `specs/compiler.spec.dir/`:
+- `specs/compiler.spec.dir/phases.spec.md` - Pipeline phases
+- `specs/compiler.spec.dir/types.spec.md` - Type system
+- `specs/compiler.spec.dir/targets.spec.md` - Target languages
+
+### 2. Check if code-pair specs exist
+Look for `.spec.ts.md` files in `specs/compiler/` or `.speclang/` that pair with the compiler. The self-hosting pattern creates files like `compiler.spec.ts.md` that contain both the spec description and TypeScript implementation blocks.
+
+### 3. Create code-pair specs if needed
+If no code-pair specs exist for the compiler, create minimal `.spec.ts.md` files in `specs/compiler.spec.dir/`that follow the same pattern as `.speclang/cascade-router.spec.ts.md` or similar existing code-pair specs.
+
+## Scope
+- ONLY read/write spec files in `specs/` and `.speclang/`
+- Do NOT modify `src/compiler/` directly
+- Follow the existing code-pair pattern (read `.speclang/cascade-router.spec.ts.md` for the template)

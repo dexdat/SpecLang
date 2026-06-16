@@ -1,0 +1,1 @@
+../../specs/guard.spec.dir/src/index.ts

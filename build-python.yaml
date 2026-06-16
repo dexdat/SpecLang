@@ -1,0 +1,40 @@
+# SpecLang Python Build Pipeline
+# Used when target_lang: py
+# Run: npx tsx .speclang/pipeline.spec --config build-python.yaml
+
+pipeline:
+  on_converge:
+    - name: assemble
+      run: npm run assemble
+      timeout: 30000
+    - name: pip-install
+      run: pip install -e ".[dev]" 2>&1 || echo "pip install skipped (no setup.py/pyproject.toml)"
+      timeout: 120000
+    - name: ruff-check
+      run: ruff check . 2>&1 || echo "ruff not configured"
+      timeout: 60000
+    - name: ruff-format-check
+      run: ruff format --check . 2>&1 || echo "ruff format not configured"
+      timeout: 30000
+    - name: mypy
+      run: mypy src/ 2>&1 || echo "mypy not configured"
+      timeout: 120000
+    - name: pytest
+      run: pytest -v 2>&1 || echo "pytest not configured"
+      timeout: 120000
+    - name: build
+      run: npm run build
+      timeout: 60000
+    - name: verify-self-host
+      run: npm run verify:self-host
+      timeout: 60000
+    - name: test
+      run: npm test
+      timeout: 120000
+    - name: smoke-test
+      run: npx tsx bin/speclang-smoke-test.ts
+      timeout: 300000
+recovery:
+  max_attempts: 2
+  on_fail:
+    - "echo 'Python pipeline failed at $PREVIOUS_STEP'"

@@ -1,0 +1,70 @@
+# Build Pipeline Configuration
+# 
+# SPECLANG-GENERATED: @speclang/pipeline
+# 
+# This file defines the pipeline that runs after convergence is detected.
+# The pipeline builds, tests, and validates generated code.
+
+# Convergence settings (these may come from .speclangrc)
+convergence:
+  quiet_period: 30s
+  max_iterations: 100
+
+# Pipeline stages to run on convergence
+pipeline:
+  # Assembler configuration
+  assemble:
+    mirror: true
+
+  # Stages to execute when cascade converges
+  on_converge:
+    # Install dependencies
+    - name: install
+      run: "bun install"
+      # Only run if package.json changed
+      condition: "package.json changed"
+
+    # TypeScript type checking
+    - name: typecheck
+      run: "bun run tsc --noEmit"
+      depends_on: [install]
+
+    # Run tests
+    - name: test
+      run: "bun test"
+      depends_on: [typecheck]
+      hooks:
+        pre: "echo 'Running tests...'"
+        post_fail: "speclang recover --last"
+
+    # Lint code
+    - name: lint
+      run: "bun run lint"
+      depends_on: [typecheck]
+
+  # Actions to run on pipeline success
+  on_success:
+    - "git add -A"
+    - "git commit -m 'speclang: pipeline success'"
+
+# Recovery configuration
+recovery:
+  # Maximum number of recovery attempts
+  max_attempts: 3
+
+  # Actions to take on failure
+  on_fail:
+    # Rollback last spec change
+    - rollback: last_spec_change
+    
+    # Notify orchestrator
+    - notify: orchestrator
+
+    # Retry (handled by executor)
+    - retry:
+        full_pipeline: true
+
+    # Pause for 5 seconds before retry
+    - pause:
+        duration: 5000
+        reason: "Waiting before retry"

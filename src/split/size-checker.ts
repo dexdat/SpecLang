@@ -1,0 +1,1 @@
+../../specs/split.spec.dir/src/size-checker.ts

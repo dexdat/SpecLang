@@ -1,0 +1,242 @@
+# SpecLang Spec Update — Precise Architecture
+
+This prompt updates ALL relevant spec files on the pi-agent-migration branch with the finalized SpecLang architecture. Read EVERY spec file before making changes. Every edit must be precise — this is the foundation for self-hosting.
+
+## Architecture Summary (Read This First)
+
+### Three File Types
+1. `{name}.spec.md` — Informational spec. Describes concepts, architecture, design. No code pair. Lives in folder structure.
+2. `{name}.spec.{lang}.md` — Code-pair spec. Design doc for a specific code file in language {lang}. Has a 1:1 pair with the generated code file.
+3. `{name}.spec.{lang}` — Generated code. The actual implementation in language {lang}. Written by the model from the code-pair spec + all refs + folder context.
+
+### The Header
+Every {name}.spec.{lang}.md file has a YAML header that controls ALL assembly decisions:
+
+```yaml
+# speclang-header lines:20
+id: "@specs/cron-system/job-runner"
+version: 1.0.0
+layer: 3
+project_level: Alpha
+agent_support: agent_autonomous
+target_lang: go
+output: internal/cron/job-runner.spec.go
+owned-by: codegen
+model: openai/gpt-4o
+model_pool: code-gen
+max_concurrent: 3
+rate_limit: 5
+quality: production
+seed: false
+tags: [cron, job-runner, go]
+short: Cron job runner implementation
+depends_on:
+  - "@ref:specs/cron-system/cron-system.spec.md"
+  - "@ref:specs/sdk/cron-driver/client"
+watch:
+  files:
+    - "specs/cron-system/cron-system.spec.md"
+    - "specs/sdk/cron-driver/*.spec.md"
+  exclude:
+    - "specs/sdk/cron-driver/legacy.spec.md"
+children:
+  - "@ref:specs/cron-system/job-runner/types"
+status: active
+```
+
+### The Watch System
+Header `watch:` fields define the notification graph alongside `@ref:` links in the spec body. When any file matching a watch pattern changes, all specs that watch it get notified. The cascade router merges both sources: `depends_on` refs + `watch.files` patterns + body `@ref:` links.
+
+### Assembler vs Compiler
+SpecLang is an ASSEMBLER, not a compiler:
+- Assembler: reads `.spec.{lang}.md` files → produces `.spec.{lang}` source code in any language
+- Compiler: target language's compiler (gcc, rustc, tsc, go build) compiles the `.spec.{lang}` files
+- The assembler uses LLM models (from header model/pool fields) to generate code
+- Codegen is a CORE SpecLang module, not a separate tool
+
+### Model Pools
+Users bring keys from multiple providers. Same model from different providers pools concurrency. Different models with same capability group in named pools. Headers control which model/pool writes each file.
+
+### Throttle — Fairness Queue with Deferral
+When the same file gets hammered by rapid cascades, it's deferred to the back of the queue. Other files process while it waits. On requeue, one more chance. Escalating backoff. User notified after 3 deferrals.
+
+### Squash
+Rapid changes to the same file within 100ms window are debounced into one cascade. Overlapping cascades merge.
+
+### Cascade Depth / Multiplying
+A single spec change can trigger multiple levels of cascades as agents generate new specs, which trigger more cascades. This is by design — it's how the spec tree expands. Controlled by squash + throttle.
+
+---
+
+## File-by-File Changes
+
+### 1. specs/headers.spec.md — ADD NEW HEADER FIELDS
+
+Current fields: id, version, layer, project_level, agent_support, tags, short, depends_on, children, parent, part, status, caused_by, change_id, part_of
+
+ADD these new fields to the header table:
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `target_lang` | Yes (for code-pair specs) | Target programming language (go, ts, py, rs, java, etc.) |
+| `output` | Yes (for code-pair specs) | Output path for generated code file |
+| `owned-by` | Yes (for code-pair specs) | Agent role responsible (northstar, spec-writer, codegen, test-writer, back-sync, assembler) |
+| `model` | No | Explicit model override (e.g., openai/gpt-4o, openrouter/claude-3-opus) |
+| `model_pool` | No | Named capability pool for model selection |
+| `max_concurrent` | No | Max concurrent agent sessions for this spec |
+| `rate_limit` | No | Rate limit per minute for cascade triggers |
+| `quality` | No | production, downgrade (providers with reduced context/quality) |
+| `seed` | No | true = human-written source, false = agent-generated |
+| `watch` | No | File patterns to watch for changes |
+| `watch.files` | No | List of file paths/globs to watch |
+| `watch.exclude` | No | List of paths/globs to exclude from watch |
+
+Also update the Overview header example to show these new fields.
+
+### 2. specs/spec-format.spec.md — ADD THREE FILE TYPES
+
+The spec-format.spec.md currently describes one type of spec file. UPDATE it to describe three file types based on extension order:
+
+1. `{name}.spec.md` — Informational spec (concepts, architecture, no code pair)
+2. `{name}.spec.{lang}.md` — Code-pair spec (design for a specific code file, has 1:1 pair with generated code)
+3. `{name}.spec.{lang}` — Generated code (the actual implementation, written by model from the code-pair spec)
+
+Add a table showing the extension order and what each means.
+
+Also update the block format section: add `@kind:entity`, `@kind:operation`, `@kind:code`, `@kind:requirement`, `@kind:diagram` block kinds.
+
+### 3. specs/core.spec.md — ADD ASSEMBLER DEFINITION
+
+Current core.spec.md describes a reactive multi-agent system with daemon, cascade, compiler, pipeline. UPDATE:
+
+- Change "compiler" language to "assembler" where it refers to SpecLang's role
+- Add section: "SpecLang is a multi-language source code assembler, not a compiler"
+- Clarify: the target language's compiler compiles assembled code
+- Add note about self-expanding spec tree (seed spec → agent expansion → full tree → code assembly)
+- Update the meta-circular section: "SpecLang builds SpecLang — its framework is written in .spec.{lang}.md files, and it assembles its own framework code from those specs"
+
+### 4. specs/core.spec.dir/entities.spec.md — UPDATE ENTITIES
+
+Update the AgentKind section:
+
+```
+AgentKind:
+  - NorthStar: user intent, high-level direction
+  - SpecWriter: expands specs from higher-level specs
+  - CodeGen: assembles source code from code-pair specs
+  - TestWriter: writes test specs and test code
+  - BackSync: syncs code changes back to specs
+  - Assembler: reads .spec.{lang}.md files and generates .spec.{lang} files
+  - Pipeline: executes build, test, deploy on convergence
+```
+
+Also update the speclangd (daemon) entity to include:
+- watch pattern handling (watch.files, watch.exclude from header)
+- notification graph (merging watch patterns + @ref: links)
+- file contention detection (for throttle)
+
+Add a new entity for the three file types:
+
+```
+SpecFileType:
+  - InformationalSpec: {name}.spec.md, no code pair, describes concepts
+  - CodePairSpec: {name}.spec.{lang}.md, design doc for specific code file
+  - GeneratedCode: {name}.spec.{lang}, actual implementation assembled from spec
+```
+
+### 5. specs/cascade.spec.md — UPDATE FOR NOTIFICATION GRAPH + THROTTLE + SQUASH
+
+Current cascade.spec.md describes the reactive loop. UPDATE:
+
+Add section for **Notification Graph**:
+- Merge two sources: explicit `depends_on` refs + `watch.files` patterns from headers + `@ref:` links from spec body
+- When any file matching a watch pattern changes, all specs that watch it get a change event
+- The graph is a directed graph from dependency sources to dependent specs
+
+Add section for **Squash**:
+- Debounce: multiple rapid changes to same file within 100ms are merged
+- Cascade merge: if cascade N is running and cascade N+1 triggers for overlapping files, merge work
+
+Add section for **Throttle** (fairness queue with deferral):
+- Track how many times each file has been queued in last 60s
+- Files exceeding threshold (default 5) marked "hot" and deferred to back of queue
+- Other files process while hot file waits
+- On requeue: one more cascade attempt
+- If still hot: escalating backoff (2x, 4x, 8x)
+- After 3 deferrals: notify user
+- No cascade is ever cancelled — only postponed
+
+Add section for **Model Pool Dispatch**:
+- Read header model/model_pool field from each changed spec
+- Group affected specs by model_pool
+- Respect max_concurrent per pool (from config + header)
+- Dispatch Pi agent sessions accordingly
+
+### 6. specs/daemon.spec.md — UPDATE FOR WATCH PATTERNS
+
+Current daemon spec describes file watching with chokidar. UPDATE:
+
+Add:
+- When a file change is detected, read its header
+- Find ALL specs that watch this file (via watch.files patterns OR have @ref: to this file)
+- The watch system supports: literal paths, glob patterns (**.spec.md, **.spec.go.md, etc.)
+- Emit FileChangeEvent with: path, kind, AND list of dependent specs that need notification
+
+Update responsibilities:
+- Watch specs/ directory recursively
+- Parse watch: patterns from all spec headers
+- Maintain notification graph: which specs watch which files
+- Route events to all dependent specs
+
+### 7. specs/agent-protocol.spec.md — UPDATE FOR OWNED-BY + MODEL ASSIGNMENT
+
+Current agent-protocol describes ownership rules and the guard plugin. UPDATE:
+
+Add **Model Resolution**:
+- Three-layer resolution (first match wins):
+  1. Header `model:` field — explicit model for this spec
+  2. Header `model_pool:` field — named pool of models with this capability
+  3. File pattern default — `specs/**/*.spec.{lang}.md` → owned-by role's default model
+
+Add **Rate Limit Enforcement**:
+- Read `max_concurrent:` from header if set
+- Read `rate_limit:` from header if set
+- Pool-level limits from model pool config
+- Cascade router enforces all limits before dispatching
+
+Update ownership rules: add "owned-by" field as the explicit owner. Pattern-based ownership falls back to header field. Header field always wins.
+
+### 8. specs/pipeline.spec.md — ADD GIT HOOK VALIDATION
+
+Current pipeline spec describes build/test/deploy on convergence. ADD:
+
+**Git Hook Validation**:
+- Pre-commit git hook validates header format on every .spec.md and .spec.{lang}.md file
+- Checks: all required fields present (id, version, layer, target_lang if code-pair spec, owned-by if code-pair spec)
+- Checks: YAML header is valid
+- Checks: @ref: links resolve to existing files
+- Rejects commit if any spec has broken header
+- The hook is installed by speclangd setup
+
+Also add the assembler-to-compiler handoff: pipeline runs target language compiler AFTER SpecLang assembler produces the .spec.{lang} files.
+
+### 9. specs/pi-integration.spec.md — UPDATE FOR ASSEMBLER + WATCH SYSTEM
+
+Already created in previous run. UPDATE to reflect:
+- Pi SDK used for agent sessions (model calls)
+- Watch system is our own (chokidar + notification graph), NOT Pi's
+- Assembler is a core module that reads .spec.{lang}.md → produces .spec.{lang}
+- The cascade router owns the notification graph, not Pi
+
+---
+
+## CRITICAL RULES
+
+1. DO NOT change or delete any existing header metadata (id, version, layer tags) unless adding new fields
+2. DO NOT change the @block: structure of specs — only add new blocks
+3. DO preserve all existing content — only ADD or UPDATE sections that need the new architecture
+4. NEW fields go in the headers spec as additions to the existing table
+5. NEW sections go in the relevant spec as new @block: entries
+6. Each spec must still have valid speclang-header after editing
+7. Do NOT remove the OpenCode-to-Pi migration content from previous edits — keep it, just ADD the new architecture
+8. After editing ALL 9 files, run `npm run build && npm test` to verify nothing is broken

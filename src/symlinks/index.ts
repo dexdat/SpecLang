@@ -1,0 +1,1 @@
+../../specs/symlinks.spec.dir/src/index.ts

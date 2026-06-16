@@ -1,0 +1,1 @@
+../specs/scripts.spec.dir/check_compliance.py

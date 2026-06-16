@@ -1,0 +1,89 @@
+{
+  "name": "speclang",
+  "version": "1.0.0",
+  "description": "SpecLang turns your AI coding assistant into a self-correcting system where every change propagates until your code is perfect.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "speclang": "./bin/speclang"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node bin/speclang start",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "cascade": "node bin/speclang cascade",
+    "lint": "eslint src/**/*.ts",
+    "clean": "rm -rf dist/",
+    "prepublishOnly": "npm run build",
+    "build:dashboard": "vite build",
+    "dev:dashboard": "vite dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dexdat/SpecLang.git"
+  },
+  "keywords": [
+    "ai",
+    "code-generation",
+    "specifications",
+    "agents",
+    "automation",
+    "developer-tools",
+    "cli"
+  ],
+  "author": "SpecLang Contributors",
+  "license": "MIT",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/dexdat/SpecLang/issues"
+  },
+  "homepage": "https://github.com/dexdat/SpecLang#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "better-sqlite3": "^12.6.2",
+    "chokidar": "^4.0.3",
+    "commander": "^14.0.3",
+    "express": "^5.2.1",
+    "fs-extra": "^11.3.3",
+    "glob": "^13.0.6",
+    "yaml": "^2.8.2"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/express": "^5.0.6",
+    "@types/fs-extra": "^11.0.4",
+    "@types/glob": "^8.1.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^25.3.0",
+    "@types/react": "^18.3.28",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "@vitest/coverage-v8": "^4.1.2",
+    "autoprefixer": "^10.4.27",
+    "d3": "^7.9.0",
+    "date-fns": "^3.6.0",
+    "js-yaml": "^4.1.1",
+    "postcss": "^8.5.8",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.19",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "vite": "^5.4.21",
+    "vitest": "^4.0.18",
+    "zustand": "^4.5.7"
+  }
+}

@@ -1,0 +1,54 @@
+# speclang-header lines:8
+id: @northstar
+version: 0.1.0
+layer: 0
+tags: [northstar, project]
+status: draft
+---
+# North Star
+
+## {{name}}
+
+{{description}}
+
+## Targets
+{{targets}}
+
+## Configuration
+
+### @block:watcher
+```yaml
+patterns:
+  - "**/*.spec.{md,yaml,yml,scl}"
+  - "**/*.{go,ts,js,py,rs,java}.spec"
+  - "**/project.scl"
+  - "**/build.{scl,yaml}"
+ignore:
+  uses: ".gitignore"
+  plus: [".speclang/", "*.log", "reports/", ".git/"]
+debounce: 100
+```
+
+### @block:split
+```yaml
+max_tokens: 10000
+max_lines: 800
+strategy: smart
+```
+
+### @block:embeddings
+```yaml
+enabled: true
+model: "openai/text-embedding-3-small"
+```
+
+### @block:database
+```yaml
+mode: WAL
+```
+
+### @block:cascade
+```yaml
+quiet_period: 30
+max_depth: 50
+```

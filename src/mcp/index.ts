@@ -1,0 +1,1 @@
+../../specs/mcp.spec.dir/src/index.ts

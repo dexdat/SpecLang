@@ -1,0 +1,1 @@
+../../specs/autonomous.spec.dir/src/index.ts

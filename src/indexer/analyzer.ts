@@ -1,0 +1,1 @@
+../../specs/indexer.spec.dir/src/analyzer.ts

@@ -1,0 +1,1 @@
+../../specs/opencode.spec.dir/src/ownership.ts

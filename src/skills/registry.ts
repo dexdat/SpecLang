@@ -1,0 +1,1 @@
+../../specs/skills.spec.dir/src/registry.ts

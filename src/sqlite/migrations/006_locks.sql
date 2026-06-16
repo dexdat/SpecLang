@@ -1,0 +1,1 @@
+../../../specs/sqlite.spec.dir/src/migrations/006_locks.sql

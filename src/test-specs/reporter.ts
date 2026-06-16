@@ -1,0 +1,1 @@
+../../specs/test-specs.spec.dir/src/reporter.ts

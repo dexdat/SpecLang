@@ -1,0 +1,1 @@
+../../../specs/ui-dashboard.spec.dir/src/types/index.ts

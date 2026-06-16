@@ -1,0 +1,178 @@
+# SpecLang Pi Agent Migration — Full Work Order
+
+## Context
+
+SpecLang is a meta-circular specification-driven multi-agent system where specs self-assemble into code. Currently, its Phase 1 runtime is designed to run as an OpenCode plugin. We are switching the runtime foundation from OpenCode to Pi Agent (github.com/earendil-works/pi).
+
+This branch is `pi-agent-migration`. We are using OpenCode ONE LAST TIME to generate the migration artifacts, then switching everything to Pi.
+
+## Pi Agent Architecture (Target State)
+
+Pi Agent is a minimalist TypeScript coding agent harness:
+- **SDK**: `createAgentSession()` → `AgentSession.prompt()` for programmatic agent control
+- **Extensions**: TypeScript modules with `pi.registerTool()`, event interception (`onToolCall`, `onSessionEvent`), custom commands (`/mycommand`), hot-reload (`/reload`)
+- **4 core tools**: read, edit, bash, glob — system prompt under 1000 tokens
+- **RPC mode**: JSON protocol over stdio for external programmatic control
+- **No Docker, no auth.json, no model catalog** — just npm install + API key
+
+## New SpecLang on Pi Architecture
+
+```
+specs/ (440 files)              ← SOURCE OF TRUTH
+  ↓ [speclangd — our inotify daemon using chokidar/fs.watch]
+cascade event router            ← our TypeScript module
+  ↓ dispatches to Pi sessions
+Pi agent sessions (6 roles)     ← pi SDK createAgentSession()
+  ↓ guard interceptor           ← Pi extension: pi.registerTool() + onToolCall
+src/ (generated code)
+  ↓ [pipeline on convergence]
+build.yaml → test → commit
+```
+
+## What Every Spec Needs to Change
+
+### 1. specs/opencode.spec.md → REPLACE with specs/pi-integration.spec.md
+Current: "Speclang's initial implementation using OpenCode as the runtime."
+New: "Speclang's runtime implementation using Pi Agent as the agent harness."
+Key changes:
+- Remove all OpenCode plugin references
+- Replace with Pi SDK createAgentSession() architecture
+- File watching: "chokidar" npm package (not OpenCode's built-in watcher)
+- Agent sessions: Pi SDK AgentSession (not OpenCode sessions)
+- Extensions: Pi extensions with pi.registerTool() (not OpenCode plugins)
+- Commands: Pi /commands (not OpenCode /commands)
+- Hot-reload: Pi /reload (not OpenCode restart)
+- Keep the core event model (file→agent→convergence→pipeline) — that's SpecLang's design, not OpenCode's
+
+### 2. specs/core.spec.md — UPDATE runtime references
+Current text to find: "daemon: File watcher (speclangd) triggers cascade" — KEEP this, it's correct and runtime-agnostic
+Current text to find referencing OpenCode: search entire spec for "OpenCode", "opencode", "plugin"
+Target: core architecture stays runtime-agnostic. Remove any OpenCode-specific phrasing.
+
+### 3. specs/daemon.spec.md — REWRITE implementation strategy
+Current:
+```
+implementations:
+  - rust: Primary daemon for scale (enterprise)
+  - typescript: OpenCode plugin for light mode
+```
+New:
+```
+implementations:
+  - typescript: chokidar/fs.watch based daemon (standard mode)
+  - rust: High-performance daemon with inotify (enterprise)
+  
+The TypeScript daemon uses chokidar for cross-platform file watching.
+When a file in specs/ changes, it emits a FileChangeEvent to the cascade router.
+```
+
+### 4. specs/cascade.spec.md — UPDATE agent dispatch mechanism
+Current: "Agents invoked one at a time via Task tool through OpenCode"
+New: "Agents dispatched via Pi SDK createAgentSession(). Each cascade step creates a new Pi agent session with the owning agent's skills loaded."
+
+### 5. specs/agent-protocol.spec.md — REWRITE guard system
+Current: "enforced via an OpenCode plugin (speclang-guard)"
+New: "enforced via a Pi extension that intercepts file writes via pi.registerTool() + onToolCall event handlers"
+
+### 6. specs/pipeline.spec.md — REMOVE OpenCode hooks
+Current pipeline uses OpenCode's convergence → pipeline trigger
+New: Pipeline triggered by our cascade router's convergence detector (not OpenCode)
+
+### 7. specs/compiler.spec.md — KEEP as-is
+Compiler spec is runtime-agnostic. It describes parse→validate→resolve→transform→generate→verify regardless of runtime.
+
+### 8. specs/skills.spec.md — UPDATE loading mechanism
+Current: OpenCode loads skills from .opencode/skills/
+New: Pi loads skills via .pi/skills/ or Pi packages
+
+### 9. specs/build.yaml — UPDATE convergence trigger
+Current: convergence → pipeline stages
+Remove: any OpenCode-specific hooks or commands
+
+## New Specs to Create
+
+### specs/pi-integration.spec.md (replaces opencode.spec.md)
+Structure:
+- Overview: Speclang's runtime on Pi Agent
+- Pi SDK usage: createAgentSession, AgentSession.prompt, event subscriptions
+- Extension architecture: pi.registerTool for custom SpecLang tools
+- File watching: chokidar setup for specs/ directory
+- Guard system: onToolCall interceptor for file ownership
+- Agent routing: how cascade events map to Pi sessions
+- Convergence detection: 30s quiet period implementation
+- Pipeline trigger: on convergence, run build.yaml stages
+- MCP server: standalone or Pi RPC mode for external access
+
+### specs/daemon.spec.dir/architecture.spec.md (update)
+Add: TypeScript daemon using chokidar for cross-platform file watching
+Remove: OpenCode plugin light mode
+
+### specs/daemon.spec.dir/events.spec.md (update)
+Add: FileChangeEvent schema, watch patterns, ignore rules
+Remove: OpenCode session events (file.edited, agent.finished)
+
+### specs/pi-extension-examples.spec.md (NEW)
+How to write Pi extensions for SpecLang:
+- pi.registerTool("create_spec_file", ...)
+- pi.registerTool("validate_specs", ...)
+- pi.registerTool("run_cascade", ...)
+- pi.registerCommand("/speclang:status")
+- Event interceptor for file ownership
+
+### specs/daemon-setup.spec.md (NEW)
+How to set up and run the Pi-based Speclang daemon:
+1. `npm install @earendil-works/pi-coding-agent`
+2. `npm install chokidar`
+3. Start daemon: `speclangd --watch specs/ --pipeline build.yaml`
+4. Daemon starts Pi agent sessions when file changes detected
+
+## Work Items to Create
+
+### .memory-bank/work-items/PM-001/plan.yaml — Spec audit & catalog
+Goal: Read every .spec.md file in specs/, find every reference to "OpenCode", "opencode", "plugin" that relates to OpenCode, produce a catalog of every file + line + what needs to change.
+Verification: Count of OpenCode references found, organized by file.
+
+### .memory-bank/work-items/PM-002/plan.yaml — Rewrite opencode.spec.md → pi-integration.spec.md
+Goal: Delete specs/opencode.spec.md. Create specs/pi-integration.spec.md with the new architecture.
+Files: specs/opencode.spec.md (delete), specs/pi-integration.spec.md (create)
+Verification: speclang validate passes, new spec has proper header and @block: markers.
+
+### .memory-bank/work-items/PM-003/plan.yaml — Update core.spec.md
+Goal: Remove any OpenCode-specific references, keep runtime-agnostic. Only change lines that mention OpenCode.
+Files: specs/core.spec.md
+Verification: grep for "OpenCode" returns 0 matches in this file.
+
+### .memory-bank/work-items/PM-004/plan.yaml — Rewrite daemon.spec.md for chokidar 
+Goal: Replace OpenCode plugin implementation with chokidar-based TypeScript daemon.
+Files: specs/daemon.spec.md
+Verification: spec describes chokidar/fs.watch, not OpenCode plugin.
+
+### .memory-bank/work-items/PM-005/plan.yaml — Rewrite agent-protocol.spec.md for Pi extensions
+Goal: Replace OpenCode plugin guard with Pi extension guard using onToolCall interceptor.
+Files: specs/agent-protocol.spec.md
+Verification: spec describes pi.registerTool() and onToolCall, not OpenCode plugin.
+
+### .memory-bank/work-items/PM-006/plan.yaml — Update cascade.spec.md for Pi agent dispatch
+Goal: Replace OpenCode Task tool with Pi SDK createAgentSession().
+Files: specs/cascade.spec.md
+Verification: spec describes Pi SDK session creation, not OpenCode Task tool.
+
+### .memory-bank/work-items/PM-007/plan.yaml — Update pipeline.spec.md for Pi runtime
+Goal: Remove OpenCode-specific convergence hooks.
+Files: specs/pipeline.spec.md
+Verification: no OpenCode references remain.
+
+---
+
+## IMPORTANT INSTRUCTIONS
+
+1. Read ALL existing spec files in specs/ before making changes. Understand the current architecture fully.
+2. Search the ENTIRE specs/ directory for the string "OpenCode" (case-sensitive) and catalog every occurrence.
+3. Do NOT change the core SpecLang concepts (spanning tree, cascade, convergence, agent-protocol, universal headers, compiler pipeline) — only change the RUNTIME FOUNDATION from OpenCode to Pi.
+4. The spec-format (specs/spec-format.spec.md, specs/headers.spec.md) stays the same.
+5. The compiler (specs/compiler.spec.md) stays the same — it is runtime-agnostic.
+6. Language targets (specs/go.spec.md, specs/typescript.spec.md, specs/python.spec.md) stay the same.
+7. All new specs must have valid speclang-header metadata.
+8. After editing each spec, verify it still has a valid speclang-header.
+9. Create the .memory-bank/work-items/PM-001 through PM-007 directories with plan.yamls.
+10. Report the total OpenCode reference count and which files are affected.

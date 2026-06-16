@@ -1,0 +1,1 @@
+../specs/speclangd.ts.spec.dir/src/speclangd.ts

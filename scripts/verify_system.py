@@ -1,0 +1,1 @@
+../specs/scripts.spec.dir/verify_system.py

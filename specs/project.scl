@@ -1,0 +1,342 @@
+# speclang-header lines:11
+id: "@northstar/speclang"
+version: 0.2.0
+layer: 0
+project_level: Alpha
+agent_support: agent_assisted
+tags: [northstar, intent, top-level]
+status: active
+
+short: "North Star: SpecLang"
+---
+
+# North Star: SpecLang
+
+The top-level intent. Everything references this.
+
+## Project
+
+```speclang
+# @block:northstar/project @kind:note
+SpecLang: A specification-driven programming language.
+
+Specs are the source of truth. Humans write/review specs.
+AI agents generate code. The filesystem is the event bus.
+Code is like machine code - trusted, not hand-edited.
+
+Core idea:
+- Write specs in natural language + structured blocks
+- Multi-agent system reacts to file changes
+- Cascading updates until convergence
+- Output: clean code in any language
+
+Key innovations:
+- inotify daemon tracks all changes
+- Convergence detection triggers pipeline
+- Self-defining build pipeline (build.yaml)
+- Guard plugin enforces file ownership
+- Self-healing recovery with rollback
+```
+
+## Getting Started
+
+```speclang
+# @block:northstar/getting-started @kind:note
+For new agents and users:
+
+1. **Read first:** `000-bootstrap.md` - Bootstrap primer and directory guide
+2. **Then read:** This file (`project.scl`) - North Star intent
+3. **Check:** `_index.md` in each directory - File listings
+4. **Follow:** `@ref:` links in headers - Dependency chains
+
+Key files to understand:
+- `000-bootstrap.md` - READ FIRST - Explains everything
+- `core.spec.md` - Core architecture
+- `spec-format.spec.md` - Spec file format
+- `headers.spec.md` - Universal headers
+
+Remember: Specs are source code. Generated code is machine code.
+```
+
+## Goals
+
+```speclang
+# @block:northstar/goals @kind:entity
+Goals:
+  primary:
+    - specs are what humans edit
+    - generated code is disposable
+    - AI understands intent, not just syntax
+    
+  secondary:
+    - language agnostic output
+    - bidirectional sync
+    - concurrent agent execution
+    - zero context loss via references
+    
+  new:
+    - self-healing on failure
+    - automatic pipeline execution
+    - guard-rail for agent file access
+```
+
+## Architecture
+
+```speclang
+# @block:northstar/architecture @kind:diagram
+```mermaid
+flowchart TD
+    U[User] -->|edits| NS[project.scl<br/>Level 0]
+    NS -->|triggers| D[speclangd<br/>inotify + guard]
+    D -->|routes| A[Agent Sessions]
+    A -->|expands| S1[Level 1-9 Specs]
+    S1 -->|maps| S2[Level 10 .go.spec]
+    S2 -->|generates| G[generated/]
+    G & S1 -->|triggers| D
+    D -->|converged| P[Pipeline<br/>build.yaml]
+    P -->|tests pass| C[Clean Code]
+    P -->|fails| R[Recovery<br/>rollback]
+    R --> NS
+```
+```
+
+## Components
+
+```speclang
+# @block:northstar/components @kind:entity
+Components:
+  core:
+    - speclangd: file watcher daemon
+    - agents: AI sessions that own files
+    - skills: prompts for AI editors
+    - specs: structured intent files
+    
+  new:
+    - pipeline: build/test execution
+    - guard: file access control
+    - recovery: self-healing system
+    
+  outputs:
+    - tests: test specs (natural language)
+    - generated: output code in target language
+
+refs:
+  - @ref:speclang/core
+  - @ref:speclang/daemon
+  - @ref:speclang/agent-protocol
+  - @ref:speclang/skills
+  - @ref:speclang/pipeline
+  - @ref:speclang/recovery
+  - @ref:speclang/file-naming
+  - @ref:speclang/test-specs
+  - @ref:speclang/cascade
+  - @ref:speclang/workflow
+  - @ref:speclang/opencode
+  - @ref:speclang/headers
+  - @ref:speclang/directory-structure
+  - @ref:speclang/tools
+  - @ref:speclang/sqlite
+  - @ref:speclang/dynamic-split
+  - @ref:speclang/deployment
+  - @ref:speclang/mcp
+  - @ref:speclang/mcp-openapi-generation
+  - @ref:speclang/mcp-openapi-generation-cli
+  - @ref:speclang/mcp-daemon
+  - @ref:speclang/git-history
+  - @ref:speclang/symlinks
+```
+
+## Specs Index
+
+```speclang
+# @block:northstar/specs @kind:table
+| Spec | Description |
+|------|-------------|
+| speclang.spec.md | Core architecture, reactive system |
+| daemon.spec.md | speclangd inotify watcher |
+| agent-protocol.spec.md | Sessions, ownership, guard |
+| skills.spec.md | AI skills for editors |
+| pipeline.spec.md | Build, test, hooks |
+| recovery.spec.md | Self-healing, rollback |
+| file-naming.spec.md | .spec.md, .spec.yaml, .go.spec |
+| test-specs.spec.md | Tests as specs |
+| spec-format.spec.md | Self-describing format |
+| stdlib.spec.md | Built-in types |
+| cli.spec.md | Commands |
+| compiler.spec.md | Codegen pipeline |
+| lenses.spec.md | Content formats |
+| project-layout.spec.md | Directory structure |
+| cascade.spec.md | Reactive loop, file triggers |
+| workflow.spec.md | User guide, setup, daily use |
+| opencode.spec.md | OpenCode integration, native events |
+| headers.spec.md | Universal headers, line declaration |
+| directory-structure.spec.md | .dir folders, hierarchy |
+| tools.spec.md | Agent tools API |
+| sqlite.spec.md | FTS, vector, graph, commands table |
+| dynamic-split.spec.md | Auto-split by size, not levels |
+| deployment.spec.md | Light vs enterprise modes |
+| mcp.spec.md | Universal MCP server (TypeScript) |
+| mcp/openapi-generation.spec.md | OpenAPI-MCP generator integration |
+| mcp-daemon.spec.md | Enterprise daemon (optional) |
+| git-history.spec.md | Per-file commits, traceability |
+| symlinks.spec.md | Dual view, specs as source of truth |
+```
+
+## File Naming
+
+```speclang
+# @block:northstar/file-naming @kind:note
+Specs support multiple formats:
+
+.scl         → core speclang format
+.spec.md     → markdown with mermaid, prose
+.spec.yaml   → structured, machine-parsable
+.go.spec     → direct mapping to .go file
+.ts.spec     → direct mapping to .ts file
+
+Core files: user writes .scl or .spec.md
+Expanded: AI writes .spec.yaml
+Direct: AI writes .{ext}.spec
+Output: clean .go, .ts, .py, etc.
+
+No fixed 1-10 levels. User sets max tokens/lines/chars.
+Specs auto-split when over limits.
+```
+
+## Pipeline
+
+```speclang
+# @block:northstar/pipeline @kind:note
+After convergence (no changes for 30s):
+
+1. Read build.yaml
+2. Run build commands
+3. Run all generated tests
+4. On success: commit, notify
+5. On fail: rollback, notify, retry
+
+Pipeline is self-defining in specs.
+```
+
+## Guard System
+
+```speclang
+# @block:northstar/guard @kind:note
+Guard plugin enforces file ownership:
+
+- Each agent session owns specific files
+- Agents can read anything
+- Agents can only write owned files
+- Orchestrator has full access
+- Users can create unguarded custom skills
+
+Prevents agents from stepping on each other.
+```
+
+## Recovery
+
+```speclang
+# @block:northstar/recovery @kind:note
+Self-healing on failure:
+
+- Build fails → rollback spec, notify
+- Test fails → rollback spec, show diff
+- Agent timeout → kill, retry
+- Max retries → pause, require human
+
+Never leaves project in broken state.
+```
+
+## Target Languages
+
+```speclang
+# @block:northstar/targets @kind:entity
+TargetLanguages:
+  primary:
+    - TypeScript
+    - Go
+    
+  secondary:
+    - Rust
+    - Python
+    
+  future:
+    - Java
+    - C#
+    - Kotlin
+```
+
+## Status
+
+```speclang
+# @block:northstar/status @kind:entity
+CurrentStatus:
+  phase: "Self-specifying"
+  
+  done:
+    - core architecture
+    - daemon spec
+    - skills spec
+    - test spec format
+    - spec format (self-describing)
+    - pipeline spec
+    - agent protocol spec
+    - recovery spec
+    - file naming spec
+    - stdlib spec
+    - cli spec
+    - compiler spec
+    - lenses spec
+    
+  todo:
+    - implement speclangd (Rust)
+    - write skills pack
+    - build codegen
+    - guard plugin
+    - example project
+```
+
+## Decisions
+
+```speclang
+# @block:northstar/decision-log @kind:decision
+Decisions:
+  
+  1. File-based event system (inotify)
+     - Works without infrastructure
+     - Git-friendly
+     - Works offline
+     
+  2. Multi-format specs
+     - .spec.md for humans/diagrams
+     - .spec.yaml for machines
+     - .{ext}.spec for direct mapping
+     
+  3. Guard plugin for access control
+     - Prevents agent conflicts
+     - Enforces file ownership
+     - Orchestrator exempt
+     
+  4. Self-defining pipeline
+     - build.yaml in specs
+     - Hooks and recovery in yaml
+     - AI can modify pipeline
+```
+
+## Next Steps
+
+```speclang
+# @block:northstar/next @kind:note
+To build SpecLang:
+
+1. Implement speclangd in Rust
+2. Write skills pack for Claude Code / OpenCode
+3. Build TypeScript codegen first
+4. Create guard plugin
+5. Example project (auth system)
+6. Dogfood on itself
+7. Add more targets
+8. Polish and release
+
+Current phase: Specs complete, ready for implementation
+```

@@ -1,0 +1,1 @@
+../specs/scripts.spec.dir/hard_checks.py
