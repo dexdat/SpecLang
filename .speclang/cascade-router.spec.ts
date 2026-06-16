@@ -499,7 +499,7 @@ export class CascadeRouter {
       const sessionStart = Date.now();
       const { session } = await sessionFn({
         cwd: projectRoot,
-        tools: ['read', 'edit', 'bash', 'glob'],
+        tools: ['read', 'edit', 'write', 'bash', 'glob'],
       });
 
       const modelInfo = resolved.model ? ` using model ${resolved.model}` : '';
