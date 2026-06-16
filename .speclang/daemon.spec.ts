@@ -326,6 +326,25 @@ export class SpeclangDaemon extends EventEmitter {
         this.handleChange(p, 'delete');
       });
 
+    // Also watch project.scl in the parent directory
+    const projectSclPath = path.join(this.watchPath, '..', 'project.scl');
+    try {
+      await fs.access(projectSclPath);
+      const projectWatcher = chokidar.watch(projectSclPath, {
+        persistent: true,
+        ignoreInitial: true,
+      });
+      projectWatcher
+        .on('change', (p) => {
+          this.log.debug('watcher:change (project.scl)', { path: p });
+          this.handleChange(p, 'modify');
+        })
+        .on('unlink', (p) => {
+          this.log.debug('watcher:unlink (project.scl)', { path: p });
+          this.handleChange(p, 'delete');
+        });
+    } catch { /* project.scl doesn't exist */ }
+
     this.emit('started', { watchPath: this.watchPath });
   }
 
@@ -359,6 +378,18 @@ export class SpeclangDaemon extends EventEmitter {
         this.graphLog.debug('skipped spec (no header)', { file });
       }
     }
+    // Also index project.scl from the parent directory (the north-star seed file)
+    const projectSclPath = path.join(this.watchPath, '..', 'project.scl');
+    try {
+      await fs.access(projectSclPath);
+      const parsed = await parseSpecFull(projectSclPath);
+      if (parsed && parsed.header) {
+        this.graph.addSpec(projectSclPath, parsed.header, parsed.bodyRefs);
+        this.graphLog.debug('indexed project.scl', { path: projectSclPath, specId: parsed.header.id, bodyRefs: parsed.bodyRefs.length });
+        totalEdges += parsed.bodyRefs.length;
+      }
+    } catch { /* project.scl doesn't exist */ }
+
     this.log.info('indexing complete', { indexed, skipped, totalEdges: this.graph.getSize(), bodyRefEdges: totalEdges });
   }
 

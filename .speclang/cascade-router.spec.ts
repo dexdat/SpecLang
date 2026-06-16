@@ -293,7 +293,15 @@ export class CascadeRouter {
         dependentCount: event.dependentSpecs.length,
         dependents: event.dependentSpecs,
       });
-      for (const spec of event.dependentSpecs) {
+
+      // Collect all spec files to process: the changed file itself + any dependents
+      const allSpecs = new Set<string>();
+      const isSpecFile = (p: string) =>
+        p.endsWith('.spec.md') || p.endsWith('.spec.py.md') || p.endsWith('.spec.meta.md');
+      if (isSpecFile(event.path)) allSpecs.add(event.path);
+      for (const spec of event.dependentSpecs) allSpecs.add(spec);
+
+      for (const spec of allSpecs) {
         const cascadeId = this.idGen.next();
         this.log.info('queuing cascade item', {
           cascadeId,
