@@ -683,13 +683,19 @@ export class CascadeRouter {
 
       // Load skill content for the target language
       let skillContext = '';
-      const skillDir = path.join(path.dirname(import.meta.url.replace('file://', '')), '..', 'specs', 'skills.spec.dir');
-      const skillFiles = [`code-gen-${targetLang}.spec.md`, `test-writer-${targetLang}.spec.md`];
+      const skillDir = (() => { try { return path.join(path.dirname(new URL(import.meta.url).pathname), '..', 'specs', 'skills.spec.dir'); } catch { return path.join(process.cwd(), 'specs', 'skills.spec.dir'); } })();
+      const stageSkillFiles: Record<string, string[]> = {
+        thinker: [`code-gen-${targetLang}.spec.md`, `test-writer-${targetLang}.spec.md`, `spec-writer-${targetLang}.spec.md`],
+        assembler: [`code-gen-${targetLang}.spec.md`, `test-writer-${targetLang}.spec.md`, `spec-writer-${targetLang}.spec.md`],
+        codegen: [`code-gen-${targetLang}.spec.md`, `test-writer-${targetLang}.spec.md`],
+        testwriter: [`code-gen-${targetLang}.spec.md`, `test-writer-${targetLang}.spec.md`],
+      };
+      const skillFiles = stageSkillFiles[item.stage] || stageSkillFiles.codegen;
       for (const sf of skillFiles) {
         try {
           const skillPath = path.join(skillDir, sf);
           const skillContent = await fs.readFile(skillPath, 'utf-8');
-          skillContext += `\n## Skill: ${sf}\n${skillContent.slice(0, 4000)}\n`;
+          skillContext += `\n## Skill: ${sf}\n${skillContent.slice(0, 8000)}\n`;
         } catch { /* skill not found */ }
       }
 
@@ -818,13 +824,15 @@ export class CascadeRouter {
         specBody.slice(0, 8000),
         `\`\`\``,
         ``,
+        skillContext ? `## Skill Reference\n${skillContext}\n` : '',
         `## Rules`,
-        `- STRIP @speclang and @dataclass annotations (SpecLang DSL, not real ${targetLang})`,
-        `- @kind:operation → implementation code`,
-        `- @kind:code → content IS code, just strip annotations`,
-        `- @kind:note → docstrings only`,
-        `- Use proper imports and type hints`,
         `- Read existing files before editing — never regenerate from scratch`,
+        ``,
+        `## Required Output Format`,
+        `Every generated file MUST begin with SPECLANG markers:`,
+        `# SPECLANG-ID: {spec id}`,
+        `# SPECLANG-GENERATED: DO NOT EDIT`,
+        `# SPECLANG-CHECKSUM: {sha256 of spec}`,
         ``,
         (item.stage === 'thinker' && projectContext ? `## Project Context (project.scl)\n\`\`\`json\n${projectContext.slice(0, 4000)}\n\`\`\`` : ''),
         `## Verify`,
