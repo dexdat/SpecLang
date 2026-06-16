@@ -109,9 +109,11 @@ interface NotificationEdge {
 export class NotificationGraph {
   private edges: NotificationEdge[] = [];
   private specHeaders: Map<string, SpecHeader> = new Map();
+  private idToPath: Map<string, string> = new Map();
 
   addSpec(specPath: string, header: SpecHeader, bodyRefs: string[] = []): void {
     this.specHeaders.set(specPath, header);
+    if (header.id) this.idToPath.set(header.id, specPath);
     this.removeEdgesForSpec(specPath);
 
     // From depends_on
@@ -147,8 +149,14 @@ export class NotificationGraph {
   }
 
   removeSpec(specPath: string): void {
+    const header = this.specHeaders.get(specPath);
+    if (header?.id) this.idToPath.delete(header.id);
     this.specHeaders.delete(specPath);
     this.removeEdgesForSpec(specPath);
+  }
+
+  getPathById(specId: string): string | null {
+    return this.idToPath.get(specId) || null;
   }
 
   private removeEdgesForSpec(specPath: string): void {
@@ -358,6 +366,11 @@ export class SpeclangDaemon extends EventEmitter {
 
   getGraphSize(): number {
     return this.graph.getSize();
+  }
+
+  /** Resolve a spec ID (e.g. @spec/chimera/rewriter) to a file path */
+  getSpecById(specId: string): string | null {
+    return this.graph.getPathById(specId);
   }
 
   private async indexExistingSpecs(): Promise<void> {

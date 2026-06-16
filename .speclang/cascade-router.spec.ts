@@ -230,6 +230,12 @@ export class ThrottleController {
 // ---- Model Pool Resolver ----
 
 export class ModelPoolResolver {
+  private defaultModel: string;
+
+  constructor(defaultModel = '') {
+    this.defaultModel = defaultModel || process.env.CASCADE_DEFAULT_MODEL || '';
+  }
+
   resolve(header: Record<string, unknown>): { model?: string; pool?: string } {
     // Layer 1: explicit model
     if (header.model) return { model: header.model as string };
@@ -237,7 +243,9 @@ export class ModelPoolResolver {
     // Layer 2: model pool
     if (header.modelPool) return { pool: header.modelPool as string };
 
-    // Layer 3: file pattern default — resolved by caller
+    // Layer 3: default model from env or constructor
+    if (this.defaultModel) return { model: this.defaultModel };
+
     return {};
   }
 
@@ -403,27 +411,87 @@ export class CascadeRouter {
         });
       }
 
-      // Track filesystem state before session to detect generated files
-      const beforeFiles = await collectOutputFiles(item.specPath);
+      // Resolve spec ID to file path if needed (e.g. @spec/chimera/rewriter → actual path)
+      let resolvedPath = item.specPath;
+      if (item.specPath.startsWith('@')) {
+        const found = this.daemon.getSpecById(item.specPath);
+        if (found) {
+          resolvedPath = found;
+          this.cascadeLog.info('resolved spec id to path', { specId: item.specPath, path: found });
+        }
+      }
+
+      // Resolve project root (parent of specs directory)
+      const specDir = path.dirname(resolvedPath);
+      const projectRoot = path.resolve(specDir, '..');
+      const projectSclPath = path.join(projectRoot, 'project.scl');
+      const outputDir = path.join(projectRoot, 'src');
+
+      // Read spec body and project context for prompt assembly
+      let specBody = '';
+      let projectContext = '';
+      let targetLang = 'py';
+      try {
+        specBody = await fs.readFile(resolvedPath, 'utf-8');
+        const header = await parseHeader(resolvedPath);
+        targetLang = (header?.targetLang as string) || (header?.target_lang as string) || 'py';
+      } catch { /* spec file gone */ }
+      try {
+        projectContext = await fs.readFile(projectSclPath, 'utf-8');
+      } catch { /* no project.scl */ }
+
+      // Track output directory before session to detect generated files
+      const getOutputFiles = async () => {
+        try {
+          const entries = await fs.readdir(outputDir, { recursive: true });
+          return entries.filter((f: string) => /\.(ts|py|go|rs|js)$/.test(f) && !f.includes('node_modules'));
+        } catch { return []; }
+      };
+      const beforeFiles = await getOutputFiles();
 
       const sessionStart = Date.now();
       const { session } = await sessionFn({
-        model: resolved.model || undefined,
+        cwd: projectRoot,
         tools: ['read', 'edit', 'bash', 'glob'],
       });
 
+      const modelInfo = resolved.model ? ` using model ${resolved.model}` : '';
       this.cascadeLog.info('pi session spawned, running prompt', {
         cascadeId: item.cascadeId,
         specPath: item.specPath,
+        projectRoot,
+        targetLang,
         setupMs: Date.now() - sessionStart,
       });
 
       const promptStart = Date.now();
-      await session.prompt(
-        `You are the ${header?.ownedBy || 'codegen'} agent. ` +
-        `Read the spec at ${item.specPath} and assemble the output. ` +
-        `Cascade: ${item.cascadeId}`
-      );
+      const prompt = [
+        `You are the ${header?.ownedBy || 'codegen'} agent for SpecLang cascade ${item.cascadeId}.`,
+        ``,
+        `## Project Context`,
+        `Project root: ${projectRoot}`,
+        `Target language: ${targetLang}`,
+        `Output directory: ${outputDir}`,
+        ``,
+        `## project.scl`,
+        `\`\`\`yaml`,
+        projectContext.slice(0, 8000),
+        `\`\`\``,
+        ``,
+        `## Spec: ${path.basename(item.specPath)}`,
+        `\`\`\`markdown`,
+        specBody.slice(0, 12000),
+        `\`\`\``,
+        ``,
+        `## Instructions`,
+        `1. Read the spec above and the project.scl context`,
+        `2. Generate ${targetLang} code that implements every @block in the spec`,
+        `3. Write output files to ${outputDir}/ (following the language conventions: src/chimera/ for Python, src/ for TypeScript)`,
+        `4. After writing code, run any available tests or build commands to verify`,
+        `5. Report: which files you created and whether they compile/test correctly`,
+      ].join('\n');
+
+      await session.prompt(prompt);
 
       session.dispose();
       this.runningSessions--;
@@ -432,8 +500,9 @@ export class CascadeRouter {
       const totalDurationMs = Date.now() - sessionStart;
 
       // Check if any files were generated
-      const afterFiles = await collectOutputFiles(item.specPath);
-      const generatedCount = afterFiles.length - beforeFiles.length;
+      const afterFiles = await getOutputFiles();
+      const newFiles = afterFiles.filter(f => !beforeFiles.includes(f));
+      const generatedCount = newFiles.length;
 
       if (generatedCount === 0 && _piSdkMocked) {
         this.cascadeLog.warn('cascade completed but 0 files generated (mock SDK)', {
