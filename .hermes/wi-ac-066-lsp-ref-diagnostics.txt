@@ -1,0 +1,75 @@
+You are tower-axiom. You are working on SpecLang, a meta-circular specification-driven programming platform.
+
+## Context
+The LSP server at `src/lsp/server.ts` currently validates spec headers (id, version, layer) but does NOT validate @ref: annotations. Users can reference non-existent specs or blocks without any diagnostic warning.
+
+The LSP server already has:
+- `src/lsp/server.ts` — main server with header validation diagnostics
+- `src/lsp/references.ts` — reference parsing (parseReferences, resolveReference, resolveFileRef)
+- `src/lsp/symbols.ts` — document symbols/block parsing (parseBlocks)
+- `src/lsp/completions.ts` — autocomplete for @ref: annotations
+- `tests/lsp/server.test.ts` — 10 tests for header validation
+- `tests/lsp/references.test.ts` — 17 tests for reference resolution
+- `tests/lsp/symbols.test.ts` — 17 tests for symbol outline
+
+## Task: Add @ref: validation diagnostics
+
+Enhance `src/lsp/server.ts` so that when a .spec.md file is opened or changed, the server ALSO produces diagnostics for broken @ref: references.
+
+### Requirements:
+1. **Parse @ref: annotations** from the document (use parseReferences from references.ts)
+2. **Resolve each reference** (use resolveReference or resolveFileRef)
+3. **If a reference fails to resolve** (file not found, block not found), emit a Diagnostic with:
+   - Severity: Warning (DiagnosticSeverity.Warning) 
+   - Message: "Unresolved spec reference: @ref:{unresolvedId}" or "Block '{blockName}' not found in {specPath}"
+   - Range: cover the exact @ref: annotation text
+4. **Do NOT show warnings for references that resolve successfully**
+5. **Add tests**: Extend `tests/lsp/references.test.ts` (or create `tests/lsp/ref-diagnostics.test.ts`) with tests that:
+   - Verify diagnostic is produced for non-existent spec reference
+   - Verify diagnostic is produced for non-existent block reference
+   - Verify no diagnostic for valid spec reference
+   - Verify no diagnostic for valid spec + block reference
+   - Verify no diagnostic for non-@ref text
+
+### Code to modify:
+- `src/lsp/server.ts` — add a `validateReferences()` function called in the diagnostics handler
+- `src/lsp/references.ts` — export any needed types/functions
+- `tests/lsp/ref-diagnostics.test.ts` — NEW FILE with reference diagnostic tests
+
+### Key existing types:
+```typescript
+// from references.ts
+export interface Reference {
+  fullMatch: string;
+  refId: string;
+  block?: string;
+  line: number;
+  startChar: number;
+  endChar: number;
+}
+export interface ResolvedLocation {
+  filePath: string;
+  line: number;
+  character: number;
+}
+export function parseReferences(text: string): Reference[]
+export function resolveReference(ref: Reference, workspaceRoot: string): ResolvedLocation | null
+export function resolveFileRef(refId: string, workspaceRoot: string): string | null
+```
+
+### Validation flow:
+```
+validateReferences(text, workspaceRoot) → Diagnostic[]
+  1. refs = parseReferences(text)
+  2. for each ref:
+     - resolved = resolveReference(ref, workspaceRoot)
+     - if resolved === null → Diagnostic(Warning, ref range)
+  3. return diagnostics
+```
+
+### CRITICAL CONSTRAINTS:
+- Container has NO Python. DO NOT install anything or run code. Just WRITE TypeScript files.
+- Add NO new features beyond what's specified. ONLY modify the exact files listed.
+- DO NOT create or switch git branches.
+- Use baby steps: write ONE function, verify it builds, then proceed.
+- After all changes: verify with `npx tsc -p src/lsp/tsconfig.json` to confirm it compiles.
