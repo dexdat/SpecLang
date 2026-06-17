@@ -38,6 +38,7 @@ const SKILL_PATHS: Record<string, string> = {
   'code-gen-py': 'python/spec-writer.spec.md',
   'code-gen-rs': 'rust/spec-writer-rust.spec.md',
   'test-writer': 'test-writer.spec.md',
+  'orchestrator': 'orchestrator.spec.md',
 };
 
 export class AgentRouter {
