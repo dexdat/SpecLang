@@ -17,3 +17,9 @@ export {
   _resetPiSdkCache,
 } from './session-manager';
 export { GitHandler, GitCommitResult, GitHandlerOptions } from './git-handler';
+export {
+  ContextManager,
+  ContextState,
+  ContextTier,
+  SessionPersistenceStats,
+} from './session-persistence';

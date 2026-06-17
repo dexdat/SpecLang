@@ -270,9 +270,9 @@ describe('getDocumentSymbols', () => {
     expect(notes.detail).toBe('@kind:note');
 
     expect(login.range.start.line).toBe(12);
-    expect(login.range.end.line).toBe(13);
+    expect(login.range.end.line).toBe(14);
     expect(users.range.start.line).toBe(15);
-    expect(users.range.end.line).toBe(16);
+    expect(users.range.end.line).toBe(17);
     expect(notes.range.start.line).toBe(18);
     expect(notes.range.end.line).toBe(19);
   });
