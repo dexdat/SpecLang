@@ -65,19 +65,20 @@ export class DependencyTracker {
   private buildGraph(indexData: Record<string, unknown>): void {
     const specs = indexData.specs as Record<string, unknown> || {};
     
-    for (const [specPath, specData] of Object.entries(specs)) {
+    for (const [_specId, specData] of Object.entries(specs)) {
       const spec = specData as Record<string, unknown>;
       const id = spec.id as string;
       const layer = spec.layer as number || 0;
       const refs = spec.refs as string[] || [];
+      const file = spec.file as string || '';
 
-      const type = this.determineType(specPath);
+      const type = this.determineType(file);
       
       const node: TreeNode = {
         id,
         layer,
         type,
-        filePath: specPath,
+        filePath: file,
         dependencies: refs.map(r => r.replace('@ref:', '')),
         children: []
       };
