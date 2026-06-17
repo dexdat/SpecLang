@@ -100,7 +100,7 @@ describe('renderImports', () => {
 describe('renderFile', () => {
   it('should render a complete Go file', () => {
     const body = 'type User struct {\n  Name string\n}\n';
-    const result = renderFile('models', renderImports(['time']), body, 'user');
+    const result = renderFile('models', ['time'], body, 'user');
     expect(result).toContain('package models');
     expect(result).toContain('import');
     expect(result).toContain('"time"');

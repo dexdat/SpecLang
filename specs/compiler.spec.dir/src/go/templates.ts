@@ -86,3 +86,98 @@ export function renderGoTemplate(
   }
   return result;
 }
+
+export function toPascalCase(s: string): string {
+  const parts = s
+    .split(/[-_\s]+|(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/)
+    .filter(Boolean);
+  return parts
+    .map((w, _i, arr) => {
+      // For single-word input: if ≤2 chars or already uppercase → uppercase all
+      if (arr.length === 1 && (w.length <= 2 || w === w.toUpperCase())) {
+        return w.toUpperCase();
+      }
+      // For segments: only preserve existing uppercase (e.g., ID, SKU)
+      if (w === w.toUpperCase()) return w.toUpperCase();
+      return w.charAt(0).toUpperCase() + w.slice(1);
+    })
+    .join('');
+}
+
+export function toCamelCase(s: string): string {
+  const pascal = toPascalCase(s);
+  if (pascal.length <= 2 || pascal === pascal.toUpperCase()) return pascal.toLowerCase();
+  return pascal.charAt(0).toLowerCase() + pascal.slice(1);
+}
+
+export function toSnakeCase(s: string): string {
+  return s
+    .replace(/([A-Z])/g, '_$1')
+    .toLowerCase()
+    .replace(/^_/, '')
+    .replace(/__+/g, '_');
+}
+
+export function renderStruct(
+  name: string,
+  fields: { name: string; type: string; tag: string }[]
+): string {
+  const renderedFields = fields
+    .map(f => renderGoTemplate(GO_TEMPLATES.field, { name: f.name, type: f.type, tag: f.tag }))
+    .join('\n');
+  return renderGoTemplate(GO_TEMPLATES.struct, { name, fields: renderedFields });
+}
+
+export function renderInterface(
+  name: string,
+  methods: { name: string; params: string; returns: string }[]
+): string {
+  const renderedMethods = methods
+    .map(m => renderGoTemplate(GO_TEMPLATES.interfaceMethod, { name: m.name, params: m.params, returns: m.returns }))
+    .join('\n');
+  return renderGoTemplate(GO_TEMPLATES.interface, { name, methods: renderedMethods });
+}
+
+export function renderConstructor(
+  name: string,
+  fields: { name: string; type: string }[]
+): string {
+  const params = fields
+    .map(f => `${f.name.charAt(0).toLowerCase() + f.name.slice(1)} ${f.type}`)
+    .join(', ');
+  const fieldInits = fields
+    .map(f => `    ${f.name}: ${f.name.charAt(0).toLowerCase() + f.name.slice(1)},`)
+    .join('\n');
+  return renderGoTemplate(GO_TEMPLATES.constructor, {
+    name,
+    params,
+    fieldInits,
+  });
+}
+
+export function renderImports(imports: string[]): string {
+  if (imports.length === 0) return '';
+  if (imports.length === 1) {
+    return renderGoTemplate(GO_TEMPLATES.importSingle, { package: imports[0] });
+  }
+  const sorted = [...imports].sort();
+  const rendered = sorted.map(i => `  "${i}"`).join('\n');
+  return renderGoTemplate(GO_TEMPLATES.importBlock, { imports: rendered });
+}
+
+export function renderFile(
+  pkg: string,
+  imports: string[],
+  body: string,
+  source: string
+): string {
+  const now = new Date().toISOString();
+  const header = renderGoTemplate(GO_TEMPLATES.fileHeader, {
+    source,
+    timestamp: now,
+    package: pkg,
+  });
+  const importBlock = renderImports(imports);
+  const sep = importBlock ? '\n' : '';
+  return header + importBlock + sep + body + '\n';
+}

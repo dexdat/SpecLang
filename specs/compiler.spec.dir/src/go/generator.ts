@@ -9,7 +9,6 @@ import { mapGoType, getGoZeroValue } from './types';
 import {
   renderStruct,
   renderInterface,
-  renderConstructor,
   renderImports,
   renderFile,
   toPascalCase,
