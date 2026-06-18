@@ -48,9 +48,15 @@
 
 ## Backlog
 
-### AC-009: File watcher daemon — full startup/shutdown lifecycle
+### AC-009: File watcher daemon — full startup/shutdown lifecycle ✅
 **Goal:** speclangd binary can start, detect file changes, and gracefully shut down
-**Why deferred:** Requires daemon process management. Mature features exist in source.
+**How to verify:**
+  1. `node -e "const {Daemon} = require('./dist/src/daemon/daemon'); ... d.start(); d.stop();"` should print STARTED then STOPPED
+  2. `npx vitest run tests/daemon/daemon.test.ts` — 25/25 tests pass (incl. restart, healthCheck)
+**Status:** passed ✅
+**Verified:** 2026-06-18 13:42 UTC
+**Evidence:** Daemon binary starts and stops cleanly (isRunning true/false cycles). All 25 daemon tests pass — SessionStore, Watcher, Router, ConvergenceDetector, Daemon integration (start/stop, restart, healthCheck, pause/resume, abort, converge detection). 2 previously-skipped tests (restart, healthCheck) now enabled and passing. Root cause of skip: stale compiled .js files in specs/daemon.spec.dir/src/ masked TypeScript methods; resolved by syncing compiled artifacts to match .ts source.
+**Binary test:** Daemon starts (STARTED, running: true), returns status (converged), stops cleanly (STOPPED, running: false). All lifecycle commands operational.
 
 ### AC-010: CLI completeness — all subcommands work
 **Goal:** `./bin/speclang --help` shows validate, cascade, build, history subcommands with correct behavior

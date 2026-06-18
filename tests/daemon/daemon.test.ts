@@ -289,7 +289,7 @@ describe('speclangd daemon', () => {
       expect(daemon.isRunning()).toBe(false);
     });
 
-    it.skip('should restart correctly', async () => {
+    it('should restart correctly', async () => {
       const daemon = new Daemon();
       
       await daemon.start();
@@ -302,7 +302,7 @@ describe('speclangd daemon', () => {
       expect(daemon.isRunning()).toBe(false);
     });
 
-    it.skip('should health check return true when running', async () => {
+    it('should health check return true when running', async () => {
       const daemon = new Daemon();
       
       await daemon.start();
