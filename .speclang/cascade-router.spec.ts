@@ -164,10 +164,26 @@ async function preProcessSpec(specPath: string, targetLang: string, projectRoot:
 
     const cleanCode = codeBlocks.join('\n').trim();
     const baseName = path.basename(specPath).replace(/\.spec\..*$/, '').replace(/\.spec$/, '');
+
+    // Extract spec ID from header
+    let specId = '';
+    try {
+      const hdr = await parseHeader(specPath);
+      specId = (hdr?.id as string) || '';
+    } catch {}
+
+    // Build trace header block
+    const traceHeaders = [
+      `// spec:trace: ${specPath}`,
+      specId ? `// spec:id: ${specId}` : '',
+      '// spec:generated: DO NOT EDIT — edit the spec instead',
+    ].filter(Boolean).join('\n');
+
+    const fullOutput = `${traceHeaders}\n\n${cleanCode}`;
     const outputPath = path.join(assembledDir, `${baseName}.code.${targetLang}`);
 
     await fs.mkdir(assembledDir, { recursive: true });
-    await fs.writeFile(outputPath, cleanCode, 'utf-8');
+    await fs.writeFile(outputPath, fullOutput, 'utf-8');
 
     return outputPath;
   } catch (err) {
@@ -807,11 +823,11 @@ export class CascadeRouter {
           `> **Sources:** bullet list of every file/section that informed this`,
           ``,
           `For spec code blocks (@block: sections):`,
-          `<!-- @spec-trace: specs/<source>.spec.md L12-45 | specs/<other>.spec.md ¶3-7 -->`,
+          `<!-- spec:trace: specs/<source>.spec.md L12-45 | specs/<other>.spec.md ¶3-7 -->`,
           ``,
           `### QUALITY GATES`,
           `- [ ] EVERY @ref: target has been read and merged`,
-          `- [ ] EVERY generated spec block has a @spec-trace annotation`,
+          `- [ ] EVERY generated spec block has a spec:trace annotation`,
           `- [ ] EVERY thinking file section has Trace + Confidence + Sources`,
           `- [ ] Cover ALL components from project.scl — no gaps`,
           `- [ ] Report unresolved @ref: links explicitly`,
@@ -820,7 +836,7 @@ export class CascadeRouter {
           `### HOW TO WORK`,
           `1. read() the meta spec + project.scl + ALL @ref: targets`,
           `2. Understand the full architecture before writing anything`,
-          `3. write() each generated spec file with proper headers, @ref: backlinks, and @spec-trace annotations`,
+          `3. write() each generated spec file with proper headers, @ref: backlinks, and spec:trace annotations`,
           `4. After all files: report what was created, what @ref: links remain unresolved, and overall confidence`,
         ].join('\n'),
         assembler: [
@@ -839,14 +855,14 @@ export class CascadeRouter {
           ``,
           `### TRACE FORMAT`,
           `Every assembled code file MUST begin with a trace block:`,
-          `// @spec-trace: ${resolvedPath} L<start>-<end>`,
-          `// @spec-id: {extract from header}`,
-          `// @generated: DO NOT EDIT — edit the spec instead`,
+          `// spec:trace: ${resolvedPath} L<start>-<end>`,
+          `// spec:id: {extract from header}`,
+          `// spec:generated: DO NOT EDIT — edit the spec instead`,
           ``,
           `### QUALITY GATES`,
           `- [ ] The assembled code COMPILES with the target language toolchain`,
           `- [ ] No DSL annotations (@speclang, @kind:, @block:) remain in output`,
-          `- [ ] Every file has @spec-trace annotations`,
+          `- [ ] Every file has spec:trace annotations`,
           `- [ ] Imports are resolved and correct`,
           ``,
           `### HOW TO WORK`,
@@ -874,16 +890,16 @@ export class CascadeRouter {
           ``,
           `### TRACE FORMAT`,
           `Every generated file MUST carry traceability:`,
-          `// @spec-trace: <source-spec> L<lines> → <target-lang-file>`,
-          `// @spec-id: {spec identifier}`,
-          `// @cascade: ${item.cascadeId}`,
+          `// spec:trace: <source-spec> L<lines> → <target-lang-file>`,
+          `// spec:id: {spec identifier}`,
+          `// spec:cascade: ${item.cascadeId}`,
           ``,
           `### QUALITY GATES`,
           `- [ ] All types are explicit — no 'any' unless truly dynamic`,
           `- [ ] Error paths are handled — every function has error handling`,
           `- [ ] The code COMPILES with the target language toolchain`,
           `- [ ] Existing files are UPDATED, not regenerated`,
-          `- [ ] Every file has @spec-trace annotations`,
+          `- [ ] Every file has spec:trace annotations`,
           ``,
           `### HOW TO WORK`,
           `1. read() the assembled code from ${projectAssembledDir}/`,
@@ -909,8 +925,8 @@ export class CascadeRouter {
           ``,
           `### TRACE FORMAT`,
           `Every test MUST reference which spec block it validates:`,
-          `// @spec-trace: ${resolvedPath} L<lines>`,
-          `// @tests: {operation name or block id}`,
+          `// spec:trace: ${resolvedPath} L<lines>`,
+          `// spec:tests: {operation name or block id}`,
           ``,
           `### QUALITY GATES`,
           `- [ ] Every @kind:operation in the spec has at least one test`,
@@ -921,7 +937,7 @@ export class CascadeRouter {
           `### HOW TO WORK`,
           `1. read() the generated code and the original spec`,
           `2. Map every @kind:operation to test cases`,
-          `3. write() test files with @spec-trace annotations`,
+          `3. write() test files with spec:trace annotations`,
           `4. bash() the test runner — FIX any failures`,
           `5. Report: tests written, pass/fail, coverage of spec operations`,
         ].join('\n'),
@@ -967,7 +983,7 @@ export class CascadeRouter {
         ``,
         `## The SpecLang Trace System`,
         ``,
-        `SpecLang uses @spec-trace annotations to create a FULLY AUDITABLE chain from requirement → design → code → test.`,
+        `SpecLang uses spec:trace annotations to create a FULLY AUDITABLE chain from requirement → design → code → test.`,
         `Every piece of generated output MUST carry trace annotations. This is NOT optional.`,
         ``,
         `### Trace Formats by Output Type`,
@@ -981,18 +997,18 @@ export class CascadeRouter {
         `   >   - specs/headers.spec.md L8-15 — header format specification`,
         ``,
         `2. **Generated code files** (.ts, .py, .go, .rs, .js):`,
-        `   // @spec-trace: specs/auth.spec.md L45-89 → src/auth/login.ts`,
-        `   // @spec-id: @specs/auth`,
-        `   // @cascade: ${item.cascadeId}`,
+        `   // spec:trace: specs/auth.spec.md L45-89 → src/auth/login.ts`,
+        `   // spec:id: @specs/auth`,
+        `   // spec:cascade: ${item.cascadeId}`,
         ``,
         `3. **Assembled code files** (.code.ts, .code.py):`,
-        `   // @spec-trace: specs/math.spec.ts.md L1-62`,
-        `   // @spec-id: @specs/calc/math`,
-        `   // @generated: DO NOT EDIT — edit the spec instead`,
+        `   // spec:trace: specs/math.spec.ts.md L1-62`,
+        `   // spec:id: @specs/calc/math`,
+        `   // spec:generated: DO NOT EDIT — edit the spec instead`,
         ``,
         `4. **Test files**:`,
-        `   // @spec-trace: specs/auth.spec.md L45-89`,
-        `   // @tests: login-flow, error-paths`,
+        `   // spec:trace: specs/auth.spec.md L45-89`,
+        `   // spec:tests: login-flow, error-paths`,
         ``,
         `### Confidence Scoring Rules`,
         `- **HIGH**: At least 2 independent source files confirm this. The design is solid.`,
@@ -1016,7 +1032,7 @@ export class CascadeRouter {
         `- glob(pattern) — discover files matching a pattern`,
         ``,
         `CRITICAL: USE the tools NOW. Do NOT plan. Do NOT describe. Execute.`,
-        `Every file must be written with @spec-trace annotations. Every thinking section needs Confidence.`,
+        `Every file must be written with spec:trace annotations. Every thinking section needs Confidence.`,
         `After all files: report what you created, what @ref: links remain unresolved, and overall confidence.`,
       ].filter(Boolean).join('\n');
 
