@@ -10,6 +10,7 @@ import { EventEmitter } from 'events';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { FileEvent, ConvergenceResult, DaemonConfig, AgentStatus, AgentStatusKind, TestResults } from './types';
+import { PipelineExecutor } from '../pipeline/executor';
 
 const execAsync = promisify(exec);
 
@@ -349,7 +350,6 @@ export class ConvergenceDetector extends EventEmitter {
   async onConverge(): Promise<ConvergenceResult> {
     console.log('[Convergence] Starting on_converge sequence...');
     
-    // Step 2: Verify all agents idle
     if (!this.areAllAgentsIdle()) {
       console.log('[Convergence] Waiting for agents to finish...');
       await new Promise(resolve => setTimeout(resolve, 2000));
@@ -357,17 +357,18 @@ export class ConvergenceDetector extends EventEmitter {
     
     let testResults: TestResults | undefined;
     
-    // Step 3: Run tests
     if (this.testOnConverge) {
-      testResults = await this.runTests();
-      console.log('[Convergence] Tests complete:', testResults);
-    }
-    
-    // Step 4: Commit changes
-    let commitSha: string | undefined;
-    if (this.autoCommit) {
-      commitSha = await this.commitChanges() ?? undefined;
-      console.log('[Convergence] Commit complete:', commitSha);
+      const executor = new PipelineExecutor({ configPath: 'build.yaml' });
+      const pipelineResult = await executor.execute();
+      
+      testResults = {
+        passed: pipelineResult.stages.filter(s => s.success).length,
+        failed: pipelineResult.stages.filter(s => !s.success).length,
+        total: pipelineResult.stages.length,
+        duration: pipelineResult.duration,
+        errors: pipelineResult.stages.filter(s => s.error).map(s => s.error!),
+      };
+      console.log('[Convergence] Pipeline complete:', testResults);
     }
     
     const result: ConvergenceResult = {
@@ -377,10 +378,8 @@ export class ConvergenceDetector extends EventEmitter {
       cascadeDepth: this.currentDepth,
       timestamp: Date.now(),
       testResults,
-      commitSha,
     };
     
-    // Step 5: Notify user
     this.emit('converged', result);
     console.log(`[Convergence] Cascade complete! Files: ${result.filesChanged}, Duration: ${result.duration}ms`);
     
