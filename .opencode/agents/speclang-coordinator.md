@@ -1,0 +1,1 @@
+../../specs/agents.spec.dir/agents/speclang-coordinator.md

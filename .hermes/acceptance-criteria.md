@@ -13,11 +13,13 @@
 **Evidence:** Skills test: 9/9 passed (previously 7/9 with 2 failures). Full regression: 2152/2152 passed. 5 symlinks created: spec-writer, code-gen, test-writer, back-sync, orchestrator. `.opencode/agents/` and `.opencode/tools/` dirs also created.
 **Commit:** speclang: AC-006 — .opencode/skills/ symlinked from specs [WI-SL-006]
 
-### AC-007: OpenCode skills — `.opencode/` with full skill inventory
+### AC-007: OpenCode skills — `.opencode/` with full skill inventory ✅
 **Goal:** `.opencode/` directory with agents/, tools/ subdirectories, symlinked from spec sources
 **How to verify:** `ls .opencode/` should show agents/ tools/ subdirs; `ls .opencode/agents/` should show .md files
-**Status:** not_started
-**Notes:** Full `.opencode/` structure is missing. AGENTS.md lists it as 0% compliant.
+**Status:** passed
+**Verified:** 2026-06-18 12:42 UTC
+**Evidence:** 7 agent files symlinked (README, speclang-code-gen, speclang-coordinator, speclang-simulator, speclang-simulator-verify, speclang-spec-writer, speclang-verifier). 1 tools file symlinked (README). All resolve and container can read.
+**Commit:** speclang: AC-007 — .opencode/agents/ and .opencode/tools/ symlinked from specs
 
 ### AC-008: Pi Agent SDK runtime test passes on host
 **Goal:** `node -e "require('@earendil-works/pi-coding-agent')"` returns successfully
