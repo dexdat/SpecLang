@@ -26,7 +26,8 @@
     "clean": "rm -rf dist/",
     "prepublishOnly": "npm run build",
     "build:dashboard": "vite build",
-    "dev:dashboard": "vite dev"
+    "dev:dashboard": "vite dev",
+    "e2e": "npx tsx bin/e2e-speclang-engine.test.ts"
   },
   "repository": {
     "type": "git",
