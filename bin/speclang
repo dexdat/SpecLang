@@ -2067,4 +2067,141 @@ This spec describes ${name}.
     console.log(`\n✅ ${options.tiers ? '4-tier' : 'Single'} spec created in specs/${name}/`);
   });
 
+// History command - show spec change history with git integration
+program
+  .command('history [spec]')
+  .alias('log')
+  .alias('changes')
+  .description('Show spec change history with git integration')
+  .option('-a, --all', 'Show all changes, not just specs')
+  .option('-b, --block <id>', 'Filter by block ID (e.g. @auth/login)')
+  .option('--author <name>', 'Filter by author')
+  .option('--since <date>', 'Changes since date/commit')
+  .option('--until <date>', 'Changes until date/commit')
+  .option('--compare <range>', 'Compare two versions (v1..v2)')
+  .option('-f, --format <type>', 'Output format (text|json|timeline)', 'text')
+  .option('--follow', 'Follow renames')
+  .option('--stat', 'Show diff statistics')
+  .option('--blame', 'Show line-level attribution')
+  .action(async (spec, options) => {
+    const git = require('simple-git')();
+
+    // --compare mode: show diff between two versions
+    if (options.compare) {
+      const [from, to] = options.compare.split('..');
+      const fileArg = spec || (options.all ? '.' : 'specs/');
+      const diff = await git.diff([from, to, '--', fileArg]);
+      const lines = diff.split('\n');
+      const filesChanged = new Set();
+      let added = 0, removed = 0;
+
+      for (const line of lines) {
+        if (line.startsWith('+++ b/')) filesChanged.add(line.slice(6));
+        if (line.startsWith('--- a/')) filesChanged.add(line.slice(6));
+        if (line.startsWith('+') && !line.startsWith('+++')) added++;
+        if (line.startsWith('-') && !line.startsWith('---')) removed++;
+      }
+
+      console.log(`Comparing ${from} to ${to}:\n`);
+      if (options.format === 'json') {
+        console.log(JSON.stringify({ from, to, filesChanged: [...filesChanged], added, removed }, null, 2));
+      } else {
+        console.log(`Files changed: ${filesChanged.size}`);
+        console.log(`Insertions: ${added}   Deletions: ${removed}\n`);
+      }
+      return;
+    }
+
+    // Build git log options
+    const logOptions = {
+      file: spec || (options.all ? undefined : 'specs/'),
+      '--follow': options.follow ? null : undefined,
+      '--author': options.author,
+      '--since': options.since,
+      '--until': options.until,
+    };
+    Object.keys(logOptions).forEach(k => { if (logOptions[k] === undefined) delete logOptions[k]; });
+
+    const log = await git.log(logOptions);
+
+    // --stat mode: show statistics
+    if (options.stat) {
+      const authors = new Set(log.all.map(c => c.author_name));
+      let filesChanged = 0;
+      try {
+        const diffSummary = await git.diffSummary([spec || 'specs/']);
+        filesChanged = diffSummary.files.length;
+      } catch (_) {}
+
+      if (options.format === 'json') {
+        console.log(JSON.stringify({
+          totalCommits: log.total,
+          uniqueAuthors: authors.size,
+          filesChanged,
+          dateRange: log.all.length > 0 ? { from: log.all[log.all.length - 1].date, to: log.all[0].date } : null
+        }, null, 2));
+      } else {
+        console.log(`Total commits: ${log.total}`);
+        console.log(`Unique authors: ${authors.size}`);
+        console.log(`Files changed: ${filesChanged}`);
+        if (log.all.length > 0) {
+          console.log(`Date range: ${log.all[log.all.length - 1].date} \u2192 ${log.all[0].date}`);
+        }
+      }
+      return;
+    }
+
+    // Filter by block ID
+    let entries = log.all;
+    if (options.block) {
+      const filtered = [];
+      for (const commit of entries) {
+        try {
+          const diffContent = await git.diff([`${commit.hash}^..${commit.hash}`, '--', spec || 'specs/']);
+          if (diffContent.includes(`@block:${options.block}`)) {
+            filtered.push(commit);
+          }
+        } catch (_) {}
+      }
+      entries = filtered;
+    }
+
+    // Format output
+    switch (options.format) {
+      case 'json': {
+        console.log(JSON.stringify(entries.map(c => ({
+          hash: c.hash, author: c.author_name, email: c.author_email,
+          date: c.date, message: c.message, refs: c.refs
+        })), null, 2));
+        break;
+      }
+      case 'timeline': {
+        const groups = {};
+        for (const c of entries) {
+          const d = new Date(c.date);
+          const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+          if (!groups[key]) groups[key] = [];
+          groups[key].push(c);
+        }
+        for (const [month, commits] of Object.entries(groups)) {
+          console.log(`\n  ${month}`);
+          console.log('  ' + '\u2500'.repeat(40));
+          for (const c of commits) {
+            const date = new Date(c.date).toISOString().slice(0, 10);
+            console.log(`  ${c.hash.slice(0, 7)}  ${date}  ${c.author_name.padEnd(20)} ${c.message.split('\n')[0]}`);
+          }
+        }
+        break;
+      }
+      default: {
+        if (entries.length === 0) { console.log('No history found.'); return; }
+        for (const c of entries) {
+          const date = new Date(c.date).toISOString().slice(0, 10);
+          console.log(`${c.hash.slice(0, 7)}  ${date}  ${c.author_name.padEnd(20)} ${c.message.split('\n')[0]}`);
+        }
+        console.log(`\n${entries.length} commits`);
+      }
+    }
+  });
+
 program.parse();
