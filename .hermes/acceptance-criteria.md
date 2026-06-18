@@ -21,11 +21,13 @@
 **Evidence:** 7 agent files symlinked (README, speclang-code-gen, speclang-coordinator, speclang-simulator, speclang-simulator-verify, speclang-spec-writer, speclang-verifier). 1 tools file symlinked (README). All resolve and container can read.
 **Commit:** speclang: AC-007 — .opencode/agents/ and .opencode/tools/ symlinked from specs
 
-### AC-008: Pi Agent SDK runtime test passes on host
-**Goal:** `node -e "require('@earendil-works/pi-coding-agent')"` returns successfully
-**How to verify:** `node -e "require('@earendil-works/pi-coding-agent'); console.log('OK')"` should print OK
-**Status:** not_started
-**Notes:** May require `npm install` in the project directory. E2E test exists that proves it works.
+### AC-008: Pi Agent SDK runtime test passes on host ✅
+**Goal:** Pi Agent SDK can be loaded at runtime on the host
+**How to verify:** `node -e "import('@earendil-works/pi-coding-agent').then(m => console.log('OK'))"` should print OK. Package is ESM-only (`"type": "module"`), CJS `require()` not supported.
+**Status:** passed
+**Verified:** 2026-06-18 13:05 UTC
+**Evidence:** `node tests/pi-agent-check.mjs` loaded the SDK successfully. Exports: AgentSession, AgentSessionRuntime, and 50+ components. Version 0.79.1.
+**Notes:** Package is ESM-only (exports only "import" field). Verification command updated from CJS require to ESM import.
 
 ## Passed Criteria
 
