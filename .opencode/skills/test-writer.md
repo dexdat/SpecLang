@@ -1,0 +1,1 @@
+../../specs/skills.spec.dir/skills/test-writer.md
