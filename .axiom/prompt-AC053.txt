@@ -1,0 +1,77 @@
+Write tests/e2e/full-cascade.test.ts for the SpecLang multi-agent swarm orchestrator E2E test.
+
+CRITICAL: Container has NO Python runtime. DO NOT install anything or test via Python. Just WRITE the test file. Testing happens on host. ONLY write tests/e2e/full-cascade.test.ts. Do NOT modify any existing files. Add NO new features or function blocks.
+
+The test file must import from vitest and use vitest patterns (describe/it/expect/vi/beforeEach/afterAll):
+
+```typescript
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+```
+
+Test the FULL cascade chain end-to-end:
+
+1. **Setup**: Create a temp workspace with dirs: specs/, generated/, .speclang/locks/
+2. **File Watcher**: Create FileWatcher watching the specs/ dir with 50ms debounce
+3. **Queue**: Create Queue linking to router output
+4. **Agent Router**: Create AgentRouter with spec-pattern and codegen-pattern configs
+5. **Session Manager**: Create SessionManager (mock Pi Agent sessions since real SDK needs API keys)
+6. **Git Handler**: Create GitHandler operating in the temp dir
+7. **Convergence Detector**: Create ConvergenceDetector with 100ms quiet period
+
+Test scenarios:
+
+**Test 1: Spec file change triggers full cascade**
+- Write a file `specs/test-auth.spec.md`
+- Verify FileWatcher detects it (use vi.waitFor or timeout-based check)
+- Verify Queue has an item for it
+- Verify AgentRouter maps it to 'spec-writer' agent
+- Verify SessionManager creates/returns a session
+- Session should have the Pi Agent skill prompt loaded
+
+**Test 2: Generated file gets routed to code-gen agent**
+- Write a file `generated/go/auth/handler.go`  
+- Verify FileWatcher detects it
+- Verify AgentRouter maps it to 'code-gen-go' agent
+
+**Test 3: Convergence detection**
+- After all events processed, verify ConvergenceDetector converges
+- Verify ConvergenceResult has filesChanged > 0
+
+**Test 4: Ownership guard integration**
+- Simulate a CodeGen agent trying to write a spec file
+- Verify ownership guard blocks it
+
+**Test 5: Session persistence — warm reuse**
+- Send two rapid changes to the same spec file
+- Verify SessionManager reuses the same session (not spawning a new one)
+
+Use these imports (check actual module paths — they may be under specs/.spec.dir/):
+
+```typescript
+import { FileWatcher } from '../src/swarm/file-watcher';
+import { Queue } from '../src/swarm/queue';
+import { AgentRouter } from '../src/swarm/agent-router';
+import { SessionManager } from '../src/swarm/session-manager';
+import { GitHandler } from '../src/swarm/git-handler';
+import { OwnershipGuard } from '../src/agents/ownership';
+import { ConvergenceDetector } from '../src/daemon/convergence';
+```
+
+Mock the Pi Agent SDK since this is a unit test:
+```typescript
+vi.mock('@earendil-works/pi-coding-agent', () => ({
+  createAgentSession: vi.fn().mockResolvedValue({
+    session: { prompt: vi.fn(), dispose: vi.fn() }
+  })
+}));
+```
+
+Use `fs.mkdtempSync` and `fs.mkdirSync` for temp workspace. Clean up with `rmSync` in afterAll.
+
+Each test must:
+- Set up required state in beforeAll/beforeEach
+- Execute the cascade step
+- Assert the expected outcome
+- Use realistic spec file content with speclang headers
+
+Follow the patterns in tests/swarm/*.test.ts for vitest style and temp dir management.

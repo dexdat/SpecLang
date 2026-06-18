@@ -1,0 +1,15 @@
+Fix parallel test race condition in post-convergence.test.ts
+
+BUG: All tests in `tests/pipeline/post-convergence.test.ts` write to and read from the same file `build.yaml` in the project root. Vitest runs tests in parallel by default. When two tests write the file simultaneously, one test's PipelineExecutor reads corrupted/empty content, `yaml.parse()` returns null, and `PipelineConfigManager.load()` silently falls back to defaults with no stages. The "should handle pipeline failure gracefully" test fails because `testResults.failed === 0` instead of `> 0`.
+
+FIX: Replace the static `PIPELINE_CONFIG_PATH = 'build.yaml'` constant with a per-test unique temp file path. Use `os.tmpdir()` + a test-specific suffix (UUID or counter). The `compileConfig` function (or equivalent `makeConfig()`) should accept a `configPath` parameter so each test can pass its own unique path.
+
+CRITICAL: ONLY change `tests/pipeline/post-convergence.test.ts`. Do NOT touch any other files:
+1. Generate a unique path per test using `path.join(os.tmpdir(), 'speclang-pipeline-test-' + Math.random().toString(36).slice(2) + '.yaml')`
+2. Pass it to `makeConfig()` — add a `configPath` field to `DaemonConfig` if needed
+3. The detector's `onConverge()` creates `new PipelineExecutor({ configPath: 'build.yaml' })` — this needs to use the unique path too. Either modify `onConverge` to accept a path, or update the test's convergence config to store the path.
+
+DO NOT add new features, do not rewrite the file — just fix the shared path race.
+
+AFTER the fix, run: npx vitest run tests/pipeline/post-convergence.test.ts --reporter=verbose
+Expected: 4/4 tests pass.
