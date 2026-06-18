@@ -15,6 +15,7 @@ import { CascadeToolHandler } from './cascade.js';
 import { IndexToolHandler } from './index-tools.js';
 import { DashboardToolHandler } from './dashboard.js';
 import { CommandsToolHandler } from './commands.js';
+import { MessagesToolHandler } from './messages.js';
 import type { 
   SearchInput, 
   CreateSpecInput, 
@@ -23,7 +24,12 @@ import type {
   UnlockInput, 
   CascadeTriggerInput,
   CommandInput,
-  QueryCommandsInput
+  QueryCommandsInput,
+  ReportMessageInput,
+  QueryMessagesInput,
+  GetMessageInput,
+  UpdateMessageStatusInput,
+  AddMessageResponseInput
 } from '../types.js';
 
 /**
@@ -42,6 +48,7 @@ export class MCPToolRegistry {
   public index: IndexToolHandler;
   public dashboard: DashboardToolHandler;
   public commands: CommandsToolHandler;
+  public messages: MessagesToolHandler;
   
   constructor(db: SpecLangDB, config: MCPServerConfig) {
     this.db = db;
@@ -55,6 +62,7 @@ export class MCPToolRegistry {
     this.index = new IndexToolHandler(db, config.specsDir);
     this.dashboard = new DashboardToolHandler(db, this.config);
     this.commands = new CommandsToolHandler(db);
+    this.messages = new MessagesToolHandler(db);
   }
   
   /**
@@ -188,6 +196,23 @@ export class MCPToolRegistry {
             result = await this.commands.handleBatchInsert(args as unknown as { commands: Array<{ cascade_id: string; action: string; target_file?: string; priority?: number }> });
             break;
             
+          // Message inbox tools
+          case 'speclang_report_message':
+            result = await this.messages.handleReportMessage(args as unknown as ReportMessageInput);
+            break;
+          case 'speclang_query_messages':
+            result = await this.messages.handleQueryMessages(args as unknown as QueryMessagesInput);
+            break;
+          case 'speclang_get_message':
+            result = await this.messages.handleGetMessage(args as unknown as GetMessageInput);
+            break;
+          case 'speclang_update_message_status':
+            result = await this.messages.handleUpdateMessageStatus(args as unknown as UpdateMessageStatusInput);
+            break;
+          case 'speclang_add_message_response':
+            result = await this.messages.handleAddMessageResponse(args as unknown as AddMessageResponseInput);
+            break;
+
           default:
             throw new Error(`Unknown tool: ${name}`);
         }
@@ -785,6 +810,79 @@ export function getToolDefinitions() {
           }
         },
         required: ['commands']
+      }
+    },
+
+    // Message inbox tools
+    {
+      name: 'speclang_report_message',
+      description: 'Agent reports a spec issue or question',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          type: { type: 'string', enum: ['ambiguity', 'incompleteness', 'validation_failure', 'question', 'suggestion'], description: 'Message type' },
+          priority: { type: 'string', enum: ['blocking', 'high', 'medium', 'low', 'informational'], description: 'Message priority' },
+          spec_id: { type: 'string', description: 'Target spec ID' },
+          file_path: { type: 'string', description: 'Target file path' },
+          title: { type: 'string', description: 'Short summary' },
+          description: { type: 'string', description: 'Detailed issue description' },
+          suggested_fix: { type: 'string', description: 'Suggested fix (optional)' },
+          code_snippet: { type: 'string', description: 'Relevant code snippet (optional)' },
+          line_range: { type: 'array', items: { type: 'number' }, description: 'Line range [start, end] (optional)' }
+        },
+        required: ['type', 'priority', 'spec_id', 'file_path', 'title', 'description']
+      }
+    },
+    {
+      name: 'speclang_query_messages',
+      description: 'Human agent queries message inbox',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          status: { type: 'string', enum: ['new', 'in_progress', 'resolved', 'dismissed'], description: 'Filter by status (optional)' },
+          priority: { type: 'string', enum: ['blocking', 'high', 'medium', 'low', 'informational'], description: 'Filter by priority (optional)' },
+          type: { type: 'string', enum: ['ambiguity', 'incompleteness', 'validation_failure', 'question', 'suggestion'], description: 'Filter by type (optional)' },
+          spec_id: { type: 'string', description: 'Filter by spec ID (optional)' },
+          limit: { type: 'number', description: 'Max results', default: 20 },
+          offset: { type: 'number', description: 'Result offset', default: 0 }
+        }
+      }
+    },
+    {
+      name: 'speclang_get_message',
+      description: 'Get specific message by ID',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          message_id: { type: 'string', description: 'Message ID' }
+        },
+        required: ['message_id']
+      }
+    },
+    {
+      name: 'speclang_update_message_status',
+      description: 'Update message status (human agent responds)',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          message_id: { type: 'string', description: 'Message ID' },
+          status: { type: 'string', enum: ['in_progress', 'resolved', 'dismissed'], description: 'New status' },
+          resolution_notes: { type: 'string', description: 'Resolution notes (optional)' }
+        },
+        required: ['message_id', 'status']
+      }
+    },
+    {
+      name: 'speclang_add_message_response',
+      description: 'Add response to message (threaded discussion)',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          message_id: { type: 'string', description: 'Message ID' },
+          content: { type: 'string', description: 'Response content' },
+          agent: { type: 'string', description: 'Agent role (human, spec-writer, etc.)' }
+        },
+        required: ['message_id', 'content', 'agent']
       }
     }
   ];

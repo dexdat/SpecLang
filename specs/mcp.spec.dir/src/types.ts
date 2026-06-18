@@ -291,6 +291,96 @@ export interface StatusResult {
   last_build: number | null;
 }
 
+// ============================================================================
+// MESSAGE INBOX TYPES
+// ============================================================================
+
+/** Message type enum */
+export type MessageType = 'ambiguity' | 'incompleteness' | 'validation_failure' | 'question' | 'suggestion';
+
+/** Message priority enum */
+export type MessagePriority = 'blocking' | 'high' | 'medium' | 'low' | 'informational';
+
+/** Message status enum */
+export type MessageStatus = 'new' | 'in_progress' | 'resolved' | 'dismissed';
+
+/** Message inbox message */
+export interface Message {
+  id: string;
+  type: MessageType;
+  priority: MessagePriority;
+  source_agent: string;
+  source_session_id: string;
+  source_change_id: string | null;
+  target_spec_id: string;
+  target_file_path: string;
+  target_line_start: number | null;
+  target_line_end: number | null;
+  title: string;
+  description: string;
+  suggested_fix: string | null;
+  code_snippet: string | null;
+  created_at: number;
+  updated_at: number;
+  status: MessageStatus;
+  resolved_by: string | null;
+  resolved_at: number | null;
+  resolution_notes: string | null;
+  cascade_id: string | null;
+  parent_message_id: string | null;
+}
+
+/** Message response for threaded discussions */
+export interface MessageResponse {
+  id: string;
+  message_id: string;
+  agent: string;
+  content: string;
+  created_at: number;
+}
+
+/** Report message input */
+export interface ReportMessageInput {
+  type: MessageType;
+  priority: MessagePriority;
+  spec_id: string;
+  file_path: string;
+  title: string;
+  description: string;
+  suggested_fix?: string;
+  code_snippet?: string;
+  line_range?: [number, number];
+}
+
+/** Query messages input */
+export interface QueryMessagesInput {
+  status?: MessageStatus;
+  priority?: MessagePriority;
+  type?: MessageType;
+  spec_id?: string;
+  limit?: number;
+  offset?: number;
+}
+
+/** Get message input */
+export interface GetMessageInput {
+  message_id: string;
+}
+
+/** Update message status input */
+export interface UpdateMessageStatusInput {
+  message_id: string;
+  status: Extract<MessageStatus, 'in_progress' | 'resolved' | 'dismissed'>;
+  resolution_notes?: string;
+}
+
+/** Add message response input */
+export interface AddMessageResponseInput {
+  message_id: string;
+  content: string;
+  agent: string;
+}
+
 /** Default server configuration */
 export const DEFAULT_MCP_CONFIG: MCPServerConfig = {
   port: 3000,
