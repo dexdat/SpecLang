@@ -1,0 +1,1 @@
+../../specs/speclang-test.spec.dir/src/test-output.ts
