@@ -347,7 +347,7 @@ export class ConvergenceDetector extends EventEmitter {
    * 5. notify user
    * 6. await next input
    */
-  async onConverge(): Promise<ConvergenceResult> {
+  async onConverge(pipelineConfigPath?: string): Promise<ConvergenceResult> {
     console.log('[Convergence] Starting on_converge sequence...');
     
     if (!this.areAllAgentsIdle()) {
@@ -358,7 +358,7 @@ export class ConvergenceDetector extends EventEmitter {
     let testResults: TestResults | undefined;
     
     if (this.testOnConverge) {
-      const executor = new PipelineExecutor({ configPath: 'build.yaml' });
+      const executor = new PipelineExecutor({ configPath: pipelineConfigPath || 'build.yaml' });
       const pipelineResult = await executor.execute();
       
       testResults = {
