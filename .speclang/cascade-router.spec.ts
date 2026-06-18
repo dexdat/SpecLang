@@ -112,14 +112,14 @@ const ASSEMBLED_DIR = path.join(process.cwd(), '.speclang', 'assembled');
  * 3. Write clean output to .speclang/assembled/{name}.code.{lang}
  * Returns the path to the clean output file, or null on failure.
  */
-async function preProcessSpec(specPath: string, targetLang: string): Promise<string | null> {
+async function preProcessSpec(specPath: string, targetLang: string, projectRoot: string): Promise<string | null> {
   try {
+    const assembledDir = path.join(projectRoot, '.speclang', 'assembled');
     const content = await fs.readFile(specPath, 'utf-8');
     const lines = content.split('\n');
     const codeBlocks: string[] = [];
     let inSpeclangFence = false;
-    let inTargetFence = false;
-    const targetLangFence = '```' + targetLang;
+    let inCodeFence = false;
 
     for (const line of lines) {
       const trimmed = line.trim();
@@ -127,6 +127,7 @@ async function preProcessSpec(specPath: string, targetLang: string): Promise<str
       // Track speclang code fences — collect content, strip DSL annotations
       if (trimmed.startsWith('```speclang')) {
         inSpeclangFence = true;
+        inCodeFence = false;
         continue;
       }
       if (inSpeclangFence && trimmed === '```') {
@@ -135,13 +136,14 @@ async function preProcessSpec(specPath: string, targetLang: string): Promise<str
         continue;
       }
 
-      // Track target-language code fences — skip clean code (already processed)
-      if (trimmed.startsWith(targetLangFence)) {
-        inTargetFence = true;
+      // Track any language code fence (```ts, ```py, ```go, etc.) — extract as clean code
+      if (!inSpeclangFence && trimmed.startsWith('```') && !trimmed.startsWith('```speclang')) {
+        inCodeFence = true;
         continue;
       }
-      if (inTargetFence && trimmed === '```') {
-        inTargetFence = false;
+      if (inCodeFence && trimmed === '```') {
+        inCodeFence = false;
+        codeBlocks.push(''); // separator between blocks
         continue;
       }
 
@@ -153,15 +155,18 @@ async function preProcessSpec(specPath: string, targetLang: string): Promise<str
         continue;
       }
 
-      // Skip target-language fence content (already clean code)
-      if (inTargetFence) continue;
+      // Inside any code fence: collect as clean code
+      if (inCodeFence) {
+        codeBlocks.push(line);
+        continue;
+      }
     }
 
     const cleanCode = codeBlocks.join('\n').trim();
     const baseName = path.basename(specPath).replace(/\.spec\..*$/, '').replace(/\.spec$/, '');
-    const outputPath = path.join(ASSEMBLED_DIR, `${baseName}.code.${targetLang}`);
+    const outputPath = path.join(assembledDir, `${baseName}.code.${targetLang}`);
 
-    await fs.mkdir(ASSEMBLED_DIR, { recursive: true });
+    await fs.mkdir(assembledDir, { recursive: true });
     await fs.writeFile(outputPath, cleanCode, 'utf-8');
 
     return outputPath;
@@ -485,8 +490,9 @@ export class CascadeRouter {
 
       // Collect all spec files to process: the changed file itself + any dependents
       const allSpecs = new Set<string>();
+      // Match .spec.md, .spec.ts.md, .spec.py.md, .spec.go.md, .spec.rs.md, etc.
       const isSpecFile = (p: string) =>
-        p.endsWith('.spec.md') || p.endsWith('.spec.py.md') || p.endsWith('.spec.meta.md');
+        /\.spec(\.\w+)?\.md$/.test(p);
       if (isSpecFile(event.path)) allSpecs.add(event.path);
       for (const spec of event.dependentSpecs) allSpecs.add(spec);
 
@@ -624,7 +630,7 @@ export class CascadeRouter {
       const hdr = await parseHeader(resolvedPath);
       targetLang = (hdr?.targetLang as string) || (hdr?.target_lang as string) || 'py';
     } catch { /* no header */ }
-    cleanSpecPath = await preProcessSpec(resolvedPath, targetLang);
+    cleanSpecPath = await preProcessSpec(resolvedPath, targetLang, projectRoot);
     if (cleanSpecPath) {
       this.cascadeLog.info('pre-processed spec', {
         cascadeId: item.cascadeId,
@@ -773,89 +779,245 @@ export class CascadeRouter {
       });
 
       // ---- Stage-specific instructions ----
+      const projectAssembledDir = path.join(projectRoot, '.speclang', 'assembled');
       const stageInstructions: Record<string, string> = {
         thinker: [
-          'Read the meta spec carefully. Understand the WHY — problem space, design philosophy, stakeholders.',
-          `Also read ${projectSclPath} for the full component tree, architecture, and constraints.`,
-          'Generate these expanded specs in the project specs/ directory:',
-          '  1. {name}.spec.plan.md — implementation plan with phases, ADRs, approach',
-          '  2. One .spec.{lang}.md per component in the architecture — with full @kind:operation blocks',
-          'Each generated spec MUST have proper YAML headers with @ref: backlinks to the meta spec.',
-          'Output: write files to specs/ (the project specs directory).',
-          'After writing, report: what files were created, and what @ref: links remain unresolved.',
+          `## STAGE: Thinker (Phase 0 — Spec Expansion)`,
+          ``,
+          `### ROLE`,
+          `You are the SpecLang Thinker. Your job is to READ high-level intent and EXPAND it into detailed`,
+          `specifications that downstream agents (assembler, codegen, testwriter) can execute.`,
+          ``,
+          `### INPUTS (use read() to access ALL of these)`,
+          `1. The meta spec: ${resolvedPath}`,
+          `2. Project architecture: ${projectSclPath}`,
+          `3. ALL files in specs/ with @ref: links pointing at or from this spec`,
+          `4. The SpecLang skill reference files (included below)`,
+          ``,
+          `### OUTPUTS (write to specs/ in ${projectRoot}/specs/)`,
+          `1. {name}.spec.plan.md — Implementation plan with phases, architecture decisions, approach rationale`,
+          `2. One .spec.{lang}.md per component — with full @kind:operation blocks, type definitions, edge cases`,
+          ``,
+          `### TRACE FORMAT (EVERY output block MUST include this)`,
+          `Every section, decision, and generated spec block MUST carry a trace annotation linking to its source:`,
+          ``,
+          `For markdown thinking files (plan, decision, context, pattern):`,
+          `> **Trace:** <source-file> L<lines> → this <section/decision>`,
+          `> **Confidence:** HIGH|MEDIUM|LOW (<reason>)`,
+          `> **Sources:** bullet list of every file/section that informed this`,
+          ``,
+          `For spec code blocks (@block: sections):`,
+          `<!-- @spec-trace: specs/<source>.spec.md L12-45 | specs/<other>.spec.md ¶3-7 -->`,
+          ``,
+          `### QUALITY GATES`,
+          `- [ ] EVERY @ref: target has been read and merged`,
+          `- [ ] EVERY generated spec block has a @spec-trace annotation`,
+          `- [ ] EVERY thinking file section has Trace + Confidence + Sources`,
+          `- [ ] Cover ALL components from project.scl — no gaps`,
+          `- [ ] Report unresolved @ref: links explicitly`,
+          `- [ ] Confidence scores are HONEST — do not mark MEDIUM as HIGH`,
+          ``,
+          `### HOW TO WORK`,
+          `1. read() the meta spec + project.scl + ALL @ref: targets`,
+          `2. Understand the full architecture before writing anything`,
+          `3. write() each generated spec file with proper headers, @ref: backlinks, and @spec-trace annotations`,
+          `4. After all files: report what was created, what @ref: links remain unresolved, and overall confidence`,
         ].join('\n'),
         assembler: [
-          `Read the pre-processed spec at: ${cleanSpecPath || '(fallback to raw spec)'}`,
-          `Extract code blocks from the spec.`,
-          `Write clean code files to ${ASSEMBLED_DIR}/`,
-          `Do NOT write to ${outputDir}/ — that is the codegen stage's job.`,
+          `## STAGE: Assembler (Phase 1 — Code Extraction)`,
+          ``,
+          `### ROLE`,
+          `You are the SpecLang Assembler. Extract clean code blocks from specs and assemble them into`,
+          `compilable files. Do NOT generate new code — extract and clean what already exists.`,
+          ``,
+          `### INPUT`,
+          `Read the pre-processed spec at: ${cleanSpecPath || '(fallback to raw spec at ' + resolvedPath + ')'}`,
+          ``,
+          `### OUTPUT`,
+          `Write clean, compilable code files to: ${projectAssembledDir}/`,
+          `Each file MUST compile standalone. Strip ALL DSL annotations. Keep only executable code.`,
+          ``,
+          `### TRACE FORMAT`,
+          `Every assembled code file MUST begin with a trace block:`,
+          `// @spec-trace: ${resolvedPath} L<start>-<end>`,
+          `// @spec-id: {extract from header}`,
+          `// @generated: DO NOT EDIT — edit the spec instead`,
+          ``,
+          `### QUALITY GATES`,
+          `- [ ] The assembled code COMPILES with the target language toolchain`,
+          `- [ ] No DSL annotations (@speclang, @kind:, @block:) remain in output`,
+          `- [ ] Every file has @spec-trace annotations`,
+          `- [ ] Imports are resolved and correct`,
+          ``,
+          `### HOW TO WORK`,
+          `1. read() the pre-processed spec`,
+          `2. Extract every code block — remove all @speclang DSL annotations`,
+          `3. write() each assembled file with trace headers to ${projectAssembledDir}/`,
+          `4. DO NOT write to ${outputDir}/ — that's the codegen stage's job`,
         ].join('\n'),
         codegen: [
-          `Read the assembled code at ${ASSEMBLED_DIR}/`,
-          `Write actual .${targetLang} files to ${outputDir}/.`,
-          `Do NOT regenerate from scratch — update existing files.`,
-          `Read existing files first, then apply targeted updates.`,
+          `## STAGE: Codegen (Phase 2 — Implementation)`,
+          ``,
+          `### ROLE`,
+          `You are the SpecLang Code Generator. Read assembled specs and generate production-ready`,
+          `${targetLang} code with full type safety, error handling, and testability.`,
+          ``,
+          `### INPUTS`,
+          `1. Assembled code at: ${projectAssembledDir}/`,
+          `2. The original spec: ${resolvedPath}`,
+          `3. Existing generated code in: ${outputDir}/`,
+          `4. SpecLang skill reference files (included below) for ${targetLang} conventions`,
+          ``,
+          `### OUTPUT`,
+          `Write .${targetLang} files to: ${outputDir}/`,
+          `Update existing files — NEVER regenerate from scratch. Read first, then apply targeted edits.`,
+          ``,
+          `### TRACE FORMAT`,
+          `Every generated file MUST carry traceability:`,
+          `// @spec-trace: <source-spec> L<lines> → <target-lang-file>`,
+          `// @spec-id: {spec identifier}`,
+          `// @cascade: ${item.cascadeId}`,
+          ``,
+          `### QUALITY GATES`,
+          `- [ ] All types are explicit — no 'any' unless truly dynamic`,
+          `- [ ] Error paths are handled — every function has error handling`,
+          `- [ ] The code COMPILES with the target language toolchain`,
+          `- [ ] Existing files are UPDATED, not regenerated`,
+          `- [ ] Every file has @spec-trace annotations`,
+          ``,
+          `### HOW TO WORK`,
+          `1. read() the assembled code from ${projectAssembledDir}/`,
+          `2. read() existing files in ${outputDir}/ — understand what's already there`,
+          `3. write() or edit() each file with full type safety and error handling`,
+          `4. bash() the compiler/linter to verify`,
+          `5. Fix any errors, then report what was generated`,
         ].join('\n'),
         testwriter: [
-          `Read the generated code at ${outputDir}/`,
-          `Write tests for the generated code.`,
-          `Run ${targetLang === 'py' ? 'pytest' : targetLang === 'ts' ? 'npm test' : 'the test suite'} after writing.`,
-          `Report results in your response.`,
+          `## STAGE: TestWriter (Phase 3 — Verification)`,
+          ``,
+          `### ROLE`,
+          `You are the SpecLang Test Writer. Generate comprehensive tests that verify the generated`,
+          `code against the original spec's acceptance criteria.`,
+          ``,
+          `### INPUTS`,
+          `1. Generated code at: ${outputDir}/`,
+          `2. Original spec: ${resolvedPath}`,
+          `3. Project test conventions (read existing tests first)`,
+          ``,
+          `### OUTPUT`,
+          `Write test files that verify every @kind:operation in the spec.`,
+          ``,
+          `### TRACE FORMAT`,
+          `Every test MUST reference which spec block it validates:`,
+          `// @spec-trace: ${resolvedPath} L<lines>`,
+          `// @tests: {operation name or block id}`,
+          ``,
+          `### QUALITY GATES`,
+          `- [ ] Every @kind:operation in the spec has at least one test`,
+          `- [ ] Edge cases from the spec are covered`,
+          `- [ ] Error paths from the spec are tested`,
+          `- [ ] Tests PASS when run`,
+          ``,
+          `### HOW TO WORK`,
+          `1. read() the generated code and the original spec`,
+          `2. Map every @kind:operation to test cases`,
+          `3. write() test files with @spec-trace annotations`,
+          `4. bash() the test runner — FIX any failures`,
+          `5. Report: tests written, pass/fail, coverage of spec operations`,
         ].join('\n'),
       };
 
       const promptStart = Date.now();
       const prompt = [
-        `You are generating ${targetLang} code from a SpecLang spec.`,
+        `# SpecLang Cascade — ${item.stage.toUpperCase()} Stage`,
         ``,
-        `## Task`,
-        `You are building ${targetLang} code from a SpecLang spec that was triggered by a file change.`,
-        `Your spec file (FULL PATH): ${resolvedPath}`,
-        `Output directory: ${item.stage === 'thinker' ? path.join(projectRoot, 'specs') : item.stage === 'assembler' ? ASSEMBLED_DIR : outputDir}`,
+        `## Identity`,
+        `You are a SpecLang cascade agent in the ${item.stage} stage.`,
+        `Cascade ID: ${item.cascadeId}`,
         `Project root: ${projectRoot}`,
+        `Target language: ${targetLang}`,
         ``,
-        `## Stage: ${item.stage}`,
-        `Triggered by cascade: ${item.cascadeId}`,
+        `## Context`,
+        `Your spec file (FULL PATH): ${resolvedPath}`,
+        `Output directory: ${item.stage === 'thinker' ? path.join(projectRoot, 'specs') : item.stage === 'assembler' ? projectAssembledDir : outputDir}`,
+        ``,
+        specDiff ? `## Trigger (what changed)` : '',
+        specDiff ? `\`\`\`diff\n${specDiff}\n\`\`\`` : '',
+        specDiff ? `This diff triggered the cascade. Focus your changes on what actually changed.` : '',
+        ``,
+        `## Stage Instructions`,
         stageInstructions[item.stage] || '',
         ``,
-        specDiff ? `## What Changed (triggered this cascade)\n\`\`\`diff\n${specDiff}\n\`\`\`` : '',
-        ``,
-        `## Spec`,
+        `## Source Spec`,
         `\`\`\`markdown`,
         specBody,
         `\`\`\``,
         ``,
-        `## Referenced Files (MUST READ)`,
-        `This spec contains @ref: annotations to other files. Use the read tool to read them.`,
-        `Merge details from ALL @ref: files into your output. They contain context, conventions, and dependencies.`,
-        `You can read ANY file in the project — use read() to explore.`,
+        `## Referenced Files`,
+        `This spec contains @ref: annotations to other files. Use read() to read EVERY one.`,
+        `Merge details from ALL @ref: files into your output — they contain context, conventions, and dependencies.`,
+        `You can read ANY file in ${projectRoot} with the read() tool.`,
         ``,
-        existingCode ? `## Existing Code (update, don't regenerate)\n${existingCode}\n` : '',
-        skillContext ? `## Skill Reference\n${skillContext}\n` : '',
-        `## Rules`,
-        `- Read ALL @ref: files referenced in the spec before writing any code`,
-        `- Merge details from referenced files into your output`,
-        `- Read existing files before editing — never regenerate from scratch`,
-        `- You can read any file in ${projectRoot} with the read tool`,
+        existingCode ? `## Existing Code` : '',
+        existingCode ? existingCode : '',
+        existingCode ? `Update existing files — NEVER regenerate from scratch.` : '',
         ``,
-        `## Required Output Format`,
-        `Every generated file MUST begin with SPECLANG markers:`,
-        `# SPECLANG-ID: {spec id}`,
-        `# SPECLANG-GENERATED: DO NOT EDIT`,
-        `# SPECLANG-CHECKSUM: {sha256 of spec}`,
+        skillContext ? `## Skill Reference` : '',
+        skillContext ? skillContext : '',
         ``,
-        (item.stage === 'thinker' && projectContext ? `## Project Context (project.scl)\n\`\`\`json\n${projectContext}\n\`\`\`` : ''),
-        `## Verify`,
-        `Run: \`cd ${projectRoot} && ${targetLang === 'py' ? 'python -m pytest tests/ -x -q 2>&1 | tail -10' : targetLang === 'ts' ? 'npm test 2>&1 | tail -10' : 'make test 2>&1 | tail -10'}\``,
+        `## The SpecLang Trace System`,
         ``,
-        `## HOW TO WORK`,
-        `You have these tools: read, edit, write, bash, glob.`,
-        `DO NOT describe what you would do. USE the tools.`,
-        `- Use read(filePath) to read the spec, @ref: files, and existing code`,
-        `- Use write(filePath, content) to create each file`,
-        `- Use edit(filePath, oldStr, newStr) to update existing files`,
-        `- After all files are written, report what you created`,
-        `IMPORTANT: Write files NOW. Do not plan. Do not describe. Execute.`,
+        `SpecLang uses @spec-trace annotations to create a FULLY AUDITABLE chain from requirement → design → code → test.`,
+        `Every piece of generated output MUST carry trace annotations. This is NOT optional.`,
+        ``,
+        `### Trace Formats by Output Type`,
+        ``,
+        `1. **Markdown thinking files** (plan, decision, context, pattern):`,
+        `   > **Trace:** specs/core.spec.md L12-45 → this decision`,
+        `   > **Confidence:** HIGH (3 sources converge: core.spec.md, project.scl, headers.spec.md)`,
+        `   > **Sources:**`,
+        `   >   - specs/core.spec.md L12-45 — cascade routing algorithm`,
+        `   >   - specs/project.scl ¶3-7 — authentication component definition`,
+        `   >   - specs/headers.spec.md L8-15 — header format specification`,
+        ``,
+        `2. **Generated code files** (.ts, .py, .go, .rs, .js):`,
+        `   // @spec-trace: specs/auth.spec.md L45-89 → src/auth/login.ts`,
+        `   // @spec-id: @specs/auth`,
+        `   // @cascade: ${item.cascadeId}`,
+        ``,
+        `3. **Assembled code files** (.code.ts, .code.py):`,
+        `   // @spec-trace: specs/math.spec.ts.md L1-62`,
+        `   // @spec-id: @specs/calc/math`,
+        `   // @generated: DO NOT EDIT — edit the spec instead`,
+        ``,
+        `4. **Test files**:`,
+        `   // @spec-trace: specs/auth.spec.md L45-89`,
+        `   // @tests: login-flow, error-paths`,
+        ``,
+        `### Confidence Scoring Rules`,
+        `- **HIGH**: At least 2 independent source files confirm this. The design is solid.`,
+        `- **MEDIUM**: Single source, or sources partially agree. Needs validation.`,
+        `- **LOW**: Extrapolated from convention or incomplete sources. Flag for human review.`,
+        `- NEVER mark MEDIUM as HIGH. Be honest — low confidence helps downstream agents know what to verify.`,
+        ``,
+        (item.stage === 'thinker' && projectContext ? `## Project Architecture (project.scl)` : ''),
+        (item.stage === 'thinker' && projectContext ? `\`\`\`json\n${projectContext}\n\`\`\`` : ''),
+        (item.stage === 'thinker' && projectContext ? `This defines ALL components that must be covered. No gaps.` : ''),
+        ``,
+        `## Verification`,
+        `After writing all files, verify:`,
+        `\`cd ${projectRoot} && ${targetLang === 'py' ? 'python -m pytest tests/ -x -q 2>&1 | tail -10' : targetLang === 'ts' ? 'npm test 2>&1 | tail -10' : 'make test 2>&1 | tail -10'}\``,
+        ``,
+        `## Execution Rules`,
+        `- read(filePath) — read the spec, @ref: files, existing code, and skill references`,
+        `- write(filePath, content) — create a new file (overwrite is OK for generated files)`,
+        `- edit(filePath, oldStr, newStr) — targeted update to an existing file`,
+        `- bash(command) — run compiler, linter, test runner, or any shell command`,
+        `- glob(pattern) — discover files matching a pattern`,
+        ``,
+        `CRITICAL: USE the tools NOW. Do NOT plan. Do NOT describe. Execute.`,
+        `Every file must be written with @spec-trace annotations. Every thinking section needs Confidence.`,
+        `After all files: report what you created, what @ref: links remain unresolved, and overall confidence.`,
       ].filter(Boolean).join('\n');
 
       await session.prompt(prompt);

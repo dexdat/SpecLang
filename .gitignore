@@ -68,3 +68,17 @@ validation_results.json
 .ralph/monitor/
 .ralph/state/
 .ralph/backups/
+
+# Agent/Axiom artifacts (not part of the project)
+.hermes/
+.memory-bank/
+.opencode/
+.ralph/
+
+# Rust build artifacts
+**/target/
+Cargo.lock
+
+# Go artifacts
+go.mod
+go.sum

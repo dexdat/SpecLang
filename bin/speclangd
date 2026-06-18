@@ -22,7 +22,7 @@ async function main() {
   const args = process.argv.slice(2);
   const command = args[0] || 'start';
   
-  const daemon = require('../dist/daemon/daemon.js');
+  const daemon = require('../dist/src/daemon/daemon.js');
   const { Daemon, DaemonCommandKind } = daemon;
   
   switch (command) {
