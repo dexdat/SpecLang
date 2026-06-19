@@ -238,7 +238,6 @@ describe('Workflow Types', () => {
     expect(workflow.type).toBe('downgrade');
   });
 });
-import { describe, it, expect, beforeEach } from 'vitest';
 import { UpgradePlanner } from '../../src/transition/upgrade/planner';
 import { UpgradeValidator } from '../../src/transition/upgrade/validator';
 import { UpgradeExecutor } from '../../src/transition/upgrade/executor';

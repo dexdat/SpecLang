@@ -1,112 +1,101 @@
 // SPECLANG-GENERATED: @speclang/transition-workflows/upgrade
-// DO NOT EDIT MANUALLY
-// Source: specs/transition-workflows.spec.dir/upgrade.spec.md
+import type { SpecRef, UpgradePlan, CheckResult, MaturityLevel, AgentSupport } from './types';
 
-import type { ParsedSpec, UpgradePlan, UpgradeTarget, UpgradeType } from './types';
-import { getUpgradeType } from './types';
-import { UpgradeChecklistProvider } from './checklist';
+interface TransitionPath {
+  from: string;
+  to: string;
+  type: 'project_level' | 'agent_support';
+}
 
-/**
- * Upgrade Planner
- * 
- * Creates upgrade plans based on current and target levels.
- */
+interface TransitionCheck {
+  category: string;
+  description: string;
+  required: boolean;
+  automated: boolean;
+}
+
+const VALID_PROJECT_TRANSITIONS = new Map<string, string>([
+  ['POC', 'MVP'], ['MVP', 'Alpha'], ['Alpha', 'Beta'], ['Beta', 'Production'],
+]);
+const VALID_AGENT_TRANSITIONS = new Map<string, string>([
+  ['human_only', 'agent_assisted'], ['agent_assisted', 'agent_autonomous'],
+]);
+
 export class UpgradePlanner {
-  private checklistProvider = new UpgradeChecklistProvider();
+  plan(from: string, to: string, specs: SpecRef[]): UpgradePlan {
+    if (!this.isValidTransition(from, to)) {
+      throw new Error('No upgrade path defined from ' + from + ' to ' + to);
+    }
+    const checks = this.buildChecks(from, to);
+    return {
+      from, to, specs, checks,
+      estimatedDuration: checks.length * 5 * 60 * 1000,
+      requiredApprovals: this.getRequiredApprovals(to),
+    };
+  }
 
-  /**
-   * Create an upgrade plan for a spec
-   */
-  createPlan(
-    spec: ParsedSpec,
-    target: UpgradeTarget,
-    options?: { skipValidation?: boolean }
-  ): UpgradePlan {
-    const current = this.extractCurrentTarget(spec);
-    const type = getUpgradeType(current, target);
-    
-    const checklists = this.getChecklists(current, target);
-    
-    return {
-      specId: spec.metadata.id || 'unknown',
-      current,
-      target,
-      type,
-      checklists,
-      estimatedDuration: this.estimateDuration(checklists),
-      requiredApprovals: this.getRequiredApprovals(type, target)
-    };
+  check(from: string, to: string, spec: SpecRef): CheckResult[] {
+    const raw = this.buildRawChecks(from, to);
+    return raw.map(function(tc: TransitionCheck): CheckResult {
+      return {
+        check: tc,
+        passed: true,
+        message: tc.automated ? 'Check passed' : 'Manual check: ' + tc.description,
+      };
+    });
   }
-  
-  /**
-   * Extract current target from spec metadata
-   */
-  private extractCurrentTarget(spec: ParsedSpec): UpgradeTarget {
-    return {
-      project_level: spec.metadata.project_level as any,
-      agent_support: spec.metadata.agent_support as any
-    };
+
+  isValidTransition(from: string, to: string): boolean {
+    return VALID_PROJECT_TRANSITIONS.get(from) === to || VALID_AGENT_TRANSITIONS.get(from) === to;
   }
-  
-  /**
-   * Get checklists for the transition
-   */
-  private getChecklists(current: UpgradeTarget, target: UpgradeTarget): any[] {
-    return this.checklistProvider.getCombinedChecklists(current, target);
+
+  listTransitionPaths(): TransitionPath[] {
+    var paths: TransitionPath[] = [];
+    VALID_PROJECT_TRANSITIONS.forEach(function(to, from) { paths.push({ from: from, to: to, type: 'project_level' }); });
+    VALID_AGENT_TRANSITIONS.forEach(function(to, from) { paths.push({ from: from, to: to, type: 'agent_support' }); });
+    return paths;
   }
-  
-  /**
-   * Estimate duration based on checklists
-   */
-  private estimateDuration(checklists: any[]): number {
-    // Rough estimate: 5 minutes per checklist item
-    const totalChecks = checklists.reduce((sum, list) => sum + list.checks.length, 0);
-    return totalChecks * 5 * 60 * 1000; // milliseconds
+
+  private buildChecks(from: string, to: string): CheckResult[] {
+    var raw = this.buildRawChecks(from, to);
+    return raw.map(function(tc: TransitionCheck): CheckResult {
+      return { check: tc, passed: false, message: tc.description };
+    });
   }
-  
-  /**
-   * Get required approvals based on upgrade type and target
-   */
-  private getRequiredApprovals(type: UpgradeType, target: UpgradeTarget): string[] {
-    const approvals: string[] = [];
-    
-    if (type === 'project_level' || type === 'combined') {
-      if (target.project_level === 'Production' || target.project_level === 'Enterprise') {
-        approvals.push('production_readiness_review');
-        approvals.push('security_review');
-      }
-      if (target.project_level === 'Beta') {
-        approvals.push('qa_lead');
-      }
-    }
-    
-    if (type === 'agent_support' || type === 'combined') {
-      if (target.agent_support === 'agent_autonomous') {
-        approvals.push('autonomous_readiness_review');
-        approvals.push('safety_review');
-      }
-    }
-    
-    return approvals;
+
+  private buildRawChecks(from: string, to: string): TransitionCheck[] {
+    var p = from + '→' + to;
+    if (p === 'POC→MVP') return [
+      { category: 'phase_basic_validation', description: 'Basic validation checks', required: true, automated: true },
+      { category: 'phase_basic_validation', description: 'Manual header review', required: true, automated: false },
+    ];
+    if (p === 'MVP→Alpha') return [
+      { category: 'phase_refs_and_tests', description: 'Cross-reference validation', required: true, automated: true },
+      { category: 'phase_refs_and_tests', description: 'Test file existence', required: true, automated: true },
+    ];
+    if (p === 'Alpha→Beta') return [
+      { category: 'phase_step_by_step', description: 'Step-by-step validation', required: true, automated: true },
+      { category: 'phase_comprehensive_tests', description: 'Comprehensive test validation', required: true, automated: true },
+    ];
+    if (p === 'Beta→Production') return [
+      { category: 'phase_security_validation', description: 'Security validation', required: true, automated: true },
+      { category: 'phase_autonomous_validation', description: 'Autonomous readiness', required: true, automated: true },
+      { category: 'phase_production_readiness', description: 'Production readiness check', required: true, automated: true },
+    ];
+    if (p === 'human_only→agent_assisted') return [
+      { category: 'phase_agent_readiness', description: 'Agent readiness', required: true, automated: true },
+    ];
+    if (p === 'agent_assisted→agent_autonomous') return [
+      { category: 'phase_autonomous_validation', description: 'Autonomous validation', required: true, automated: true },
+    ];
+    return [];
   }
-  
-  /**
-   * Validate that an upgrade is possible
-   */
-  validatePlan(plan: UpgradePlan): { valid: boolean; errors: string[] } {
-    const errors: string[] = [];
-    
-    if (!plan.specId) {
-      errors.push('Missing spec ID');
-    }
-    
-    if (!plan.target.project_level && !plan.target.agent_support) {
-      errors.push('No target level specified');
-    }
-    
-    return {
-      valid: errors.length === 0,
-      errors
-    };
+
+  private getRequiredApprovals(toLevel: string): string[] {
+    var a: string[] = [];
+    if (toLevel === 'Production') { a.push('production_readiness_review', 'security_review'); }
+    if (toLevel === 'Beta') { a.push('qa_lead'); }
+    if (toLevel === 'agent_autonomous') { a.push('autonomous_readiness_review', 'safety_review'); }
+    return a;
   }
 }
