@@ -3471,7 +3471,7 @@ export class CascadeRouter {
       };
 
       const promptStart = Date.now();
-      const prompt =           [
+      const wrapper =           [
 `# SpecLang Shared Cascade Wrapper — Runtime Prompt`,
 ``,
 `## 1. Title`,
@@ -4363,6 +4363,7 @@ export class CascadeRouter {
 `**End of compiled runtime prompt.** This prompt is the shared SpecLang cascade wrapper. It is assembled by the cascade router with stage-specific instructions injected at \`${stageInstructions}\`. All other template variables (\`${stage}\`, \`${item.cascadeId}\`, \`${projectRoot}\`, \`${targetLanguage}\`, \`${specFilePath}\`, \`${outputDirectory}\`, \`${diffTriggerPresent}\`, \`${diffTrigger}\`, \`${sourceSpecBody}\`, \`${existingCodeInventory}\`, \`${unresolvedRefs}\`, \`${skillReferencePresent}\`, \`${skillReference}\`, \`${projectArchitecturePresent}\`, \`${projectArchitecture}\`, \`${verificationCommand}\`) are resolved at assembly time from the cascade router's context.`
           ].join('\\n');
 
+      const prompt = wrapper.replace('${stageInstructions}', stageInstructions[item.stage] || '');
       await session.prompt(prompt);
 
 
