@@ -820,7 +820,6 @@ export class CascadeRouter {
     - A .spec.plan.md exists with phases, architecture decisions, and approach rationale
     - Every generated spec has @ref: backlinks to the meta spec
     - Every generated spec section has a spec:trace annotation
-    - Confidence scores are honest — never mark MEDIUM as HIGH
   </success_criteria>
   <constraints>
     - Read ALL @ref: targets before writing anything
@@ -836,19 +835,30 @@ export class CascadeRouter {
     <file>{name}.spec.plan.md</file> — implementation plan (phases, decisions, rationale)
     <file>{name}.spec.{lang}.md</file> — one per component (@kind:operation blocks, types, edge cases)
   </outputs>
-  <trace_format>
-    Every section carries a single-line trace:
-    > spec:trace spec=<path#section> plan=<phase/task/step> evidence=<path> cascade=<id>
-
-    Example thinking section:
-    ## Decision: Use JWT for Authentication
-    > spec:trace spec=specs/auth.spec.md#auth-strategy L12-34 plan=phase-1/architecture/step-2 evidence=.speclang/evidence/auth-decision.md cascade=<id>
-    > **Confidence:** HIGH (3 sources)
-
-    At file bottom:
-    ## Trace Index
-    - specs/auth.spec.md#auth-strategy → this file §Decision
-  </trace_format>
+  <output_contract>
+    - Return exactly the sections requested, in order.
+    - Every spec section: > spec:trace spec=<path#section> plan=<phase/task/step> evidence=<path> cascade=<id>
+    - Thinking files carry a Trace Index at bottom.
+    - Confidence: HIGH (section-level + 2+ sources), MEDIUM (file-level + single source), LOW (extrapolated).
+  </output_contract>
+  <completeness_contract>
+    - Treat the task as incomplete until every project.scl component has a spec file AND a plan file exists.
+    - Keep an internal checklist of required deliverables.
+    - If any component is blocked by missing data, mark it [blocked] and state exactly what is missing.
+  </completeness_contract>
+  <empty_result_recovery>
+    If a @ref: target returns empty or unreadable:
+    - try reading the file from a different path or with a broader glob,
+    - note it as unresolved rather than concluding it does not exist,
+    - only then report that the reference is unresolved, along with what you tried.
+  </empty_result_recovery>
+  <verification_loop>
+    Before finalizing:
+    - Check correctness: does every project.scl component have a spec?
+    - Check grounding: are all @ref: backlinks resolvable?
+    - Check formatting: do all specs follow the @kind:operation block format?
+    - Check completeness: is the plan file present with phases and decisions?
+  </verification_loop>
   <stop_rules>
     - Stop when every project.scl component has a spec file AND a plan file exists
     - If a @ref: target cannot be read, note it as unresolved and continue — do not loop
@@ -858,7 +868,8 @@ export class CascadeRouter {
     1. read() the meta spec, project.scl, and ALL @ref: targets
     2. Understand the full architecture before writing anything
     3. write() each generated spec file with @ref: backlinks and spec:trace annotations
-    4. Report: files created, unresolved @ref: links, overall confidence
+    4. Run the verification loop before declaring done
+    5. Report: files created, unresolved @ref: links, overall confidence
   </workflow>
 </stage_instructions>`,
         ].join('\\n'),
@@ -882,11 +893,25 @@ export class CascadeRouter {
     <file path="${cleanSpecPath || '(fallback to raw spec)'}" purpose="pre-processed-spec">The spec with annotations stripped, ready for extraction.</file>
   </inputs>
   <outputs directory="${projectAssembledDir}/">
-    <trace_header>
-      // spec:trace spec=${resolvedPath}#implementation L<start>-<end> cascade=${item.cascadeId}
-      // spec:generated DO NOT EDIT — edit the spec instead
-    </trace_header>
+    Every file begins with:
+    // spec:trace spec=${resolvedPath}#implementation L<start>-<end> cascade=${item.cascadeId}
+    // spec:generated DO NOT EDIT — edit the spec instead
   </outputs>
+  <output_contract>
+    - Output only clean, compilable code. No DSL annotations, no commentary, no markdown fences.
+    - If extracting from a spec with multiple code blocks, assemble them in declaration order.
+  </output_contract>
+  <completeness_contract>
+    - Treat the task as incomplete until every code block in the spec has been extracted and written.
+    - If a code block cannot be extracted because it is malformed, report the specific block.
+  </completeness_contract>
+  <verification_loop>
+    Before finalizing:
+    - Check correctness: do all extracted blocks match their source spec sections?
+    - Check grounding: are imports resolvable?
+    - Check formatting: no @speclang annotations remain in output?
+    - Check completeness: every code block extracted?
+  </verification_loop>
   <stop_rules>
     - Stop when all code blocks have been extracted and written
     - If the spec has no extractable code blocks, report that and stop
@@ -896,7 +921,8 @@ export class CascadeRouter {
     1. read() the pre-processed spec
     2. Extract every code block — remove all @speclang DSL annotations
     3. write() each assembled file with trace headers to ${projectAssembledDir}/
-    4. DO NOT write to ${outputDir}/ — that is the codegen stage output directory
+    4. Run the verification loop
+    5. DO NOT write to ${outputDir}/ — that is the codegen stage output directory
   </workflow>
 </stage_instructions>`,
         ].join('\\n'),
@@ -924,11 +950,30 @@ export class CascadeRouter {
     <directory path="${outputDir}/" purpose="existing-code">Existing generated files — read before writing to understand current state.</directory>
   </inputs>
   <outputs directory="${outputDir}/">
-    <file>.${targetLang}</file> — production-ready code with trace annotations
-    <trace_format>
-      // spec:trace spec=<source-spec>#<section> L<lines> plan=<phase/task/step> test=<path> cascade=${item.cascadeId}
-    </trace_format>
+    <file>.${targetLang}</file> — production-ready code
+    Trace format: // spec:trace spec=<source-spec>#<section> L<lines> plan=<phase/task/step> test=<path> cascade=${item.cascadeId}
   </outputs>
+  <output_contract>
+    - Write compilable ${targetLang} code. No markdown fences, no commentary in code files.
+    - Every function, class, and endpoint carries a spec:trace annotation on the line above its definition.
+    - Update existing files — target the specific lines that changed, not the whole file.
+  </output_contract>
+  <dependency_checks>
+    - Before writing a file, check whether it imports or references other generated files.
+    - Read those dependencies first — do not assume their interfaces.
+    - If the assembled spec references an interface or type, verify it exists before writing code that depends on it.
+  </dependency_checks>
+  <completeness_contract>
+    - Treat the task as incomplete until every @kind:operation or @block: in the spec has corresponding code.
+    - If an operation cannot be implemented because dependencies are missing, mark it [blocked] with the missing dependency.
+  </completeness_contract>
+  <verification_loop>
+    Before finalizing:
+    - Check correctness: does the code implement every @kind:operation from the spec?
+    - Check grounding: are all imports resolvable and types correct?
+    - Check formatting: does it compile? Run bash() to verify.
+    - Check completeness: any unhandled edge cases from the spec?
+  </verification_loop>
   <stop_rules>
     - Stop when the code compiles AND all success criteria above pass
     - If compilation fails after two fix attempts, report the specific error and stop
@@ -939,7 +984,8 @@ export class CascadeRouter {
     2. read() existing files in ${outputDir}/ — understand what is already there
     3. write() or edit() each file with full type safety and error handling
     4. bash() the compiler/linter to verify
-    5. Fix any errors, then report what was generated
+    5. Run the verification loop
+    6. Fix any errors, then report what was generated
   </workflow>
 </stage_instructions>`,
         ].join('\\n'),
@@ -966,10 +1012,24 @@ export class CascadeRouter {
     <file path="${resolvedPath}" purpose="source-spec">The original spec with @kind:operation definitions.</file>
   </inputs>
   <outputs directory="tests/">
-    <trace_format>
-      // spec:trace spec=${resolvedPath}#<section> L<lines> test=<test-path> cascade=${item.cascadeId}
-    </trace_format>
+    Trace format: // spec:trace spec=${resolvedPath}#<section> L<lines> test=<test-path> cascade=${item.cascadeId}
   </outputs>
+  <output_contract>
+    - One test file per spec, following the project's existing test conventions.
+    - Every test function carries a spec:trace annotation linking to the exact @kind:operation it verifies.
+    - Test names clearly describe the operation and scenario (e.g., test_loginUser_withValidCredentials_returnsSession).
+  </output_contract>
+  <completeness_contract>
+    - Treat the task as incomplete until every @kind:operation has at least one test.
+    - If a test cannot be written because the generated code does not expose the right interface, mark the operation [blocked] with the gap description.
+  </completeness_contract>
+  <verification_loop>
+    Before finalizing:
+    - Check correctness: does every test verify the correct @kind:operation?
+    - Check grounding: do tests use the actual generated code interfaces?
+    - Check formatting: do tests pass? Run bash() to verify.
+    - Check completeness: are all edge cases and error paths from the spec covered?
+  </verification_loop>
   <stop_rules>
     - Stop when all tests pass AND every @kind:operation has coverage
     - If a test cannot be written because the generated code does not expose the right interface, report the gap
@@ -980,7 +1040,8 @@ export class CascadeRouter {
     2. Map every @kind:operation to test cases
     3. write() test files with spec:trace annotations
     4. bash() the test runner — FIX any failures
-    5. Report: tests written, pass/fail, coverage of spec operations
+    5. Run the verification loop
+    6. Report: tests written, pass/fail, coverage of spec operations
   </workflow>
 </stage_instructions>`,
         ].join('\\n'),
@@ -996,6 +1057,7 @@ export class CascadeRouter {
     Project root: ${projectRoot}
     Target language: ${targetLang}
   </identity>
+
   <context>
     <spec_file path="${resolvedPath}">Your spec file — this is what you are working on.</spec_file>
     <output_directory>${item.stage === 'thinker' ? path.join(projectRoot, 'specs') : item.stage === 'assembler' ? projectAssembledDir : outputDir}</output_directory>` + (specDiff ? `
@@ -1024,9 +1086,51 @@ ${existingCode}
 ${skillContext}
   </skill_reference>` : '') + `
 
+  <verbosity_controls>
+    - Prefer concise, information-dense writing.
+    - Avoid repeating the user's request or the spec content in your output.
+    - Keep progress updates brief — one sentence on outcome, one on next step.
+    - Do not shorten the answer so aggressively that required evidence, traces, or completion checks are omitted.
+  </verbosity_controls>
+
+  <default_follow_through_policy>
+    - If the intent is clear and the next step is reversible and low-risk, proceed without asking.
+    - Ask permission only if the next step is irreversible, has external side effects, or requires missing sensitive information.
+    - If proceeding, briefly state what you did and what remains optional.
+  </default_follow_through_policy>
+
+  <tool_persistence_rules>
+    - Use tools whenever they materially improve correctness, completeness, or grounding.
+    - Do not stop early when another tool call is likely to materially improve the result.
+    - Keep calling tools until the task is complete AND verification passes.
+    - If a tool returns empty or partial results, retry with a different strategy.
+  </tool_persistence_rules>
+
+  <dependency_checks>
+    - Before taking an action, check whether prerequisite discovery, lookup, or file reads are required.
+    - Do not skip prerequisite steps just because the intended end state seems obvious.
+    - If the task depends on the output of a prior step, resolve that dependency first.
+  </dependency_checks>
+
+  <missing_context_gating>
+    - If required context is missing, do NOT guess.
+    - Use read() or glob() when the missing context is retrievable.
+    - If you must proceed without it, label assumptions explicitly and choose a reversible action.
+  </missing_context_gating>
+
+  <grounding_rules>
+    - Base claims only on provided context or tool outputs.
+    - If sources conflict, state the conflict explicitly and attribute each side.
+    - If the context is insufficient, narrow the answer or say you cannot support the claim.
+    - If a statement is an inference rather than a directly supported fact, label it as an inference.
+  </grounding_rules>
+
+  <autonomy_and_persistence>
+    Persist until the task is fully handled end-to-end: do not stop at analysis or partial fixes; carry changes through implementation, verification, and a clear explanation of outcomes. If you encounter challenges or blockers, attempt to resolve them yourself.
+  </autonomy_and_persistence>
+
   <trace_system>
     <purpose>Every generated artifact carries trace annotations. Traces create a grep-friendly, bidirectional chain: Requirement → Design → Implementation → Verification.</purpose>
-    <value>A model reading a traced function immediately knows: (1) which spec section produced it, (2) where it fits in the plan, (3) which tests verify it, (4) whether to update or replace it.</value>
     <format>Single line, key=value, grep-friendly: spec:trace spec=<path#section> plan=<phase/task/step> test=<path> evidence=<path> cascade=<id></format>
     <field_reference>
       spec       — REQUIRED. Source spec path + #section + L<lines>. Example: specs/auth.spec.md#login-flow L45-89
@@ -1035,7 +1139,7 @@ ${skillContext}
       evidence   — SHOULD. Verification evidence path
       cascade    — SHOULD. Cascade run ID. Current: ${item.cascadeId}
       ac         — MAY. Acceptance Criteria satisfied
-      requires   — MAY. Dependencies. Example: specs/security.spec.md#password-hash L90-112
+      requires   — MAY. Dependencies
       implements — MAY. @kind:operation implemented
     </field_reference>
     <placement>Always trace near: function/method definitions, class definitions, API endpoint handlers, test functions. Also trace in: configuration files, generated docs, thinking files.</placement>
@@ -1085,6 +1189,7 @@ ${projectContext}
       ].filter(Boolean).join('\\n');
 
       await session.prompt(prompt);
+
 
 
       session.dispose();
