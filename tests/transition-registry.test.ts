@@ -238,14 +238,13 @@ describe('Workflow Types', () => {
     expect(workflow.type).toBe('downgrade');
   });
 });
-import { UpgradePlanner } from '../../src/transition/upgrade/planner';
-import { UpgradeValidator } from '../../src/transition/upgrade/validator';
-import { UpgradeExecutor } from '../../src/transition/upgrade/executor';
+import { UpgradePlanner } from '../src/transition/upgrade/planner';
+import { UpgradeValidator } from '../src/transition/upgrade/validator';
+import { UpgradeExecutor } from '../src/transition/upgrade/executor';
 import {
   registerUpgradeWorkflows,
-} from '../../src/transition/upgrade/index';
-import { TransitionRegistryImpl } from '../../src/transition/registry';
-import type { SpecRef, UpgradePlan, ValidationResult, ExecutionResult } from '../../src/transition/upgrade/types';
+} from '../src/transition/upgrade/index';
+import type { SpecRef, UpgradePlan, ValidationResult, ExecutionResult } from '../src/transition/upgrade/types';
 
 describe('UpgradePlanner', () => {
   let planner: UpgradePlanner;
