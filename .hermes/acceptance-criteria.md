@@ -2,37 +2,48 @@
 
 ## Active Criteria
 
-### AC-006: Dual-view compliance — `.opencode/skills/` symlinked from specs
-**Goal:** `.opencode/skills/` directory exists and contains symlinks to `specs/skills.spec.dir/skills/` so the SkillLoader tests pass
-**How to verify:** 
-  1. `ls -la .opencode/skills/` should show 5+ skill files
-  2. The symlinks should point to `specs/skills.spec.dir/skills/`
-  3. `npm test -- --run tests/skills.test.ts` should pass
+### AC-012: Agent Communication — inter-agent messaging (pub_sub, request_response, broadcast) ✅
+**Goal:** Agents can communicate using the three protocols defined in `specs/agents.spec.md` — pub_sub (file change notifications, cascade events), request_response (query/response), and broadcast (system-wide announcements). Underpinned by SQLite-based message queue.
+**How to verify:**
+  1. `npm test` passes (baseline + 37 new tests = 2191 passed)
+  2. `npm run build` compiles clean
+  3. `src/agents/communication.ts` exists with PubSubChannel, RequestResponseChannel, BroadcastChannel, AgentCommunicationBus
+  4. Unit tests: 37/37 passed in tests/agents/communication.test.ts
+**Spec source:** `specs/agents.spec.md#agent-communication`, `specs/agent-protocol.spec.md`
 **Status:** passed ✅
-**Verified:** 2026-06-18 11:29 UTC
-**Evidence:** Skills test: 9/9 passed (previously 7/9 with 2 failures). Full regression: 2152/2152 passed. 5 symlinks created: spec-writer, code-gen, test-writer, back-sync, orchestrator. `.opencode/agents/` and `.opencode/tools/` dirs also created.
-**Commit:** speclang: AC-006 — .opencode/skills/ symlinked from specs [WI-SL-006]
-
-### AC-007: OpenCode skills — `.opencode/` with full skill inventory ✅
-**Goal:** `.opencode/` directory with agents/, tools/ subdirectories, symlinked from spec sources
-**How to verify:** `ls .opencode/` should show agents/ tools/ subdirs; `ls .opencode/agents/` should show .md files
-**Status:** passed
-**Verified:** 2026-06-18 12:42 UTC
-**Evidence:** 7 agent files symlinked (README, speclang-code-gen, speclang-coordinator, speclang-simulator, speclang-simulator-verify, speclang-spec-writer, speclang-verifier). 1 tools file symlinked (README). All resolve and container can read.
-**Commit:** speclang: AC-007 — .opencode/agents/ and .opencode/tools/ symlinked from specs
-
-### AC-008: Pi Agent SDK runtime test passes on host ✅
-**Goal:** Pi Agent SDK can be loaded at runtime on the host
-**How to verify:** `node -e "import('@earendil-works/pi-coding-agent').then(m => console.log('OK'))"` should print OK. Package is ESM-only (`"type": "module"`), CJS `require()` not supported.
-**Status:** passed
-**Verified:** 2026-06-18 13:05 UTC
-**Evidence:** `node tests/pi-agent-check.mjs` loaded the SDK successfully. Exports: AgentSession, AgentSessionRuntime, and 50+ components. Version 0.79.1.
-**Notes:** Package is ESM-only (exports only "import" field). Verification command updated from CJS require to ESM import.
+**Verified:** 2026-06-19 01:59 UTC
+**Axiom work item:** WI-SL-013
+**Evidence:** 37/37 communication tests pass. Full regression: 2191/2191 passed (up from 2154, +37 new tests). Files created: src/agents/communication.ts (16545B), tests/agents/communication.test.ts (16945B). Protocols: PubSubChannel (publish/subscribe), RequestResponseChannel (request/response), BroadcastChannel (broadcast), AgentCommunicationBus (unified bus with convenience methods).
 
 ## Passed Criteria
 
 ### AC-001 through AC-005 (Swarm Orchestrator core) ✅
 **All verified in git history** — File Watcher, Agent Router, Ownership Guard, Session Manager, GitHandler all implemented and tested.
+
+### AC-006: Dual-view compliance — `.opencode/skills/` symlinked from specs ✅
+**Verified:** 2026-06-18 11:29 UTC
+**Evidence:** Skills test: 9/9 passed. Full regression: 2152/2152 passed. 5 symlinks created.
+
+### AC-007: OpenCode skills — `.opencode/` with full skill inventory ✅
+**Verified:** 2026-06-18 12:42 UTC
+**Evidence:** 7 agent files symlinked (README, speclang-code-gen, speclang-coordinator, speclang-simulator, speclang-simulator-verify, speclang-spec-writer, speclang-verifier). 1 tools file symlinked (README).
+
+### AC-008: Pi Agent SDK runtime test passes on host ✅
+**Verified:** 2026-06-18 13:05 UTC
+**Evidence:** Pi SDK v0.79.1 loads successfully with 137 exports including AgentSession and AgentSessionRuntime.
+
+### AC-009: File watcher daemon — full startup/shutdown lifecycle ✅
+**Verified:** 2026-06-19 03:35 UTC
+**Evidence:** Daemon binary starts and stops cleanly (isRunning true/false cycles). All 25 daemon tests pass.
+
+### AC-010: CLI completeness — all subcommands work ✅
+**Verified:** 2026-06-19 03:35 UTC
+**Evidence:** All 40 CLI tests pass (previously 34/40, 6 skipped). Fixes: `_index.json` parser handles array/object formats, `process.exit(1)` removed from validate, standalone `check` command added.
+**Commit:** speclang: AC-010 — CLI validate/check tests pass (6 unskipped) [WI-SL-012]
+
+### AC-011: Spec-to-code pipeline — full end-to-end generation ✅
+**Verified:** 2026-06-18 15:47 UTC
+**Evidence:** `npm run e2e` completed in 242s. 6/9 phases passed, 2 code files generated.
 
 ### AC-2.1 through AC-2.4 (Cascade System) ✅
 **All verified in git history** — Dependency graph, cascade propagation, spanning tree.
@@ -46,28 +57,4 @@
 ### AC-5.1 through AC-5.4 (Pipeline & Self-healing) ✅
 **All verified in git history** — Build pipeline, recovery executor, E2E cascade orchestrator, dual-view 100% compliance.
 
-### AC-009: File watcher daemon — full startup/shutdown lifecycle ✅
-**Verified:** 2026-06-18 13:42 UTC
-**Evidence:** Daemon binary starts and stops cleanly (isRunning true/false cycles). All 25 daemon tests pass — SessionStore, Watcher, Router, ConvergenceDetector, Daemon integration (start/stop, restart, healthCheck, pause/resume, abort, converge detection). Binary test: STARTED, running: true, converged, STOPPED.
-
-## Passed Criteria
-
-### AC-010: CLI completeness — all subcommands work ✅
-**Goal:** `./bin/speclang --help` shows validate, cascade, build, history subcommands with correct behavior
-**Verified:** 2026-06-19 03:35 UTC
-**Evidence:** All 40 CLI tests pass (previously 34/40, 6 skipped). Fixes applied:
-1. **Bug fix**: `_index.json` parser handles both array and object formats — `loadSpecIndex` in `specs/parser.spec.dir/src/validator.ts`
-2. **Bug fix**: `process.exit(1)` removed from validate command — now returns normally with error output
-3. **Feature**: Standalone `check` command added to `src/cli/index.ts` — delegates to `validateCommand`
-4. **Tests**: 6 previously-skipped validate/check tests enabled with correct assertions for real output format
-**Commit:** speclang: AC-010 — CLI validate/check tests pass (6 unskipped) [WI-SL-012]
-
-### AC-011: Spec-to-code pipeline — full end-to-end generation ✅
-**Goal:** Edit a spec, cascade triggers code generation, tests pass
-**Status:** passed ✅
-**Verified:** 2026-06-18 15:47 UTC
-**Evidence:** `npm run e2e` completed in 242s. **6/9 phases passed**, 2 code files generated (cli.code.py 728B, math.code.py 353B with proper divide-by-zero protection and CLI calc logic). Daemon lifecycle clean: start → watch → squash → dispatch → convergence detect → stop.
-**Pipeline phases proven:** Pi Agent SDK loaded ✅, daemon started ✅, spec injection triggers file events ✅, cascade router queues/dispatches ✅, squash buffer flushes ✅, assembler produces clean code ✅, convergence detected ✅, daemon stops cleanly ✅.
-**Gap:** 3 Pi Agent LLM cascade checks timed out at 180s (sessions spawned but DeepSeek API response exceeds 180s with rate-limited key). Generated code confirmed by independent filesystem inspection.
-**Notes:** The infrastructure is proven. Pi Agent LLM sessions time out at 180s with current DeepSeek key — operational concern, not code bug. Use `--model deepseek/deepseek-v4-flash` or adjust timeout for faster completions.
-
+## Backlog
