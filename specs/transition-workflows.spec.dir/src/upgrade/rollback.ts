@@ -14,7 +14,7 @@ export class UpgradeRollback {
    * Rollback a failed upgrade
    */
   async rollback(result: UpgradeResult): Promise<void> {
-    console.log(`Rolling back upgrade for spec ${result.plan.specId}`);
+    console.log(`Rolling back upgrade for spec ${result.plan.specs.map(function(s) { return s.id; }).join(', ')}`);
     
     // In a real implementation, we would:
     // 1. Check if a backup exists for this spec
@@ -23,7 +23,7 @@ export class UpgradeRollback {
     // 4. Log the rollback for audit purposes
     
     // For now, just log the action
-    console.log(`Rollback completed for spec ${result.plan.specId}`);
+    console.log(`Rollback completed for spec ${result.plan.specs.map(function(s) { return s.id; }).join(', ')}`);
   }
   
   /**
@@ -36,8 +36,8 @@ export class UpgradeRollback {
     // 2. Store metadata about the backup (timestamp, original values)
     // 3. Return a backup ID for later restoration
     
-    const backupId = `backup-${Date.now()}-${plan.specId}`;
-    console.log(`Created backup ${backupId} for spec ${plan.specId}`);
+    const backupId = `backup-${Date.now()}-${plan.specs.map(function(s) { return s.id; }).join('_')}`;
+    console.log(`Created backup ${backupId} for spec ${plan.specs.map(function(s) { return s.id; }).join(', ')}`);
     return backupId;
   }
   

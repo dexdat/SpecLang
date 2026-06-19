@@ -1,17 +1,10 @@
 // SPECLANG-GENERATED: @speclang/transition-workflows/upgrade
-import type { SpecRef, UpgradePlan, CheckResult, MaturityLevel, AgentSupport } from './types';
+import type { SpecRef, UpgradePlan, UpgradeCheck, CheckResult, MaturityLevel, AgentSupport, TransitionCheck } from './types';
 
 interface TransitionPath {
   from: string;
   to: string;
   type: 'project_level' | 'agent_support';
-}
-
-interface TransitionCheck {
-  category: string;
-  description: string;
-  required: boolean;
-  automated: boolean;
 }
 
 const VALID_PROJECT_TRANSITIONS = new Map<string, string>([
@@ -34,9 +27,9 @@ export class UpgradePlanner {
     };
   }
 
-  check(from: string, to: string, spec: SpecRef): CheckResult[] {
+  check(from: string, to: string, spec: SpecRef): UpgradeCheck[] {
     const raw = this.buildRawChecks(from, to);
-    return raw.map(function(tc: TransitionCheck): CheckResult {
+    return raw.map(function(tc: TransitionCheck): UpgradeCheck {
       return {
         check: tc,
         passed: true,
@@ -56,9 +49,9 @@ export class UpgradePlanner {
     return paths;
   }
 
-  private buildChecks(from: string, to: string): CheckResult[] {
+  private buildChecks(from: string, to: string): UpgradeCheck[] {
     var raw = this.buildRawChecks(from, to);
-    return raw.map(function(tc: TransitionCheck): CheckResult {
+    return raw.map(function(tc: TransitionCheck): UpgradeCheck {
       return { check: tc, passed: false, message: tc.description };
     });
   }

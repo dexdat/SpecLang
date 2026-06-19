@@ -43,7 +43,7 @@ export interface ParsedSpec {
 }
 
 export interface TransitionCheck {
-  category: 'spec' | 'validation' | 'test' | 'documentation' | 'approval' | 'automated' | 'agent' | 'human' | 'safety' | 'documentation' | 'testing' | 'review' | 'deployment';
+  category: string;
   description: string;
   required: boolean;
   automated: boolean;
@@ -81,18 +81,43 @@ export interface UpgradeTarget {
   agent_support?: AgentSupport;
 }
 
+/** Simple spec reference used in upgrade plans */
+export type SpecRef = { id: string; name?: string };
+
 export interface UpgradePlan {
-  specId: string;
-  current: UpgradeTarget;
-  target: UpgradeTarget;
-  type: UpgradeType;
-  checklists: TransitionChecklist[];
+  from: string;
+  to: string;
+  specs: SpecRef[];
+  checks: UpgradeCheck[];
+  type?: UpgradeType;
   estimatedDuration?: number;
   requiredApprovals?: string[];
 }
 
-export interface UpgradeCheck extends TransitionCheck {
-  // same as TransitionCheck
+export interface UpgradeCheck {
+  check: TransitionCheck;
+  passed: boolean;
+  message: string;
+}
+
+export interface ValidationCheck {
+  name: string;
+  passed: boolean;
+  message: string;
+  required?: boolean;
+}
+
+export interface ValidationResult {
+  valid: boolean;
+  checks: ValidationCheck[];
+  blockingChecks?: ValidationCheck[];
+}
+
+export interface ExecutionResult {
+  success: boolean;
+  plan: UpgradePlan;
+  warnings?: string[];
+  executedAt?: string;
 }
 
 export interface UpgradeChecklist extends TransitionChecklist {
