@@ -50,11 +50,17 @@
 **Verified:** 2026-06-18 13:42 UTC
 **Evidence:** Daemon binary starts and stops cleanly (isRunning true/false cycles). All 25 daemon tests pass — SessionStore, Watcher, Router, ConvergenceDetector, Daemon integration (start/stop, restart, healthCheck, pause/resume, abort, converge detection). Binary test: STARTED, running: true, converged, STOPPED.
 
-## Backlog
+## Passed Criteria
 
-### AC-010: CLI completeness — all subcommands work
+### AC-010: CLI completeness — all subcommands work ✅
 **Goal:** `./bin/speclang --help` shows validate, cascade, build, history subcommands with correct behavior
-**Why deferred:** CLI is documented in specs but CLI tool has limited subcommands implemented.
+**Verified:** 2026-06-19 03:35 UTC
+**Evidence:** All 40 CLI tests pass (previously 34/40, 6 skipped). Fixes applied:
+1. **Bug fix**: `_index.json` parser handles both array and object formats — `loadSpecIndex` in `specs/parser.spec.dir/src/validator.ts`
+2. **Bug fix**: `process.exit(1)` removed from validate command — now returns normally with error output
+3. **Feature**: Standalone `check` command added to `src/cli/index.ts` — delegates to `validateCommand`
+4. **Tests**: 6 previously-skipped validate/check tests enabled with correct assertions for real output format
+**Commit:** speclang: AC-010 — CLI validate/check tests pass (6 unskipped) [WI-SL-012]
 
 ### AC-011: Spec-to-code pipeline — full end-to-end generation ✅
 **Goal:** Edit a spec, cascade triggers code generation, tests pass
