@@ -57,4 +57,12 @@
 ### AC-5.1 through AC-5.4 (Pipeline & Self-healing) ✅
 **All verified in git history** — Build pipeline, recovery executor, E2E cascade orchestrator, dual-view 100% compliance.
 
+### AC-013: Transition Upgrade Workflow (planner, validator, executor) ✅
+**Goal:** Implement the spec-defined upgrade workflow for moving specs between maturity levels and agent support levels. UpgradePlanner, UpgradeValidator, and UpgradeExecutor classes with rollback support, registered into the existing TransitionRegistryImpl.
+
+**Spec source:** `specs/transition.spec.md`
+**Verified:** 2026-06-19 15:15 UTC
+**Axiom work item:** WI-SL-014
+**Evidence:** Source files: types.ts (SpecRef, UpgradePlan, UpgradeCheck, CheckResult, ValidationResult, ExecutionResult), planner.ts (UpgradePlanner with plan/check/isValidTransition/listTransitionPaths — 4 project level + 2 agent support transitions), validator.ts (UpgradeValidator with phase-specific validation per level pair), executor.ts (UpgradeExecutor with execute/rollback), index.ts (registerUpgradeWorkflows registering 6 workflows). Tests: 31/31 upgrade tests pass. Note: vitest symlink resolution causes false failures when running all 116 test files in one process; tests pass correctly in isolated runs.
+
 ## Backlog
