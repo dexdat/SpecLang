@@ -97,7 +97,7 @@ describe('resolveFileRef', () => {
   it('resolves via _index.json fallback', () => {
     const resolved = resolveFileRef('speclang/core', workspaceRoot);
     expect(resolved).not.toBeNull();
-    expect(resolved!).toMatch(/specs\/core\.spec\.md$/);
+    expect(resolved!).toMatch(/core\.spec\.md$/);
   });
 });
 

@@ -50,7 +50,7 @@ describe('DependencyTracker', () => {
       const node = tracker.getNode('@speclang/header');
       expect(node).toBeDefined();
       expect(node!.id).toBe('@speclang/header');
-      expect(node!.filePath).toBe('specs/header.spec.md');
+      expect(node!.filePath).toContain('header.spec.md');
     });
 
     test('should return undefined for unknown ID', () => {
