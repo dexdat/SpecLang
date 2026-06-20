@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:14
 id: "@speclang/external-methodologies/recommendations"
 version: 0.1.0
 layer: 2
@@ -9,7 +9,8 @@ parent: "@ref:specs/external-methodologies"
 part: "2/3"
 siblings:
   prev: "@ref:specs/external-methodologies.spec.dir/bmad-comparison"
-next: "@ref:specs/external-methodologies.spec.dir/adoption-patterns"short: Recommendations - What to adopt from BMAD
+next: "@ref:specs/external-methodologies.spec.dir/adoption-patterns"
+short: Recommendations - What to adopt from BMAD
 ---
 
 # Recommendations: BMAD Patterns for SpecLang

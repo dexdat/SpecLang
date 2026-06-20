@@ -1,4 +1,4 @@
-# speclang-header lines:17
+# speclang-header lines:18
 id: "@speclang/agent-protocol"
 version: 0.2.0
 layer: 1
@@ -7,12 +7,12 @@ agent_support: agent_autonomous
 tags: [agents, protocol, ownership, sessions, guard]
 children:
   - "@ref:specs/agent-protocol.spec.dir/types"
-- "@ref:specs/agent-protocol.spec.dir/sessions"
-- "@ref:specs/agent-protocol.spec.dir/ownership"
-- "@ref:specs/agent-protocol.spec.dir/rules"
-- "@ref:specs/agent-protocol.spec.dir/registry"
-- "@ref:specs/agent-protocol.spec.dir/interceptor"
-- "@ref:specs/agent-protocol.spec.dir/violations"
+  - "@ref:specs/agent-protocol.spec.dir/sessions"
+  - "@ref:specs/agent-protocol.spec.dir/ownership"
+  - "@ref:specs/agent-protocol.spec.dir/rules"
+  - "@ref:specs/agent-protocol.spec.dir/registry"
+  - "@ref:specs/agent-protocol.spec.dir/interceptor"
+  - "@ref:specs/agent-protocol.spec.dir/violations"
 short: "Agent Protocol - Ownership, sessions, and write guards"
 status: draft
 ---

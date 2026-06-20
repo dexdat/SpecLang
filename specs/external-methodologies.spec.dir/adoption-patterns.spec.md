@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:14
 id: "@speclang/external-methodologies/adoption-patterns"
 version: 0.1.0
 layer: 2
@@ -105,7 +105,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [features, requirements, prd]
 depends_on:
-  - "@ref:project/product-brief"children:"
+  - "@ref:project/product-brief"
+children:"
   - "@ref:project/features.spec.dir/auth"
 - "@ref:project/features.spec.dir/api"
 short: Feature specifications (PRD equivalent)
@@ -143,8 +144,10 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [auth, component, architecture]
-parent: "@ref:project/features"depends_on:
-  - "@ref:project/features"children:"
+parent: "@ref:project/features"
+depends_on:
+  - "@ref:project/features"
+children:"
   - "@ref:project/features.spec.dir/auth.spec.dir/entities"
 - "@ref:project/features.spec.dir/auth.spec.dir/operations"
 short: Authentication component architecture

@@ -8,7 +8,7 @@ tags: [format, syntax, self-describing]
 status: draft
 children:
   - "@ref:specs/spec-format.spec.dir/structure"
-- "@ref:specs/spec-format.spec.dir/blocks"
+  - "@ref:specs/spec-format.spec.dir/blocks"
 short: Spec Format (2 parts)
 ---
 

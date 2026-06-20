@@ -1,6 +1,7 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/mcp.cli"
-parent: "@ref:speclang/mcp"part: 12/12
+parent: "@ref:speclang/mcp"
+part: 12/12
 short: Command-line interface for MCP server
 project_level: Alpha
 agent_support: agent_assisted

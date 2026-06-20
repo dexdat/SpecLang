@@ -1,6 +1,7 @@
-# speclang-header lines:7
+# speclang-header lines:8
 id: "@speclang/roadmap/poc/simple-agent"
-parent: "@ref:specs/roadmap/poc"version: 0.1.0
+parent: "@ref:specs/roadmap/poc"
+version: 0.1.0
 layer: 2
 short: "Simple single agent for POC - converts specs to code"
 tags: [poc, agent, simple, demo]

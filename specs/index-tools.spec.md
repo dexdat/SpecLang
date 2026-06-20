@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:13
 id: "@speclang/index/tools"
 version: 0.1.0
 layer: 5
@@ -9,7 +9,7 @@ short: "Tool handler for index operations"
 status: generated
 depends_on:
   - "@specs/indexer"
-- "@speclang/tools"
+  - "@speclang/tools"
 ---
 
 # Index Tools Spec

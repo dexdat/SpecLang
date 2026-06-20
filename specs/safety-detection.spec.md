@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:12
 id: "@specs/safety-detection"
 version: 1.0.0
 layer: 5
@@ -8,7 +8,7 @@ tags: [safety, detection, security, validation]
 short: Safety Detection Mechanisms for autonomous agents
 depends_on:
   - "@specs/safety"
-- "@speclang/skills"
+  - "@speclang/skills"
 ---
 
 # Safety Detection Mechanisms

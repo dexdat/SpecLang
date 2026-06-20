@@ -1,6 +1,7 @@
-# speclang-header lines:7
+# speclang-header lines:8
 id: "@speclang/roadmap/poc/event-routing"
-parent: "@ref:specs/roadmap/poc"version: 0.1.0
+parent: "@ref:specs/roadmap/poc"
+version: 0.1.0
 layer: 2
 short: "Simple event routing for POC - direct to single agent"
 tags: [poc, routing, simple]

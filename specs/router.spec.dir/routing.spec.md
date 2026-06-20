@@ -1,6 +1,7 @@
-# speclang-header lines:12
+# speclang-header lines:13
 id: "@speclang/router/routing"
-parent: "@ref:specs/router"part: 1/2
+parent: "@ref:specs/router"
+part: 1/2
 siblings:
   next: "@ref:specs/router.spec.dir/agents"
 short: Routing rules and cascade depth

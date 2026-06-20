@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:13
 id: "@speclang/autonomous-validation"
 version: 0.1.0
 layer: 2
@@ -9,7 +9,7 @@ children: ["@speclang/autonomous-validation/rules", "@speclang/autonomous-valida
 short: Validation rules for specs labeled agent_autonomous
 depends_on:
   - "@speclang/headers"
-- "@speclang/validation"
+  - "@speclang/validation"
 ---
 # Autonomous Validation
 

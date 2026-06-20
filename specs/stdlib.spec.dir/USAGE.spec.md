@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:9
 id: "@speclang/stdlib/USAGE"
 version: 1.0.0
 layer: 1

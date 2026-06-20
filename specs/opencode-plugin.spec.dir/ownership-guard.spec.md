@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:10
 id: "@speclang/opencode-plugin.spec.dir/ownership-guard"
 version: 0.1.0
 layer: 5

@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:12
 id: "@speclang/scripts.generate-sqlite-schema"
 version: 0.1.0
 layer: 2

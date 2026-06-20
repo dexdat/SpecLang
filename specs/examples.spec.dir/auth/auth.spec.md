@@ -1,4 +1,4 @@
-# speclang-header lines:15
+# speclang-header lines:12
 id: "@specs/examples/auth"
 version: 1.0.0
 layer: 1
@@ -8,7 +8,7 @@ tags: [example, auth, jwt, security]
 short: Authentication example with JWT tokens
 depends_on:
   - "@ref:specs/core"
-- "@ref:specs/examples/hello-world"
+  - "@ref:specs/examples/hello-world"
 ---
 
 # Authentication Example

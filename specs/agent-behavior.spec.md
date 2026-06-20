@@ -1,4 +1,4 @@
-# speclang-header lines:8
+# speclang-header lines:9
 id: "@specs/agent-behavior"
 version: 1.0.0
 layer: 5

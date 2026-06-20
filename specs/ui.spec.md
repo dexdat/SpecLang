@@ -1,4 +1,4 @@
-# speclang-header lines:25
+# speclang-header lines:26
 id: "@speclang/ui"
 version: 0.2.0
 layer: 2
@@ -7,19 +7,19 @@ imports: ["@speclang/cascade", "@speclang/mcp", "@speclang/agent-protocol", "@sp
 status: draft
 children:
   - "@speclang/ui/overview"
-- "@speclang/ui/visual-design"
-- "@speclang/ui/components/cascade-status"
-- "@speclang/ui/components/agent-health"
-- "@speclang/ui/components/event-timeline"
-- "@speclang/ui/components/queue-depth"
-- "@speclang/ui/components/system-metrics"
-- "@speclang/ui/components/control-panel"
-- "@speclang/ui/components/cascade-graph"
-- "@speclang/ui/components/log-viewer"
-- "@speclang/ui/interactions"
-- "@speclang/ui/state-management"
-- "@speclang/ui/testing"
-- "@speclang/mcp-ui-tools"
+  - "@speclang/ui/visual-design"
+  - "@speclang/ui/components/cascade-status"
+  - "@speclang/ui/components/agent-health"
+  - "@speclang/ui/components/event-timeline"
+  - "@speclang/ui/components/queue-depth"
+  - "@speclang/ui/components/system-metrics"
+  - "@speclang/ui/components/control-panel"
+  - "@speclang/ui/components/cascade-graph"
+  - "@speclang/ui/components/log-viewer"
+  - "@speclang/ui/interactions"
+  - "@speclang/ui/state-management"
+  - "@speclang/ui/testing"
+  - "@speclang/mcp-ui-tools"
 short: System monitoring dashboard for SpecLang cascade and agent health (split into parts)
 project_level: Alpha
 agent_support: agent_assisted

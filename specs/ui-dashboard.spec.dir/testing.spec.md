@@ -1,6 +1,7 @@
-# speclang-header lines:9
+# speclang-header lines:10
 id: "@speclang/ui-dashboard/testing"
-parent: "@ref:specs/ui-dashboard"short: "UI testing framework and test runner"
+parent: "@ref:specs/ui-dashboard"
+short: "UI testing framework and test runner"
 project_level: Alpha
 agent_support: agent_assisted
 tags: [ui, dashboard, testing, tests]

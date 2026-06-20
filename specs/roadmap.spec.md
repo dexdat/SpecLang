@@ -1,4 +1,4 @@
-# speclang-header lines:15
+# speclang-header lines:60
 id: "@speclang/roadmap"
 version: 1.0.0
 layer: 0
@@ -9,10 +9,10 @@ agent_support: agent_autonomous
 tags: [roadmap, planning, phases, milestones]
 children:
   - "@ref:specs/roadmap.spec.dir/poc"
-- "@ref:specs/roadmap.spec.dir/mvp"
-- "@ref:specs/roadmap.spec.dir/alpha"
-- "@ref:specs/roadmap.spec.dir/beta"
-- "@ref:specs/roadmap.spec.dir/production"---"
+  - "@ref:specs/roadmap.spec.dir/mvp"
+  - "@ref:specs/roadmap.spec.dir/alpha"
+  - "@ref:specs/roadmap.spec.dir/beta"
+  - "@ref:specs/roadmap.spec.dir/production"---"
 
 # SpecLang Development Roadmap
 

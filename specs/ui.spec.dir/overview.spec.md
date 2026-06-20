@@ -1,6 +1,7 @@
-# speclang-header lines:12
+# speclang-header lines:13
 id: "@speclang/ui.overview"
-parent: "@ref:specs/ui"part: 1/14
+parent: "@ref:specs/ui"
+part: 1/14
 siblings:
   next: "@ref:specs/ui.spec.dir/visual-design"
 short: Dashboard overview, architecture, and core views

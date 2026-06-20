@@ -1,6 +1,7 @@
-# speclang-header lines:13
+# speclang-header lines:14
 id: "@speclang/pipeline/build"
-parent: "@ref:speclang/pipeline"part: 1/3
+parent: "@ref:speclang/pipeline"
+part: 1/3
 siblings:
   next: "@ref:speclang/pipeline/hooks"
 short: Build Pipeline - Core Stages

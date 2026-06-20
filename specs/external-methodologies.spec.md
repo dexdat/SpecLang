@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:13
 id: "@speclang/external-methodologies"
 version: 0.1.0
 layer: 1
@@ -7,8 +7,8 @@ agent_support: agent_autonomous
 tags: [methodology, bmad, comparison, external, reference]
 children:
   - "@ref:specs/external-methodologies.spec.dir/bmad-comparison"
-- "@ref:specs/external-methodologies.spec.dir/recommendations"
-- "@ref:specs/external-methodologies.spec.dir/adoption-patterns"
+  - "@ref:specs/external-methodologies.spec.dir/recommendations"
+  - "@ref:specs/external-methodologies.spec.dir/adoption-patterns"
 short: External Methodologies - Analysis of BMAD and other AI-driven development frameworks
 ---
 

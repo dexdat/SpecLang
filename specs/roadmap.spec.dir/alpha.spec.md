@@ -1,6 +1,7 @@
-# speclang-header lines:19
+# speclang-header lines:20
 id: "@speclang/roadmap/alpha"
-parent: "@ref:specs/roadmap"version: 1.0.0
+parent: "@ref:specs/roadmap"
+version: 1.0.0
 layer: 1
 target: specs/roadmap.spec.dir/alpha.spec.dir/
 short: "Alpha phase: End-to-end workflow with pipeline"
@@ -9,12 +10,13 @@ agent_support: agent_autonomous
 tags: [roadmap, alpha, phase-3, pipeline, validation]
 children:
   - "@ref:specs/roadmap.spec.dir/alpha.spec.dir/pipeline-executor"
-- "@ref:specs/roadmap.spec.dir/alpha.spec.dir/build-system"
-- "@ref:specs/roadmap.spec.dir/alpha.spec.dir/test-integration"
-- "@ref:specs/roadmap.spec.dir/alpha.spec.dir/recovery-system"depends_on:"
+  - "@ref:specs/roadmap.spec.dir/alpha.spec.dir/build-system"
+  - "@ref:specs/roadmap.spec.dir/alpha.spec.dir/test-integration"
+  - "@ref:specs/roadmap.spec.dir/alpha.spec.dir/recovery-system"
+depends_on:"
   - "@speclang/roadmap/mvp"
-- "@speclang/pipeline"
-- "@speclang/validation"
+  - "@speclang/pipeline"
+  - "@speclang/validation"
 ---
 
 # Alpha Phase: Internal Testing

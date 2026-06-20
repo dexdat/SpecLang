@@ -1,6 +1,7 @@
-# speclang-header lines:7
+# speclang-header lines:8
 id: "@speclang/roadmap/poc/poc-daemon"
-parent: "@ref:specs/roadmap/poc"version: 0.1.0
+parent: "@ref:specs/roadmap/poc"
+version: 0.1.0
 layer: 2
 short: "Main entry point for POC daemon"
 tags: [poc, daemon, entry-point, main]

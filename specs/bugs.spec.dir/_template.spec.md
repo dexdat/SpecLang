@@ -1,4 +1,4 @@
-# speclang-header lines:8
+# speclang-header lines:9
 id: "@bugs/integration-test-template"
 version: 1.0.0
 layer: 5

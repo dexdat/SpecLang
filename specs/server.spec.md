@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:13
 id: "@speclang/server"
 version: 0.1.0
 layer: 5
@@ -9,7 +9,7 @@ short: "MCP Server implementation for SpecLang"
 status: generated
 depends_on:
   - "@speclang/mcp"
-- "@speclang/core"
+  - "@speclang/core"
 ---
 
 # MCP Server Spec

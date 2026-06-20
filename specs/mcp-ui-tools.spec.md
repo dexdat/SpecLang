@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:14
 id: "@speclang/mcp-ui-tools"
 version: 0.1.0
 layer: 3
@@ -10,7 +10,7 @@ project_level: Alpha
 agent_support: agent_assisted
 children:
   - "@speclang/mcp-ui-tools/tools"
-- "@speclang/mcp-ui-tools/ui"
+  - "@speclang/mcp-ui-tools/ui"
 ---
 
 # MCP UI Tools

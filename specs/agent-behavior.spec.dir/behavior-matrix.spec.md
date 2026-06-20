@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:14
 id: "@specs/agent-behavior/behavior-matrix"
 version: 1.0.0
 layer: 5
@@ -9,8 +9,8 @@ short: Agent behavior matrix implementation
 target: src/agent-behavior/behavior-matrix.ts
 depends_on:
   - "@speclang/project-maturity-levels"
-- "@speclang/agent-support-levels"
-- "@speclang/agent-behavior-matrix"
+  - "@speclang/agent-support-levels"
+  - "@speclang/agent-behavior-matrix"
 ---
 
 # Agent Behavior Matrix Implementation

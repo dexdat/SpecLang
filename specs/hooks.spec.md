@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:12
 id: "@speclang/hooks"
 version: 0.1.0
 layer: 5
@@ -7,7 +7,7 @@ agent_support: agent_autonomous
 tags: [typescript, generated, auto-generated]
 children:
   - "@ref:specs/hooks.spec.dir/lifecycle"
-- "@ref:specs/hooks.spec.dir/handlers"
+  - "@ref:specs/hooks.spec.dir/handlers"
 short: "Hook execution system for pipeline - lifecycle and built-in handlers"
 ---
 # Hook Execution System

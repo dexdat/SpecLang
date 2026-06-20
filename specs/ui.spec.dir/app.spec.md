@@ -1,6 +1,7 @@
-# speclang-header lines:13
+# speclang-header lines:14
 id: "@speclang/ui.app"
-parent: "@ref:specs/ui"part: 15/15
+parent: "@ref:specs/ui"
+part: 15/15
 siblings:
   prev: "@ref:specs/ui.spec.dir/index"
 short: Dashboard React app entry point

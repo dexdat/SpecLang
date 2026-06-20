@@ -8,13 +8,13 @@ agent_support: agent_autonomous
 tags: [mcp, server, typescript, opensource, protocol]
 children:
   - "@ref:specs/mcp.spec.dir/overview"
-- "@ref:specs/mcp.spec.dir/architecture"
-- "@ref:specs/mcp.spec.dir/authentication"
-- "@ref:specs/mcp.spec.dir/cli"
-- "@ref:specs/mcp.spec.dir/configuration"
-- "@ref:specs/mcp.spec.dir/error-handling"
-- "@ref:specs/mcp.spec.dir/run-modes"
-- "@ref:specs/mcp.spec.dir/sse-stream"
+  - "@ref:specs/mcp.spec.dir/architecture"
+  - "@ref:specs/mcp.spec.dir/authentication"
+  - "@ref:specs/mcp.spec.dir/cli"
+  - "@ref:specs/mcp.spec.dir/configuration"
+  - "@ref:specs/mcp.spec.dir/error-handling"
+  - "@ref:specs/mcp.spec.dir/run-modes"
+  - "@ref:specs/mcp.spec.dir/sse-stream"
 short: "MCP Server - Model Context Protocol server for SpecLang"
 status: draft
 ---

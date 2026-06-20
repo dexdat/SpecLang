@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:14
 id: "@speclang/pipeline"
 version: 0.2.0
 layer: 1
@@ -7,8 +7,8 @@ agent_support: agent_autonomous
 tags: [pipeline, build, hooks, recovery, convergence]
 children:
   - "@ref:specs/pipeline.spec.dir/build"
-- "@ref:specs/pipeline.spec.dir/hooks"
-- "@ref:specs/pipeline.spec.dir/recovery"
+  - "@ref:specs/pipeline.spec.dir/hooks"
+  - "@ref:specs/pipeline.spec.dir/recovery"
 short: "Pipeline - Build, test, deploy execution after convergence"
 status: draft
 ---

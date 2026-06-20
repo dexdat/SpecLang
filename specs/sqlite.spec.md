@@ -1,4 +1,4 @@
-# speclang-header lines:14
+# speclang-header lines:15
 id: "@speclang/sqlite"
 version: 0.2.0
 layer: 1
@@ -7,9 +7,9 @@ agent_support: agent_autonomous
 tags: [sqlite, database, fts, vector, graph]
 children:
   - "@ref:specs/sqlite.spec.dir/schema"
-- "@ref:specs/sqlite.spec.dir/fts"
-- "@ref:specs/sqlite.spec.dir/graph"
-- "@ref:specs/sqlite.spec.dir/vectors"
+  - "@ref:specs/sqlite.spec.dir/fts"
+  - "@ref:specs/sqlite.spec.dir/graph"
+  - "@ref:specs/sqlite.spec.dir/vectors"
 short: "SQLite Database - Context preservation and search"
 status: draft
 ---

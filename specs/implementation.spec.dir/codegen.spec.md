@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/implementation.codegen"
 version: 0.1.0
 layer: 2
@@ -6,7 +6,8 @@ project_level: Alpha
 agent_support: agent_assisted
 tags: [implementation, codegen]
 short: "Code Generation Implementation"
-parent: "@ref:speclang/implementation"part: 5/7
+parent: "@ref:speclang/implementation"
+part: 5/7
 ---
 # Code Generation Implementation
 
