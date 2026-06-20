@@ -1,9 +1,8 @@
-# speclang-header lines:14
+# speclang-header lines:13
 id: "@speclang/deployment/enterprise"
 version: 0.1.0
 layer: 2
 tags: [deployment, enterprise, scale, compliance]
-imports: ["@speclang/core", "@speclang/opencode", "@speclang/daemon"]
 status: draft
 parent: "@speclang/deployment"
 part: "2/2"

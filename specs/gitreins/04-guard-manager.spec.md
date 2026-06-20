@@ -8,7 +8,6 @@ owned_by: gitreins
 tags: [gitreins, guard]
 status: imported
 short: "Guard Manager — tiered pre-commit guard system with secrets scan, lint, test, and agentic evaluator"
-realized_by: gitreins-poc/engine/guard_manager.py
 ---
 
 # 04 — Guard Manager

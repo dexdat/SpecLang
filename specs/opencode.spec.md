@@ -1,10 +1,9 @@
-# speclang-header lines:13
+# speclang-header lines:12
 id: "@speclang/opencode"
 version: 0.1.0
 target: src/opencode/
 layer: 0
 tags: [opencode, integration, plugin, sse]
-imports: ["@speclang/core", "@speclang/daemon", "@speclang/agent-protocol"]
 status: draft
 
 project_level: Alpha

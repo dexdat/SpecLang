@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@specs/examples/hello-world"
 version: 1.0.0
 layer: 1
@@ -7,7 +7,6 @@ agent_support: agent_autonomous
 tags: [example, hello-world]
 short: Hello World example for SpecLang
 depends_on:
-  - "@ref:specs/core"
 ---
 
 # Hello World Example

@@ -7,7 +7,6 @@ agent_support: agent_assisted
 tags: [skills, code-gen, agents]
 status: draft
 short: "CodeGen Skill"
-imports: ["@speclang/skills"]
 ---
 
 # CodeGen Skill

@@ -5,7 +5,6 @@ layer: 5
 project_level: Alpha
 agent_support: agent_assisted
 short: "Test writer for Fsharp"
-target_lang: fsharp
 ---
 
 # Test Writer: Fsharp

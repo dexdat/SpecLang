@@ -1,10 +1,9 @@
-# speclang-header lines:12
+# speclang-header lines:11
 id: "@speclang/recovery/retry"
 version: 0.1.0
 layer: 2
 part: 2/2
 tags: [recovery, retry]
-imports: ["@speclang/recovery"]
 status: draft
 project_level: Alpha
 agent_support: agent_assisted

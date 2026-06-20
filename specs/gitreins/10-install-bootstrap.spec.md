@@ -8,7 +8,6 @@ owned_by: gitreins
 tags: [gitreins, install]
 status: imported
 short: "Install and Bootstrap — one-command setup with pre-commit hooks, config initialization, and dependency checks"
-realized_by: gitreins-poc/gitreins/install
 ---
 
 ## 1. Overview

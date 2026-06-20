@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/skills/test-writer-python"
 version: 0.1.0
 layer: 2
@@ -7,8 +7,6 @@ agent_support: agent_assisted
 tags: [skills, test-writer, agents, python]
 status: draft
 short: "TestWriter Skill (Python)"
-imports: ["@speclang/skills"]
-target_lang: py
 ---
 
 # TestWriter Skill — Python Target

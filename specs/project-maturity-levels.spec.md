@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:11
 id: "@speclang/project-maturity-levels"
 version: 0.1.0
 layer: 1
@@ -7,8 +7,6 @@ agent_support: agent_autonomous
 tags: [project, maturity, levels, autonomous]
 target: src/maturity/
 children:
-  - "@ref:specs/project-maturity-levels.spec.dir/levels"
-  - "@ref:specs/project-maturity-levels.spec.dir/criteria"
 short: Concrete criteria for each project_level value
 ---
 # Project Maturity Levels

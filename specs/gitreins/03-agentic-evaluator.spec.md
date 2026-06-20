@@ -8,7 +8,6 @@ owned_by: gitreins
 tags: [gitreins, evaluator]
 status: imported
 short: "Agentic Evaluator — LLM-driven verification of task outputs against acceptance criteria"
-realized_by: gitreins-poc/engine/evaluator.py
 ---
 
 # 03 — Agentic Evaluator

@@ -1,4 +1,4 @@
-# speclang-header lines:19
+# speclang-header lines:15
 id: "@speclang/roadmap/beta"
 parent: "@ref:specs/roadmap"
 version: 1.0.0
@@ -9,10 +9,6 @@ project_level: Beta
 agent_support: agent_autonomous
 tags: [roadmap, beta, phase-4, performance, stability]
 children:
-  - "@ref:specs/roadmap.spec.dir/beta.spec.dir/performance-optimization"
-  - "@ref:specs/roadmap.spec.dir/beta.spec.dir/scalability"
-  - "@ref:specs/roadmap.spec.dir/beta.spec.dir/monitoring"
-  - "@ref:specs/roadmap.spec.dir/beta.spec.dir/external-testing"
 depends_on:"
   - "@speclang/roadmap/alpha"
   - "@speclang/testing-strategy.spec"

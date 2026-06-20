@@ -1,17 +1,14 @@
-# speclang-header lines:36
+# speclang-header lines:32
 id: "@speclang/cascade/convergence"
 version: 0.1.0
 layer: 2
 tags: [cascade, reactive, convergence, termination]
-imports: ["@speclang/core", "@speclang/daemon", "@speclang/agent-protocol"]
 status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Cascade Convergence
 parent: "@ref:speclang/cascade"
 part: 2/2
-siblings:
-  prev: "@ref:speclang/cascade/triggers"---
 # Cascade Convergence
 
 How the cascade ends and what happens after.
@@ -21,7 +18,6 @@ How the cascade ends and what happens after.
 ### @cascade/vs-build
 
 ```speclang
-# @block:cascade/vs-build @kind:table
 | Cascade | Build |
 |---------|-------|
 | Reactive, continuous | Triggered, one-shot |

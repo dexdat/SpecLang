@@ -1,8 +1,7 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@tests/ui-dashboard"
 version: 0.1.0
 layer: 3
-imports: ["@implementation/ui-dashboard", "@speclang/ui"]
 tags: [tests, ui, dashboard, bdd, react]
 short: BDD test specifications for UI dashboard implementation
 status: draft

@@ -1,9 +1,8 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/file-naming/patterns"
 version: 0.1.0
 layer: 2
 tags: [naming, format, files, conventions, patterns]
-imports: ["@speclang/core"]
 status: draft
 project_level: Alpha
 agent_support: agent_assisted

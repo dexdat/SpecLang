@@ -5,7 +5,6 @@ layer: 5
 project_level: Alpha
 agent_support: agent_assisted
 short: "Spec writer for Clojure"
-target_lang: clojure
 ---
 
 # Spec Writer: Clojure

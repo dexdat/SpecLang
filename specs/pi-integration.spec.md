@@ -8,7 +8,6 @@ tags: [pi, integration, runtime, agents, assembler, watch-system]
 status: draft
 short: "Pi Agent Integration"
 target: src/pi-integration/
-imports: "["@speclang/core", "@speclang/daemon", "@speclang/agent-protocol"]"
 ---
 
 # Pi Agent Integration

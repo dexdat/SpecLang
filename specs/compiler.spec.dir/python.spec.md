@@ -5,7 +5,6 @@ layer: 5
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [compiler, targets, python]
-imports: "["@speclang/core", "@speclang/stdlib", "@speclang/compiler.spec.dir/targets"]"
 parent: """@ref:specs/compiler.spec.dir/targets"short: Python code generator implementation"
 ---
 

@@ -8,7 +8,6 @@ owned_by: gitreins
 tags: [gitreins, task]
 status: imported
 short: "Task Manager — YAML-backed task lifecycle management with create/start/complete states"
-realized_by: gitreins-poc/engine/task_manager.py
 ---
 
 # 05 — Task Manager

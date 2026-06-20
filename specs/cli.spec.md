@@ -1,19 +1,10 @@
-# speclang-header lines:20
+# speclang-header lines:11
 id: "@speclang/cli.spec"
 version: 0.1.0
 target: src/cli/
 layer: 0
 tags: [cli, commands, interface]
-imports: ["@speclang/core", "@speclang/stdlib"]
 children:
-  - "@ref:specs/cli.spec.dir/installation"
-  - "@ref:specs/cli.spec.dir/commands"
-  - "@ref:specs/cli.spec.dir/global-options"
-  - "@ref:specs/cli.spec.dir/configuration"
-  - "@ref:specs/cli.spec.dir/exit-codes"
-  - "@ref:specs/cli.spec.dir/output-formats"
-  - "@ref:specs/cli.spec.dir/interactive-mode"
-  - "@ref:specs/cli.spec.dir/integration"
 project_level: Alpha
 agent_support: agent_assisted
 short: Speclang CLI (8 sub-specs)

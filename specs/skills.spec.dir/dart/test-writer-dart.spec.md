@@ -5,7 +5,6 @@ layer: 5
 project_level: Alpha
 agent_support: agent_assisted
 short: "Test writer for Dart"
-target_lang: dart
 ---
 
 # Test Writer: Dart

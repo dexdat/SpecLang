@@ -1,9 +1,8 @@
-# speclang-header lines:13
+# speclang-header lines:12
 id: "@speclang/cascade/triggers"
 version: 0.1.0
 layer: 2
 tags: [cascade, reactive, loop, trigger]
-imports: ["@speclang/core", "@speclang/daemon", "@speclang/agent-protocol"]
 status: draft
 project_level: Alpha
 agent_support: agent_assisted

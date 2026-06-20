@@ -1,10 +1,7 @@
-# speclang-header lines:14
+# speclang-header lines:11
 id: "@speclang/daemon/routing"
 parent: "@ref:specs/daemon"
 part: 3/4
-siblings:
-  prev: "@ref:specs/daemon.spec.dir/events"
-next: "@ref:specs/daemon.spec.dir/convergence"
 short: Event routing to agents
 project_level: Alpha
 agent_support: agent_assisted

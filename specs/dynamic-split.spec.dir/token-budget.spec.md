@@ -1,11 +1,10 @@
-# speclang-header lines:10
+# speclang-header lines:9
 id: "@speclang/dynamic-split/token-budget"
 version: 0.1.0
 layer: 2
 tags: [splitting, tokens, budget, limits]
 parent: "@ref:speclang/dynamic-split"
 part: 2/2
-order: 2
 short: Token counting, budget overhead, and limits
 ---
 

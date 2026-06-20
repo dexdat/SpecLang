@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/skills/code-gen-python"
 version: 0.1.0
 layer: 2
@@ -7,8 +7,6 @@ agent_support: agent_assisted
 tags: [skills, code-gen, agents, python]
 status: draft
 short: "CodeGen Skill (Python)"
-imports: ["@speclang/skills"]
-target_lang: py
 ---
 
 # CodeGen Skill — Python Target

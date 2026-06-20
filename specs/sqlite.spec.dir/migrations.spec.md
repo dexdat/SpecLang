@@ -1,11 +1,9 @@
-# speclang-header lines:14
+# speclang-header lines:12
 id: "@speclang/sqlite/migrations"
 version: 0.1.0
 layer: 2
 part: 3
-total_parts: 4
 tags: [sqlite, migrations, database]
-imports: ["@speclang/sqlite"]
 status: draft
 project_level: Alpha
 agent_support: agent_autonomous

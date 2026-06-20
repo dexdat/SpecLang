@@ -8,7 +8,6 @@ tags: [pi, extensions, tools, commands, guard]
 status: draft
 short: "Pi Extension Examples for Speclang"
 target: src/pi-extension/
-imports: "["@speclang/pi-integration", "@speclang/agent-protocol"]"
 ---
 
 # Pi Extension Examples

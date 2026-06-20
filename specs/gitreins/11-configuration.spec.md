@@ -8,7 +8,6 @@ owned_by: gitreins
 tags: [gitreins, config]
 status: imported
 short: "Configuration Schema — .gitreins/config.yaml structure for guards, tasks, pipelines, and LLM settings"
-realized_by: gitreins-poc/.gitreins/config.yaml
 ---
 
 # 11 — Configuration Schema

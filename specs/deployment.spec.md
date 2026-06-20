@@ -1,10 +1,9 @@
-# speclang-header lines:13
+# speclang-header lines:12
 id: "@speclang/deployment"
 version: 0.1.0
 target: src/deployment/
 layer: 0
 tags: [deployment, modes, light, enterprise, scale]
-imports: ["@speclang/core", "@speclang/opencode", "@speclang/daemon"]
 status: draft
 
 project_level: Alpha

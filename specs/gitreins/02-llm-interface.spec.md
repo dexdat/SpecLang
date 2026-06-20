@@ -8,7 +8,6 @@ owned_by: gitreins
 tags: [gitreins, llm]
 status: imported
 short: "LLM Interface — provider-agnostic LLM wrapper with structured output parsing"
-realized_by: gitreins-poc/engine/llm.py
 ---
 
 # 02 — LLM Interface

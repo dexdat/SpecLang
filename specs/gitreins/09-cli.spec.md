@@ -8,7 +8,6 @@ owned_by: gitreins
 tags: [gitreins, cli]
 status: imported
 short: "CLI — command-line interface for GitReins with init, guard, task, pipeline, and status commands"
-realized_by: gitreins-poc/gitreins/cli.py
 ---
 
 ## 1. Overview

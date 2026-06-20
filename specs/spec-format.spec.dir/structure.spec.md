@@ -1,4 +1,4 @@
-# speclang-header lines:15
+# speclang-header lines:13
 id: "@speclang/spec-format/structure"
 version: 0.1.0
 layer: 2
@@ -8,8 +8,6 @@ tags: [format, syntax, self-describing]
 status: draft
 parent: "@ref:specs/spec-format"
 part: 1/2
-siblings:
-  next: "@ref:specs/spec-format.spec.dir/blocks"
 
 short: Spec Format - Structure
 ---

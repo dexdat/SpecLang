@@ -1,4 +1,4 @@
-# speclang-header lines:14
+# speclang-header lines:11
 id: "@speclang/external-methodologies/bmad-comparison"
 version: 0.1.0
 layer: 2
@@ -7,9 +7,6 @@ agent_support: agent_autonomous
 tags: [bmad, comparison, methodology, analysis]
 parent: "@ref:specs/external-methodologies"
 part: "1/3"
-siblings:
-  prev: null
-  next: "@ref:specs/external-methodologies.spec.dir/recommendations"
 short: BMAD Comparison - Detailed analysis of BMAD vs SpecLang
 ---
 

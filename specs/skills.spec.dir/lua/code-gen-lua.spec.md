@@ -5,7 +5,6 @@ layer: 5
 project_level: Alpha
 agent_support: agent_assisted
 short: "Code gen for Lua"
-target_lang: lua
 ---
 
 # Code Gen: Lua

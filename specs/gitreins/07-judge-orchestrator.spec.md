@@ -8,7 +8,6 @@ owned_by: gitreins
 tags: [gitreins, judge, evaluation]
 status: imported
 short: "Judge Orchestrator — coordinates evaluator loops, aggregates verdicts, computes scores, and handles recovery"
-realized_by: gitreins-poc/engine/judge.py
 ---
 
 # 07 — Judge Orchestrator

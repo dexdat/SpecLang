@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:11
 id: "@speclang/project-maturity-levels/levels"
 version: 0.1.0
 layer: 2
@@ -8,7 +8,6 @@ project_level: Alpha
 agent_support: agent_autonomous
 short: Definitions for each project_level value
 target: typescript
-produces: src/maturity/levels.ts
 ---
 # Project Maturity Level Definitions
 

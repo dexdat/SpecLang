@@ -1,9 +1,8 @@
-# speclang-header lines:13
+# speclang-header lines:12
 id: "@speclang/directory-structure/pattern"
 version: 0.1.0
 layer: 2
 tags: [directory, structure, pattern]
-imports: ["@speclang/directory-structure"]
 parent: "@ref:specs/directory-structure"
 part: 1/2
 status: draft

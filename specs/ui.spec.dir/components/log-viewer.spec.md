@@ -1,10 +1,7 @@
-# speclang-header lines:14
+# speclang-header lines:11
 id: "@speclang/ui.components.log-viewer"
 parent: "@ref:specs/ui"
 part: 10/14
-siblings:
-  prev: "@ref:specs/ui.spec.dir/components/cascade-graph"
-next: "@ref:specs/ui.spec.dir/interactions"
 short: Log viewer component
 project_level: Alpha
 agent_support: agent_assisted

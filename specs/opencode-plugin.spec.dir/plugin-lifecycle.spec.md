@@ -1,8 +1,7 @@
-# speclang-header lines:10
+# speclang-header lines:9
 id: "@speclang/opencode-plugin.spec.dir/plugin-lifecycle"
 version: 0.1.0
 layer: 5
-imports: ["@speclang/opencode-plugin.spec.dir/overview"]
 tags: [opencode, plugin, lifecycle]
 short: Plugin lifecycle for OpenCode Speclang plugin
 project_level: Alpha

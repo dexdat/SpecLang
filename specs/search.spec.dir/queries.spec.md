@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:11
 id: "@speclang/search/queries"
 version: 0.1.0
 layer: 2
@@ -7,8 +7,6 @@ agent_support: agent_autonomous
 tags: [search, queries, fts, semantic]
 parent: "@ref:speclang/search"
 part: 1/2
-siblings:
-  next: "@ref:speclang/search/indexing"
 short: "Search query types: FTS, semantic, tag, layer"
 ---
 # Search Queries

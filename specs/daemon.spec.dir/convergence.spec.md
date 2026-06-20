@@ -1,9 +1,7 @@
-# speclang-header lines:13
+# speclang-header lines:11
 id: "@speclang/daemon/convergence"
 parent: "@ref:specs/daemon"
 part: 4/4
-siblings:
-  prev: "@ref:specs/daemon.spec.dir/routing"
 short: Convergence detection and finalization
 project_level: Alpha
 agent_support: agent_assisted

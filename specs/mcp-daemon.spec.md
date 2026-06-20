@@ -1,9 +1,8 @@
-# speclang-header lines:14
+# speclang-header lines:13
 id: "@speclang/mcp-daemon"
 version: 0.1.0
 layer: 0
 tags: [mcp, daemon, http, sse, enterprise]
-imports: ["@speclang/core", "@speclang/daemon", "@speclang/deployment"]
 status: draft
 project_level: Alpha
 agent_support: agent_assisted

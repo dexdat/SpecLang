@@ -1,9 +1,8 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/symlinks/verification"
 version: 0.1.0
 layer: 2
 tags: [symlinks, verification, git, tools, layout]
-imports: ["@speclang/symlinks"]
 status: draft
 project_level: Alpha
 agent_support: agent_autonomous

@@ -1,10 +1,7 @@
-# speclang-header lines:14
+# speclang-header lines:11
 id: "@speclang/ui.interactions"
 parent: "@ref:specs/ui"
 part: 11/14
-siblings:
-  prev: "@ref:specs/ui.spec.dir/components/log-viewer"
-next: "@ref:specs/ui.spec.dir/state-management"
 short: User interactions and control flows
 project_level: Alpha
 agent_support: agent_assisted

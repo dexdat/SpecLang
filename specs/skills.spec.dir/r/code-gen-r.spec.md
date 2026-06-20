@@ -5,7 +5,6 @@ layer: 5
 project_level: Alpha
 agent_support: agent_assisted
 short: "Code gen for R"
-target_lang: r
 ---
 
 # Code Gen: R

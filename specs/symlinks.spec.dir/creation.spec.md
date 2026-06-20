@@ -1,9 +1,8 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/symlinks/creation"
 version: 0.1.0
 layer: 2
 tags: [symlinks, creation, rebuild, portability, cross-platform]
-imports: ["@speclang/symlinks"]
 status: draft
 project_level: Alpha
 agent_support: agent_autonomous

@@ -8,7 +8,6 @@ owned_by: gitreins
 tags: [gitreins, mcp, server]
 status: imported
 short: "MCP Server — exposes GitReins tools via stdio MCP for task management, guard execution, agentic evaluation, and pipeline control"
-realized_by: gitreins-poc/gitreins_mcp/server.py
 ---
 
 # 08 — MCP Server

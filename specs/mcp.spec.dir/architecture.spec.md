@@ -1,9 +1,7 @@
-# speclang-header lines:13
+# speclang-header lines:11
 id: "@speclang/mcp.architecture"
 parent: "@ref:speclang/mcp"
 part: 2/12
-siblings:
-  next: "@ref:specs/mcp.spec.dir/run-modes"
 short: MCP server architecture diagram and components
 project_level: Alpha
 agent_support: agent_assisted

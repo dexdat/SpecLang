@@ -1,9 +1,8 @@
-# speclang-header lines:13
+# speclang-header lines:12
 id: "@speclang/git-history/commits"
 version: 0.1.0
 layer: 2
 tags: [git, history, commits, traceability]
-imports: ["@speclang/git-history"]
 parent: "@ref:specs/git-history"
 part: 1/2
 status: draft

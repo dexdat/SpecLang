@@ -1,4 +1,4 @@
-# speclang-header lines:20
+# speclang-header lines:16
 id: "@speclang/roadmap/mvp"
 parent: "@ref:specs/roadmap"
 version: 1.0.0
@@ -9,10 +9,6 @@ project_level: MVP
 agent_support: agent_autonomous
 tags: [roadmap, mvp, phase-2, agents, coordination]
 children:
-  - "@ref:specs/roadmap.spec.dir/mvp.spec.dir/agent-session-manager"
-  - "@ref:specs/roadmap.spec.dir/mvp.spec.dir/multi-agent-coordination"
-  - "@ref:specs/roadmap.spec.dir/mvp.spec.dir/agent-tools-api"
-  - "@ref:specs/roadmap.spec.dir/mvp.spec.dir/file-ownership"
 depends_on:"
   - "@speclang/roadmap/poc"
   - "@speclang/agents"

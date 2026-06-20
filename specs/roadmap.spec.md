@@ -1,4 +1,4 @@
-# speclang-header lines:60
+# speclang-header lines:49
 id: "@speclang/roadmap"
 version: 1.0.0
 layer: 0
@@ -8,11 +8,6 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [roadmap, planning, phases, milestones]
 children:
-  - "@ref:specs/roadmap.spec.dir/poc"
-  - "@ref:specs/roadmap.spec.dir/mvp"
-  - "@ref:specs/roadmap.spec.dir/alpha"
-  - "@ref:specs/roadmap.spec.dir/beta"
-  - "@ref:specs/roadmap.spec.dir/production"---"
 
 # SpecLang Development Roadmap
 
@@ -20,13 +15,11 @@ This roadmap defines the phased development of SpecLang from proof of concept to
 
 ## Overview
 
-SpecLang development follows a maturity progression:
 
 ```
 POC → MVP → Alpha → Beta → Production
 ```
 
-Each phase has:
 - **Clear deliverables** - What must work
 - **Success criteria** - How we know it's done
 - **Estimated timeline** - When we target completion
@@ -44,7 +37,6 @@ Each phase has:
 
 ## Reading This Roadmap
 
-Each phase document contains:
 - **User Stories** - What users can do
 - **Technical Requirements** - What must be built
 - **Acceptance Criteria** - How we verify completion
@@ -53,9 +45,6 @@ Each phase document contains:
 
 ## Current Status
 
-**In Progress**: POC Phase
-**Next Milestone**: Working file watcher + cascade
-**Target Date**: TBD
 
 ---
 

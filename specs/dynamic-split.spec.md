@@ -1,9 +1,8 @@
-# speclang-header lines:12
+# speclang-header lines:11
 id: "@speclang/dynamic-split"
 version: 0.1.0
 layer: 0
 tags: [splitting, sizing, tokens, limits]
-imports: ["@speclang/core", "@speclang/headers"]
 status: draft
 project_level: Alpha
 agent_support: agent_assisted

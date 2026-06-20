@@ -8,7 +8,6 @@ tags: [daemon, setup, chokidar, pi, file-watcher]
 status: draft
 short: "Daemon Setup and Configuration for Pi Agent"
 target: src/daemon-setup/
-imports: "["@speclang/daemon", "@speclang/pi-integration"]"
 ---
 
 # Daemon Setup

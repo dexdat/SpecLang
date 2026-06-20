@@ -1,8 +1,7 @@
-# speclang-header lines:10
+# speclang-header lines:9
 id: "@speclang/opencode-plugin.spec.dir/error-handling"
 version: 0.1.0
 layer: 5
-imports: ["@speclang/opencode-plugin.spec.dir/architecture"]
 tags: [opencode, plugin, error, handling]
 short: Error handling for OpenCode Speclang plugin
 project_level: Alpha

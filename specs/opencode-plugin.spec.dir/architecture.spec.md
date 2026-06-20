@@ -1,8 +1,7 @@
-# speclang-header lines:10
+# speclang-header lines:9
 id: "@speclang/opencode-plugin.spec.dir/architecture"
 version: 0.1.0
 layer: 4
-imports: ["@speclang/opencode-plugin.spec.dir/overview"]
 tags: [opencode, plugin, architecture, diagram]
 short: Architecture diagram and components for OpenCode Speclang plugin
 project_level: Alpha

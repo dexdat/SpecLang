@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:9
 id: "@specs/demo/hello-agnostic"
 version: 0.1.0
 layer: 5
@@ -6,8 +6,6 @@ project_level: Alpha
 agent_support: agent_assisted
 tags: [demo, agnostic, catch-all]
 short: "Demo agnostic spec — pseudo-code"
-target_lang: any
-output: .speclang/demo/hello-agnostic.spec.md
 ---
 
 # Hello Agnostic Demo

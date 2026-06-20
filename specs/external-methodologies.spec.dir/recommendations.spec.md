@@ -1,4 +1,4 @@
-# speclang-header lines:14
+# speclang-header lines:11
 id: "@speclang/external-methodologies/recommendations"
 version: 0.1.0
 layer: 2
@@ -7,9 +7,6 @@ agent_support: agent_autonomous
 tags: [bmad, recommendations, adoption, patterns]
 parent: "@ref:specs/external-methodologies"
 part: "2/3"
-siblings:
-  prev: "@ref:specs/external-methodologies.spec.dir/bmad-comparison"
-next: "@ref:specs/external-methodologies.spec.dir/adoption-patterns"
 short: Recommendations - What to adopt from BMAD
 ---
 

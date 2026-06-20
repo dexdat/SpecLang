@@ -1,11 +1,10 @@
-# speclang-header lines:12
+# speclang-header lines:11
 id: "@speclang/lenses/formats"
 version: 0.1.0
 layer: 2
 parent: "@speclang/lenses"
 part: 1/2
 tags: [lenses, formats, built-in]
-imports: ["@speclang/lenses"]
 project_level: Alpha
 agent_support: agent_assisted
 short: Built-in Lens Formats

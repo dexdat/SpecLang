@@ -1,9 +1,8 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/skills/spec-writer"
 version: 0.1.0
 layer: 2
 tags: [skills, spec-writer, agents]
-imports: ["@speclang/skills"]
 status: draft
 project_level: Alpha
 agent_support: agent_assisted

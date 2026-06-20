@@ -1,9 +1,8 @@
-# speclang-header lines:26
+# speclang-header lines:25
 id: "@speclang/ui"
 version: 0.2.0
 layer: 2
 tags: [dashboard, monitoring, system, mcp, web]
-imports: ["@speclang/cascade", "@speclang/mcp", "@speclang/agent-protocol", "@speclang/sqlite", "@speclang/mcp-ui-tools"]
 status: draft
 children:
   - "@speclang/ui/overview"

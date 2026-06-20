@@ -1,9 +1,8 @@
-# speclang-header lines:13
+# speclang-header lines:12
 id: "@speclang/project-layout/structure"
 version: 0.1.0
 layer: 2
 tags: [layout, structure, files]
-imports: ["@speclang/project-layout"]
 parent: "@ref:specs/project-layout"
 part: 1/2
 status: draft

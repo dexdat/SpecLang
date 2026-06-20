@@ -1,4 +1,4 @@
-# speclang-header lines:14
+# speclang-header lines:12
 id: "@speclang/executor/execution"
 version: 0.1.0
 layer: 2
@@ -7,8 +7,6 @@ agent_support: agent_autonomous
 tags: [executor, execution, pipeline]
 parent: "@ref:specs/executor"
 part: 1/2
-siblings:
-  next: "@ref:specs/executor.spec.dir/scheduling"
 
 short: Pipeline stage execution - running commands, hooks, retries
 ---

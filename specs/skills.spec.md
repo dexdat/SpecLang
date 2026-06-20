@@ -1,9 +1,8 @@
-# speclang-header lines:13
+# speclang-header lines:12
 id: "@speclang/skills"
 version: 0.1.0
 layer: 0
 tags: [skills, agents, prompts, ai]
-imports: ["@speclang/core"]
 status: draft
 
 project_level: Alpha

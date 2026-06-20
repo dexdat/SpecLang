@@ -5,7 +5,6 @@ layer: 5
 project_level: Alpha
 agent_support: agent_assisted
 short: "Test writer for Objc"
-target_lang: objc
 ---
 
 # Test Writer: Objc

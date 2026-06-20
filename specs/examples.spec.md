@@ -1,15 +1,10 @@
-# speclang-header lines:17
+# speclang-header lines:12
 id: "@speclang/examples.spec"
 version: 0.1.0
 layer: 1
 target: src/examples/
 tags: [examples]
-imports: ["@speclang/core"]
 children:
-  - "@ref:specs/examples.spec.dir/hello-world"
-  - "@ref:specs/examples.spec.dir/hello-world-cascade"
-  - "@ref:specs/examples.spec.dir/auth"
-  - "@ref:specs/examples.spec.dir/api"
 status: draft
 project_level: Alpha
 agent_support: agent_assisted

@@ -1,15 +1,12 @@
-# speclang-header lines:13
+# speclang-header lines:10
 id: "@speclang/stdlib"
 version: 0.1.0
 layer: 0
 tags: [stdlib, builtins, types]
-imports: ["@speclang/core"]
 project_level: Alpha
 agent_support: agent_assisted
 short: Standard Library
 children:
-  - "@ref:specs/stdlib.spec.dir/types"
-  - "@ref:specs/stdlib.spec.dir/mapping"
 ---
 # Standard Library
 

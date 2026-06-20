@@ -8,7 +8,6 @@ owned_by: gitreins
 tags: [gitreins, pipeline]
 status: imported
 short: "Pipeline Engine — structured pipeline execution with stage lifecycle and failure recovery"
-realized_by: gitreins-poc/engine/pipeline.py
 ---
 
 # 06 — Pipeline Engine

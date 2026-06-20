@@ -1,12 +1,10 @@
-# speclang-header lines:10
+# speclang-header lines:8
 id: "@bugs/cascade-generates-zero-files"
 version: 1.0.0
 layer: 5
 tags: [bug, cascade, code-generation, documentation]
 short: Cascade completes but generates 0 files - needs better error messages
-severity: medium
 status: closed
-found_during: dogfooding
 ---
 
 # Bug: Cascade Generates 0 Files Without Clear Explanation

@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:10
 id: "@speclang/skills/code-gen-go"
 version: 0.1.0
 layer: 2
@@ -7,9 +7,6 @@ agent_support: agent_assisted
 tags: [skills, code-gen, agents, go, golang]
 status: draft
 short: "CodeGen Skill (Go)"
-imports: ["@speclang/skills"]
-target_lang: go
-resources: [go-generics]
 ---
 
 # CodeGen Skill — Go Target

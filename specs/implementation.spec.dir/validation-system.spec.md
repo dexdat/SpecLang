@@ -1,9 +1,8 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/implementation.validation-system"
 version: 0.1.0
 layer: 3
 parent: "@ref:speclang/implementation"
-imports: ["@speclang/validation", "@speclang/core", "@speclang/sqlite", "@speclang/headers"]
 tags: [validation, implementation, typescript, schema, linting]
 short: TypeScript validation system for Speclang spec compliance
 project_level: Alpha

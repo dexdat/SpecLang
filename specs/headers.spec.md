@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:11
 id: "@speclang/headers"
 version: 0.2.0
 layer: 1
@@ -6,8 +6,6 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [headers, format, universal, metadata]
 children:
-  - "@ref:specs/spec-format.spec.dir/structure"
-  - "@ref:specs/spec-format.spec.dir/blocks"
 short: "Universal Headers - Metadata format for all SpecLang files"
 status: draft
 ---

@@ -1,10 +1,7 @@
-# speclang-header lines:14
+# speclang-header lines:11
 id: "@speclang/ui.components.cascade-graph"
 parent: "@ref:specs/ui"
 part: 9/14
-siblings:
-  prev: "@ref:specs/ui.spec.dir/components/control-panel"
-next: "@ref:specs/ui.spec.dir/components/log-viewer"
 short: Cascade graph visualization component
 project_level: Alpha
 agent_support: agent_assisted

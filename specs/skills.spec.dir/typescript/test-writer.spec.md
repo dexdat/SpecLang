@@ -7,7 +7,6 @@ agent_support: agent_assisted
 tags: [skills, test-writer, agents]
 status: draft
 short: "TestWriter Skill"
-imports: ["@speclang/skills"]
 ---
 
 # TestWriter Skill

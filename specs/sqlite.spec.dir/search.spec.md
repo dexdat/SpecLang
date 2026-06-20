@@ -1,11 +1,9 @@
-# speclang-header lines:14
+# speclang-header lines:12
 id: "@speclang/sqlite/search"
 version: 0.1.0
 layer: 2
 part: 4
-total_parts: 4
 tags: [sqlite, search, fts, vector, graph]
-imports: ["@speclang/sqlite"]
 status: draft
 project_level: Alpha
 agent_support: agent_autonomous

@@ -1,9 +1,8 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/lenses"
 version: 0.1.0
 layer: 0
 tags: [lenses, views, formats, parsers]
-imports: ["@speclang/core"]
 children: ["@speclang/lenses/formats", "@speclang/lenses/mermaid"]
 project_level: Alpha
 agent_support: agent_assisted
