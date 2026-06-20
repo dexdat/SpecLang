@@ -1,10 +1,12 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: "@speclang/roadmap/poc/demo-workflow"
 parent: "@ref:specs/roadmap/poc"
 version: 0.1.0
 layer: 2
 short: "Complete end-to-end demo workflow for POC"
 tags: [poc, demo, workflow, example, happy-path]
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 
 # POC: Demo Workflow

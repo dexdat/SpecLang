@@ -1,10 +1,12 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: "@speclang/speclangd"
 version: 0.1.0
 layer: 5
 target: src/speclangd.ts
 tags: [daemon, file-watcher]
 short: Main daemon entry point
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 
 # Speclangd CLI

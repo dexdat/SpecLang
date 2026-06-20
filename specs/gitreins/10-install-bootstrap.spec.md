@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_assisted
 owned_by: gitreins
 tags: [gitreins, install]
-status: imported
+status: draft
 short: "Install and Bootstrap — one-command setup with pre-commit hooks, config initialization, and dependency checks"
 ---
 

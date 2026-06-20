@@ -5,11 +5,11 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [validation, autonomous, agent, rules]
-children: ["@speclang/autonomous-validation/rules", "@speclang/autonomous-validation/scoring"]
+children: ["@ref:specs/autonomous-validation/rules", "@ref:specs/autonomous-validation/scoring"]
 short: Validation rules for specs labeled agent_autonomous
 depends_on:
-  - "@speclang/headers"
-  - "@speclang/validation"
+  - "@ref:specs/headers"
+  - "@ref:specs/validation"
 ---
 # Autonomous Validation
 

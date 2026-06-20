@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_assisted
 owned_by: gitreins
 tags: [gitreins, llm]
-status: imported
+status: draft
 short: "LLM Interface — provider-agnostic LLM wrapper with structured output parsing"
 ---
 

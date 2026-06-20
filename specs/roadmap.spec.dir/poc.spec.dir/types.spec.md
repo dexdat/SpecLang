@@ -1,10 +1,12 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: "@speclang/roadmap/poc/types"
 parent: "@ref:specs/roadmap/poc"
 version: 0.1.0
 layer: 2
 short: "TypeScript types and interfaces for POC"
 tags: [poc, types, interfaces, typescript]
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 
 # POC: Type Definitions

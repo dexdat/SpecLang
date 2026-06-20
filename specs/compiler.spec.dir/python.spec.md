@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:10
 id: "@speclang/compiler.spec.dir/python"
 version: 0.1.0
 layer: 5
@@ -6,6 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [compiler, targets, python]
 parent: """@ref:specs/compiler.spec.dir/targets"short: Python code generator implementation"
+short: "Auto-generated spec"
 ---
 
 # Python Code Generator

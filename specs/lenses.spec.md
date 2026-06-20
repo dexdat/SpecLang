@@ -3,7 +3,7 @@ id: "@speclang/lenses"
 version: 0.1.0
 layer: 0
 tags: [lenses, views, formats, parsers]
-children: ["@speclang/lenses/formats", "@speclang/lenses/mermaid"]
+children: ["@ref:specs/lenses/formats", "@ref:specs/lenses/mermaid"]
 project_level: Alpha
 agent_support: agent_assisted
 short: Lenses

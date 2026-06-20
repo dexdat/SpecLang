@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [typescript, generated, auto-generated]
 short: "MCP tool handler for spec operations"
-status: generated
+status: draft
 ---
 
 # Specs Tool Handler

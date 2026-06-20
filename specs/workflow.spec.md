@@ -6,7 +6,7 @@ tags: [workflow, user, guide, setup]
 status: draft
 project_level: Alpha
 agent_support: agent_assisted
-children: ["@speclang/workflow/setup", "@speclang/workflow/daily-use", "@speclang/workflow/examples"]
+children: ["@ref:specs/workflow/setup", "@ref:specs/workflow/daily-use", "@ref:specs/workflow/examples"]
 short: User Workflow
 ---
 

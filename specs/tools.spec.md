@@ -7,7 +7,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [typescript, generated, auto-generated]
 short: "Auto-generated spec for tools.ts"
-status: generated
+status: draft
 ---
 
 ## @block:simpletoolregistry @kind:entity

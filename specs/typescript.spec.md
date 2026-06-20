@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [typescript, generated, auto-generated]
 short: "TypeScript code generator for SpecLang"
-status: generated
+status: draft
 ---
 
 # TypeScript Generator Spec

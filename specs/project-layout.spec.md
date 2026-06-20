@@ -4,7 +4,7 @@ version: 0.1.0
 target: src/project-layout/
 layer: 0
 tags: [layout, structure, files]
-children: ["@speclang/project-layout/structure", "@speclang/project-layout/conventions"]
+children: ["@ref:specs/project-layout/structure", "@ref:specs/project-layout/conventions"]
 status: draft
 
 project_level: Alpha

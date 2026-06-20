@@ -5,7 +5,7 @@ layer: 1
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [agent, support, autonomy, levels]
-children: ["@speclang/agent-support-levels/levels", "@speclang/agent-support-levels/behaviors"]
+children: ["@ref:specs/agent-support-levels/levels", "@ref:specs/agent-support-levels/behaviors"]
 short: Behavioral expectations for each agent_support level
 ---
 

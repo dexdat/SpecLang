@@ -6,10 +6,10 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [typescript, generated, auto-generated, index, tools]
 short: "Tool handler for index operations"
-status: generated
+status: draft
 depends_on:
   - "@specs/indexer"
-  - "@speclang/tools"
+  - "@ref:specs/tools"
 ---
 
 # Index Tools Spec

@@ -10,9 +10,9 @@ agent_support: agent_autonomous
 tags: [roadmap, alpha, phase-3, pipeline, validation]
 children:
 depends_on:"
-  - "@speclang/roadmap/mvp"
-  - "@speclang/pipeline"
-  - "@speclang/validation"
+  - "@ref:specs/roadmap/mvp"
+  - "@ref:specs/pipeline"
+  - "@ref:specs/validation"
 ---
 
 # Alpha Phase: Internal Testing

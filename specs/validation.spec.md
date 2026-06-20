@@ -7,7 +7,7 @@ tags: [validation, schema, errors]
 status: draft
 project_level: Alpha
 agent_support: agent_autonomous
-children: ["@speclang/validation/rules", "@speclang/validation/tool", "@speclang/validation/language-blocks"]
+children: ["@ref:specs/validation/rules", "@ref:specs/validation/tool", "@ref:specs/validation/language-blocks"]
 short: Validation
 ---
 

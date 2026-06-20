@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [semantic, definitions, layer, mapping, autonomous]
 short: Layer mapping definitions and interactions
-parent: "@speclang/semantic-definitions"
+parent: "@ref:specs/semantic-definitions"
 part: "1/2"
 ---
 # Depth Mapping Definitions

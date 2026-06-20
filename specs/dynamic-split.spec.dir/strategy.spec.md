@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:11
 id: "@speclang/dynamic-split/strategy"
 version: 0.1.0
 layer: 2
@@ -6,6 +6,8 @@ tags: [splitting, strategy, logic]
 parent: "@ref:speclang/dynamic-split"
 part: 1/2
 short: Dynamic splitting strategy and configuration
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 
 # Dynamic Splitting Strategy

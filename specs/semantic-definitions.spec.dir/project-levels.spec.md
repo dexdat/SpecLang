@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [semantic, definitions, project-level, agent-support, autonomous]
 short: Project level and agent support definitions and interactions
-parent: "@speclang/semantic-definitions"
+parent: "@ref:specs/semantic-definitions"
 part: "2/2"
 ---
 # Project Level and Agent Support Definitions

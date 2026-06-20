@@ -1,9 +1,11 @@
-# speclang-header lines:7
+# speclang-header lines:9
 id: "@speclang/project-maturity"
 version: 1.0.0
 layer: 1
 short: "Project maturity levels and requirements"
 tags: [maturity, levels, requirements, validation]
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 
 # Project Maturity Levels

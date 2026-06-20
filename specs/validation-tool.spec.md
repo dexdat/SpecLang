@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [validation, tool, python, typescript, autonomous]
 short: Overview and references for validation tool specifications
-children: ["@speclang/validation-tool/implementation", "@speclang/validation-tool/api"]
+children: ["@ref:specs/validation-tool/implementation", "@ref:specs/validation-tool/api"]
 ---
 # Validation Tool Specifications
 

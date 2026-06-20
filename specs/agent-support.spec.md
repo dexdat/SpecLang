@@ -5,7 +5,7 @@ layer: 1
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [agent, support, levels]
-children: ["@speclang/agent-support/human-only"]
+children: ["@ref:specs/agent-support/human-only"]
 short: Agent support level implementations
 ---
 

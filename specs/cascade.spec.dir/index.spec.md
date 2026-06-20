@@ -7,7 +7,7 @@ agent_support: agent_autonomous
 tags: [cascade, implementation, code]
 target: src/cascade/index.ts
 short: Cascade system implementation
-refs: [@speclang/cascade]
+refs: [@ref:specs/cascade]
 ---
 
 # Cascade Implementation

@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_assisted
 owned_by: gitreins
 tags: [gitreins, evaluator]
-status: imported
+status: draft
 short: "Agentic Evaluator — LLM-driven verification of task outputs against acceptance criteria"
 ---
 

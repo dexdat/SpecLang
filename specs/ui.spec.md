@@ -5,20 +5,20 @@ layer: 2
 tags: [dashboard, monitoring, system, mcp, web]
 status: draft
 children:
-  - "@speclang/ui/overview"
-  - "@speclang/ui/visual-design"
-  - "@speclang/ui/components/cascade-status"
-  - "@speclang/ui/components/agent-health"
-  - "@speclang/ui/components/event-timeline"
-  - "@speclang/ui/components/queue-depth"
-  - "@speclang/ui/components/system-metrics"
-  - "@speclang/ui/components/control-panel"
-  - "@speclang/ui/components/cascade-graph"
-  - "@speclang/ui/components/log-viewer"
-  - "@speclang/ui/interactions"
-  - "@speclang/ui/state-management"
-  - "@speclang/ui/testing"
-  - "@speclang/mcp-ui-tools"
+  - "@ref:specs/ui/overview"
+  - "@ref:specs/ui/visual-design"
+  - "@ref:specs/ui/components/cascade-status"
+  - "@ref:specs/ui/components/agent-health"
+  - "@ref:specs/ui/components/event-timeline"
+  - "@ref:specs/ui/components/queue-depth"
+  - "@ref:specs/ui/components/system-metrics"
+  - "@ref:specs/ui/components/control-panel"
+  - "@ref:specs/ui/components/cascade-graph"
+  - "@ref:specs/ui/components/log-viewer"
+  - "@ref:specs/ui/interactions"
+  - "@ref:specs/ui/state-management"
+  - "@ref:specs/ui/testing"
+  - "@ref:specs/mcp-ui-tools"
 short: System monitoring dashboard for SpecLang cascade and agent health (split into parts)
 project_level: Alpha
 agent_support: agent_assisted

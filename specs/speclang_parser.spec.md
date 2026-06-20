@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [python, generated, auto-generated]
 short: "Auto-generated spec for speclang_parser.py"
-status: generated
+status: draft
 ---
 
 ## @block:block @kind:entity

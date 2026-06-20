@@ -66,10 +66,15 @@ When you receive a file change:
 
 Use the standard speclang format:
 
-# speclang-header
+# speclang-header lines:78
 id: "@domain/feature"
 ...
 
+version: "1.0.0"
+layer: 5
+project_level: Alpha
+agent_support: agent_autonomous
+short: "Auto-generated spec"
 ---
 
 # @block:domain/feature @kind:entity

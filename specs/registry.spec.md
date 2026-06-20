@@ -6,8 +6,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [typescript, generated, auto-generated]
 short: "Auto-generated spec for registry.ts"
-status: generated
-children: ["@speclang/registry/storage", "@speclang/registry/lookup"]
+status: draft
+children: ["@ref:specs/registry/storage", "@ref:specs/registry/lookup"]
 ---
 ## @block:agentregistry @kind:entity
 ```text

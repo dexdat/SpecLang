@@ -1,9 +1,11 @@
-# speclang-header lines:7
+# speclang-header lines:9
 id: "@specs/speclangd-ts"
 version: 1.0.0
 layer: 5
 short: Speclang daemon TypeScript implementation
 tags: [daemon, typescript]
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 # Speclang Daemon TypeScript Implementation
 

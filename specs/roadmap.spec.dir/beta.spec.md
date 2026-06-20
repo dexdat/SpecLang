@@ -10,8 +10,8 @@ agent_support: agent_autonomous
 tags: [roadmap, beta, phase-4, performance, stability]
 children:
 depends_on:"
-  - "@speclang/roadmap/alpha"
-  - "@speclang/testing-strategy.spec"
+  - "@ref:specs/roadmap/alpha"
+  - "@ref:specs/testing-strategy.spec"
 ---
 
 # Beta Phase: External Testing

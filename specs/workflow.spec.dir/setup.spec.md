@@ -2,7 +2,7 @@
 id: "@speclang/workflow/setup"
 version: 0.1.0
 layer: 2
-parent: "@speclang/workflow"
+parent: "@ref:specs/workflow"
 part: 1/3
 tags: [workflow, setup, installation, start]
 status: draft

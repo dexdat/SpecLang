@@ -6,7 +6,7 @@ project_level: "Alpha"
 agent_support: "agent_autonomous"
 tags: [auth, mcp, typescript, component]
 short: "Authentication component for MCP server"
-children: ["@speclang/auth/entities", "@speclang/auth/flows"]
+children: ["@ref:specs/auth/entities", "@ref:specs/auth/flows"]
 ---
 # Authentication Component
 

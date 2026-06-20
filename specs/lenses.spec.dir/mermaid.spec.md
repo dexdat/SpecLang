@@ -8,7 +8,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [lenses, mermaid, diagrams, visualization]
 version: 0.1.0
-layer: "4"
+layer: 5
 ---
 
 # Mermaid Diagram Lens

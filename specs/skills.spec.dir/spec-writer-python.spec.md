@@ -90,12 +90,17 @@ def process_items(items: list[str]) -> dict[str, int]:
 
 Use the standard speclang format:
 
-# speclang-header
+# speclang-header lines:104
 id: "@domain/feature"
 target_lang: py
 output: .speclang/assembled/domain-feature.spec.py
 ...
 
+version: "1.0.0"
+layer: 5
+project_level: Alpha
+agent_support: agent_autonomous
+short: "Auto-generated spec"
 ---
 
 # @block:domain/feature @kind:entity

@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [search, queries, indexing]
 short: "Search functionality: queries and indexing"
-children: ["@speclang/search/queries", "@speclang/search/indexing"]
+children: ["@ref:specs/search/queries", "@ref:specs/search/indexing"]
 ---
 
 # Search Functionality

@@ -7,7 +7,7 @@ status: draft
 short: UI integration for MCP dashboard monitoring tools
 project_level: Alpha
 agent_support: agent_assisted
-parent: "@speclang/mcp-ui-tools"
+parent: "@ref:specs/mcp-ui-tools"
 part: 2/2
 ---
 # MCP UI Tools - UI Integration

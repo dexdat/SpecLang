@@ -1,10 +1,12 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: "@speclang/roadmap/poc/convergence"
 parent: "@ref:specs/roadmap/poc"
 version: 0.1.0
 layer: 2
 short: "Detect when cascade has converged"
 tags: [poc, convergence, detection, completion]
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 
 # POC: Convergence Detection

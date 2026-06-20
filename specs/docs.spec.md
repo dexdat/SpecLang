@@ -1,9 +1,11 @@
-# speclang-header lines:7
+# speclang-header lines:9
 id: "@specs/docs"
 version: 1.0.0
 layer: 5
 short: Documentation specifications
 tags: [docs, documentation]
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 # Documentation Specifications
 

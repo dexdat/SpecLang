@@ -1,10 +1,12 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: "@speclang/roadmap/poc/package-json"
 parent: "@ref:specs/roadmap/poc"
 version: 0.1.0
 layer: 2
 short: "Package.json specification for POC"
 tags: [poc, package, dependencies, npm]
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 
 # POC: Package.json

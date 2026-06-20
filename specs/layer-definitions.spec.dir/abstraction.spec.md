@@ -5,7 +5,7 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [layer, definitions, abstraction, guidelines]
-parent: "@speclang/layer-definitions"
+parent: "@ref:specs/layer-definitions"
 part: "1/2"
 short: Abstract depth definitions, table, guidelines, and validation rules
 ---

@@ -1,10 +1,12 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: "@bugs/integration-test-template"
 version: 1.0.0
 layer: 5
 tags: [bug, template, documentation]
 short: Template for documenting bugs found during dogfooding
-status: template
+project_level: Alpha
+agent_support: agent_autonomous
+status: draft
 ---
 
 # Bug Report Template

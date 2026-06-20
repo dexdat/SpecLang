@@ -3,7 +3,7 @@ id: "@speclang/opencode/integration"
 version: 0.1.0
 layer: 2
 tags: [opencode, plugin, sqlite, tools, skills, git, profiles]
-parent: "@speclang/opencode"
+parent: "@ref:specs/opencode"
 part: "2/2"
 project_level: Alpha
 agent_support: agent_assisted

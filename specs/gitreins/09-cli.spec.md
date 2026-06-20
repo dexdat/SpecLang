@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_assisted
 owned_by: gitreins
 tags: [gitreins, cli]
-status: imported
+status: draft
 short: "CLI — command-line interface for GitReins with init, guard, task, pipeline, and status commands"
 ---
 

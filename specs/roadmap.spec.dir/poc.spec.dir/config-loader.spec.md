@@ -1,10 +1,12 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: "@speclang/roadmap/poc/config-loader"
 parent: "@ref:specs/roadmap/poc"
 version: 0.1.0
 layer: 2
 short: "Configuration loading for POC daemon"
 tags: [poc, config, configuration, yaml, loading]
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 
 # POC: Configuration Loader

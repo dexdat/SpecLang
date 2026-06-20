@@ -7,7 +7,7 @@ status: draft
 short: MCP tool definitions for dashboard monitoring
 project_level: Alpha
 agent_support: agent_assisted
-parent: "@speclang/mcp-ui-tools"
+parent: "@ref:specs/mcp-ui-tools"
 part: 1/2
 ---
 # MCP UI Tools - Tool Definitions

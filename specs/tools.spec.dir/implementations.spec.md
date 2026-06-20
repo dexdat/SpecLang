@@ -2,7 +2,7 @@
 id: "@speclang/tools/implementations"
 version: 0.1.0
 layer: 2
-parent: "@speclang/tools"
+parent: "@ref:specs/tools"
 part: 2/2
 tags: [tools, implementation, skills]
 status: draft

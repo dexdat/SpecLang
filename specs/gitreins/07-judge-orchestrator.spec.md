@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_assisted
 owned_by: gitreins
 tags: [gitreins, judge, evaluation]
-status: imported
+status: draft
 short: "Judge Orchestrator — coordinates evaluator loops, aggregates verdicts, computes scores, and handles recovery"
 ---
 

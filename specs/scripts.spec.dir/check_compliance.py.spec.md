@@ -1,10 +1,13 @@
-# speclang-header lines:8
+# speclang-header lines:11
 id: "@speclang/scripts/check-compliance"
 parent: "@ref:specs/scripts"
 version: 0.1.0
 layer: 3
 target: scripts/check_compliance.py
 tags: [scripts, compliance, dual-view, validation]
+project_level: Alpha
+agent_support: agent_autonomous
+short: "Auto-generated spec"
 ---
 
 # Check Compliance Script

@@ -10,9 +10,9 @@ agent_support: agent_autonomous
 tags: [roadmap, production, phase-5, enterprise, security]
 children:
 depends_on:"
-  - "@speclang/roadmap/beta"
-  - "@speclang/deployment"
-  - "@speclang/safety-nets"
+  - "@ref:specs/roadmap/beta"
+  - "@ref:specs/deployment"
+  - "@ref:specs/safety-nets"
 ---
 
 # Production Phase: Enterprise Ready

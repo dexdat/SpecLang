@@ -1,10 +1,12 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: "@bugs/cli-missing-generate-command"
 version: 1.0.0
 layer: 5
 tags: [bug, cli, commands]
 short: CLI is missing the generate command that exists in specs
-status: open
+project_level: Alpha
+agent_support: agent_autonomous
+status: draft
 ---
 
 # Bug: CLI Missing Generate Command

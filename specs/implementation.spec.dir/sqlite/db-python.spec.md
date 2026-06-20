@@ -8,7 +8,7 @@ tags: [sqlite, database, python, connection]
 short: Python SQLite database module for Speclang
 project_level: Alpha
 agent_support: agent_autonomous
-status: stable
+status: active
 ---
 
 # Python SQLite Database Module

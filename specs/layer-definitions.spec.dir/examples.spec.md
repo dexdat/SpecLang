@@ -5,7 +5,7 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [layer, definitions, examples, concrete]
-parent: "@speclang/layer-definitions"
+parent: "@ref:specs/layer-definitions"
 part: "2/2"
 short: Concrete depth definitions with examples
 ---

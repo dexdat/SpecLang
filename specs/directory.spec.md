@@ -1,8 +1,11 @@
-# speclang-header lines:6
+# speclang-header lines:9
 id: "@specs/directory"
 version: 1.0.0
 layer: 5
 target: src/directory/
+project_level: Alpha
+agent_support: agent_autonomous
+short: "Auto-generated spec"
 ---
 
 # Directory Module Spec

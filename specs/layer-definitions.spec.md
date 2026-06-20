@@ -5,7 +5,7 @@ layer: 1
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [layer, definitions, tree, depth, metadata]
-children: ["@speclang/layer-definitions/abstraction", "@speclang/layer-definitions/examples"]
+children: ["@ref:specs/layer-definitions/abstraction", "@ref:specs/layer-definitions/examples"]
 short: "Tree Depth Definitions - Relative position in dependency tree"
 ---
 # Tree Depth Definitions

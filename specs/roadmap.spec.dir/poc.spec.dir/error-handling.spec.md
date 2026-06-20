@@ -1,10 +1,12 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: "@speclang/roadmap/poc/error-handling"
 parent: "@ref:specs/roadmap/poc"
 version: 0.1.0
 layer: 2
 short: "Error recovery strategies for POC"
 tags: [poc, errors, recovery, handling, resilience]
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 
 # POC: Error Handling

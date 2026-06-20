@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [agent, behavior, matrix, autonomous]
 short: Core behavior matrix definitions
-parent: "@speclang/agent-behavior-matrix"
+parent: "@ref:specs/agent-behavior-matrix"
 part: "1/2"
 ---
 # Agent Behavior Matrix

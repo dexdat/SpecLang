@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_assisted
 owned_by: gitreins
 tags: [gitreins, guard]
-status: imported
+status: draft
 short: "Guard Manager — tiered pre-commit guard system with secrets scan, lint, test, and agentic evaluator"
 ---
 

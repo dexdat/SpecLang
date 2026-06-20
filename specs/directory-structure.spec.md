@@ -3,7 +3,7 @@ id: "@speclang/directory-structure"
 version: 0.1.0
 layer: 0
 tags: [directory, structure, hierarchy, dir]
-children: ["@speclang/directory-structure/pattern", "@speclang/directory-structure/creation"]
+children: ["@ref:specs/directory-structure/pattern", "@ref:specs/directory-structure/creation"]
 status: draft
 
 project_level: Alpha

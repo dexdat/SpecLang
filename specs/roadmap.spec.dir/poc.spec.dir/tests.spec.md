@@ -1,10 +1,12 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: "@speclang/roadmap/poc/tests"
 parent: "@ref:specs/roadmap/poc"
 version: 0.1.0
 layer: 2
 short: "Comprehensive test suite for POC"
 tags: [poc, tests, testing, validation]
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 
 # POC: Test Suite

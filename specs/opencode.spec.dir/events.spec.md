@@ -3,7 +3,7 @@ id: "@speclang/opencode/events"
 version: 0.1.0
 layer: 2
 tags: [opencode, events, file-watching, convergence]
-parent: "@speclang/opencode"
+parent: "@ref:specs/opencode"
 part: "1/2"
 project_level: Alpha
 agent_support: agent_assisted

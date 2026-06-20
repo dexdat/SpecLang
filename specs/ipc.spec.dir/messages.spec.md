@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [ipc, messages, typescript]
 short: "IPC message types and formats"
-parent: "@speclang/ipc"
+parent: "@ref:specs/ipc"
 part: 1/2
 ---
 ## @block:messages @kind:entity

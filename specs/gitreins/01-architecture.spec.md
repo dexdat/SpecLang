@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_assisted
 owned_by: gitreins
 tags: [gitreins, architecture, data-flow]
-status: imported
+status: draft
 short: "GitReins architecture and data flow — system identity, tiered evaluation, component dependency graph, technology stack, and non-functional requirements"
 ---
 

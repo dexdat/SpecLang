@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_assisted
 owned_by: gitreins
 tags: [gitreins, mcp, server]
-status: imported
+status: draft
 short: "MCP Server — exposes GitReins tools via stdio MCP for task management, guard execution, agentic evaluation, and pipeline control"
 ---
 

@@ -4,7 +4,7 @@ version: 0.1.0
 layer: 2
 tags: [deployment, enterprise, scale, compliance]
 status: draft
-parent: "@speclang/deployment"
+parent: "@ref:specs/deployment"
 part: "2/2"
 
 project_level: Alpha

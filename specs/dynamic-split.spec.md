@@ -6,7 +6,7 @@ tags: [splitting, sizing, tokens, limits]
 status: draft
 project_level: Alpha
 agent_support: agent_assisted
-children: ["@speclang/dynamic-split/strategy", "@speclang/dynamic-split/token-budget"]
+children: ["@ref:specs/dynamic-split/strategy", "@ref:specs/dynamic-split/token-budget"]
 short: Dynamic Splitting (split into 2 sub-specs)
 ---
 

@@ -1,10 +1,13 @@
-# speclang-header lines:8
+# speclang-header lines:11
 id: "@speclang/scripts/generate-index"
 parent: "@ref:specs/scripts"
 version: 0.1.0
 layer: 3
 target: scripts/generate_index.py
 tags: [scripts, index, specs, validation]
+project_level: Alpha
+agent_support: agent_autonomous
+short: "Auto-generated spec"
 ---
 
 # Generate Index Script

@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_assisted
 owned_by: gitreins
 tags: [gitreins, config]
-status: imported
+status: draft
 short: "Configuration Schema — .gitreins/config.yaml structure for guards, tasks, pipelines, and LLM settings"
 ---
 

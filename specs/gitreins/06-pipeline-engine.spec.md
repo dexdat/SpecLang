@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_assisted
 owned_by: gitreins
 tags: [gitreins, pipeline]
-status: imported
+status: draft
 short: "Pipeline Engine — structured pipeline execution with stage lifecycle and failure recovery"
 ---
 

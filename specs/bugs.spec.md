@@ -1,9 +1,11 @@
-# speclang-header lines:7
+# speclang-header lines:9
 id: "@speclang/bugs"
 version: 1.0.0
 layer: 5
 tags: [bugs, issues, fixes]
 short: Collection of bug reports and fixes
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 
 # Bugs Collection

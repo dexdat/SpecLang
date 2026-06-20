@@ -1,10 +1,12 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: "@speclang/roadmap/poc/template-registry"
 parent: "@ref:specs/roadmap/poc"
 version: 0.1.0
 layer: 2
 short: "Template registry with loading mechanism"
 tags: [poc, templates, registry, loading, codegen]
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 
 # POC: Template Registry

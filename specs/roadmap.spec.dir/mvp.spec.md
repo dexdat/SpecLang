@@ -10,9 +10,9 @@ agent_support: agent_autonomous
 tags: [roadmap, mvp, phase-2, agents, coordination]
 children:
 depends_on:"
-  - "@speclang/roadmap/poc"
-  - "@speclang/agents"
-  - "@speclang/agent-protocol"
+  - "@ref:specs/roadmap/poc"
+  - "@ref:specs/agents"
+  - "@ref:specs/agent-protocol"
 ---
 
 # MVP Phase: Minimum Viable Product

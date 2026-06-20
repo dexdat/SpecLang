@@ -1,10 +1,12 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: "@speclang/roadmap/poc/path-utils"
 parent: "@ref:specs/roadmap/poc"
 version: 0.1.0
 layer: 2
 short: "Path resolution utilities - spec ID to filesystem mapping"
 tags: [poc, paths, utils, filesystem, mapping]
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 
 # POC: Path Utilities

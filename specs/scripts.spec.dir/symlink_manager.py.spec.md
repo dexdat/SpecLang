@@ -1,10 +1,13 @@
-# speclang-header lines:8
+# speclang-header lines:11
 id: "@speclang/scripts/symlink-manager"
 parent: "@ref:specs/scripts"
 version: 0.1.0
 layer: 3
 target: scripts/symlink_manager.py
 tags: [scripts, symlinks, dual-view, filesystem]
+project_level: Alpha
+agent_support: agent_autonomous
+short: "Auto-generated spec"
 ---
 
 # Symlink Manager Script

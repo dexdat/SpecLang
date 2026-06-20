@@ -1,10 +1,12 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: "@speclang/roadmap/poc/block-parser"
 parent: "@ref:specs/roadmap/poc"
 version: 0.1.0
 layer: 2
 short: "Parse @block: definitions from markdown specs"
 tags: [poc, parser, blocks, markdown]
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 
 # POC: Block Parser

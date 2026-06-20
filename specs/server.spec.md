@@ -6,10 +6,10 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [typescript, generated, auto-generated, mcp, server]
 short: "MCP Server implementation for SpecLang"
-status: generated
+status: draft
 depends_on:
-  - "@speclang/mcp"
-  - "@speclang/core"
+  - "@ref:specs/mcp"
+  - "@ref:specs/core"
 ---
 
 # MCP Server Spec

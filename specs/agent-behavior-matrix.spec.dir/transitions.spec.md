@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [agent, behavior, transitions, autonomous]
 short: Transition workflows and fallback protocols
-parent: "@speclang/agent-behavior-matrix"
+parent: "@ref:specs/agent-behavior-matrix"
 part: "2/2"
 ---
 ## Mixed Maturity Handling

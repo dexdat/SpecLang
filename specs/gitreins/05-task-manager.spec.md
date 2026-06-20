@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_assisted
 owned_by: gitreins
 tags: [gitreins, task]
-status: imported
+status: draft
 short: "Task Manager — YAML-backed task lifecycle management with create/start/complete states"
 ---
 

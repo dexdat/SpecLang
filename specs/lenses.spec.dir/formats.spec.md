@@ -2,7 +2,7 @@
 id: "@speclang/lenses/formats"
 version: 0.1.0
 layer: 2
-parent: "@speclang/lenses"
+parent: "@ref:specs/lenses"
 part: 1/2
 tags: [lenses, formats, built-in]
 project_level: Alpha

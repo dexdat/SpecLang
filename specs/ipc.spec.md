@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [ipc, typescript, communication]
 short: "Inter‑Process Communication system"
-children: ["@speclang/ipc/messages", "@speclang/ipc/channels"]
+children: ["@ref:specs/ipc/messages", "@ref:specs/ipc/channels"]
 ---
 
 ## @block:ipc @kind:entity

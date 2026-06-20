@@ -7,7 +7,7 @@ agent_support: agent_assisted
 owned_by: gitreins
 tags: [gitreins, index]
 depends_on: []
-status: imported
+status: draft
 short: "GitReins specification index — 11 specs for task lifecycle, agentic evaluator, guard manager, pipeline engine, MCP server, CLI, and bootstrap"
 ---
 

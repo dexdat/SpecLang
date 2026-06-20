@@ -1,10 +1,12 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: "@speclang/roadmap/poc/code-generator"
 parent: "@ref:specs/roadmap/poc"
 version: 0.1.0
 layer: 2
 short: "Code generator orchestrator - ties templates to file output"
 tags: [poc, codegen, generator, orchestration]
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 
 # POC: Code Generator

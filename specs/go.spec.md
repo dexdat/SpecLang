@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [go, generated, auto-generated]
 short: "Go code generator for SpecLang"
-status: generated
+status: draft
 ---
 
 # Go Generator Spec

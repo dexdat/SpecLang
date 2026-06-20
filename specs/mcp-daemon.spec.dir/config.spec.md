@@ -6,7 +6,7 @@ tags: [mcp, daemon, http, sse, enterprise]
 status: draft
 project_level: Alpha
 agent_support: agent_assisted
-parent: "@speclang/mcp-daemon"
+parent: "@ref:specs/mcp-daemon"
 part: 2/2
 short: MCP Daemon Configuration
 ---

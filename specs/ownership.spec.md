@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [typescript, generated, auto-generated]
 short: "Auto-generated spec for ownership.ts"
-status: generated
+status: draft
 ---
 
 ## @block:ownershipregistry @kind:entity

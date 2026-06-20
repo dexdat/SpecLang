@@ -7,7 +7,7 @@ tags: [sqlite, schema, implementation, migration, typescript]
 short: SQLite database schema definitions and migration scripts for Speclang
 project_level: Alpha
 agent_support: agent_autonomous
-status: stable
+status: active
 ---
 
 # SQLite Schema Implementation

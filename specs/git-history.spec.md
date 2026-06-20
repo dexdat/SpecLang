@@ -3,7 +3,7 @@ id: "@speclang/git-history"
 version: 0.1.0
 layer: 0
 tags: [git, history, commits, traceability]
-children: ["@speclang/git-history/commits", "@speclang/git-history/rollback"]
+children: ["@ref:specs/git-history/commits", "@ref:specs/git-history/rollback"]
 status: draft
 
 project_level: Alpha

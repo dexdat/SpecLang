@@ -1,10 +1,12 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: "@speclang/roadmap/poc/build-integration"
 parent: "@ref:specs/roadmap/poc"
 version: 0.1.0
 layer: 2
 short: "Build integration for generated code"
 tags: [poc, build, npm, typescript, integration]
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 
 # POC: Build Integration

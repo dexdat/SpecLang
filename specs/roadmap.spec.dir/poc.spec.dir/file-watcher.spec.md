@@ -1,10 +1,12 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: "@speclang/roadmap/poc/file-watcher"
 parent: "@ref:specs/roadmap/poc"
 version: 0.1.0
 layer: 2
 short: "File system watcher implementation"
 tags: [poc, file-watcher, daemon, inotify]
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 
 # POC: File Watcher

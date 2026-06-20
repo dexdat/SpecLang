@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [ipc, channels, communication]
 short: "IPC communication channels"
-parent: "@speclang/ipc"
+parent: "@ref:specs/ipc"
 part: 2/2
 ---
 ## @block:channels @kind:entity

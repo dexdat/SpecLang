@@ -1,10 +1,12 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: "@speclang/roadmap/poc/events"
 parent: "@ref:specs/roadmap/poc"
 version: 0.1.0
 layer: 2
 short: "Event system for POC components"
 tags: [poc, events, eventemitter, communication]
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 
 # POC: Event System

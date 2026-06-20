@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [safety, validation, analysis, scoring]
 short: Automated analysis and confidence scoring for safety nets
-parent: "@speclang/safety-nets"
+parent: "@ref:specs/safety-nets"
 part: 1/2
 ---
 # Safety Nets: Analysis

@@ -1,10 +1,12 @@
-# speclang-header lines:8
+# speclang-header lines:10
 id: "@speclang/roadmap/poc/cli"
 parent: "@ref:specs/roadmap/poc"
 version: 0.1.0
 layer: 2
 short: "Command line interface for POC daemon"
 tags: [poc, cli, commands, ux, interface]
+project_level: Alpha
+agent_support: agent_autonomous
 ---
 
 # POC: Command Line Interface
