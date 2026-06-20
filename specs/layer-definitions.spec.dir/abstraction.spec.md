@@ -95,8 +95,8 @@ LayerValidation:
 ```speclang
 # @block:depth/references @kind:refs
 refs:
-  - "@ref:speclang/headers#layer
-  - "@ref:speclang/spec-format#layers
-  - "@ref:speclang/project-maturity-levels
-  - "@ref:speclang/agent-support-levels
+  - "@ref:speclang/headers#layer"
+  - "@ref:speclang/spec-format#layers"
+  - "@ref:speclang/project-maturity-levels"
+  - "@ref:speclang/agent-support-levels"
 ```

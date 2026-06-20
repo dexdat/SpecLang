@@ -13,7 +13,7 @@ short: Symlink Verification and Tooling
 
 Part 2 of 2: Verification, git handling, tools, and layout examples.
 
-Parent: @ref:specs/symlinks
+Parent: "@ref:specs/symlinks"
 
 ## Symlink Verification
 

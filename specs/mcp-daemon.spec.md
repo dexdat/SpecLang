@@ -9,7 +9,7 @@ project_level: Alpha
 agent_support: agent_assisted
 children:
   - "@speclang/mcp-daemon/architecture"
-  - "@speclang/mcp-daemon/config"
+- "@speclang/mcp-daemon/config"
 short: MCP Daemon for enterprise deployments
 ---
 
@@ -51,8 +51,8 @@ Architecture:
 ### @block::children @kind:entity
 
 ChildSpecs:
-  - "@speclang/mcp-daemon/architecture" – Detailed architecture
-  - "@speclang/mcp-daemon/config" – Configuration options
+  - "@speclang/mcp-daemon/architecture" – Detailed architecture"
+  - "@speclang/mcp-daemon/config" – Configuration options"
 
 ### @block::deployment @kind:entity
 

@@ -1,5 +1,5 @@
 # speclang-header lines:13
-id: @specs/self-host-harness.modified.spec
+id: "@specs/self-host-harness.modified.spec"
 version: 1.0.0
 layer: 5
 target: src/self-host-harness.modified.ts

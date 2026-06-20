@@ -517,8 +517,8 @@ Potential future enhancements:
 
 ## References
 
-- "@ref:speclang/mcp
-- @ref:speclang/cli
-- @ref:speclang/tools
-- @ref:speclang/pipeline
-- @ref:northstar/speclang
+- "@ref:speclang/mcp"
+- "@ref:speclang/cli"
+- "@ref:speclang/tools"
+- "@ref:speclang/pipeline"
+- "@ref:northstar/speclang"

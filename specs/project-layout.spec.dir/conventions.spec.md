@@ -4,7 +4,7 @@ version: 0.1.0
 layer: 2
 tags: [layout, conventions, naming, refs]
 imports: ["@speclang/project-layout"]
-parent: @ref:specs/project-layout
+parent: "@ref:specs/project-layout"
 part: 2/2
 status: draft
 project_level: Alpha
@@ -37,7 +37,7 @@ NamingConventions:
 # @block:layout/refs @kind:note
 Reference paths are relative to project root:
 
-- "@ref:specs/auth -> specs/auth.scl
+- "@ref:specs/auth -> specs/auth.scl"
 - @ref:tests/auth#login -> tests/auth.test.spec.scl block "login"
 - @ref:northstar -> project.scl
 - @ref:generated/ts/auth -> generated/ts/auth/

@@ -14,7 +14,7 @@ short: CodeGen Skill
 
 Part 2/3 of the Speclang Skills Pack.
 
-Parent: @ref:specs/skills
+Parent: "@ref:specs/skills"
 
 ## CodeGen Skill
 
@@ -53,8 +53,8 @@ Default: TypeScript
 ## Code Generation Rules
 
 1. Every generated file must have SPECLANG markers:
-   // SPECLANG-ID: @ref:specs/spec-format#format/block
-   // SPECLANG-NORTHSTAR: @ref:northstar#feature
+   // SPECLANG-ID: "@ref:specs/spec-format#format/block"
+   // SPECLANG-NORTHSTAR: "@ref:northstar#feature"
    // SPECLANG-VERSION: 1.0.0
    // SPECLANG-GENERATED: DO NOT EDIT
 

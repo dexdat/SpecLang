@@ -1,5 +1,5 @@
 # speclang-header lines:13
-id: @specs/swarm_backup
+id: "@specs/swarm_backup"
 version: 1.0.0
 layer: 5
 target: src/swarm_backup/

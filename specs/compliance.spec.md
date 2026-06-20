@@ -14,7 +14,7 @@ short: Compliance verification for dual-view pattern
 
 Part of Speclang Quality Assurance.
 
-Parent: @ref:specs/quality
+Parent: "@ref:specs/quality"
 
 ## Compliance System
 
@@ -195,7 +195,7 @@ def check_spec_header(spec_path: Path) -> Tuple[bool, List[str]]:
         errors.append("Missing speclang-header")
     
     # Check for id
-    if 'id: @specs/' not in content:
+    if 'id: "@specs/"' not in content:
         errors.append("Missing id field")
     
     # Check for version

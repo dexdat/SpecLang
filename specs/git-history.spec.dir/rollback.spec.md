@@ -4,7 +4,7 @@ version: 0.1.0
 layer: 2
 tags: [git, history, rollback, revert]
 imports: ["@speclang/git-history"]
-parent: @ref:specs/git-history
+parent: "@ref:specs/git-history"
 part: 2/2
 status: draft
 project_level: Alpha

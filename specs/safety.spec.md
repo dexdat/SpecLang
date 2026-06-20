@@ -28,5 +28,5 @@ Components:
 ## @block:dependencies @kind:refs
 
 refs:
-- @ref:specs/safety-nets
-- @ref:specs/safety-confidence
+- "@ref:specs/safety-nets"
+- "@ref:specs/safety-confidence"

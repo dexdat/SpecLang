@@ -63,5 +63,5 @@ tools.define('speclang_validate', {
 
 ## References
 
-- "@ref:speclang/mcp (MCP tool pattern)
+- "@ref:speclang/mcp (MCP tool pattern)"
 - @ref:speclang/opencode-plugin.spec.dir/mcp-client (for query/execute)

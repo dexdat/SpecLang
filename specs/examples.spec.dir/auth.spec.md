@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [examples, auth, security, entities]
 short: Authentication example spec
-parent: @ref:speclang/examples
+parent: "@ref:speclang/examples"
 part: 2/3
 target: src/examples/auth.ts
 ---

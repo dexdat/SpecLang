@@ -53,4 +53,4 @@ async function withErrorHandling<T>(fn: () => Promise<T>, context: string): Prom
 
 ## References
 
-- "@ref:speclang/recovery (recovery system)
+- "@ref:speclang/recovery (recovery system)"

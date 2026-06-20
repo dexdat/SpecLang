@@ -1,5 +1,5 @@
 # speclang-header lines:13
-id: @specs/lsp
+id: "@specs/lsp"
 version: 1.0.0
 layer: 5
 target: src/lsp/

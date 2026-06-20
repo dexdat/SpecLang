@@ -22,9 +22,9 @@ The Safety Confidence Scoring system:
 
 ## @block:references @kind:ref
 
-- "@ref:speclang/safety-nets
-- @ref:speclang/autonomous-validation
-- @ref:speclang/security
+- "@ref:speclang/safety-nets"
+- "@ref:speclang/autonomous-validation"
+- "@ref:speclang/security"
 
 ## @block:implementation @kind:note
 

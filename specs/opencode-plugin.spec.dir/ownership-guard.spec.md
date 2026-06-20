@@ -87,5 +87,5 @@ async function releaseOwnership(sessionId: string): Promise<void> {
 
 ## References
 
-- "@ref:speclang/opencode-plugin.spec.dir/session-manager
+- "@ref:speclang/opencode-plugin.spec.dir/session-manager"
 - @ref:speclang/sqlite (for file_locks table)

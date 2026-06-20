@@ -6,7 +6,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [headers, format, universal, metadata]
 children:
-  - "@ref:@ref:specs/spec-format.spec.dir/structure"  - "@ref:specs/spec-format.spec.dir/blocks"
+  - "@ref:specs/spec-format.spec.dir/structure"
+- "@ref:specs/spec-format.spec.dir/blocks"
 short: "Universal Headers - Metadata format for all SpecLang files"
 status: draft
 ---
@@ -29,7 +30,8 @@ agent_support: agent_autonomous
 tags: [example, docs]
 short: Brief description
 depends_on:
-  - "@ref:specs/other#block"caused_by: "@commit:abc123def"    # optional: commit hash that triggered this
+  - "@ref:specs/other#block"
+caused_by: "@commit:abc123def"    # optional: commit hash that triggered this
 change_id: "@commit:def456ghi"    # optional: this commit's hash
 part_of: "@cascade:20250222-001" # optional: cascade this belongs to
 ---

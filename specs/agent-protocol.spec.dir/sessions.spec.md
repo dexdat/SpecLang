@@ -6,7 +6,8 @@ project_level: Alpha
 agent_support: agent_assisted
 tags: [agents, protocol, sessions, lifecycle, api]
 short: Agent Sessions and Lifecycle
-parent: ""@ref:speclang/agent-protocol"part: 1/2
+parent: "@ref:speclang/agent-protocol"
+part: 1/2
 ---
 
 ## Sessions

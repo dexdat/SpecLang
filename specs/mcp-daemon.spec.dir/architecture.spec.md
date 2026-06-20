@@ -11,7 +11,6 @@ parent: "@speclang/mcp-daemon"
 part: 1/2
 siblings:
   next: "@speclang/mcp-daemon/config"
-
 short: MCP Daemon Architecture
 ---
 # MCP Daemon

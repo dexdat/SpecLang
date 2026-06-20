@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [validation, tool, python, typescript, autonomous]
 short: API and interface definitions for validation tool
-parent: @ref:speclang/validation-tool
+parent: "@ref:speclang/validation-tool"
 part: 2/2
 ---
 # Validation Tool API
@@ -145,8 +145,8 @@ interface ValidationTool {
 ```speclang
 # @block:validation-tool/references @kind:refs
 refs:
-  - "@ref:speclang/autonomous-validation
-  - "@ref:speclang/safety-nets
-  - "@ref:speclang/validation
-  - "@ref:speclang/headers
+  - "@ref:speclang/autonomous-validation"
+  - "@ref:speclang/safety-nets"
+  - "@ref:speclang/validation"
+  - "@ref:speclang/headers"
 ```

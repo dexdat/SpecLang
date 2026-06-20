@@ -5,10 +5,10 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [typescript, hooks, handlers]
-parent: @ref:specs/hooks
+parent: "@ref:specs/hooks"
 part: 2/2
 siblings:
-  prev: @ref:specs/hooks.spec.dir/lifecycle
+  prev: "@ref:specs/hooks.spec.dir/lifecycle"
 short: "Built-in hook handlers and utilities"
 ---
 # Hook Handlers

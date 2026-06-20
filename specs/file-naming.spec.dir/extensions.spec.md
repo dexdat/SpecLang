@@ -13,7 +13,7 @@ short: File Extensions
 
 Part 1 of 2: File extensions and format types.
 
-Parent: @ref:speclang/file-naming
+Parent: "@ref:speclang/file-naming"
 
 ## File Extensions
 
@@ -89,7 +89,7 @@ speclang-header:
   id: @generated/handler-go
   layer: 5
   produces: handler.go
-  refs: [""@ref:specs/auth#login""]
+  refs: ["@ref:specs/auth#login""]
 
 block:
   kind: code
@@ -97,7 +97,7 @@ block:
   content: |
     package auth
     
-    // SPECLANG-ID: @ref:specs/auth#login
+    // SPECLANG-ID: "@ref:specs/auth#login"
     func Login(email, password string) (*Token, error) {
       // implementation
     }
@@ -205,12 +205,12 @@ YAMLSpec:
 ```yaml
 # auth.spec.yaml
 speclang-header:
-  id: @specs/auth
+  id: "@specs/auth"
   version: 1.0.0
   layer: 3
   refs:
-    - "@ref:northstar#auth
-    - "@ref:stdlib/Result
+    - "@ref:northstar#auth"
+    - "@ref:stdlib/Result"
 
 blocks:
   - id: auth/User
@@ -258,12 +258,12 @@ SpecHeader:
   
   yaml:
     speclang-header:
-      id: @specs/auth
+      id: "@specs/auth"
       version: 1.0.0
       layer: 2
       
   markdown:
     # speclang-header
-    id: @specs/auth
+    id: "@specs/auth"
     version: 1.0.0
 ```

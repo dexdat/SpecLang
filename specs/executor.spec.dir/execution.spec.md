@@ -5,10 +5,10 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [executor, execution, pipeline]
-parent: @ref:specs/executor
+parent: "@ref:specs/executor"
 part: 1/2
 siblings:
-  next: @ref:specs/executor.spec.dir/scheduling
+  next: "@ref:specs/executor.spec.dir/scheduling"
 
 short: Pipeline stage execution - running commands, hooks, retries
 ---

@@ -66,5 +66,5 @@ async function initialize(db: Database): Promise<void> {
 
 ## References
 
-- "@ref:speclang/opencode-plugin.spec.dir/overview (overview)
+- "@ref:speclang/opencode-plugin.spec.dir/overview (overview)"
 - @ref:speclang/opencode-plugin.spec.dir/configuration (config)

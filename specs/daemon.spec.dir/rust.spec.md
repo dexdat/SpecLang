@@ -1,8 +1,9 @@
 # speclang-header lines:13
 id: "@speclang/daemon/rust"
-parent: ""@ref:specs/daemon"part: 5/5
+parent: "@ref:specs/daemon"part: 5/5
 siblings:
-  prev: ""@ref:specs/daemon.spec.dir/convergence"short: Rust implementation of speclangd daemon
+  prev: "@ref:specs/daemon.spec.dir/convergence"
+short: Rust implementation of speclangd daemon
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [daemon, rust, implementation, code]

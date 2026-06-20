@@ -6,7 +6,8 @@ tags: [compiler, templates, codegen, markers]
 imports: ["@speclang/core", "@speclang/stdlib", "@speclang/spec-format"]
 project_level: Alpha
 agent_support: agent_assisted
-parent: ""@ref:speclang/compiler"part: 3/3
+parent: "@ref:speclang/compiler"
+part: 3/3
 short: Code generation templates and markers
 
 ---

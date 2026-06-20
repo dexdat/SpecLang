@@ -109,7 +109,7 @@ speclang test
 
 ## @speclang/references
 
-- "@ref:specs/core - Core architecture
+- "@ref:specs/core - Core architecture"
 - @ref:specs/bootstrap - Bootstrap process
 - @ref:specs/tutorial - Step-by-step tutorial
 - @ref:specs/examples/hello-world - Minimal example

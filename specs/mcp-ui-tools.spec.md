@@ -10,7 +10,7 @@ project_level: Alpha
 agent_support: agent_assisted
 children:
   - "@speclang/mcp-ui-tools/tools"
-  - "@speclang/mcp-ui-tools/ui"
+- "@speclang/mcp-ui-tools/ui"
 ---
 
 # MCP UI Tools
@@ -49,8 +49,8 @@ UIComponents:
 ### @block::children @kind:entity
 
 ChildSpecs:
-  - "@speclang/mcp-ui-tools/tools" – Tool definitions
-  - "@speclang/mcp-ui-tools/ui" – UI components
+  - "@speclang/mcp-ui-tools/tools" – Tool definitions"
+  - "@speclang/mcp-ui-tools/ui" – UI components"
 
 ### @block::real-time @kind:entity
 

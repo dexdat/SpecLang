@@ -11,7 +11,6 @@ parent: "@speclang/mcp-daemon"
 part: 2/2
 siblings:
   prev: "@speclang/mcp-daemon/architecture"
-
 short: MCP Daemon Configuration
 ---
 ## Queue Management

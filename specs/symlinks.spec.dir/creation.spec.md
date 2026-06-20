@@ -13,7 +13,7 @@ short: Symlink Creation and Management
 
 Part 1 of 2: Creation, rebuild, portability, and cross-platform support.
 
-Parent: @ref:specs/symlinks
+Parent: "@ref:specs/symlinks"
 
 ## Header Mapping
 

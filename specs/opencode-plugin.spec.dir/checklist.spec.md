@@ -46,4 +46,4 @@ agent_support: agent_assisted
 
 ## References
 
-- "@ref:speclang/opencode-plugin.spec.dir/* (individual components)
+- "@ref:speclang/opencode-plugin.spec.dir/* (individual components)"

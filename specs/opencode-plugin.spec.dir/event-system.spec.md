@@ -115,6 +115,6 @@ async function parseHeader(path: string): Promise<Header> {
 
 ## References
 
-- "@ref:speclang/opencode-plugin.spec.dir/session-manager (for ownership)
+- "@ref:speclang/opencode-plugin.spec.dir/session-manager (for ownership)"
 - @ref:speclang/opencode-plugin.spec.dir/convergence (for pipeline)
 - @ref:speclang/spec-format (header format)

@@ -96,8 +96,8 @@ All validation should be integrated into:
 ```speclang
 # @block:semantic-definitions/references-depth @kind:refs
 refs:
-  - "@ref:speclang/layer-definitions
-  - "@ref:speclang/project-maturity-levels
-  - "@ref:speclang/agent-support-levels
-  - "@ref:speclang/autonomous-validation
+  - "@ref:speclang/layer-definitions"
+  - "@ref:speclang/project-maturity-levels"
+  - "@ref:speclang/agent-support-levels"
+  - "@ref:speclang/autonomous-validation"
 ```

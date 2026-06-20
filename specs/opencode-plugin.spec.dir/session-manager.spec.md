@@ -77,5 +77,5 @@ async function updateSessionActivity(sessionId: string): Promise<void> {
 
 ## References
 
-- "@ref:speclang/opencode-plugin.spec.dir/ownership-guard
+- "@ref:speclang/opencode-plugin.spec.dir/ownership-guard"
 - @ref:speclang/sqlite (for database schema)

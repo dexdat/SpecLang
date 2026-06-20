@@ -1,5 +1,5 @@
 # speclang-header lines:12
-id: @specs/speclang-test
+id: "@specs/speclang-test"
 version: 1.0.0
 layer: 5
 target: src/.speclang-test/

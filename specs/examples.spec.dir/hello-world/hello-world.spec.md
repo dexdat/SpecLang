@@ -1,5 +1,5 @@
 # speclang-header lines:14
-id: @specs/examples/hello-world
+id: "@specs/examples/hello-world"
 version: 1.0.0
 layer: 1
 project_level: Alpha

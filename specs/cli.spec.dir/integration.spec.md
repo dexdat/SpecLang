@@ -5,7 +5,8 @@ layer: 1
 tags: [cli, integration]
 project_level: Alpha
 agent_support: agent_assisted
-parent: ""@ref:specs/cli.spec"part: 8/8
+parent: "@ref:specs/cli.spec"
+part: 8/8
 short: CLI integration
 ---
 

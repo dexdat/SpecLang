@@ -1,6 +1,6 @@
 # speclang-header lines:7
 id: "@speclang/roadmap/poc/code-generation"
-parent: ""@ref:specs/roadmap/poc"version: 0.1.0
+parent: "@ref:specs/roadmap/poc"version: 0.1.0
 layer: 2
 short: "Generate code from spec blocks"
 tags: [poc, codegen, generation, typescript]

@@ -6,7 +6,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [core]
 short: Concurrency model for agent sessions
-parent: ""@ref:speclang/core"part: 6/6
+parent: "@ref:speclang/core"
+part: 6/6
 ---
 
 ## Concurrency Model

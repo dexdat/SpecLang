@@ -449,7 +449,7 @@ Best Practices for SpecLang Testing:
 
 ## References
 
-- "@ref:specs/test-specs - Test spec format
+- "@ref:specs/test-specs - Test spec format"
 - @ref:specs/validation - Validation system
 - @ref:specs/cascade.spec.dir/error-handling - Error handling
 - @ref:specs/project-maturity-levels - Maturity levels

@@ -4,7 +4,7 @@ version: 0.1.0
 layer: 2
 tags: [layout, structure, files]
 imports: ["@speclang/project-layout"]
-parent: @ref:specs/project-layout
+parent: "@ref:specs/project-layout"
 part: 1/2
 status: draft
 project_level: Alpha
@@ -226,6 +226,6 @@ steps:
   11. run validation to ensure project structure is correct
   12. output success message with next steps
 
-refs: [""@ref:speclang/cli#new""]
+refs: ["@ref:speclang/cli#new""]
 ```
 

@@ -108,4 +108,4 @@ interface Block {
 ---
 
 **References:**
-- @ref:specs/core#blocks
+- "@ref:specs/core#blocks"

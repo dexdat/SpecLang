@@ -3,7 +3,8 @@ id: "@speclang/scripts.analyze-completeness"
 version: 0.1.0
 layer: 2
 tags: [scripts, analysis, completeness, safety-nets]
-parent: ""@ref:speclang/scripts"status: draft
+parent: "@ref:speclang/scripts"
+status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Analyze Spec Completeness Script

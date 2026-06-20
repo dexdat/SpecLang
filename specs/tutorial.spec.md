@@ -24,7 +24,7 @@ Components:
   auth:
     description: User authentication
     refs:
-      - "@ref:speclang/auth
+      - "@ref:speclang/auth"
 ```
 
 ### Step 2: Create Feature Spec
@@ -137,6 +137,6 @@ Then: The user is returned with correct email
 
 ## @tutorial/references
 
-- "@ref:specs/speclang - Usage specification
+- "@ref:specs/speclang - Usage specification"
 - @ref:specs/bootstrap - Bootstrap process
 - @ref:specs/examples/auth - Complete auth example

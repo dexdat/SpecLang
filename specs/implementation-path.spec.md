@@ -129,10 +129,10 @@ Phase1:
     - Can traverse dependency tree
     
   specs_to_read:
-    - "@ref:specs/headers
-    - "@ref:specs/parser
-    - "@ref:specs/spec-format
-    - "@ref:specs/validation/rules
+    - "@ref:specs/headers"
+    - "@ref:specs/parser"
+    - "@ref:specs/spec-format"
+    - "@ref:specs/validation/rules"
 ```
 
 ### Phase 2: Daemon & Events (Week 3-4)
@@ -180,11 +180,11 @@ Phase2:
     - No missed events under normal load
     
   specs_to_read:
-    - "@ref:specs/daemon
-    - "@ref:specs/daemon.spec.dir/events
-    - "@ref:specs/daemon.spec.dir/routing
-    - "@ref:specs/daemon.spec.dir/convergence
-    - "@ref:specs/opencode-plugin
+    - "@ref:specs/daemon"
+    - "@ref:specs/daemon.spec.dir/events"
+    - "@ref:specs/daemon.spec.dir/routing"
+    - "@ref:specs/daemon.spec.dir/convergence"
+    - "@ref:specs/opencode-plugin"
 ```
 
 ### Phase 3: Agents & Cascade (Week 5-6)
@@ -233,11 +233,11 @@ Phase3:
     - Multiple agents run concurrently
     
   specs_to_read:
-    - "@ref:specs/agent-protocol
-    - "@ref:specs/cascade
-    - "@ref:specs/cascade.spec.dir/error-handling
-    - "@ref:specs/guard
-    - "@ref:specs/skills
+    - "@ref:specs/agent-protocol"
+    - "@ref:specs/cascade"
+    - "@ref:specs/cascade.spec.dir/error-handling"
+    - "@ref:specs/guard"
+    - "@ref:specs/skills"
 ```
 
 ### Phase 4: Code Generation (Week 7-8)
@@ -286,9 +286,9 @@ Phase4:
     - Bidirectional sync possible
     
   specs_to_read:
-    - "@ref:specs/compiler
-    - "@ref:specs/compiler.spec.dir/targets
-    - "@ref:specs/compiler.spec.dir/templates
+    - "@ref:specs/compiler"
+    - "@ref:specs/compiler.spec.dir/targets"
+    - "@ref:specs/compiler.spec.dir/templates"
 ```
 
 ### Phase 5: Pipeline & Testing (Week 9-10)
@@ -336,10 +336,10 @@ Phase5:
     - Notifications sent correctly
     
   specs_to_read:
-    - "@ref:specs/pipeline
-    - "@ref:specs/test-specs
-    - "@ref:specs/git-history.spec.dir/rollback
-    - "@ref:specs/cascade.spec.dir/error-handling
+    - "@ref:specs/pipeline"
+    - "@ref:specs/test-specs"
+    - "@ref:specs/git-history.spec.dir/rollback"
+    - "@ref:specs/cascade.spec.dir/error-handling"
 ```
 
 ## Minimum Viable Product (MVP)
@@ -542,7 +542,7 @@ DevSetup:
 
 ## References
 
-- "@ref:specs/000-bootstrap - Bootstrap primer
+- "@ref:specs/000-bootstrap - Bootstrap primer"
 - @ref:specs/project.scl - North Star vision
 - @ref:specs/core - Core architecture
 - @ref:specs/compiler - Code generation

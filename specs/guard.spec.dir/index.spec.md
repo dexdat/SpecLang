@@ -162,5 +162,5 @@ initGuard(customRules, { strictMode: true });
 
 ## References
 
-- "@ref:specs/core#agents - Agent definitions
+- "@ref:specs/core#agents - Agent definitions"
 - @ref:specs/agents/types - AgentRole type

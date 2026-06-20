@@ -6,7 +6,9 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [methodology, bmad, comparison, external, reference]
 children:
-  - "@ref:specs/external-methodologies.spec.dir/bmad-comparison"  - "@ref:@ref:specs/external-methodologies.spec.dir/recommendations"  - "@ref:specs/external-methodologies.spec.dir/adoption-patterns"
+  - "@ref:specs/external-methodologies.spec.dir/bmad-comparison"
+- "@ref:specs/external-methodologies.spec.dir/recommendations"
+- "@ref:specs/external-methodologies.spec.dir/adoption-patterns"
 short: External Methodologies - Analysis of BMAD and other AI-driven development frameworks
 ---
 

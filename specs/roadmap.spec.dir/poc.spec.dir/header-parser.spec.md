@@ -1,6 +1,6 @@
 # speclang-header lines:7
 id: "@speclang/roadmap/poc/header-parser"
-parent: ""@ref:specs/roadmap/poc"version: 0.1.0
+parent: "@ref:specs/roadmap/poc"version: 0.1.0
 layer: 2
 short: "Parse spec headers (YAML frontmatter)"
 tags: [poc, parser, header, yaml, frontmatter]
@@ -234,7 +234,7 @@ version: 1.0.0
 layer: 5
 short: User login functionality
 tags: [auth, security]
-parent: @ref:specs/auth
+parent: "@ref:specs/auth"
 ---
 ```
 
@@ -247,7 +247,7 @@ parent: @ref:specs/auth
   short: 'User login functionality',
   tags: ['auth', 'security'],
   lineCount: 7,
-  rawHeader: '# speclang-header lines:7\nid: @specs/auth/login\nversion: 1.0.0\n...'
+  rawHeader: '# speclang-header lines:7\nid: "@specs/auth/login\nversion:" 1.0.0\n...'
 }
 ```
 

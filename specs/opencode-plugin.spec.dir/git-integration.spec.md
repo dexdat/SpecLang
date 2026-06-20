@@ -73,6 +73,6 @@ UUID Generation:
 
 ## References
 
-- "@ref:speclang/git-history (for git conventions and UUID causality chains)
+- "@ref:speclang/git-history (for git conventions and UUID causality chains)"
 - @ref:speclang/agent-protocol (for commit protocol requirements)
 - @ref:speclang/headers (for causality header fields: caused_by, change_id, part_of)

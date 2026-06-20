@@ -1,8 +1,9 @@
 # speclang-header lines:12
 id: "@speclang/mcp.sse-stream"
-parent: ""@ref:speclang/mcp"part: 10/12
+parent: "@ref:speclang/mcp"part: 10/12
 siblings:
-  next: ""@ref:specs/mcp.spec.dir/configuration"short: SSE stream implementation for real-time events
+  next: "@ref:specs/mcp.spec.dir/configuration"
+short: SSE stream implementation for real-time events
 project_level: Alpha
 agent_support: agent_assisted
 tags: [mcp, speclang]

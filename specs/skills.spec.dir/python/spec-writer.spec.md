@@ -15,7 +15,7 @@ short: SpecWriter Skill (Python)
 
 Part 1/3 of the Speclang Python Skills Pack.
 
-Parent: @ref:specs/skills
+Parent: "@ref:specs/skills"
 
 ## SpecWriter Skill (Python)
 

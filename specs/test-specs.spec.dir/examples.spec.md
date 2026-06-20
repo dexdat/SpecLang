@@ -22,7 +22,7 @@ Part 2 of 2: Concrete test examples. See also @ref:speclang/test-specs/format fo
 # speclang-header
 id: "@tests/auth".login
 version: 1.0
-refs: [""@ref:specs/auth#login"", ""@ref:northstar#auth""]
+refs: ["@ref:specs/auth#login"", "@ref:northstar#auth""]
 
 ---
 
@@ -91,7 +91,7 @@ Then: returns valid as specified
 ```speclang
 # @block:tests/go-output @kind:code
 ```go
-// SPECLANG-ID: @ref:tests/auth#login-success
+// SPECLANG-ID: "@ref:tests/auth#login-success"
 // SPECLANG-GENERATED: DO NOT EDIT
 
 package tests
@@ -123,7 +123,7 @@ func TestLoginSuccess(t *testing.T) {
 ```speclang
 # @block:tests/ts-output @kind:code
 ```typescript
-// SPECLANG-ID: @ref:tests/auth#login-success
+// SPECLANG-ID: "@ref:tests/auth#login-success"
 // SPECLANG-GENERATED: DO NOT EDIT
 
 import { describe, it, expect, beforeEach } from 'vitest';
@@ -182,7 +182,7 @@ Then: returns result within 2 seconds
 # speclang-header
 id: "@tests/hash".bcrypt
 category: unit
-refs: [""@ref:specs/hash#bcrypt""]
+refs: ["@ref:specs/hash#bcrypt""]
 
 ---
 
@@ -208,7 +208,7 @@ And: verify(hash, "wrong") returns false
 # speclang-header
 id: "@tests/auth".full-flow
 category: integration
-refs: [""@ref:specs/auth""]
+refs: ["@ref:specs/auth""]
 
 ---
 

@@ -185,7 +185,7 @@ Example Go code header:
 ```go
 // speclang-header
 // id: @generated/auth/handler-go
-// source: @specs/auth#login
+// source: "@specs/auth#login"
 // depth: 5
 // project_level: Enterprise
 // validation_level: strict
@@ -281,7 +281,7 @@ depth_requirements:
 
 ## References
 
-- "@ref:specs/project-maturity-levels/levels - Project level definitions
+- "@ref:specs/project-maturity-levels/levels - Project level definitions"
 - @ref:specs/project-maturity-levels/criteria - Detailed criteria
 - @ref:specs/layer-definitions - Layer definitions and examples
 - @ref:specs/cascade - Cascade system integration

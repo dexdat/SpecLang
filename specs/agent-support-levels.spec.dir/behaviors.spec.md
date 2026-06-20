@@ -80,8 +80,8 @@ Integration:
 ```speclang
 # @block:agent-support/references @kind:refs
 refs:
-  - "@ref:speclang/headers#agent_support
-  - "@ref:speclang/layer-definitions
-  - "@ref:speclang/project-maturity-levels
-  - "@ref:speclang/autonomous-validation
+  - "@ref:speclang/headers#agent_support"
+  - "@ref:speclang/layer-definitions"
+  - "@ref:speclang/project-maturity-levels"
+  - "@ref:speclang/autonomous-validation"
 ```

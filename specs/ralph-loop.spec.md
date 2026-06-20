@@ -6,7 +6,9 @@ layer: 0
 tags: [ralph, loop, agents, coordination, validation]
 imports: ["@speclang/agent-protocol", "@speclang/cascade", "@speclang/recovery"]
 children:
-  - "@ref:specs/ralph-loop.spec.dir/workflow"  - "@ref:specs/ralph-loop.spec.dir/state"status: draft
+  - "@ref:specs/ralph-loop.spec.dir/workflow"
+- "@ref:specs/ralph-loop.spec.dir/state"
+status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Ralph Loop System
@@ -37,7 +39,7 @@ This implements meta-circular development.
 
 This specification has been split into multiple parts for better organization and autonomous agent operation.
 
-- "@ref:specs/ralph-loop.spec.dir/workflow – Operational processes, control flow, and integration
+- "@ref:specs/ralph-loop.spec.dir/workflow – Operational processes, control flow, and integration"
 - @ref:specs/ralph-loop.spec.dir/state – Entity definitions, data schemas, and state management
 
 *See individual parts in ralph-loop.spec.dir/*

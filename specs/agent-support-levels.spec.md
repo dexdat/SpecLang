@@ -56,8 +56,8 @@ BehaviorMatrix:
 ### @block::children @kind:entity
 
 ChildSpecs:
-  - "@ref:speclang/agent-support-levels/levels" – Definitions of levels
-  - "@ref:speclang/agent-support-levels/behaviors" – Behavior matrix
+  - "@ref:speclang/agent-support-levels/levels" – Definitions of levels"
+  - "@ref:speclang/agent-support-levels/behaviors" – Behavior matrix"
 
 ### @block::usage @kind:entity
 

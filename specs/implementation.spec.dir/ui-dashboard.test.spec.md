@@ -77,6 +77,6 @@ Then: It should successfully:
 
 ## References
 
-- "@ref:implementation/ui-dashboard
-- @ref:speclang/ui
-- @ref:speclang/test-specs
+- "@ref:implementation/ui-dashboard"
+- "@ref:speclang/ui"
+- "@ref:speclang/test-specs"

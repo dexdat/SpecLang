@@ -137,7 +137,7 @@ OrchestrationDowngrade:
 ```yaml
 # Downgrade request
 downgrade:
-  spec: @specs/payment-service
+  spec: "@specs/payment-service"
   from: { project_level: Production, agent_support: agent_autonomous }
   to: { project_level: Beta, agent_support: agent_assisted }
   reason: "Critical security vulnerability CVE-2024-XXXX"
@@ -203,9 +203,9 @@ MonitoringIntegration:
 ```speclang
 # @block:transition/references-downgrade @kind:refs
 refs:
-  - "@ref:speclang/project-maturity-levels
-  - "@ref:speclang/agent-support-levels
-  - "@ref:speclang/autonomous-validation
-  - "@ref:speclang/agent-behavior-matrix
-  - "@ref:speclang/transition-workflows/upgrade
+  - "@ref:speclang/project-maturity-levels"
+  - "@ref:speclang/agent-support-levels"
+  - "@ref:speclang/autonomous-validation"
+  - "@ref:speclang/agent-behavior-matrix"
+  - "@ref:speclang/transition-workflows/upgrade"
 ```

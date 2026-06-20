@@ -3,7 +3,8 @@ id: "@speclang/implementation.meta-circular"
 version: 0.1.0
 layer: 0
 tags: [meta, circular, development, bootstrapping]
-parent: ""@ref:speclang/implementation"status: draft
+parent: "@ref:speclang/implementation"
+status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Meta-Circular Development
@@ -160,7 +161,7 @@ MetaAgent:
 IndexFile:
   path: _index.json
   format: JSONL (one JSON object per line)
-  spec: @ref:sip-009-index-format
+  spec: "@ref:sip-009-index-format"
   content: aggregated headers from all files
   
   purpose:

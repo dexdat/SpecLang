@@ -272,8 +272,8 @@ ScoringIntegration:
 ```speclang
 # @block:autonomous-validation/scoring-references @kind:refs
 refs:
-  - "@ref:speclang/autonomous-validation/rules
-  - "@ref:speclang/validation
-  - "@ref:speclang/layer-definitions
-  - "@ref:speclang/project-maturity-levels
+  - "@ref:speclang/autonomous-validation/rules"
+  - "@ref:speclang/validation"
+  - "@ref:speclang/layer-definitions"
+  - "@ref:speclang/project-maturity-levels"
 ```

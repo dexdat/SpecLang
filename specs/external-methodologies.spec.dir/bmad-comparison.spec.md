@@ -5,10 +5,12 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [bmad, comparison, methodology, analysis]
-parent: ""@ref:specs/external-methodologies"part: "1/3"
+parent: "@ref:specs/external-methodologies"
+part: "1/3"
 siblings:
   prev: null
-  next: ""@ref:specs/external-methodologies.spec.dir/recommendations"short: BMAD Comparison - Detailed analysis of BMAD vs SpecLang
+  next: "@ref:specs/external-methodologies.spec.dir/recommendations"
+short: BMAD Comparison - Detailed analysis of BMAD vs SpecLang
 ---
 
 # BMAD Comparison

@@ -9,7 +9,7 @@ short: "Tool handler for index operations"
 status: generated
 depends_on:
   - "@specs/indexer"
-  - "@speclang/tools"
+- "@speclang/tools"
 ---
 
 # Index Tools Spec

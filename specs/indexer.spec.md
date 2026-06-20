@@ -113,6 +113,6 @@ ValidationRules:
 ### @block::dependencies @kind:entity
 
 RelatedSpecs:
-  - "@ref:specs/core" - Core types and interfaces
-  - "@ref:specs/sqlite" - SQLite database operations
-  - "@ref:specs/headers" - Header format specification
+  - "@ref:specs/core" - Core types and interfaces"
+  - "@ref:specs/sqlite" - SQLite database operations"
+  - "@ref:specs/headers" - Header format specification"

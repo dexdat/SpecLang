@@ -3,7 +3,8 @@ id: "@speclang/mcp/messages"
 version: 0.1.0
 layer: 2
 tags: [mcp, messages, notifications, communication, agents]
-parent: ""@ref:specs/mcp"project_level: Alpha
+parent: "@ref:specs/mcp"
+project_level: Alpha
 agent_support: agent_autonomous
 short: MCP Message Protocol - Communication between autonomous agents and humans
 ---
@@ -484,7 +485,7 @@ ContinuousImprovementIntegration:
 
 ## References
 
-- "@ref:specs/mcp - MCP server specification
+- "@ref:specs/mcp - MCP server specification"
 - @ref:specs/agent-protocol - Agent communication protocol
 - @ref:specs/cascade - Cascade system integration
 - @ref:specs/cascade/continuous-improvement - Continuous improvement loop

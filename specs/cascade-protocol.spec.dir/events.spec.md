@@ -7,7 +7,7 @@ status: draft
 project_level: Alpha
 agent_support: agent_autonomous
 short: Cascade Protocol Events and Definitions
-parent: @ref:specs/cascade-protocol
+parent: "@ref:specs/cascade-protocol"
 part: 1/2
 ---
 
@@ -222,7 +222,7 @@ Current step: test generation
 Reason: Code needs manual review
 
 To resume:
-@speclang-coordinator continue
+"@speclang-coordinator" continue
 ```
 
 ## Comparison: Fantasy vs Reality

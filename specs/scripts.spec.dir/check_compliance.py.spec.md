@@ -1,6 +1,6 @@
 # speclang-header lines:7
 id: "@speclang/scripts/check-compliance"
-parent: ""@ref:specs/scripts"version: 0.1.0
+parent: "@ref:specs/scripts"version: 0.1.0
 layer: 3
 target: scripts/check_compliance.py
 tags: [scripts, compliance, dual-view, validation]

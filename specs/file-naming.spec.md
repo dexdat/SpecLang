@@ -7,8 +7,7 @@ imports: ["@speclang/core"]
 status: draft
 parts:
   - "@speclang/file-naming/extensions"
-  - "@speclang/file-naming/patterns"
-
+- "@speclang/file-naming/patterns"
 project_level: Alpha
 agent_support: agent_assisted
 short: File Naming
@@ -134,7 +133,7 @@ block:
   content: |
     package auth
     
-    // SPECLANG-ID: @ref:specs/auth#login
+    // SPECLANG-ID: "@ref:specs/auth#login"
     func Login(email, password string) (*Token, error) {
       // implementation
     }
@@ -247,12 +246,12 @@ YAMLSpec:
 ```yaml
 # auth.spec.yaml
 speclang-header:
-  id: @specs/auth
+  id: "@specs/auth"
   version: 1.0.0
   layer: 3
   refs:
-    - "@ref:northstar#auth
-    - "@ref:stdlib/Result
+    - "@ref:northstar#auth"
+    - "@ref:stdlib/Result"
 
 blocks:
   - id: auth/User
@@ -388,13 +387,13 @@ SpecHeader:
   
   yaml:
     speclang-header:
-      id: @specs/auth
+      id: "@specs/auth"
       version: 1.0.0
       layer: 2
       
   markdown:
     # speclang-header
-    id: @specs/auth
+    id: "@specs/auth"
     version: 1.0.0
 ```
 

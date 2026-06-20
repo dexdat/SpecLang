@@ -14,7 +14,7 @@ short: TestWriter Skill
 
 Part 3/3 of the Speclang Skills Pack.
 
-Parent: @ref:specs/skills
+Parent: "@ref:specs/skills"
 
 ## TestWriter Skill
 

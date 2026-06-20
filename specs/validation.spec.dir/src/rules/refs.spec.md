@@ -16,7 +16,7 @@ short: Reference validation rule
 Validates references in specs.
 
 **Steps:**
-1. Parse reference format: @ref:path or @ref:path#block
+1. Parse reference format: "@ref:path" or @ref:path#block
 2. Check target spec exists
 3. Check target block exists (if specified)
 4. Detect circular dependencies

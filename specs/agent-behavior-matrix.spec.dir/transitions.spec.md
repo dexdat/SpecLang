@@ -104,8 +104,8 @@ Integration points:
 ```speclang
 # @block:behavior-matrix/references @kind:refs
 refs:
-  - "@ref:speclang/project-maturity-levels
-  - "@ref:speclang/agent-support-levels
-  - "@ref:speclang/semantic-definitions
-  - "@ref:speclang/autonomous-validation
+  - "@ref:speclang/project-maturity-levels"
+  - "@ref:speclang/agent-support-levels"
+  - "@ref:speclang/semantic-definitions"
+  - "@ref:speclang/autonomous-validation"
 ```

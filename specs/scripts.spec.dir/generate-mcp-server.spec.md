@@ -3,7 +3,8 @@ id: "@speclang/scripts.generate-mcp-server"
 version: 0.1.0
 layer: 2
 tags: [scripts, generation, mcp]
-parent: ""@ref:speclang/scripts"status: draft
+parent: "@ref:speclang/scripts"
+status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Generate MCP Server Script
@@ -169,7 +170,7 @@ python3 scripts/generate_mcp_server.py specs/my-api.spec.md --dry-run
 # @block:example @kind:note
 Input spec (specs/auth-mcp.spec.md):
   # speclang-header lines:8
-  id: @specs/auth-mcp
+  id: "@specs/auth-mcp"
   ---
   
   # @block:tools @kind:entity

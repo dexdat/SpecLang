@@ -1,8 +1,9 @@
 # speclang-header lines:13
 id: "@speclang/pipeline/build"
-parent: ""@ref:speclang/pipeline"part: 1/3
+parent: "@ref:speclang/pipeline"part: 1/3
 siblings:
-  next: ""@ref:speclang/pipeline/hooks"short: Build Pipeline - Core Stages
+  next: "@ref:speclang/pipeline/hooks"
+short: Build Pipeline - Core Stages
 project_level: Alpha
 agent_support: agent_assisted
 tags: [pipeline, build, convergence, stages]

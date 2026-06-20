@@ -6,7 +6,10 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [sqlite, database, fts, vector, graph]
 children:
-  - "@ref:specs/sqlite.spec.dir/schema"  - "@ref:specs/sqlite.spec.dir/fts"  - "@ref:@ref:specs/sqlite.spec.dir/graph"  - "@ref:specs/sqlite.spec.dir/vectors"
+  - "@ref:specs/sqlite.spec.dir/schema"
+- "@ref:specs/sqlite.spec.dir/fts"
+- "@ref:specs/sqlite.spec.dir/graph"
+- "@ref:specs/sqlite.spec.dir/vectors"
 short: "SQLite Database - Context preservation and search"
 status: draft
 ---

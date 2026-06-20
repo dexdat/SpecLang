@@ -1,6 +1,6 @@
 # speclang-header lines:9
 id: "@speclang/ui-dashboard/testing"
-parent: ""@ref:specs/ui-dashboard"short: "UI testing framework and test runner"
+parent: "@ref:specs/ui-dashboard"short: "UI testing framework and test runner"
 project_level: Alpha
 agent_support: agent_assisted
 tags: [ui, dashboard, testing, tests]
@@ -42,5 +42,5 @@ Test runner integration with cascade pipeline.
 - Generate coverage reports
 
 **Dependencies:**
-- @ref:specs/testing-strategy
-- @ref:specs/pipeline#test-stages
+- "@ref:specs/testing-strategy"
+- "@ref:specs/pipeline#test-stages"

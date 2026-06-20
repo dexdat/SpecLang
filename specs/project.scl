@@ -121,29 +121,29 @@ Components:
     - generated: output code in target language
 
 refs:
-  - @ref:speclang/core
-  - @ref:speclang/daemon
-  - @ref:speclang/agent-protocol
-  - @ref:speclang/skills
-  - @ref:speclang/pipeline
-  - @ref:speclang/recovery
-  - @ref:speclang/file-naming
-  - @ref:speclang/test-specs
-  - @ref:speclang/cascade
-  - @ref:speclang/workflow
-  - @ref:speclang/opencode
-  - @ref:speclang/headers
-  - @ref:speclang/directory-structure
-  - @ref:speclang/tools
-  - @ref:speclang/sqlite
-  - @ref:speclang/dynamic-split
-  - @ref:speclang/deployment
-  - @ref:speclang/mcp
-  - @ref:speclang/mcp-openapi-generation
-  - @ref:speclang/mcp-openapi-generation-cli
-  - @ref:speclang/mcp-daemon
-  - @ref:speclang/git-history
-  - @ref:speclang/symlinks
+  - "@ref:speclang/core"
+  - "@ref:speclang/daemon"
+  - "@ref:speclang/agent-protocol"
+  - "@ref:speclang/skills"
+  - "@ref:speclang/pipeline"
+  - "@ref:speclang/recovery"
+  - "@ref:speclang/file-naming"
+  - "@ref:speclang/test-specs"
+  - "@ref:speclang/cascade"
+  - "@ref:speclang/workflow"
+  - "@ref:speclang/opencode"
+  - "@ref:speclang/headers"
+  - "@ref:speclang/directory-structure"
+  - "@ref:speclang/tools"
+  - "@ref:speclang/sqlite"
+  - "@ref:speclang/dynamic-split"
+  - "@ref:speclang/deployment"
+  - "@ref:speclang/mcp"
+  - "@ref:speclang/mcp-openapi-generation"
+  - "@ref:speclang/mcp-openapi-generation-cli"
+  - "@ref:speclang/mcp-daemon"
+  - "@ref:speclang/git-history"
+  - "@ref:speclang/symlinks"
 ```
 
 ## Specs Index

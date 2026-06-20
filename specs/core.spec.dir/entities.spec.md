@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [core, entities, daemon, agent]
 short: "Core entities: daemon, agent, northstar, pointer-graph, autonomous-readiness"
-parent: ""@ref:specs/core"part: 1/6
+parent: "@ref:specs/core"part: 1/6
 ---
 
 # Core Entities
@@ -82,10 +82,10 @@ PointerGraph:
   description: "Universal reference system"
   
   format:
-    @ref:path/to/file#block-id
+    "@ref:path/to/file#block-id"
     
   examples:
-    @ref:northstar#auth
+    "@ref:northstar#auth"
     @ref:specs/auth#login-handler
     @ref:generated/auth.ts#login-fn
     
@@ -95,8 +95,8 @@ PointerGraph:
     - north star is always reachable
     
   markers:
-    // SPECLANG-ID: @ref:specs/auth#login
-    // SPECLANG-PARENT: @ref:northstar#auth
+    // SPECLANG-ID: "@ref:specs/auth#login"
+    // SPECLANG-PARENT: "@ref:northstar#auth"
 ```
 
 ### @speclang/autonomous-readiness

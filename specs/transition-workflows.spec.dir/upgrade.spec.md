@@ -350,7 +350,7 @@ Orchestration:
 ```yaml
 # Transition request
 transition:
-  spec: @specs/auth
+  spec: "@specs/auth"
   from: { project_level: Alpha, agent_support: agent_assisted }
   to: { project_level: Beta, agent_support: agent_autonomous }
   
@@ -402,8 +402,8 @@ Integration:
 ```speclang
 # @block:transition/references @kind:refs
 refs:
-  - "@ref:speclang/project-maturity-levels
-  - "@ref:speclang/agent-support-levels
-  - "@ref:speclang/autonomous-validation
-  - "@ref:speclang/agent-behavior-matrix
+  - "@ref:speclang/project-maturity-levels"
+  - "@ref:speclang/agent-support-levels"
+  - "@ref:speclang/autonomous-validation"
+  - "@ref:speclang/agent-behavior-matrix"
 ```

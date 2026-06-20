@@ -55,6 +55,6 @@ console.log(result.resourceBudget);       // 'moderate'
 
 ## References
 
-- "@ref:specs/agent-behavior-matrix - Behavior matrix definitions
+- "@ref:specs/agent-behavior-matrix - Behavior matrix definitions"
 - @ref:specs/project-maturity-levels - Project maturity levels
 - @ref:specs/agent-support-levels - Agent support levels

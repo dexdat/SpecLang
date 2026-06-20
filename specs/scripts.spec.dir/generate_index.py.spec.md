@@ -1,6 +1,6 @@
 # speclang-header lines:7
 id: "@speclang/scripts/generate-index"
-parent: ""@ref:specs/scripts"version: 0.1.0
+parent: "@ref:specs/scripts"version: 0.1.0
 layer: 3
 target: scripts/generate_index.py
 tags: [scripts, index, specs, validation]

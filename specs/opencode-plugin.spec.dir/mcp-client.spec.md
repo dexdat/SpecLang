@@ -78,5 +78,5 @@ async function speclangExecute(sql: string, params: any[] = []): Promise<void> {
 
 ## References
 
-- "@ref:speclang/mcp (MCP server spec)
+- "@ref:speclang/mcp (MCP server spec)"
 - @ref:speclang/sqlite (for query/execute)

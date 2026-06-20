@@ -7,8 +7,8 @@ agent_support: agent_autonomous
 tags: [pipeline, build, hooks, recovery, convergence]
 children:
   - "@ref:specs/pipeline.spec.dir/build"
-  - "@ref:specs/pipeline.spec.dir/hooks"
-  - "@ref:specs/pipeline.spec.dir/recovery"
+- "@ref:specs/pipeline.spec.dir/hooks"
+- "@ref:specs/pipeline.spec.dir/recovery"
 short: "Pipeline - Build, test, deploy execution after convergence"
 status: draft
 ---

@@ -1,5 +1,5 @@
 # speclang-header lines:13
-id: @specs/assemble-all.modified.spec
+id: "@specs/assemble-all.modified.spec"
 version: 1.0.0
 layer: 5
 target: src/assemble-all.modified.ts

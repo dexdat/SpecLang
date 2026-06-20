@@ -14,7 +14,7 @@ short: SpecWriter Skill
 
 Part 1/3 of the Speclang Skills Pack.
 
-Parent: @ref:specs/skills
+Parent: "@ref:specs/skills"
 
 ## SpecWriter Skill
 
@@ -73,7 +73,7 @@ id: "@domain/feature"
 ---
 
 # @block:domain/feature @kind:entity
-refs: [""@ref:northstar#feature""]
+refs: ["@ref:northstar#feature""]
 ...
 ```
 ```

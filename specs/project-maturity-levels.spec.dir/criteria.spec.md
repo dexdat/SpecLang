@@ -245,9 +245,9 @@ ProjectLevelValidation:
 ```speclang
 # @block:project-level/references @kind:refs
 refs:
-  - "@ref:speclang/headers#project_level
-  - "@ref:speclang/layer-definitions
-  - "@ref:speclang/agent-support-levels
+  - "@ref:speclang/headers#project_level"
+  - "@ref:speclang/layer-definitions"
+  - "@ref:speclang/agent-support-levels"
 ```
 ## TypeScript Interface
 

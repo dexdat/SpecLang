@@ -3,7 +3,8 @@ id: "@speclang/cascade/error-handling"
 version: 0.1.0
 layer: 2
 tags: [cascade, error-handling, retry, fallback, rollback, recovery]
-parent: ""@ref:specs/cascade"project_level: Alpha
+parent: "@ref:specs/cascade"
+project_level: Alpha
 agent_support: agent_autonomous
 short: Cascade error handling with retry logic, fallback mechanisms, and automated rollback
 ---
@@ -536,7 +537,7 @@ ImplementationGuidelines:
 
 ## References
 
-- "@ref:specs/git-history/rollback - Git rollback strategies
+- "@ref:specs/git-history/rollback - Git rollback strategies"
 - @ref:specs/mcp/error-handling - MCP error handling
 - @ref:specs/safety-nets/fallback - Safety net fallback protocols
 - @ref:specs/cascade/continuous-improvement - Continuous improvement loop

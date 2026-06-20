@@ -4,7 +4,7 @@ version: 0.1.0
 layer: 2
 tags: [git, history, commits, traceability]
 imports: ["@speclang/git-history"]
-parent: @ref:specs/git-history
+parent: "@ref:specs/git-history"
 part: 1/2
 status: draft
 project_level: Alpha
@@ -183,7 +183,7 @@ CausalityHeaders:
     
   example_header:
     # speclang-header lines:15
-    id: @specs/auth
+    id: "@specs/auth"
     version: 1.0.0
     layer: 2
     caused_by: "@commit:abc123def"

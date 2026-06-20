@@ -7,7 +7,7 @@ status: draft
 project_level: POC
 agent_support: agent_autonomous
 short: Hello World Example
-parent: @ref:specs/examples.spec
+parent: "@ref:specs/examples.spec"
 part: 1/3
 ---
 

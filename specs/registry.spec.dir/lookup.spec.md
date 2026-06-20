@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [registry, lookup, agents]
 short: Lookup and querying aspects of agent registry
-parent: @ref:specs/registry
+parent: "@ref:specs/registry"
 part: 2/2
 ---
 ## @block:agentregistry @kind:entity

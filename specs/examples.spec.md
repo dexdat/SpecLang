@@ -6,7 +6,11 @@ target: src/examples/
 tags: [examples]
 imports: ["@speclang/core"]
 children:
-  - "@ref:specs/examples.spec.dir/hello-world"  - "@ref:specs/examples.spec.dir/hello-world-cascade"  - "@ref:specs/examples.spec.dir/auth"  - "@ref:specs/examples.spec.dir/api"status: draft
+  - "@ref:specs/examples.spec.dir/hello-world"
+- "@ref:specs/examples.spec.dir/hello-world-cascade"
+- "@ref:specs/examples.spec.dir/auth"
+- "@ref:specs/examples.spec.dir/api"
+status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Example specifications

@@ -6,7 +6,7 @@ project_level: "Alpha"
 agent_support: "agent_autonomous"
 tags: [auth, flows, mcp, typescript]
 short: "Authentication flows: factory function and middleware usage"
-parent: ""@ref:speclang/auth"part: "2/2"
+parent: "@ref:speclang/auth"part: "2/2"
 ---
 # Authentication Flows
 

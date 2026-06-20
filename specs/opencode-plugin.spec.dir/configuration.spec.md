@@ -58,4 +58,4 @@ tools.define('speclang_index', {
 
 ## References
 
-- "@ref:speclang/opencode-plugin.spec.dir/tools (detailed tool definitions)
+- "@ref:speclang/opencode-plugin.spec.dir/tools (detailed tool definitions)"

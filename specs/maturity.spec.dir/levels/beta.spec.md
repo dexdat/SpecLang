@@ -791,6 +791,6 @@ export const betaBehaviorResolver = new BetaAgentBehaviorResolver();
 
 ## References
 
-- "@ref:specs/project-maturity-levels/levels - Level definitions
+- "@ref:specs/project-maturity-levels/levels - Level definitions"
 - @ref:specs/maturity/levels/alpha - Alpha level (previous level)
 - @ref:specs/maturity/levels/production - Production level (next level)

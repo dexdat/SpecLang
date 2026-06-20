@@ -67,5 +67,5 @@ async function runPipeline(): Promise<void> {
 
 ## References
 
-- "@ref:speclang/cascade (cascade concepts)
+- "@ref:speclang/cascade (cascade concepts)"
 - @ref:speclang/validation-tool (validation tools)

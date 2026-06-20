@@ -73,6 +73,6 @@ Monitors quiet period (no changes for 30s), triggers pipeline (`generate_index.p
 
 ## References
 
-- "@ref:speclang/opencode-plugin.spec.dir/event-system
-- @ref:speclang/opencode-plugin.spec.dir/session-manager
-- @ref:speclang/opencode-plugin.spec.dir/ownership-guard
+- "@ref:speclang/opencode-plugin.spec.dir/event-system"
+- "@ref:speclang/opencode-plugin.spec.dir/session-manager"
+- "@ref:speclang/opencode-plugin.spec.dir/ownership-guard"

@@ -42,7 +42,7 @@ Defines major components and their relationships.
 
 **Example:**
 ```yaml
-id: @speclang/components
+id: "@speclang/components"
 layer: 1
 depends_on: ["@northstar/myapp"]
 ```
@@ -58,7 +58,7 @@ Defines the core domain concepts.
 
 **Example:**
 ```yaml
-id: @speclang/entities
+id: "@speclang/entities"
 layer: 2
 depends_on: ["@speclang/components"]
 ```
@@ -74,7 +74,7 @@ Defines how components interact.
 
 **Example:**
 ```yaml
-id: @speclang/api
+id: "@speclang/api"
 layer: 3
 depends_on: ["@speclang/entities"]
 ```
@@ -90,7 +90,7 @@ Defines how the system behaves.
 
 **Example:**
 ```yaml
-id: @speclang/workflows
+id: "@speclang/workflows"
 layer: 4
 depends_on: ["@speclang/api"]
 ```
@@ -106,7 +106,7 @@ Maps specs to target language code.
 
 **Example:**
 ```yaml
-id: @speclang/handler.ts.spec
+id: "@speclang/handler.ts.spec"
 layer: 5
 target: src/handler.ts
 depends_on: ["@speclang/workflows"]
@@ -132,7 +132,7 @@ Defines what to test, not how.
 
 **Example:**
 ```yaml
-id: @speclang/handler.test.spec
+id: "@speclang/handler.test.spec"
 layer: 7
 depends_on: ["@speclang/handler.ts.spec"]
 ```
@@ -156,7 +156,7 @@ Defines how to build, test, and deploy.
 
 **Example:**
 ```yaml
-id: @speclang/pipeline
+id: "@speclang/pipeline"
 layer: 9
 depends_on: ["@speclang/handler.ts.spec"]
 ```

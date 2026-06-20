@@ -5,7 +5,8 @@ layer: 5
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [locks, file-locking, concurrency]
-parent: "@ref:northstar"part: 1/1
+parent: "@ref:northstar"
+part: 1/1
 short: "File locking system for spec cascade concurrency control"
 ---
 # Locks System
@@ -14,7 +15,7 @@ The locks system prevents concurrent modifications to spec files during reactive
 
 ## Sub‑Specs
 
-- "@ref:speclang/locks/types – Lock types and structures
+- "@ref:speclang/locks/types – Lock types and structures"
 - @ref:speclang/locks/management – Acquisition, release, and management
 
 ## @block:locks-overview @kind:note

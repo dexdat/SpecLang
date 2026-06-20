@@ -4,7 +4,7 @@ version: 0.1.0
 layer: 2
 tags: [directory, structure, pattern]
 imports: ["@speclang/directory-structure"]
-parent: @ref:specs/directory-structure
+parent: "@ref:specs/directory-structure"
 part: 1/2
 status: draft
 project_level: Alpha

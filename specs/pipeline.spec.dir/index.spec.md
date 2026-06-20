@@ -85,4 +85,4 @@ Main pipeline executor:
 
 ## Dependencies
 
-- "@ref:specs/daemon#types - ConvergenceResult type
+- "@ref:specs/daemon#types - ConvergenceResult type"

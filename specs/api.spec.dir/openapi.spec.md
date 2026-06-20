@@ -123,7 +123,7 @@ SpecSchema:
       type: "string"
       pattern: "^@[a-z0-9-]+/[a-z0-9-/]+"
       example: "@specs/auth/login"
-      description: "Unique spec identifier"
+description: "Unique spec identifier"
     version:
       type: "string"
       pattern: "^\\d+\\.\\d+\\.\\d+$"
@@ -770,7 +770,7 @@ ContentTypes:
 
 ## References
 
-- "@ref:specs/api.spec - API overview
+- "@ref:specs/api.spec - API overview"
 - @ref:specs/mcp - MCP server specification
 - @ref:specs/validation/rules - Validation rules
 - @ref:specs/cascade - Cascade system

@@ -6,7 +6,7 @@ project_level: "Alpha"
 agent_support: "agent_autonomous"
 tags: [core]
 short: "Spec file types: spec-file, test-spec, generated-file"
-parent: ""@ref:speclang/core"part: 3/6
+parent: "@ref:speclang/core"part: 3/6
 ---
 
 ## File Types
@@ -56,8 +56,8 @@ GeneratedFile:
   description: "Output code in target language"
   
   markers:
-    // SPECLANG-ID: @ref:specs/auth#login
-    // SPECLANG-NORTHSTAR: @ref:northstar#auth
+    // SPECLANG-ID: "@ref:specs/auth#login"
+    // SPECLANG-NORTHSTAR: "@ref:northstar#auth"
     // SPECLANG-VERSION: 1.0.0
     // SPECLANG-GENERATED: DO NOT EDIT
     

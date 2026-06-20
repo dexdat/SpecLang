@@ -8,7 +8,7 @@ tags: [project, maturity, levels, autonomous]
 target: src/maturity/
 children:
   - "@ref:specs/project-maturity-levels.spec.dir/levels"
-  - "@ref:specs/project-maturity-levels.spec.dir/criteria"
+- "@ref:specs/project-maturity-levels.spec.dir/criteria"
 short: Concrete criteria for each project_level value
 ---
 # Project Maturity Levels

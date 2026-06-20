@@ -4,7 +4,8 @@ version: 0.1.0
 layer: 1
 tags: [api, rest, http, integration]
 children:
-  - "@ref:specs/api.spec.dir/openapi"project_level: Alpha
+  - "@ref:specs/api.spec.dir/openapi"
+project_level: Alpha
 agent_support: agent_autonomous
 short: SpecLang API - REST endpoints for external integration
 ---
@@ -134,11 +135,11 @@ Pagination:
 
 ## Children
 
-- "@ref:specs/api.spec.dir/openapi - OpenAPI specification requirements
+- "@ref:specs/api.spec.dir/openapi - OpenAPI specification requirements"
 
 ## References
 
-- "@ref:specs/cli - CLI commands (mirrors API)
+- "@ref:specs/cli - CLI commands (mirrors API)"
 - @ref:specs/mcp - MCP server
 - @ref:specs/cascade - Cascade system
 - @ref:specs/validation - Validation rules

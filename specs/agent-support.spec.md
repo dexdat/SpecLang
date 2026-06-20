@@ -56,7 +56,7 @@ ImplementationDetails:
 ### @block::children @kind:entity
 
 ChildSpecs:
-  - "@ref:speclang/agent-support/human-only" – Human-only agent support module
+  - "@ref:speclang/agent-support/human-only" – Human-only agent support module"
 
 ### @block::usage @kind:entity
 
@@ -73,5 +73,5 @@ UsageExample:
     code: |
       # speclang-header lines:10
       id: "@specs/my-feature"
-      agent_support: agent_autonomous
+agent_support: agent_autonomous
       ---

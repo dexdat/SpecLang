@@ -3,7 +3,8 @@ id: "@speclang/scripts.add-missing-fields"
 version: 0.1.0
 layer: 2
 tags: [scripts, fix, headers]
-parent: ""@ref:speclang/scripts"status: draft
+parent: "@ref:speclang/scripts"
+status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Add Missing Fields Script
@@ -122,13 +123,13 @@ python3 scripts/add_missing_fields.py specs/ --fix --report
 # @block:examples @kind:note
 Before:
   # speclang-header lines:5
-  id: @speclang/example
+  id: "@speclang/example"
   ---
 
 After:
   # speclang-header lines:11
   id: "@speclang/example"
-  version: 0.1.0
+version: 0.1.0
   layer: 5
   status: draft
   project_level: Alpha

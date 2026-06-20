@@ -699,6 +699,6 @@ export const alphaBehaviorResolver = new AlphaAgentBehaviorResolver();
 
 ## References
 
-- "@ref:specs/project-maturity-levels/levels - Level definitions
+- "@ref:specs/project-maturity-levels/levels - Level definitions"
 - @ref:specs/maturity/levels/mvp - MVP level (previous level)
 - @ref:specs/maturity/levels/poc - POC level (earlier level)

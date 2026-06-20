@@ -143,6 +143,6 @@ Test Implementation:
 
 ## References
 
-- "@ref:speclang/mcp-openapi-generation
-- @ref:speclang/test-specs
-- @ref:speclang/mcp-openapi-generation-cli
+- "@ref:speclang/mcp-openapi-generation"
+- "@ref:speclang/test-specs"
+- "@ref:speclang/mcp-openapi-generation-cli"

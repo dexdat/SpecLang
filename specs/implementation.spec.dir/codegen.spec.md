@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_assisted
 tags: [implementation, codegen]
 short: "Code Generation Implementation"
-parent: ""@ref:speclang/implementation"part: 5/7
+parent: "@ref:speclang/implementation"part: 5/7
 ---
 # Code Generation Implementation
 
@@ -25,5 +25,5 @@ Code generation transforms spec blocks into target language code.
 
 ## References
 
-- "@ref:speclang/compiler
-- @ref:speclang/spec-format
+- "@ref:speclang/compiler"
+- "@ref:speclang/spec-format"

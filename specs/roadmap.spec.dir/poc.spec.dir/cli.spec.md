@@ -1,6 +1,6 @@
 # speclang-header lines:7
 id: "@speclang/roadmap/poc/cli"
-parent: ""@ref:specs/roadmap/poc"version: 0.1.0
+parent: "@ref:specs/roadmap/poc"version: 0.1.0
 layer: 2
 short: "Command line interface for POC daemon"
 tags: [poc, cli, commands, ux, interface]
@@ -93,7 +93,7 @@ speclangd --silent
 [speclangd] DEBUG: Scanning existing files...
 [speclangd] DEBUG: Found 12 spec files
 [speclangd] DEBUG: Processing: specs/auth.spec.md
-[speclangd] DEBUG:   Header parsed: @specs/auth
+[speclangd] DEBUG:   Header parsed: "@specs/auth"
 [speclangd] DEBUG:   Blocks found: 3
 [speclangd] DEBUG:   Generated: src/auth/login.ts
 [speclangd] DEBUG:   Generated: src/auth/logout.ts

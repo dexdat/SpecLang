@@ -3,7 +3,8 @@ id: "@speclang/examples.spec.dir/hello-world-cascade"
 version: 0.1.0
 layer: 2
 tags: [example, cascade, end-to-end, tutorial, demo]
-parent: ""@ref:specs/examples.spec"project_level: POC
+parent: "@ref:specs/examples.spec"
+project_level: POC
 agent_support: agent_autonomous
 short: "Hello World Cascade - Complete end-to-end demonstration"
 ---
@@ -116,7 +117,8 @@ id: "@myproject/hello.ts"
 version: 1.0.0
 layer: 5
 target: typescript
-parent: ""@ref:specs/hello"project_level: POC
+parent: "@ref:specs/hello"
+project_level: POC
 agent_support: agent_autonomous
 tags: [greeting, typescript, generated]
 short: "TypeScript code mapping for hello module"
@@ -157,7 +159,7 @@ The code-gen agent reads `specs/hello.ts.spec` and generates actual code:
 **Agent creates:** `src/hello.ts`
 
 ```typescript
-// @speclang-id: @ref:specs/hello.ts#greet
+// @speclang-id: "@ref:specs/hello.ts#greet"
 // Generated from specs/hello.ts.spec
 // DO NOT EDIT - changes will be overwritten
 
@@ -170,7 +172,7 @@ export function greet(name: string): string {
   return `Hello, ${name}!`;
 }
 
-// @speclang-id: @ref:specs/hello.ts#farewell
+// @speclang-id: "@ref:specs/hello.ts#farewell"
 // Generated from specs/hello.ts.spec
 // DO NOT EDIT - changes will be overwritten
 
@@ -202,7 +204,8 @@ The test-writer agent creates a test spec:
 id: "@myproject/hello.test"
 version: 1.0.0
 layer: 7
-parent: ""@ref:specs/hello"project_level: POC
+parent: "@ref:specs/hello"
+project_level: POC
 agent_support: agent_autonomous
 tags: [test, greeting]
 short: "Tests for hello module"
@@ -249,7 +252,7 @@ Then: It returns "Goodbye, World!"
 **Agent creates:** `src/hello.test.ts`
 
 ```typescript
-// @speclang-id: @ref:specs/hello.test
+// @speclang-id: "@ref:specs/hello.test"
 // Generated from specs/hello.test.spec.md
 // DO NOT EDIT - changes will be overwritten
 
@@ -435,7 +438,7 @@ Expected output:
 
 ## References
 
-- "@ref:specs/examples.spec.dir/hello-world - Simple hello world
+- "@ref:specs/examples.spec.dir/hello-world - Simple hello world"
 - @ref:specs/cascade - Cascade system
 - @ref:specs/agent-protocol - Agent roles
 - @ref:specs/compiler - Code generation

@@ -52,11 +52,11 @@ DirectoryIndex:
 # @block:transition/common-refs @kind:refs
 refs:
   - "@ref:speclang/project-maturity-levels"
-  - "@ref:speclang/agent-support-levels"
-  - "@ref:speclang/autonomous-validation"
-  - "@ref:speclang/agent-behavior-matrix"
-  - "@ref:speclang/transition-workflows/upgrade"
-  - "@ref:speclang/transition-workflows/downgrade"
+- "@ref:speclang/agent-support-levels"
+- "@ref:speclang/autonomous-validation"
+- "@ref:speclang/agent-behavior-matrix"
+- "@ref:speclang/transition-workflows/upgrade"
+- "@ref:speclang/transition-workflows/downgrade"
 ```
 
 ## Maintenance Notes

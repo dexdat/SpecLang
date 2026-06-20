@@ -14,7 +14,7 @@ short: Orchestrator Skill
 
 Part 2/3 of the Speclang Skills Pack.
 
-Parent: @ref:specs/skills
+Parent: "@ref:specs/skills"
 
 ## Orchestrator Skill
 

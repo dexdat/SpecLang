@@ -3,7 +3,7 @@ id: "@speclang/dynamic-split/strategy"
 version: 0.1.0
 layer: 2
 tags: [splitting, strategy, logic]
-parent: @ref:speclang/dynamic-split
+parent: "@ref:speclang/dynamic-split"
 part: 1/2
 order: 1
 short: Dynamic splitting strategy and configuration
@@ -176,19 +176,19 @@ DirStructure:
 
   parent_as_index:
     header:
-      id: @specs/auth/login
+      id: "@specs/auth/login"
       children:
-        - "@ref:specs/auth/login.spec.dir/overview
-        - "@ref:specs/auth/login.spec.dir/entities
-        - "@ref:specs/auth/login.spec.dir/operations
-        - "@ref:specs/auth/login.spec.dir/tests
+        - "@ref:specs/auth/login.spec.dir/overview"
+        - "@ref:specs/auth/login.spec.dir/entities"
+        - "@ref:specs/auth/login.spec.dir/operations"
+        - "@ref:specs/auth/login.spec.dir/tests"
       short: "Login (4 sub-specs)"
     content: "See login.spec.dir/ for details"
 
   sub_specs_link_back:
     header:
-      id: @specs/auth/login.spec.dir/overview
-      parent: @ref:specs/auth/login
+      id: "@specs/auth/login.spec.dir/overview"
+      parent: "@ref:specs/auth/login"
       part: 1/4
       order: 1
       short: "Login overview"
@@ -242,12 +242,12 @@ After split:
 Parent header (specs/auth.spec.yaml):
   ---
   # speclang-header lines:10
-  id: @specs/auth
+  id: "@specs/auth"
   version: 1.0.0
   children:
-    - "@ref:specs/auth.spec.dir/entities
-    - "@ref:specs/auth.spec.dir/operations
-    - "@ref:specs/auth.spec.dir/policies
+    - "@ref:specs/auth.spec.dir/entities"
+    - "@ref:specs/auth.spec.dir/operations"
+    - "@ref:specs/auth.spec.dir/policies"
   short: "Authentication system (3 parts)"
   ---
   
@@ -256,11 +256,11 @@ Parent header (specs/auth.spec.yaml):
 Child header (specs/auth.spec.dir/entities.spec.yaml):
   ---
   # speclang-header lines:8
-  id: @specs/auth.spec.dir/entities
-  parent: @ref:specs/auth
+  id: "@specs/auth.spec.dir/entities"
+  parent: "@ref:specs/auth"
   part: 1/3
   siblings:
-    next: @ref:specs/auth.spec.dir/operations
+    next: "@ref:specs/auth.spec.dir/operations"
   short: "Auth entities (User, Session, Token)"
   ---
 ```

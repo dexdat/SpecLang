@@ -117,7 +117,7 @@ sequenceDiagram
 ```
 
 **Dependencies:**
-- @ref:specs/agent-protocol
+- "@ref:specs/agent-protocol"
 
 ## Class Diagram Generation
 

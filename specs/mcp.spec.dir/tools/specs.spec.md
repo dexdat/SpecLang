@@ -5,9 +5,11 @@ layer: 3
 project_level: Alpha
 agent_support: agent_assisted
 tags: [mcp, tools, specs]
-parent: ""@ref:speclang/mcp"part: 5/12
+parent: "@ref:speclang/mcp"
+part: 5/12
 siblings:
-  next: ""@ref:specs/mcp.spec.dir/tools/commands"short: "Spec-related tools: get spec, find dependents, get tree, validate, split, query errors, versioning, SQL"
+  next: "@ref:specs/mcp.spec.dir/tools/commands"
+short: "Spec-related tools: get spec, find dependents, get tree, validate, split, query errors, versioning, SQL"
 ---
 # MCP Spec Tools
 

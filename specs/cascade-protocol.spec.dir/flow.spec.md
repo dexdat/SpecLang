@@ -7,7 +7,7 @@ status: draft
 project_level: Alpha
 agent_support: agent_autonomous
 short: Cascade Protocol Flow and Multi‑Tree Generation
-parent: @ref:specs/cascade-protocol
+parent: "@ref:specs/cascade-protocol"
 part: 2/2
 ---
 
@@ -184,7 +184,7 @@ Results:
 Steering packet created: sp-20260222-001-step1
 
 Next step: Generate auth handler code
-Agent: @speclang-code-gen
+Agent: "@speclang-code-gen"
 
 Continue cascade? (yes / no / retry / modify)
 ```
@@ -317,7 +317,7 @@ Specs can generate outputs in multiple trees:
 ```markdown
 # specs/auth.spec.md
 id: "@specs/auth"
-refs: [""@ref:project.scl"", ""@ref:specs/core""]
+refs: ["@ref:project.scl"", "@ref:specs/core""]
 ---
 
 ## API Specification

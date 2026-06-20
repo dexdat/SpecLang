@@ -13,7 +13,7 @@ short: File Naming Patterns
 
 Part 2 of 2: Layer organization, directory structure, and naming conventions.
 
-Parent: @ref:speclang/file-naming
+Parent: "@ref:speclang/file-naming"
 
 ## Layer Organization
 

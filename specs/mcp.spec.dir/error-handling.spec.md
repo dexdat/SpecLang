@@ -1,8 +1,9 @@
 # speclang-header lines:12
 id: "@speclang/mcp.error-handling"
-parent: ""@ref:speclang/mcp"part: 9/12
+parent: "@ref:speclang/mcp"part: 9/12
 siblings:
-  next: ""@ref:specs/mcp.spec.dir/sse-stream"short: Error categories and handling strategies
+  next: "@ref:specs/mcp.spec.dir/sse-stream"
+short: Error categories and handling strategies
 project_level: Alpha
 agent_support: agent_assisted
 tags: [mcp, speclang]

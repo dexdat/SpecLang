@@ -5,10 +5,10 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [executor, scheduling, pipeline]
-parent: @ref:specs/executor
+parent: "@ref:specs/executor"
 part: 2/2
 siblings:
-  prev: @ref:specs/executor.spec.dir/execution
+  prev: "@ref:specs/executor.spec.dir/execution"
 
 short: Pipeline scheduling - stage ordering, dependency resolution, triggers
 ---

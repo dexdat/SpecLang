@@ -6,10 +6,10 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [format, syntax, self-describing]
 status: draft
-parent: @ref:specs/spec-format
+parent: "@ref:specs/spec-format"
 part: 2/2
 siblings:
-  prev: @ref:specs/spec-format.spec.dir/structure
+  prev: "@ref:specs/spec-format.spec.dir/structure"
 
 short: Spec Format - Blocks
 ---
@@ -50,7 +50,7 @@ steps:
   - verify password
   - generate token
 
-refs: [""@ref:northstar#auth"", ""@ref:stdlib/Result""]
+refs: ["@ref:northstar#auth"", "@ref:stdlib/Result""]
 ```
 ```
 
@@ -142,12 +142,12 @@ Numbered:
 ```speclang
 # @block:format/ref @kind:entity
 Reference:
-  syntax: @ref:path/to/block
+  syntax: "@ref:path/to/block"
   inline: see @ref:format/ref for details
-  explicit: refs: [""@ref:format/block"", ""@ref:format/kinds""]
+  explicit: refs: ["@ref:format/block"", "@ref:format/kinds""]
   
   forms:
-    @ref:spec           -> entire spec
+    "@ref:spec"           -> entire spec
     @ref:spec#block     -> specific block
     @ref:file.ext#loc   -> generated code location
 ```
@@ -158,7 +158,7 @@ Reference:
 # @block:format/ref-usage @kind:code
 ```speclang
 # @block:auth/login @kind:operation
-refs: [""@ref:northstar#auth"", ""@ref:stdlib/Result"", ""@ref:specs/users#User""]
+refs: ["@ref:northstar#auth"", "@ref:stdlib/Result"", "@ref:specs/users#User""]
 
 Steps:
 1. Validate email format using regex
@@ -183,8 +183,8 @@ GeneratedCodeMarker:
   purpose: link code back to spec
   
   format:
-    // SPECLANG-ID: @ref:specs/auth#login
-    // SPECLANG-NORTHSTAR: @ref:northstar#auth
+    // SPECLANG-ID: "@ref:specs/auth#login"
+    // SPECLANG-NORTHSTAR: "@ref:northstar#auth"
     // SPECLANG-VERSION: 1.2.0
     // SPECLANG-GENERATED: DO NOT EDIT
   
@@ -196,8 +196,8 @@ GeneratedCodeMarker:
 ```speclang
 # @block:format/marker-example @kind:code
 ```typescript
-// SPECLANG-ID: @ref:specs/auth#login
-// SPECLANG-NORTHSTAR: @ref:northstar#auth
+// SPECLANG-ID: "@ref:specs/auth#login"
+// SPECLANG-NORTHSTAR: "@ref:northstar#auth"
 // SPECLANG-VERSION: 1.0.0
 // SPECLANG-GENERATED: DO NOT EDIT
 

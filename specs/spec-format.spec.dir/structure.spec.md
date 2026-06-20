@@ -6,10 +6,10 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [format, syntax, self-describing]
 status: draft
-parent: @ref:specs/spec-format
+parent: "@ref:specs/spec-format"
 part: 1/2
 siblings:
-  next: @ref:specs/spec-format.spec.dir/blocks
+  next: "@ref:specs/spec-format.spec.dir/blocks"
 
 short: Spec Format - Structure
 ---
@@ -145,9 +145,9 @@ HeaderSplitFields:
       
   for_child_specs:
     parent:
-      type: @ref
+      type: "@ref"
       purpose: Reference to parent spec
-      example: @ref:specs/auth
+      example: "@ref:specs/auth"
       
     part:
       type: string "N/M"
@@ -155,8 +155,8 @@ HeaderSplitFields:
       example: "1/4"
       
     siblings:
-      prev: @ref (optional)
-      next: @ref (optional)
+      prev: "@ref" (optional)
+      next: "@ref" (optional)
 ```
 
 ### @format/header-example
@@ -172,11 +172,11 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [auth, security, user]
 imports:
-  - @speclang/stdlib
+  - "@speclang/stdlib"
   - @myapp/users
 status: stable
 owner: @team-security
-refs: [""@ref:northstar#auth""]
+refs: ["@ref:northstar#auth""]
 
 ---
 ```
@@ -192,9 +192,9 @@ Parent index spec (auth.spec.md):
 id: "@myapp/auth"
 version: 1.2.0
 children:
-  - "@ref:specs/auth.spec.dir/entities
-  - "@ref:specs/auth.spec.dir/operations
-  - "@ref:specs/auth.spec.dir/policies
+  - "@ref:specs/auth.spec.dir/entities"
+  - "@ref:specs/auth.spec.dir/operations"
+  - "@ref:specs/auth.spec.dir/policies"
 short: "Authentication (3 parts)"
 ---
 
@@ -205,10 +205,10 @@ Child spec (auth.spec.dir/entities.spec.yaml):
 ```yaml
 # speclang-header
 id: "@myapp/auth".spec.dir/entities
-parent: @ref:specs/auth
+parent: "@ref:specs/auth"
 part: 1/3
 siblings:
-  next: @ref:specs/auth.spec.dir/operations
+  next: "@ref:specs/auth.spec.dir/operations"
 short: "Auth entities"
 ---
 

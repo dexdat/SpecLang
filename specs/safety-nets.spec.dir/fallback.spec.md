@@ -136,7 +136,7 @@ Implementation:
 ```speclang
 # @block:safety-nets/example-mislabeling @kind:code
 ```yaml
-spec: @specs/payment/process
+spec: "@specs/payment/process"
 metadata:
   project_level: Beta
   agent_support: agent_autonomous
@@ -161,7 +161,7 @@ actions:
 ```speclang
 # @block:safety-nets/example-intervention @kind:code
 ```yaml
-spec: @specs/auth/login
+spec: "@specs/auth/login"
 metadata:
   project_level: Production
   agent_support: agent_autonomous
@@ -189,8 +189,8 @@ outcome:
 ```speclang
 # @block:safety-nets/references @kind:refs
 refs:
-  - "@ref:speclang/autonomous-validation
-  - "@ref:speclang/transition-workflows
-  - "@ref:speclang/agent-behavior-matrix
-  - "@ref:speclang/agent-support-levels
+  - "@ref:speclang/autonomous-validation"
+  - "@ref:speclang/transition-workflows"
+  - "@ref:speclang/agent-behavior-matrix"
+  - "@ref:speclang/agent-support-levels"
 ```

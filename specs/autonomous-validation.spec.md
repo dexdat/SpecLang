@@ -9,7 +9,7 @@ children: ["@speclang/autonomous-validation/rules", "@speclang/autonomous-valida
 short: Validation rules for specs labeled agent_autonomous
 depends_on:
   - "@speclang/headers"
-  - "@speclang/validation"
+- "@speclang/validation"
 ---
 # Autonomous Validation
 
@@ -100,5 +100,5 @@ Minimum threshold for autonomous operation: **70/100**
 
 **Children specs:**
 
-- "@ref:speclang/autonomous-validation/rules – Core validation rules and criteria
+- "@ref:speclang/autonomous-validation/rules – Core validation rules and criteria"
 - @ref:speclang/autonomous-validation/scoring – Scoring algorithms and thresholds

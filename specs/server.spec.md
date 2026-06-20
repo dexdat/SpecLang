@@ -9,7 +9,7 @@ short: "MCP Server implementation for SpecLang"
 status: generated
 depends_on:
   - "@speclang/mcp"
-  - "@speclang/core"
+- "@speclang/core"
 ---
 
 # MCP Server Spec

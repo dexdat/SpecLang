@@ -1,5 +1,5 @@
 # speclang-header lines:15
-id: @specs/examples/crud-app
+id: "@specs/examples/crud-app"
 version: 1.0.0
 layer: 1
 project_level: Alpha
@@ -8,8 +8,8 @@ tags: [example, crud, rest, api]
 short: CRUD example with REST API
 depends_on:
   - "@ref:specs/core"
-  - "@ref:specs/examples/hello-world"
-  - "@ref:specs/examples/auth"
+- "@ref:specs/examples/hello-world"
+- "@ref:specs/examples/auth"
 ---
 
 # CRUD Application Example

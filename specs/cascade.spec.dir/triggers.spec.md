@@ -8,7 +8,8 @@ status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Cascade Triggers
-parent: ""@ref:speclang/cascade"part: 1/2
+parent: "@ref:speclang/cascade"
+part: 1/2
 ---
 # Cascade Triggers
 
@@ -294,7 +295,7 @@ CascadeGraph:
     - test files
   
   edges:
-    - "@ref: spec → spec
+    - "@ref: spec → spec"
     - produces: spec → generated
     - tests: test → generated
   

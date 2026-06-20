@@ -8,7 +8,11 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [roadmap, planning, phases, milestones]
 children:
-  - "@ref:specs/roadmap.spec.dir/poc"  - "@ref:specs/roadmap.spec.dir/mvp"  - "@ref:specs/roadmap.spec.dir/alpha"  - "@ref:specs/roadmap.spec.dir/beta"  - "@ref:specs/roadmap.spec.dir/production"---
+  - "@ref:specs/roadmap.spec.dir/poc"
+- "@ref:specs/roadmap.spec.dir/mvp"
+- "@ref:specs/roadmap.spec.dir/alpha"
+- "@ref:specs/roadmap.spec.dir/beta"
+- "@ref:specs/roadmap.spec.dir/production"---"
 
 # SpecLang Development Roadmap
 

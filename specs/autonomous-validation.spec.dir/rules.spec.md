@@ -43,7 +43,7 @@ AutonomousValidationCriteria:
     
   resolved_references:
     requirement: "All `@ref:` references must resolve to existing blocks"
-    check: "Every `@ref:` in content points to a block ID in `_index.json`"
+check: "Every `@ref:` in content points to a block ID in `_index.json`"
     tolerance: "Zero unresolved references allowed"
     
   unambiguous_language:
@@ -57,7 +57,7 @@ AutonomousValidationCriteria:
       - id: "Must follow @domain/path format"
       - version: "Semantic version"
       - layer: "Integer (depth in tree), appropriate for content"
-      - project_level: "Value meets criteria defined in ""@ref:speclang/project-maturity-levels"      - agent_support: "agent_autonomous"
+      - project_level: "Value meets criteria defined in "@ref:speclang/project-maturity-levels"      - agent_support: "agent_autonomous"
       - tags: "Non-empty array"
       - short: "One-line description"
     optional_but_recommended:
@@ -297,9 +297,9 @@ steps:
 ```speclang
 # @block:autonomous-validation/references @kind:refs
 refs:
-  - "@ref:speclang/validation
-  - "@ref:speclang/headers
-  - "@ref:speclang/layer-definitions
-  - "@ref:speclang/project-maturity-levels
-  - "@ref:speclang/agent-support-levels
+  - "@ref:speclang/validation"
+  - "@ref:speclang/headers"
+  - "@ref:speclang/layer-definitions"
+  - "@ref:speclang/project-maturity-levels"
+  - "@ref:speclang/agent-support-levels"
 ```

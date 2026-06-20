@@ -269,6 +269,6 @@ This schema applies specifically to `{name}.{ext}.spec` files:
 
 ## References
 
-- "@ref:speclang/file-naming - File naming conventions
+- "@ref:speclang/file-naming - File naming conventions"
 - @ref:speclang/compiler - Code generation pipeline
 - @ref:speclang/headers - Universal header format

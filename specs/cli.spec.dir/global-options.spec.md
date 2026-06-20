@@ -5,7 +5,8 @@ layer: 1
 tags: [cli, options]
 project_level: Alpha
 agent_support: agent_assisted
-parent: ""@ref:specs/cli.spec"part: 3/8
+parent: "@ref:specs/cli.spec"
+part: 3/8
 short: CLI global options
 ---
 

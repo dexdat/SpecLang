@@ -5,7 +5,8 @@ layer: 1
 tags: [cli, exit-codes]
 project_level: Alpha
 agent_support: agent_assisted
-parent: ""@ref:specs/cli.spec"part: 5/8
+parent: "@ref:specs/cli.spec"
+part: 5/8
 short: CLI exit codes
 ---
 

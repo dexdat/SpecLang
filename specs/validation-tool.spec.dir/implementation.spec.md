@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [validation, tool, python, typescript, autonomous]
 short: Implementation details for validation tool
-parent: @ref:speclang/validation-tool
+parent: "@ref:speclang/validation-tool"
 part: 1/2
 ---
 # Validation Tool Implementation
@@ -206,7 +206,7 @@ ConfidenceScoring:
 ```speclang
 # @block:validation-tool/human-report @kind:code
 ```
-Validation Report: @specs/auth/login
+Validation Report: "@specs/auth/login"
 ────────────────────────────────────
 ✓ PASSED (confidence: 0.85)
 
