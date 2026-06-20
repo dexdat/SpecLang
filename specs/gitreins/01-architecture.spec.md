@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@gitreins/01-architecture"
 version: 1.0.0
 layer: 1

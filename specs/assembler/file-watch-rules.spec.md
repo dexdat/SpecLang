@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:10
 id: "@speclang/assembler/file-watch-rules"
 version: 1.0.0
 layer: 2
