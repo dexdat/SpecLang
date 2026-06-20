@@ -65,4 +65,39 @@
 **Axiom work item:** WI-SL-014
 **Evidence:** Source files: types.ts (SpecRef, UpgradePlan, UpgradeCheck, CheckResult, ValidationResult, ExecutionResult), planner.ts (UpgradePlanner with plan/check/isValidTransition/listTransitionPaths — 4 project level + 2 agent support transitions), validator.ts (UpgradeValidator with phase-specific validation per level pair), executor.ts (UpgradeExecutor with execute/rollback), index.ts (registerUpgradeWorkflows registering 6 workflows). Tests: 31/31 upgrade tests pass. Note: vitest symlink resolution causes false failures when running all 116 test files in one process; tests pass correctly in isolated runs.
 
+### AC-014: Spec Header Remediation — fix 478 invalid spec headers ❌ blocked
+**Goal:** Fix all 478 spec files with invalid headers. Currently only 80/558 (14.3%) pass the universal header validator. Target: 100% pass rate.
+**How to verify:**
+  1. `npx vitest run tests/headers/validator.test.ts` — all 4 tests pass with 100% pass rate (0 invalid)
+  2. Every spec file has valid: id, version, layer, project_level, agent_support, short
+  3. No unknown fields in headers
+  4. `lines:N` matches actual header line count
+  5. `npm run build && npm test` passes (full regression)
+**Spec source:** `specs/headers.spec.md`
+**Status:** blocked ❌
+**Blocker:** 2 stale Axiom processes (PIDs 2450864, 2625625) from prior wakes are still running in the opencode-speclang container. They cannot be killed by this agent (Operation not permitted). New Axiom tasks cannot be safely dispatched until these are cleared by the user.
+**Evidence:** `tests/headers/validator.test.ts` created by WI-SL-015, reports 478/558 invalid. Common errors: missing required fields (id, version, layer), lines:N mismatch, unknown fields.
+**Next step:** User must `docker exec -u root opencode-speclang kill 2450864 2625625` or restart the container, then re-run cron.
+
+### AC-015: LSP Server — tests and verification ❌ blocked
+**Goal:** The SpecLang LSP server (`src/lsp/server.ts`) provides header validation diagnostics, go-to-definition for @ref annotations, document symbols, completions, and hover information for `.spec.md` files. Currently has 0 tests.
+**How to verify:**
+  1. `npm run build` compiles clean (LSP is included in build)
+  2. New test suite: `tests/lsp/` with tests for header validation, references, completions, symbols
+  3. LSP server initializes/shuts down correctly
+  4. Common error scenarios tested (malformed headers, missing refs, empty files)
+**Spec source:** LSP implementation exists at `src/lsp/server.ts` (356 lines) but no formal spec exists yet. Dual-view compliance needed.
+**Status:** blocked ❌
+**Blocker:** Same stale Axiom processes blocking AC-014.
+**Evidence:** LSP code exists: server.ts (356 lines), completions.ts, references.ts, symbols.ts, index.ts. Compiles cleanly. 0 tests.
+
 ## Backlog
+
+### BL-001: Dashboard monitoring — activate and test
+Dashboard server (`src/dashboard/server.ts`) exists but is excluded from TypeScript build. Has spec at `specs/mcp-ui-tools.spec.md`. Needs: inclusion in tsconfig, tests, verification.
+
+### BL-002: Dual-view docs compliance
+147 direct files in `docs/` need spec sources and symlinks. Currently 11 symlinks.
+
+### BL-003: stdlib tests
+`src/stdlib/` (collections.ts, results.ts, validators.ts) has no tests.
