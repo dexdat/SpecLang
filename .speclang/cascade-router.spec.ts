@@ -704,11 +704,15 @@ export class CascadeRouter {
         });
       }
 
-      // Read spec body for prompt assembly
+      // Read spec body for prompt assembly (prefer pre-processed with trace headers)
       let specBody = '';
       let projectContext = '';
       try {
-        specBody = await fs.readFile(resolvedPath, 'utf-8');
+        if (cleanSpecPath) {
+          specBody = await fs.readFile(cleanSpecPath, 'utf-8');
+        } else {
+          specBody = await fs.readFile(resolvedPath, 'utf-8');
+        }
         const header = await parseHeader(resolvedPath);
         targetLang = (header?.targetLang as string) || (header?.target_lang as string) || 'py';
       } catch { /* spec file gone */ }
@@ -4361,7 +4365,26 @@ export class CascadeRouter {
 `**End of compiled runtime prompt.** This prompt is the shared SpecLang cascade wrapper. It is assembled by the cascade router with stage-specific instructions injected at \`${stageInstructions}\`. All other template variables (\`\${stage}\`, \`${item.cascadeId}\`, \`${projectRoot}\`, \`\${targetLanguage}\`, \`\${specFilePath}\`, \`\${outputDirectory}\`, \`\${diffTriggerPresent}\`, \`\${diffTrigger}\`, \`\${sourceSpecBody}\`, \`\${existingCodeInventory}\`, \`\${unresolvedRefs}\`, \`\${skillReferencePresent}\`, \`\${skillReference}\`, \`\${projectArchitecturePresent}\`, \`\${projectArchitecture}\`, \`\${verificationCommand}\`) are resolved at assembly time from the cascade router's context.`
           ].join('\\n');
 
-      const prompt = wrapper.replace('${stageInstructions}', stageInstructions[item.stage] || '');
+      // Resolve all template variables into the prompt
+      const resolvedStageInstructions = stageInstructions[item.stage] || '';
+      let prompt = wrapper
+        .replaceAll('${stageInstructions}', resolvedStageInstructions)
+        .replaceAll('${stage}', item.stage)
+        .replaceAll('${item.cascadeId}', item.cascadeId)
+        .replaceAll('${projectRoot}', projectRoot)
+        .replaceAll('${targetLanguage}', targetLang)
+        .replaceAll('${specFilePath}', resolvedPath)
+        .replaceAll('${outputDirectory}', outputDir)
+        .replaceAll('${diffTriggerPresent}', specDiff ? 'true' : 'false')
+        .replaceAll('${diffTrigger}', specDiff || '(no diff — fresh cascade)')
+        .replaceAll('${sourceSpecBody}', specBody || '(spec body not available)')
+        .replaceAll('${existingCodeInventory}', existingCode || '(no existing files)')
+        .replaceAll('${unresolvedRefs}', '(resolved at runtime by agent)')
+        .replaceAll('${skillReferencePresent}', skillContext ? 'true' : 'false')
+        .replaceAll('${skillReference}', skillContext || '(no skill files loaded)')
+        .replaceAll('${projectArchitecturePresent}', projectContext ? 'true' : 'false')
+        .replaceAll('${projectArchitecture}', projectContext || '(no project.scl)')
+        .replaceAll('${verificationCommand}', `npx tsc --noEmit`);
       await session.prompt(prompt);
 
 
