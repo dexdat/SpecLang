@@ -1,13 +1,13 @@
----
+# speclang-header lines:11
 id: "@gitreins/07-judge-orchestrator"
 version: 1.0.0
 layer: 2
-owned-by: gitreins
+project_level: Alpha
+agent_support: agent_assisted
+owned_by: gitreins
 tags: [gitreins, judge, evaluation]
-short: "Judge Orchestrator — coordinates evaluator loops, aggregates verdicts, computes scores, and handles recovery"
-depends_on:
-  - "@ref:gitreins/01-architecture"
 status: imported
+short: "Judge Orchestrator — coordinates evaluator loops, aggregates verdicts, computes scores, and handles recovery"
 realized_by: gitreins-poc/engine/judge.py
 ---
 

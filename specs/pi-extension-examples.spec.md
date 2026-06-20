@@ -1,15 +1,14 @@
----
+# speclang-header lines:11
 id: "@speclang/pi-extension-examples"
 version: 0.1.0
-target: src/pi-extension/
 layer: 1
-tags: [pi, extensions, tools, commands, guard]
-imports: ["@speclang/pi-integration", "@speclang/agent-protocol"]
-status: draft
-
 project_level: Alpha
 agent_support: agent_autonomous
-short: Pi Extension Examples for Speclang
+tags: [pi, extensions, tools, commands, guard]
+status: draft
+short: "Pi Extension Examples for Speclang"
+target: src/pi-extension/
+imports: "["@speclang/pi-integration", "@speclang/agent-protocol"]"
 ---
 
 # Pi Extension Examples

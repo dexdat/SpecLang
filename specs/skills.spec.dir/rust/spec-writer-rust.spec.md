@@ -1,7 +1,11 @@
----
+# speclang-header lines:8
 id: "@spec/skills/rust-spec-writer"
-target_lang: rust
+version: 1.0.0
+layer: 5
+project_level: Alpha
+agent_support: agent_assisted
 short: "Spec writer for Rust"
+target_lang: rust
 ---
 
 # Spec Writer: Rust

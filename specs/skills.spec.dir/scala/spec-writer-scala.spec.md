@@ -1,7 +1,11 @@
----
+# speclang-header lines:8
 id: "@spec/skills/scala-spec-writer"
-target_lang: scala
+version: 1.0.0
+layer: 5
+project_level: Alpha
+agent_support: agent_assisted
 short: "Spec writer for Scala"
+target_lang: scala
 ---
 
 # Spec Writer: Scala

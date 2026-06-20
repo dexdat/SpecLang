@@ -1,13 +1,13 @@
----
+# speclang-header lines:10
 id: "@gitreins/01-architecture"
 version: 1.0.0
 layer: 1
-owned-by: gitreins
+project_level: Alpha
+agent_support: agent_assisted
+owned_by: gitreins
 tags: [gitreins, architecture, data-flow]
-short: "GitReins architecture and data flow — system identity, tiered evaluation, component dependency graph, technology stack, and non-functional requirements"
-depends_on:
-  - "@gitreins/00-readme"
 status: imported
+short: "GitReins architecture and data flow — system identity, tiered evaluation, component dependency graph, technology stack, and non-functional requirements"
 ---
 
 # 01 — Architecture & Data Flow

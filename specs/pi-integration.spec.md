@@ -1,15 +1,14 @@
----
+# speclang-header lines:11
 id: "@speclang/pi-integration"
 version: 0.1.0
-target: src/pi-integration/
 layer: 0
-tags: [pi, integration, runtime, agents, assembler, watch-system]
-imports: ["@speclang/core", "@speclang/daemon", "@speclang/agent-protocol"]
-status: draft
-
 project_level: Alpha
 agent_support: agent_assisted
-short: Pi Agent Integration
+tags: [pi, integration, runtime, agents, assembler, watch-system]
+status: draft
+short: "Pi Agent Integration"
+target: src/pi-integration/
+imports: "["@speclang/core", "@speclang/daemon", "@speclang/agent-protocol"]"
 ---
 
 # Pi Agent Integration

@@ -1,13 +1,13 @@
----
+# speclang-header lines:11
 id: "@gitreins/06-pipeline-engine"
 version: 1.0.0
 layer: 2
-owned-by: gitreins
+project_level: Alpha
+agent_support: agent_assisted
+owned_by: gitreins
 tags: [gitreins, pipeline]
-short: "Pipeline Engine — structured pipeline execution with stage lifecycle and failure recovery"
-depends_on:
-  - "@ref:gitreins/01-architecture"
 status: imported
+short: "Pipeline Engine — structured pipeline execution with stage lifecycle and failure recovery"
 realized_by: gitreins-poc/engine/pipeline.py
 ---
 

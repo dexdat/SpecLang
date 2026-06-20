@@ -1,7 +1,11 @@
----
+# speclang-header lines:8
 id: "@spec/skills/kotlin-code-gen"
-target_lang: kotlin
+version: 1.0.0
+layer: 5
+project_level: Alpha
+agent_support: agent_assisted
 short: "Code gen for Kotlin"
+target_lang: kotlin
 ---
 
 # Code Gen: Kotlin

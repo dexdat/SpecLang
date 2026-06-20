@@ -1,7 +1,11 @@
----
+# speclang-header lines:8
 id: "@spec/skills/elixir-spec-writer"
-target_lang: elixir
+version: 1.0.0
+layer: 5
+project_level: Alpha
+agent_support: agent_assisted
 short: "Spec writer for Elixir"
+target_lang: elixir
 ---
 
 # Spec Writer: Elixir

@@ -1,15 +1,14 @@
----
+# speclang-header lines:11
 id: "@speclang/daemon-setup"
 version: 0.1.0
-target: src/daemon-setup/
 layer: 1
-tags: [daemon, setup, chokidar, pi, file-watcher]
-imports: ["@speclang/daemon", "@speclang/pi-integration"]
-status: draft
-
 project_level: Alpha
 agent_support: agent_autonomous
-short: Daemon Setup and Configuration for Pi Agent
+tags: [daemon, setup, chokidar, pi, file-watcher]
+status: draft
+short: "Daemon Setup and Configuration for Pi Agent"
+target: src/daemon-setup/
+imports: "["@speclang/daemon", "@speclang/pi-integration"]"
 ---
 
 # Daemon Setup

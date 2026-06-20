@@ -1,13 +1,13 @@
----
+# speclang-header lines:11
 id: "@gitreins/11-configuration"
 version: 1.0.0
 layer: 1
-owned-by: gitreins
+project_level: Alpha
+agent_support: agent_assisted
+owned_by: gitreins
 tags: [gitreins, config]
-short: "Configuration Schema — .gitreins/config.yaml structure for guards, tasks, pipelines, and LLM settings"
-depends_on:
-  - "@ref:gitreins/01-architecture"
 status: imported
+short: "Configuration Schema — .gitreins/config.yaml structure for guards, tasks, pipelines, and LLM settings"
 realized_by: gitreins-poc/.gitreins/config.yaml
 ---
 

@@ -1,12 +1,12 @@
----
+# speclang-header lines:9
 id: "@speclang/assembler/overview"
 version: 1.0.0
 layer: 1
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [assembler, overview, architecture, components]
-short: "Assembler system overview — how the 6 core components connect"
 status: active
+short: "Assembler system overview — how the 6 core components connect"
 ---
 
 # Assembler System Overview

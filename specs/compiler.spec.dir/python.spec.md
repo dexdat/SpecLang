@@ -1,14 +1,12 @@
----
+# speclang-header lines:9
 id: "@speclang/compiler.spec.dir/python"
 version: 0.1.0
 layer: 5
-tags: [compiler, targets, python]
-imports: ["@speclang/core", "@speclang/stdlib", "@speclang/compiler.spec.dir/targets"]
 project_level: Alpha
 agent_support: agent_autonomous
-parent: ""@ref:specs/compiler.spec.dir/targets"short: Python code generator implementation
-references:
-  - ""@ref:src/compiler/python/types.ts"  - ""@ref:src/compiler/python/templates.ts"  - ""@ref:src/compiler/python/builtins.ts"  - ""@ref:src/compiler/targets/python.ts"
+tags: [compiler, targets, python]
+imports: "["@speclang/core", "@speclang/stdlib", "@speclang/compiler.spec.dir/targets"]"
+parent: """@ref:specs/compiler.spec.dir/targets"short: Python code generator implementation"
 ---
 
 # Python Code Generator

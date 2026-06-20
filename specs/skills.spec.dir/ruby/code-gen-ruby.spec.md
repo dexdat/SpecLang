@@ -1,7 +1,11 @@
----
+# speclang-header lines:8
 id: "@spec/skills/ruby-code-gen"
-target_lang: ruby
+version: 1.0.0
+layer: 5
+project_level: Alpha
+agent_support: agent_assisted
 short: "Code gen for Ruby"
+target_lang: ruby
 ---
 
 # Code Gen: Ruby

@@ -1,12 +1,12 @@
----
+# speclang-header lines:9
 id: "@speclang/assembler/cli"
 version: 1.0.0
 layer: 2
 project_level: Alpha
 agent_support: agent_assisted
 tags: [assembler, cli, commands, usage]
-short: "CLI commands reference for SpecLang assembler"
 status: draft
+short: "CLI commands reference for SpecLang assembler"
 ---
 
 # Assembler CLI

@@ -1,7 +1,11 @@
----
+# speclang-header lines:8
 id: "@spec/skills/r-test-writer"
-target_lang: r
+version: 1.0.0
+layer: 5
+project_level: Alpha
+agent_support: agent_assisted
 short: "Test writer for R"
+target_lang: r
 ---
 
 # Test Writer: R

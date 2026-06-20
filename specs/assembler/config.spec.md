@@ -1,12 +1,12 @@
----
+# speclang-header lines:9
 id: "@speclang/assembler/config"
 version: 1.0.0
 layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [assembler, config, build-yaml, speclangrc, schema]
-short: "Configuration schema for SpecLang assembler"
 status: draft
+short: "Configuration schema for SpecLang assembler"
 ---
 
 # Assembler Configuration

@@ -1,12 +1,12 @@
----
+# speclang-header lines:9
 id: "@speclang/assembler/skill-specs"
 version: 1.0.0
 layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [assembler, skills, agents, roles]
-short: "Skill definitions for each SpecLang agent role"
 status: draft
+short: "Skill definitions for each SpecLang agent role"
 ---
 
 # Agent Role Skill Definitions

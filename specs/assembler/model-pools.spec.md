@@ -1,12 +1,12 @@
----
+# speclang-header lines:9
 id: "@speclang/assembler/model-pools"
 version: 1.0.0
 layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [assembler, model-pools, providers, rate-limits, concurrency, downgrade]
-short: "Model pool system — provider configuration, rate limits, capability grouping"
 status: draft
+short: "Model pool system — provider configuration, rate limits, capability grouping"
 ---
 
 # Model Pools

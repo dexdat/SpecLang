@@ -1,13 +1,13 @@
----
+# speclang-header lines:11
 id: "@gitreins/03-agentic-evaluator"
 version: 1.0.0
 layer: 2
-owned-by: gitreins
+project_level: Alpha
+agent_support: agent_assisted
+owned_by: gitreins
 tags: [gitreins, evaluator]
-short: "Agentic Evaluator — LLM-driven verification of task outputs against acceptance criteria"
-depends_on:
-  - "@ref:gitreins/01-architecture"
 status: imported
+short: "Agentic Evaluator — LLM-driven verification of task outputs against acceptance criteria"
 realized_by: gitreins-poc/engine/evaluator.py
 ---
 

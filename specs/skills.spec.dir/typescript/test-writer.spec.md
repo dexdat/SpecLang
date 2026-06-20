@@ -1,13 +1,13 @@
----
+# speclang-header lines:10
 id: "@speclang/skills/test-writer"
 version: 0.1.0
 layer: 2
-tags: [skills, test-writer, agents]
-imports: ["@speclang/skills"]
-status: draft
 project_level: Alpha
 agent_support: agent_assisted
-short: TestWriter Skill
+tags: [skills, test-writer, agents]
+status: draft
+short: "TestWriter Skill"
+imports: ["@speclang/skills"]
 ---
 
 # TestWriter Skill

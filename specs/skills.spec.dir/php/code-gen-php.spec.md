@@ -1,7 +1,11 @@
----
+# speclang-header lines:8
 id: "@spec/skills/php-code-gen"
-target_lang: php
+version: 1.0.0
+layer: 5
+project_level: Alpha
+agent_support: agent_assisted
 short: "Code gen for Php"
+target_lang: php
 ---
 
 # Code Gen: Php

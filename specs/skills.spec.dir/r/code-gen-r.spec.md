@@ -1,7 +1,11 @@
----
+# speclang-header lines:8
 id: "@spec/skills/r-code-gen"
-target_lang: r
+version: 1.0.0
+layer: 5
+project_level: Alpha
+agent_support: agent_assisted
 short: "Code gen for R"
+target_lang: r
 ---
 
 # Code Gen: R

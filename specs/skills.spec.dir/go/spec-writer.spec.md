@@ -1,14 +1,14 @@
----
+# speclang-header lines:12
 id: "@speclang/skills/spec-writer-go"
 version: 0.1.0
 layer: 2
-tags: [skills, spec-writer, agents, go, golang]
-imports: ["@speclang/skills"]
-status: draft
 project_level: Alpha
 agent_support: agent_assisted
+tags: [skills, spec-writer, agents, go, golang]
+status: draft
+short: "SpecWriter Skill (Go)"
+imports: ["@speclang/skills"]
 target_lang: go
-short: SpecWriter Skill (Go)
 resources: [go-generics]
 ---
 

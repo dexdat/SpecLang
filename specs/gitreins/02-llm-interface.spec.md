@@ -1,13 +1,13 @@
----
+# speclang-header lines:11
 id: "@gitreins/02-llm-interface"
 version: 1.0.0
 layer: 2
-owned-by: gitreins
+project_level: Alpha
+agent_support: agent_assisted
+owned_by: gitreins
 tags: [gitreins, llm]
-short: "LLM Interface — provider-agnostic LLM wrapper with structured output parsing"
-depends_on:
-  - "@ref:gitreins/01-architecture"
 status: imported
+short: "LLM Interface — provider-agnostic LLM wrapper with structured output parsing"
 realized_by: gitreins-poc/engine/llm.py
 ---
 

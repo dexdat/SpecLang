@@ -1,13 +1,13 @@
----
+# speclang-header lines:11
 id: "@gitreins/04-guard-manager"
 version: 1.0.0
 layer: 2
-owned-by: gitreins
+project_level: Alpha
+agent_support: agent_assisted
+owned_by: gitreins
 tags: [gitreins, guard]
-short: "Guard Manager — tiered pre-commit guard system with secrets scan, lint, test, and agentic evaluator"
-depends_on:
-  - "@gitreins/01-architecture"
 status: imported
+short: "Guard Manager — tiered pre-commit guard system with secrets scan, lint, test, and agentic evaluator"
 realized_by: gitreins-poc/engine/guard_manager.py
 ---
 

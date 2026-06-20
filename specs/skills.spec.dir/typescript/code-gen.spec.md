@@ -1,13 +1,13 @@
----
+# speclang-header lines:10
 id: "@speclang/skills/code-gen"
 version: 0.1.0
 layer: 2
-tags: [skills, code-gen, agents]
-imports: ["@speclang/skills"]
-status: draft
 project_level: Alpha
 agent_support: agent_assisted
-short: CodeGen Skill
+tags: [skills, code-gen, agents]
+status: draft
+short: "CodeGen Skill"
+imports: ["@speclang/skills"]
 ---
 
 # CodeGen Skill

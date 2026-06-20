@@ -1,7 +1,11 @@
----
+# speclang-header lines:8
 id: "@spec/skills/haskell-spec-writer"
-target_lang: haskell
+version: 1.0.0
+layer: 5
+project_level: Alpha
+agent_support: agent_assisted
 short: "Spec writer for Haskell"
+target_lang: haskell
 ---
 
 # Spec Writer: Haskell

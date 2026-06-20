@@ -1,12 +1,14 @@
----
+# speclang-header lines:11
 id: "@gitreins/00-readme"
 version: 1.0.0
 layer: 0
-owned-by: gitreins
+project_level: Alpha
+agent_support: agent_assisted
+owned_by: gitreins
 tags: [gitreins, index]
-short: "GitReins specification index — 11 specs for task lifecycle, agentic evaluator, guard manager, pipeline engine, MCP server, CLI, and bootstrap"
 depends_on: []
 status: imported
+short: "GitReins specification index — 11 specs for task lifecycle, agentic evaluator, guard manager, pipeline engine, MCP server, CLI, and bootstrap"
 ---
 
 # GitReins Specifications

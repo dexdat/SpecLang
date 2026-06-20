@@ -1,7 +1,11 @@
----
+# speclang-header lines:8
 id: "@spec/skills/scala-code-gen"
-target_lang: scala
+version: 1.0.0
+layer: 5
+project_level: Alpha
+agent_support: agent_assisted
 short: "Code gen for Scala"
+target_lang: scala
 ---
 
 # Code Gen: Scala

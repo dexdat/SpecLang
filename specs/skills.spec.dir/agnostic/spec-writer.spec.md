@@ -1,14 +1,14 @@
----
+# speclang-header lines:11
 id: "@speclang/skills/spec-writer-agnostic"
 version: 0.1.0
 layer: 2
-tags: [skills, spec-writer, agents, agnostic, catch-all]
-imports: ["@speclang/skills"]
-status: draft
 project_level: Alpha
 agent_support: agent_assisted
+tags: [skills, spec-writer, agents, agnostic, catch-all]
+status: draft
+short: "SpecWriter Skill (Language-Agnostic Catch-All)"
+imports: ["@speclang/skills"]
 target_lang: any
-short: SpecWriter Skill (Language-Agnostic Catch-All)
 ---
 
 # SpecWriter Skill — Language-Agnostic

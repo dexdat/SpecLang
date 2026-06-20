@@ -1,13 +1,13 @@
----
+# speclang-header lines:11
 id: "@gitreins/05-task-manager"
 version: 1.0.0
 layer: 2
-owned-by: gitreins
+project_level: Alpha
+agent_support: agent_assisted
+owned_by: gitreins
 tags: [gitreins, task]
-short: "Task Manager — YAML-backed task lifecycle management with create/start/complete states"
-depends_on:
-  - "@ref:gitreins/01-architecture"
 status: imported
+short: "Task Manager — YAML-backed task lifecycle management with create/start/complete states"
 realized_by: gitreins-poc/engine/task_manager.py
 ---
 

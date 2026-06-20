@@ -1,7 +1,11 @@
----
+# speclang-header lines:8
 id: "@spec/skills/elixir-code-gen"
-target_lang: elixir
+version: 1.0.0
+layer: 5
+project_level: Alpha
+agent_support: agent_assisted
 short: "Code gen for Elixir"
+target_lang: elixir
 ---
 
 # Code Gen: Elixir

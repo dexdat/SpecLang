@@ -1,4 +1,4 @@
----
+# speclang-header lines:10
 id: "@specs/demo/hello-agnostic"
 version: 0.1.0
 layer: 5

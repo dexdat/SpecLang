@@ -1,12 +1,12 @@
----
+# speclang-header lines:9
 id: "@speclang/assembler/file-watch-rules"
 version: 1.0.0
 layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [assembler, watch, patterns, glob, notification-graph]
-short: "Watch pattern matching rules for the notification graph"
 status: draft
+short: "Watch pattern matching rules for the notification graph"
 ---
 
 # File Watch Rules

@@ -1,7 +1,11 @@
----
+# speclang-header lines:8
 id: "@spec/skills/zig-test-writer"
-target_lang: zig
+version: 1.0.0
+layer: 5
+project_level: Alpha
+agent_support: agent_assisted
 short: "Test writer for Zig"
+target_lang: zig
 ---
 
 # Test Writer: Zig

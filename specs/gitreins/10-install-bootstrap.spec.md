@@ -1,13 +1,13 @@
----
+# speclang-header lines:11
 id: "@gitreins/10-install-bootstrap"
 version: 1.0.0
 layer: 1
-owned-by: gitreins
+project_level: Alpha
+agent_support: agent_assisted
+owned_by: gitreins
 tags: [gitreins, install]
-short: "Install and Bootstrap — one-command setup with pre-commit hooks, config initialization, and dependency checks"
-depends_on:
-  - "@ref:gitreins/01-architecture"
 status: imported
+short: "Install and Bootstrap — one-command setup with pre-commit hooks, config initialization, and dependency checks"
 realized_by: gitreins-poc/gitreins/install
 ---
 

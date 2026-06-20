@@ -1,13 +1,13 @@
----
+# speclang-header lines:11
 id: "@gitreins/09-cli"
 version: 1.0.0
 layer: 2
-owned-by: gitreins
+project_level: Alpha
+agent_support: agent_assisted
+owned_by: gitreins
 tags: [gitreins, cli]
-short: "CLI — command-line interface for GitReins with init, guard, task, pipeline, and status commands"
-depends_on:
-  - "@ref:gitreins/01-architecture"
 status: imported
+short: "CLI — command-line interface for GitReins with init, guard, task, pipeline, and status commands"
 realized_by: gitreins-poc/gitreins/cli.py
 ---
 

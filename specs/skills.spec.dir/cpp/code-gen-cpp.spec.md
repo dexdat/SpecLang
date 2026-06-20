@@ -1,7 +1,11 @@
----
+# speclang-header lines:8
 id: "@spec/skills/cpp-code-gen"
-target_lang: cpp
+version: 1.0.0
+layer: 5
+project_level: Alpha
+agent_support: agent_assisted
 short: "Code gen for Cpp"
+target_lang: cpp
 ---
 
 # Code Gen: Cpp
