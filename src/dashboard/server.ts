@@ -80,7 +80,7 @@ function parseYamlHeader(content: string): Record<string, unknown> | null {
         try {
           val = JSON.parse(val.replace(/'/g, '"'));
         } catch {
-          val = val.slice(1, -1).split(',').map(s => s.trim().replace(/"/g, ''));
+          val = (val as string).slice(1, -1).split(',').map(s => s.trim().replace(/"/g, ''));
         }
       } else if (val.startsWith('"') && val.endsWith('"')) {
         val = val.slice(1, -1);
