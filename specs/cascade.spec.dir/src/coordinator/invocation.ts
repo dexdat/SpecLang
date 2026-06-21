@@ -106,6 +106,15 @@ export function getAgentForTrigger(trigger: string): string {
   if (trigger.endsWith('.spec.md') || trigger.endsWith('.spec')) {
     return 'speclang-spec-writer';
   }
+  if (trigger.endsWith('.spec.py')) {
+    return 'speclang-code-gen-python';
+  }
+  if (trigger.endsWith('.spec.ts')) {
+    return 'speclang-code-gen-typescript';
+  }
+  if (trigger.endsWith('.spec.go')) {
+    return 'speclang-code-gen-go';
+  }
   if (trigger.startsWith('src/')) {
     return 'speclang-code-gen';
   }
