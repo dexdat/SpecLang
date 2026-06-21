@@ -1,4 +1,4 @@
-# speclang-header lines:49
+# speclang-header lines:10
 id: "@speclang/roadmap"
 version: 1.0.0
 layer: 0
@@ -7,7 +7,7 @@ short: "SpecLang development roadmap from POC to Production"
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [roadmap, planning, phases, milestones]
-children:
+---
 
 # SpecLang Development Roadmap
 

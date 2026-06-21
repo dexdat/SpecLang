@@ -2,7 +2,7 @@
 id: "@speclang/sqlite/migrations"
 version: 0.1.0
 layer: 2
-part: 3
+part: 3/7
 tags: [sqlite, migrations, database]
 status: draft
 project_level: Alpha

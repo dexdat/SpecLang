@@ -8,7 +8,7 @@ tags: [typescript, generated, auto-generated, index, tools]
 short: "Tool handler for index operations"
 status: draft
 depends_on:
-  - "@specs/indexer"
+  - "@ref:specs/indexer"
   - "@ref:specs/tools"
 ---
 

@@ -1,4 +1,4 @@
-# speclang-header lines:16
+# speclang-header lines:15
 id: "@speclang/roadmap/mvp"
 parent: "@ref:specs/roadmap"
 version: 1.0.0
@@ -8,8 +8,7 @@ short: "MVP phase: Multi-agent coordination system"
 project_level: MVP
 agent_support: agent_autonomous
 tags: [roadmap, mvp, phase-2, agents, coordination]
-children:
-depends_on:"
+depends_on:
   - "@ref:specs/roadmap/poc"
   - "@ref:specs/agents"
   - "@ref:specs/agent-protocol"

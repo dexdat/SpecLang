@@ -1,13 +1,11 @@
----
+# speclang-header lines:10
 id: "@speclang/skills/spec-writer-python"
 version: 0.1.0
 layer: 2
 tags: [skills, spec-writer, agents, python]
-imports: ["@speclang/skills"]
 status: draft
 project_level: Alpha
 agent_support: agent_assisted
-target_lang: py
 short: SpecWriter Skill (Python)
 ---
 
@@ -38,7 +36,6 @@ Target Language: Python 3.11+
 name: SpecWriter-Python
 description: Writes and expands spec files for Python targets
 owns: specs/**/*.scl, specs/**/*.spec.py.md
-target_lang: py
 ---
 
 # System Prompt
@@ -92,7 +89,6 @@ Use the standard speclang format:
 
 # speclang-header lines:104
 id: "@domain/feature"
-target_lang: py
 output: .speclang/assembled/domain-feature.spec.py
 ...
 

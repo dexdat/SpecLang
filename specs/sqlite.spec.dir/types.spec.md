@@ -2,7 +2,7 @@
 id: "@speclang/sqlite/types"
 version: 0.1.0
 layer: 2
-part: 2
+part: 2/7
 tags: [sqlite, types, database]
 status: draft
 project_level: Alpha

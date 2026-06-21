@@ -2,7 +2,7 @@
 id: "@speclang/sqlite/search"
 version: 0.1.0
 layer: 2
-part: 4
+part: 4/7
 tags: [sqlite, search, fts, vector, graph]
 status: draft
 project_level: Alpha

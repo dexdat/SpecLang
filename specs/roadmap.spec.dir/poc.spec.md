@@ -1,4 +1,4 @@
-# speclang-header lines:255
+# speclang-header lines:12
 id: "@speclang/roadmap/poc"
 parent: "@ref:specs/roadmap"
 version: 1.0.0
@@ -8,8 +8,8 @@ short: "POC phase: File watcher to code generation"
 project_level: POC
 agent_support: agent_assisted
 tags: [roadmap, poc, phase-1, daemon, cascade]
-children:
-depends_on:"
+depends_on:
+---
 
 
 

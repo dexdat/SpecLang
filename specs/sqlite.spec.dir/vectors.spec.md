@@ -2,7 +2,7 @@
 id: "@speclang/sqlite/vectors"
 version: 0.1.0
 layer: 2
-part: 3
+part: 3/7
 tags: [sqlite, vectors, embeddings, semantic-search]
 status: draft
 project_level: Alpha

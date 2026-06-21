@@ -1,6 +1,5 @@
-# speclang-header lines:11
+# speclang-header lines:10
 id: "@speclang/compliance"
-description: Dual-view compliance verification system
 version: 1.0.0
 layer: 1
 project_level: Alpha

@@ -4,7 +4,7 @@ version: 1.0.0
 layer: 5
 target: src/swarm/
 project_level: Alpha
-agent_support: agent_assonomous
+agent_support: agent_autonomous
 tags: [swarm]
 short: swarm module implementation
 ---

@@ -4,7 +4,7 @@ version: 1.0.0
 layer: 5
 target: src/.speclang-test/
 project_level: Alpha
-agent_support: agent_assonomous
+agent_support: agent_autonomous
 tags: [test, infrastructure]
 short: Self-hosting test infrastructure for SpecLang compiler
 ---

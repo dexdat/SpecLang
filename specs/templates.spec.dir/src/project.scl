@@ -1,8 +1,11 @@
-# speclang-header lines:7
-id: "@northstar"
+# speclang-header lines:10
+id: "@speclang/northstar"
 version: 0.1.0
 layer: 0
+project_level: POC
+agent_support: agent_assisted
 tags: [northstar, project]
+short: North Star template for project scaffolding
 status: draft
 ---
 # North Star

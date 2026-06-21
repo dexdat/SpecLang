@@ -2,7 +2,7 @@
 id: "@speclang/sqlite/fts"
 version: 0.1.0
 layer: 2
-part: 2
+part: 2/7
 tags: [sqlite, fts, full-text-search]
 status: draft
 project_level: Alpha

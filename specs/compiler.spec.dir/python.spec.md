@@ -5,8 +5,8 @@ layer: 5
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [compiler, targets, python]
-parent: """@ref:specs/compiler.spec.dir/targets"short: Python code generator implementation"
-short: "Auto-generated spec"
+parent: "@ref:specs/compiler.spec.dir/targets"
+short: "Python code generator implementation"
 ---
 
 # Python Code Generator

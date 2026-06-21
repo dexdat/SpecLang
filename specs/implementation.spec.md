@@ -1,4 +1,4 @@
-# speclang-header lines:18
+# speclang-header lines:19
 id: "@speclang/implementation"
 version: 0.1.0
 target: src/implementation/
@@ -10,12 +10,13 @@ agent_support: agent_assisted
 short: Implementation Specs
 children:
   - "@ref:speclang/implementation.meta-circular"
-- "@ref:speclang/implementation.validation-system"
-- "@ref:speclang/implementation.ralph-loop"
-- "@ref:speclang/implementation.sqlite-schema"
-- "@ref:speclang/implementation.codegen"
-- "@ref:speclang/implementation.phases"
-- "@ref:speclang/implementation.checklist"---"
+  - "@ref:speclang/implementation.validation-system"
+  - "@ref:speclang/implementation.ralph-loop"
+  - "@ref:speclang/implementation.sqlite-schema"
+  - "@ref:speclang/implementation.codegen"
+  - "@ref:speclang/implementation.phases"
+  - "@ref:speclang/implementation.checklist"
+---
 
 # Implementation Specs
 

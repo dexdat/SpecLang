@@ -1,4 +1,4 @@
-# speclang-header lines:16
+# speclang-header lines:15
 id: "@speclang/roadmap/production"
 parent: "@ref:specs/roadmap"
 version: 1.0.0
@@ -8,8 +8,7 @@ short: "Production phase: Enterprise-ready system"
 project_level: Production
 agent_support: agent_autonomous
 tags: [roadmap, production, phase-5, enterprise, security]
-children:
-depends_on:"
+depends_on:
   - "@ref:specs/roadmap/beta"
   - "@ref:specs/deployment"
   - "@ref:specs/safety-nets"

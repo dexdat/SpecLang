@@ -1,4 +1,4 @@
-# speclang-header lines:32
+# speclang-header lines:12
 id: "@speclang/cascade/convergence"
 version: 0.1.0
 layer: 2
@@ -9,6 +9,7 @@ agent_support: agent_assisted
 short: Cascade Convergence
 parent: "@ref:speclang/cascade"
 part: 2/2
+---
 # Cascade Convergence
 
 How the cascade ends and what happens after.
