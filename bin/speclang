@@ -673,6 +673,24 @@ program
               const outputPath = path.join(outputDir, `block-${blockName}${ext}`);
               generatedFiles.push({ specFile, outputPath, code, blockName });
             }
+
+            // Also extract from ## Implementation sections with language-tagged code fences
+            const implRegex = /## Implementation\n\n([\s\S]*?)(?=\n## )/g;
+            while ((match = implRegex.exec(content)) !== null) {
+              const section = match[1];
+              const fenceRegex = /```(\w+)\s*\n([\s\S]*?)```/g;
+              let fenceMatch;
+              while ((fenceMatch = fenceRegex.exec(section)) !== null) {
+                const code = fenceMatch[2].trim();
+                const lang = fenceMatch[1];
+                if (lang === 'ts' || lang === 'typescript' || lang === 'py' || lang === 'python' || lang === 'go' || lang === 'rs' || lang === 'rust' || lang === 'js' || lang === 'javascript') {
+                  const ext = getExtensionForTarget(target);
+                  const specName = path.basename(specFile, path.extname(specFile));
+                  const outputPath = path.join(outputDir, `${specName}-impl-${generatedFiles.length + 1}${ext}`);
+                  generatedFiles.push({ specFile, outputPath, code, blockName: 'implementation' });
+                }
+              }
+            }
           } catch (err) {
             errors.push({ file: specFile, error: err.message });
           }
@@ -759,6 +777,24 @@ program
             const ext = getExtensionForTarget(target);
             const outputPath = path.join(outputDir, `block-${blockName}${ext}`);
             generatedFiles.push({ specFile, outputPath, code, blockName });
+          }
+
+          // Also extract from ## Implementation sections with language-tagged code fences
+          const implRegex = /## Implementation\n\n([\s\S]*?)(?=\n## )/g;
+          while ((match = implRegex.exec(content)) !== null) {
+            const section = match[1];
+            const fenceRegex = /```(\w+)\s*\n([\s\S]*?)```/g;
+            let fenceMatch;
+            while ((fenceMatch = fenceRegex.exec(section)) !== null) {
+              const code = fenceMatch[2].trim();
+              const lang = fenceMatch[1];
+              if (lang === 'ts' || lang === 'typescript' || lang === 'py' || lang === 'python' || lang === 'go' || lang === 'rs' || lang === 'rust' || lang === 'js' || lang === 'javascript') {
+                const ext = getExtensionForTarget(target);
+                const specName = path.basename(specFile, path.extname(specFile));
+                const outputPath = path.join(outputDir, `${specName}-impl-${generatedFiles.length + 1}${ext}`);
+                generatedFiles.push({ specFile, outputPath, code, blockName: 'implementation' });
+              }
+            }
           }
         } catch (err) {
           errors.push({ file: specFile, error: err.message });
