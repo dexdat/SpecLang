@@ -1,0 +1,9 @@
+# Gitleaks configuration for SpecLang
+# Whitelist paths that contain env files or test examples
+[allowlist]
+  paths = [
+    '.speclang/',
+    'specs/',
+    'docs/',
+    'node_modules/',
+  ]

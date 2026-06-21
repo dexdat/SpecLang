@@ -93,11 +93,26 @@
 
 ## Backlog
 
-### BL-001: Dashboard monitoring — activate and test
-Dashboard server (`src/dashboard/server.ts`) exists but is excluded from TypeScript build. Has spec at `specs/mcp-ui-tools.spec.md`. Needs: inclusion in tsconfig, tests, verification.
-
 ### BL-002: Dual-view docs compliance
 147 direct files in `docs/` need spec sources and symlinks. Currently 11 symlinks.
 
-### BL-003: stdlib tests
-`src/stdlib/` (collections.ts, results.ts, validators.ts) has no tests.
+## Passed Criteria
+
+### BL-001: Dashboard monitoring — activate and test ✅
+**Goal:** Dashboard server activated in build, includes comprehensive tests.
+**How to verify:**
+  1. `npm run build` compiles clean (dashboard included in tsconfig)
+  2. `npx vitest run tests/dashboard/` passes
+**Spec source:** `specs/mcp-ui-tools.spec.md`
+**Status:** passed ✅
+**Verified:** 2026-06-20 22:58 UTC
+**Evidence:** 17 dashboard test files pass (157 tests). Dashboard activated in tsconfig via commits 34174f8, d7c59c0, 9a810fe. Server runs with proper error handling.
+
+### BL-003: stdlib tests ✅
+**Goal:** Tests for src/stdlib/ (collections.ts, results.ts, validators.ts, functions.ts, types.ts)
+**How to verify:**
+  1. `npx vitest run tests/stdlib/` passes
+**Spec source:** Implementation at src/stdlib/
+**Status:** passed ✅
+**Verified:** 2026-06-20 22:58 UTC
+**Evidence:** 6 stdlib test files pass (384 tests). Commit 8f43b57 added comprehensive tests covering collections, results, validators, functions, types.
