@@ -21,8 +21,14 @@
 All previously verified.
 
 ### BL-001: Dashboard monitoring ✅ (Verified 2026-06-20)
-### BL-002: Dual-view docs compliance 🔄 backlog
+### BL-002: Dual-view docs compliance 🔄 in_progress (Top-level docs: 15/15 symlinked ✅ | Remaining: archive/ + prompts/ directories)
 ### BL-003: stdlib tests ✅ (Verified 2026-06-20)
+
+## Recent Wake: 2026-06-21 06:34
+- **Guard status:** Tier 1 PASS (secrets ✓, build ✓, lint ✓, tests ✓)
+- **Test results:** 2447 passed, 0 failed, 18 skipped (all 6 pre-existing failures resolved!)
+- **BL-002 progress:** Converted 3 remaining top-level docs/ files (DOGFOODING.md, MULTI_TIER_CASCADE.md, layers.md) to symlinks → 15/15 docs/ top-level files now dual-view compliant
+- **Commit:** 7269a9e pushed to master
 
 ## Acceptance Criteria Status
 
@@ -34,14 +40,10 @@ All previously verified.
 | AC-014 | ✅ Passed | 552/558 valid (98.9%) | Spec header remediation complete. 6 backup files excluded. |
 | AC-015 | ✅ Passed | 72/72 LSP tests | LSP server tests |
 | BL-001 | ✅ Passed | 157/157 dashboard tests | Dashboard monitoring |
+| BL-002 | 🔄 In Progress | 15/15 top-level docs | Dual-view docs: top-level complete; archive/, prompts/ remain |
 | BL-003 | ✅ Passed | 384/384 stdlib tests | Standard library tests |
-| BL-002 | 🔄 Backlog | — | Dual-view docs compliance |
-
-## Pre-existing Test Failures (non-blocking, unrelated to header fixes)
-- `tests/pipeline.test.ts`: 5 failures (stage dependency validation, dry-run mode, stage failure)
-- `tests/tools.test.ts`: 1 failure (input schema validation)
 
 ## GitReins Baseline
 - ✅ Tier 1 Guards: PASS (secrets ✓, build ✓, lint ✓, tests ✓)
-- 2441 tests passed, 6 failed (pre-existing), 18 skipped
+- 2447 tests passed, 0 failed, 18 skipped
 - Build: PASS (tsc clean)
