@@ -1644,7 +1644,12 @@ program
     // Validate a specific spec
     let specPath = spec;
     if (!path.isAbsolute(spec)) {
-      specPath = path.join(specsDir, spec);
+      // Don't double-prefix if spec already starts with specs/ or specsDir
+      if (spec.startsWith('specs/') || spec.startsWith(specsDir)) {
+        specPath = path.resolve(projectDir, spec);
+      } else {
+        specPath = path.join(specsDir, spec);
+      }
     }
     
     if (!fs.existsSync(specPath)) {
