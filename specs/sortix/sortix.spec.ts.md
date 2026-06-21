@@ -3,6 +3,7 @@ id: "@sortix/master"
 version: 1.0.0
 layer: 1
 target_lang: ts
+output: .speclang/sortix.spec.ts
 owned-by: sortix
 tags: [sortix, file-organization, cli-tool]
 short: "Sortix — File organizer core library. Scans directories, categorizes files, and organizes them by type."

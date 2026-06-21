@@ -198,7 +198,7 @@ export class Assembler {
     }
   }
 
-  async assembleAll(globs: string[] = ['specs/**/*.spec.ts.md']): Promise<AssemblerOutput[]> {
+  async assembleAll(globs: string[] = ['specs/**/*.spec.ts.md', 'specs/**/*.spec.py.md']): Promise<AssemblerOutput[]> {
     const { default: fastGlob } = await import('fast-glob');
     const files = await fastGlob(globs, { ignore: ['node_modules/**', '.git/**'] });
     const results: AssemblerOutput[] = [];

@@ -3,6 +3,7 @@ id: "@sortix/cli"
 version: 1.0.0
 layer: 2
 target_lang: ts
+output: .speclang/sortix-cli.spec.ts
 owned-by: sortix
 tags: [sortix, cli, commander]
 short: "Sortix — CLI entry point using Commander.js"

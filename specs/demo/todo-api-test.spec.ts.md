@@ -3,6 +3,7 @@ id: "speclang-demo/todo-api-test"
 version: 1.0.0
 layer: 3
 target_lang: ts
+output: .speclang/demo/todo-api-test.spec.ts
 owned-by: demo
 tags: [demo, test, api]
 short: "Integration tests for the Todo API demo — proves spec-driven test workflow"

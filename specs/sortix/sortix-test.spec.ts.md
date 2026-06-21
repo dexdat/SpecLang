@@ -3,6 +3,7 @@ id: "@sortix/test"
 version: 1.0.0
 layer: 3
 target_lang: ts
+output: .speclang/sortix-test.spec.ts
 owned-by: sortix
 tags: [sortix, test, vitest]
 short: "Sortix — Integration tests for the CLI tool"

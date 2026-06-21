@@ -3,6 +3,7 @@ id: "@test-feature/test-feature/ts"
 version: 0.1.0
 layer: 5
 target_lang: ts
+output: .speclang/test-feature.spec.ts
 ---
 
 # test-feature — Implementation (What)
