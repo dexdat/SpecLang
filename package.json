@@ -2,6 +2,9 @@
   "name": "speclang",
   "version": "1.0.0",
   "description": "SpecLang turns your AI coding assistant into a self-correcting system where every change propagates until your code is perfect.",
+  "piConfig": {
+    "name": "speclang"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
