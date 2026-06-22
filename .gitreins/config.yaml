@@ -1,49 +1,48 @@
-# GitReins Configuration — SpecLang
 guards:
   secrets: true
   lint: false
   tests: true
-  test_command: "npx vitest run --passWithNoTests 2>&1 | grep -q 'Tests.*passed' && exit 0 || exit 1"
+  test_command: npx vitest run --passWithNoTests 2>&1 | grep -q 'Tests.*passed' &&
+    exit 0 || exit 1
   dead_code: false
   skylos: false
   assemble: true
-  assemble_command: "npm run assemble 2>/dev/null || true"
+  assemble_command: npm run assemble 2>/dev/null || true
   build: true
-  build_command: "npm run build"
-  test_mode: "diff"
-
+  build_command: npm run build
+  test_mode: diff
+  go:
+    build: true
+    lint: true
+    tests: true
 evaluator:
   max_iterations: 25
-  max_time: "10m"
-  max_output_tokens: "200k"
+  max_time: 10m
+  max_output_tokens: 200k
   tool_call_weight: 0.1
-
 defaults:
   model: deepseek-v4-flash
-
 history:
   enabled: false
-
 pipeline:
   stages:
-    - id: tier1
-      parallel: true
-      steps:
-        - id: secrets
-          type: script
-          run: |
-            STAGED=$(git diff --cached --name-only --diff-filter=ACM)
-            [ -z "$STAGED" ] && exit 0
-            echo "$STAGED" | xargs -I{} grep -Pn 'sk-[a-zA-Z0-9_-]{20,}|ghp_[a-zA-Z0-9]{36}' {} 2>/dev/null && exit 1 || true
-            echo "✓ No secrets detected"
-        - id: build
-          type: script
-          run: "npm run build"
-        - id: tests
-          type: script
-          run: "npx vitest run --passWithNoTests 2>&1 | tail -3"
-    - id: tier2
-      type: ai_eval
-      on: [pre-eval]
-      condition: "true"
-      max_iterations: 25
+  - id: tier1
+    parallel: true
+    steps:
+    - id: secrets
+      type: script
+      run: "STAGED=$(git diff --cached --name-only --diff-filter=ACM)\n[ -z \"$STAGED\"\
+        \ ] && exit 0\necho \"$STAGED\" | xargs -I{} grep -Pn 'sk-[a-zA-Z0-9_-]{20,}|ghp_[a-zA-Z0-9]{36}'\
+        \ {} 2>/dev/null && exit 1 || true\necho \"\u2713 No secrets detected\"\n"
+    - id: build
+      type: script
+      run: npm run build
+    - id: tests
+      type: script
+      run: npx vitest run --passWithNoTests 2>&1 | tail -3
+  - id: tier2
+    type: ai_eval
+    true:
+    - pre-eval
+    condition: 'true'
+    max_iterations: 25
