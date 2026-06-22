@@ -59,6 +59,11 @@
     "src/parser/**",
     "src/codegen/**",
     "src/lsp_backup/**",
-    "src/lsp/**"
+    "src/lsp/**",
+    "src/generated/**",
+    "src/sortix/**",
+    "src/demo/**",
+    "src/test-feature/**",
+    "src/test-init-tiers/**"
   ]
 }
