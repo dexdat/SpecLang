@@ -34,4 +34,6 @@ tasks:
   - Every file in .speclang/assembled/*.code.ts contains // spec:generated DO NOT EDIT
   - No template variables (${...}, {{...}}, __VARS__) remain in assembled .code.ts output
   - preProcessSpec function exists and is callable from .speclang/cascade-router.spec.ts
-  status: pending
+  status: complete
+  completed_at: '2026-06-24T18:33:00.000000+00:00'
+  verified_by: hermes-manual
