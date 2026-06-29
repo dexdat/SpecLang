@@ -2,61 +2,46 @@
 
 ## Active Criteria
 
-### AC-001 through AC-024 (all passed) ✅
-All previously verified. Swarm, cascade, skills, infrastructure, agent communication, spec headers, LSP, Python codegen, maturity CLI, cascade-trace, tsc clean, TotalStack cascade, history CLI, search CLI.
-
-### AC-025: Expand/Downgrade CLI Tests ✅
-**Status:** passed ✅ | **Verified:** 2026-06-25 | **Delegated:** WI-025 to Axiom (proc_acfbbe9dfc41)
-
-**Description:** The `expand` and `downgrade` CLI commands had implementations but zero dedicated test coverage. Two bugs were fixed:
-1. **Downgrade path bug (FIXED):** `speclang downgrade specs/core.spec.md --to MVP` no longer double-prefixes the path.
-2. **Expand block matching bug (FIXED):** Block matching now handles spec-prefixed names (e.g., `core/overview`) and searches inside code fences.
-
-**How to verify:**
-1. `npx vitest run tests/cli/expand.test.ts` — 8/8 pass ✅
-2. `npx vitest run tests/cli/downgrade.test.ts` — 9/9 pass ✅
-3. `./bin/speclang downgrade specs/core.spec.md --to MVP --plan` — shows plan ✅
-4. `./bin/speclang expand "core.spec.md#overview"` — finds 18 blocks ✅
-
-**Evidence:** Tests committed by Axiom in 7c5c1fa. 17/17 tests pass across both test files.
+### AC-001 through AC-025 (all passed) ✅
+All previously verified. Swarm, cascade, skills, infrastructure, agent communication, spec headers, LSP, Python codegen, maturity CLI, cascade-trace, tsc clean, TotalStack cascade, history CLI, search CLI, expand/downgrade CLI.
 
 ### BL-001 through BL-003 (all passed) ✅
+Dashboard monitoring, dual-view docs, standard library tests.
+
+### AC-066 (LSP Ref Diagnostics) ✅ RECOVERED 2026-06-28 23:51 UTC
+`src/lsp/references.ts` reconstructed by Axiom from test + server.ts usage patterns. Commit `11064375`. 8/8 tests pass. Recovered from git corruption (original commit `8404a842`).
 
 ## Acceptance Criteria Status
 
 | Criterion | Status | Notes |
 |-----------|--------|-------|
-| AC-001–AC-024 | ✅ Passed | All verified |
-| AC-025 | ✅ Passed | Expand/downgrade CLI tests (17 tests) + 2 bug fixes |
+| AC-001–AC-025 | ✅ Passed | All verified |
 | BL-001 | ✅ Passed | Dashboard monitoring (157 tests) |
 | BL-002 | ✅ Passed | Dual-view docs complete (15/15) |
 | BL-003 | ✅ Passed | Standard library tests (384 tests) |
+| AC-066 | ✅ Passed | LSP ref diagnostics recovered 2026-06-28 |
 
-## Current Wake: 2026-06-28 ~19:13 UTC (RECOVERY — Git Corruption FIXED)
+## Current Wake: 2026-06-29 09:05 UTC (MAINTENANCE — ALL CLEAR)
 
-**🔴 RESOLVED: Git corruption recovered after 5+ days / 6+ consecutive wakes**
+- **GitReins T1:** PASS ✓ (secrets ✓, static_analysis ✓, build ✓, lint ✓, tests ✓)
+- **tsc --noEmit:** EXIT=0 (clean)
+- **Tests:** 46 failed, 1665 passed, 8 skipped — all 46 failures pre-existing in `tests/transition/upgrade.test.ts` (`registerUpgradeWorkflows` not implemented in generated index.ts; test dates from June 19 recovery)
+- **Container:** opencode-speclang Up 5d, ACLs READ_OK
+- **/tmp:** 67% (11G free)
+- **Staleness:** 442 specs, 21 CLI subcommands — no new features or specs uncovered
+- **npm outdated:** 9 packages (MCP SDK 1.26→1.29, vitest 4.1.2→4.1.9, etc.) — non-blocking
+- **TODO.md:** 7 remaining P2 stories (stale, last updated April 2026)
+- **Git:** main branch, clean (AC file only modified)
 
-- **Recovery:** Cloned clean copy from `dexdat/SpecLang` (GitHub), rsync'd local working files, committed, pushed to `origin/main`
-- **Commit:** `8e8aacfb` — 25 files changed, 4269 insertions, 238 deletions
-- **Pushed to:** `github.com/dexdat/SpecLang` (main → main)
-- **Git health:** 0 missing objects, on `main` branch, clean `git fsck`
-- **Build:** `tsc --noEmit` clean (EXIT=0), `npm run build` clean
-- **Tests:** 46 failed, 1657 passed, 8 skipped — UNCHANGED (pre-existing)
-- **GitReins T1:** PASS (secrets clean, static_analysis, go_build, go_lint, go_tests)
-- **Container:** opencode-speclang Up 4d
-- **/tmp:** 61% (18G/30G)
-- **Corrupted backup:** `/home/kara/SpecLang.corrupted.20260628-1913` (can be removed after verification)
+## Previous Wake: 2026-06-28 23:53 UTC (AC-066 RECOVERED)
+- Axiom dispatched for AC-066 — `proc_c2084a0e466a`, completed ~6min
+- 8/8 LSP ref diagnostics tests pass
 
-### Recovery Steps Performed:
-1. `git clone https://github.com/dexdat/SpecLang.git` → clean clone with 0 fsck errors
-2. Fixed tsconfig.json (added `src/generated/**/*` and `src/lsp/**/*` excludes)
-3. `rsync` all local files from corrupted repo → clone (excluding .git, node_modules, dist)
-4. Swapped directories: `mv SpecLang SpecLang.corrupted`, `mv speclang-recovery SpecLang`
-5. Updated .gitignore with `.hermes/`, dev artifacts
-6. Staged + committed 25 files (tests, configs, memory-bank)
-7. Pushed to origin/main successfully
+## Previous Wake: 2026-06-28 21:07 UTC
+- All ACs passed. Maintenance mode.
 
-**Status:** Git is now fully operational. All ACs remain passed. Maintenance mode.
+## Previous Wake: 2026-06-28 19:13 UTC
+- Git corruption recovery completed. 25 files committed, pushed to origin/main.
 
 ## Previous Wake: 2026-06-28 12:57 UTC
 - All ACs passed. Maintenance mode. Git corruption noted (now resolved).
