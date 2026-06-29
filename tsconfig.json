@@ -53,6 +53,8 @@
     "src/mcp/**",
     "src/indexer/**",
     "src/parser/**",
-    "src/codegen/**"
+    "src/codegen/**",
+    "src/generated/**/*",
+    "src/lsp/**/*"
   ]
 }

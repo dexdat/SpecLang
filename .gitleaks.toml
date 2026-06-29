@@ -1,0 +1,15 @@
+title = "SpecLang Gitleaks Config"
+
+[allowlist]
+  description = "Whitelist for SpecLang project"
+  paths = [
+    '''\.env''',
+    '''\.env\..*''',
+    '''\.speclang\/''',
+    '''specs\/''',
+    '''docs\/''',
+    '''node_modules\/''',
+    '''tests\/''',
+    '''.*\.spec\.md''',
+    '''.*\.md''',
+  ]

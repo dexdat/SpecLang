@@ -68,3 +68,20 @@ validation_results.json
 .ralph/monitor/
 .ralph/state/
 .ralph/backups/
+
+# Hermes working files
+.hermes/
+!.hermes/acceptance-criteria.md
+# GitReins
+.gitreins/history/
+
+# Dev artifacts
+thinking/
+bin.orig2/
+speclang-patch/
+src/daemon/target/
+src/daemon/Cargo.lock
+speclang-history-fixes.patch
+go.mod
+test-build.yaml
+test.spec.md

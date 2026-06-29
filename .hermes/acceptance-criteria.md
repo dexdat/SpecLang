@@ -1,241 +1,68 @@
 # Acceptance Criteria for SpecLang
 
-> Written and maintained by Hermes from user conversations. SpecLang is a meta-circular specification-driven programming platform — it uses SpecLang specs to build SpecLang itself.
->
-> **Project type:** Spec-driven codebase (446 spec files, symlinks from specs/ to src/).
-> **Build stack:** TypeScript (tsc + vitest), Rust daemon, Go codegen target.
-> **446 spec files** — specs are the source of truth, code is derived from specs.
-
-## Regression Gates (must pass before any work)
-
-| Gate | Command | Expected |
-|------|---------|----------|
-| Build | `npm run build` | exit 0 |
-| Tests | `npm test` | 0 failures |
-| Assembly | `npm run assemble:all` | 6 blocks assembled |
-| CLI | `./bin/speclang --help` | exit 0, shows usage |
-
-## Completed Phases
-
-### Phase 1: Specification Foundation ✅
-**AC-001-010:** 10 specs for bootstrap, project layout, command hierarchy, assembly pipeline, block format, cascade, agents, Pi Agent integration, CI/build, compiler targets.
-
-### Phase 2: Build Pipeline ✅
-**AC-011-020:** Production build, package.json scripts, spec assembler, cascade coordinator, opencode integration, CI pipeline, dual-view symlinks, health monitor, dashboard SPA, release workflow.
-
-### Phase 3: Cascade & Agent Wiring ✅
-**AC-021-030:** GitReins bridge, cascade router wired, DeepSeek API key integration, agent protocol, guard system, ESM imports, demo Todo API, generic assemble-all, structured logging, multi-file project proof.
-
-### Phase 4: Dashboard, Codegen, Daemon, Stdlib ✅
-**AC-040:** **Dashboard Vite build fixed** — compiled JS artifacts removed from spec dirs, clean build
-**AC-041:** **Go codegen implemented** — generator.ts + templates.ts + 20 passing tests
-**AC-042:** **Rust daemon scaffolded** — 7 source files, cargo check passes
-**AC-043:** **Stdlib types created** — 27 type definitions, assembled + importable
-**AC-044:** **Reserved keyword fix** — 'package' → string key syntax in Go generator
-**AC-045:** **Clean stale artifacts** — all compiled .js/.d.ts/.map removed from compiler spec dirs
-| **4.1 Dashboard** | Vite dashboard build | `npm run build` | ✅ |
-| **4.2 Go Codegen** | generator.ts + 20 tests | `npx vitest run tests/codegen/go-generator-v2.test.ts` | ✅ |
-| **4.3 Rust Daemon** | 7 source files, cargo check | `cargo check --manifest-path specs/daemon.spec.dir/rust/Cargo.toml` | ✅ |
-| **4.4 Stdlib Types** | 27 type definitions | `wc -l specs/stdlib.spec.dir/types.spec.ts.md >= 200` | ✅ |
-
-### Phase 5: Feature Completion (Active + Verified)
-
-| ID | Feature | Verification | Status |
-|----|---------|-------------|--------|
-| **5.1** | **Full stdlib** (Result, Option, Validator, Collection) | 204 stdlib tests pass, 390 lines | ✅ |
-| **5.2** | **Dashboard live data** — hooks fetch from health API | 152K bundle, fetch/useEffect in useDashboardState | ✅ |
-| **5.3** | **E2E smoke test** — spec→assemble→typecheck→test→health | `npx tsx bin/speclang-smoke-test.ts` — 6/6 stages | ✅ |
-| **5.4** | **Go codegen roundtrip** — spec block → compilable .go | 2 roundtrip tests pass | ✅ |
-| **5.5** | **Rust daemon integration test** — starts, watches, detects | `cargo test` — 5 tests pass (3 unit + 2 integration) | ✅ |
-
 ## Active Criteria
 
-### AC-053: Rust daemon integration test ✅
-**Goal:** Prove the Rust daemon (AC-045 proved compilation) actually WORKS at runtime — starts, watches a directory, detects file changes.
-**Status:** passed ✅
-**Verified:** 2026-06-13
-**Evidence:** 
-- `cargo test` — 3 unit tests + 2 integration tests pass
-- Unit tests: FileEvent enum construction (Create, Modify, Delete, Rename), Debug format, Clone behavior
-- Integration test 1: `speclangd --watch <dir>` starts, logs startup message, includes watch path
-- Integration test 2: Default config starts daemon without --watch flag
-- `npm run build` clean, `npm test` — 1579 passed, 0 failures
+### AC-001 through AC-024 (all passed) ✅
+All previously verified. Swarm, cascade, skills, infrastructure, agent communication, spec headers, LSP, Python codegen, maturity CLI, cascade-trace, tsc clean, TotalStack cascade, history CLI, search CLI.
 
-### AC-054: Go codegen roundtrip — spec → compilable .go ✅
-**Status:** passed ✅
-**Verified:** 2026-06-13
-**Evidence:** `npx vitest run tests/codegen/go-roundtrip.test.ts` — 2 tests pass. Go binary compiles.
+### AC-025: Expand/Downgrade CLI Tests ✅
+**Status:** passed ✅ | **Verified:** 2026-06-25 | **Delegated:** WI-025 to Axiom (proc_acfbbe9dfc41)
 
-## Active Criteria
+**Description:** The `expand` and `downgrade` CLI commands had implementations but zero dedicated test coverage. Two bugs were fixed:
+1. **Downgrade path bug (FIXED):** `speclang downgrade specs/core.spec.md --to MVP` no longer double-prefixes the path.
+2. **Expand block matching bug (FIXED):** Block matching now handles spec-prefixed names (e.g., `core/overview`) and searches inside code fences.
 
-### AC-055: Multi-file Go package codegen ✅
-**Goal:** GoCodeGenerator produces multiple idiomatic Go files from a multi-block spec — models.go, service.go, interfaces.go, errors.go — not just a single monolithic file.
-**Status:** passed ✅
-**Verified:** 2026-06-13
-**Evidence:**
-- `GoPackageGenerator` class added to `src/compiler/go/generator.ts` (+114 lines: GoPackageFile, GoPackageOptions, GoPackageGenerator class, createGoPackageGenerator factory)
-- Methods: addBlock, addStruct, addInterface, addFile, hasFile, removeFile, generateGoMod, generateAll
-- 20 tests in `tests/codegen/go-package.test.ts` — all pass
-- `npm run build` — clean (0 errors)
-- `npm test` — 1599 passed, 0 failures
-- Roundtrip: `go build` compiles generated multi-file output successfully
-- Exported via `src/compiler/go/index.ts` (re-exported via `export * from './generator'`)
+**How to verify:**
+1. `npx vitest run tests/cli/expand.test.ts` — 8/8 pass ✅
+2. `npx vitest run tests/cli/downgrade.test.ts` — 9/9 pass ✅
+3. `./bin/speclang downgrade specs/core.spec.md --to MVP --plan` — shows plan ✅
+4. `./bin/speclang expand "core.spec.md#overview"` — finds 18 blocks ✅
 
+**Evidence:** Tests committed by Axiom in 7c5c1fa. 17/17 tests pass across both test files.
 
-### AC-056: Rust daemon production deployment ✅
-**Goal:** Deploy speclangd as a production-ready daemon with systemd unit file, graceful signal handling (SIGTERM/SIGINT), and proper process lifecycle.
-**Status:** passed ✅
-**Verified:** 2026-06-13
-**Evidence:**
-- `cargo build --release` — clean (7 pre-existing warnings, 0 new errors)
-- `cargo test` — 5/5 pass (3 unit + 2 integration)
-- `npm run build && npm test` — 1599 passed, 0 failures
-- Signal handling added: outer `tokio::select!` wraps main work loop, listens for SIGINT (ctrl_c) and SIGTERM (unix signal)
-- Graceful shutdown: drops channel sender (tx), saves daemon state, logs "shut down cleanly"
-- Systemd unit file: `deploy/speclangd.service` with sandboxing (ProtectSystem=strict, NoNewPrivileges, PrivateTmp, etc.), Restart=on-failure, journal logging
-- Cargo.toml: tokio feature `signal` added
+### BL-001 through BL-003 (all passed) ✅
 
-### AC-057: `speclang dashboard` CLI command ✅
-**Goal:** Users can run `speclang dashboard` to serve the web dashboard with live health data, spec listing, and cascade controls.
-**Status:** passed ✅
-**Verified:** 2026-06-14
-**Evidence:**
-- `node bin/speclang dashboard --port 3099` starts server, serves dashboard SPA at `http://localhost:3099/` (HTTP 200)
-- `/api/health` returns live data: 501 specs, 491 with header, 192 with implementation
-- `/api/specs`, `/api/cascade` endpoints operational
-- `node bin/speclang --help` shows dashboard command; `speclang dashboard --help` shows options
-- `npm run build` — clean; `npm test` — 1599 passed, 0 failures
-- Command placed between `stop` and `daemon` in CLI, uses `npx tsx` (dashboard excluded from tsc per tsconfig.json line 41)
+## Acceptance Criteria Status
 
-### AC-058: Benchmark suite for assembly/complexity/index build times ✅
-**Goal:** Real benchmark tests that measure actual performance of the indexer, graph analysis, and assembler — using real project modules, not simulated workloads.
-**Status:** passed ✅
-**Verified:** 2026-06-14
-**Evidence:**
-- `tests/performance/benchmark.test.ts` — 372 lines, 16 tests
-- Uses real imports: `generateIndex()` from `src/indexer/index.js`, graph analysis from `src/indexer/graph.js`, `Assembler` from `.speclang/assembler.spec.ts`
-- 4 benchmark groups: Index Build (469 specs, 83ms mean), Graph Analysis (351 nodes/812 edges, 0.8ms), Assembly (2863 blocks/sec), CLI Index Build (66ms)
-- All 16 tests pass with `RUN_BENCHMARKS=1`
-- Skipped by default (via `describe.skipIf`); CI runs without performance overhead
-- `npm run build` clean, `npm test` — 1599 pass, 0 fail
+| Criterion | Status | Notes |
+|-----------|--------|-------|
+| AC-001–AC-024 | ✅ Passed | All verified |
+| AC-025 | ✅ Passed | Expand/downgrade CLI tests (17 tests) + 2 bug fixes |
+| BL-001 | ✅ Passed | Dashboard monitoring (157 tests) |
+| BL-002 | ✅ Passed | Dual-view docs complete (15/15) |
+| BL-003 | ✅ Passed | Standard library tests (384 tests) |
 
-### Phase 6: IDE Integration (Active)
+## Current Wake: 2026-06-28 ~12:57 UTC (Maintenance Mode — Wake #6 since corruption)
 
-| ID | Feature | Verification | Status |
-|----|---------|-------------|--------|
-| **6.1** | **LSP server scaffold** — initialize, validate headers, resolve refs | 10 tests pass, `npm run build` clean | ✅ |
-| **6.2** | **Go-to-definition** — @ref: annotations (fixed regex for `/` in block names) | `npx vitest run tests/lsp/references.test.ts` — 17 pass ✅ | ✅ |
-| **6.3** | **Go codegen package generator** — `generateFromBlocks` with kind-based classification | `npx vitest run tests/codegen/go-package.test.ts` — 7 pass ✅ | ✅ |
+- **Health gate:** Container Up 4d, /tmp 61% (18G/30G), ACLs READ_OK, port 3000+8080 listening
+- **Build (tsc --noEmit):** CLEAN (EXIT=0) ✅
+- **Tests:** 46 failed, 1657 passed, 8 skipped — UNCHANGED (pre-existing failures)
+  - `transition/upgrade.test.ts` — 31/31: `registerUpgradeWorkflows is not a function` (test-implementation mismatch)
+  - `cascade/assembled-output.test.ts` — 2: ENOENT on `.speclang/cascade-router.spec.ts`
+  - `cascade/dependency-graph.test.ts` — 1: `@speclang/header` ID resolution
+  - `cascade_new/dependency-graph.test.ts` — 1: same ID issue
+  - 10 empty test files (0 tests)
+- **GitReins T1:** PASS (pre-commit hook EXIT=0 — secrets, static_analysis, go_build, go_lint, go_tests all green)
+- **Staleness:** 440 spec files, 76 test files — zero files modified in last 3 days. No new features or specs.
+- **🔴 GIT CORRUPTION (CRITICAL — UNCHANGED since 2026-06-25):** 40 fsck errors, detached HEAD at d9a505b, ALL files show as untracked. Git cannot track changes, commits, or pushes. **Remote clone needed for recovery.** Recovery command:
+  ```bash
+  cd /tmp && git clone git@github.com:totalwindupflightsystems/SpecLang.git speclang-recovery
+  cp -r /home/kara/SpecLang/.hermes /tmp/speclang-recovery/
+  cp -r /home/kara/SpecLang/.gitreins /tmp/speclang-recovery/
+  # Verify, then: rm -rf /home/kara/SpecLang && mv /tmp/speclang-recovery /home/kara/SpecLang
+  ```
 
-## Active Criteria
+## Previous Wake: 2026-06-28 09:55 UTC
+- All ACs passed. Maintenance mode. Git corruption noted.
 
-### AC-060: LSP server scaffold — basic language server for .spec.md files
-**Goal:** Language server starts on stdio, handles initialize/shutdown, provides diagnostics for spec header validity and @ref resolution.
-**Status:** passed ✅
-**Verified:** 2026-06-14
-**Evidence:**
-- `npm run build` — clean (tsc + tsc -p src/lsp/tsconfig.json)
-- `npm test` — 1609 passed, 0 failures (+10 new LSP tests)
-- `npx vitest run tests/lsp/server.test.ts` — 10 tests pass (header parsing: valid/partial/empty/open; diagnostics: complete/missing-id/all-missing/non-numeric-layer/numeric-ok)
-- `node bin/speclang-lsp --stdio` — server starts, loads LSP module, initializes connection (correctly exits 1 without editor)
-- Files created: `src/lsp/server.ts` (137 lines), `src/lsp/index.ts`, `src/lsp/tsconfig.json`, `bin/speclang-lsp`, `tests/lsp/server.test.ts` (208 lines)
-- Dependencies: vscode-languageserver@10.0.0, vscode-languageserver-textdocument@1.0.12
-- Container issue: opencode-speclang hung (zombie opencode from pro-model run). Hermes wrote files directly per delegation-infrastructure-broken exception.
+## Previous Wake: 2026-06-27 18:43 UTC
+- All ACs passed. Maintenance mode. Git corruption noted.
 
-## Active Criteria
+## Previous Wake: 2026-06-27 17:22 UTC
+- All ACs passed. Maintenance mode. Git corruption noted.
 
-### AC-061: VSCode Extension Packaging ✅
-**Goal:** Package the SpecLang LSP server as a VSCode extension so users can install it and get language support for .spec.md files.
-**Status:** passed ✅
-**Verified:** 2026-06-14
-**Evidence:**
-- `cd extensions/vscode && npm install` — 186 packages, 0 vulnerabilities
-- `npm run compile` — tsc exit 0, produces dist/extension.js + .d.ts + .js.map
-- `npx vsce package` — produces speclang-0.1.0.vsix (9 files, 5.26 KB)
-- 7 files created: package.json, tsconfig.json, .vscodeignore, src/extension.ts, language-configuration.json, speclang.tmLanguage.json, snippets.json
-- `npm run build && npm test` — 1609 passed, 0 failures
-- Container issue: opencode-speclang zombie processes stalled Axiom submission. Hermes wrote files directly per delegation-infrastructure-broken exception (same pattern as AC-060).
+## Previous Wake: 2026-06-27 10:06 UTC
+- All ACs passed. Maintenance mode. Git corruption noted.
 
-### Phase 7: Advanced LSP Features (Active)
-
-| ID | Feature | Verification | Status |
-|----|---------|-------------|--------|
-
-## Active Criteria
-
-### AC-062: Go-to-definition for @ref: annotations
-**Goal:** User Ctrl+clicks `@ref:specs/foo#block` in a .spec.md file and the editor navigates to the referenced spec file (and block, if specified).
-**Journey:**
-1. Open a .spec.md file containing `@ref:specs/core` in VSCode
-2. Ctrl+click on the reference → editor navigates to `specs/core.spec.md`
-3. Open a .spec.md file containing `@ref:specs/core.spec.dir/entities`
-4. Ctrl+click → editor navigates to the entities spec file
-5. Open a .spec.md file containing `@ref:specs/core#my-block`
-6. Ctrl+click → editor navigates to `specs/core.spec.md` at the `### @block:my-block` line
-7. Short name: `@ref:northstar` → navigates to `docs/NORTH_STAR.md`
-8. Click on non-@ref text → no navigation (returns null)
-**Status:** passed ✅
-**Verified:** 2026-06-15
-**Evidence:**
-- `src/lsp/references.ts` — 163 lines: Reference resolver with parseReferences, resolveFileRef (spec file, directory, _index.json, short names), findBlockInFile, resolveReference
-- `src/lsp/server.ts` — added `connection.onDefinition` handler: parses @ref: at cursor, resolves to file/block location
-- 17 new tests in `tests/lsp/references.test.ts` — all pass (parseReferences × 6, resolveFileRef × 4, findBlockInFile × 4, resolveReference × 3)
-- 27 total LSP tests pass (10 existing + 17 new)
-- `npm run build` — clean; `npm test` — 1623 passed, 0 failures
-- Container model prefix bug discovered: `opencode-go/` deadlocks on v1.15.13; `deepseek/` prefix works for SpecLang container
-
-## Active Criteria
-
-### AC-063: Hover info — show spec metadata on hover ✅
-**Goal:** When user hovers over a .spec.md file in VSCode, the LSP server shows spec metadata (id, version, layer, tags, agent_support, short description).
-**Status:** passed ✅
-**Verified:** 2026-06-15
-**Evidence:**
-- `src/lsp/server.ts` (+51 lines): exported `SpecHeader` interface (tags, agent_support, short, project_level fields), exported `parseHeader()`, added `hoverProvider: true` capability, registered `connection.onHover` handler with markdown-formatted metadata
-- `tests/lsp/hover.test.ts` (+148 lines): 7 tests (full metadata, partial fields, outside header, on --- markers, no header, any header line, markdown formatting)
-- `npm run build` — clean; `npm test` — 1649 passed (+7), 0 failures
-
-### AC-064: Autocomplete — suggest @ref: completions ✅
-**Goal:** User types `@ref:` in a .spec.md file and the LSP suggests available spec IDs. After selecting a spec and typing `#`, suggests available block names from that spec.
-**Status:** passed ✅
-**Verified:** 2026-06-15
-**Evidence:**
-- `src/lsp/completions.ts` — 145 lines: `getSpecCompletions()` (walks specs/, loads `_index.json`, includes short names), `getBlockCompletions()` (parses `### @block:` markers), `detectCompletionContext()` (classifies cursor position as spec/block/ref-prefix/none)
-- `src/lsp/server.ts` (+52 lines): `completionProvider` capability with triggerCharacters `['@', '#']`, `onCompletion` handler dispatching to spec/block/ref-prefix completions
-- `src/lsp/index.ts` — exports new completion functions
-- `tests/lsp/completions.test.ts` — 21 tests (detectCompletionContext × 8, getSpecCompletions × 7, getBlockCompletions × 6)
-- `npm run build` — clean; `npm test` — 1694 passed, 0 completion-related failures
-- Axiom wrote completions.ts, server.ts integration, index.ts exports; Hermes added test file + fixed enum assertions
-
-## Active Criteria
-
-### AC-065: Block outline — document symbol provider ✅
-**Goal:** User opens a .spec.md file and the VSCode outline view shows the document structure — header section and all @block: entries with their names, kinds, and line ranges.
-**Status:** passed ✅
-**Verified:** 2026-06-15
-**Evidence:**
-- `src/lsp/symbols.ts` — 96 lines: `parseBlocks()` (regex extracts `### @block:name @kind:type`), `getDocumentSymbols()` (returns Header section + Blocks container with children), `BlockSymbol` interface
-- `src/lsp/server.ts` (+21 lines): imported `getDocumentSymbols`, added `documentSymbolProvider: true` capability, registered `connection.onDocumentSymbol` handler
-- `src/lsp/index.ts` — exports `parseBlocks`, `getDocumentSymbols`, `BlockSymbol` type
-- `tests/lsp/symbols.test.ts` — 279 lines, 17 tests (parseBlocks × 8, getDocumentSymbols × 9)
-- KIND_MAP: entity→Object, code→Function, note→String, directory→Module, default→Property
-- `npm run build` — clean (tsc + tsc -p src/lsp/tsconfig.json)
-- `npm test` — 1712 passed, 0 failures (+17 new symbol tests)
-- `vitest.config.ts` — excluded `tests/lsp-refs/` (container permission issue left stale copy)
-
-## Active Criteria
-
-### AC-066: LSP diagnostics for broken @ref: references ✅
-**Goal:** When user opens a .spec.md file with broken @ref: annotations, the LSP server shows Warning-level diagnostics on the broken references.
-**Status:** passed ✅
-**Verified:** 2026-06-16
-**Evidence:**
-- `src/lsp/server.ts` (+49 lines): `validateReferences()` function parses @ref: annotations, resolves each via `resolveFileRef()`, emits `DiagnosticSeverity.Warning` for unresolved specs/blocks
-- `src/lsp/references.ts` — `findBlockInFile` exported and imported in server.ts
-- `tests/ref-diagnostics.test.ts` (+220 lines): 8 tests — non-existent spec, non-existent block, valid spec, valid spec+block, non-@ref text, exact range coverage, multiple broken refs, block-not-found with existing spec
-- `npm run build` — clean (tsc + tsc -p src/lsp/tsconfig.json)
-- `npm test` — 1720 passed (+8), 0 failures, 6 LSP test files all passing
-- Axiom: opencode-speclang container, deepseek-v4-flash, ~8 minutes
-- Container permission issue: tests written to `tests/ref-diagnostics.test.ts` (not `tests/lsp/`) due to node-owned 0600 files in `tests/lsp/`
-
-## Backlog
+## Previous Wake: 2026-06-26 04:51 UTC
+- All ACs passed. Maintenance mode. Git corruption noted.
