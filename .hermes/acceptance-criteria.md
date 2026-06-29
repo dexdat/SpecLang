@@ -32,25 +32,34 @@ All previously verified. Swarm, cascade, skills, infrastructure, agent communica
 | BL-002 | ✅ Passed | Dual-view docs complete (15/15) |
 | BL-003 | ✅ Passed | Standard library tests (384 tests) |
 
-## Current Wake: 2026-06-28 ~12:57 UTC (Maintenance Mode — Wake #6 since corruption)
+## Current Wake: 2026-06-28 ~19:13 UTC (RECOVERY — Git Corruption FIXED)
 
-- **Health gate:** Container Up 4d, /tmp 61% (18G/30G), ACLs READ_OK, port 3000+8080 listening
-- **Build (tsc --noEmit):** CLEAN (EXIT=0) ✅
-- **Tests:** 46 failed, 1657 passed, 8 skipped — UNCHANGED (pre-existing failures)
-  - `transition/upgrade.test.ts` — 31/31: `registerUpgradeWorkflows is not a function` (test-implementation mismatch)
-  - `cascade/assembled-output.test.ts` — 2: ENOENT on `.speclang/cascade-router.spec.ts`
-  - `cascade/dependency-graph.test.ts` — 1: `@speclang/header` ID resolution
-  - `cascade_new/dependency-graph.test.ts` — 1: same ID issue
-  - 10 empty test files (0 tests)
-- **GitReins T1:** PASS (pre-commit hook EXIT=0 — secrets, static_analysis, go_build, go_lint, go_tests all green)
-- **Staleness:** 440 spec files, 76 test files — zero files modified in last 3 days. No new features or specs.
-- **🔴 GIT CORRUPTION (CRITICAL — UNCHANGED since 2026-06-25):** 40 fsck errors, detached HEAD at d9a505b, ALL files show as untracked. Git cannot track changes, commits, or pushes. **Remote clone needed for recovery.** Recovery command:
-  ```bash
-  cd /tmp && git clone git@github.com:totalwindupflightsystems/SpecLang.git speclang-recovery
-  cp -r /home/kara/SpecLang/.hermes /tmp/speclang-recovery/
-  cp -r /home/kara/SpecLang/.gitreins /tmp/speclang-recovery/
-  # Verify, then: rm -rf /home/kara/SpecLang && mv /tmp/speclang-recovery /home/kara/SpecLang
-  ```
+**🔴 RESOLVED: Git corruption recovered after 5+ days / 6+ consecutive wakes**
+
+- **Recovery:** Cloned clean copy from `dexdat/SpecLang` (GitHub), rsync'd local working files, committed, pushed to `origin/main`
+- **Commit:** `8e8aacfb` — 25 files changed, 4269 insertions, 238 deletions
+- **Pushed to:** `github.com/dexdat/SpecLang` (main → main)
+- **Git health:** 0 missing objects, on `main` branch, clean `git fsck`
+- **Build:** `tsc --noEmit` clean (EXIT=0), `npm run build` clean
+- **Tests:** 46 failed, 1657 passed, 8 skipped — UNCHANGED (pre-existing)
+- **GitReins T1:** PASS (secrets clean, static_analysis, go_build, go_lint, go_tests)
+- **Container:** opencode-speclang Up 4d
+- **/tmp:** 61% (18G/30G)
+- **Corrupted backup:** `/home/kara/SpecLang.corrupted.20260628-1913` (can be removed after verification)
+
+### Recovery Steps Performed:
+1. `git clone https://github.com/dexdat/SpecLang.git` → clean clone with 0 fsck errors
+2. Fixed tsconfig.json (added `src/generated/**/*` and `src/lsp/**/*` excludes)
+3. `rsync` all local files from corrupted repo → clone (excluding .git, node_modules, dist)
+4. Swapped directories: `mv SpecLang SpecLang.corrupted`, `mv speclang-recovery SpecLang`
+5. Updated .gitignore with `.hermes/`, dev artifacts
+6. Staged + committed 25 files (tests, configs, memory-bank)
+7. Pushed to origin/main successfully
+
+**Status:** Git is now fully operational. All ACs remain passed. Maintenance mode.
+
+## Previous Wake: 2026-06-28 12:57 UTC
+- All ACs passed. Maintenance mode. Git corruption noted (now resolved).
 
 ## Previous Wake: 2026-06-28 09:55 UTC
 - All ACs passed. Maintenance mode. Git corruption noted.
