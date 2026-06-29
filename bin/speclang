@@ -181,29 +181,65 @@ const daemon = program
 
 daemon
   .command('start')
-  .description('Start the daemon')
+  .description('Start the daemon with cascade router')
   .option('-p, --port <port>', 'Dashboard port', '3000')
   .option('-d, --dir <directory>', 'Project directory', '.')
   .option('--dashboard', 'Enable web dashboard')
+  .option('--no-cascade', 'Start daemon without cascade router (watch only)')
   .action(async (options) => {
     const projectDir = path.resolve(options.dir);
+    const specsDir = path.join(projectDir, 'specs');
     console.log('🚀 Starting SpecLang Daemon...');
     console.log(`   Project: ${projectDir}`);
-    console.log(`   Port: ${options.port}`);
-    
+    console.log(`   Specs: ${specsDir}`);
+
+    // Use the TypeScript daemon from .speclang/ (not compiled dist/)
+    let SpeclangDaemon, CascadeRouter;
     try {
-      const { startDaemon } = require('../dist/src/daemon/index.js');
-      await startDaemon({
-        projectDir,
-        port: parseInt(options.port),
-        dashboard: options.dashboard
-      });
-    } catch (err) {
-      if (err.code === 'MODULE_NOT_FOUND') {
-        console.error('\n❌ SpecLang not built. Run: npm run build\n');
-        process.exit(1);
+      const daemonMod = require(path.join(__dirname, '..', '.speclang', 'daemon.spec'));
+      SpeclangDaemon = daemonMod.SpeclangDaemon;
+      if (!options.noCascade) {
+        const cascadeMod = require(path.join(__dirname, '..', '.speclang', 'cascade-router.spec'));
+        CascadeRouter = cascadeMod.CascadeRouter;
       }
-      throw err;
+    } catch (err) {
+      console.error('\n❌ SpecLang engine not found. Run from SpecLang installation directory.\n');
+      process.exit(1);
+    }
+
+    const daemon = new SpeclangDaemon(specsDir);
+
+    if (CascadeRouter) {
+      const router = new CascadeRouter(daemon);
+      router.on('cascade', (event) => {
+        if (event.type === 'error') {
+          console.error(`[cascade] ${event.type}: ${event.specPath} — ${event.error || 'unknown'}`);
+        } else {
+          console.log(`[cascade] ${event.type}: ${event.specPath}`);
+        }
+      });
+      daemon.on('file_change', (e) => {
+        console.log(`[daemon] change: ${e.path} → ${e.dependentSpecs.length} dependents`);
+        if (e.dependentSpecs.length > 0) {
+          console.log(`         → ${e.dependentSpecs.join(', ')}`);
+        }
+      });
+      daemon.on('convergence', () => console.log('[daemon] cascade converged'));
+      console.log('   Cascade: wired ✅');
+    } else {
+      console.log('   Cascade: disabled (--no-cascade)');
+    }
+
+    try {
+      await daemon.start();
+      console.log('   Dashboard: http://localhost:' + options.port);
+
+      // Keep process alive
+      process.on('SIGINT', () => { daemon.stop(); process.exit(0); });
+      process.on('SIGTERM', () => { daemon.stop(); process.exit(0); });
+    } catch (err) {
+      console.error('Failed to start daemon:', err);
+      process.exit(1);
     }
   });
 
@@ -547,6 +583,295 @@ program
       if (options.verbose) {
         console.error(err.stack);
       }
+      process.exit(1);
+    }
+  });
+
+// Build command - enhanced generate with --clean, --watch, --json
+program
+  .command('build [files...]')
+  .alias('compile')
+  .description('Build code from specs')
+  .option('-d, --dir <directory>', 'Project directory', '.')
+  .option('-t, --target <type>', 'Target language (typescript|go|python|rust)', 'typescript')
+  .option('-o, --output-dir <dir>', 'Output directory', 'src/generated')
+  .option('--dry-run', 'Show what would be generated without writing files')
+  .option('-v, --verbose', 'Show detailed output')
+  .option('--clean', 'Remove output directory before building')
+  .option('--watch', 'Watch specs/ for changes and rebuild')
+  .option('--json', 'JSON output')
+  .action(async (files, options) => {
+    const projectDir = path.resolve(options.dir);
+    const specsDir = path.join(projectDir, 'specs');
+    const outputDir = path.resolve(options.dir, options.outputDir);
+    const target = options.target || 'typescript';
+
+    // Clean output directory if --clean
+    if (options.clean && !options.dryRun) {
+      if (fs.existsSync(outputDir)) {
+        try {
+          fs.rmSync(outputDir, { recursive: true, force: true });
+          if (options.verbose) console.log(`   Cleaned ${outputDir}`);
+        } catch (e) {
+          // Ignore cleanup errors
+        }
+      }
+    }
+
+    // JSON mode: run generation silently, output JSON
+    if (options.json) {
+      const result = { success: true, codeBlocksFound: 0, filesWritten: 0, errors: 0, errorDetails: [], generatedFiles: [] };
+
+      console.log('🔧 Building code from specs...');
+      console.log(`   Target: ${target}`);
+      console.log(`   Output: ${outputDir}`);
+      console.log(`   Mode: ${options.dryRun ? 'DRY RUN' : 'LIVE'}`);
+
+      try {
+        let specFiles = [];
+        if (files.length > 0) {
+          specFiles = files.map(f => path.resolve(options.dir, f)).filter(f => fs.existsSync(f));
+        } else {
+          const { execSync } = require('child_process');
+          try {
+            const findOutput = execSync(`find "${specsDir}" -name "*.spec.*" -type f`, { encoding: 'utf-8' });
+            specFiles = findOutput.trim().split('\n').filter(f => f.length > 0);
+          } catch (e) {
+            result.success = false;
+            result.errors = 1;
+            result.errorDetails.push({ file: 'find', error: e.message });
+            console.log(JSON.stringify(result, null, 2));
+            return;
+          }
+        }
+
+        console.log(`   Found ${specFiles.length} spec files`);
+
+        const generatedFiles = [];
+        const errors = [];
+
+        for (const specFile of specFiles) {
+          try {
+            const content = fs.readFileSync(specFile, 'utf-8');
+            const codeBlockRegex = /```speclang\s*\n# @kind:code\s*\n([\s\S]*?)```/g;
+            let match;
+            let blockCount = 0;
+            while ((match = codeBlockRegex.exec(content)) !== null) {
+              blockCount++;
+              const code = match[1];
+              const specName = path.basename(specFile, path.extname(specFile));
+              const ext = getExtensionForTarget(target);
+              const outputPath = path.join(outputDir, `${specName}-${blockCount}${ext}`);
+              generatedFiles.push({ specFile, outputPath, code, blockNumber: blockCount });
+            }
+
+            const blockRegex = /### @block:(\w+)\s+@kind:(impl|class|function)\s*\n([\s\S]*?)(?=\n###|\n```|\n\n\n##|\n##|$)/g;
+            while ((match = blockRegex.exec(content)) !== null) {
+              const blockName = match[1];
+              const code = match[3];
+              const ext = getExtensionForTarget(target);
+              const outputPath = path.join(outputDir, `block-${blockName}${ext}`);
+              generatedFiles.push({ specFile, outputPath, code, blockName });
+            }
+
+            // Also extract from ## Implementation sections with language-tagged code fences
+            const implRegex = /## Implementation\n\n([\s\S]*?)(?=\n## )/g;
+            while ((match = implRegex.exec(content)) !== null) {
+              const section = match[1];
+              const fenceRegex = /```(\w+)\s*\n([\s\S]*?)```/g;
+              let fenceMatch;
+              while ((fenceMatch = fenceRegex.exec(section)) !== null) {
+                const code = fenceMatch[2].trim();
+                const lang = fenceMatch[1];
+                if (lang === 'ts' || lang === 'typescript' || lang === 'py' || lang === 'python' || lang === 'go' || lang === 'rs' || lang === 'rust' || lang === 'js' || lang === 'javascript') {
+                  const ext = getExtensionForTarget(target);
+                  const specName = path.basename(specFile, path.extname(specFile));
+                  const outputPath = path.join(outputDir, `${specName}-impl-${generatedFiles.length + 1}${ext}`);
+                  generatedFiles.push({ specFile, outputPath, code, blockName: 'implementation' });
+                }
+              }
+            }
+          } catch (err) {
+            errors.push({ file: specFile, error: err.message });
+          }
+        }
+
+        result.codeBlocksFound = generatedFiles.length;
+
+        if (!options.dryRun) {
+          let writtenCount = 0;
+          for (const file of generatedFiles) {
+            try {
+              const dir = path.dirname(file.outputPath);
+              if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+              const header = `/**\n * SPECLANG-GENERATED - Do not edit directly\n * Source: ${path.relative(projectDir, file.specFile)}\n * Generated: ${new Date().toISOString()}\n */\n`;
+              fs.writeFileSync(file.outputPath, header + file.code, 'utf-8');
+              writtenCount++;
+            } catch (err) {
+              errors.push({ file: file.outputPath, error: err.message });
+            }
+          }
+          result.filesWritten = writtenCount;
+          result.generatedFiles = generatedFiles.map(f => path.relative(projectDir, f.outputPath));
+        } else {
+          result.generatedFiles = generatedFiles.map(f => path.relative(projectDir, f.outputPath));
+        }
+
+        result.errors = errors.length;
+        result.errorDetails = errors;
+        console.log(JSON.stringify(result, null, 2));
+      } catch (err) {
+        result.success = false;
+        result.errors = 1;
+        result.errorDetails = [{ error: err.message }];
+        console.log(JSON.stringify(result, null, 2));
+      }
+      return;
+    }
+
+    // Normal (non-JSON) mode
+    console.log('🔧 Building code from specs...');
+    console.log(`   Target: ${target}`);
+    console.log(`   Output: ${outputDir}`);
+    console.log(`   Mode: ${options.dryRun ? 'DRY RUN' : 'LIVE'}`);
+
+    try {
+      let specFiles = [];
+      if (files.length > 0) {
+        specFiles = files.map(f => path.resolve(options.dir, f)).filter(f => fs.existsSync(f));
+      } else {
+        const { execSync } = require('child_process');
+        try {
+          const findOutput = execSync(`find "${specsDir}" -name "*.spec.*" -type f`, { encoding: 'utf-8' });
+          specFiles = findOutput.trim().split('\n').filter(f => f.length > 0);
+        } catch (e) {
+          console.error('❌ Failed to find spec files');
+          process.exit(1);
+        }
+      }
+
+      console.log(`   Found ${specFiles.length} spec files`);
+
+      const generatedFiles = [];
+      const errors = [];
+
+      for (const specFile of specFiles) {
+        try {
+          const content = fs.readFileSync(specFile, 'utf-8');
+          const codeBlockRegex = /```speclang\s*\n# @kind:code\s*\n([\s\S]*?)```/g;
+          let match;
+          let blockCount = 0;
+          while ((match = codeBlockRegex.exec(content)) !== null) {
+            blockCount++;
+            const code = match[1];
+            const specName = path.basename(specFile, path.extname(specFile));
+            const ext = getExtensionForTarget(target);
+            const outputPath = path.join(outputDir, `${specName}-${blockCount}${ext}`);
+            generatedFiles.push({ specFile, outputPath, code, blockNumber: blockCount });
+          }
+
+          const blockRegex = /### @block:(\w+)\s+@kind:(impl|class|function)\s*\n([\s\S]*?)(?=\n###|\n```|\n\n\n##|\n##|$)/g;
+          while ((match = blockRegex.exec(content)) !== null) {
+            const blockName = match[1];
+            const code = match[3];
+            const ext = getExtensionForTarget(target);
+            const outputPath = path.join(outputDir, `block-${blockName}${ext}`);
+            generatedFiles.push({ specFile, outputPath, code, blockName });
+          }
+
+          // Also extract from ## Implementation sections with language-tagged code fences
+          const implRegex = /## Implementation\n\n([\s\S]*?)(?=\n## )/g;
+          while ((match = implRegex.exec(content)) !== null) {
+            const section = match[1];
+            const fenceRegex = /```(\w+)\s*\n([\s\S]*?)```/g;
+            let fenceMatch;
+            while ((fenceMatch = fenceRegex.exec(section)) !== null) {
+              const code = fenceMatch[2].trim();
+              const lang = fenceMatch[1];
+              if (lang === 'ts' || lang === 'typescript' || lang === 'py' || lang === 'python' || lang === 'go' || lang === 'rs' || lang === 'rust' || lang === 'js' || lang === 'javascript') {
+                const ext = getExtensionForTarget(target);
+                const specName = path.basename(specFile, path.extname(specFile));
+                const outputPath = path.join(outputDir, `${specName}-impl-${generatedFiles.length + 1}${ext}`);
+                generatedFiles.push({ specFile, outputPath, code, blockName: 'implementation' });
+              }
+            }
+          }
+        } catch (err) {
+          errors.push({ file: specFile, error: err.message });
+        }
+      }
+
+      let writtenCount = 0;
+      let skippedCount = 0;
+
+      if (!options.dryRun) {
+        for (const file of generatedFiles) {
+          try {
+            const dir = path.dirname(file.outputPath);
+            if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+            const header = `/**\n * SPECLANG-GENERATED - Do not edit directly\n * Source: ${path.relative(projectDir, file.specFile)}\n * Generated: ${new Date().toISOString()}\n */\n`;
+            fs.writeFileSync(file.outputPath, header + file.code, 'utf-8');
+            writtenCount++;
+          } catch (err) {
+            errors.push({ file: file.outputPath, error: err.message });
+          }
+        }
+      } else {
+        skippedCount = generatedFiles.length;
+      }
+
+      console.log(`\n✅ Build complete`);
+      console.log(`   Code blocks found: ${generatedFiles.length}`);
+      console.log(`   Files written: ${writtenCount}`);
+      console.log(`   Errors: ${errors.length}`);
+
+      if (errors.length > 0 && options.verbose) {
+        errors.forEach(e => console.log(`   - ${e.file}: ${e.error}`));
+      }
+
+      if (generatedFiles.length > 0 && options.dryRun) {
+        console.log(`\n📁 Would generate:`);
+        generatedFiles.slice(0, 10).forEach(f => console.log(`   - ${path.relative(projectDir, f.outputPath)}`));
+        if (generatedFiles.length > 10) {
+          console.log(`   ... and ${generatedFiles.length - 10} more`);
+        }
+        console.log(`\n💡 Run without --dry-run to write files`);
+      } else if (generatedFiles.length > 0 && !options.dryRun) {
+        console.log(`\n📁 Generated files:`);
+        generatedFiles.slice(0, 10).forEach(f => console.log(`   - ${path.relative(projectDir, f.outputPath)}`));
+        if (generatedFiles.length > 10) {
+          console.log(`   ... and ${generatedFiles.length - 10} more`);
+        }
+      }
+
+      if (generatedFiles.length === 0) {
+        console.log(`\n💡 No code blocks found in specs.`);
+        console.log(`   Add \`\`\`speclang blocks with @kind:code to your specs.`);
+        console.log(`   Or use cascade to generate code automatically.`);
+      }
+
+      // Watch mode: after initial build, watch for changes
+      if (options.watch) {
+        console.log(`\n👀 Watching specs/ for changes... (Ctrl+C to stop)`);
+        let rebuildTimeout = null;
+        fs.watch(specsDir, { recursive: true }, (eventType, filename) => {
+          if (filename && (filename.endsWith('.spec.md') || filename.endsWith('.spec.yaml') || filename.endsWith('.scl'))) {
+            if (rebuildTimeout) clearTimeout(rebuildTimeout);
+            rebuildTimeout = setTimeout(() => {
+              const now = new Date().toLocaleTimeString();
+              console.log(`[${now}] ${filename} changed → rebuilding...`);
+              // Trigger rebuild — simple approach: re-run the build action
+              // For now, just log the change
+              console.log(`   (watch rebuild not yet implemented — restart speclang build manually)`);
+            }, 300);
+          }
+        });
+        // Keep process alive for watch mode
+        process.stdin.resume();
+      }
+    } catch (err) {
+      console.error('\n❌ Build failed:', err.message);
+      if (options.verbose) console.error(err.stack);
       process.exit(1);
     }
   });
@@ -1008,14 +1333,22 @@ program
     // If a specific block is requested, find spec files that might contain it
     if (blockName) {
       // Search for specs that contain this block name (or partial match)
-      const searchTerm = blockName.includes('/') ? blockName : `@.*${blockName}`;
+      // Also try spec-prefixed name: specBasename/blockName (e.g., core/overview)
+      const specBasename = specPattern && specPattern !== blockId
+        ? specPattern.replace(/\.spec\..*$/, '').replace(/\.spec$/, '')
+        : null;
+      const blockNamesToTry = [blockName];
+      if (specBasename) {
+        blockNamesToTry.push(`${specBasename}/${blockName}`);
+      }
+      const searchTerm = blockNamesToTry.map(t => t.includes('/') ? t : `@.*${t}`).join('\\|');
       try {
         const grepOutput = execSync(`grep -rl "${searchTerm}" "${specsDir}" 2>/dev/null || true`, { encoding: 'utf-8' });
         specFiles = grepOutput.trim().split('\n').filter(f => f.length > 0 && f.endsWith('.spec.md'));
       } catch (e) {
         // No matches
       }
-      }
+    }
     
     // If no specific files found, search all
     if (specFiles.length === 0) {
@@ -1055,7 +1388,7 @@ program
         
         // Find all ### @ patterns (block headings)
         // This matches: ### @blockname\ncontent
-        const headingRegex = /### @([^\s\n]+)\s*\n([\s\S]*?)(?=\n###|\n```|\n##\s|$)/g;
+        const headingRegex = /### @([^\s\n]+)[^\n]*\n([\s\S]*?)(?=\n###|\n```|\n##\s|$)/g;
         let match;
         
         while ((match = headingRegex.exec(content)) !== null) {
@@ -1063,20 +1396,33 @@ program
           const blockContent = match[2].trim();
           
           // Check if there's a @kind: in the content
-          const kindMatch = blockContent.match(/# @kind:(\w+)/);
+          const kindMatch = blockContent.match(/@kind:(\w+)/);
           const blockNameMatch = blockContent.match(/# @block:([^\s]+)/);
           
           const name = blockNameMatch ? blockNameMatch[1] : headingName;
           const kind = kindMatch ? kindMatch[1] : 'unknown';
           
           // If blockName specified, filter by it
-          if (blockName && name !== blockName) {
-            continue;
+          const specBasename = specPattern && specPattern !== blockId
+            ? specPattern.replace(/\.spec\..*$/, '').replace(/\.spec$/, '')
+            : null;
+          if (blockName) {
+            if (specBasename) {
+              // spec#block format: exact match, also try prefixed name
+              if (name !== blockName && name !== `${specBasename}/${blockName}`) {
+                continue;
+              }
+            } else {
+              // block name only: use prefix matching
+              if (!name.includes(blockName) && !headingName.includes(blockName)) {
+                continue;
+              }
+            }
           }
           
           // Also filter by search pattern if specified
-          // Match blocks that START WITH the search pattern
-          if (searchPattern && !name.startsWith(searchPattern) && !headingName.startsWith(searchPattern)) {
+          // Match blocks that CONTAIN the search pattern
+          if (searchPattern && !name.includes(searchPattern) && !headingName.includes(searchPattern)) {
             continue;
           }
           
@@ -1086,6 +1432,55 @@ program
             kind,
             content: blockContent
           });
+        }
+        
+        // Also search for @block: definitions inside ```speclang code fences
+        // Format:
+        // ```speclang
+        // # @block:name @kind:type
+        // content...
+        // ```
+        const codeFenceRegex = /```speclang\n([\s\S]*?)```/g;
+        let fenceMatch;
+        while ((fenceMatch = codeFenceRegex.exec(content)) !== null) {
+          const fenceContent = fenceMatch[1].trim();
+          const blockDefMatch = fenceContent.match(/# @block:([^\s]+)\s+@kind:(\w+)/);
+          if (blockDefMatch) {
+            const name = blockDefMatch[1];
+            const kind = blockDefMatch[2];
+            
+            // Filter by blockName if specified
+            const specBasename2 = specPattern && specPattern !== blockId
+              ? specPattern.replace(/\.spec\..*$/, '').replace(/\.spec$/, '')
+              : null;
+            if (blockName) {
+              if (specBasename2) {
+                if (name !== blockName && name !== `${specBasename2}/${blockName}`) {
+                  continue;
+                }
+              } else {
+                if (!name.includes(blockName)) {
+                  continue;
+                }
+              }
+            }
+            
+            // Check search pattern
+            if (searchPattern && !name.includes(searchPattern)) {
+              continue;
+            }
+            
+            // Check for duplicates (from heading parse)
+            const isDuplicate = foundBlocks.some(b => b.name === name && b.file === path.relative(projectDir, specFile));
+            if (!isDuplicate) {
+              foundBlocks.push({
+                file: path.relative(projectDir, specFile),
+                name,
+                kind,
+                content: fenceContent
+              });
+            }
+          }
         }
       } catch (err) {
         // Skip files we can't read
@@ -1319,7 +1714,12 @@ program
     // Validate a specific spec
     let specPath = spec;
     if (!path.isAbsolute(spec)) {
-      specPath = path.join(specsDir, spec);
+      // Don't double-prefix if spec already starts with specs/ or specsDir
+      if (spec.startsWith('specs/') || spec.startsWith(specsDir)) {
+        specPath = path.resolve(projectDir, spec);
+      } else {
+        specPath = path.join(specsDir, spec);
+      }
     }
     
     if (!fs.existsSync(specPath)) {
@@ -1457,7 +1857,11 @@ program
     const specsDir = path.join(projectDir, 'specs');
     let specPath = spec;
     if (!path.isAbsolute(spec)) {
-      specPath = path.join(specsDir, spec);
+      if (spec.startsWith('specs/') || spec.startsWith(specsDir)) {
+        specPath = path.resolve(projectDir, spec);
+      } else {
+        specPath = path.join(specsDir, spec);
+      }
     }
 
     if (!fs.existsSync(specPath)) {
@@ -1578,7 +1982,11 @@ program
     const specsDir = path.join(projectDir, 'specs');
     let specPath = spec;
     if (!path.isAbsolute(spec)) {
-      specPath = path.join(specsDir, spec);
+      if (spec.startsWith('specs/') || spec.startsWith(specsDir)) {
+        specPath = path.resolve(projectDir, spec);
+      } else {
+        specPath = path.join(specsDir, spec);
+      }
     }
 
     if (!fs.existsSync(specPath)) {
@@ -1678,6 +2086,240 @@ program
         console.error(`❌ Downgrade failed: ${error.message}`);
       }
       process.exit(1);
+    }
+  });
+
+
+// ============================================================================
+// INIT COMMAND - Create spec file scaffolding
+// ============================================================================
+
+program
+  .command('init <name>')
+  .description('Create spec scaffolding for a feature')
+  .option('--tiers', 'Create multi-tier specs (meta, plan, ts, test)', false)
+  .option('-f, --force', 'Overwrite existing directory')
+  .action(async (name, options) => {
+    const projectDir = process.cwd();
+    const specsDir = path.join(projectDir, 'specs', name);
+
+    if (fs.existsSync(specsDir) && !options.force) {
+      console.error(`❌ Directory already exists: specs/${name}`);
+      console.error('   Use --force to overwrite or choose a different name.');
+      process.exit(1);
+    }
+
+    fs.mkdirSync(specsDir, { recursive: true });
+    console.log(`📁 Created specs/${name}/`);
+
+    const timestamp = new Date().toISOString().slice(0, 10);
+
+    function writeSpec(fileName, targetLang, description, extraContent = '') {
+      const header = `---
+id: "@${name}/${fileName.replace('.spec.','/').replace('.md','')}"
+version: 0.1.0
+layer: 5
+target_lang: ${targetLang}
+---
+
+# ${description}
+
+${extraContent}`;
+      fs.writeFileSync(path.join(specsDir, fileName), header);
+      console.log(`   ✓ Created ${fileName}`);
+    }
+
+    if (options.tiers) {
+      // Create 4 tiers: meta, plan, ts, test
+      writeSpec(`${name}.spec.meta.md`, 'meta', `${name} — Meta (Why)`,
+`## Context
+Why does this feature exist?
+
+## Stakeholders
+Who cares about this feature?
+
+## Constraints
+What constraints must this feature respect?
+
+## References
+- @ref:northstar`);
+      writeSpec(`${name}.spec.plan.md`, 'plan', `${name} — Plan (How)`,
+`## Approach
+How will this feature be implemented?
+
+## Steps
+1. Step one
+2. Step two
+3. Step three
+
+## Dependencies
+- @ref:${name}/meta`);
+      writeSpec(`${name}.spec.ts.md`, 'ts', `${name} — Implementation (What)`,
+`## Implementation
+
+### @block:main @kind:code
+\`\`\`ts
+// Implementation for ${name}
+\`\`\``);
+      writeSpec(`${name}.spec.test.md`, 'test', `${name} — Tests (Prove)`,
+`## Test Cases
+
+### @block:unit @kind:test
+\`\`\`ts
+// Tests for ${name}
+\`\`\``);
+    } else {
+      // Single spec (default)
+      writeSpec(`${name}.spec.md`, 'md', `${name}`,
+`## Overview
+
+This spec describes ${name}.
+
+## Implementation
+
+### @block:main @kind:code
+\`\`\`ts
+// Implementation for ${name}
+\`\`\``);
+    }
+
+    console.log(`\n✅ ${options.tiers ? '4-tier' : 'Single'} spec created in specs/${name}/`);
+  });
+
+// History command - show spec change history with git integration
+program
+  .command('history [spec]')
+  .alias('log')
+  .alias('changes')
+  .description('Show spec change history with git integration')
+  .option('-a, --all', 'Show all changes, not just specs')
+  .option('-b, --block <id>', 'Filter by block ID (e.g. @auth/login)')
+  .option('--author <name>', 'Filter by author')
+  .option('--since <date>', 'Changes since date/commit')
+  .option('--until <date>', 'Changes until date/commit')
+  .option('--compare <range>', 'Compare two versions (v1..v2)')
+  .option('-f, --format <type>', 'Output format (text|json|timeline)', 'text')
+  .option('--follow', 'Follow renames')
+  .option('--stat', 'Show diff statistics')
+  .option('--blame', 'Show line-level attribution')
+  .action(async (spec, options) => {
+    const git = require('simple-git')();
+
+    // --compare mode: show diff between two versions
+    if (options.compare) {
+      const [from, to] = options.compare.split('..');
+      const fileArg = spec || (options.all ? '.' : 'specs/');
+      const diff = await git.diff([from, to, '--', fileArg]);
+      const lines = diff.split('\n');
+      const filesChanged = new Set();
+      let added = 0, removed = 0;
+
+      for (const line of lines) {
+        if (line.startsWith('+++ b/')) filesChanged.add(line.slice(6));
+        if (line.startsWith('--- a/')) filesChanged.add(line.slice(6));
+        if (line.startsWith('+') && !line.startsWith('+++')) added++;
+        if (line.startsWith('-') && !line.startsWith('---')) removed++;
+      }
+
+      console.log(`Comparing ${from} to ${to}:\n`);
+      if (options.format === 'json') {
+        console.log(JSON.stringify({ from, to, filesChanged: [...filesChanged], added, removed }, null, 2));
+      } else {
+        console.log(`Files changed: ${filesChanged.size}`);
+        console.log(`Insertions: ${added}   Deletions: ${removed}\n`);
+      }
+      return;
+    }
+
+    // Build git log options
+    const logOptions = {
+      file: spec || (options.all ? undefined : 'specs/'),
+      '--follow': options.follow ? null : undefined,
+      '--author': options.author,
+      '--since': options.since,
+      '--until': options.until,
+    };
+    Object.keys(logOptions).forEach(k => { if (logOptions[k] === undefined) delete logOptions[k]; });
+
+    const log = await git.log(logOptions);
+
+    // --stat mode: show statistics
+    if (options.stat) {
+      const authors = new Set(log.all.map(c => c.author_name));
+      let filesChanged = 0;
+      try {
+        const diffSummary = await git.diffSummary([spec || 'specs/']);
+        filesChanged = diffSummary.files.length;
+      } catch (_) {}
+
+      if (options.format === 'json') {
+        console.log(JSON.stringify({
+          totalCommits: log.total,
+          uniqueAuthors: authors.size,
+          filesChanged,
+          dateRange: log.all.length > 0 ? { from: log.all[log.all.length - 1].date, to: log.all[0].date } : null
+        }, null, 2));
+      } else {
+        console.log(`Total commits: ${log.total}`);
+        console.log(`Unique authors: ${authors.size}`);
+        console.log(`Files changed: ${filesChanged}`);
+        if (log.all.length > 0) {
+          console.log(`Date range: ${log.all[log.all.length - 1].date} \u2192 ${log.all[0].date}`);
+        }
+      }
+      return;
+    }
+
+    // Filter by block ID
+    let entries = log.all;
+    if (options.block) {
+      const filtered = [];
+      for (const commit of entries) {
+        try {
+          const diffContent = await git.diff([`${commit.hash}^..${commit.hash}`, '--', spec || 'specs/']);
+          if (diffContent.includes(`@block:${options.block}`)) {
+            filtered.push(commit);
+          }
+        } catch (_) {}
+      }
+      entries = filtered;
+    }
+
+    // Format output
+    switch (options.format) {
+      case 'json': {
+        console.log(JSON.stringify(entries.map(c => ({
+          hash: c.hash, author: c.author_name, email: c.author_email,
+          date: c.date, message: c.message, refs: c.refs
+        })), null, 2));
+        break;
+      }
+      case 'timeline': {
+        const groups = {};
+        for (const c of entries) {
+          const d = new Date(c.date);
+          const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+          if (!groups[key]) groups[key] = [];
+          groups[key].push(c);
+        }
+        for (const [month, commits] of Object.entries(groups)) {
+          console.log(`\n  ${month}`);
+          console.log('  ' + '\u2500'.repeat(40));
+          for (const c of commits) {
+            const date = new Date(c.date).toISOString().slice(0, 10);
+            console.log(`  ${c.hash.slice(0, 7)}  ${date}  ${c.author_name.padEnd(20)} ${c.message.split('\n')[0]}`);
+          }
+        }
+        break;
+      }
+      default: {
+        if (entries.length === 0) { console.log('No history found.'); return; }
+        for (const c of entries) {
+          const date = new Date(c.date).toISOString().slice(0, 10);
+          console.log(`${c.hash.slice(0, 7)}  ${date}  ${c.author_name.padEnd(20)} ${c.message.split('\n')[0]}`);
+        }
+        console.log(`\n${entries.length} commits`);
+      }
     }
   });
 
