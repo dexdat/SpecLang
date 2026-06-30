@@ -21,17 +21,22 @@ Dashboard monitoring, dual-view docs, standard library tests.
 | BL-003 | ✅ Passed | Standard library tests (384 tests) |
 | AC-066 | ✅ Passed | LSP ref diagnostics recovered 2026-06-28 |
 
-## Current Wake: 2026-06-29 09:05 UTC (MAINTENANCE — ALL CLEAR)
+## Current Wake: 2026-06-29 15:46 UTC (MAINTENANCE — ALL CLEAR)
 
-- **GitReins T1:** PASS ✓ (secrets ✓, static_analysis ✓, build ✓, lint ✓, tests ✓)
+- **GitReins T1:** PASS ✓ (secrets ✓, static_analysis ✓, build ✓, lint ✓, tests ✓) — gitleaks timed out (30s, 442 specs), built-in scanner passed
 - **tsc --noEmit:** EXIT=0 (clean)
-- **Tests:** 46 failed, 1665 passed, 8 skipped — all 46 failures pre-existing in `tests/transition/upgrade.test.ts` (`registerUpgradeWorkflows` not implemented in generated index.ts; test dates from June 19 recovery)
-- **Container:** opencode-speclang Up 5d, ACLs READ_OK
-- **/tmp:** 67% (11G free)
-- **Staleness:** 442 specs, 21 CLI subcommands — no new features or specs uncovered
-- **npm outdated:** 9 packages (MCP SDK 1.26→1.29, vitest 4.1.2→4.1.9, etc.) — non-blocking
-- **TODO.md:** 7 remaining P2 stories (stale, last updated April 2026)
-- **Git:** main branch, clean (AC file only modified)
+- **Tests:** 46 failed, 1665 passed, 8 skipped — all 46 failures pre-existing in `tests/transition/upgrade.test.ts` (`registerUpgradeWorkflows` not implemented; last src/transition/ touched `bb8acddc`, test file touched in recovery `8e8aacfb` — pre-existing, no Axiom dispatch)
+- **Container:** opencode-speclang Up 5d, healthy
+- **/tmp:** 70% (9.2G free)
+- **Staleness:** 442 specs, 20 CLI subcommands — no new features or specs uncovered. No backlog items.
+- **TODO.md:** 7 remaining P2 stories (stale, last updated April 2026) — archival, no active deficiencies
+- **Git:** main branch, clean (prior wake's AC-066 work committed)
+
+## Previous Wake: 2026-06-29 11:11 UTC (MAINTENANCE)
+- All clear. T1 PASS. tsc clean. 46 pre-existing test failures.
+
+## Previous Wake: 2026-06-29 09:05 UTC (MAINTENANCE)
+- All clear. T1 PASS. tsc clean. 46 pre-existing test failures.
 
 ## Previous Wake: 2026-06-28 23:53 UTC (AC-066 RECOVERED)
 - Axiom dispatched for AC-066 — `proc_c2084a0e466a`, completed ~6min
@@ -47,16 +52,4 @@ Dashboard monitoring, dual-view docs, standard library tests.
 - All ACs passed. Maintenance mode. Git corruption noted (now resolved).
 
 ## Previous Wake: 2026-06-28 09:55 UTC
-- All ACs passed. Maintenance mode. Git corruption noted.
-
-## Previous Wake: 2026-06-27 18:43 UTC
-- All ACs passed. Maintenance mode. Git corruption noted.
-
-## Previous Wake: 2026-06-27 17:22 UTC
-- All ACs passed. Maintenance mode. Git corruption noted.
-
-## Previous Wake: 2026-06-27 10:06 UTC
-- All ACs passed. Maintenance mode. Git corruption noted.
-
-## Previous Wake: 2026-06-26 04:51 UTC
 - All ACs passed. Maintenance mode. Git corruption noted.

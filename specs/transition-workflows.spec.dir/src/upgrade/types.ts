@@ -81,14 +81,46 @@ export interface UpgradeTarget {
   agent_support?: AgentSupport;
 }
 
+export interface SpecRef {
+  id: string;
+  name?: string;
+}
+
 export interface UpgradePlan {
-  specId: string;
-  current: UpgradeTarget;
-  target: UpgradeTarget;
-  type: UpgradeType;
-  checklists: TransitionChecklist[];
+  from: string;
+  to: string;
+  specs: SpecRef[];
+  checks: Array<{
+    check: TransitionCheck;
+    passed: boolean;
+    message: string;
+  }>;
   estimatedDuration?: number;
   requiredApprovals?: string[];
+}
+
+export interface ValidationResult {
+  valid: boolean;
+  checks: Array<{
+    name: string;
+    passed: boolean;
+    message?: string;
+    automated?: boolean;
+  }>;
+  blockingChecks: Array<{
+    name: string;
+    passed: boolean;
+    message?: string;
+    automated?: boolean;
+  }>;
+}
+
+export interface ExecutionResult {
+  success: boolean;
+  plan: UpgradePlan;
+  executedAt?: string;
+  warnings?: string[];
+  errors?: string[];
 }
 
 export interface UpgradeCheck extends TransitionCheck {

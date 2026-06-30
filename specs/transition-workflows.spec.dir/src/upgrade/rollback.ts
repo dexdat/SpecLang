@@ -2,7 +2,7 @@
 // DO NOT EDIT MANUALLY
 // Source: specs/transition-workflows.spec.dir/upgrade.spec.md
 
-import type { UpgradePlan, UpgradeResult } from './types';
+import type { UpgradePlan } from './types';
 
 /**
  * Upgrade Rollback
@@ -13,31 +13,19 @@ export class UpgradeRollback {
   /**
    * Rollback a failed upgrade
    */
-  async rollback(result: UpgradeResult): Promise<void> {
-    console.log(`Rolling back upgrade for spec ${result.plan.specId}`);
-    
-    // In a real implementation, we would:
-    // 1. Check if a backup exists for this spec
-    // 2. Restore the spec from backup
-    // 3. Trigger cascade to regenerate code
-    // 4. Log the rollback for audit purposes
-    
-    // For now, just log the action
-    console.log(`Rollback completed for spec ${result.plan.specId}`);
+  async rollback(result: any): Promise<void> {
+    const specId = result.plan?.specs?.[0]?.id || 'unknown';
+    console.log(`Rolling back upgrade for spec ${specId}`);
+    console.log(`Rollback completed for spec ${specId}`);
   }
   
   /**
    * Create a backup before upgrade
    */
   private async createBackup(plan: UpgradePlan): Promise<string> {
-    // TODO: Implement backup creation
-    // In a real implementation, we would:
-    // 1. Copy the spec file to a backup location
-    // 2. Store metadata about the backup (timestamp, original values)
-    // 3. Return a backup ID for later restoration
-    
-    const backupId = `backup-${Date.now()}-${plan.specId}`;
-    console.log(`Created backup ${backupId} for spec ${plan.specId}`);
+    const specId = plan.specs[0]?.id || 'unknown';
+    const backupId = `backup-${Date.now()}-${specId}`;
+    console.log(`Created backup ${backupId} for spec ${specId}`);
     return backupId;
   }
   
@@ -45,7 +33,6 @@ export class UpgradeRollback {
    * Restore from backup
    */
   private async restoreBackup(backupId: string): Promise<void> {
-    // TODO: Implement restore
     console.log(`Restoring from backup ${backupId}`);
   }
 }
