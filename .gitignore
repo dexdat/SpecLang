@@ -85,3 +85,4 @@ speclang-history-fixes.patch
 go.mod
 test-build.yaml
 test.spec.md
+.gitreins/tasks.yaml
