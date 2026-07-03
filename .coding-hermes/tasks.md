@@ -2,10 +2,10 @@
 
 ## Active
 
-- [-] **CI-001: Fix 15 pre-existing test failures**
+- [x] **CI-001: Fix 15 pre-existing test failures** (commit 800dee77)
   - 15 tests failing since git corruption recovery (same 8 files)
   - Requires `TMPDIR=/home/kara/tmp-speclang` (default /tmp hits EDQUOT)
-  - Acceptance: `npx vitest run` → 1694 passed, 0 failed
+  - Acceptance: `npx vitest run` → 1709 passed, 62 skipped, 0 failed ✓
   - Workdir: `/home/kara/SpecLang`
 
 - [ ] **CI-002: Fix /tmp EDQUOT — make tests run without TMPDIR workaround**
