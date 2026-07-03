@@ -2,9 +2,10 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { execSync } from 'child_process';
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 
 const CLI = path.resolve(__dirname, '..', '..', 'bin', 'speclang');
-const TMP_DIR = '/tmp/speclang-test-downgrade';
+const TMP_DIR = path.join(os.tmpdir(), 'speclang-test-downgrade');
 const SPECS_DIR = path.join(TMP_DIR, 'specs');
 const SPEC_PATH = path.join(SPECS_DIR, 'test-downgrade.spec.md');
 const BACKUP_PATH = path.join(SPECS_DIR, 'test-downgrade.spec.md.bak');

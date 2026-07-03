@@ -2,6 +2,8 @@ import { describe, test, expect, beforeEach, vi, afterEach } from 'vitest';
 import { DepthTracker } from '../../src/cascade/depth/tracker.js';
 import { CascadeDepthManager } from '../../src/cascade/depth/index.js';
 import type { TreeNode } from '../../src/cascade/coordinator/dependency.js';
+import path from 'path';
+import os from 'os';
 
 interface DependencyEdge {
   from: string;
@@ -511,7 +513,7 @@ describe('CascadeDepthManager (integration)', () => {
   });
 
   test('setStateDir changes state persistence directory', () => {
-    manager.setStateDir('/tmp/test-speclang');
+    manager.setStateDir(path.join(os.tmpdir(), 'test-speclang'));
   });
 
   test('reset clears all internal state', () => {

@@ -2,9 +2,10 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { execSync } from 'child_process';
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 
 const CLI = path.resolve(__dirname, '..', '..', 'bin', 'speclang');
-const TMP_DIR = '/tmp/speclang-test-expand';
+const TMP_DIR = path.join(os.tmpdir(), 'speclang-test-expand');
 const SPECS_DIR = path.join(TMP_DIR, 'specs');
 
 function runCli(args: string, cwd: string = TMP_DIR): { stdout: string; stderr: string } {
@@ -102,7 +103,7 @@ describe('speclang expand', () => {
   });
 
   it('should error when no specs directory', () => {
-    const emptyDir = '/tmp/speclang-expand-empty';
+    const emptyDir = path.join(os.tmpdir(), 'speclang-expand-empty');
     fs.mkdirSync(emptyDir, { recursive: true });
     try {
       const { stdout, stderr } = runCli('expand "test.spec.md#block"', emptyDir);
