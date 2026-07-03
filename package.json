@@ -59,6 +59,7 @@
     "express": "^5.2.1",
     "fs-extra": "^11.3.3",
     "glob": "^13.0.6",
+    "simple-git": "^3.36.0",
     "yaml": "^2.8.2"
   },
   "devDependencies": {

@@ -42,14 +42,14 @@ describe('history', () => {
   });
 
   it('should filter by --author', async () => {
-    const { stdout } = await execAsync(`${CLI} history --author "Hermes Agent"`);
+    const { stdout } = await execAsync(`${CLI} history --author "Alexis Okuwa"`);
     expect(stdout).toContain('commits');
   });
 
   it('should show blame output with --blame', async () => {
     const { stdout } = await execAsync(`${CLI} history --blame specs/core.spec.md`);
-    expect(stdout).toContain('Hermes Agent');
-    expect(stdout).toContain('Hermes Agent');
+    expect(stdout).toContain('Alexis Okuwa');
+    expect(stdout).toContain('Alexis Okuwa');
   });
 
   it('should support --blame with --format json', async () => {

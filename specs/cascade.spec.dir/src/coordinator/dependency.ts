@@ -69,15 +69,15 @@ export class DependencyTracker {
       const spec = specData as Record<string, unknown>;
       const id = spec.id as string;
       const layer = spec.layer as number || 0;
-      const refs = spec.refs as string[] || [];
+      const refs = spec.depends_on as string[] || spec.refs as string[] || [];
 
-      const type = this.determineType(specPath);
+      const type = this.determineType((spec.file as string) || specPath);
       
       const node: TreeNode = {
         id,
         layer,
         type,
-        filePath: specPath,
+        filePath: (spec.file as string) || specPath,
         dependencies: refs.map(r => r.replace('@ref:', '')),
         children: []
       };
