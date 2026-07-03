@@ -8,7 +8,7 @@
   - Acceptance: `npx vitest run` → 1709 passed, 62 skipped, 0 failed ✓
   - Workdir: `/home/kara/SpecLang`
 
-- [ ] **CI-002: Fix /tmp EDQUOT — make tests run without TMPDIR workaround**
+- [x] **CI-002: Fix /tmp EDQUOT — make tests run without TMPDIR workaround** (commit 25fd3acd)
   - /tmp is a 30G tmpfs, 80% full, 24K stale Chrome dirs
   - Tests should not require a custom TMPDIR
   - Either: clean /tmp, mount tmpfs elsewhere, or configure vitest tmp dir
