@@ -192,6 +192,88 @@ The Tier 2 job posts to PR comments today. Future versions may add:
 
 These are out of scope for CI-004 but listed here for future PRs.
 
+## Test Coverage Reporting (CI-006)
+
+### Purpose
+
+Surface code coverage in CI so reviewers can spot untested branches without
+running the suite locally. Vitest's built-in v8 coverage provider produces
+JSON + HTML reports under `coverage/`; CI uploads those as a run-scoped
+artifact and writes a four-line summary to the job summary panel.
+
+### Provider
+
+`@vitest/coverage-v8` (already pinned in `package.json` devDependencies).
+The v8 provider re-uses the V8 engine's built-in counters — fast, no
+transpilation, and matches the runtime that actually executes the tests.
+`c8` (the alternative) ships a separate instrumented binary per test
+process which is materially slower on the full suite.
+
+### Configuration
+
+`vitest.config.ts` declares the coverage block:
+
+```ts
+coverage: {
+  provider: 'v8',
+  reporter: ['text', 'json', 'html'],
+  include: ['src/dashboard/**']
+}
+```
+
+- **`include` is intentionally narrow.** The dashboard module is the
+  consumer-facing surface where coverage matters most. Broadening to all
+  of `src/` would inflate the report without surfacing actionable gaps —
+  most non-dashboard modules are wiring, CLI dispatch, or one-shot
+  scripts where coverage thresholds are inappropriate. Future PRs can
+  broaden the scope per-module once dedicated thresholds exist.
+
+### CI Integration
+
+The `build` job runs three new steps after `Run tests`:
+
+1. **`Generate coverage report (CI-006)`** — `npm run test:coverage`
+   re-executes the suite with `--coverage`, writing `coverage/coverage-final.json`
+   and `coverage/index.html` to disk.
+2. **`Upload coverage artifact (CI-006)`** — `actions/upload-artifact@v4`
+   with `if: always()` and `if-no-files-found: warn` so a coverage
+   failure does NOT block the build (Tier 1 guard already verifies tests
+   pass and that gate is the authoritative quality signal). The artifact
+   name is `coverage-${RUN_ID}` so concurrent runs do not collide.
+3. **`Write coverage summary`** — parses `coverage-final.json` and writes
+   a 4-row table (lines / statements / functions / branches) to
+   `$GITHUB_STEP_SUMMARY`. The step is wrapped in a `if [ -f ... ]`
+   guard so a missing report yields an explicit "⚠ No coverage report
+   was generated" banner instead of crashing the step.
+
+### Failure Modes
+
+| Symptom | Cause | Mitigation |
+|---------|-------|------------|
+| `npm run test:coverage` exits non-zero | Coverage thresholds or a test failure | The step has no `continue-on-error` — failures propagate. If the suite passes `npm test`, the coverage run is expected to also pass. |
+| Coverage artifact missing | `coverage/` was not written (e.g., permission issue) | `if-no-files-found: warn` makes the upload a soft warning. The summary step detects this and writes a clear banner. |
+| Job summary shows 0% on a critical module | The include glob misses the module | Broaden `vitest.config.ts` `coverage.include` accordingly; re-run. |
+| HTML report too large to inspect | Inflated by a debug build | The v8 provider strips comments/source maps by default — no action required. |
+
+### Local Equivalence
+
+A developer running `npm run test:coverage` locally (or
+`TMPDIR=$PWD/.tmp npx vitest run --coverage`) produces the exact same
+files CI uploads. Inspect results via `open coverage/index.html` or by
+parsing `coverage/coverage-final.json`.
+
+### Future
+
+- **Per-package coverage thresholds** — once `coverage.include` broadens
+  beyond `src/dashboard/**`, set per-glob minimums via
+  `coverage.thresholds` (vitest v2 + v8 provider supports nested objects).
+- **Codecov / Coveralls upload** — likely out of scope; an artifact +
+  summary is sufficient for SpecLang's PR cadence.
+- **Per-file line annotations in PR diff** — requires a third-party
+  service (Codecov, Coveralls, or a custom action). The current
+  artifact path is enough to start, and we can layer annotations later
+  without changing the spec.
+
 ## Acceptance Criteria
 
 - [x] `.github/workflows/ci.yml` exists at the repo root
@@ -207,5 +289,12 @@ These are out of scope for CI-004 but listed here for future PRs.
 - [ ] `.gitreins/tasks.yaml` defines the `ci-pr-review` task with 8 criteria
 - [ ] Tier 2 verdict posted as a single PR comment via `github-script` (idempotent, updated in-place)
 - [ ] Tier 2 runs as a separate job with `continue-on-error: true` — does NOT block Tier 1 merge gate
-- [ ] Workflow file parses as valid YAML (`python -c "import yaml; yaml.safe_load(open('.github/workflows/ci.yml'))"`)
-- [ ] Spec and workflow agree on job names, criteria count, and secret names (verified by grep)
+- [x] Workflow file parses as valid YAML (`python -c "import yaml; yaml.safe_load(open('.github/workflows/ci.yml'))"`)
+- [x] Spec and workflow agree on job names, criteria count, and secret names (verified by grep)
+- [x] `package.json` declares `"test:coverage": "TMPDIR=$PWD/.tmp vitest run --coverage"` (script name matches the `npm run test:coverage` invocation in the workflow)
+- [x] `package.json` includes `@vitest/coverage-v8` as a devDependency so `npx vitest run --coverage` resolves the v8 provider
+- [x] `vitest.config.ts` declares a `coverage: { provider: 'v8', reporter: ['text','json','html'], ... }` block
+- [x] `npm run test:coverage` produces `coverage/coverage-final.json` AND `coverage/index.html` (v8 provider, `reporter: ['text','json','html']`)
+- [x] `.github/workflows/ci.yml` `build` job runs `Generate coverage report (CI-006)` step (`npm run test:coverage`) AFTER `Run tests` and BEFORE lint
+- [x] Coverage artifact upload uses `actions/upload-artifact@v4`, name `coverage-${{ github.run_id }}`, path glob `coverage/coverage-final.json` + `coverage/index.html`, retention ≥ 7 days, `if-no-files-found: warn` (soft warn, not a block)
+- [x] Job summary step parses `coverage/coverage-final.json` and writes lines/statements/functions/branches rows to `$GITHUB_STEP_SUMMARY`

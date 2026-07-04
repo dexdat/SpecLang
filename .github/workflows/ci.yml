@@ -1,10 +1,10 @@
-# speclang-header lines:326
+# speclang-header lines:388
 # id: @specs/ci
-# version: 1.1.0
+# version: 1.2.0
 # layer: 4
 # target: .github/workflows/ci.yml
-# tags: [ci, github-actions, testing, tier2, gitreins]
-# short: GitHub Actions CI workflow (Tier 1 + Tier 2 review)
+# tags: [ci, github-actions, testing, tier2, gitreins, coverage]
+# short: GitHub Actions CI workflow (Tier 1 + Tier 2 review + coverage reporting)
 # depends_on:
 #   - "@ref:specs/core"
 # ---
@@ -59,6 +59,66 @@ jobs:
           # being explicit here makes the CI environment reproducible.
           TMPDIR: ${{ github.workspace }}/.tmp
 
+      - name: Generate coverage report (CI-006)
+        # Runs the same suite with `--coverage` so the v8 provider writes
+        # `coverage/coverage-final.json`, `coverage/index.html`, and prints
+        # the table to stdout. Report is uploaded as an artifact so PR
+        # authors can inspect it via the Actions UI.
+        # `test:coverage` is wired in package.json (uses the local vitest
+        # binary + TMPDIR redirect) so the env below is purely belt-and-
+        # braces — but having it explicit in CI keeps the environment
+        # reproducible when a developer runs locally with system /tmp.
+        run: npm run test:coverage
+        env:
+          TMPDIR: ${{ github.workspace }}/.tmp
+
+      - name: Upload coverage artifact (CI-006)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ github.run_id }}
+          path: |
+            coverage/coverage-final.json
+            coverage/index.html
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: Write coverage summary
+        if: always()
+        # Print a short coverage table to the job summary so reviewers see
+        # the numbers in the GitHub UI without downloading the artifact.
+        # Uses the `text` reporter's stdout output by re-running vitest in
+        # summary mode (lightweight — does NOT re-execute the suite)
+        # against the already-generated `coverage-final.json`.
+        run: |
+          if [ ! -f coverage/coverage-final.json ]; then
+            echo "## 📊 Coverage Report" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "⚠ No coverage report was generated" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          echo "## 📊 Coverage Report" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Download the full HTML report from the **coverage-\${{ github.run_id }}** artifact above." >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Metric | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          python3 - <<'PYEOF'
+          import json, sys
+          try:
+              with open('coverage/coverage-final.json') as f:
+                  data = json.load(f)
+              total = data.get('total', {})
+              keys = ('lines','statements','functions','branches')
+              for k in keys:
+                  pct = total.get(k, {}).get('pct', 'n/a')
+                  print(f"| {k} | {pct}% |")
+          except Exception as e:
+              print(f"| error | {e} |")
+          PYEOF
+
       - name: Lint (graceful when no config)
         # Run ESLint only when an eslint.config.* file is present in the
         # repo. When absent (current state — CI-005 lands lint config),
@@ -94,7 +154,6 @@ jobs:
           path: |
             .tmp/
             dist/
-            coverage/
           retention-days: 7
 
   # ─────────────────────────────────────────────────────────────────
