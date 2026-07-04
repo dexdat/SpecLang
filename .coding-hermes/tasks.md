@@ -14,11 +14,16 @@
   - Either: clean /tmp, mount tmpfs elsewhere, or configure vitest tmp dir
   - Acceptance: `npx vitest run` passes without TMPDIR env var
 
-- [ ] **CI-003: Set up GitHub Actions CI pipeline**
+- [x] **CI-003: Set up GitHub Actions CI pipeline** (commit 64132309)
   - Build + test on push/PR to main
   - Lint (tsc, ESLint if configured)
   - GitReins guard (secrets, static_analysis)
   - Acceptance: `.github/workflows/ci.yml` exists, green run on GitHub
+  - Implementation: `specs/ci.spec.md` (spec) + `.github/workflows/ci.yml` (working file)
+  - Single Node 20 job (replaces 3-version matrix)
+  - 9 steps: checkout, setup-node, install, build, test, lint (continue-on-error), gitreins install, gitreins guard, artifact upload
+  - Concurrency group + 15min timeout
+  - **NOT PUSHED** — GitHub Actions changes require review per cron rule
 
 - [ ] **CI-004: Wire GitReins Tier 2 into CI**
   - Run `gitreins judge` on changed files in CI
