@@ -174,20 +174,50 @@ export class Watcher extends EventEmitter {
   }
 
   /**
+   * Convert a glob pattern (with **, *, brace expansion {a,b}, .ext) into a RegExp.
+   *
+   * ARCH-001 fix (2026-07-04): the prior implementation did ** → .* first,
+   * then * → [^/]* last — which meant the trailing * from **\/*.spec.md
+   * turned the .* (multi-segment) into .[^/]* (single-segment), causing the
+   * compiled regex to only match 2-segment paths. The new approach uses
+   * placeholders for **/ and /** (multi-directory anchors) and handles
+   * brace expansion before escaping.
+   */
+  private globToRegex(pattern: string): RegExp {
+    let regex = pattern;
+
+    // 1. Brace expansion {a,b,c} → (a|b|c) — must run before escaping
+    regex = regex.replace(/\{([^}]+)\}/g, (_, inner: string) =>
+      '(' + inner.replace(/,/g, '|') + ')'
+    );
+
+    // 2. Escape regex specials (not *, not the () we just inserted)
+    regex = regex.replace(/[.+^$\[\]\\]/g, '\\$&');
+
+    // 3. Placeholder **/ and /**, then bare ** → `.*`
+    regex = regex.replace(/\*\*\//g, '__DOUBLE_SLASH__');
+    regex = regex.replace(/\/\*\*/g, '__SLASH_DOUBLE__');
+    regex = regex.replace(/\*\*/g, '.*');
+
+    // 4. Restore literal slashes (escaped above)
+    regex = regex.replace(/\\\//g, '/');
+
+    // 5. Single `*` (already placeholder-free) → `[^/]*`
+    regex = regex.replace(/\*/g, '[^/]*');
+
+    // 6. Multi-dir anchors:
+    //    __DOUBLE_SLASH__ = `**/` prefix = zero or more directory levels
+    regex = regex.replace(/__DOUBLE_SLASH__/g, '(?:[^/]*\\/)*');
+    regex = regex.replace(/__SLASH_DOUBLE__/g, '(?:\\/[^/]*)*');
+
+    return new RegExp(`^${regex}$`);
+  }
+
+  /**
    * Simple glob pattern matching
    */
   private matchPattern(filePath: string, pattern: string): boolean {
-    // Convert glob pattern to regex
-    const regexPattern = pattern
-      .replace(/\./g, '\\.')
-      .replace(/\*\*/g, '.*')
-      .replace(/\*/g, '[^/]*')
-      .replace(/\{/g, '(')
-      .replace(/,/g, '|')
-      .replace(/\}/g, ')');
-    
-    const regex = new RegExp(`^${regexPattern}$`);
-    return regex.test(filePath);
+    return this.globToRegex(pattern).test(filePath);
   }
 
   /**

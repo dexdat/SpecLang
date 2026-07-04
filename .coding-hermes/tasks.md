@@ -46,7 +46,7 @@
 - **Acceptance:** YAML well-formed, spec+workflow aligned, vitest 1709 passed / 62 skipped / 0 failed (20.94s)
 - **NOT PUSHED** — GitHub Actions changes require review per cron rule
 
-- [ ] **ARCH-001: Automatic file watching — daemon detects spec changes**
+- [-] **ARCH-001: Automatic file watching — daemon detects spec changes**
   - Coordinator must currently be invoked explicitly
   - Add inotify/fs.watch on specs/ directory
   - On change: trigger assemble → cascade → regenerate
