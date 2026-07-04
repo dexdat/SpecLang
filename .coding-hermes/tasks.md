@@ -46,11 +46,21 @@
 - **Acceptance:** YAML well-formed, spec+workflow aligned, vitest 1709 passed / 62 skipped / 0 failed (20.94s)
 - **NOT PUSHED** — GitHub Actions changes require review per cron rule
 
-- [-] **ARCH-001: Automatic file watching — daemon detects spec changes**
+- [x] **ARCH-001: Automatic file watching — daemon detects spec changes** (commit 255184a4)
   - Coordinator must currently be invoked explicitly
   - Add inotify/fs.watch on specs/ directory
   - On change: trigger assemble → cascade → regenerate
   - Acceptance: save a `.spec.md` file → cascade fires within 2s without manual invocation
+  - **CRITICAL FIX**: The Watcher's `matchPattern` glob → regex converter had a
+    substring-replacement bug. `**` → `.*` followed by `*` → `[^/]*` would
+    collapse `**/*.spec.md` into `.[^/]*` (single-segment), so multi-directory
+    spec files were silently ignored. The watcher was effectively a no-op.
+  - **Implementation**: New `globToRegex()` method with `**/` and `/**` placeholders
+    + 4 end-to-end acceptance tests in `tests/daemon/arch001-file-watching.test.ts`
+  - **Validation**: build clean, vitest 1713 passed / 62 skipped / 0 failed
+    (was 1709; +4 new tests). Push: main 255184a4.
+  - Note: ARCH-002/003/004 build on this — daemon mode + parallel agents
+    + autonomous cascade are now unblocked.
 
 - [ ] **ARCH-002: Background daemon mode — speclangd runs as a service**
   - Everything currently runs in foreground
