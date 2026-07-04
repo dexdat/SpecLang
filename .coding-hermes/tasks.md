@@ -62,7 +62,7 @@
   - Note: ARCH-002/003/004 build on this — daemon mode + parallel agents
     + autonomous cascade are now unblocked.
 
-- [x] **ARCH-002: Background daemon mode — speclangd runs as a service** (commit pending)
+- [x] **ARCH-002: Background daemon mode — speclangd runs as a service** (commit 55d52b55)
   - speclangd start -d → forks detached, writes PID, parent exits 0
   - speclangd status → reads PID + state file (no new Daemon spawned — avoids race)
   - speclangd stop → SIGTERM + PID file cleanup, daemon shuts down gracefully
