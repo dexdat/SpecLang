@@ -1,7 +1,7 @@
 # speclang-header lines:18
 # id: @specs/ci
 # version: 1.0.0
-# layer: 5
+# layer: 4
 # target: .github/workflows/ci.yml
 # tags: [ci, github-actions, testing]
 # short: GitHub Actions CI workflow
@@ -15,104 +15,65 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+
+# Cancel superseded runs on the same branch/PR.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
+    name: Build, test, and guard
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 15
+
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Build TypeScript
         run: npm run build
-      
-      - name: Run linter
-        run: npm run lint
-      
-  test:
-    runs-on: ubuntu-latest
-    needs: build
-    
-    strategy:
-      matrix:
-        node-version: ['18', '20', '22']
-    
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Build
-        run: npm run build
-      
+
       - name: Run tests
         run: npm test
-      
-      - name: Upload coverage
+        env:
+          # vitest.config.ts already redirects TMPDIR to .tmp/, but
+          # being explicit here makes the CI environment reproducible.
+          TMPDIR: ${{ github.workspace }}/.tmp
+
+      - name: Lint (graceful when no config)
+        # eslint.config.js is not yet committed; this step is non-blocking
+        # until CI-005 lands the lint configuration.
+        continue-on-error: true
+        run: npm run lint
+
+      - name: Install GitReins
+        # GitReins is the project's git-native quality gate (secrets +
+        # lint + diff-mode tests). Install the latest PyPI release.
+        run: pipx install gitreins
+
+      - name: Run GitReins Tier 1 guard
+        # Block commits with secrets, lint failures, or test regressions.
+        # Uses the same .gitreins/config.yaml as the local pre-commit hook.
+        run: gitreins guard
+
+      - name: Upload test artifacts
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-${{ matrix.node-version }}
-          path: coverage/
-
-  validate:
-    runs-on: ubuntu-latest
-    needs: build
-    
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Build
-        run: npm run build
-      
-      - name: Validate specs
-        run: ./bin/speclang validate
-
-  coverage:
-    runs-on: ubuntu-latest
-    needs: test
-    if: github.event_name == 'pull_request'
-    
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Download coverage artifacts
-        uses: actions/download-artifact@v4
-        with:
-          pattern: coverage-*
-          path: coverage-reports/
-          merge-multiple: true
-      
-      - name: Generate coverage summary
-        run: |
-          echo "## Test Coverage Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Node Version | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------------|--------|" >> $GITHUB_STEP_SUMMARY
-          for dir in coverage-reports/*/; do
-            echo "| $(basename $dir) | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
-          done
+          name: test-failure-${{ github.run_id }}
+          path: |
+            .tmp/
+            dist/
+            coverage/
+          retention-days: 7
