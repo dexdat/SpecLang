@@ -2,12 +2,16 @@
 
 ## Active
 
-- [-] **CI-004: Wire GitReins Tier 2 into CI**
+- [x] **CI-004: Wire GitReins Tier 2 into CI** (commit bd96cf83)
   - Run `gitreins judge` on changed files in CI
   - Annotate PRs with per-criterion PASS/FAIL
-  - Approach: dedicated `tier2` job, fixed `ci-pr-review` task with PR-shaped criteria,
-    DeepSeek API key from GitHub Secrets, verdict surfaced as PR comment + job summary
-  - Files: `.github/workflows/ci.yml`, `specs/ci.spec.md`, `.gitreins/tasks.yaml`
+  - Implementation: `review` job in `.github/workflows/ci.yml` (13 steps),
+    `specs/ci.spec.md` §Tier 2 LLM Evaluation (8 new AC items),
+    `.gitreins/tasks.yaml` (gitignored, 8 PR-shaped criteria)
+  - Uses DeepSeek V4 Flash via DEEPSEEK_API_KEY; verdict posted as
+    single idempotent PR comment (`<!-- gitreins-tier2 -->` marker)
+  - Tier 2 is ADVISORY (continue-on-error: true) — does not block Tier 1
+  - Validation: build clean, vitest 1709/62/0 (no regression), Tier 1 PASS
   - **NOT PUSHED** — GitHub Actions changes require review per cron rule
 
 - [x] **CI-001: Fix 15 pre-existing test failures** (commit 800dee77)
