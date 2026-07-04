@@ -1,5 +1,22 @@
 title = "SpecLang Gitleaks Config"
 
+# CI-005: explicit rules for sk-/ghp_ prefixed secrets.
+# Gitleaks v8 default rules don't catch standalone `sk-` short keys
+# reliably, so we define explicit patterns here. The pre-commit hook
+# blocks commits that match any of these.
+
+[[rules]]
+id = "openrouter-style-sk"
+description = "Catch sk- prefixed secrets (OpenAI/OpenRouter/etc.)"
+regex = '''sk-[a-zA-Z0-9_-]{20,}'''
+keywords = ["sk-"]
+
+[[rules]]
+id = "github-pat"
+description = "Catch ghp_ prefixed GitHub tokens"
+regex = '''ghp_[a-zA-Z0-9]{30,}'''
+keywords = ["ghp_"]
+
 [allowlist]
   description = "Whitelist for SpecLang project"
   paths = [
@@ -9,7 +26,24 @@ title = "SpecLang Gitleaks Config"
     '''specs\/''',
     '''docs\/''',
     '''node_modules\/''',
+    '''dist\/''',
+    '''bin\/''',
+    '''__pycache__\/''',
+    '''\.pytest_cache\/''',
+    '''\.cache\/''',
+    '''\.ralph\/''',
+    '''\.gitreins\/''',
+    '''\.memory-bank\/''',
+    '''\.agents\/''',
+    '''\.opencode\/''',
+    '''thinking\/''',
+    '''scripts\/''',
+    '''generated\/''',
+    '''config\/''',
     '''tests\/''',
+    '''test-temp-bootstrap\/''',
+    '''speclang-patch\/''',
     '''.*\.spec\.md''',
     '''.*\.md''',
+    '''.*\.log''',
   ]
