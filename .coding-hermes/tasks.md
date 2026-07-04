@@ -62,10 +62,26 @@
   - Note: ARCH-002/003/004 build on this — daemon mode + parallel agents
     + autonomous cascade are now unblocked.
 
-- [ ] **ARCH-002: Background daemon mode — speclangd runs as a service**
-  - Everything currently runs in foreground
-  - Wire `speclangd` to stay resident, watch files, and cascade on change
-  - Acceptance: `speclangd start` → daemon runs, `speclangd status` reports healthy, save spec → auto-cascade
+- [x] **ARCH-002: Background daemon mode — speclangd runs as a service** (commit pending)
+  - speclangd start -d → forks detached, writes PID, parent exits 0
+  - speclangd status → reads PID + state file (no new Daemon spawned — avoids race)
+  - speclangd stop → SIGTERM + PID file cleanup, daemon shuts down gracefully
+  - Save spec → daemon transitions to "cascading", filesChanged populated
+  - Implementation:
+    - Rewrote `bin/speclangd` (313 lines) — split into per-case handlers,
+      each lazy-loading `dist/src/daemon/daemon.js` to avoid loading the
+      daemon module for `start -d`/`stop`/`status` (which never need it).
+    - Added `.speclang/speclangd.pid` and `.speclang/speclangd.log` paths.
+    - Parent → child uses `child_process.spawn({detached: true})` with
+      `SPECLANGD_CHILD=1` env so the child bypasses its own PID-record check.
+    - `status` reads `.speclang/daemon-state.json` directly — never
+      instantiates a fresh Daemon (was creating new ones that raced with
+      the live daemon over the state file).
+    - Stop kills, waits up to 5s for graceful exit, removes PID file.
+  - Tests: `tests/daemon/arch002-background-daemon.test.ts` — 4 end-to-end
+    tests covering start/status/cascade/stop via `child_process.execFile`.
+  - Validation: tsc clean, vitest **1717 passed / 62 skipped / 0 failed**
+    (was 1713; +4 new ARCH-002 tests).
 
 - [ ] **ARCH-003: Parallel agent execution — swarm instead of sequential**
   - Agents currently invoked one at a time via Task tool

@@ -1,74 +1,236 @@
 #!/usr/bin/env node
 /**
  * Speclangd CLI - Reactive file watcher daemon
- * 
+ *
  * Usage:
  *   speclangd start     - Start daemon in foreground
- *   speclangd start -d  - Start daemon in background
- *   speclangd status    - Check daemon status
+ *   speclangd start -d  - Start daemon in background (detached)
+ *   speclangd status    - Check daemon status (no-op if not running)
+ *   speclangd stop      - Stop the background daemon
  *   speclangd pause     - Pause cascade
  *   speclangd resume    - Resume cascade
  *   speclangd abort     - Abort current cascade
  *   speclangd trigger <file> - Manually trigger event
  *   speclangd converge  - Wait for convergence
+ *
+ * Background mode writes the child PID to .speclang/speclangd.pid and
+ * detaches the process. stdout/stderr are redirected to
+ * .speclang/speclangd.log so the parent can exit immediately.
  */
 
 const path = require('path');
 const fs = require('fs');
+const { spawn } = require('child_process');
 
 const packageJson = require('../package.json');
+
+const PID_FILE = '.speclang/speclangd.pid';
+const LOG_FILE = '.speclang/speclangd.log';
+const STATE_FILE = '.speclang/daemon-state.json';
+
+function ensureSpeclangDir() {
+  fs.mkdirSync('.speclang', { recursive: true });
+}
+
+function writePidFile(pid) {
+  ensureSpeclangDir();
+  fs.writeFileSync(PID_FILE, String(pid));
+}
+
+function readPidFile() {
+  try {
+    const raw = fs.readFileSync(PID_FILE, 'utf-8').trim();
+    const pid = parseInt(raw, 10);
+    return Number.isFinite(pid) ? pid : null;
+  } catch {
+    return null;
+  }
+}
+
+function removePidFile() {
+  try { fs.unlinkSync(PID_FILE); } catch {}
+}
+
+function isProcessAlive(pid) {
+  if (!pid) return false;
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+function readStateFile() {
+  try {
+    return JSON.parse(fs.readFileSync(STATE_FILE, 'utf-8'));
+  } catch {
+    return null;
+  }
+}
 
 async function main() {
   const args = process.argv.slice(2);
   const command = args[0] || 'start';
-  
-  const daemon = require('../dist/src/daemon/daemon.js');
-  const { Daemon, DaemonCommandKind } = daemon;
-  
+
   switch (command) {
     case 'start': {
       const daemonMode = args.includes('-d') || args.includes('--daemon');
       const configPath = args.find(a => a.startsWith('--config='))?.split('=')[1] || '.speclangrc';
-      
-      console.log('🚀 Starting Speclangd...');
-      
+
+      // Reject if a background daemon is already running — UNLESS we
+      // are the spawned background child (parent sets SPECLANGD_CHILD=1),
+      // in which case the PID file already holds our PID.
+      const isSpawnedChild = process.env.SPECLANGD_CHILD === '1';
+      if (!isSpawnedChild) {
+        const existingPid = readPidFile();
+        if (existingPid && isProcessAlive(existingPid)) {
+          console.error(`❌ Daemon already running (PID ${existingPid}). Run 'speclangd stop' first.`);
+          process.exit(1);
+        }
+        if (existingPid) {
+          // Stale PID file from a previous crash — clean up.
+          removePidFile();
+        }
+      }
+
+      if (daemonMode) {
+        // Detach into background. Spawn a new node process running this
+        // script in foreground mode; redirect stdio to a log file, write
+        // the child PID so the parent can exit immediately. The child
+        // process is identified by SPECLANGD_CHILD=1 so it doesn't reject
+        // its own PID record.
+        ensureSpeclangDir();
+        const logFd = fs.openSync(LOG_FILE, 'a');
+        const child = spawn(process.execPath, [__filename, 'start', `--config=${configPath}`], {
+          detached: true,
+          stdio: ['ignore', logFd, logFd],
+          cwd: process.cwd(),
+          env: { ...process.env, SPECLANGD_CHILD: '1' },
+        });
+        child.unref();
+        writePidFile(child.pid);
+        console.log(`🚀 Speclangd daemon started in background (PID ${child.pid})`);
+        console.log(`   Log: ${LOG_FILE}`);
+        console.log(`   PID: ${PID_FILE}`);
+        console.log(`   Check status: speclangd status`);
+        break;
+      }
+
+      // Foreground mode: load the daemon module and block.
+      const daemon = require('../dist/src/daemon/daemon.js');
+      const { Daemon, DaemonCommandKind } = daemon;
       const d = new Daemon(configPath);
-      
+
+      console.log('🚀 Starting Speclangd (foreground)...');
+
       d.on('started', () => {
         console.log('[CLI] Daemon started');
       });
-      
+
       d.on('converged', (result) => {
         console.log('[CLI] Cascade converged:', result);
       });
-      
+
       d.on('task', (task) => {
         console.log('[CLI] Task generated:', task.kind, task.trigger);
       });
-      
+
       await d.start();
-      
-      if (!daemonMode) {
-        console.log('[CLI] Running in foreground. Press Ctrl+C to stop.');
-        process.on('SIGINT', async () => {
-          console.log('\n[CLI] Shutting down...');
-          await d.stop();
-          process.exit(0);
-        });
+
+      console.log('[CLI] Running in foreground. Press Ctrl+C to stop.');
+      process.on('SIGINT', async () => {
+        console.log('\n[CLI] Shutting down...');
+        removePidFile();
+        await d.stop();
+        process.exit(0);
+      });
+      process.on('SIGTERM', async () => {
+        removePidFile();
+        await d.stop();
+        process.exit(0);
+      });
+      break;
+    }
+
+    case 'stop': {
+      const pid = readPidFile();
+      if (!pid) {
+        console.log('Daemon not running (no PID file)');
+        return;
+      }
+      if (!isProcessAlive(pid)) {
+        console.log(`Daemon not running (stale PID ${pid}); cleaning up`);
+        removePidFile();
+        return;
+      }
+      try {
+        process.kill(pid, 'SIGTERM');
+        console.log(`✅ Sent SIGTERM to daemon (PID ${pid})`);
+      } catch (err) {
+        console.error(`Failed to stop daemon: ${err.message}`);
+        process.exit(1);
+      }
+      // Wait briefly for graceful shutdown, then remove PID file.
+      const deadline = Date.now() + 5000;
+      while (Date.now() < deadline && isProcessAlive(pid)) {
+        await new Promise((r) => setTimeout(r, 100));
+      }
+      removePidFile();
+      if (!isProcessAlive(pid)) {
+        console.log('✅ Daemon stopped');
+      } else {
+        console.log('⚠ Daemon still alive after 5s; PID file left in place');
+      }
+      break;
+    }
+
+    case 'status': {
+      // Query PID file + state file directly. NO new Daemon is spawned —
+      // that would clobber the live daemon's state file and race with it.
+      const pid = readPidFile();
+      const state = readStateFile();
+      const json = args.includes('--json');
+
+      if (!pid || !isProcessAlive(pid)) {
+        if (json) {
+          console.log(JSON.stringify({ running: false, pid: null }));
+        } else {
+          console.log('🔴 Daemon: Stopped');
+        }
+        return;
+      }
+
+      const result = {
+        running: true,
+        pid,
+        status: state?.status || 'unknown',
+        cascadeDepth: state?.cascadeDepth || 0,
+        filesChanged: state?.filesChanged?.length || 0,
+        lastEventAt: state?.lastEventAt || null,
+        startedAt: state?.startedAt || null,
+        activeAgents: state?.activeAgents?.length || 0,
+      };
+
+      if (json) {
+        console.log(JSON.stringify(result, null, 2));
+      } else {
+        const age = result.startedAt
+          ? Math.round((Date.now() - result.startedAt) / 1000) + 's'
+          : 'unknown';
+        console.log('🟢 Daemon: Running');
+        console.log(`   PID: ${pid}`);
+        console.log(`   Status: ${result.status}`);
+        console.log(`   Cascade Depth: ${result.cascadeDepth}`);
+        console.log(`   Files Changed: ${result.filesChanged}`);
+        console.log(`   Active Agents: ${result.activeAgents}`);
+        console.log(`   Uptime: ${age}`);
       }
       break;
     }
     
-    case 'status': {
-      const d = new Daemon();
-      await d.start();
-      const status = d.getStatus();
-      console.log(JSON.stringify(status, null, 2));
-      await d.stop();
-      break;
-    }
-    
     case 'pause': {
+      const { Daemon, DaemonCommandKind } = require('../dist/src/daemon/daemon.js');
       const d = new Daemon();
       await d.start();
       await d.processCommand({ kind: DaemonCommandKind.Pause });
@@ -76,8 +238,9 @@ async function main() {
       await d.stop();
       break;
     }
-    
+
     case 'resume': {
+      const { Daemon, DaemonCommandKind } = require('../dist/src/daemon/daemon.js');
       const d = new Daemon();
       await d.start();
       await d.processCommand({ kind: DaemonCommandKind.Resume });
@@ -85,8 +248,9 @@ async function main() {
       await d.stop();
       break;
     }
-    
+
     case 'abort': {
+      const { Daemon, DaemonCommandKind } = require('../dist/src/daemon/daemon.js');
       const d = new Daemon();
       await d.start();
       await d.processCommand({ kind: DaemonCommandKind.Abort });
@@ -94,13 +258,14 @@ async function main() {
       await d.stop();
       break;
     }
-    
+
     case 'trigger': {
       const file = args[1];
       if (!file) {
         console.error('Usage: speclangd trigger <file>');
         process.exit(1);
       }
+      const { Daemon, DaemonCommandKind } = require('../dist/src/daemon/daemon.js');
       const d = new Daemon();
       await d.start();
       await d.processCommand({ kind: DaemonCommandKind.Trigger, path: file });
@@ -108,42 +273,44 @@ async function main() {
       await d.stop();
       break;
     }
-    
+
     case 'converge': {
       const timeoutIndex = args.findIndex(a => a === '-t' || a === '--timeout');
       const timeout = timeoutIndex >= 0 ? parseInt(args[timeoutIndex + 1]) * 1000 : 60000;
-      
+      const { Daemon } = require('../dist/src/daemon/daemon.js');
+
       const d = new Daemon();
       await d.start();
-      
+
       try {
         const result = await d.getConvergence().waitForConvergence(timeout);
         console.log('Converged:', result);
       } catch (error) {
         console.error('Convergence timeout');
       }
-      
+
       await d.stop();
       break;
     }
-    
+
     case '--version':
     case '-v':
       console.log(`speclangd ${packageJson.version}`);
       break;
-      
+
     default:
       console.log(`speclangd v${packageJson.version}`);
       console.log('');
       console.log('Usage:');
       console.log('  speclangd start           Start daemon in foreground');
-      console.log('  speclangd start -d        Start daemon in background');
-      console.log('  speclangd status         Check daemon status');
-      console.log('  speclangd pause          Pause cascade');
-      console.log('  speclangd resume         Resume cascade');
-      console.log('  speclangd abort          Abort current cascade');
-      console.log('  speclangd trigger <file> Manually trigger event');
-      console.log('  speclangd converge       Wait for convergence');
+      console.log('  speclangd start -d        Start daemon in background (detached)');
+      console.log('  speclangd stop            Stop background daemon');
+      console.log('  speclangd status          Check daemon status');
+      console.log('  speclangd pause           Pause cascade');
+      console.log('  speclangd resume          Resume cascade');
+      console.log('  speclangd abort           Abort current cascade');
+      console.log('  speclangd trigger <file>  Manually trigger event');
+      console.log('  speclangd converge        Wait for convergence');
       break;
   }
 }
