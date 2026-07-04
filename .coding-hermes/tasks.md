@@ -114,10 +114,29 @@
   - **Validation**: tsc clean, vitest **1728 passed / 62 skipped / 0 failed**
     (was 1717; +11 new ARCH-003 tests). No regressions in existing 1717.
 
-- [-] **ARCH-004: Autonomous cascade — remove user-controlled gating**
+- [x] **ARCH-004: Autonomous cascade — remove user-controlled gating** (commit 4a7fdd99)
   - User currently decides when to continue the cascade
   - Daemon + file watcher + parallel agents = fully autonomous pipeline
   - Acceptance: save a top-level spec → cascade propagates through all dependencies → assembled output regenerated → no user interaction
+  - **Implementation**:
+    - `DaemonConfig.convergence.autoRecascade: boolean` (default true) — daemon
+      resets the ConvergenceDetector and transitions back to Idle after the
+      pipeline settles, so the next file event fires a fresh cascade without
+      `/finalize`.
+    - `Daemon.start()` wires post-pipeline arming: emits 'armed', resets
+      ConvergenceDetector, transitions back to Idle when autoRecascade=true.
+    - `ConvergenceDetector.reset()` now also resets `lastEventTime` so
+      `isConverged()` returns false immediately after reset (previously it
+      stayed "converged" forever because `lastEventTime` was in the past).
+    - `specs/daemon.spec.dir/convergence.spec.md` step 6 changed from
+      "await next user input" to "arm for next cascade (no user input
+      required)" — spec already listed auto-restart as the default.
+  - **Tests**: `tests/daemon/arch004-autonomous-cascade.test.ts` — 6 new
+    tests covering default config, legacy mode (autoRecascade=false),
+    autonomous arming, full end-to-end (save → cascade → arm → save
+    another → second cascade), detector reset+re-arm, and spec doc.
+  - **Validation**: tsc clean, vitest **1734 passed / 62 skipped / 0
+    failed** (was 1728; +6 new tests). No regressions in existing 1728.
 
 ## [ ] Fix CI: Speclang CI — test env assumptions fail (git author name, CLI output)
 - **Priority:** high
