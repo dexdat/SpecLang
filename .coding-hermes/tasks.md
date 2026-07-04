@@ -191,7 +191,44 @@
     (tsc) plus the `secrets + build + tests` pipeline. The hardening
     is now provable end-to-end via the new acceptance tests.
 
-- [ ] **CI-006: Test coverage reporting**
-  - Generate coverage with vitest (c8 or v8 provider)
-  - Upload to GitHub Actions artifact
+- [x] **CI-006: Test coverage reporting** (commit feb93680)
+  - Generate coverage with vitest (v8 provider, text/json/html reporters)
+  - Upload `coverage/coverage-final.json` + `coverage/index.html` to GitHub Actions artifact (run-scoped name `coverage-${RUN_ID}`)
+  - Job-summary step parses `coverage-final.json` and writes a lines/statements/functions/branches table to `$GITHUB_STEP_SUMMARY`
   - Acceptance: CI job shows coverage % in summary
+  - **Implementation:**
+    - `.github/workflows/ci.yml` — 3 new steps after `Run tests`:
+      `Generate coverage report (CI-006)` (npm run test:coverage),
+      `Upload coverage artifact (CI-006)` (actions/upload-artifact@v4,
+      `if: always()`, `if-no-files-found: warn`),
+      `Write coverage summary` (parses coverage-final.json via inline
+      Python, writes to `$GITHUB_STEP_SUMMARY` with a 4-row table).
+      Coverage removed from the failure-only test-failure upload
+      since it now has its own always-uploaded artifact.
+    - `vitest.config.ts` already had the `coverage` block declared
+      (v8 / text / json / html / `include: ['src/dashboard/**']`)
+      — the contract was unused until CI wired it up.
+    - `specs/ci.spec.md` — new `## Test Coverage Reporting (CI-006)`
+      section + 9 acceptance criteria appended to the existing AC list.
+      Header bumped v1.1.0 → v1.2.0; tags gain `coverage`.
+    - `tests/ci/ci006-coverage.test.ts` — 9 acceptance tests, one per AC:
+      AC1 script exists, AC2 `@vitest/coverage-v8` installed,
+      AC3 config block declared, AC4 single-file `--coverage` runs
+      produce both artifacts, AC5-AC7 workflow steps + artifact + summary,
+      AC8 coverage step ordering (after tests, before lint),
+      AC9 required step-name anchors.
+  - **Note on AC4 design:** the test deliberately invokes vitest on a
+    single small suite rather than the full 1700+ corpus. The v8
+    provider races when a large worker pool opens
+    `coverage/.tmp/coverage-N.json` before the dir-create completes
+    (known upstream flake with @vitest/coverage-v8). Single-file
+    invocation still reproduces the spec contract that `--coverage`
+    produces both `coverage-final.json` and `index.html`.
+  - **Validation:** tsc clean, vitest 1747 passed / 62 skipped /
+    2 failed. The 2 failures are pre-existing timing flakes in
+    `tests/daemon/arch004-autonomous-cascade.test.ts` (2 tests) and
+    `tests/performance/cascade.test.ts` (variance) that pass in
+    isolation; not caused by this change. New CI-006 tests:
+    9/9 pass standalone.
+  - **NOT PUSHED** — GitHub Actions changes require review per cron rule.
+
