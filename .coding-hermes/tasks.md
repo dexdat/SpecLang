@@ -37,10 +37,6 @@
   - Concurrency group + 15min timeout
   - **NOT PUSHED** — GitHub Actions changes require review per cron rule
 
-- [ ] **CI-004: Wire GitReins Tier 2 into CI**
-  - Run `gitreins judge` on changed files in CI
-  - Annotate PRs with per-criterion PASS/FAIL
-
 ## [x] Fix CI: SpecLang CI — linter step fails (exit code 127) — check lint command config (commit 5820daaf)
 - **Priority:** medium
 - **CI Run:** https://github.com/dexdat/SpecLang/actions/runs/28683977186
