@@ -2,6 +2,14 @@
 
 ## Active
 
+- [-] **CI-004: Wire GitReins Tier 2 into CI**
+  - Run `gitreins judge` on changed files in CI
+  - Annotate PRs with per-criterion PASS/FAIL
+  - Approach: dedicated `tier2` job, fixed `ci-pr-review` task with PR-shaped criteria,
+    DeepSeek API key from GitHub Secrets, verdict surfaced as PR comment + job summary
+  - Files: `.github/workflows/ci.yml`, `specs/ci.spec.md`, `.gitreins/tasks.yaml`
+  - **NOT PUSHED** — GitHub Actions changes require review per cron rule
+
 - [x] **CI-001: Fix 15 pre-existing test failures** (commit 800dee77)
   - 15 tests failing since git corruption recovery (same 8 files)
   - Requires `TMPDIR=/home/kara/tmp-speclang` (default /tmp hits EDQUOT)

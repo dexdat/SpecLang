@@ -1,10 +1,10 @@
-# speclang-header lines:18
+# speclang-header lines:326
 # id: @specs/ci
-# version: 1.0.0
+# version: 1.1.0
 # layer: 4
 # target: .github/workflows/ci.yml
-# tags: [ci, github-actions, testing]
-# short: GitHub Actions CI workflow
+# tags: [ci, github-actions, testing, tier2, gitreins]
+# short: GitHub Actions CI workflow (Tier 1 + Tier 2 review)
 # depends_on:
 #   - "@ref:specs/core"
 # ---
@@ -88,3 +88,240 @@ jobs:
             dist/
             coverage/
           retention-days: 7
+
+  # ─────────────────────────────────────────────────────────────────
+  # Tier 2: LLM-driven PR review (CI-004)
+  # Runs on PRs to main and pushes to develop. The DeepSeek V4 Flash
+  # judge evaluates the 8 PR-shaped criteria from .gitreins/tasks.yaml
+  # and the verdict is posted as a single PR comment (idempotent).
+  #
+  # Tier 2 is ADVISORY — it does not block the Tier 1 merge gate.
+  # continue-on-error: true ensures LLM hiccups don't break the PR.
+  # ─────────────────────────────────────────────────────────────────
+  review:
+    name: Tier 2 LLM review
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Only run for PRs (always review) and develop pushes (catches
+    # integration issues before they hit main). Pushes to main are
+    # post-merge — no review needed.
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/develop')
+    needs: build
+    continue-on-error: true
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history for diff context
+
+      - name: Setup Python 3.11 (for pipx + gitreins)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Setup Node.js 20 (for diff inspection)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install pipx
+        run: pipx ensurepath
+
+      - name: Install GitReins
+        run: pipx install gitreins
+
+      - name: Verify DeepSeek API key is configured
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          if [ -z "$DEEPSEEK_API_KEY" ]; then
+            echo "::error::DEEPSEEK_API_KEY secret is not configured."
+            echo "::error::Add it at: https://github.com/${{ github.repository }}/settings/secrets/actions"
+            echo "::error::Tier 2 review is advisory — this job will continue but produce no verdict."
+            exit 0
+          fi
+          echo "✓ DEEPSEEK_API_KEY present (${#DEEPSEEK_API_KEY} chars)"
+
+      - name: Recreate ci-pr-review task with canonical 8 criteria
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          GITREINS_LLM_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          GITREINS_LLM_BASE_URL: https://api.deepseek.com/v1
+          GITREINS_LLM_MODEL: deepseek-v4-flash
+        # The create command is idempotent: it overwrites the existing
+        # task entry, ensuring the latest 8 criteria are always loaded.
+        run: |
+          gitreins task create ci-pr-review \
+            "SpecLang PR review — Tier 2 LLM evaluation" \
+            "Every modified .ts file passes tsc --noEmit (no type errors in the PR's diff)" \
+            "Every new exported function, class, or type added in src/ has a corresponding test under tests/ that exercises it" \
+            "The PR adds at least one entry to CHANGELOG.md or the ## Next Wake section of .hermes/acceptance-criteria.md, or the diff is documentation-only (no src/ changes)" \
+            "No TODO, FIXME, or XXX markers were added in src/ (excluding tests/, bin/, and dist/)" \
+            "No console.log debug statements remain in production code under src/ (tests/, bin/, and dist/ excluded)" \
+            "Every new public export (function, class, interface, type) in src/ has JSDoc with @param and @returns" \
+            "No dead code in changed files: no unreachable branches, no unused exports, no orphaned helpers left behind by the PR" \
+            "The PR's spec coverage matches its source changes — every modified .spec.md has a matching edit in src/ or tests/"
+
+      - name: Start the task
+        env:
+          GITREINS_LLM_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          GITREINS_LLM_BASE_URL: https://api.deepseek.com/v1
+          GITREINS_LLM_MODEL: deepseek-v4-flash
+        run: gitreins task start ci-pr-review
+
+      - name: Run Tier 2 evaluation (DeepSeek V4 Flash)
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          GITREINS_LLM_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          GITREINS_LLM_BASE_URL: https://api.deepseek.com/v1
+          GITREINS_LLM_MODEL: deepseek-v4-flash
+        # 5-min cap; the judge writes the verdict JSON to
+        # .gitreins/history/<date>/<hash>/verdict.json regardless of
+        # pass/fail/timeout. Even a timeout produces a partial verdict.
+        run: |
+          if [ -z "$DEEPSEEK_API_KEY" ]; then
+            echo "Skipping Tier 2 evaluation — DEEPSEEK_API_KEY not set"
+            mkdir -p .gitreins/history/skip
+            echo '{"status":"SKIPPED","reason":"DEEPSEEK_API_KEY not configured"}' \
+              > .gitreins/history/skip/verdict.json
+            exit 0
+          fi
+          timeout 300 gitreins task complete ci-pr-review || {
+            echo "::warning::Tier 2 evaluation exited non-zero (likely timeout or LLM error)"
+            echo "::warning::Verdict may be partial — see .gitreins/history/"
+          }
+
+      - name: Locate verdict JSON
+        id: verdict
+        run: |
+          # Find the most recent verdict.json from the run. The history
+          # directory is gitignored, so this is a fresh capture.
+          VERDICT_FILE=$(find .gitreins/history -name verdict.json -type f -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)
+          if [ -z "$VERDICT_FILE" ]; then
+            echo "::warning::No verdict.json found — Tier 2 produced no output"
+            echo "verdict_path=" >> "$GITHUB_OUTPUT"
+          else
+            echo "Found verdict: $VERDICT_FILE"
+            echo "verdict_path=$VERDICT_FILE" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Post verdict to PR (idempotent)
+        if: github.event_name == 'pull_request' && steps.verdict.outputs.verdict_path != ''
+        uses: actions/github-script@v7
+        env:
+          VERDICT_PATH: ${{ steps.verdict.outputs.verdict_path }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        with:
+          script: |
+            const fs = require('fs');
+            const verdictPath = process.env.VERDICT_PATH;
+            const runId = process.env.RUN_ID;
+            const runUrl = process.env.RUN_URL;
+            const prNumber = process.env.PR_NUMBER;
+            if (!verdictPath || !fs.existsSync(verdictPath)) {
+              core.setFailed('Verdict file not found');
+              return;
+            }
+            const verdict = JSON.parse(fs.readFileSync(verdictPath, 'utf8'));
+            const marker = '<!-- gitreins-tier2 -->';
+
+            // GitReins verdict.json shape (verified 2026-06-21):
+            //   { passed: bool, items: [], stages: { tier2: { steps: [{ output: string }] } }, summary: string }
+            // The per-criterion PASS/FAIL data is in the `output` string
+            // as `  ✓ criterion: evidence` or `  ✗ criterion: evidence` lines.
+            const tier2Step = (verdict.stages && verdict.stages.tier2 && verdict.stages.tier2.steps && verdict.stages.tier2.steps[0]) || {};
+            const outputText = tier2Step.output || verdict.summary || '';
+            const passed = verdict.passed === true;
+
+            // Parse per-criterion lines from the output string.
+            const rows = [];
+            const lines = outputText.split('\n');
+            for (const line of lines) {
+              // Match "  ✓ <criterion>: <evidence>" or "  ✗ <criterion>: <evidence>"
+              // Allow both Unicode checkmarks; FAIL lines have ✗ in them.
+              const m = line.match(/^\s*[✓✗]\s+(.+?):\s*(.*)$/);
+              if (!m) continue;
+              const after = m[1].trim();
+              const evidence = (m[2] || '').trim().replace(/\|/g, '\\|').slice(0, 200);
+              const linePassed = line.indexOf('✓') !== -1 && line.indexOf('✗') === -1;
+              const status = linePassed ? '✓ PASS' : '✗ FAIL';
+              rows.push('| ' + (rows.length + 1) + '. ' + after + ' | ' + status + ' | ' + evidence + ' |');
+            }
+
+            // Build status summary
+            const passCount = rows.filter(function (r) { return r.indexOf('✓ PASS') !== -1; }).length;
+            const failCount = rows.length - passCount;
+            const statusDetail = passed
+              ? 'PASS ✓'
+              : (failCount > 0 ? 'FAIL ✗ (' + failCount + ' of ' + rows.length + ')' : 'FAIL ✗');
+            const icon = passed ? '✅' : '⚠️';
+
+            // If no per-criterion rows were parsed (LLM timed out or
+            // returned summary-only), show the raw output as evidence.
+            const body = marker + '\n'
+              + '## ' + icon + ' GitReins Tier 2 Review\n'
+              + '\n'
+              + '**Verdict:** ' + statusDetail
+              + '  |  **Run:** [`' + runId + '`](' + runUrl + ')'
+              + '  |  **PR:** #' + prNumber + '\n'
+              + '\n'
+              + (rows.length > 0
+                  ? '| # | Criterion | Status | Evidence |\n|---|-----------|--------|----------|\n' + rows.join('\n') + '\n'
+                  : '> No per-criterion breakdown available. Verdict: **' + (passed ? 'PASS' : 'FAIL') + '**. Raw output below.\n>\n> ```\n' + outputText.slice(0, 1500) + '\n> ```\n')
+              + '\n'
+              + '<sub>Powered by DeepSeek V4 Flash · criteria from `.gitreins/tasks.yaml` · `specs/ci.spec.md` §Tier 2 LLM Evaluation (CI-004)</sub>\n';
+
+            // Find existing comment by marker, update or create
+            github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            }).then(function (res) {
+              const existing = res.data.find(function (c) { return c.body && c.body.includes(marker); });
+              if (existing) {
+                return github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existing.id,
+                  body: body,
+                }).then(function () {
+                  core.info('Updated existing Tier 2 comment (id=' + existing.id + ')');
+                });
+              }
+              return github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body,
+              }).then(function () {
+                core.info('Posted new Tier 2 comment');
+              });
+            });
+
+      - name: Write job summary
+        if: always()
+        run: |
+          VERDICT_FILE="${{ steps.verdict.outputs.verdict_path }}"
+          if [ -z "$VERDICT_FILE" ] || [ ! -f "$VERDICT_FILE" ]; then
+            echo "## 🤖 GitReins Tier 2 Review" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Verdict:** ⚠ no verdict produced" >> $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
+          echo "## 🤖 GitReins Tier 2 Review" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```json' >> $GITHUB_STEP_SUMMARY
+          cat "$VERDICT_FILE" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload verdict artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tier2-verdict-${{ github.run_id }}
+          path: .gitreins/history/
+          retention-days: 14
