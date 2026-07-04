@@ -52,10 +52,21 @@ jobs:
           TMPDIR: ${{ github.workspace }}/.tmp
 
       - name: Lint (graceful when no config)
-        # eslint.config.js is not yet committed; this step is non-blocking
-        # until CI-005 lands the lint configuration.
-        continue-on-error: true
-        run: npm run lint
+        # Run ESLint only when an eslint.config.* file is present in the
+        # repo. When absent (current state — CI-005 lands lint config),
+        # the step is a no-op that exits 0 so the job stays green.
+        # The legacy `npm run lint` invocation exits 127 because the
+        # `eslint` binary isn't installed yet — checking for the config
+        # file is the correct graceful-degradation path described in
+        # specs/ci.spec.md §2.
+        run: |
+          if [ -f eslint.config.js ] || [ -f eslint.config.mjs ] || [ -f eslint.config.cjs ] || [ -f .eslintrc.js ] || [ -f .eslintrc.json ]; then
+            echo "Lint config found — running eslint"
+            npm run lint
+          else
+            echo "No lint config present — skipping (CI-005 lands ESLint config)"
+            exit 0
+          fi
 
       - name: Install GitReins
         # GitReins is the project's git-native quality gate (secrets +

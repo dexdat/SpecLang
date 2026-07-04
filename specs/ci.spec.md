@@ -45,7 +45,7 @@ runs build + test + secrets guard. No code is merged without green CI.
 ### 2. `lint` (optional)
 
 - Lint with ESLint only if `eslint.config.js` is present
-- Skipped automatically when no config exists (graceful degradation)
+- Skipped automatically when no ESLint config exists (the workflow checks for `eslint.config.{js,mjs,cjs}` and `.eslintrc.{js,json}` before invoking `npm run lint`, so the step exits 0 instead of 127 when the binary is missing)
 - Future: enable via `// @ts-check` strict mode
 
 ## Matrix Strategy
@@ -75,7 +75,7 @@ the same result as CI. The CI script is a thin wrapper over local commands.
 | `tsc` fails with type errors | New code, missing types | Fix the types, do not use `// @ts-ignore` |
 | Tests pass locally but fail in CI | `TMPDIR` collision in CI | Already mitigated: `vitest.config.ts` redirects TMPDIR to `.tmp/` |
 | GitReins guard blocks commit | Secret in staged file | Remove the secret, add the file path to `.gitleaks.toml` allowlist |
-| ESLint config missing | v9 migration not completed | Step is `continue-on-error: true` until config lands |
+| ESLint config missing | v9 migration not completed | Workflow probes for an ESLint config file before invoking `npm run lint`; step exits 0 when absent |
 
 ## Acceptance Criteria
 
@@ -86,4 +86,4 @@ the same result as CI. The CI script is a thin wrapper over local commands.
 - [x] Uses Node 20 (matches local dev)
 - [x] Uses `actions/checkout@v4` and `actions/setup-node@v4`
 - [x] Includes `gitreins guard` step (Tier 1 secrets/lint/tests)
-- [x] Lint step is `continue-on-error: true` (graceful when no ESLint config exists)
+- [x] Lint step degrades gracefully when no ESLint config exists (workflow checks for `eslint.config.{js,mjs,cjs}` / `.eslintrc.{js,json}` before invoking `npm run lint`; exits 0 when absent — replaces the prior `continue-on-error: true` approach that still exited 127 because `eslint` binary wasn't on PATH)
