@@ -86,6 +86,21 @@ export class Daemon extends EventEmitter {
 
       // Execute pipeline on convergence
       await this.executePipeline(result);
+
+      // ARCH-004: After pipeline completes, arm for the next cascade
+      // without requiring user input (/finalize). When autoRecascade is on
+      // (default), the next file event automatically starts a new cascade.
+      // When autoRecascade is off, the daemon stays in Converged state until
+      // a user explicitly commands it to continue (legacy behavior).
+      const autoRecascade = this.config.get().convergence.autoRecascade ?? true;
+      if (autoRecascade) {
+        console.log('[Daemon] Auto-recascade enabled — arming for next cascade');
+        this.convergence.reset();
+        this.state.setStatus(DaemonStatusKind.Idle);
+        this.emit('armed', result);
+      } else {
+        console.log('[Daemon] Auto-recascade disabled — awaiting user input');
+      }
     });
 
     // Start watching

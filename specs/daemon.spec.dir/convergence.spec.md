@@ -35,7 +35,7 @@ ConvergenceDetector:
     3. run tests
     4. commit changes
     5. notify user
-    6. await next input
+    6. arm for next cascade (no user input required)
 ```
 
 ### @daemon/convergence-impl

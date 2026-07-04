@@ -51,6 +51,7 @@ const state_1 = require("./state");
 const ipc_1 = require("./ipc");
 const config_1 = require("./config");
 const locks_1 = require("./locks");
+const session_store_1 = require("./session-store");
 const types_1 = require("./types");
 class Daemon extends events_1.EventEmitter {
     watcher = null;
@@ -60,6 +61,7 @@ class Daemon extends events_1.EventEmitter {
     ipc;
     config;
     lockManager;
+    sessionStore;
     running;
     paused;
     constructor(configPath) {
@@ -69,6 +71,7 @@ class Daemon extends events_1.EventEmitter {
         this.state = new state_1.State();
         this.ipc = new ipc_1.IPC();
         this.lockManager = new locks_1.LockManager();
+        this.sessionStore = new session_store_1.SessionStore();
         this.convergence = null; // Initialized in start()
         this.running = false;
         this.paused = false;
@@ -99,6 +102,21 @@ class Daemon extends events_1.EventEmitter {
             this.emit('converged', result);
             // Execute pipeline on convergence
             await this.executePipeline(result);
+            // ARCH-004: After pipeline completes, arm for the next cascade
+            // without requiring user input (/finalize). When autoRecascade is on
+            // (default), the next file event automatically starts a new cascade.
+            // When autoRecascade is off, the daemon stays in Converged state until
+            // a user explicitly commands it to continue (legacy behavior).
+            const autoRecascade = this.config.get().convergence.autoRecascade ?? true;
+            if (autoRecascade) {
+                console.log('[Daemon] Auto-recascade enabled — arming for next cascade');
+                this.convergence.reset();
+                this.state.setStatus(types_1.DaemonStatusKind.Idle);
+                this.emit('armed', result);
+            }
+            else {
+                console.log('[Daemon] Auto-recascade disabled — awaiting user input');
+            }
         });
         // Start watching
         await this.watcher.start();
@@ -125,6 +143,15 @@ class Daemon extends events_1.EventEmitter {
         this.state.setStatus(types_1.DaemonStatusKind.Idle);
         console.log('[Daemon] Stopped');
         this.emit('stopped');
+    }
+    /**
+     * Restart the daemon
+     */
+    async restart() {
+        console.log('[Daemon] Restarting...');
+        await this.stop();
+        await this.start();
+        console.log('[Daemon] Restarted');
     }
     /**
      * Handle a file event
@@ -223,6 +250,12 @@ class Daemon extends events_1.EventEmitter {
         return this.paused;
     }
     /**
+     * Health check for daemon
+     */
+    healthCheck() {
+        return this.running && this.watcher !== null && this.convergence !== null;
+    }
+    /**
      * Get convergence detector
      */
     getConvergence() {
@@ -245,6 +278,12 @@ class Daemon extends events_1.EventEmitter {
      */
     getLockManager() {
         return this.lockManager;
+    }
+    /**
+     * Get session store
+     */
+    getSessionStore() {
+        return this.sessionStore;
     }
     /**
      * Execute pipeline on convergence

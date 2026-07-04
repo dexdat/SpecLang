@@ -114,10 +114,20 @@
   - **Validation**: tsc clean, vitest **1728 passed / 62 skipped / 0 failed**
     (was 1717; +11 new ARCH-003 tests). No regressions in existing 1717.
 
-- [ ] **ARCH-004: Autonomous cascade — remove user-controlled gating**
+- [-] **ARCH-004: Autonomous cascade — remove user-controlled gating**
   - User currently decides when to continue the cascade
   - Daemon + file watcher + parallel agents = fully autonomous pipeline
   - Acceptance: save a top-level spec → cascade propagates through all dependencies → assembled output regenerated → no user interaction
+
+## [ ] Fix CI: Speclang CI — test env assumptions fail (git author name, CLI output)
+- **Priority:** high
+- **CI Run:** https://github.com/dexdat/SpecLang/actions/runs/28709517105
+- **Root cause:** Tests assume `git user.name` = "Alexis Okuwa" but actual is "Hermes Foreman". CLI tests expect JSON output but get progress output ("Generating…").
+- **Error details:**
+  - `tests/cli/history.test.ts:51` — expects 'Alexis Okuwa' in git log output
+  - `tests/cli/history.test.ts:46` — expects 'commits' in output
+  - `tests/cli.test.ts:104,131,206` — JSON parsing fails: gets "Generating…" instead of JSON
+- **Fix patterns:** Use `--no-user` or `--committer` flags in CLI tests. Replace git name assertion with regex. Add `--json` flag to CLI test calls.
 
 ## Backlog
 

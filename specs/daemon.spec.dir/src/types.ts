@@ -146,6 +146,12 @@ export interface DaemonConfig {
     maxDepth: number;
     testOnConverge?: boolean;
     autoCommit?: boolean;
+    /**
+     * ARCH-004: When true (default), the daemon stays armed for the next
+     * cascade after convergence — a new file event automatically restarts
+     * the cascade without requiring a /finalize command or user input.
+     */
+    autoRecascade?: boolean;
   };
   agentApi: {
     port: number;

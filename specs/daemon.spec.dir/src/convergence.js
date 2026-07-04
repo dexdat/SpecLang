@@ -138,12 +138,19 @@ class ConvergenceDetector extends events_1.EventEmitter {
         return result;
     }
     /**
-     * Reset convergence state
+     * Reset convergence state.
+     *
+     * ARCH-004: also resets `lastEventTime` so `isConverged()` returns
+     * false immediately after reset (not stuck in "converged" because
+     * the old lastEventTime is still past the quiet period). After
+     * reset, the next `onEvent()` re-arms the quiet-period timer
+     * normally.
      */
     reset() {
         this.filesChangedCount = 0;
         this.currentDepth = 0;
         this.converged = false;
+        this.lastEventTime = Date.now();
         this.cascadeStartTime = Date.now();
         console.log('[Convergence] State reset');
     }

@@ -54,6 +54,7 @@ const DEFAULT_CONFIG = {
         maxDepth: 100,
         testOnConverge: true,
         autoCommit: false,
+        autoRecascade: true, // ARCH-004: daemon stays armed for the next cascade
     },
     agentApi: {
         port: 7777,
