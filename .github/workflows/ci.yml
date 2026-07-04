@@ -31,6 +31,14 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+        # fetch-depth: 0 pulls full git history so tests that filter by
+        # git author (e.g. `speclang history --author <name>`) can find
+        # commits authored before the most recent merge. Without this,
+        # CI defaults to a shallow clone (depth: 1) and any
+        # history-based test that expects historical commits fails
+        # with empty output.
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js 20
         uses: actions/setup-node@v4

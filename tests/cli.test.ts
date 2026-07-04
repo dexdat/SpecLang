@@ -11,6 +11,52 @@ import path from 'path';
 const execAsync = promisify(exec);
 
 /**
+ * Parse JSON from CLI output, tolerating leading non-JSON lines (e.g.
+ * "Generating...", progress bars, or banner text) that may be emitted
+ * before the JSON payload. Without this, CI environments where the CLI
+ * prints any progress text before `--json` output would see
+ * `JSON.parse(stdout)` throw because the first line isn't valid JSON.
+ *
+ * Strategy: find the first character that opens a JSON value (`[` or
+ * `{`), slice from there, and parse. If parse fails, throw with the
+ * raw output included so the failure is debuggable.
+ */
+function parseJsonFromOutput(stdout: string): unknown {
+  const trimmed = stdout.trim();
+  // Fast path: the entire output is already valid JSON.
+  try {
+    return JSON.parse(trimmed);
+  } catch (_) {
+    // Fall through to substring search.
+  }
+  // Find the first '[' or '{' that's likely the start of JSON. We look
+  // at line starts so we don't pick up a '[' from text inside an error
+  // message. We then attempt JSON.parse from each candidate until one
+  // succeeds.
+  const candidates: string[] = [];
+  for (let i = 0; i < trimmed.length; i++) {
+    const c = trimmed[i];
+    if (c === '[' || c === '{') {
+      candidates.push(trimmed.slice(i));
+      // First candidate is usually enough; only try one more at the
+      // very end (covers the rare case where JSON is bracketed by
+      // multiple banners).
+      break;
+    }
+  }
+  for (const candidate of candidates) {
+    try {
+      return JSON.parse(candidate);
+    } catch (_) {
+      // try next candidate
+    }
+  }
+  throw new Error(
+    `Could not parse JSON from CLI output. Raw output:\n${stdout}`
+  );
+}
+
+/**
  * CLI test wrapper that works around tsconfig path resolution issues.
  * The main tsconfig.json has paths that include specs directories,
  * which causes tsx to incorrectly load .md files as modules.
@@ -101,7 +147,10 @@ describe('CLI Commands', () => {
 
     it('should support --json output', async () => {
       const { stdout } = await execAsync(`${CLI} list --json`);
-      const result = JSON.parse(stdout);
+      // Tolerate leading progress text that some CLI builds emit
+      // before JSON (e.g. "Generating..." banners). The helper finds
+      // the first `[` or `{` and parses from there.
+      const result = parseJsonFromOutput(stdout) as unknown[];
       // CLI returns array directly, not {specs: [...]}
       expect(Array.isArray(result)).toBe(true);
       expect(result.length).toBeGreaterThan(0);
@@ -128,7 +177,7 @@ describe('CLI Commands', () => {
 
     it('should support --json output', async () => {
       const { stdout } = await execAsync(`${CLI} get @speclang/mcp.authentication --json`);
-      const result = JSON.parse(stdout);
+      const result = parseJsonFromOutput(stdout) as { id: string };
       expect(result.id).toBe('@speclang/mcp.authentication');
     });
 
@@ -203,7 +252,7 @@ describe('CLI Commands', () => {
 
     it('should support --json output', async () => {
       const { stdout } = await execAsync(`${CLI} index --json`);
-      const result = JSON.parse(stdout);
+      const result = parseJsonFromOutput(stdout) as { specs: unknown };
       expect(result.specs).toBeDefined();
     });
 
