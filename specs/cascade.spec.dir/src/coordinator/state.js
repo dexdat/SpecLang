@@ -14,4 +14,3 @@ function createInitialState(triggerFile, maxDepth = 5) {
         depth_by_tree: { specs: 0, src: 0, tests: 0, docs: 0 }
     };
 }
-//# sourceMappingURL=state.js.map

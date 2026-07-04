@@ -56,13 +56,13 @@ class DependencyTracker {
             const spec = specData;
             const id = spec.id;
             const layer = spec.layer || 0;
-            const refs = spec.refs || [];
-            const type = this.determineType(specPath);
+            const refs = spec.depends_on || spec.refs || [];
+            const type = this.determineType(spec.file || specPath);
             const node = {
                 id,
                 layer,
                 type,
-                filePath: specPath,
+                filePath: spec.file || specPath,
                 dependencies: refs.map(r => r.replace('@ref:', '')),
                 children: []
             };
@@ -125,6 +125,71 @@ class DependencyTracker {
         traverse(triggerId);
         return result;
     }
+    /**
+     * ARCH-003: Get all nodes that depend (directly or transitively) on the
+     * given triggerId. Used by the swarm to fan out from a trigger file to
+     * its full dependent tree (codegen, tests, docs).
+     *
+     * Distinct from `getOrderedForCascade()` which walks the dependency
+     * list (downstream), not the dependent list (upstream). For "a spec
+     * changed — what files must regenerate?" we need dependents.
+     */
+    getDependentsTree(triggerId) {
+        const result = [];
+        const visited = new Set();
+        const traverse = (id) => {
+            if (visited.has(id))
+                return;
+            visited.add(id);
+            const node = this.graph.nodes.get(id);
+            if (!node)
+                return;
+            // Down: follow dependencies (must be done before the trigger).
+            for (const dep of node.dependencies) {
+                traverse(dep);
+            }
+            // Up: follow dependents (the trigger's downstream cascade targets).
+            const dependents = this.getDependents(id);
+            for (const dep of dependents) {
+                traverse(dep.id);
+            }
+            result.push(node);
+        };
+        traverse(triggerId);
+        return result;
+    }
+    /**
+     * ARCH-003: Partition an ordered node list into parallel "waves".
+     *
+     * Wave 0 contains all nodes whose `layer` is the minimum layer in the
+     * input. Wave 1 contains the next layer up, etc. Nodes in the same wave
+     * have no inter-dependencies at the layer level — they can be invoked
+     * concurrently by `AgentInvoker.invokeMany()`.
+     *
+     * Example:
+     *   Input:  [a(0), b(0), c(1), d(1), e(2)]
+     *   Output: [[a, b], [c, d], [e]]
+     *
+     * Within a layer, original ordering is preserved (stable partition by
+     * occurrence order).
+     */
+    partitionByDepth(nodes) {
+        if (nodes.length === 0)
+            return [];
+        // Group by layer, preserving input order within each layer.
+        const layerOrder = [];
+        const layerMap = new Map();
+        for (const node of nodes) {
+            if (!layerMap.has(node.layer)) {
+                layerMap.set(node.layer, []);
+                layerOrder.push(node.layer);
+            }
+            layerMap.get(node.layer).push(node);
+        }
+        // Return waves in ascending layer order (root → leaves).
+        layerOrder.sort((a, b) => a - b);
+        return layerOrder.map((layer) => layerMap.get(layer));
+    }
     saveState(state) {
         const stateDir = '.speclang';
         if (!fs.existsSync(stateDir)) {
@@ -154,4 +219,3 @@ class DependencyTracker {
     }
 }
 exports.DependencyTracker = DependencyTracker;
-//# sourceMappingURL=dependency.js.map

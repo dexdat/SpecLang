@@ -83,10 +83,36 @@
   - Validation: tsc clean, vitest **1717 passed / 62 skipped / 0 failed**
     (was 1713; +4 new ARCH-002 tests).
 
-- [ ] **ARCH-003: Parallel agent execution — swarm instead of sequential**
+- [x] **ARCH-003: Parallel agent execution — swarm instead of sequential**
   - Agents currently invoked one at a time via Task tool
   - Spawn multiple Pi Agent workers concurrently when cascade fans out
   - Acceptance: cascade with 5 independent specs → all 5 codegen agents run in parallel, wall time ≤ slowest agent
+  - **Implementation**:
+    - `AgentInvoker.invokeMany(opts, concurrency?)` — `Promise.all` fan-out
+      with optional bounded concurrency (round-robin worker pool)
+    - Replaced blocking `execSync` with async `execFile` (truly non-blocking,
+      so 5+ agents can run concurrently)
+    - Injectable `AgentExecutorFn` for tests (no real `speclang agent` spawns)
+    - `DependencyTracker.partitionByDepth(nodes)` — group into parallel waves
+      by `layer` field, preserving input order within each layer
+    - `DependencyTracker.getDependentsTree(triggerId)` — fan out from a
+      trigger to its full downstream dependent tree (was missing — pre-existing
+      `getOrderedForCascade` only followed dependencies, not dependents)
+    - `CascadeCoordinator.cascadeFrom()` defaults to swarm mode (`parallel: true`),
+      with `parallel: false` for legacy sequential fallback
+    - Gates now run once per wave (not per agent) — they're expensive and
+      observe post-wave filesystem state
+    - `CascadeResult` gains `mode` ('swarm' | 'sequential'), `waves`, and
+      `parallelism` fields for observability
+    - `start()` calls `tracker.loadIndex()` lazily so callers don't have to
+  - **Tests**: `tests/daemon/arch003-parallel-agents.test.ts` — 11 tests:
+    - `invokeMany` 5-way concurrency (wall time ≤ slowest, maxConcurrent === 5)
+    - Order preservation, empty input, bounded concurrency, duration_ms recording
+    - `partitionByDepth` wave grouping, single-wave, empty input
+    - Swarm: 5 parallel agents via dependent tree, multi-wave topology
+    - Sequential fallback: maxConcurrent === 1
+  - **Validation**: tsc clean, vitest **1728 passed / 62 skipped / 0 failed**
+    (was 1717; +11 new ARCH-003 tests). No regressions in existing 1717.
 
 - [ ] **ARCH-004: Autonomous cascade — remove user-controlled gating**
   - User currently decides when to continue the cascade
