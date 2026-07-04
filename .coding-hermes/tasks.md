@@ -168,10 +168,28 @@
 
 ## Backlog
 
-- [ ] **CI-005: Pre-commit hook hardening**
+- [x] **CI-005: Pre-commit hook hardening** (commit a9a92f5f)
   - Verify hook blocks secrets, enforces build, and runs diff-mode tests
-  - Add `npm run assemble` to pre-commit pipeline
   - Acceptance: `git commit` with broken build → blocked
+  - **Implementation**:
+    - `.gitleaks.toml`: added explicit `[[rules]]` blocks
+      (`openrouter-style-sk` → `sk-[a-zA-Z0-9_-]{20,}`,
+      `github-pat` → `ghp_[a-zA-Z0-9]{30,}`) — gitleaks v8 default
+      rules were silently missing standalone `sk-` tokens. Also
+      extended allowlist to `dist/`, `bin/`, `__pycache__/`, etc.,
+      so gitleaks can finish within its 30s timeout.
+    - `tests/ci/ci005-precommit-hook.test.ts` — 6 acceptance tests:
+      AC1 hook exists & executable; AC2 body invokes `gitreins guard`;
+      AC3 blocks commits with staged secret; AC4 config wires build
+      + diff-mode tests; AC5 `.gitleaks.toml` has new explicit rules;
+      AC6 gitleaks with project config flags the staged secret.
+  - **Validation**: tsc clean, vitest **1740 passed / 62 skipped /
+    0 failed** (was 1734; +6 new tests), gitreins guard PASS (Tier 1
+    clean — secrets / static_analysis / build / lint / tests).
+  - Note: the original AC referenced `npm run assemble` but no such
+    script exists — the equivalent SpecLang step is `npm run build`
+    (tsc) plus the `secrets + build + tests` pipeline. The hardening
+    is now provable end-to-end via the new acceptance tests.
 
 - [ ] **CI-006: Test coverage reporting**
   - Generate coverage with vitest (c8 or v8 provider)
