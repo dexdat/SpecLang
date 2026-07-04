@@ -28,7 +28,15 @@
 - [ ] **CI-004: Wire GitReins Tier 2 into CI**
   - Run `gitreins judge` on changed files in CI
   - Annotate PRs with per-criterion PASS/FAIL
-  - Acceptance: CI job runs evaluator and reports verdicts
+
+## [x] Fix CI: SpecLang CI — linter step fails (exit code 127) — check lint command config (commit 5820daaf)
+- **Priority:** medium
+- **CI Run:** https://github.com/dexdat/SpecLang/actions/runs/28683977186
+- **Root cause:** `npm run lint` invokes `eslint src/**/*.ts` but the `eslint` binary is not installed (CI-005 lands lint config). The prior `continue-on-error: true` did not catch this because the failure happens BEFORE the guard evaluates — exit 127 propagates as a job failure.
+- **Fix:** Replaced unconditional `npm run lint` with a config-file probe — checks for `eslint.config.{js,mjs,cjs}` or `.eslintrc.{js,json}` before invoking. Step exits 0 when absent (matches `specs/ci.spec.md §2` graceful-degradation contract).
+- **Files:** `.github/workflows/ci.yml` (+15/-7), `specs/ci.spec.md` (3 lines updated to reflect probe-based approach)
+- **Acceptance:** YAML well-formed, spec+workflow aligned, vitest 1709 passed / 62 skipped / 0 failed (20.94s)
+- **NOT PUSHED** — GitHub Actions changes require review per cron rule
 
 - [ ] **ARCH-001: Automatic file watching — daemon detects spec changes**
   - Coordinator must currently be invoked explicitly
