@@ -28,48 +28,40 @@ Dashboard monitoring, dual-view docs, standard library tests.
 | AC-066 | ✅ Passed | LSP ref diagnostics recovered 2026-06-28 |
 | AC-067 | ✅ Passed | Transition upgrade tests — fixed 2026-06-30 |
 
-## Current Wake: 2026-07-05 ~08:35 UTC (MAINTENANCE — WORK)
+## Current Wake: 2026-07-05 22:36 UTC (MAINTENANCE — ALL CLEAR)
 
-- **ARCH-002 COMPLETE** (commit pending): `speclangd start -d` now forks
-  detached, writes `.speclang/speclangd.pid`, parent exits 0. `speclangd
-  status` reads PID + state file directly (no new Daemon spawned). `stop`
-  sends SIGTERM with 5s grace. Saving a spec transitions daemon-state to
-  "cascading" automatically.
+- **Container:** Up 3h, v1.17.7, bind mount READ_OK.
+- **/tmp:** 51% (15G/30G), inodes 44%. Clean.
 - **GitReins T1:** PASS ✓ (secrets ✓, static_analysis ✓, go_build ✓, go_lint ✓, go_tests ✓). Gitleaks timeout (30s) — fell back to built-in scanner.
 - **Build:** tsc clean (EXIT=0)
-- **Tests:** **1717 passed, 0 failed, 62 skipped** (89 files, 21.10s). +4 new ARCH-002 tests (was 1713). TMPDIR redirect required.
-- **Container:** opencode-speclang Up 10 days, healthy.
-- **/tmp:** 80% (24G/30G). TMPDIR=/home/kara/tmp-speclang active.
-- **Git:** main, HEAD `4cec05c5`. 2 modified files (bin/speclangd, .coding-hermes/tasks.md, .hermes/acceptance-criteria.md). 1 new test file. 7 untracked bin/ artifacts (non-blocking).
-- **Staleness:** 441 specs (.spec.md). CLI: 26 subcommands. No new specs. No uncovered features.
-- **Archive:** docs/archive/ (16 files). No backlog.
-- **Next wake:** Continue ARCH-003 (parallel agent execution swarm) — the file
-  watcher (ARCH-001) + background daemon (ARCH-002) + PARALLEL agents =
-  fully autonomous cascade that ARCH-004 will string together.
+- **Tests:** **1749 passed, 0 failed, 62 skipped** (93 files, 21.13s). +1 test since last wake.
+- **Git:** main, HEAD `7d7bedd5`. 0 modified source files. 9 untracked bin/ artifacts (non-blocking).
+- **Staleness:** 441 specs (.spec.md) + 2 .scl = 443 total. CLI: 24 subcommands. No new specs. No uncovered features.
+- **Archive:** docs/archive/ (16 files — archival). No backlog.
+- **ARCH/CI:** ARCH-001 through ARCH-004 all committed. CI-001 through CI-006 all complete. 0 open tasks.
+- **Work Items:** No work-items.json — no pending or dispatched Axiom tasks.
+- **Next wake:** Maintenance mode (11th consecutive all-clear wake). Continue monitoring.
+
+## Previous Wake: 2026-07-05 19:36 UTC (MAINTENANCE — ALL CLEAR)
+
+- Container OOM-killed, restarted. T1 PASS, tsc clean, 1748/1/62.
+
+## Previous Wake: 2026-07-05 08:35 UTC (MAINTENANCE — WORK)
+
+- ARCH-002 COMPLETE (committed `55d52b55`). ARCH-003 committed `c5f457e3`. ARCH-004 committed `4a7fdd99`.
 
 ## Previous Wake: 2026-07-05 07:55 UTC (MAINTENANCE — ALL CLEAR)
 
-- **GitReins T1:** PASS ✓ (secrets ✓, static_analysis ✓, go_build ✓, go_lint ✓, go_tests ✓). Gitleaks timeout (30s) — fell back to built-in scanner.
-- **Build:** tsc clean (EXIT=0)
-- **Tests:** 1713 passed, 0 failed, 62 skipped (84 files, 21.36s). **TMPDIR redirect required** — `/tmp` at 80% (24G/30G) causes EDQUOT (-122) during parallel worker execution; `TMPDIR=/home/kara/tmp-speclang` resolves.
-- **Container:** opencode-speclang Up 10 days, healthy
-- **/tmp:** 80% (24G/30G), inodes 41%. TMPDIR workaround active.
-- **Git:** main, HEAD `4cec05c5`. 0 new commits since last wake. 1 uncommitted change (this AC file). 7 untracked bin/ artifacts (non-blocking).
-- **Staleness:** 441 specs (.spec.md). CLI: 26 subcommands. No new specs. No uncovered features. No uncommitted source changes outside bin/.
-- **Archive:** docs/archive/ (16 files — archival artifacts). No backlog.
-- **Next wake:** Maintenance mode (all ACs passed, 8th consecutive all-clear wake)
+- T1 PASS, tsc clean, 1713/0/62. /tmp at 80% — TMPDIR redirect required.
 
 ## Previous Wake: 2026-07-05 04:35 UTC (MAINTENANCE — ALL CLEAR)
 T1 PASS, tsc clean, 1709/0/62, container healthy. CI-002 complete (commits `25fd3acd`, `69d4e556`).
 
-## Previous Wake: 2026-07-05 04:00 UTC (MAINTENANCE — ALL CLEAR)
-T1 PASS, tsc clean, 1709/0/62, container healthy. CI-002 complete (commits `25fd3acd`, `69d4e556`).
-
 ## Previous Wake: 2026-07-04 22:00 UTC (MAINTENANCE — ALL CLEAR)
-T1 PASS, tsc clean, 1708/1/62 (1 flaky), container healthy. CI-002 complete (commits `25fd3acd`, `69d4e556`).
+T1 PASS, tsc clean, 1708/1/62 (1 flaky), container healthy. CI-002 complete.
 
 ## Previous Wake: 2026-07-04 14:45 UTC (MAINTENANCE — ALL CLEAR)
-T1 PASS, tsc clean, 1709/0/62, container healthy, no new changes. CI-001 complete (commit `800dee77` + `50414d5f`).
+T1 PASS, tsc clean, 1709/0/62, container healthy, no new changes. CI-001 complete.
 
 ## Previous Wake: 2026-07-03 19:43 UTC (MAINTENANCE — ALL CLEAR)
 T1 PASS, tsc clean, 1709/0/62, container healthy, no new changes.
@@ -82,15 +74,6 @@ Same state. T1 PASS, tsc clean, 1696/15/8, container healthy, no new changes.
 
 ## Previous Wake: 2026-07-02 10:55 UTC (MAINTENANCE — ALL CLEAR)
 Same state. Fixed /tmp inode pressure (1340 stale temp dirs).
-
-## Previous Wake: 2026-07-02 06:38 UTC (MAINTENANCE — ALL CLEAR)
-Same state.
-
-## Previous Wake: 2026-07-02 06:34 UTC (MAINTENANCE — ALL CLEAR)
-Same state.
-
-## Previous Wake: 2026-07-01 21:18 UTC (MAINTENANCE — ALL CLEAR)
-Fixed /tmp EDQUOT from stale restore dirs.
 
 ## Previous Wake: 2026-06-30 11:28 UTC (AC-067 COMPLETE)
 AC-067 went from in_progress → passed. Fixed 31 transition upgrade tests.

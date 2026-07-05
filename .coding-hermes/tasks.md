@@ -232,3 +232,11 @@
     9/9 pass standalone.
   - **NOT PUSHED** — GitHub Actions changes require review per cron rule.
 
+## [ ] Fix CI: SpecLang — test code bugs (precommit hook, CLI JSON response)
+- **Priority:** high
+- **CI Run:** https://github.com/dexdat/SpecLang/actions/runs/28718869369
+- **Errors:**
+  1. `tests/ci/ci005-precommit-hook.test.ts:59` — Hook not found: `/home/runner/.git/hooks/pre-commit`. CI doesn't have git hooks installed. Add skip guard for CI environment or install hooks in workflow.
+  2. `tests/cli.test.ts:117` — `SyntaxError: Unexpected token 'G', "Generating..."... is not valid JSON`. CLI outputs "Generating…" prefix before JSON. Fix: strip non-JSON prefix before parsing, or add `--json` flag.
+  3. `tests/cli.test.ts:127` — AssertionError (expected true to be false). Related to the JSON parsing issue above.
+- **Note:** CI workflow (CI-001 through CI-005) IS pushed to main despite "NOT PUSHED" note in tasks. Remaining failures are test code bugs, not workflow config issues.
