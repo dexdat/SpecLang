@@ -152,4 +152,31 @@ describe('CI-005: pre-commit hook hardening', () => {
     );
     expect(gl.status).toBe(1); // leak found
   }, 30_000);
+
+  // -------------------------------------------------------------------------
+  // AC7: CI workflow installs the pre-commit hook (CI-fix-001, run 28718869369)
+  // -------------------------------------------------------------------------
+  // GitHub Actions' `actions/checkout` does NOT install git hooks by default.
+  // Before CI-fix-001, the `tests/ci/ci005-precommit-hook.test.ts` "Hook
+  // not found: /home/runner/.git/hooks/pre-commit" failure broke the build
+  // because the hook-exists assertion (AC1) ran against a fresh CI clone.
+  // The CI workflow now has an `Install pre-commit hook` step that runs
+  // `gitreins install` + `chmod +x .git/hooks/pre-commit`. Verify the
+  // workflow YAML references that step so AC1 cannot silently regress.
+  it('AC7: CI workflow runs an Install pre-commit hook step before tests', () => {
+    const wfPath = join(REPO_ROOT, '.github', 'workflows', 'ci.yml');
+    expect(existsSync(wfPath)).toBe(true);
+    const wf = readFileSync(wfPath, 'utf8');
+    expect(wf).toMatch(/Install pre-commit hook/);
+    // The step must happen BEFORE the test step (which depends on it
+    // via the AC1 existsSync assertion). The simple contract: the
+    // install step appears earlier in the file than `npm test`.
+    const installIdx = wf.indexOf('Install pre-commit hook');
+    const testIdx = wf.indexOf('npm test');
+    expect(installIdx).toBeGreaterThan(-1);
+    expect(testIdx).toBeGreaterThan(-1);
+    expect(installIdx).toBeLessThan(testIdx);
+    // And must actually wire up the hook (chmod +x or gitreins install).
+    expect(wf).toMatch(/gitreins install|\.git\/hooks\/pre-commit/);
+  });
 });

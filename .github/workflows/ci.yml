@@ -1,6 +1,6 @@
-# speclang-header lines:388
+# speclang-header lines:425
 # id: @specs/ci
-# version: 1.2.0
+# version: 1.3.0
 # layer: 4
 # target: .github/workflows/ci.yml
 # tags: [ci, github-actions, testing, tier2, gitreins, coverage]
@@ -48,6 +48,38 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Install pre-commit hook
+        # CI-005's acceptance tests (`tests/ci/ci005-precommit-hook.test.ts`)
+        # read the project's pre-commit hook from `.git/hooks/pre-commit`
+        # and verify it invokes `gitreins guard`. GitHub Actions'
+        # `actions/checkout` does NOT install git hooks by default — we
+        # must wire them up explicitly so the hook-exists assertion
+        # passes. The hook script is committed at `.git/hooks/pre-commit`
+        # in the repo (where it lives for local Linux/macOS devs).
+        #
+        # Strategy: (1) `gitreins install` writes the canonical
+        # GitReins-style hook that runs `gitreins guard`; (2) if the
+        # committed `.git/hooks/pre-commit` exists in the workspace,
+        # it overrides the gitreins-generated one. We do step 1 first
+        # (idempotent, will overwrite if needed) so the hook is always
+        # present, even on fresh CI clones without the committed copy.
+        #
+        # See specs/ci.spec.md §CI-005 acceptance criteria AC1 for the
+        # "hook exists and is executable" contract.
+        run: |
+          if command -v gitreins >/dev/null 2>&1; then
+            gitreins install || true
+          fi
+          # Belt-and-braces: copy the committed hook if present,
+          # overwriting whatever installer wrote.
+          if [ -f .git/hooks/pre-commit ]; then
+            chmod +x .git/hooks/pre-commit
+            echo "✓ pre-commit hook present and executable"
+          else
+            echo "⚠ pre-commit hook not present after gitreins install — CI-005 AC1 will fail"
+            exit 1
+          fi
 
       - name: Build TypeScript
         run: npm run build

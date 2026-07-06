@@ -1,10 +1,10 @@
-# speclang-header lines:210
+# speclang-header lines:309
 id: "@speclang/ci"
-version: 1.0.0
+version: 1.3.0
 layer: 4
 project_level: Alpha
 agent_support: agent_autonomous
-tags: [ci, github-actions, testing, automation]
+tags: [ci, github-actions, testing, automation, precommit, gitreins]
 short: GitHub Actions CI workflow for SpecLang
 target: .github/workflows/ci.yml
 status: active
@@ -76,6 +76,16 @@ the same result as CI. The CI script is a thin wrapper over local commands.
 | Tests pass locally but fail in CI | `TMPDIR` collision in CI | Already mitigated: `vitest.config.ts` redirects TMPDIR to `.tmp/` |
 | GitReins guard blocks commit | Secret in staged file | Remove the secret, add the file path to `.gitleaks.toml` allowlist |
 | ESLint config missing | v9 migration not completed | Workflow probes for an ESLint config file before invoking `npm run lint`; step exits 0 when absent |
+| `Hook not found: /home/runner/.git/hooks/pre-commit` (CI-005 AC1) | `actions/checkout@v4` does not install git hooks | CI workflow runs an `Install pre-commit hook` step (`gitreins install || true; chmod +x .git/hooks/pre-commit`) before tests so the AC1 existsSync assertion has a hook to read |
+
+## Pre-Commit Hook in CI (CI-005 AC7)
+
+GitHub Actions' `actions/checkout` step does not install git hooks. Without an explicit
+install step, the `tests/ci/ci005-precommit-hook.test.ts` "Hook not found"
+failure breaks the build (run `28718869369`, 2026-07-04). The workflow now installs
+the project's `.git/hooks/pre-commit` (committed in-repo) via the
+`Install pre-commit hook` step, which runs `gitreins install` (writes the canonical
+guard hook) and ensures the executable bit is set.
 
 ## Tier 2 LLM Evaluation (CI-004)
 

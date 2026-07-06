@@ -28,19 +28,41 @@ Dashboard monitoring, dual-view docs, standard library tests.
 | AC-066 | ✅ Passed | LSP ref diagnostics recovered 2026-06-28 |
 | AC-067 | ✅ Passed | Transition upgrade tests — fixed 2026-06-30 |
 
-## Current Wake: 2026-07-05 22:36 UTC (MAINTENANCE — ALL CLEAR)
+## Current Wake: 2026-07-05 14:30 UTC (MAINTENANCE — ALL CLEAR)
 
-- **Container:** Up 3h, v1.17.7, bind mount READ_OK.
-- **/tmp:** 51% (15G/30G), inodes 44%. Clean.
-- **GitReins T1:** PASS ✓ (secrets ✓, static_analysis ✓, go_build ✓, go_lint ✓, go_tests ✓). Gitleaks timeout (30s) — fell back to built-in scanner.
+- **Container:** Up 19h, bind mount READ_OK.
+- **/tmp:** 54% (16G/30G), inodes 38%. Clean.
+- **GitReins T1:** PASS ✓ (secrets ✓, static_analysis ✓, go_build ✓, go_lint ✓, go_tests ✓). gitleaks timeout→built-in fallback (expected on 381MB repo).
 - **Build:** tsc clean (EXIT=0)
-- **Tests:** **1749 passed, 0 failed, 62 skipped** (93 files, 21.13s). +1 test since last wake.
-- **Git:** main, HEAD `7d7bedd5`. 0 modified source files. 9 untracked bin/ artifacts (non-blocking).
-- **Staleness:** 441 specs (.spec.md) + 2 .scl = 443 total. CLI: 24 subcommands. No new specs. No uncovered features.
+- **Tests:** **1749 passed, 0 failed, 62 skipped** (89/93 files, 21.60s). Stable.
+- **Git:** main, HEAD `d4d7eb64`. 1 modified file (AC file only).
+- **Staleness:** 443 specs (441 .spec.md + 2 .scl). No new specs. No uncovered features.
+- **Archive:** docs/archive/ (16 files — archival). TODO.md from 2026-04-02 (stale/historical). No backlog.
+- **Work Items:** No pending or dispatched Axiom tasks.
+- **Untracked:** 4 bin/e2e-*.ts/mjs files (2026-07-04, E2E cascade tests — experimental, not yet spec-tracked). Noted for 2+ wakes.
+- **Next wake:** Maintenance mode (14th consecutive all-clear wake). Continue monitoring.
+
+## Previous Wake: 2026-07-05 08:12 UTC (MAINTENANCE — ALL CLEAR)
+
+- **Container:** Up 13h, bind mount READ_OK.
+- **/tmp:** 55% (17G/30G), inodes 45%. Clean.
+- **GitReins T1:** PASS ✓ (secrets ✓, static_analysis ✓, go_build ✓, go_lint ✓, go_tests ✓).
+- **Build:** tsc clean (EXIT=0)
+- **Tests:** **1749 passed, 0 failed, 62 skipped** (89/93 files, 21.32s). Stable.
+- **Git:** main, HEAD `d4d7eb64`. 0 modified source files (AC file only).
+- **Staleness:** 443 specs (441 .spec.md + 2 .scl). CLI: 26 subcommands. No new specs. No uncovered features.
 - **Archive:** docs/archive/ (16 files — archival). No backlog.
-- **ARCH/CI:** ARCH-001 through ARCH-004 all committed. CI-001 through CI-006 all complete. 0 open tasks.
-- **Work Items:** No work-items.json — no pending or dispatched Axiom tasks.
-- **Next wake:** Maintenance mode (11th consecutive all-clear wake). Continue monitoring.
+- **Work Items:** No pending or dispatched Axiom tasks.
+- **Untracked:** 4 bin/e2e-*.ts/mjs files (2026-07-04, E2E cascade tests — experimental, not yet spec-tracked).
+- **Next wake:** Maintenance mode (13th consecutive all-clear wake). Continue monitoring.
+
+## Previous Wake: 2026-07-05 02:49 UTC (MAINTENANCE — ALL CLEAR)
+
+- Container Up 7h, T1 PASS, tsc clean, 1749/0/62. 12th consecutive all-clear.
+
+## Previous Wake: 2026-07-05 22:36 UTC (MAINTENANCE — ALL CLEAR)
+
+- Container Up 3h, T1 PASS, tsc clean, 1749/0/62. 11th consecutive all-clear.
 
 ## Previous Wake: 2026-07-05 19:36 UTC (MAINTENANCE — ALL CLEAR)
 

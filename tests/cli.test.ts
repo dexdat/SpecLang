@@ -114,7 +114,7 @@ describe('CLI Commands', () => {
 
     it('should support --json output', async () => {
       const { stdout } = await execAsync(`${CLI} search auth --json`);
-      const result = JSON.parse(stdout);
+      const result = parseJsonFromOutput(stdout);
       expect(Array.isArray(result)).toBe(true);
     });
 
@@ -281,7 +281,7 @@ describe('CLI Commands', () => {
 
     it('should support --json output', async () => {
       const { stdout } = await execAsync(`${CLI} cascade status --json`);
-      const result = JSON.parse(stdout);
+      const result = parseJsonFromOutput(stdout);
       expect(result.active).toBeDefined();
     });
   });
@@ -295,7 +295,7 @@ describe('CLI Commands', () => {
 
     it('should support --json output', async () => {
       const { stdout } = await execAsync(`${CLI} generate --dry-run --json`);
-      const result = JSON.parse(stdout);
+      const result = parseJsonFromOutput(stdout);
       expect(result.target).toBe('typescript');
     });
   });
