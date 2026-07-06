@@ -232,11 +232,20 @@
     9/9 pass standalone.
   - **NOT PUSHED** — GitHub Actions changes require review per cron rule.
 
-## [ ] Fix CI: SpecLang — test code bugs (precommit hook, CLI JSON response)
+## [x] Fix CI: SpecLang — test code bugs (precommit hook, CLI JSON response) (commit 46828de5)
 - **Priority:** high
 - **CI Run:** https://github.com/dexdat/SpecLang/actions/runs/28718869369
 - **Errors:**
   1. `tests/ci/ci005-precommit-hook.test.ts:59` — Hook not found: `/home/runner/.git/hooks/pre-commit`. CI doesn't have git hooks installed. Add skip guard for CI environment or install hooks in workflow.
   2. `tests/cli.test.ts:117` — `SyntaxError: Unexpected token 'G', "Generating..."... is not valid JSON`. CLI outputs "Generating…" prefix before JSON. Fix: strip non-JSON prefix before parsing, or add `--json` flag.
   3. `tests/cli.test.ts:127` — AssertionError (expected true to be false). Related to the JSON parsing issue above.
-- **Note:** CI workflow (CI-001 through CI-005) IS pushed to main despite "NOT PUSHED" note in tasks. Remaining failures are test code bugs, not workflow config issues.
+- **Resolution:**
+  1. **Workflow fix (chosen path):** Added `Install pre-commit hook` step to `.github/workflows/ci.yml` that runs `gitreins install || true; chmod +x .git/hooks/pre-commit`. The hook script is committed in-repo, so local + CI agree. The hook-existence assertion (`existsSync(HOOK)`) now finds a hook.
+  2. **`tests/cli.test.ts`:** Replaced 3 remaining `JSON.parse(stdout)` calls (lines 117/284/298) with the existing `parseJsonFromOutput(stdout)` helper (introduced 735b7f88 but only applied to 3 of the 6 --json tests — this change covers the other 3).
+  3. Same as #2 (the assertion failure is a consequence — once JSON parses, `Array.isArray(result)` becomes `true`).
+- **Coverage:**
+  - New **AC7** in `tests/ci/ci005-precommit-hook.test.ts` asserts the workflow YAML has the install step and it appears before `npm test`. Future regressions of the AC1 failure caught.
+  - `specs/ci.spec.md` Failure Modes table + new `Pre-Commit Hook in CI (CI-005 AC7)` section document the contract. Version bumped 1.0.0 → 1.3.0; tags gain `precommit`, `gitreins`.
+- **Files:** `.github/workflows/ci.yml` (+36/-3), `specs/ci.spec.md` (+14/-2), `tests/ci/ci005-precommit-hook.test.ts` (+27), `tests/cli.test.ts` (+3/-3)
+- **Validation:** tsc clean, vitest **1750 passed / 62 skipped / 0 failed** (was 1749; +1 = new AC7 test, no regressions across 89 test files), gitreins guard PASS
+- **NOT PUSHED** — GitHub Actions changes require review per cron rule
