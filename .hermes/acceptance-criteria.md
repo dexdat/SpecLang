@@ -28,18 +28,32 @@ Dashboard monitoring, dual-view docs, standard library tests.
 | AC-066 | ✅ Passed | LSP ref diagnostics recovered 2026-06-28 |
 | AC-067 | ✅ Passed | Transition upgrade tests — fixed 2026-06-30 |
 
-## Current Wake: 2026-07-05 14:30 UTC (MAINTENANCE — ALL CLEAR)
+## Current Wake: 2026-07-05 16:11 UTC (MAINTENANCE — ALL CLEAR)
 
-- **Container:** Up 19h, bind mount READ_OK.
+- **Container:** Up 21h, bind mount READ_OK. No zombie processes.
 - **/tmp:** 54% (16G/30G), inodes 38%. Clean.
 - **GitReins T1:** PASS ✓ (secrets ✓, static_analysis ✓, go_build ✓, go_lint ✓, go_tests ✓). gitleaks timeout→built-in fallback (expected on 381MB repo).
 - **Build:** tsc clean (EXIT=0)
-- **Tests:** **1749 passed, 0 failed, 62 skipped** (89/93 files, 21.60s). Stable.
-- **Git:** main, HEAD `d4d7eb64`. 1 modified file (AC file only).
-- **Staleness:** 443 specs (441 .spec.md + 2 .scl). No new specs. No uncovered features.
+- **Tests:** **1749 passed, 0 failed, 62 skipped** (89/93 files, 22.40s). Stable.
+- **Git:** main, HEAD `d4d7eb64`. 1 modified file (AC file only). No new commits since last wake.
+- **Staleness:** 443 specs (441 .spec.md + 2 .scl). 20 CLI subcommands. No new specs. No uncovered features.
 - **Archive:** docs/archive/ (16 files — archival). TODO.md from 2026-04-02 (stale/historical). No backlog.
 - **Work Items:** No pending or dispatched Axiom tasks.
-- **Untracked:** 4 bin/e2e-*.ts/mjs files (2026-07-04, E2E cascade tests — experimental, not yet spec-tracked). Noted for 2+ wakes.
+- **Untracked:** 4 bin/e2e-*.ts/mjs files (2026-07-04, E2E cascade tests — experimental, not yet spec-tracked). Noted for 3+ wakes.
+- **Next wake:** Maintenance mode (15th consecutive all-clear wake). Continue monitoring.
+
+## Previous Wake: 2026-07-05 14:30 UTC (MAINTENANCE — ALL CLEAR)
+
+- **Container:** Up 19h, bind mount READ_OK.
+- **/tmp:** 54% (16G/30G), inodes 38%. Clean.
+- **GitReins T1:** PASS ✓ (secrets ✓, static_analysis ✓, go_build ✓, go_lint ✓, go_tests ✓).
+- **Build:** tsc clean (EXIT=0)
+- **Tests:** **1749 passed, 0 failed, 62 skipped** (89/93 files, 21.60s). Stable.
+- **Git:** main, HEAD `d4d7eb64`. 1 modified file (AC file only).
+- **Staleness:** 443 specs. No new specs. No uncovered features.
+- **Archive:** docs/archive/ (16 files — archival). No backlog.
+- **Work Items:** No pending or dispatched Axiom tasks.
+- **Untracked:** 4 bin/e2e-*.ts/mjs files (experimental, noted for 2+ wakes).
 - **Next wake:** Maintenance mode (14th consecutive all-clear wake). Continue monitoring.
 
 ## Previous Wake: 2026-07-05 08:12 UTC (MAINTENANCE — ALL CLEAR)
@@ -50,52 +64,15 @@ Dashboard monitoring, dual-view docs, standard library tests.
 - **Build:** tsc clean (EXIT=0)
 - **Tests:** **1749 passed, 0 failed, 62 skipped** (89/93 files, 21.32s). Stable.
 - **Git:** main, HEAD `d4d7eb64`. 0 modified source files (AC file only).
-- **Staleness:** 443 specs (441 .spec.md + 2 .scl). CLI: 26 subcommands. No new specs. No uncovered features.
+- **Staleness:** 443 specs. CLI: 26 subcommands. No new specs. No uncovered features.
 - **Archive:** docs/archive/ (16 files — archival). No backlog.
 - **Work Items:** No pending or dispatched Axiom tasks.
-- **Untracked:** 4 bin/e2e-*.ts/mjs files (2026-07-04, E2E cascade tests — experimental, not yet spec-tracked).
+- **Untracked:** 4 bin/e2e-*.ts/mjs files (2026-07-04, E2E cascade tests — experimental).
 - **Next wake:** Maintenance mode (13th consecutive all-clear wake). Continue monitoring.
 
 ## Previous Wake: 2026-07-05 02:49 UTC (MAINTENANCE — ALL CLEAR)
 
 - Container Up 7h, T1 PASS, tsc clean, 1749/0/62. 12th consecutive all-clear.
-
-## Previous Wake: 2026-07-05 22:36 UTC (MAINTENANCE — ALL CLEAR)
-
-- Container Up 3h, T1 PASS, tsc clean, 1749/0/62. 11th consecutive all-clear.
-
-## Previous Wake: 2026-07-05 19:36 UTC (MAINTENANCE — ALL CLEAR)
-
-- Container OOM-killed, restarted. T1 PASS, tsc clean, 1748/1/62.
-
-## Previous Wake: 2026-07-05 08:35 UTC (MAINTENANCE — WORK)
-
-- ARCH-002 COMPLETE (committed `55d52b55`). ARCH-003 committed `c5f457e3`. ARCH-004 committed `4a7fdd99`.
-
-## Previous Wake: 2026-07-05 07:55 UTC (MAINTENANCE — ALL CLEAR)
-
-- T1 PASS, tsc clean, 1713/0/62. /tmp at 80% — TMPDIR redirect required.
-
-## Previous Wake: 2026-07-05 04:35 UTC (MAINTENANCE — ALL CLEAR)
-T1 PASS, tsc clean, 1709/0/62, container healthy. CI-002 complete (commits `25fd3acd`, `69d4e556`).
-
-## Previous Wake: 2026-07-04 22:00 UTC (MAINTENANCE — ALL CLEAR)
-T1 PASS, tsc clean, 1708/1/62 (1 flaky), container healthy. CI-002 complete.
-
-## Previous Wake: 2026-07-04 14:45 UTC (MAINTENANCE — ALL CLEAR)
-T1 PASS, tsc clean, 1709/0/62, container healthy, no new changes. CI-001 complete.
-
-## Previous Wake: 2026-07-03 19:43 UTC (MAINTENANCE — ALL CLEAR)
-T1 PASS, tsc clean, 1709/0/62, container healthy, no new changes.
-
-## Previous Wake: 2026-07-03 09:49 UTC (MAINTENANCE — ALL CLEAR)
-T1 PASS, tsc clean, 1679/15/25, container healthy, no new changes.
-
-## Previous Wake: 2026-07-02 16:32 UTC (MAINTENANCE — ALL CLEAR)
-Same state. T1 PASS, tsc clean, 1696/15/8, container healthy, no new changes.
-
-## Previous Wake: 2026-07-02 10:55 UTC (MAINTENANCE — ALL CLEAR)
-Same state. Fixed /tmp inode pressure (1340 stale temp dirs).
 
 ## Previous Wake: 2026-06-30 11:28 UTC (AC-067 COMPLETE)
 AC-067 went from in_progress → passed. Fixed 31 transition upgrade tests.
