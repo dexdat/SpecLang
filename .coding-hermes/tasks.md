@@ -250,7 +250,7 @@
 - **Validation:** tsc clean, vitest **1750 passed / 62 skipped / 0 failed** (was 1749; +1 = new AC7 test, no regressions across 89 test files), gitreins guard PASS
 - **NOT PUSHED** — GitHub Actions changes require review per cron rule
 
-## [ ] COMPLIANCE-001: Add src/generated/ to compliance exemptions
+## [x] COMPLIANCE-001: Add src/generated/ to compliance exemptions (commit a828b4e3)
 - **Priority:** medium
 - **Model:** direct-write (foreman) — 2-file mechanical edit, no spawn needed
 - **Source signal:** `./scripts/check_compliance.py --report` shows 53 non-compliant files, all in `src/generated/` (SPECLANG-GENERATED output of src/codegen/). Currently reports 91.7% compliance (588/641) — should be 100% after this fix.
