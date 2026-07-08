@@ -267,7 +267,7 @@
   6. `gitreins guard` PASS (Tier 1)
 - **Validation gates:** tsc + vitest + gitreins guard all pass before commit
 - **Commit pattern:** `compliance: add src/generated/ to auto-generated exemptions (COMPLIANCE-001)` + `Co-authored-by: wojons <wojonstech@gmail.com>`
-- **Status:** [-] in progress (started 2026-07-08)
+- **Status:** [x] DONE (commit a828b4e3, pushed to main)
 - **Actual results (2026-07-08):**
   - `./scripts/check_compliance.py --report`: **96.4%** (was 91.7%, +4.7pp)
   - Compliant: **588** (unchanged — all already compliant files preserved)
