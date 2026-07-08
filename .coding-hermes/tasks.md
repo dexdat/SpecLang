@@ -279,3 +279,28 @@
   - gitreins guard PASS (Tier 1)
   - Spec updated (`specs/compliance.spec.md` §Auto-Generated Files)
 - **Follow-up:** The 22 remaining non-compliant files are a separate concern — each needs a spec created, which is much larger scope. Queue as future task or accept the 96.4% baseline.
+
+## [ ] COMPLIANCE-002: Add specs for remaining 22 non-compliant files
+- **Priority:** medium
+- **Model:** direct-write (foreman) — 22 small spec files, mechanical work
+- **Source signal:** `./scripts/check_compliance.py --report` shows 96.4% (22 non-compliant)
+- **Files needing specs:**
+  - `src/lsp/references.ts` (81 lines, ref parser) — add `specs/lsp.spec.dir/src/references.ts.spec.md`
+  - `src/lsp/server.ts` (10,671 bytes, LSP server) — add `specs/lsp.spec.dir/src/server.ts.spec.md`
+  - 20× orphaned `scripts/*.py` (cron/header-fix utilities) — add to `specs/scripts.spec.dir/` or prune if dead
+- **Approach:**
+  1. **LSP files:** Read each file, write a small spec capturing intent + public API. Both are real working code (server handles spec diagnostics + @ref goto-def; references parses @ref: annotations). 2 spec files.
+  2. **Orphaned scripts:** Group by purpose:
+     - `add_short_field.py`, `analyze_completeness.py`, `check_compliance.py`, etc. → real utility scripts, deserve specs
+     - `fix_*.py`, `test_fix*.py` → one-time git corruption recovery scripts (likely dead post-1917fa47 which was the corruption cleanup)
+     - `debug_children.py`, `integration-test.py` → ad-hoc debug/test scripts (likely dead)
+     - `packaging.py` → real, but may belong to a different layer
+  3. For dead scripts: **delete** (with `git rm` if tracked) — they were one-time fixups, not ongoing utilities. For live utilities: add minimal specs.
+- **Acceptance:**
+  1. `./scripts/check_compliance.py --report` shows **Compliance Rate: 100%**
+  2. `❌ Non-compliant: 0`
+  3. `tsc --noEmit` clean
+  4. `npx vitest run` — 1750/62/0 (no regression)
+  5. `gitreins guard` PASS (Tier 1)
+- **Triage decision (will be made in next tick):** confirm which scripts are dead vs live. If all 20 are dead, this becomes a `git rm` batch instead of spec-writing.
+- **Status:** pending
