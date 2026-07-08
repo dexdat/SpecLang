@@ -47,6 +47,7 @@ EXEMPTIONS = [
     r'scripts/temp/',           # Temporary validation scripts - one-time use
     r'docs/archive/',           # Historical documentation - not implementing
     r'docs/prompts/',          # Development prompts - planning artifacts, not implementation
+    r'src/generated/',         # SPECLANG-GENERATED output of src/codegen/ — gitignored, contains SPECLANG-GENERATED marker
 ]
 
 def check_symlink_target_valid(file_path: Path, expected_spec_path: str) -> bool:

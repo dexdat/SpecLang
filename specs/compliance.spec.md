@@ -110,6 +110,7 @@ specs/{category}.spec.dir/     ← SOURCE OF TRUTH
    - node_modules/ - Dependencies
    - _index.json - Generated index
    - .speclang/ - Runtime state
+   - src/generated/ - SPECLANG-GENERATED output of src/codegen/ (gitignored, contains SPECLANG-GENERATED marker)
 
 2. **Configuration Templates**
    - .gitignore
