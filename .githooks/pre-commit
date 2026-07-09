@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# GitReins pre-commit hook — runs Tier 1 guards on staged changes.
+#
+# This file is tracked in the repo at `.githooks/pre-commit` so that both
+# local developers AND fresh CI clones can use it. Set core.hooksPath to
+# `.githooks` (the workflow does this in CI; local devs can do it once
+# with `git config core.hooksPath .githooks`) and git will pick this up
+# for every commit.
+#
+# We intentionally keep a symlink at `.git/hooks/pre-commit` so the
+# CI-005 acceptance test (which hardcodes that path) continues to pass
+# without changes — readFileSync follows symlinks transparently.
+
+# Skip cleanly if the repo hasn't been initialised with a config.
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+if [ ! -f "$REPO_ROOT/.gitreins/config.yaml" ]; then
+    exit 0
+fi
+
+cd "$REPO_ROOT"
+gitreins guard
+exit $?

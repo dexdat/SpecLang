@@ -76,16 +76,30 @@ the same result as CI. The CI script is a thin wrapper over local commands.
 | Tests pass locally but fail in CI | `TMPDIR` collision in CI | Already mitigated: `vitest.config.ts` redirects TMPDIR to `.tmp/` |
 | GitReins guard blocks commit | Secret in staged file | Remove the secret, add the file path to `.gitleaks.toml` allowlist |
 | ESLint config missing | v9 migration not completed | Workflow probes for an ESLint config file before invoking `npm run lint`; step exits 0 when absent |
-| `Hook not found: /home/runner/.git/hooks/pre-commit` (CI-005 AC1) | `actions/checkout@v4` does not install git hooks | CI workflow runs an `Install pre-commit hook` step (`gitreins install || true; chmod +x .git/hooks/pre-commit`) before tests so the AC1 existsSync assertion has a hook to read |
+| `Hook not found: /home/runner/.git/hooks/pre-commit` (CI-005 AC1) | `actions/checkout@v4` does not install git hooks; `.git/hooks/` is per-clone and not tracked | The canonical hook lives at `.githooks/pre-commit` (tracked); CI's `Install pre-commit hook` step symlinks it into `.git/hooks/pre-commit` and sets `core.hooksPath=.githooks` so both the AC1 path-based assertion and git's own hook lookup succeed on a fresh clone |
 
 ## Pre-Commit Hook in CI (CI-005 AC7)
 
-GitHub Actions' `actions/checkout` step does not install git hooks. Without an explicit
-install step, the `tests/ci/ci005-precommit-hook.test.ts` "Hook not found"
-failure breaks the build (run `28718869369`, 2026-07-04). The workflow now installs
-the project's `.git/hooks/pre-commit` (committed in-repo) via the
-`Install pre-commit hook` step, which runs `gitreins install` (writes the canonical
-guard hook) and ensures the executable bit is set.
+GitHub Actions' `actions/checkout` step does not install git hooks, and `.git/hooks/` is
+per-clone (not tracked). Without an explicit install step, the
+`tests/ci/ci005-precommit-hook.test.ts` "Hook not found" failure breaks the build
+(observed in CI run `28718869369`, 2026-07-04, and again on run `29001005644` /
+2026-07-09 — fresh clone had no `.git/hooks/pre-commit`, the prior `gitreins install`
+was a no-op because GitReins isn't installed until step 12).
+
+The canonical hook now lives at `.githooks/pre-commit` (tracked in the repo). CI's
+`Install pre-commit hook` step:
+
+1. Symlinks `.git/hooks/pre-commit` → `../../.githooks/pre-commit` (so the
+   `tests/ci/ci005-precommit-hook.test.ts` AC1 existsSync assertion finds a hook
+   at its hardcoded path on a fresh clone).
+2. Sets `core.hooksPath=.githooks` so git itself picks up the tracked hook on
+   every commit (no `gitreins install` race).
+3. Ensures the executable bit is set on both the canonical file and the symlink.
+
+Local developers run the same `git config core.hooksPath .githooks` once after
+cloning; the `.git/hooks/pre-commit` symlink is restored by the project
+`setup.sh` (idempotent — re-running is safe).
 
 ## Tier 2 LLM Evaluation (CI-004)
 

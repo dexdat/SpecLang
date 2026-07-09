@@ -55,29 +55,28 @@ jobs:
         # and verify it invokes `gitreins guard`. GitHub Actions'
         # `actions/checkout` does NOT install git hooks by default — we
         # must wire them up explicitly so the hook-exists assertion
-        # passes. The hook script is committed at `.git/hooks/pre-commit`
-        # in the repo (where it lives for local Linux/macOS devs).
+        # passes.
         #
-        # Strategy: (1) `gitreins install` writes the canonical
-        # GitReins-style hook that runs `gitreins guard`; (2) if the
-        # committed `.git/hooks/pre-commit` exists in the workspace,
-        # it overrides the gitreins-generated one. We do step 1 first
-        # (idempotent, will overwrite if needed) so the hook is always
-        # present, even on fresh CI clones without the committed copy.
+        # Strategy: the canonical hook lives at `.githooks/pre-commit`
+        # (tracked in the repo) and is symlinked to `.git/hooks/pre-commit`
+        # by `setup.sh` for local devs and by this step for CI. Pointing
+        # `core.hooksPath` at `.githooks` makes git pick up the tracked
+        # script directly on a fresh CI clone — no `gitreins install`
+        # race (GitReins isn't installed until step 12). The symlink at
+        # `.git/hooks/pre-commit` keeps the CI-005 AC1 path-based
+        # assertion working without test changes.
         #
         # See specs/ci.spec.md §CI-005 acceptance criteria AC1 for the
         # "hook exists and is executable" contract.
         run: |
-          if command -v gitreins >/dev/null 2>&1; then
-            gitreins install || true
-          fi
-          # Belt-and-braces: copy the committed hook if present,
-          # overwriting whatever installer wrote.
-          if [ -f .git/hooks/pre-commit ]; then
-            chmod +x .git/hooks/pre-commit
-            echo "✓ pre-commit hook present and executable"
+          if [ -f .githooks/pre-commit ]; then
+            mkdir -p .git/hooks
+            ln -sf ../../.githooks/pre-commit .git/hooks/pre-commit
+            chmod +x .githooks/pre-commit .git/hooks/pre-commit
+            git config core.hooksPath .githooks
+            echo "✓ pre-commit hook installed (.githooks/pre-commit + .git/hooks/pre-commit symlink, core.hooksPath=.githooks)"
           else
-            echo "⚠ pre-commit hook not present after gitreins install — CI-005 AC1 will fail"
+            echo "⚠ .githooks/pre-commit missing — CI-005 AC1 will fail"
             exit 1
           fi
 
