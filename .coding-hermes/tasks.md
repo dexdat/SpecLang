@@ -304,3 +304,16 @@
   5. `gitreins guard` PASS (Tier 1)
 - **Triage decision (will be made in next tick):** confirm which scripts are dead vs live. If all 20 are dead, this becomes a `git rm` batch instead of spec-writing.
 - **Status:** pending
+
+## [x] CI-006: Fix pre-commit hook missing on fresh CI clone (commit 442a3296)
+- **Priority:** high (CI was red)
+- **CI Run:** https://github.com/dexdat/SpecLang/actions/runs/29001005644
+- **Root cause:** `.git/hooks/pre-commit` is per-clone (git refuses to track `.git/` contents), so a fresh `actions/checkout` clone had no hook. The step's `gitreins install || true` was a no-op because GitReins isn't installed until step 12 — by then, AC1's existsSync assertion would have failed. Same root cause as the original 28718869369 fix (commit 46828de5) but that one relied on a non-existent tracked `.git/hooks/pre-commit`.
+- **Fix:**
+  - New `.githooks/pre-commit` (tracked, executable) — the canonical hook script
+  - Workflow `Install pre-commit hook` step: (1) symlinks `.git/hooks/pre-commit` → `../../.githooks/pre-commit` (so CI-005 AC1's hardcoded path-based existsSync assertion still finds a hook), (2) sets `core.hooksPath=.githooks` (so git's own hook lookup picks up the tracked file on a fresh clone — no `gitreins install` race), (3) ensures executable bit on both
+  - `.git/hooks/pre-commit` is now a symlink to the tracked file (idempotent restore via CI step or local `setup.sh`)
+  - `specs/ci.spec.md` Failure-Modes table + §Pre-Commit Hook in CI (CI-005 AC7) updated to reflect the new approach
+- **Acceptance:** YAML well-formed, spec+workflow aligned, vitest 1750/62/0, gitreins guard Tier 1 PASS, **fresh-clone simulation: `.githooks/pre-commit` arrives in clone, install step exits 0, AC1 contract satisfied, CI-005 tests 7/7 PASS in fresh clone**
+- **Ad-hoc verification:** `/tmp/hermes-verify-ci-hook-006.sh` — 10/10 passed
+- **NOT PUSHED** — GitHub Actions changes require review per cron rule
