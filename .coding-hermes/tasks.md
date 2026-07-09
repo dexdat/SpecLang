@@ -280,7 +280,7 @@
   - Spec updated (`specs/compliance.spec.md` §Auto-Generated Files)
 - **Follow-up:** The 22 remaining non-compliant files are a separate concern — each needs a spec created, which is much larger scope. Queue as future task or accept the 96.4% baseline.
 
-## [ ] COMPLIANCE-002: Add specs for remaining 22 non-compliant files
+## [x] COMPLIANCE-002: Add specs for remaining 22 non-compliant files
 - **Priority:** medium
 - **Model:** direct-write (foreman) — 22 small spec files, mechanical work
 - **Source signal:** `./scripts/check_compliance.py --report` shows 96.4% (22 non-compliant)
