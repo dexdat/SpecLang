@@ -80,6 +80,26 @@ jobs:
             exit 1
           fi
 
+      - name: Install gitleaks
+        # CI-005's acceptance tests (AC3 + AC6 in
+        # `tests/ci/ci005-precommit-hook.test.ts`) invoke `gitleaks detect`
+        # against scratch repos. Without the gitleaks binary, execFile
+        # returns ENOENT (a string), and `Number(ENOENT)` becomes `NaN`,
+        # causing `expect(gl.status).toBe(1)` to fail with
+        # "expected NaN to be 1". Install gitleaks before `Run tests`
+        # so the assertions execute against the real scanner.
+        #
+        # Uses the official `gitleaks/gitleaks-action` which downloads
+        # the matching release binary (v8.30.1 as of 2026-07). We
+        # invoke it with `args: --help` to perform install + setup
+        # without running a scan — the actual scan is done by the tests.
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+        with:
+          args: --help
+
       - name: Build TypeScript
         run: npm run build
 

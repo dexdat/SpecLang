@@ -317,3 +317,19 @@
 - **Acceptance:** YAML well-formed, spec+workflow aligned, vitest 1750/62/0, gitreins guard Tier 1 PASS, **fresh-clone simulation: `.githooks/pre-commit` arrives in clone, install step exits 0, AC1 contract satisfied, CI-005 tests 7/7 PASS in fresh clone**
 - **Ad-hoc verification:** `/tmp/hermes-verify-ci-hook-006.sh` — 10/10 passed
 - **NOT PUSHED** — GitHub Actions changes require review per cron rule
+
+## [x] CI-007: Install gitleaks in CI workflow (commit pending)
+- **Priority:** high (CI was red — `expected NaN to be 1` in 2 tests)
+- **CI Run:** https://github.com/dexdat/SpecLang/actions/runs/29077534603
+- **Root cause:** CI-005's `tests/ci/ci005-precommit-hook.test.ts` AC3 + AC6 invoke `gitleaks detect` against scratch repos. The CI workflow never installed the `gitleaks` binary, so `execFile` returned `ENOENT` (a string), `Number(ENOENT)` evaluated to `NaN`, and `expect(gl.status).toBe(1)` failed with "expected NaN to be 1". Only the `cli.test.ts > should support --quiet output` flake was unrelated (a transient index/state race that does not reproduce locally).
+- **Fix:**
+  - New `Install gitleaks` step in `.github/workflows/ci.yml` (after `Install pre-commit hook`, before `Build TypeScript`) using `gitleaks/gitleaks-action@v2` with `args: --help` so it installs the binary but does not run a scan — the test suite runs the actual scan.
+  - `specs/ci.spec.md` Failure-Modes table gains a new row for the "expected NaN to be 1" symptom, citing the install step as the remediation.
+  - Workflow YAML validated with `python3 -c "import yaml; yaml.safe_load(...)"` — step is well-formed and parsed correctly.
+- **Acceptance:**
+  - YAML well-formed, step present + ordered before `Run tests`
+  - vitest 1750/62/0 (no regression)
+  - gitreins guard Tier 1 PASS
+  - `tests/ci/ci005-precommit-hook.test.ts` — 7/7 pass locally (with `gitleaks` available; CI mirror uses the new install step)
+- **Ad-hoc verification:** `/tmp/hermes-verify-ci007-gitleaks-install.sh` — 8/8 passed
+- **NOT PUSHED** — GitHub Actions changes require review per cron rule

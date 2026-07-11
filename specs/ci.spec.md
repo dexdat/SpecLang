@@ -77,6 +77,7 @@ the same result as CI. The CI script is a thin wrapper over local commands.
 | GitReins guard blocks commit | Secret in staged file | Remove the secret, add the file path to `.gitleaks.toml` allowlist |
 | ESLint config missing | v9 migration not completed | Workflow probes for an ESLint config file before invoking `npm run lint`; step exits 0 when absent |
 | `Hook not found: /home/runner/.git/hooks/pre-commit` (CI-005 AC1) | `actions/checkout@v4` does not install git hooks; `.git/hooks/` is per-clone and not tracked | The canonical hook lives at `.githooks/pre-commit` (tracked); CI's `Install pre-commit hook` step symlinks it into `.git/hooks/pre-commit` and sets `core.hooksPath=.githooks` so both the AC1 path-based assertion and git's own hook lookup succeed on a fresh clone |
+| `expected NaN to be 1` in CI-005 AC3 / AC6 (gitleaks assertions) | `gitleaks` binary not installed in CI; `execFile` returns `ENOENT` (string) → `Number(ENOENT)` → `NaN` | CI's `Install gitleaks` step (uses `gitleaks/gitleaks-action@v2` with `args: --help`) downloads the v8.30.1 binary before `Run tests`, so the assertions execute against the real scanner |
 
 ## Pre-Commit Hook in CI (CI-005 AC7)
 
