@@ -89,16 +89,17 @@ jobs:
         # "expected NaN to be 1". Install gitleaks before `Run tests`
         # so the assertions execute against the real scanner.
         #
-        # Uses the official `gitleaks/gitleaks-action` which downloads
-        # the matching release binary (v8.30.1 as of 2026-07). We
-        # invoke it with `args: --help` to perform install + setup
-        # without running a scan — the actual scan is done by the tests.
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
-        with:
-          args: --help
+        # Downloads the gitleaks v8.30.1 binary directly from GitHub
+        # releases — no third-party action, no license secret required.
+        # Placed in /usr/local/bin so it's on PATH for the test assertions
+        # that call `gitleaks detect` via execFile.
+        run: |
+          GITLEAKS_VER="8.30.1"
+          GITLEAKS_URL="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VER}/gitleaks_${GITLEAKS_VER}_linux_x64.tar.gz"
+          curl -sSfL "$GITLEAKS_URL" | sudo tar -xz -C /usr/local/bin gitleaks
+          sudo chmod +x /usr/local/bin/gitleaks
+          gitleaks version
+          echo "✓ gitleaks $(gitleaks version) installed"
 
       - name: Build TypeScript
         run: npm run build

@@ -2,14 +2,12 @@
 
 ## Active
 
-- [ ] **FIX-CI-001: Diagnose and fix CI build failures (5 consecutive red runs)**
+- [ ] **FIX-CI-001: CI installs gitleaks without license secret**
   - **Priority:** high
-  - **Source:** Discovery sweep 2026-07-11 — all 5 recent CI runs on main are `failure`
-  - **Symptom:** Build step (`npm run build` / `tsc`) fails on CI but passes locally
-  - **Latest run:** https://github.com/dexdat/SpecLang/actions/runs/28683977186
-  - **Context:** Remote CI workflow includes `.githooks/` pre-commit hook fix (CI-006) but NOT the gitleaks install (CI-007). Local has additional unpushed CI-007 fixes.
-  - **Acceptance:** CI run on main shows ✅ green (build + test pass)
-  - **Model:** MiniMax-M3
+  - **Source:** CI-007 fix used `gitleaks/gitleaks-action@v2` which requires `GITLEAKS_LICENSE` secret — not configured. CI run 29169928578 failed at "Install gitleaks" step.
+  - **Fix:** Replace gitleaks-action with direct binary download (`curl | tar` from GitHub releases). No license required.
+  - **Acceptance:** CI run on main shows ✅ green (build + test pass, gitleaks installed, no NaN assertions)
+  - **Model:** deepseek-v4-flash
 
 - [ ] **FIX-TEST-001: Fix flaky cascade status test timeout**
   - **Priority:** low
@@ -44,4 +42,4 @@
 - [x] **COMPLIANCE-001: Add src/generated/ to exemptions** (commit a828b4e3)
 - [x] **COMPLIANCE-002: Specs for 22 non-compliant files** (commit 98ccac4c)
 - [x] **CI-006 Fix: pre-commit hook missing on fresh CI clone** (commit 442a3296)
-- [x] **CI-007: Install gitleaks in CI workflow** (commit ace758fc — NOT PUSHED)
+- [x] **CI-007: Install gitleaks in CI workflow** (commit ace758fc — pushed by spare foreman)
