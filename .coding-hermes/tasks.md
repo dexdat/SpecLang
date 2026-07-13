@@ -2,9 +2,26 @@
 
 ## Active
 
-- [x] **FIX-TEST-004: Fix 2 daemon autonomous cascade test timeouts** (stale — resolved by prior CI-007 ordering fix) — Both tests pass at ~3s, confirmed 2 consecutive runs. Same mechanism as FIX-TEST-001 resolution.
+- [ ] **FIX-VALIDATE-002: Fix 68 spec reference format issues**
+  - **Priority:** medium
+  - **Source:** Discovery sweep 2026-07-12 — `speclang validate` shows 68 `[@validation/refs]` failures
+  - **Failures:** Invalid `@ref:` format — trailing backticks, parentheses, quotes, wrong prefixes (e.g. `@ref:speclang/implementation...` should be `@ref:specs/implementation...`)
+  - **Acceptance:** `speclang validate` shows 0 refs failures, refs category passes
+  - **Model:** deepseek-v4-flash
+  - **Files:** specs/ (various .spec.md files with broken @ref: lines)
+
+- [ ] **FIX-VALIDATE-003: Fix 57 block kind + 12 missing header fields**
+  - **Priority:** medium
+  - **Source:** Discovery sweep 2026-07-12 — `speclang validate` shows 57 `[@validation/blocks]` + 12 `[@validation/autonomous]` failures
+  - **Block issues:** Invalid block kinds — enum, interface, class (not recognized by validator)
+  - **Header issues:** Missing required fields — layer, project_level, short
+  - **Acceptance:** `speclang validate` shows 0 blocks + 0 autonomous failures
+  - **Model:** deepseek-v4-flash
+  - **Files:** specs/ (various .spec.md files)
 
 ## Done
+
+- [x] **FIX-TEST-004: Fix 2 daemon autonomous cascade test timeouts** (stale — resolved by prior CI-007 ordering fix) — Both tests pass at ~3s, confirmed 2 consecutive runs. Same mechanism as FIX-TEST-001 resolution.
 
 - [x] **FIX-TEST-003: Fix 4 CLI get/search tests referencing wrong spec ID** (commit 0ca68981) — Replaced `@speclang/mcp.authentication` with `@speclang/auth` in tests/cli.test.ts. 32/32 CLI tests pass, 0 failures. ✅
 
