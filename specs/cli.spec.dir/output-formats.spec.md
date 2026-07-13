@@ -5,7 +5,7 @@ layer: 1
 tags: [cli, output]
 project_level: Alpha
 agent_support: agent_assisted
-parent: ""@ref:specs/cli.specpart: 6/8
+parent: "@ref:specs/cli.specpart: 6/8
 short: CLI output formats
 ---
 

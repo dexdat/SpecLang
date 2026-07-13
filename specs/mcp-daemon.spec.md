@@ -8,8 +8,8 @@ status: draft
 project_level: Alpha
 agent_support: agent_assisted
 children:
-  - "@speclang/mcp-daemon/architecture"
-  - "@speclang/mcp-daemon/config"
+    - "@speclang/mcp-daemon/architecture"
+    - "@speclang/mcp-daemon/config"
 short: MCP Daemon for enterprise deployments
 ---
 

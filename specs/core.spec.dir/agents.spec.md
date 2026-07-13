@@ -6,7 +6,7 @@ project_level: "Alpha"
 agent_support: "agent_autonomous"
 tags: [core]
 short: "Agent responsibilities: spec, code, test, backsync"
-parent: ""@ref:speclang/corepart: 4/6
+parent: "@ref:speclang/corepart: 4/6
 ---
 
 ## Agent Responsibilities

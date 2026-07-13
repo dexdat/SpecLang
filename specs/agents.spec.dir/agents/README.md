@@ -10,10 +10,10 @@ Custom agent definitions for Speclang.
 ## What are Agents?
 
 Agents in Speclang are AI assistants that:
-- Own specific files or file patterns
-- React to file changes
-- Write new files
-- Coordinate through the cascade system
+  - "Own specific files or file patterns"
+  - "React to file changes"
+  - "Write new files"
+  - "Coordinate through the cascade system"
 
 ## Agent Structure
 

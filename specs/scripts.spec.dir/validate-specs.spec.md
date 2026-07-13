@@ -3,7 +3,7 @@ id: "@speclang/scripts-validate-specs"
 version: 0.1.0
 layer: 1
 tags: [scripts, validation, specs]
-parent: ""@ref:speclang/scriptsstatus: draft
+parent: "@ref:speclang/scriptsstatus: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Validate Specs Script

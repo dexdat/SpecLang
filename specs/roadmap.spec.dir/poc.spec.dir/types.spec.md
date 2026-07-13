@@ -1,6 +1,6 @@
 # speclang-header lines:7
 id: "@speclang/roadmap/poc/types"
-parent: ""@ref:specs/roadmap/pocversion: 0.1.0
+parent: "@ref:specs/roadmap/pocversion: 0.1.0
 layer: 2
 short: "TypeScript types and interfaces for POC"
 tags: [poc, types, interfaces, typescript]

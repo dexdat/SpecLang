@@ -3,7 +3,7 @@ id: "@speclang/scripts-fix-headers"
 version: 0.1.0
 layer: 2
 tags: [scripts, headers, fix]
-parent: ""@ref:speclang/scriptsstatus: draft
+parent: "@ref:speclang/scriptsstatus: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Fix Headers Script

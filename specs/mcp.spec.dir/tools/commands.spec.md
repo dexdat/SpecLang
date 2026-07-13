@@ -5,7 +5,7 @@ layer: 3
 project_level: Alpha
 agent_support: agent_assisted
 tags: [mcp, tools, commands]
-parent: ""@ref:speclang/mcppart: 6/12
+parent: "@ref:speclang/mcppart: 6/12
 siblings:
   next: ""@ref:specs/mcp.spec.dir/tools/locksshort: "Command queue tools: get status, query commands, insert command"
 ---

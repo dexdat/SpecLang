@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:13
 id: "@speclang/executor"
 version: 0.1.0
 layer: 5
@@ -6,7 +6,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [executor, pipeline, scheduling, execution]
 children:
-  - "@ref:@ref:specs/executor.spec.dir/execution  - "@ref:specs/executor.spec.dir/scheduling
+    - "@ref:specs/executor.spec.dir/execution"
+    - "@ref:specs/executor.spec.dir/scheduling"
 
 short: Pipeline executor - orchestrates stage scheduling and execution
 ---

@@ -1,6 +1,6 @@
 # speclang-header lines:7
 id: "@speclang/roadmap/poc/tests"
-parent: ""@ref:specs/roadmap/pocversion: 0.1.0
+parent: "@ref:specs/roadmap/pocversion: 0.1.0
 layer: 2
 short: "Comprehensive test suite for POC"
 tags: [poc, tests, testing, validation]

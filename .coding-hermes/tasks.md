@@ -2,14 +2,6 @@
 
 ## Active
 
-- [ ] **FIX-VALIDATE-001: Fix 313 spec validation failures (pre-existing format issues)**
-  - **Priority:** medium
-  - **Source:** Discovery sweep 2026-07-11
-  - **Progress (2026-07-12):** Parser fix (5389c248) skips code blocks in ref extraction (-6 failures, -40 errors). Remaining 313 failures are YAML parse errors ("Nested mappings not allowed", "Plain value cannot start with @" in header frontmatter) and ~20 ref format issues from inline markdown. These need per-file YAML header fixes.
-  - **Root cause:** Many spec YAML headers have malformed quoting (`parent: ""@ref:specs/...` patterns) or unquoted `@` values.
-  - **Acceptance:** `./bin/speclang validate` shows <50 failures (from 313)
-  - **Model:** MiniMax-M3 (batch fix approach recommended)
-
 - [ ] **FIX-TEST-002: Fix intermittent test timeouts in CLI test suite**
   - **Priority:** low
   - **Source:** Foreman tick 2026-07-12 — 2 tests flake intermittently:
@@ -20,6 +12,8 @@
   - **Model:** MiniMax-M3
 
 ## Done
+
+- [x] **FIX-VALIDATE-001: Fix 313 spec validation failures** (commit 2c9fcac5) — 376 spec header line counts corrected. AC met: validate shows 21 failures (<50)
 
 - [x] **FIX-CI-001: CI installs gitleaks without license secret** (commit 9d116bb1 + 4c12ee47) — RESOLVED by spare foreman ✅
 - [x] **FIX-TEST-001: Fix flaky cascade status test timeout** (resolved 2026-07-12) — cascade status test passed 4+ consecutive runs. The search test skips from CI-007 likely changed test ordering enough to resolve the port/resource conflict. Accept: full suite 3 consecutive runs with 0 cascade-related failures ✅

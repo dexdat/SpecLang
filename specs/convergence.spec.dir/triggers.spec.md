@@ -2,7 +2,7 @@
 id: "@speclang/convergence/triggers"
 version: 0.1.0
 layer: 2
-parent: ""@ref:speclang/convergencepart: 2/2
+parent: "@ref:speclang/convergencepart: 2/2
 siblings:
   prev: ""@ref:speclang/convergence/detectionproject_level: Alpha
 agent_support: agent_autonomous

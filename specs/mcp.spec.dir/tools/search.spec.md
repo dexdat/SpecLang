@@ -5,7 +5,7 @@ layer: 3
 project_level: Alpha
 agent_support: agent_assisted
 tags: [mcp, tools, search]
-parent: ""@ref:speclang/mcppart: 4/12
+parent: "@ref:speclang/mcppart: 4/12
 siblings:
   next: ""@ref:specs/mcp.spec.dir/tools/specsshort: "Search tools: speclang_search and speclang_semantic_search"
 ---

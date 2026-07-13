@@ -1,4 +1,4 @@
-# speclang-header lines:35
+# speclang-header lines:13
 id: "@speclang/cascade/convergence"
 version: 0.1.0
 layer: 2
@@ -8,9 +8,10 @@ status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Cascade Convergence
-parent: ""@ref:speclang/cascadepart: 2/2
+parent: "@ref:speclang/cascadepart: 2/2
 siblings:
-  prev: ""@ref:speclang/cascade/triggers---
+---
+  prev: ""@ref:speclang/cascade/triggers
 # Cascade Convergence
 
 How the cascade ends and what happens after.

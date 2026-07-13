@@ -1,6 +1,6 @@
 # speclang-header lines:11
 id: "@speclang/mcp-sse-stream"
-parent: ""@ref:speclang/mcppart: 10/12
+parent: "@ref:speclang/mcppart: 10/12
 siblings:
   next: ""@ref:specs/mcp.spec.dir/configurationshort: SSE stream implementation for real-time events
 project_level: Alpha

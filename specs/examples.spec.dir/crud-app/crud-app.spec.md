@@ -7,9 +7,9 @@ agent_support: agent_autonomous
 tags: [example, crud, rest, api]
 short: CRUD example with REST API
 depends_on:
-  - "@ref:specs/core
-  - "@ref:specs/examples/hello-world
-  - "@ref:specs/examples/auth
+    - "@ref:specs/core"
+    - "@ref:specs/examples/hello-world"
+    - "@ref:specs/examples/auth"
 ---
 
 # CRUD Application Example

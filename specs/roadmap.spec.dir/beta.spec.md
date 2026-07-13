@@ -1,6 +1,6 @@
-# speclang-header lines:14
+# speclang-header lines:17
 id: "@speclang/roadmap/beta"
-parent: ""@ref:specs/roadmapversion: 1.0.0
+parent: "@ref:specs/roadmapversion: 1.0.0
 layer: 1
 target: specs/roadmap.spec.dir/beta.spec.dir/
 short: "Beta phase: Stability and performance optimization"
@@ -8,9 +8,12 @@ project_level: Beta
 agent_support: agent_autonomous
 tags: [roadmap, beta, phase-4, performance, stability]
 children:
-  - ""@ref:specs/roadmap.spec.dir/beta.spec.dir/performance-optimization  - ""@ref:specs/roadmap.spec.dir/beta.spec.dir/scalability  - ""@ref:specs/roadmap.spec.dir/beta.spec.dir/monitoring  - ""@ref:specs/roadmap.spec.dir/beta.spec.dir/external-testingdepends_on:
-  - "@speclang/roadmap/alpha"
-  - "@speclang/testing-strategy.spec"
+    - ""@ref:specs/roadmap.spec.dir/beta.spec.dir/performance-optimization"
+    - ""@ref:specs/roadmap.spec.dir/beta.spec.dir/scalability"
+    - ""@ref:specs/roadmap.spec.dir/beta.spec.dir/monitoring"
+    - ""@ref:specs/roadmap.spec.dir/beta.spec.dir/external-testingdepends_on:"
+    - "@speclang/roadmap/alpha"
+    - "@speclang/testing-strategy.spec"
 ---
 
 # Beta Phase: External Testing

@@ -8,8 +8,8 @@ tags: [typescript, generated, auto-generated, mcp, server]
 short: "MCP Server implementation for SpecLang"
 status: generated
 depends_on:
-  - "@speclang/mcp"
-  - "@speclang/core"
+    - "@speclang/mcp"
+    - "@speclang/core"
 ---
 
 # MCP Server Spec

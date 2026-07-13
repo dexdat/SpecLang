@@ -1,6 +1,6 @@
 # speclang-header lines:12
 id: "@speclang/ui-index"
-parent: ""@ref:specs/uipart: 14/14
+parent: "@ref:specs/uipart: 14/14
 siblings:
   prev: ""@ref:specs/ui.spec.dir/testingshort: Dashboard index.html entry point
 project_level: Alpha

@@ -5,7 +5,7 @@ layer: 3
 project_level: Alpha
 agent_support: agent_assisted
 tags: [mcp, run-modes]
-parent: ""@ref:speclang/mcppart: 3/12
+parent: "@ref:speclang/mcppart: 3/12
 siblings:
   next: ""@ref:specs/mcp.spec.dir/tools/searchshort: "Three run modes: editor-initiated, remote, server"
 ---

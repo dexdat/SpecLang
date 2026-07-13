@@ -8,7 +8,7 @@ status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Cascade Triggers
-parent: ""@ref:speclang/cascadepart: 1/2
+parent: "@ref:speclang/cascadepart: 1/2
 ---
 # Cascade Triggers
 

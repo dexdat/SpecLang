@@ -5,7 +5,7 @@ layer: 3
 project_level: Alpha
 agent_support: agent_assisted
 tags: [mcp, tools, locks]
-parent: ""@ref:speclang/mcppart: 7/12
+parent: "@ref:speclang/mcppart: 7/12
 siblings:
   next: ""@ref:specs/mcp.spec.dir/authenticationshort: "Lock and event tools: claim event, acquire lock, release lock"
 ---

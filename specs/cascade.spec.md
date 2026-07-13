@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:16
 id: "@speclang/cascade"
 version: 0.2.0
 target: src/cascade/
@@ -7,7 +7,10 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [cascade, reactive, loop, triggers, convergence]
 children:
-  - "@ref:specs/cascade.spec.dir/triggers  - "@ref:specs/cascade.spec.dir/convergence  - "@ref:@ref:specs/cascade.spec.dir/continuous-improvement  - "@ref:specs/cascade.spec.dir/error-handling
+    - "@ref:specs/cascade.spec.dir/triggers"
+    - "@ref:specs/cascade.spec.dir/convergence"
+    - "@ref:specs/cascade.spec.dir/continuous-improvement"
+    - "@ref:specs/cascade.spec.dir/error-handling"
 short: "Cascade - Reactive loop of spec expansion"
 status: draft
 ---

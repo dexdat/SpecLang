@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [core, entities, daemon, agent]
 short: "Core entities: daemon, agent, northstar, pointer-graph, autonomous-readiness"
-parent: ""@ref:specs/corepart: 1/6
+parent: "@ref:specs/corepart: 1/6
 ---
 
 # Core Entities

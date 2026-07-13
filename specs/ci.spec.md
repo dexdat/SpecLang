@@ -9,8 +9,8 @@ short: GitHub Actions CI workflow for SpecLang
 target: .github/workflows/ci.yml
 status: active
 depends_on:
-  - "@ref:speclang/core
-  - "@ref:speclang/build
+    - "@ref:speclang/core"
+    - "@ref:speclang/build"
 ---
 
 # GitHub Actions CI Workflow

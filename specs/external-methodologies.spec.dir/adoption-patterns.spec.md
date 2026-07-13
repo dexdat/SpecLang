@@ -5,7 +5,7 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [bmad, patterns, adoption, mapping, workflow]
-parent: ""@ref:specs/external-methodologiespart: "3/3"
+parent: "@ref:specs/external-methodologiespart: "3/3"
 siblings:
   prev: ""@ref:specs/external-methodologies.spec.dir/recommendations  next: null
 short: Adoption Patterns - How to map BMAD concepts to SpecLang

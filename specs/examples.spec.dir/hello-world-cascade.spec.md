@@ -3,7 +3,7 @@ id: "@speclang/examples-spec-dir/hello-world-cascade"
 version: 0.1.0
 layer: 2
 tags: [example, cascade, end-to-end, tutorial, demo]
-parent: ""@ref:specs/examples.specproject_level: POC
+parent: "@ref:specs/examples.specproject_level: POC
 agent_support: agent_autonomous
 short: "Hello World Cascade - Complete end-to-end demonstration"
 ---

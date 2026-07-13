@@ -5,7 +5,7 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [locks, management, acquisition, release]
-parent: ""@ref:speclang/lockspart: 2/2
+parent: "@ref:speclang/lockspart: 2/2
 short: "Lock acquisition, release, and management operations"
 ---
 # Lock Management

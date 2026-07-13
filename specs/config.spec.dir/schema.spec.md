@@ -5,7 +5,7 @@ layer: 2
 tags: [config, schema, entities]
 project_level: Alpha
 agent_support: agent_assisted
-parent: ""@ref:speclang/configpart: 1/2
+parent: "@ref:speclang/configpart: 1/2
 short: Configuration schema definitions
 ---
 # Configuration Schema

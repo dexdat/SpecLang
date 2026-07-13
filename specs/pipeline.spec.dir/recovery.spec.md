@@ -1,6 +1,6 @@
 # speclang-header lines:12
 id: "@speclang/pipeline/recovery"
-parent: ""@ref:speclang/pipelinepart: 3/3
+parent: "@ref:speclang/pipelinepart: 3/3
 siblings:
   prev: ""@ref:speclang/pipeline/hooksshort: Build Pipeline - Recovery
 project_level: Alpha

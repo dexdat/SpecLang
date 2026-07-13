@@ -1,6 +1,6 @@
 # speclang-header lines:11
 id: "@speclang/ui-components-system-metrics"
-parent: ""@ref:specs/uipart: 7/14
+parent: "@ref:specs/uipart: 7/14
 siblings:
   prev: ""@ref:specs/ui.spec.dir/components/queue-depth  next: ""@ref:specs/ui.spec.dir/components/control-panelshort: System metrics panel component
 project_level: Alpha

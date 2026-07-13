@@ -6,8 +6,8 @@ tags: [naming, format, files, conventions]
 imports: ["@speclang/core"]
 status: draft
 parts:
-  - "@speclang/file-naming/extensions"
-  - "@speclang/file-naming/patterns"
+    - "@speclang/file-naming/extensions"
+    - "@speclang/file-naming/patterns"
 
 project_level: Alpha
 agent_support: agent_assisted

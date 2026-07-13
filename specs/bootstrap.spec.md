@@ -8,12 +8,12 @@ tags: [bootstrap, meta-circular, self-hosting]
 short: Meta-circular bootstrap process for SpecLang
 status: active
 depends_on:
-  - "@ref:speclang/core
-  - "@ref:speclang/cascade
-  - "@ref:speclang/headers
+    - "@ref:speclang/core"
+    - "@ref:speclang/cascade"
+    - "@ref:speclang/headers"
 children:
-  - "@ref:specs/bootstrap/phases
-  - "@ref:specs/bootstrap/execution
+    - "@ref:specs/bootstrap/phases"
+    - "@ref:specs/bootstrap/execution"
 ---
 # Bootstrap Process
 

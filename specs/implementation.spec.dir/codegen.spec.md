@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_assisted
 tags: [implementation, codegen]
 short: "Code Generation Implementation"
-parent: ""@ref:speclang/implementationpart: 5/7
+parent: "@ref:speclang/implementationpart: 5/7
 ---
 # Code Generation Implementation
 

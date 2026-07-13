@@ -1,6 +1,6 @@
 # speclang-header lines:7
 id: "@speclang/roadmap/poc/integration"
-parent: ""@ref:specs/roadmap/pocversion: 0.1.0
+parent: "@ref:specs/roadmap/pocversion: 0.1.0
 layer: 2
 short: "How all POC components integrate"
 tags: [poc, integration, architecture, wiring]

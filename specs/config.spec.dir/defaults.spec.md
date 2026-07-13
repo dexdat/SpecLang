@@ -5,7 +5,7 @@ layer: 2
 tags: [config, defaults, examples]
 project_level: Alpha
 agent_support: agent_assisted
-parent: ""@ref:speclang/configpart: 2/2
+parent: "@ref:speclang/configpart: 2/2
 short: Configuration defaults and examples
 ---
 # Configuration Defaults

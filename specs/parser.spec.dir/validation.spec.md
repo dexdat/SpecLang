@@ -5,7 +5,7 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [parser, validation, headers, references, layers]
-parent: ""@ref:speclang/parserpart: 2/2
+parent: "@ref:speclang/parserpart: 2/2
 short: "Validation rules for parsed spec data"
 ---
 # Validation Rules

@@ -7,7 +7,7 @@ agent_support: agent_autonomous
 tags: [example, hello-world]
 short: Hello World example for SpecLang
 depends_on:
-  - "@ref:specs/core
+    - "@ref:specs/core"
 ---
 
 # Hello World Example

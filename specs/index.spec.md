@@ -7,7 +7,8 @@ agent_support: agent_autonomous
 tags: [typescript, generated, auto-generated]
 short: "Auto-generated spec for index.ts"
 status: generated
-parent: "@ref:specs/core---
+---
+parent: "@ref:specs/core
 
 # Index Module
 

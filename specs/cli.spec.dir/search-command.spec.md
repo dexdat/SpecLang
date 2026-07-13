@@ -5,7 +5,7 @@ layer: 1
 tags: [cli, commands]
 project_level: Alpha
 agent_support: agent_assisted
-parent: ""@ref:specs/cli.spec.dir/commandspart: 1/1
+parent: "@ref:specs/cli.spec.dir/commandspart: 1/1
 short: CLI search command
 
 ---

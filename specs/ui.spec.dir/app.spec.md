@@ -1,6 +1,6 @@
 # speclang-header lines:12
 id: "@speclang/ui-app"
-parent: ""@ref:specs/uipart: 15/15
+parent: "@ref:specs/uipart: 15/15
 siblings:
   prev: ""@ref:specs/ui.spec.dir/indexshort: Dashboard React app entry point
 project_level: Alpha

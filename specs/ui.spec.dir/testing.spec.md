@@ -1,6 +1,6 @@
 # speclang-header lines:11
 id: "@speclang/ui-testing"
-parent: ""@ref:specs/uipart: 13/14
+parent: "@ref:specs/uipart: 13/14
 siblings:
   prev: ""@ref:specs/ui.spec.dir/state-management  next: ""@ref:specs/mcp-ui-toolsshort: Testing strategy and specifications for UI components
 project_level: Alpha

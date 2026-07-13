@@ -1,6 +1,6 @@
 # speclang-header lines:11
 id: "@speclang/daemon/events"
-parent: ""@ref:specs/daemonpart: 2/4
+parent: "@ref:specs/daemonpart: 2/4
 siblings:
   prev: ""@ref:specs/daemon.spec.dir/architecture  next: ""@ref:specs/daemon.spec.dir/routingshort: File watching and event handling
 project_level: Alpha

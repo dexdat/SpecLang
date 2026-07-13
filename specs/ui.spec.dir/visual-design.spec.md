@@ -1,6 +1,6 @@
 # speclang-header lines:11
 id: "@speclang/ui-visual-design"
-parent: ""@ref:specs/uipart: 2/14
+parent: "@ref:specs/uipart: 2/14
 siblings:
   prev: ""@ref:specs/ui.spec.dir/overview  next: ""@ref:specs/ui.spec.dir/components/cascade-statusshort: Visual design system, CSS architecture, themes, accessibility
 project_level: Alpha

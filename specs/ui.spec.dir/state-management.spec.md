@@ -1,6 +1,6 @@
 # speclang-header lines:11
 id: "@speclang/ui-state-management"
-parent: ""@ref:specs/uipart: 12/14
+parent: "@ref:specs/uipart: 12/14
 siblings:
   prev: ""@ref:specs/ui.spec.dir/interactions  next: ""@ref:specs/ui.spec.dir/testingshort: State management and implementation notes
 project_level: Alpha

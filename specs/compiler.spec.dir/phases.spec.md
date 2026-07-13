@@ -6,7 +6,7 @@ tags: [compiler, phases, pipeline, sync, plugins, errors]
 imports: ["@speclang/core", "@speclang/stdlib", "@speclang/spec-format"]
 project_level: Alpha
 agent_support: agent_assisted
-parent: ""@ref:speclang/compilerpart: 1/3
+parent: "@ref:speclang/compilerpart: 1/3
 short: Compiler phases and advanced features
 
 ---

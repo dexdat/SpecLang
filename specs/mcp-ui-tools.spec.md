@@ -9,8 +9,8 @@ short: Additional MCP tools for system dashboard monitoring
 project_level: Alpha
 agent_support: agent_assisted
 children:
-  - "@speclang/mcp-ui-tools/tools"
-  - "@speclang/mcp-ui-tools/ui"
+    - "@speclang/mcp-ui-tools/tools"
+    - "@speclang/mcp-ui-tools/ui"
 ---
 
 # MCP UI Tools

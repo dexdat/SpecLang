@@ -8,8 +8,8 @@ tags: [validation, autonomous, agent, rules]
 children: ["@speclang/autonomous-validation/rules", "@speclang/autonomous-validation/scoring"]
 short: Validation rules for specs labeled agent_autonomous
 depends_on:
-  - "@speclang/headers"
-  - "@speclang/validation"
+    - "@speclang/headers"
+    - "@speclang/validation"
 ---
 # Autonomous Validation
 

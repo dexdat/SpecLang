@@ -10,11 +10,11 @@ Custom tools for agent use in Speclang.
 ## What are Tools?
 
 Tools are functions that agents can call:
-- Query the database
-- Search specs
-- Validate files
-- Split specs
-- Find dependencies
+  - "Query the database"
+  - "Search specs"
+  - "Validate files"
+  - "Split specs"
+  - "Find dependencies"
 
 ## Tool Structure
 

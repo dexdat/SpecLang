@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:14
 id: "@speclang/spec-format"
 version: 0.1.0
 layer: 0
@@ -7,7 +7,8 @@ agent_support: agent_autonomous
 tags: [format, syntax, self-describing]
 status: draft
 children:
-  - "@ref:@ref:specs/spec-format.spec.dir/structure  - "@ref:specs/spec-format.spec.dir/blocks
+    - "@ref:specs/spec-format.spec.dir/structure"
+    - "@ref:specs/spec-format.spec.dir/blocks"
 
 short: Spec Format (2 parts)
 ---

@@ -8,8 +8,8 @@ tags: [typescript, generated, auto-generated, index, tools]
 short: "Tool handler for index operations"
 status: generated
 depends_on:
-  - "@specs/indexer"
-  - "@speclang/tools"
+    - "@specs/indexer"
+    - "@speclang/tools"
 ---
 
 # Index Tools Spec

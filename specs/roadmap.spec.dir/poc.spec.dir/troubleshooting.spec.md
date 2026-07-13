@@ -1,6 +1,6 @@
 # speclang-header lines:7
 id: "@speclang/roadmap/poc/troubleshooting"
-parent: ""@ref:specs/roadmap/pocversion: 0.1.0
+parent: "@ref:specs/roadmap/pocversion: 0.1.0
 layer: 2
 short: "Troubleshooting guide for common issues"
 tags: [poc, troubleshooting, errors, debugging, help]

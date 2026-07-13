@@ -6,7 +6,7 @@ tags: [compiler, targets, languages]
 imports: ["@speclang/core", "@speclang/stdlib", "@speclang/spec-format"]
 project_level: Alpha
 agent_support: agent_assisted
-parent: ""@ref:speclang/compilerpart: 2/3
+parent: "@ref:speclang/compilerpart: 2/3
 short: Compiler target languages
 
 ---

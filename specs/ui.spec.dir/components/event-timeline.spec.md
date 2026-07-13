@@ -1,6 +1,6 @@
 # speclang-header lines:11
 id: "@speclang/ui-components-event-timeline"
-parent: ""@ref:specs/uipart: 5/14
+parent: "@ref:specs/uipart: 5/14
 siblings:
   prev: ""@ref:specs/ui.spec.dir/components/agent-health  next: ""@ref:specs/ui.spec.dir/components/queue-depthshort: Event timeline component
 project_level: Alpha

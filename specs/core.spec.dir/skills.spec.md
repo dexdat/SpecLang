@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [core]
 short: Skills pack for AI editor integration
-parent: ""@ref:speclang/corepart: 5/6
+parent: "@ref:speclang/corepart: 5/6
 ---
 
 ## Skills Pack

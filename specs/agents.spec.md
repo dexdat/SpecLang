@@ -8,7 +8,7 @@ tags: [agents, system, autonomous]
 short: Agent system implementation
 status: draft
 depends_on:
-  - "@speclang/agent-protocol"
+    - "@speclang/agent-protocol"
 ---
 
 # Agents Module

@@ -3,13 +3,13 @@ id: "@speclang/scripts-validate-autonomous"
 version: 0.1.0
 layer: 2
 tags: [scripts, validation, autonomous]
-parent: ""@ref:speclang/scriptsstatus: draft
+parent: "@ref:speclang/scriptsstatus: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Validate Autonomous Specs Script
 target: scripts/validate_autonomous.py
 depends_on:
-  - "@specs/autonomous"
+    - "@specs/autonomous"
 ---
 
 # Validate Autonomous Specs Script

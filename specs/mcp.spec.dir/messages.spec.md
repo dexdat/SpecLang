@@ -3,7 +3,7 @@ id: "@speclang/mcp/messages"
 version: 0.1.0
 layer: 2
 tags: [mcp, messages, notifications, communication, agents]
-parent: ""@ref:specs/mcpproject_level: Alpha
+parent: "@ref:specs/mcpproject_level: Alpha
 agent_support: agent_autonomous
 short: MCP Message Protocol - Communication between autonomous agents and humans
 ---

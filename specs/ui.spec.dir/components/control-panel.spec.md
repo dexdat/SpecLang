@@ -1,6 +1,6 @@
 # speclang-header lines:11
 id: "@speclang/ui-components-control-panel"
-parent: ""@ref:specs/uipart: 8/14
+parent: "@ref:specs/uipart: 8/14
 siblings:
   prev: ""@ref:specs/ui.spec.dir/components/system-metrics  next: ""@ref:specs/ui.spec.dir/components/cascade-graphshort: Control panel component for cascade operations
 project_level: Alpha
