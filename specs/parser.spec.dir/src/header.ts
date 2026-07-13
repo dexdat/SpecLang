@@ -180,10 +180,22 @@ export function extractBlocks(content: string, sourceFile: string): Block[] {
 export function extractReferences(content: string, sourceFile: string): Reference[] {
   const lines = content.split('\n');
   const references: Reference[] = [];
+  let inCodeBlock = false;
   
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     const lineNumber = i + 1;
+    
+    // Track fenced code blocks (``` or ~~~)
+    if (/^\s*```/.test(line) || /^\s*~~~/.test(line)) {
+      inCodeBlock = !inCodeBlock;
+      continue;
+    }
+    
+    // Skip lines inside code blocks
+    if (inCodeBlock) {
+      continue;
+    }
     
     // Find all @ref: patterns in the line
     let match;
