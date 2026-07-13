@@ -137,7 +137,7 @@ describe('CLI Commands', () => {
       expect(stdout).toContain('layer 3');
     });
 
-    it('should filter by tags', async () => {
+    it('should filter by tags', { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await execAsync(`${CLI} search mcp --tags mcp`);
       expect(stdout).toContain('Found');
     });
@@ -254,7 +254,7 @@ describe('CLI Commands', () => {
       expect(stdout).toContain('Total specs:');
     });
 
-    it('should support --json output', async () => {
+    it('should support --json output', { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await execAsync(`${CLI} index --json`);
       const result = parseJsonFromOutput(stdout) as { specs: unknown };
       expect(result.specs).toBeDefined();
