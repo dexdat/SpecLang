@@ -6,8 +6,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [examples, api, design, endpoints]
 short: API design example spec
-parent: @ref:speclang/examples
-part: 3/3
+parent: "@ref:speclang/examples"
+
 target: src/examples/api.ts
 ---
 # API Design Example

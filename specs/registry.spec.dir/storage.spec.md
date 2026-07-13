@@ -6,8 +6,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [registry, storage, agents]
 short: Storage and indexing aspects of agent registry
-parent: @ref:specs/registry
-part: 1/2
+parent: "@ref:specs/registry"
+
 ---
 ## @block:agentregistry @kind:entity
 ```text

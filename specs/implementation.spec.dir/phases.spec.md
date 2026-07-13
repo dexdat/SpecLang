@@ -1,9 +1,10 @@
-# speclang-header lines:11
+# speclang-header lines:12
 id: "@speclang/implementation-phases"
 version: 0.1.0
 layer: 2
-parent: "@ref:speclang/implementationtags: [phases, implementation, process]
-part: 1/2
+parent: "@ref:speclang/implementation"
+tags: [phases, implementation, process]
+
 status: draft
 project_level: Alpha
 agent_support: agent_assisted

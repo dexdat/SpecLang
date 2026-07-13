@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:13
 id: "@speclang/scripts"
 version: 0.1.0
 layer: 0
@@ -7,9 +7,10 @@ status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Build and Development Scripts
-children:
-  - "@ref:speclang/scripts/generate  - "@ref:speclang/scripts/validate---
-
+children: 
+    - "@ref:speclang/scripts/generate"
+    - "@ref:speclang/scripts/validate"
+---
 # Build and Development Scripts
 
 Scripts for building, validating, and maintaining Speclang.

@@ -6,8 +6,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [bootstrap, phases, meta-circular]
 short: Bootstrap phases and minimal specs
-parent: @ref:specs/bootstrap
-part: 1/2
+parent: "@ref:specs/bootstrap"
+
 ---
 ## @bootstrap/phases
 

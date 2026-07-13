@@ -7,9 +7,10 @@ status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Validation Scripts for Speclang
-parent: ""@ref:speclang/scriptspart: 2/2
+parent: "@ref:speclang/scripts
 children:
-  - ""@ref:speclang/scripts.validate-refs  - ""@ref:speclang/scripts.validate-autonomous---
+    - ""
+    - ""
 # Validation Scripts
 
 Scripts that validate Speclang specifications for correctness and completeness.

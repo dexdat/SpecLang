@@ -1,14 +1,11 @@
-# speclang-header lines:12
+# speclang-header lines:9
 id: "@speclang/external-methodologies/adoption-patterns"
 version: 0.1.0
 layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [bmad, patterns, adoption, mapping, workflow]
-parent: "@ref:specs/external-methodologiespart: "3/3"
-siblings:
-  prev: ""@ref:specs/external-methodologies.spec.dir/recommendations  next: null
-short: Adoption Patterns - How to map BMAD concepts to SpecLang
+parent: "@ref:specs/external-methodologiespart: "3/3""
 ---
 
 # Adoption Patterns
@@ -103,8 +100,9 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [features, requirements, prd]
 depends_on:
-  - ""@ref:project/product-briefchildren:
-  - ""@ref:project/features.spec.dir/auth  - ""@ref:project/features.spec.dir/apishort: Feature specifications (PRD equivalent)
+  - ""@ref:project/product-briefchildren:"
+    - ""
+    - ""
 ---
 
 # Features
@@ -139,9 +137,9 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [auth, component, architecture]
-parent: ""@ref:project/featuresdepends_on:
-  - ""@ref:project/featureschildren:
-  - ""@ref:project/features.spec.dir/auth.spec.dir/entities  - ""@ref:project/features.spec.dir/auth.spec.dir/operationsshort: Authentication component architecture
+parent: "@ref:project/featuresdepends_on:
+  - ""@ref:project/featureschildren:"
+  - ""@ref:project/features.spec.dir/auth.spec.dir/entities  - ""@ref:project/features.spec.dir/auth.spec.dir/operationsshort: Authentication component architecture"
 ---
 
 # Authentication Component
@@ -179,7 +177,7 @@ layer: 4
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [auth, login, go, implementation]
-parent: ""@ref:project/features/authshort: Login implementation in Go
+parent: "@ref:project/features/authshort: Login implementation in Go
 ---
 
 # Login Implementation (Go)
@@ -271,7 +269,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [cascade, party-mode, multi-agent]
 depends_on:
-  - ""@ref:project/featurescaused_by: "@commit:abc123"  # Trigger commit
+  - ""@ref:project/featurescaused_by: "@commit:abc123"  # Trigger commit"
 part_of: "@cascade:20250222-001"
 short: Multi-agent collaboration example
 ---

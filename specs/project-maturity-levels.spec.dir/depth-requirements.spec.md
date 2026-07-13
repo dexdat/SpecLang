@@ -3,7 +3,7 @@ id: "@speclang/project-maturity-levels/depth-requirements"
 version: 0.1.0
 layer: 2
 tags: [project, maturity, depth, requirements, scope]
-parent: "@ref:specs/project-maturity-levels
+parent: "@ref:specs/project-maturity-levels"
 project_level: Alpha
 agent_support: agent_autonomous
 short: Depth Requirements by Project Scope - How much spec expansion is needed

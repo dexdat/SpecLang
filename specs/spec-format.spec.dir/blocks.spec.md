@@ -1,4 +1,4 @@
-# speclang-header lines:15
+# speclang-header lines:13
 id: "@speclang/spec-format/blocks"
 version: 0.1.0
 layer: 2
@@ -6,10 +6,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [format, syntax, self-describing]
 status: draft
-parent: @ref:specs/spec-format
-part: 2/2
-siblings:
-  prev: @ref:specs/spec-format.spec.dir/structure
+parent: "@ref:specs/spec-format"
+
 
 short: Spec Format - Blocks
 ---

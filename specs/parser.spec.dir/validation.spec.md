@@ -1,11 +1,12 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/parser/validation"
 version: 0.1.0
 layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [parser, validation, headers, references, layers]
-parent: "@ref:speclang/parserpart: 2/2
+parent: "@ref:speclang/parser"
+
 short: "Validation rules for parsed spec data"
 ---
 # Validation Rules

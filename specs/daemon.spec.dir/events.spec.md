@@ -1,8 +1,6 @@
-# speclang-header lines:11
+# speclang-header lines:9
 id: "@speclang/daemon/events"
-parent: "@ref:specs/daemonpart: 2/4
-siblings:
-  prev: ""@ref:specs/daemon.spec.dir/architecture  next: ""@ref:specs/daemon.spec.dir/routingshort: File watching and event handling
+parent: "@ref:specs/daemon"
 project_level: Alpha
 agent_support: agent_assisted
 tags: [daemon, watcher, events, rust]

@@ -1,15 +1,12 @@
-# speclang-header lines:13
+# speclang-header lines:10
 id: "@speclang/hooks/lifecycle"
 version: 0.1.0
 layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [typescript, hooks, lifecycle]
-parent: @ref:specs/hooks
-part: 1/2
-siblings:
-  next: @ref:specs/hooks.spec.dir/handlers
-short: "Hook lifecycle execution and context creation"
+parent: "@ref:specs/hooks"
+
 ---
 # Hook Lifecycle
 

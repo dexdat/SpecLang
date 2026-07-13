@@ -7,7 +7,7 @@ agent_support: agent_autonomous
 tags: [ipc, messages, typescript]
 short: "IPC message types and formats"
 parent: "speclang/ipc"
-part: 1/2
+
 ---
 ## @block:messages @kind:entity
 IPC messages are the fundamental data units exchanged between processes.

@@ -4,8 +4,8 @@ version: 0.1.0
 layer: 2
 tags: [git, history, commits, traceability]
 imports: ["@speclang/git-history"]
-parent: @ref:specs/git-history
-part: 1/2
+parent: "@ref:specs/git-history"
+
 status: draft
 project_level: Alpha
 agent_support: agent_assisted

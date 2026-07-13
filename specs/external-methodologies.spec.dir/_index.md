@@ -5,7 +5,7 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [index, external, methodologies]
-parent: "@ref:specs/external-methodologies
+parent: "@ref:specs/external-methodologies"
 short: Index for external-methodologies sub-specs
 ---
 

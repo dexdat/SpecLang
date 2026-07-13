@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/core/agents"
 version: 0.1.0
 layer: 2
@@ -6,7 +6,8 @@ project_level: "Alpha"
 agent_support: "agent_autonomous"
 tags: [core]
 short: "Agent responsibilities: spec, code, test, backsync"
-parent: "@ref:speclang/corepart: 4/6
+parent: "@ref:speclang/core"
+
 ---
 
 ## Agent Responsibilities

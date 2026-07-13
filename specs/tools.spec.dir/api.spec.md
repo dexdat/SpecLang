@@ -3,7 +3,7 @@ id: "@speclang/tools/api"
 version: 0.1.0
 layer: 2
 parent: "speclang/tools"
-part: 1/2
+
 tags: [tools, api, functions]
 imports: ["@speclang/core", "@speclang/opencode"]
 status: draft

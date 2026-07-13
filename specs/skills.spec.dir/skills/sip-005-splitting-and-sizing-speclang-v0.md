@@ -214,7 +214,7 @@ This spec has been split. See children in auth.spec.spec.dir/
 # speclang-header lines:12
 id: @specs/auth.spec.spec.dir/entities
 parent: @ref:specs/auth
-part: 2/5
+
 siblings:
   prev: @ref:specs/auth.spec.spec.dir/overview
   next: @ref:specs/auth.spec.spec.dir/operations

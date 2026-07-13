@@ -3,8 +3,8 @@ id: "@speclang/dynamic-split/strategy"
 version: 0.1.0
 layer: 2
 tags: [splitting, strategy, logic]
-parent: @ref:speclang/dynamic-split
-part: 1/2
+parent: "@ref:speclang/dynamic-split"
+
 order: 1
 short: Dynamic splitting strategy and configuration
 ---
@@ -189,7 +189,7 @@ DirStructure:
     header:
       id: @specs/auth/login.spec.dir/overview
       parent: @ref:specs/auth/login
-      part: 1/4
+
       order: 1
       short: "Login overview"
 ```
@@ -258,7 +258,7 @@ Child header (specs/auth.spec.dir/entities.spec.yaml):
   # speclang-header lines:8
   id: @specs/auth.spec.dir/entities
   parent: @ref:specs/auth
-  part: 1/3
+
   siblings:
     next: @ref:specs/auth.spec.dir/operations
   short: "Auth entities (User, Session, Token)"

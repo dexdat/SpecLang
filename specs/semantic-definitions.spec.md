@@ -5,7 +5,7 @@ layer: 1
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [semantic, definitions, metadata, autonomous]
-short: Directory spec for semantic definitions of layer, project_level, and agent_support
+short: "Directory spec for semantic definitions of layer, project_level, and agent_support"
 ---
 # Semantic Definitions (Directory)
 

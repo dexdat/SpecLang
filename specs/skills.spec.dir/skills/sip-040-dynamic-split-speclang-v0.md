@@ -145,7 +145,7 @@ content: "See login.spec.spec.dir/ for details"
 ChildHeader:
   id: @specs/auth/login.spec.spec.dir/overview
   parent: @ref:specs/auth/login
-  part: 1/4
+
   order: 1
   short: "Login overview"
 ```

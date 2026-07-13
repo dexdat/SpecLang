@@ -1,9 +1,10 @@
-# speclang-header lines:9
+# speclang-header lines:10
 id: "@speclang/cascade/continuous-improvement"
 version: 0.1.0
 layer: 2
 tags: [cascade, continuous-improvement, loop, self-improving, openclaw]
-parent: "@ref:specs/cascadeproject_level: Alpha
+parent: "@ref:specs/cascade"
+project_level: Alpha
 agent_support: agent_autonomous
 short: Continuous Improvement Loop - Self-improving applications like OpenClaw
 ---

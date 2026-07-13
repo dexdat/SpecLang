@@ -4,8 +4,8 @@ version: 0.1.0
 layer: 2
 tags: [directory, structure, creation]
 imports: ["@speclang/directory-structure"]
-parent: @ref:specs/directory-structure
-part: 2/2
+parent: "@ref:specs/directory-structure"
+
 status: draft
 project_level: Alpha
 agent_support: agent_assisted

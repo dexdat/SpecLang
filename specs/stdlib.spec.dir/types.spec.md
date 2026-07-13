@@ -1,6 +1,6 @@
 # speclang-header lines:10
 id: "@speclang/stdlib/types"
-parent: "@ref:specs/stdlib
+parent: "@ref:specs/stdlib"
 short: "Standard library type definitions"
 project_level: Alpha
 agent_support: agent_autonomous

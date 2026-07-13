@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/core/skills"
 version: 0.1.0
 layer: 2
@@ -6,7 +6,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [core]
 short: Skills pack for AI editor integration
-parent: "@ref:speclang/corepart: 5/6
+parent: "@ref:speclang/core"
+
 ---
 
 ## Skills Pack

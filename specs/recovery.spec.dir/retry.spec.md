@@ -2,7 +2,7 @@
 id: "@speclang/recovery/retry"
 version: 0.1.0
 layer: 2
-part: 2/2
+
 tags: [recovery, retry]
 imports: ["@speclang/recovery"]
 status: draft

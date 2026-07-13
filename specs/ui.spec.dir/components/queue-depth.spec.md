@@ -1,8 +1,6 @@
-# speclang-header lines:11
+# speclang-header lines:9
 id: "@speclang/ui-components-queue-depth"
-parent: "@ref:specs/uipart: 6/14
-siblings:
-  prev: ""@ref:specs/ui.spec.dir/components/event-timeline  next: ""@ref:specs/ui.spec.dir/components/system-metricsshort: Queue depth meter component
+parent: "@ref:specs/ui"
 project_level: Alpha
 agent_support: agent_assisted
 tags: [speclang]

@@ -1,9 +1,10 @@
-# speclang-header lines:11
+# speclang-header lines:12
 id: "@speclang/scripts-add-missing-fields"
 version: 0.1.0
 layer: 2
 tags: [scripts, fix, headers]
-parent: "@ref:speclang/scriptsstatus: draft
+parent: "@ref:speclang/scripts"
+status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Add Missing Fields Script

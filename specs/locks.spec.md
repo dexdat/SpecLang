@@ -1,11 +1,12 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/locks"
 version: 0.1.0
 layer: 5
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [locks, file-locking, concurrency]
-parent: "@ref:northstarpart: 1/1
+parent: "@ref:northstar"
+
 short: "File locking system for spec cascade concurrency control"
 ---
 # Locks System

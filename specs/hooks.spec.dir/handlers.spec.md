@@ -1,15 +1,12 @@
-# speclang-header lines:13
+# speclang-header lines:10
 id: "@speclang/hooks/handlers"
 version: 0.1.0
 layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [typescript, hooks, handlers]
-parent: @ref:specs/hooks
-part: 2/2
-siblings:
-  prev: @ref:specs/hooks.spec.dir/lifecycle
-short: "Built-in hook handlers and utilities"
+parent: "@ref:specs/hooks"
+
 ---
 # Hook Handlers
 

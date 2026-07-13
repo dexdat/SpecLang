@@ -1,11 +1,12 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/locks/management"
 version: 0.1.0
 layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [locks, management, acquisition, release]
-parent: "@ref:speclang/lockspart: 2/2
+parent: "@ref:speclang/locks"
+
 short: "Lock acquisition, release, and management operations"
 ---
 # Lock Management

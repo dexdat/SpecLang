@@ -1,13 +1,11 @@
-# speclang-header lines:11
+# speclang-header lines:9
 id: "@speclang/mcp-tools-locks"
 version: 0.1.0
 layer: 3
 project_level: Alpha
 agent_support: agent_assisted
 tags: [mcp, tools, locks]
-parent: "@ref:speclang/mcppart: 7/12
-siblings:
-  next: ""@ref:specs/mcp.spec.dir/authenticationshort: "Lock and event tools: claim event, acquire lock, release lock"
+parent: "@ref:speclang/mcp"
 ---
 # MCP Lock and Event Tools
 

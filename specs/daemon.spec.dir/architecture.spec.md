@@ -1,10 +1,7 @@
-# speclang-header lines:13
+# speclang-header lines:10
 id: "@speclang/daemon/architecture"
-parent: "@ref:specs/daemon
-part: 1/4
-siblings:
-  next: "@ref:specs/daemon.spec.dir/events
-short: Architecture overview of speclangd
+parent: "@ref:specs/daemon"
+
 project_level: Alpha
 agent_support: agent_assisted
 tags: [daemon, architecture, components, rust]

@@ -7,7 +7,7 @@ agent_support: agent_autonomous
 tags: [safety, validation, analysis, scoring]
 short: Automated analysis and confidence scoring for safety nets
 parent: "speclang/safety-nets"
-part: 1/2
+
 ---
 # Safety Nets: Analysis
 

@@ -3,7 +3,7 @@ id: "@speclang/workflow/daily-use"
 version: 0.1.0
 layer: 2
 parent: "speclang/workflow"
-part: 2/3
+
 tags: [workflow, daily, conversation, review, commands]
 status: draft
 project_level: Alpha

@@ -1,9 +1,10 @@
-# speclang-header lines:11
+# speclang-header lines:12
 id: "@speclang/scripts-validate-refs"
 version: 0.1.0
 layer: 2
 tags: [scripts, validation, references]
-parent: "@ref:speclang/scriptsstatus: draft
+parent: "@ref:speclang/scripts"
+status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Validate References Script

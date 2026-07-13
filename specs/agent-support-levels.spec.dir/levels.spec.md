@@ -5,9 +5,9 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [agent, support, levels, definitions]
-short: Definitions of human_only, agent_assisted, and agent_autonomous levels
+short: "Definitions of human_only, agent_assisted, and agent_autonomous levels"
 parent: "speclang/agent-support-levels"
-part: 1/2
+
 ---
 # Agent Support Levels - Definitions
 

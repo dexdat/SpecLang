@@ -1,4 +1,4 @@
-# speclang-header lines:15
+# speclang-header lines:13
 id: "@speclang/spec-format/structure"
 version: 0.1.0
 layer: 2
@@ -6,10 +6,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [format, syntax, self-describing]
 status: draft
-parent: @ref:specs/spec-format
-part: 1/2
-siblings:
-  next: @ref:specs/spec-format.spec.dir/blocks
+parent: "@ref:specs/spec-format"
+
 
 short: Spec Format - Structure
 ---
@@ -206,7 +204,7 @@ Child spec (auth.spec.dir/entities.spec.yaml):
 # speclang-header
 id: "@myapp/auth".spec.dir/entities
 parent: @ref:specs/auth
-part: 1/3
+
 siblings:
   next: @ref:specs/auth.spec.dir/operations
 short: "Auth entities"

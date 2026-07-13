@@ -1,8 +1,6 @@
-# speclang-header lines:12
+# speclang-header lines:10
 id: "@speclang/ui-index"
-parent: "@ref:specs/uipart: 14/14
-siblings:
-  prev: ""@ref:specs/ui.spec.dir/testingshort: Dashboard index.html entry point
+parent: "@ref:specs/ui"
 project_level: Alpha
 agent_support: agent_assisted
 tags: [speclang]

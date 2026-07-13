@@ -1,4 +1,4 @@
-# speclang-header lines:16
+# speclang-header lines:14
 id: "@speclang/mcp-daemon/architecture"
 version: 0.1.0
 layer: 2
@@ -8,9 +8,7 @@ status: draft
 project_level: Alpha
 agent_support: agent_assisted
 parent: "speclang/mcp-daemon"
-part: 1/2
-siblings:
-  next: "@speclang/mcp-daemon/config"
+
 
 short: MCP Daemon Architecture
 ---

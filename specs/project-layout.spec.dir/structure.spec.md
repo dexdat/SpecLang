@@ -4,8 +4,8 @@ version: 0.1.0
 layer: 2
 tags: [layout, structure, files]
 imports: ["@speclang/project-layout"]
-parent: @ref:specs/project-layout
-part: 1/2
+parent: "@ref:specs/project-layout"
+
 status: draft
 project_level: Alpha
 agent_support: agent_assisted

@@ -8,8 +8,8 @@ status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Cascade Convergence
-parent: "@ref:speclang/cascadepart: 2/2
-siblings:
+parent: "@ref:speclang/cascade"
+
 ---
   prev: ""@ref:speclang/cascade/triggers
 # Cascade Convergence

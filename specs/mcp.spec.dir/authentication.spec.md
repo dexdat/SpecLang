@@ -1,9 +1,6 @@
-# speclang-header lines:12
+# speclang-header lines:9
 id: "@speclang/mcp-authentication"
-parent: "@ref:speclang/mcp
-siblings:
-  next: "@ref:specs/mcp.spec.dir/error-handling
-short: "Authentication methods for remote and server modes"
+parent: "@ref:speclang/mcp"
 project_level: Alpha
 agent_support: agent_assisted
 tags: [mcp, speclang]

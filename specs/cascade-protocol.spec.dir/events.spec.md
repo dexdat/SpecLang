@@ -7,8 +7,8 @@ status: draft
 project_level: Alpha
 agent_support: agent_autonomous
 short: Cascade Protocol Events and Definitions
-parent: @ref:specs/cascade-protocol
-part: 1/2
+parent: "@ref:specs/cascade-protocol"
+
 ---
 
 # Cascade Protocol Events and Definitions

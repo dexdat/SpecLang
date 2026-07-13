@@ -42,7 +42,7 @@ project_level: POC
 agent_support: agent_autonomous
 short: Hello World Example
 parent: @ref:speclang/examples
-part: 1/3
+
 ---
 
 # Hello World Example
@@ -170,7 +170,7 @@ project_level: POC
 agent_support: agent_autonomous
 short: Hello World Example
 parent: @ref:speclang/examples
-part: 1/3
+
 ---
 
 # Hello World Example

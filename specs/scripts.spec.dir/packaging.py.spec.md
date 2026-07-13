@@ -4,7 +4,7 @@ version: 1.0.0
 layer: 5
 target: scripts/packaging.py
 tags: [scripts, packaging, release, automation]
-parent: "@ref:specs/scripts.packaging
+parent: "@ref:specs/scripts.packaging"
 ---
 
 # SpecLang Packaging Script

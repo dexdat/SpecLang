@@ -5,9 +5,9 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [bootstrap, execution, validation]
-short: Bootstrap execution, validation, and recovery
-parent: @ref:specs/bootstrap
-part: 2/2
+short: "Bootstrap execution, validation, and recovery"
+parent: "@ref:specs/bootstrap"
+
 ---
 ## @bootstrap/first-run
 

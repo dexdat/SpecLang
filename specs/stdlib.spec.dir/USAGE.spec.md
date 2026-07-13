@@ -1,5 +1,5 @@
 # speclang-header lines:9
-id: @speclang/stdlib/USAGE
+id: "@speclang/stdlib/USAGE"
 version: 1.0.0
 layer: 1
 project_level: Alpha

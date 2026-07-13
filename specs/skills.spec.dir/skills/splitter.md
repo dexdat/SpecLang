@@ -91,7 +91,7 @@ short: "Auth (3 sub-specs)"
 ```yaml
 id: @specs/auth.spec.spec.dir/entities
 parent: @ref:specs/auth
-part: 1/3
+
 order: 1
 short: "Auth entities"
 ```

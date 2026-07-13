@@ -2,7 +2,7 @@
 id: "@speclang/recovery/rollback"
 version: 0.1.0
 layer: 2
-part: 1/2
+
 tags: [recovery, rollback]
 imports: ["@speclang/recovery"]
 status: draft

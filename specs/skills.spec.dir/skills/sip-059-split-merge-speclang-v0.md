@@ -215,7 +215,7 @@ children:
   - "@ref:specs/auth.spec.dir/operations
   - "@ref:specs/auth.spec.dir/policies
 short: "Authentication system (split into 3 parts)"
-part: 0/3
+
 total_parts: 3
 ---
 
@@ -241,7 +241,7 @@ See `auth.spec.dir/` for details.
 # speclang-header lines:12
 id: @specs/auth.spec.dir/entities
 parent: @ref:specs/auth
-part: 1/3
+
 siblings:
   prev: null
   next: @ref:specs/auth.spec.dir/operations

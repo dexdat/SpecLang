@@ -1,8 +1,6 @@
-# speclang-header lines:11
+# speclang-header lines:9
 id: "@speclang/router/routing"
-parent: "@ref:specs/routerpart: 1/2
-siblings:
-  next: ""@ref:specs/router.spec.dir/agentsshort: Routing rules and cascade depth
+parent: "@ref:specs/router"
 project_level: Alpha
 agent_support: agent_assisted
 tags: [router, routing, daemon, typescript]

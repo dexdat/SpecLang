@@ -1,6 +1,7 @@
-# speclang-header lines:7
+# speclang-header lines:8
 id: "@speclang/scripts/validate-refs"
-parent: "@ref:specs/scriptsversion: 0.1.0
+parent: "@ref:specs/scripts"
+version: 0.1.0
 layer: 3
 target: scripts/validate_refs.py
 tags: [scripts, validation, references, specs]

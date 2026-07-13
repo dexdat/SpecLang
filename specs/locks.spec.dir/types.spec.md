@@ -1,11 +1,12 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/locks/types"
 version: 0.1.0
 layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [locks, types, file-locks]
-parent: "@ref:speclang/lockspart: 1/2
+parent: "@ref:speclang/locks"
+
 short: "Lock types and structures for file locking"
 ---
 # Lock Types

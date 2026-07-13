@@ -3,7 +3,7 @@ id: "@speclang/autonomous-validation/scoring"
 version: 0.1.0
 layer: 2
 parent: "speclang/autonomous-validation"
-part: 2/2
+
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [validation, autonomous, agent, scoring]

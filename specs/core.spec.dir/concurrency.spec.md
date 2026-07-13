@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/core/concurrency"
 version: 0.1.0
 layer: 2
@@ -6,7 +6,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [core]
 short: Concurrency model for agent sessions
-parent: "@ref:speclang/corepart: 6/6
+parent: "@ref:speclang/core"
+
 ---
 
 ## Concurrency Model

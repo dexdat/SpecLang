@@ -5,9 +5,9 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [agent, support, behaviors, transitions, integration]
-short: Agent behavior matrix, transition guidelines, and integration with metadata
+short: "Agent behavior matrix, transition guidelines, and integration with metadata"
 parent: "speclang/agent-support-levels"
-part: 2/2
+
 ---
 # Agent Support Levels - Behaviors
 

@@ -7,7 +7,7 @@ agent_support: agent_autonomous
 tags: [ipc, channels, communication]
 short: "IPC communication channels"
 parent: "speclang/ipc"
-part: 2/2
+
 ---
 ## @block:channels @kind:entity
 IPC channels establish and manage communication pathways between processes.

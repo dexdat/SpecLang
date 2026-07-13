@@ -7,7 +7,7 @@ agent_support: agent_autonomous
 tags: [layer, definitions, abstraction, guidelines]
 parent: "speclang/layer-definitions"
 part: "1/2"
-short: Abstract depth definitions, table, guidelines, and validation rules
+short: "Abstract depth definitions, table, guidelines, and validation rules"
 ---
 # Depth Definitions: Abstraction
 

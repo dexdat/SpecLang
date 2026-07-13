@@ -1,10 +1,11 @@
-# speclang-header lines:12
+# speclang-header lines:13
 id: "@speclang/ralph-loop/workflow"
 version: 0.1.0
 layer: 2
 tags: [ralph, loop, workflow, agents, coordination]
 imports: ["@speclang/ralph-loop/state"]
-parent: "@ref:specs/ralph-looppart: 1/2
+parent: "@ref:specs/ralph-loop"
+
 status: draft
 project_level: Alpha
 agent_support: agent_assisted

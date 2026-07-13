@@ -7,8 +7,8 @@ status: draft
 project_level: Alpha
 agent_support: agent_autonomous
 short: Cascade Protocol Flow and Multi‑Tree Generation
-parent: @ref:specs/cascade-protocol
-part: 2/2
+parent: "@ref:specs/cascade-protocol"
+
 ---
 
 # Cascade Protocol Flow and Multi‑Tree Generation

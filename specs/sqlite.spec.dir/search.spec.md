@@ -10,7 +10,7 @@ status: draft
 project_level: Alpha
 agent_support: agent_autonomous
 target: src/db/search.ts
-short: SQLite search modules - FTS, vectors, graph, JSON
+short: "SQLite search modules - FTS, vectors, graph, JSON"
 ---
 
 # Database Search

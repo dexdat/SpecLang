@@ -1,13 +1,11 @@
-# speclang-header lines:11
+# speclang-header lines:9
 id: "@speclang/mcp-run-modes"
 version: 0.1.0
 layer: 3
 project_level: Alpha
 agent_support: agent_assisted
 tags: [mcp, run-modes]
-parent: "@ref:speclang/mcppart: 3/12
-siblings:
-  next: ""@ref:specs/mcp.spec.dir/tools/searchshort: "Three run modes: editor-initiated, remote, server"
+parent: "@ref:speclang/mcp"
 ---
 # MCP Server Run Modes
 

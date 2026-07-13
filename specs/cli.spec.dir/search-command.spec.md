@@ -1,11 +1,12 @@
-# speclang-header lines:11
+# speclang-header lines:12
 id: "@speclang/cli-spec-dir/search-command"
 version: 0.1.0
 layer: 1
 tags: [cli, commands]
 project_level: Alpha
 agent_support: agent_assisted
-parent: "@ref:specs/cli.spec.dir/commandspart: 1/1
+parent: "@ref:specs/cli.spec.dir/commands"
+
 short: CLI search command
 
 ---

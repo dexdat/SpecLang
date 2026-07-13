@@ -1,16 +1,14 @@
-# speclang-header lines:14
+# speclang-header lines:12
 id: "@speclang/executor/scheduling"
 version: 0.1.0
 layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [executor, scheduling, pipeline]
-parent: @ref:specs/executor
-part: 2/2
-siblings:
-  prev: @ref:specs/executor.spec.dir/execution
+parent: "@ref:specs/executor"
 
-short: Pipeline scheduling - stage ordering, dependency resolution, triggers
+
+short: "Pipeline scheduling - stage ordering, dependency resolution, triggers"
 ---
 # Pipeline Scheduling
 

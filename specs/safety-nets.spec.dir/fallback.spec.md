@@ -5,9 +5,9 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [safety, validation, fallback, peer-review]
-short: Peer review, fallback protocols, and implementation guidelines
+short: "Peer review, fallback protocols, and implementation guidelines"
 parent: "speclang/safety-nets"
-part: 2/2
+
 ---
 # Safety Nets: Fallback
 

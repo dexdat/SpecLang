@@ -1,11 +1,12 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/cli-spec-dir/installation"
 version: 0.1.0
 layer: 1
 tags: [cli, installation]
 project_level: Alpha
 agent_support: agent_assisted
-parent: "@ref:specs/cli.specpart: 1/8
+parent: "@ref:specs/cli.spec"
+
 short: CLI installation
 ---
 

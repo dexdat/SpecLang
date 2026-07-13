@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:13
 id: "@speclang/cascade/triggers"
 version: 0.1.0
 layer: 2
@@ -8,7 +8,8 @@ status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Cascade Triggers
-parent: "@ref:speclang/cascadepart: 1/2
+parent: "@ref:speclang/cascade"
+
 ---
 # Cascade Triggers
 
