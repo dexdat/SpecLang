@@ -109,7 +109,7 @@ describe('CLI Commands', () => {
     it('should find specs matching query', async () => {
       const { stdout } = await execAsync(`${CLI} search auth`);
       expect(stdout).toContain('Found');
-      expect(stdout).toContain('@speclang/mcp.authentication');
+      expect(stdout).toContain('@speclang/auth');
     });
 
     it.skip('should support --json output', async () => {
@@ -173,20 +173,20 @@ describe('CLI Commands', () => {
 
   describe('get', () => {
     it('should get spec by ID', async () => {
-      const { stdout } = await execAsync(`${CLI} get @speclang/mcp.authentication`);
-      expect(stdout).toContain('@speclang/mcp.authentication');
+      const { stdout } = await execAsync(`${CLI} get @speclang/auth`);
+      expect(stdout).toContain('@speclang/auth');
       expect(stdout).toContain('Version:');
       expect(stdout).toContain('Layer:');
     });
 
     it('should support --json output', async () => {
-      const { stdout } = await execAsync(`${CLI} get @speclang/mcp.authentication --json`);
+      const { stdout } = await execAsync(`${CLI} get @speclang/auth --json`);
       const result = parseJsonFromOutput(stdout) as { id: string };
-      expect(result.id).toBe('@speclang/mcp.authentication');
+      expect(result.id).toBe('@speclang/auth');
     });
 
     it('should show blocks with --blocks flag', async () => {
-      const { stdout } = await execAsync(`${CLI} get @speclang/mcp.authentication --blocks`);
+      const { stdout } = await execAsync(`${CLI} get @speclang/auth --blocks`);
       expect(stdout).toContain('Blocks:');
     });
 
