@@ -1,6 +1,6 @@
 # speclang-header lines:7
 id: "@speclang/scripts/validate-refs"
-parent: ""@ref:specs/scripts"version: 0.1.0
+parent: ""@ref:specs/scriptsversion: 0.1.0
 layer: 3
 target: scripts/validate_refs.py
 tags: [scripts, validation, references, specs]
@@ -136,7 +136,7 @@ if __name__ == '__main__':
 ## Validation Checks
 
 1. **File Existence**: Target spec must exist
-2. **Format**: Reference must follow `@ref:path` format
+2. **Format**: Reference must follow @ref:path format
 3. **Block References**: Block anchors are stripped for file validation
 
 ## Exit Codes

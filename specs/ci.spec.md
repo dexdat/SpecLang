@@ -1,4 +1,4 @@
-# speclang-header lines:309
+# speclang-header lines:14
 id: "@speclang/ci"
 version: 1.3.0
 layer: 4
@@ -9,8 +9,8 @@ short: GitHub Actions CI workflow for SpecLang
 target: .github/workflows/ci.yml
 status: active
 depends_on:
-  - "@ref:speclang/core"
-  - "@ref:speclang/build"
+  - "@ref:speclang/core
+  - "@ref:speclang/build
 ---
 
 # GitHub Actions CI Workflow

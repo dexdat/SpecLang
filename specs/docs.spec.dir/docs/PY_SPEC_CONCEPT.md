@@ -1,4 +1,4 @@
-# speclang-header lines:5
+# speclang-header lines:31
 # id: @specs/docs
 # version: 1.0.0
 # layer: 5
@@ -22,7 +22,7 @@ This document proves that the `.py.spec` concept works:
 
 ```
 # speclang-header lines:7
-id: "@speclang/scripts.generate-index.py"
+id: "@speclang/scripts-generate-index-py"
 version: 0.1.0
 layer: 5
 target: python
@@ -60,7 +60,7 @@ The spec contains:
 # id: "@scripts/generate_index.py"
 # version: 0.1.0
 # layer: 5
-# source: "@speclang/scripts.generate-index.py"
+# source: "@speclang/scripts-generate-index-py"
 # source_path: "specs/scripts.spec.dir/generate-index.py.spec"
 # generated_at: "2026-02-22"
 # generator: "speclang-code-gen"
@@ -230,7 +230,7 @@ ls -la generate_index.py
 
 # 4. Header references spec
 head -10 scripts/generate_index.py
-# Shows: source: "@speclang/scripts.generate-index.py"
+# Shows: source: "@speclang/scripts-generate-index-py"
 ```
 
 ### Other .py.spec Files

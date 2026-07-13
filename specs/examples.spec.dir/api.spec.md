@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:12
 id: "@speclang/examples/api"
 version: 0.1.0
 layer: 2
@@ -98,6 +98,6 @@ Standard error codes:
 
 ## References
 
-- Parent: `@ref:speclang/examples`
-- Related: `@ref:specs/examples.spec.dir/auth` (authentication example)
-- Core: `@ref:speclang/core`
+- Parent: @ref:speclang/examples
+- Related: @ref:specs/examples.spec.dir/auth (authentication example)
+- Core: @ref:speclang/core

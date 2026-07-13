@@ -1,11 +1,11 @@
-# speclang-header lines:14
+# speclang-header lines:13
 id: "@speclang/config"
 version: 0.1.0
 layer: 0
 tags: [config, schema, loader, validator]
 imports: ["@speclang/core", "@speclang/stdlib"]
 children:
-  - "@ref:speclang/config.spec.dir/schema"  - "@ref:speclang/config.spec.dir/defaults"status: draft
+  - "@ref:speclang/config.spec.dir/schema  - "@ref:speclang/config.spec.dir/defaultsstatus: draft
 
 project_level: Alpha
 agent_support: agent_assisted

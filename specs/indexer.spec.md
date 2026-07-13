@@ -1,4 +1,4 @@
-# speclang-header lines:8
+# speclang-header lines:9
 id: "@specs/indexer"
 version: 1.0.0
 layer: 3
@@ -113,6 +113,6 @@ ValidationRules:
 ### @block::dependencies @kind:entity
 
 RelatedSpecs:
-  - "@ref:specs/core" - Core types and interfaces
-  - "@ref:specs/sqlite" - SQLite database operations
-  - "@ref:specs/headers" - Header format specification
+  - "@ref:specs/core - Core types and interfaces
+  - "@ref:specs/sqlite - SQLite database operations
+  - "@ref:specs/headers - Header format specification

@@ -1,9 +1,9 @@
 # speclang-header lines:11
-id: "@speclang/scripts.rename-spec-files"
+id: "@speclang/scripts-rename-spec-files"
 version: 0.1.0
 layer: 2
 tags: [scripts, rename, files]
-parent: ""@ref:speclang/scripts"status: draft
+parent: ""@ref:speclang/scriptsstatus: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Rename Spec Files Script

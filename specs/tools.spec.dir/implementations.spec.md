@@ -1,8 +1,8 @@
-# speclang-header lines:12
+# speclang-header lines:13
 id: "@speclang/tools/implementations"
 version: 0.1.0
 layer: 2
-parent: "@speclang/tools"
+parent: "speclang/tools"
 part: 2/2
 tags: [tools, implementation, skills]
 imports: ["@speclang/core", "@speclang/opencode"]

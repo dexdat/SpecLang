@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:10
 id: "@specs/safety"
 version: 1.0.0
 layer: 5
@@ -15,7 +15,7 @@ This spec defines the safety module implementation, including fallback protocols
 
 ## @block:overview @kind:note
 
-The safety module implements the safety nets defined in `@ref:specs/safety-nets`.
+The safety module implements the safety nets defined in @ref:specs/safety-nets.
 
 ## @block:components @kind:entity
 

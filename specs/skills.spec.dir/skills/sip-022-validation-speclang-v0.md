@@ -148,7 +148,7 @@ HeaderValidation:
 ```yaml
 ReferenceValidation:
   reference_patterns:
-    block_ref: ""@ref:specs/path#block-id"    file_ref: ""@ref:specs/path"    project_ref: ""@ref:project-name"    
+    block_ref: ""@ref:specs/path#block-id    file_ref: ""@ref:specs/path    project_ref: ""@ref:project-name    
   validation_rules:
     - "Reference must match pattern"
     - "Target spec must exist in _index.json"

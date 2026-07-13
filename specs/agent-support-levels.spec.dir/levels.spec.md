@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/agent-support-levels/levels"
 version: 0.1.0
 layer: 2
@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [agent, support, levels, definitions]
 short: Definitions of human_only, agent_assisted, and agent_autonomous levels
-parent: "@speclang/agent-support-levels"
+parent: "speclang/agent-support-levels"
 part: 1/2
 ---
 # Agent Support Levels - Definitions

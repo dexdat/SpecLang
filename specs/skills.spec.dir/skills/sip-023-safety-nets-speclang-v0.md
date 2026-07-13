@@ -1,3 +1,5 @@
+short: id: @specs/skills
+layer: 5
 ---
 name: sip-023-safety-nets-speclang-v0
 title: "SIP 23: Safety Nets"

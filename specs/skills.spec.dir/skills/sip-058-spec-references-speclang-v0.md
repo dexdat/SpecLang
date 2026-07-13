@@ -23,8 +23,8 @@ This SIP defines reference syntax, resolution, and validation for Speclang.
 
 ### Quick Start
 
-1. **File Reference:** `@ref:specs/auth`
-2. **Block Reference:** `@ref:specs/auth#login`
+1. **File Reference:** @ref:specs/auth
+2. **Block Reference:** @ref:specs/auth#login
 3. **Resolution:** Parse → Find file → Find block (optional)
 4. **Validation:** Check format, existence, no circular deps
 
@@ -75,7 +75,7 @@ References need:
 
 ## Rationale
 
-**Reference Format:** `@ref:domain/path#block-id`
+**Reference Format:** @ref:domain/path#block-id
 
 **Components:**
 
@@ -126,7 +126,7 @@ References need:
 
 | Type | Format | Purpose |
 |------|--------|---------|
-| `ref` | `@ref:...` | General reference |
+| `ref` | @ref:... | General reference |
 
 **Future Extensions:**
 

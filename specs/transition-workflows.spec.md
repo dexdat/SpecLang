@@ -1,4 +1,4 @@
-# speclang-header lines:8
+# speclang-header lines:9
 id: "@speclang/transition-workflows"
 version: 0.1.0
 layer: 2
@@ -21,11 +21,11 @@ This directory contains detailed specifications for transition workflows:
 DirectoryIndex:
   
   upgrade:
-    - "@ref:speclang/transition-workflows/upgrade"
+    - "@ref:speclang/transition-workflows/upgrade
     - Contains: Upgrade checklists, validation gates, orchestration, examples
   
   downgrade:
-    - "@ref:speclang/transition-workflows/downgrade"
+    - "@ref:speclang/transition-workflows/downgrade
     - Contains: Downgrade triggers, rollback procedures, emergency workflows
   
   relationship:
@@ -40,10 +40,10 @@ DirectoryIndex:
 
 | Scenario | Primary Spec | Key Sections |
 |----------|--------------|--------------|
-| Planning an upgrade | `@ref:speclang/transition-workflows/upgrade` | Upgrade Checklist, Validation Gates |
-| Executing a rollback | `@ref:speclang/transition-workflows/downgrade` | Rollback Procedures, Downgrade Validation |
+| Planning an upgrade | @ref:speclang/transition-workflows/upgrade | Upgrade Checklist, Validation Gates |
+| Executing a rollback | @ref:speclang/transition-workflows/downgrade | Rollback Procedures, Downgrade Validation |
 | Configuring transition gates | Both | Validation Gates, Orchestration |
-| Emergency procedures | `@ref:speclang/transition-workflows/downgrade` | Emergency Rollback, Monitoring Integration |
+| Emergency procedures | @ref:speclang/transition-workflows/downgrade | Emergency Rollback, Monitoring Integration |
 | Agent behavior changes | Both | Integration with Agent Behavior Matrix |
 
 ## Common References
@@ -51,12 +51,12 @@ DirectoryIndex:
 ```speclang
 # @block:transition/common-refs @kind:refs
 refs:
-  - "@ref:speclang/project-maturity-levels"
-  - "@ref:speclang/agent-support-levels"
-  - "@ref:speclang/autonomous-validation"
-  - "@ref:speclang/agent-behavior-matrix"
-  - "@ref:speclang/transition-workflows/upgrade"
-  - "@ref:speclang/transition-workflows/downgrade"
+  - "@ref:speclang/project-maturity-levels
+  - "@ref:speclang/agent-support-levels
+  - "@ref:speclang/autonomous-validation
+  - "@ref:speclang/agent-behavior-matrix
+  - "@ref:speclang/transition-workflows/upgrade
+  - "@ref:speclang/transition-workflows/downgrade
 ```
 
 ## Maintenance Notes

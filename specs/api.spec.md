@@ -1,10 +1,10 @@
 # speclang-header lines:10
-id: "@speclang/api.spec"
+id: "@speclang/api-spec"
 version: 0.1.0
 layer: 1
 tags: [api, rest, http, integration]
 children:
-  - "@ref:specs/api.spec.dir/openapi"project_level: Alpha
+  - "@ref:specs/api.spec.dir/openapiproject_level: Alpha
 agent_support: agent_autonomous
 short: SpecLang API - REST endpoints for external integration
 ---

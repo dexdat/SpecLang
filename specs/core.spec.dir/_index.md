@@ -1,5 +1,5 @@
-# speclang-header lines:12
-id: "@specs/core.dir/index"
+# speclang-header lines:10
+id: "@specs/core-dir/index"
 version: 1.0.0
 layer: 1
 project_level: Alpha
@@ -56,7 +56,7 @@ For understanding Core architecture:
 ## Dependencies
 
 All files in this directory:
-- Reference parent: `@ref:specs/core`
+- Reference parent: @ref:specs/core
 - May reference siblings via `siblings.prev` and `siblings.next`
 - Reference other core specs as needed
 
@@ -73,7 +73,7 @@ The Core directory defines the fundamental architecture of SpecLang:
 ## Notes
 
 - All files are **sub-specs** of `core.spec.md`
-- Each has `parent: "@ref:specs/core"` in header
+- Each has `parent: "@ref:specs/core` in header
 - Parts are numbered 1/6 through 6/6 for logical reading order
 - Layer is 2 (implementation details of layer 0 core concepts)
 

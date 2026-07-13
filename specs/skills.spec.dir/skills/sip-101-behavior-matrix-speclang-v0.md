@@ -1,3 +1,5 @@
+short: id: @specs/skills
+layer: 5
 ---
 name: sip-101-behavior-matrix-speclang-v0
 title: "SIP 101: Agent Behavior Matrix"

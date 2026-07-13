@@ -3,7 +3,7 @@ id: "@speclang/maturity/levels/production"
 version: 0.1.0
 layer: 3
 tags: [maturity, levels, production]
-parent: "@ref:specs/project-maturity-levels/levels"
+parent: "@ref:specs/project-maturity-levels/levels
 project_level: Alpha
 agent_support: agent_autonomous
 short: Production level definition, validation, transitions, and agent behavior

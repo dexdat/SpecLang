@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:10
 id: "@speclang/search"
 version: 0.1.0
 layer: 5
@@ -13,8 +13,8 @@ children: ["@speclang/search/queries", "@speclang/search/indexing"]
 
 This spec defines search capabilities for SpecLang, split into two sub‑specs:
 
-- **@ref:speclang/search/queries** – Query types: FTS, semantic, tag, layer, combined
-- **@ref:speclang/search/indexing** – Indexing: FTS table, embeddings, update triggers
+- @ref:speclang/search/queries – Query types: FTS, semantic, tag, layer, combined
+- @ref:speclang/search/indexing – Indexing: FTS table, embeddings, update triggers
 
 ## Search Tool Handler
 

@@ -111,7 +111,7 @@ FieldFormat:
   array: "field_name: type_name[]"
   map: "field_name: Map<key, value>"
   union: "field_name: type_a | type_b"
-  reference: "field_name: ""@ref:entity-id"```
+  reference: "field_name: ""@ref:entity-id```
 
 ### Supported Types
 

@@ -192,7 +192,7 @@ ReferenceValidation:
   resolution_process:
     1: "Extract all @ref: patterns from content"
     2: "For each reference:"
-      a: "Parse format: ""@ref:domain/path#block"      b: "Look up in _index.json"
+      a: "Parse format: ""@ref:domain/path#block      b: "Look up in _index.json"
       c: "If not found, check forward reference"
       d: "If still not found, fail"
       

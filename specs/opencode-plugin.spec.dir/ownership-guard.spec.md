@@ -1,5 +1,5 @@
-# speclang-header lines:9
-id: "@speclang/opencode-plugin.spec.dir/ownership-guard"
+# speclang-header lines:10
+id: "@speclang/opencode-plugin-spec-dir/ownership-guard"
 version: 0.1.0
 layer: 5
 imports: ["@speclang/opencode-plugin.spec.dir/session-manager"]

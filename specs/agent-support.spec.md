@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:10
 id: "@speclang/agent-support"
 version: 0.1.0
 layer: 1
@@ -56,7 +56,7 @@ ImplementationDetails:
 ### @block::children @kind:entity
 
 ChildSpecs:
-  - "@ref:speclang/agent-support/human-only" – Human-only agent support module
+  - "@ref:speclang/agent-support/human-only – Human-only agent support module
 
 ### @block::usage @kind:entity
 

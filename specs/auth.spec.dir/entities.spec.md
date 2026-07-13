@@ -6,7 +6,7 @@ project_level: "Alpha"
 agent_support: "agent_autonomous"
 tags: [auth, entities, mcp, typescript]
 short: "Authentication entities: MCPAuth class and configuration"
-parent: ""@ref:speclang/auth"part: "1/2"
+parent: ""@ref:speclang/authpart: "1/2"
 ---
 # Authentication Entities
 
@@ -74,5 +74,5 @@ export class MCPAuth {
 ## Related Entities
 
 See also:
-- `@ref:speclang/mcp.authentication` for MCP authentication methods
-- `@ref:speclang/examples/auth` for example authentication entities
+- @ref:speclang/mcp.authentication for MCP authentication methods
+- @ref:speclang/examples/auth for example authentication entities

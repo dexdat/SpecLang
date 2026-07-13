@@ -5,7 +5,7 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [locks, types, file-locks]
-parent: ""@ref:speclang/locks"part: 1/2
+parent: ""@ref:speclang/lockspart: 1/2
 short: "Lock types and structures for file locking"
 ---
 # Lock Types

@@ -1,13 +1,13 @@
-# speclang-header lines:12
-id: "@speclang/mcp.tools.search"
+# speclang-header lines:11
+id: "@speclang/mcp-tools-search"
 version: 0.1.0
 layer: 3
 project_level: Alpha
 agent_support: agent_assisted
 tags: [mcp, tools, search]
-parent: ""@ref:speclang/mcp"part: 4/12
+parent: ""@ref:speclang/mcppart: 4/12
 siblings:
-  next: ""@ref:specs/mcp.spec.dir/tools/specs"short: "Search tools: speclang_search and speclang_semantic_search"
+  next: ""@ref:specs/mcp.spec.dir/tools/specsshort: "Search tools: speclang_search and speclang_semantic_search"
 ---
 # MCP Search Tools
 

@@ -1,9 +1,9 @@
 # speclang-header lines:11
-id: "@speclang/scripts.compute-header-lines"
+id: "@speclang/scripts-compute-header-lines"
 version: 0.1.0
 layer: 2
 tags: [scripts, headers]
-parent: ""@ref:speclang/scripts"status: draft
+parent: ""@ref:speclang/scriptsstatus: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Compute Header Lines Script

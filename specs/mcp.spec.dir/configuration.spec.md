@@ -1,8 +1,8 @@
-# speclang-header lines:12
-id: "@speclang/mcp.configuration"
-parent: ""@ref:speclang/mcp"part: 11/12
+# speclang-header lines:11
+id: "@speclang/mcp-configuration"
+parent: ""@ref:speclang/mcppart: 11/12
 siblings:
-  next: ""@ref:specs/mcp.spec.dir/cli"short: Configuration options and schema
+  next: ""@ref:specs/mcp.spec.dir/clishort: Configuration options and schema
 project_level: Alpha
 agent_support: agent_assisted
 tags: [mcp, speclang]

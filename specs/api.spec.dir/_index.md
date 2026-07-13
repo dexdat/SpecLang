@@ -1,5 +1,5 @@
-# speclang-header lines:20
-id: "@speclang/api.spec.dir/index"
+# speclang-header lines:10
+id: "@speclang/api-spec-dir/index"
 version: 1.0.0
 layer: 2
 project_level: Alpha

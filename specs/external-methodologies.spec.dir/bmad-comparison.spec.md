@@ -1,14 +1,15 @@
-# speclang-header lines:13
+# speclang-header lines:12
 id: "@speclang/external-methodologies/bmad-comparison"
 version: 0.1.0
 layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [bmad, comparison, methodology, analysis]
-parent: ""@ref:specs/external-methodologies"part: "1/3"
+short: BMAD Comparison
+parent: ""@ref:specs/external-methodologiespart: "1/3"
 siblings:
   prev: null
-  next: ""@ref:specs/external-methodologies.spec.dir/recommendations"short: BMAD Comparison - Detailed analysis of BMAD vs SpecLang
+  next: ""@ref:specs/external-methodologies.spec.dir/recommendationsshort: BMAD Comparison - Detailed analysis of BMAD vs SpecLang
 ---
 
 # BMAD Comparison
@@ -52,9 +53,9 @@ BMAD is an AI-driven development framework that provides:
 | **Header Format** | YAML frontmatter with `speclang-header` | YAML frontmatter in `.agent.yaml` |
 | **Content Format** | Flexible markdown blocks | Template-driven markdown |
 | **File Extension** | `.spec.md`, `.scl`, `.spec.yaml` | `.agent.yaml` → compiled `.md` |
-| **References** | `@ref:path/to/spec#block` | Workflow phase implicit refs |
+| **References** | @ref:path/to/spec#block | Workflow phase implicit refs |
 | **Splitting** | `.spec.dir/` sub-specs | Workflow step outputs |
-| **Validation** | `@ref:speclang/autonomous-validation` | `tools/schema/agent.js` schema validation |
+| **Validation** | @ref:speclang/autonomous-validation | `tools/schema/agent.js` schema validation |
 | **Compilation** | Parse and execute | YAML → Markdown with XML injection |
 ```
 

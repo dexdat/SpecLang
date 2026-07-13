@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/compliance"
 description: Dual-view compliance verification system
 version: 1.0.0

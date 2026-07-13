@@ -1,8 +1,8 @@
 # speclang-header lines:11
-id: "@speclang/implementation.sqlite-schema"
+id: "@speclang/implementation-sqlite-schema"
 version: 0.1.0
 layer: 3
-parent: ""@ref:speclang/implementation"imports: ["@speclang/sqlite", "@speclang/core", "@speclang/headers"]
+parent: ""@ref:speclang/implementationimports: ["@speclang/sqlite", "@speclang/core", "@speclang/headers"]
 tags: [sqlite, schema, implementation, migration, typescript]
 short: SQLite database schema definitions and migration scripts for Speclang
 project_level: Alpha

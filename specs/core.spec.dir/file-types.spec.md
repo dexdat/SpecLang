@@ -6,7 +6,7 @@ project_level: "Alpha"
 agent_support: "agent_autonomous"
 tags: [core]
 short: "Spec file types: spec-file, test-spec, generated-file"
-parent: ""@ref:speclang/core"part: 3/6
+parent: ""@ref:speclang/corepart: 3/6
 ---
 
 ## File Types

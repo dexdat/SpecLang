@@ -1,4 +1,4 @@
-# speclang-header lines:37
+# speclang-header lines:38
 # id: @specs/docs
 # version: 1.0.0
 # layer: 5
@@ -35,6 +35,8 @@
 | Guard System | ⚠️ Mentioned | ❌ | **NOT STARTED** |
 | OpenCode Plugin | ✅ `opencode-plugin.spec.md` | ⚠️ Partial | Needs completion |
 
+short: id: @specs/docs
+layer: 5
 ---
 
 ## Build Order (Dependency Graph)

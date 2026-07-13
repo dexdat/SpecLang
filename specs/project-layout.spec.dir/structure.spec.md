@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:13
 id: "@speclang/project-layout/structure"
 version: 0.1.0
 layer: 2
@@ -226,6 +226,6 @@ steps:
   11. run validation to ensure project structure is correct
   12. output success message with next steps
 
-refs: [""@ref:speclang/cli#new""]
+refs: [""@ref:speclang/cli#new"]
 ```
 

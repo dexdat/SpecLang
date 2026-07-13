@@ -23,8 +23,8 @@ This SIP defines the universal reference system for linking specs.
 
 ### Quick Start
 
-1. **File Reference:** `@ref:specs/auth`
-2. **Block Reference:** `@ref:specs/auth#login`
+1. **File Reference:** @ref:specs/auth
+2. **Block Reference:** @ref:specs/auth#login
 3. **Header Field:** `refs: [@ref:specs/user]`
 4. **In Content:** `See @ref:specs/auth#login`
 
@@ -76,7 +76,7 @@ Without a standard format, references become ambiguous and fragile.
 
 ## Rationale
 
-**Format:** `@ref:path#block`
+**Format:** @ref:path#block
 
 **Why this format?**
 - `@` clearly marks it as a reference
@@ -95,7 +95,7 @@ Without a standard format, references become ambiguous and fragile.
 
 ### Reference Format
 
-**Full Format:** `@ref:domain/path#block-id`
+**Full Format:** @ref:domain/path#block-id
 
 **Components:**
 
@@ -162,7 +162,7 @@ northstar            → project.scl
 
 | Type | Format | Purpose |
 |------|--------|---------|
-| `ref` | `@ref:...` | General reference |
+| `ref` | @ref:... | General reference |
 
 **Future Types:**
 
@@ -300,9 +300,9 @@ def resolve_reference(ref_str, current_file):
 
 **Errors:**
 ```
-Error: Invalid reference ""@ref:specs/auth#login"  File not found: specs/auth.spec.yaml
+Error: Invalid reference ""@ref:specs/auth#login  File not found: specs/auth.spec.yaml
 
-Error: Invalid reference ""@ref:specs/auth#login"  Block not found: "login" in specs/auth.spec.yaml
+Error: Invalid reference ""@ref:specs/auth#login  Block not found: "login" in specs/auth.spec.yaml
 
 Error: Circular dependency detected
   specs/auth → specs/user → specs/auth

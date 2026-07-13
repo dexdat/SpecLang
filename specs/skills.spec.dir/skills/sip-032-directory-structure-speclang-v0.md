@@ -142,14 +142,14 @@ DirectoryTree:
 ```yaml
 ReferencePattern:
   child_to_parent:
-    - "auth.spec.dir/entities.scl references ""@ref:specs/auth"    - "auth.spec.dir/login.spec.dir/handler.go.spec references ""@ref:specs/auth.spec.dir/login"    
+    - "auth.spec.dir/entities.scl references ""@ref:specs/auth    - "auth.spec.dir/login.spec.dir/handler.go.spec references ""@ref:specs/auth.spec.dir/login    
   parent_to_children:
     - "auth.spec.md lists children in header"
     - "SQLite tracks relationships"
     
   header_example:
     id: "@specs/auth/entities"
-    parent: ""@ref:specs/auth"    children: []
+    parent: ""@ref:specs/auth    children: []
 ```
 
 ### Creating New Specs
@@ -349,7 +349,7 @@ result:
   path: "specs/auth.spec.dir/login.spec.yaml"
   header:
     id: "@specs/auth/login"
-    parent: ""@ref:specs/auth"```
+    parent: ""@ref:specs/auth```
 
 ### Example 2: Deep Nesting
 

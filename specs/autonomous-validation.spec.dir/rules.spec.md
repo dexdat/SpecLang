@@ -1,8 +1,8 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/autonomous-validation/rules"
 version: 0.1.0
 layer: 2
-parent: "@speclang/autonomous-validation"
+parent: "speclang/autonomous-validation"
 part: 1/2
 project_level: Alpha
 agent_support: agent_autonomous
@@ -57,7 +57,7 @@ AutonomousValidationCriteria:
       - id: "Must follow @domain/path format"
       - version: "Semantic version"
       - layer: "Integer (depth in tree), appropriate for content"
-      - project_level: "Value meets criteria defined in ""@ref:speclang/project-maturity-levels"      - agent_support: "agent_autonomous"
+      - project_level: "Value meets criteria defined in ""@ref:speclang/project-maturity-levels      - agent_support: "agent_autonomous"
       - tags: "Non-empty array"
       - short: "One-line description"
     optional_but_recommended:
@@ -146,7 +146,7 @@ ReferenceValidation:
   resolution_process:
     1. Extract all `@ref:` patterns from spec content
     2. For each reference:
-       a. Parse reference format: `@ref:domain/path#block` or `@ref:domain/path`
+       a. Parse reference format: @ref:domain/path#block or @ref:domain/path
        b. Look up in `_index.json`
        c. If not found, check if it's a forward reference (allowed in `depends_on`)
        d. If still not found, validation fails
@@ -154,7 +154,7 @@ ReferenceValidation:
   forward_references:
     - `depends_on` may reference specs not yet written
     - Content references must exist
-    - Exception: `@ref:northstar` always exists
+    - Exception: @ref:northstar always exists
     
   tools:
     - `validate_refs.py` script

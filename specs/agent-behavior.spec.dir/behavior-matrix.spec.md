@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:14
 id: "@specs/agent-behavior/behavior-matrix"
 version: 1.0.0
 layer: 5
@@ -15,7 +15,7 @@ depends_on:
 
 # Agent Behavior Matrix Implementation
 
-Implementation of the agent behavior matrix defined in `@ref:specs/agent-behavior-matrix`.
+Implementation of the agent behavior matrix defined in @ref:specs/agent-behavior-matrix.
 
 ## @block:types @kind:interface
 

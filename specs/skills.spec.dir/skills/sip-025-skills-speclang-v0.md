@@ -459,7 +459,7 @@ skill_invocation:
   
   actions:
     1: "Read specs/auth.spec.md"
-    2: "Find specs with ""@ref:specs/auth"    3: "Update each child spec"
+    2: "Find specs with ""@ref:specs/auth    3: "Update each child spec"
     4: "Validate references"
 ```
 

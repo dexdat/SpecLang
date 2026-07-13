@@ -1,4 +1,4 @@
-# speclang-header lines:22
+# speclang-header lines:23
 # id: @specs/agents
 # version: 1.0.0
 # layer: 5

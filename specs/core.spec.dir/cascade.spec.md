@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [core]
 short: Reactive loop and convergence detection
-parent: ""@ref:speclang/core"part: 2/6
+parent: ""@ref:speclang/corepart: 2/6
 ---
 
 ## The Reactive Loop

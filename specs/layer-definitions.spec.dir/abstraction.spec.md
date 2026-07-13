@@ -1,11 +1,11 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/layer-definitions/abstraction"
 version: 0.1.0
 layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [layer, definitions, abstraction, guidelines]
-parent: "@speclang/layer-definitions"
+parent: "speclang/layer-definitions"
 part: "1/2"
 short: Abstract depth definitions, table, guidelines, and validation rules
 ---

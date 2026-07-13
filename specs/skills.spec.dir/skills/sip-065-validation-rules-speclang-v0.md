@@ -1,3 +1,5 @@
+short: id: @specs/skills
+layer: 5
 ---
 name: sip-065-validation-rules-speclang-v0
 title: "SIP 65: Validation Rules"
@@ -150,7 +152,7 @@ IdValidation:
 ```speclang
 # @block:validation/refs @kind:entity
 RefValidation:
-  format: ""@ref:path#block-id"  
+  format: ""@ref:path#block-id  
   checks:
     - Target file must exist
     - Target block must exist (if specified)

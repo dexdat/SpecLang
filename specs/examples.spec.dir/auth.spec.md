@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:12
 id: "@speclang/examples/auth"
 version: 0.1.0
 layer: 2
@@ -79,6 +79,6 @@ JWT configuration:
 
 ## References
 
-- Parent: `@ref:speclang/examples`
-- Related: `@ref:specs/examples.spec.dir/api` (API design example)
-- Core: `@ref:speclang/core`
+- Parent: @ref:speclang/examples
+- Related: @ref:specs/examples.spec.dir/api (API design example)
+- Core: @ref:speclang/core

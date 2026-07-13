@@ -1,9 +1,9 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/opencode/events"
 version: 0.1.0
 layer: 2
 tags: [opencode, events, file-watching, convergence]
-parent: "@speclang/opencode"
+parent: "speclang/opencode"
 part: "1/2"
 project_level: Alpha
 agent_support: agent_assisted

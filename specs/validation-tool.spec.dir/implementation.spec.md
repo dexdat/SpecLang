@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/validation-tool/implementation"
 version: 0.1.0
 layer: 2
@@ -83,7 +83,7 @@ ReferenceResolution:
     
   requirements:
     - 100% resolution for `agent_autonomous` specs
-    - Exceptions: `@ref:northstar` always valid
+    - Exceptions: @ref:northstar always valid
     - Forward references allowed only in `depends_on`
 ```
 

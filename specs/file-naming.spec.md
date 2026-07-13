@@ -1,4 +1,4 @@
-# speclang-header lines:14
+# speclang-header lines:15
 id: "@speclang/file-naming"
 version: 0.1.0
 layer: 1
@@ -34,8 +34,8 @@ The format determines how speclangd parses and uses the file.
 
 This spec is split into two sub‑specs:
 
-1. **Extensions** (`@ref:speclang/file-naming/extensions`) – File extensions, direct code mapping, markdown/YAML specs, header requirements.
-2. **Patterns** (`@ref:speclang/file-naming/patterns`) – Layer organization, directory structure, transformation flow, naming conventions.
+1. **Extensions** (@ref:speclang/file-naming/extensions) – File extensions, direct code mapping, markdown/YAML specs, header requirements.
+2. **Patterns** (@ref:speclang/file-naming/patterns) – Layer organization, directory structure, transformation flow, naming conventions.
 
 See the sub‑specs for detailed information.
 
@@ -126,7 +126,7 @@ speclang-header:
   id: @generated/handler-go
   layer: 5
   produces: handler.go
-  refs: ["@ref:specs/auth#login""]
+  refs: ["@ref:specs/auth#login"]
 
 block:
   kind: code

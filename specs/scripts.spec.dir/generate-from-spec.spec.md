@@ -1,9 +1,9 @@
 # speclang-header lines:11
-id: "@speclang/scripts.generate-from-spec"
+id: "@speclang/scripts-generate-from-spec"
 version: 0.1.0
 layer: 2
 tags: [scripts, generation]
-parent: ""@ref:speclang/scripts"status: draft
+parent: ""@ref:speclang/scriptsstatus: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Generate From Spec Script

@@ -1,6 +1,6 @@
 # speclang-header lines:7
 id: "@speclang/roadmap/poc/templates"
-parent: ""@ref:specs/roadmap/poc"version: 0.1.0
+parent: ""@ref:specs/roadmap/pocversion: 0.1.0
 layer: 2
 short: "Code generation templates for POC"
 tags: [poc, templates, codegen, generation]

@@ -1,4 +1,4 @@
-# speclang-header lines:14
+# speclang-header lines:15
 id: "@speclang/spec-format/structure"
 version: 0.1.0
 layer: 2
@@ -176,7 +176,7 @@ imports:
   - @myapp/users
 status: stable
 owner: @team-security
-refs: [""@ref:northstar#auth""]
+refs: [""@ref:northstar#auth"]
 
 ---
 ```

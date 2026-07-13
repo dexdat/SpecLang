@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:10
 id: "@speclang/agent-support-levels"
 version: 0.1.0
 layer: 1
@@ -56,8 +56,8 @@ BehaviorMatrix:
 ### @block::children @kind:entity
 
 ChildSpecs:
-  - "@ref:speclang/agent-support-levels/levels" – Definitions of levels
-  - "@ref:speclang/agent-support-levels/behaviors" – Behavior matrix
+  - "@ref:speclang/agent-support-levels/levels – Definitions of levels
+  - "@ref:speclang/agent-support-levels/behaviors – Behavior matrix
 
 ### @block::usage @kind:entity
 

@@ -1,9 +1,9 @@
 # speclang-header lines:11
-id: "@speclang/scripts.analyze-completeness"
+id: "@speclang/scripts-analyze-completeness"
 version: 0.1.0
 layer: 2
 tags: [scripts, analysis, completeness, safety-nets]
-parent: ""@ref:speclang/scripts"status: draft
+parent: ""@ref:speclang/scriptsstatus: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Analyze Spec Completeness Script
@@ -14,7 +14,7 @@ target: scripts/analyze_completeness.py
 
 Analyzes spec completeness for safety nets, computing step-by-step coverage, reference resolution, ambiguity score, metadata completeness, and dependency graph completeness.
 
-Implements the analysis component from `@ref:speclang/safety-nets/analysis`.
+Implements the analysis component from @ref:speclang/safety-nets/analysis.
 
 ## Overview
 

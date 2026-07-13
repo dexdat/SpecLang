@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/lenses/prose"
 version: 0.1.0
 layer: 4
@@ -108,7 +108,7 @@ Generates formatted prose in multiple output formats.
 - **Horizontal rules:** Section dividers
 
 **Cross-references:**
-- **Internal references:** `@ref:specs/path#block` links
+- **Internal references:** @ref:specs/path#block links
 - **External references:** URLs to external documentation
 - **Block references:** References to specific blocks within specs
 - **File references:** Links to generated code files
@@ -174,8 +174,8 @@ Formats extracted prose for various output targets.
 Manages cross-references within prose content.
 
 **Reference resolution:**
-- **Internal spec references:** Resolve `@ref:specs/path` to actual spec titles
-- **Block references:** Resolve `@ref:specs/path#block` to block content
+- **Internal spec references:** Resolve @ref:specs/path to actual spec titles
+- **Block references:** Resolve @ref:specs/path#block to block content
 - **External references:** Validate URLs and fetch metadata
 - **File references:** Link to generated code files in repository
 

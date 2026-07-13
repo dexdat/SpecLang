@@ -1,5 +1,5 @@
-# speclang-header lines:8
-id: "@speclang/api.spec.dir/openapi"
+# speclang-header lines:9
+id: "@speclang/api-spec-dir/openapi"
 version: 0.1.0
 layer: 2
 tags: [api, openapi, rest, http, specification]

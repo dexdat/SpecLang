@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/semantic-definitions/layer-mapping"
 version: 0.1.0
 layer: 2
@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [semantic, definitions, layer, mapping, autonomous]
 short: Layer mapping definitions and interactions
-parent: "@speclang/semantic-definitions"
+parent: "speclang/semantic-definitions"
 part: "1/2"
 ---
 # Depth Mapping Definitions

@@ -1,4 +1,4 @@
-# speclang-header lines:14
+# speclang-header lines:15
 id: "@speclang/mcp-ui-tools/ui"
 version: 0.1.0
 layer: 2
@@ -8,7 +8,7 @@ status: draft
 short: UI integration for MCP dashboard monitoring tools
 project_level: Alpha
 agent_support: agent_assisted
-parent: "@speclang/mcp-ui-tools"
+parent: "speclang/mcp-ui-tools"
 part: 2/2
 siblings:
   prev: "@speclang/mcp-ui-tools/tools"

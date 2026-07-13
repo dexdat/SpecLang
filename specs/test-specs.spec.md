@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:14
 id: "@speclang/test-specs"
 version: 0.1.0
 layer: 0
@@ -19,8 +19,8 @@ Tests written as specs in natural language. First-class citizens.
 
 This spec has been split into sub-specs:
 
-- **@ref:speclang/test-specs/format.spec** – Format and structure definitions
-- **@ref:speclang/test-specs/examples.spec** – Concrete test examples
+- @ref:speclang/test-specs/format.spec – Format and structure definitions
+- @ref:speclang/test-specs/examples.spec – Concrete test examples
 
 ## Philosophy
 

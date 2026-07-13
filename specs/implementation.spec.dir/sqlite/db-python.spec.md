@@ -1,9 +1,9 @@
 # speclang-header lines:12
-id: "@speclang/implementation.sqlite-db"
+id: "@speclang/implementation-sqlite-db"
 version: 0.1.0
 layer: 5
 target: src/db/speclang_db.py
-parent: ""@ref:speclang/implementation"imports: ["@speclang/implementation.sqlite-schema"]
+parent: ""@ref:speclang/implementationimports: ["@speclang/implementation.sqlite-schema"]
 tags: [sqlite, database, python, connection]
 short: Python SQLite database module for Speclang
 project_level: Alpha

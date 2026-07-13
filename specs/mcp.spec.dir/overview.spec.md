@@ -1,8 +1,8 @@
-# speclang-header lines:11
+# speclang-header lines:12
 id: "@speclang/mcp-overview"
-parent: "@ref:speclang/mcp"
+parent: "@ref:speclang/mcp
 siblings:
-  next: "@ref:specs/mcp.spec.dir/architecture"
+  next: "@ref:specs/mcp.spec.dir/architecture
 short: MCP server overview
 project_level: Alpha
 agent_support: agent_assisted

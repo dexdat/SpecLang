@@ -8,7 +8,7 @@ tags: [agents, implementation]
 target: src/agents/
 short: Agent system implementation files
 refs:
-  - ""@ref:specs/agent-protocol"---
+  - ""@ref:specs/agent-protocol---
 
 # Agents Implementation
 

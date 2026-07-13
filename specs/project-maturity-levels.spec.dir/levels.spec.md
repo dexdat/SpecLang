@@ -3,7 +3,7 @@ id: "@speclang/project-maturity-levels/levels"
 version: 0.1.0
 layer: 2
 tags: [project, maturity, levels, definitions]
-parent: "@ref:specs/project-maturity-levels"
+parent: "@ref:specs/project-maturity-levels
 project_level: Alpha
 agent_support: agent_autonomous
 short: Definitions for each project_level value

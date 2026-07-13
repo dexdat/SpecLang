@@ -7,7 +7,7 @@ agent_support: agent_autonomous
 tags: [format, syntax, self-describing]
 status: draft
 children:
-  - "@ref:@ref:specs/spec-format.spec.dir/structure"  - "@ref:specs/spec-format.spec.dir/blocks"
+  - "@ref:@ref:specs/spec-format.spec.dir/structure  - "@ref:specs/spec-format.spec.dir/blocks
 
 short: Spec Format (2 parts)
 ---

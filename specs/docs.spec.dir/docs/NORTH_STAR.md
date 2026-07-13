@@ -1,4 +1,4 @@
-# speclang-header lines:13
+# speclang-header lines:14
 # id: @specs/docs
 # version: 1.0.0
 # layer: 5
@@ -73,7 +73,7 @@ agent_support: agent_autonomous
 tags: [auth, login, security]
 short: User authentication login flow
 depends_on:
-  - ""@ref:specs/users#model"caused_by: "@change:e4f5g6h"    # optional: what triggered this
+  - ""@ref:specs/users#modelcaused_by: "@change:e4f5g6h"    # optional: what triggered this
 change_id: "@change:a1b2c3d"    # optional: this change's ID
 part_of: "@cascade:20250222-001" # optional: cascade this belongs to
 ---

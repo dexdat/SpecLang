@@ -89,14 +89,14 @@ Each line is a valid JSON object (JSON Lines format). Empty lines are ignored.
   "layer": 0,
   "tags": ["tag1", "tag2"],
   "short": "One line description",
-  "refs": ["@ref:other/spec"],
+  "refs": ["@ref:other/spec],
   "lines": 123,
   "modified": "2025-02-20T10:30:00Z",
   "header_lines": 8,
   "status": "draft",
   "target": "go",
-  "depends_on": ["@ref:parent/spec"],
-  "children": ["@ref:child/spec"]
+  "depends_on": ["@ref:parent/spec],
+  "children": ["@ref:child/spec]
 }
 ```
 
@@ -217,13 +217,13 @@ The Speclang system uses the index for:
   "layer": 3,
   "tags": ["auth", "login", "jwt", "rate-limit"],
   "short": "Login operation with JWT and rate limiting",
-  "refs": ["@ref:specs/auth/entities", "@ref:stdlib/JWT"],
+  "refs": ["@ref:specs/auth/entities, "@ref:stdlib/JWT],
   "lines": 45,
   "modified": "2025-02-20T10:30:00Z",
   "header_lines": 12,
   "status": "stable",
   "target": "go",
-  "depends_on": ["@ref:northstar#auth"],
+  "depends_on": ["@ref:northstar#auth],
   "children": []
 }
 ```
@@ -243,7 +243,7 @@ The Speclang system uses the index for:
   "header_lines": 8,
   "status": "draft",
   "target": null,
-  "depends_on": ["@ref:specs/auth"],
+  "depends_on": ["@ref:specs/auth],
   "children": [],
   "part": 1,
   "total_parts": 3

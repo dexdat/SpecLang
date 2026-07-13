@@ -1,13 +1,14 @@
-# speclang-header lines:12
+# speclang-header lines:11
 id: "@speclang/search/indexing"
 version: 0.1.0
 layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [search, indexing, fts, embeddings]
-parent: ""@ref:speclang/search"part: 2/2
+short: Search Indexing
+parent: ""@ref:speclang/searchpart: 2/2
 siblings:
-  prev: ""@ref:speclang/search/queries"short: "Search indexing: FTS table, embeddings, update triggers"
+  prev: ""@ref:speclang/search/queriesshort: "Search indexing: FTS table, embeddings, update triggers"
 ---
 # Search Indexing
 

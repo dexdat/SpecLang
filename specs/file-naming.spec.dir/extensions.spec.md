@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/file-naming/extensions"
 version: 0.1.0
 layer: 2
@@ -89,7 +89,7 @@ speclang-header:
   id: @generated/handler-go
   layer: 5
   produces: handler.go
-  refs: [""@ref:specs/auth#login""]
+  refs: [""@ref:specs/auth#login"]
 
 block:
   kind: code

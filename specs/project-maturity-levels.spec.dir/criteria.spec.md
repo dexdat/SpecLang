@@ -3,7 +3,7 @@ id: "@speclang/project-maturity-levels/criteria"
 version: 0.1.0
 layer: 2
 tags: [project, maturity, levels, criteria, validation]
-parent: "@ref:specs/project-maturity-levels"
+parent: "@ref:specs/project-maturity-levels
 project_level: Alpha
 agent_support: agent_autonomous
 short: Detailed criteria and validation rules for project_level

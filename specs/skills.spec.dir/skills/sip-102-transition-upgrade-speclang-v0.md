@@ -1,3 +1,5 @@
+short: id: @specs/skills
+layer: 5
 ---
 name: sip-102-transition-upgrade-speclang-v0
 title: "SIP 102: Transition Upgrade Workflows"

@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:10
 id: "@speclang/auth"
 version: 0.1.0
 layer: 2
@@ -36,6 +36,6 @@ Refer to the sub‑specs for detailed definitions. This directory spec provides 
 
 ## Related Specs
 
-- `@ref:speclang/mcp.authentication` – MCP authentication methods
-- `@ref:speclang/examples/auth` – Example authentication spec
+- @ref:speclang/mcp.authentication – MCP authentication methods
+- @ref:speclang/examples/auth – Example authentication spec
 

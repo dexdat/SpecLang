@@ -26,7 +26,7 @@ This SIP defines the block system for structured content in specs.
 1. **Block Declaration:** `# @block:id @kind:type`
 2. **Block Content:** Follows declaration
 3. **Block Kinds:** entity, operation, policy, test, code, diagram, etc.
-4. **References:** Link blocks with `@ref:file#block`
+4. **References:** Link blocks with @ref:file#block
 
 ### Example
 
@@ -389,7 +389,7 @@ Token entity...
 
 ## Block References
 
-**Format:** `@ref:file-path#block-id`
+**Format:** @ref:file-path#block-id
 
 **Examples:**
 ```

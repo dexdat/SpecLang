@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/agent-behavior-matrix/transitions"
 version: 0.1.0
 layer: 2
@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [agent, behavior, transitions, autonomous]
 short: Transition workflows and fallback protocols
-parent: "@speclang/agent-behavior-matrix"
+parent: "speclang/agent-behavior-matrix"
 part: "2/2"
 ---
 ## Mixed Maturity Handling

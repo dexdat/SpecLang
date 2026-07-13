@@ -1,8 +1,8 @@
-# speclang-header lines:11
+# speclang-header lines:12
 id: "@speclang/workflow/examples"
 version: 0.1.0
 layer: 2
-parent: "@speclang/workflow"
+parent: "speclang/workflow"
 part: 3/3
 tags: [workflow, examples, file-flow, team, troubleshooting]
 status: draft

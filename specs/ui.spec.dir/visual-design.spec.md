@@ -1,8 +1,8 @@
-# speclang-header lines:13
-id: "@speclang/ui.visual-design"
-parent: ""@ref:specs/ui"part: 2/14
+# speclang-header lines:11
+id: "@speclang/ui-visual-design"
+parent: ""@ref:specs/uipart: 2/14
 siblings:
-  prev: ""@ref:specs/ui.spec.dir/overview"  next: ""@ref:specs/ui.spec.dir/components/cascade-status"short: Visual design system, CSS architecture, themes, accessibility
+  prev: ""@ref:specs/ui.spec.dir/overview  next: ""@ref:specs/ui.spec.dir/components/cascade-statusshort: Visual design system, CSS architecture, themes, accessibility
 project_level: Alpha
 agent_support: agent_assisted
 tags: [speclang]

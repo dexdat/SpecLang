@@ -1,8 +1,8 @@
-# speclang-header lines:13
-id: "@speclang/ui.testing"
-parent: ""@ref:specs/ui"part: 13/14
+# speclang-header lines:11
+id: "@speclang/ui-testing"
+parent: ""@ref:specs/uipart: 13/14
 siblings:
-  prev: ""@ref:specs/ui.spec.dir/state-management"  next: ""@ref:specs/mcp-ui-tools"short: Testing strategy and specifications for UI components
+  prev: ""@ref:specs/ui.spec.dir/state-management  next: ""@ref:specs/mcp-ui-toolsshort: Testing strategy and specifications for UI components
 project_level: Alpha
 agent_support: agent_assisted
 tags: [speclang]

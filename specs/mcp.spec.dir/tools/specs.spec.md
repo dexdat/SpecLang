@@ -1,13 +1,13 @@
-# speclang-header lines:12
-id: "@speclang/mcp.tools.specs"
+# speclang-header lines:11
+id: "@speclang/mcp-tools-specs"
 version: 0.1.0
 layer: 3
 project_level: Alpha
 agent_support: agent_assisted
 tags: [mcp, tools, specs]
-parent: ""@ref:speclang/mcp"part: 5/12
+parent: ""@ref:speclang/mcppart: 5/12
 siblings:
-  next: ""@ref:specs/mcp.spec.dir/tools/commands"short: "Spec-related tools: get spec, find dependents, get tree, validate, split, query errors, versioning, SQL"
+  next: ""@ref:specs/mcp.spec.dir/tools/commandsshort: "Spec-related tools: get spec, find dependents, get tree, validate, split, query errors, versioning, SQL"
 ---
 # MCP Spec Tools
 

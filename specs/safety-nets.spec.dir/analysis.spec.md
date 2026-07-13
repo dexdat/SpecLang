@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/safety-nets/analysis"
 version: 0.1.0
 layer: 2
@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [safety, validation, analysis, scoring]
 short: Automated analysis and confidence scoring for safety nets
-parent: "@speclang/safety-nets"
+parent: "speclang/safety-nets"
 part: 1/2
 ---
 # Safety Nets: Analysis

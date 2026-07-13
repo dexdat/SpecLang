@@ -7,7 +7,7 @@ agent_support: agent_assisted
 tags: [demo, hello-world, example]
 short: Hello world demo directory
 status: draft
-parent: "@ref:specs/demo"---
+parent: "@ref:specs/demo---
 
 # Hello World Demo Directory
 

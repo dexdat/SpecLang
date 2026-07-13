@@ -87,7 +87,7 @@ errors:
     field: layer
   - type: unresolved_reference
     file: specs/auth.spec.md
-    ref: ""@ref:specs/user#login"  - type: duplicate_block
+    ref: ""@ref:specs/user#login  - type: duplicate_block
     file: specs/auth.spec.md
     block: "#login"
 ```

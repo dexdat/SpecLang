@@ -1,9 +1,9 @@
 # speclang-header lines:10
-id: "@speclang/scripts.verify-system"
+id: "@speclang/scripts-verify-system"
 version: 0.1.0
 layer: 1
 tags: [scripts, verification, testing]
-parent: ""@ref:specs/scripts"status: draft
+parent: ""@ref:specs/scriptsstatus: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: System Verification Script

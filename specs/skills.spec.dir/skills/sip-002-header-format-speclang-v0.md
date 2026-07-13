@@ -172,11 +172,11 @@ version: "semver"         # Semantic version
 **Optional Fields:**
 
 ```yaml
-parent: "@ref:..."        # Parent spec
+parent: "@ref:...        # Parent spec
 children:                 # Child specs
-  - ""@ref:..."depends_on:               # Dependencies
-  - ""@ref:..."refs:                     # Outgoing references
-  - ""@ref:..."tags:                     # Categorization
+  - ""@ref:...depends_on:               # Dependencies
+  - ""@ref:...refs:                     # Outgoing references
+  - ""@ref:...tags:                     # Categorization
   - "tag1"
   - "tag2"
 short: "One line desc"    # Quick description

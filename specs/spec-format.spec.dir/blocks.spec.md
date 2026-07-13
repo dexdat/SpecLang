@@ -1,4 +1,4 @@
-# speclang-header lines:14
+# speclang-header lines:15
 id: "@speclang/spec-format/blocks"
 version: 0.1.0
 layer: 2
@@ -50,7 +50,7 @@ steps:
   - verify password
   - generate token
 
-refs: [""@ref:northstar#auth"", ""@ref:stdlib/Result""]
+refs: [""@ref:northstar#auth", ""@ref:stdlib/Result"]
 ```
 ```
 
@@ -144,7 +144,7 @@ Numbered:
 Reference:
   syntax: @ref:path/to/block
   inline: see @ref:format/ref for details
-  explicit: refs: [""@ref:format/block"", ""@ref:format/kinds""]
+  explicit: refs: [""@ref:format/block", ""@ref:format/kinds"]
   
   forms:
     @ref:spec           -> entire spec
@@ -158,7 +158,7 @@ Reference:
 # @block:format/ref-usage @kind:code
 ```speclang
 # @block:auth/login @kind:operation
-refs: [""@ref:northstar#auth"", ""@ref:stdlib/Result"", ""@ref:specs/users#User""]
+refs: [""@ref:northstar#auth", ""@ref:stdlib/Result", ""@ref:specs/users#User"]
 
 Steps:
 1. Validate email format using regex

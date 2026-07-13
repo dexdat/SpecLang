@@ -1,5 +1,5 @@
-# speclang-header lines:12
-id: "@specs/compiler.dir/index"
+# speclang-header lines:10
+id: "@specs/compiler-dir/index"
 version: 1.0.0
 layer: 1
 project_level: Alpha
@@ -70,7 +70,7 @@ For understanding the compiler:
 ## Dependencies
 
 All files:
-- Reference parent: `@ref:specs/compiler`
+- Reference parent: @ref:specs/compiler
 - Reference siblings via `siblings.prev` and `siblings.next`
 - Reference `spec-format.dir/` for spec format definitions
 - Reference `headers.spec.md` for header parsing

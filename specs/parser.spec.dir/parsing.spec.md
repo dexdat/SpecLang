@@ -5,7 +5,7 @@ layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [parser, parsing, headers, blocks, references]
-parent: ""@ref:speclang/parser"part: 1/2
+parent: ""@ref:speclang/parserpart: 1/2
 short: "Parsing spec files: headers, blocks, references"
 ---
 # Parsing Spec Files

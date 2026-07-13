@@ -1,9 +1,9 @@
-# speclang-header lines:11
-id: "@speclang/scripts.cleanup-temp"
+# speclang-header lines:12
+id: "@speclang/scripts-cleanup-temp"
 version: 0.1.0
 layer: 2
 tags: [scripts, utility, cleanup]
-parent: "@ref:speclang/scripts"
+parent: "@ref:speclang/scripts
 status: draft
 project_level: Alpha
 agent_support: agent_assisted

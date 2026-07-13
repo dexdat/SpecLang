@@ -1,4 +1,4 @@
-# speclang-header lines:11
+# speclang-header lines:12
 id: "@speclang/cascade-protocol/flow"
 version: 1.0.0
 layer: 2
@@ -317,7 +317,7 @@ Specs can generate outputs in multiple trees:
 ```markdown
 # specs/auth.spec.md
 id: "@specs/auth"
-refs: [""@ref:project.scl"", ""@ref:specs/core""]
+refs: [""@ref:project.scl", ""@ref:specs/core"]
 ---
 
 ## API Specification

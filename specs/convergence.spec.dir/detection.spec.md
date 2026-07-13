@@ -1,10 +1,10 @@
-# speclang-header lines:12
+# speclang-header lines:11
 id: "@speclang/convergence/detection"
 version: 0.1.0
 layer: 2
-parent: ""@ref:speclang/convergence"part: 1/2
+parent: ""@ref:speclang/convergencepart: 1/2
 siblings:
-  next: ""@ref:speclang/convergence/triggers"project_level: Alpha
+  next: ""@ref:speclang/convergence/triggersproject_level: Alpha
 agent_support: agent_autonomous
 tags: [convergence, detection, algorithm]
 short: Convergence detection algorithms

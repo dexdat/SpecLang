@@ -1,11 +1,11 @@
-# speclang-header lines:13
+# speclang-header lines:14
 id: "@speclang/deployment/enterprise"
 version: 0.1.0
 layer: 2
 tags: [deployment, enterprise, scale, compliance]
 imports: ["@speclang/core", "@speclang/opencode", "@speclang/daemon"]
 status: draft
-parent: "@speclang/deployment"
+parent: "speclang/deployment"
 part: "2/2"
 
 project_level: Alpha

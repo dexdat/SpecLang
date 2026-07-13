@@ -1,5 +1,5 @@
-# speclang-header lines:20
-id: "@speclang/scripts.spec/index"
+# speclang-header lines:10
+id: "@speclang/scripts-spec/index"
 version: 1.0.0
 layer: 1
 project_level: Alpha

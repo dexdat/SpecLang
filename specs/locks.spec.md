@@ -5,7 +5,7 @@ layer: 5
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [locks, file-locking, concurrency]
-parent: "@ref:northstar"part: 1/1
+parent: "@ref:northstarpart: 1/1
 short: "File locking system for spec cascade concurrency control"
 ---
 # Locks System

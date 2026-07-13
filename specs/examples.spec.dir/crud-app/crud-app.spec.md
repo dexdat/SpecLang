@@ -1,4 +1,4 @@
-# speclang-header lines:15
+# speclang-header lines:13
 id: @specs/examples/crud-app
 version: 1.0.0
 layer: 1
@@ -7,9 +7,9 @@ agent_support: agent_autonomous
 tags: [example, crud, rest, api]
 short: CRUD example with REST API
 depends_on:
-  - "@ref:specs/core"
-  - "@ref:specs/examples/hello-world"
-  - "@ref:specs/examples/auth"
+  - "@ref:specs/core
+  - "@ref:specs/examples/hello-world
+  - "@ref:specs/examples/auth
 ---
 
 # CRUD Application Example

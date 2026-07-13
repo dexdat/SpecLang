@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:10
 id: "@speclang/router"
 version: 0.1.0
 layer: 5
@@ -24,5 +24,5 @@ export interface AgentSession {
 ```speclang
 # @block:router-subspecs @kind:reference
 Subspecs:
-  routing: "@ref:specs/router.spec.dir/routing"  agents: "@ref:specs/router.spec.dir/agents"```
+  routing: "@ref:specs/router.spec.dir/routing  agents: "@ref:specs/router.spec.dir/agents```
 

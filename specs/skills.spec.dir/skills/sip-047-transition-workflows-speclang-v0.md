@@ -1,3 +1,5 @@
+short: id: @specs/skills
+layer: 5
 ---
 name: sip-047-transition-workflows-speclang-v0
 title: "SIP 47: Transition Workflows"

@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/ipc/channels"
 version: 0.1.0
 layer: 2
@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [ipc, channels, communication]
 short: "IPC communication channels"
-parent: "@speclang/ipc"
+parent: "speclang/ipc"
 part: 2/2
 ---
 ## @block:channels @kind:entity

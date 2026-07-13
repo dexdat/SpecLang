@@ -1,4 +1,4 @@
-# speclang-header lines:12
+# speclang-header lines:13
 id: "@speclang/hooks/lifecycle"
 version: 0.1.0
 layer: 2
@@ -71,4 +71,4 @@ export interface HookContext {
 }
 ```
 
-Note: Hook and HookResult types are defined in the pipeline types spec (`@ref:specs/pipeline/types`).
+Note: Hook and HookResult types are defined in the pipeline types spec (@ref:specs/pipeline/types).

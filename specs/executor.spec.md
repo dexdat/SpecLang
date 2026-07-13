@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [executor, pipeline, scheduling, execution]
 children:
-  - "@ref:@ref:specs/executor.spec.dir/execution"  - "@ref:specs/executor.spec.dir/scheduling"
+  - "@ref:@ref:specs/executor.spec.dir/execution  - "@ref:specs/executor.spec.dir/scheduling
 
 short: Pipeline executor - orchestrates stage scheduling and execution
 ---
@@ -14,8 +14,8 @@ short: Pipeline executor - orchestrates stage scheduling and execution
 
 Orchestrates pipeline stage scheduling and execution. Splits into two sub‑specs:
 
-- **Execution** (`@ref:specs/executor.spec.dir/execution`): Running individual stages, commands, hooks, retries.
-- **Scheduling** (`@ref:specs/executor.spec.dir/scheduling`): Stage ordering, dependency resolution, triggers.
+- **Execution** (@ref:specs/executor.spec.dir/execution): Running individual stages, commands, hooks, retries.
+- **Scheduling** (@ref:specs/executor.spec.dir/scheduling): Stage ordering, dependency resolution, triggers.
 
 ## @block:pipelineexecutor @kind:entity
 

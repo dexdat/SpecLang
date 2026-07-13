@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/skills/spec-writer"
 version: 0.1.0
 layer: 2
@@ -73,7 +73,7 @@ id: "@domain/feature"
 ---
 
 # @block:domain/feature @kind:entity
-refs: [""@ref:northstar#feature""]
+refs: [""@ref:northstar#feature"]
 ...
 ```
 ```

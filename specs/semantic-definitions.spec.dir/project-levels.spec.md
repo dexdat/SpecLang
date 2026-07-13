@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/semantic-definitions/project-levels"
 version: 0.1.0
 layer: 2
@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [semantic, definitions, project-level, agent-support, autonomous]
 short: Project level and agent support definitions and interactions
-parent: "@speclang/semantic-definitions"
+parent: "speclang/semantic-definitions"
 part: "2/2"
 ---
 # Project Level and Agent Support Definitions

@@ -1,14 +1,15 @@
-# speclang-header lines:16
-id: "@speclang/compiler.spec.dir/go"
+# speclang-header lines:12
+id: "@speclang/compiler-spec-dir/go"
 version: 0.1.0
 layer: 5
 tags: [compiler, targets, go]
+short: Go Code Generator
 imports: ["@speclang/core", "@speclang/stdlib", "@speclang/compiler.spec.dir/targets"]
 project_level: Alpha
 agent_support: agent_autonomous
-parent: ""@ref:specs/compiler.spec.dir/targets"short: Go code generator implementation
+parent: ""@ref:specs/compiler.spec.dir/targetsshort: Go code generator implementation
 references:
-  - ""@ref:src/compiler/go/types.ts"  - ""@ref:src/compiler/go/templates.ts"  - ""@ref:src/compiler/go/builtins.ts"  - ""@ref:src/compiler/targets/go.ts"
+  - ""@ref:src/compiler/go/types.ts  - ""@ref:src/compiler/go/templates.ts  - ""@ref:src/compiler/go/builtins.ts  - ""@ref:src/compiler/targets/go.ts
 ---
 
 # Go Code Generator

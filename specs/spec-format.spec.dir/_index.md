@@ -1,5 +1,5 @@
-# speclang-header lines:12
-id: "@specs/spec-format.dir/index"
+# speclang-header lines:10
+id: "@specs/spec-format-dir/index"
 version: 1.0.0
 layer: 1
 project_level: Alpha
@@ -56,7 +56,7 @@ For understanding SpecLang file format:
 ## Dependencies
 
 Both files:
-- Reference parent: `@ref:specs/spec-format`
+- Reference parent: @ref:specs/spec-format
 - Reference each other via `siblings.prev` and `siblings.next`
 - Are referenced by `headers.spec.md` for implementation
 

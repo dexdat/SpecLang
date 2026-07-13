@@ -1,13 +1,13 @@
-# speclang-header lines:12
-id: "@speclang/mcp.tools.commands"
+# speclang-header lines:11
+id: "@speclang/mcp-tools-commands"
 version: 0.1.0
 layer: 3
 project_level: Alpha
 agent_support: agent_assisted
 tags: [mcp, tools, commands]
-parent: ""@ref:speclang/mcp"part: 6/12
+parent: ""@ref:speclang/mcppart: 6/12
 siblings:
-  next: ""@ref:specs/mcp.spec.dir/tools/locks"short: "Command queue tools: get status, query commands, insert command"
+  next: ""@ref:specs/mcp.spec.dir/tools/locksshort: "Command queue tools: get status, query commands, insert command"
 ---
 # MCP Command Tools
 

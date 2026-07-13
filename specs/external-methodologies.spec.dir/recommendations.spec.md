@@ -1,13 +1,14 @@
-# speclang-header lines:13
+# speclang-header lines:11
 id: "@speclang/external-methodologies/recommendations"
 version: 0.1.0
 layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [bmad, recommendations, adoption, patterns]
-parent: ""@ref:specs/external-methodologies"part: "2/3"
+short: Recommendations: BMAD Patterns for SpecLang
+parent: ""@ref:specs/external-methodologiespart: "2/3"
 siblings:
-  prev: ""@ref:specs/external-methodologies.spec.dir/bmad-comparison"  next: ""@ref:specs/external-methodologies.spec.dir/adoption-patterns"short: Recommendations - What to adopt from BMAD
+  prev: ""@ref:specs/external-methodologies.spec.dir/bmad-comparison  next: ""@ref:specs/external-methodologies.spec.dir/adoption-patternsshort: Recommendations - What to adopt from BMAD
 ---
 
 # Recommendations: BMAD Patterns for SpecLang
@@ -52,7 +53,7 @@ Specific recommendations for adopting patterns from BMAD into SpecLang. Based on
 
 **1. Validation Depth Requirements**
 - **From BMAD**: `tools/schema/agent.js` validation
-- **To SpecLang**: Enhance `@ref:speclang/autonomous-validation`
+- **To SpecLang**: Enhance @ref:speclang/autonomous-validation
 
 **Adoption**:
 ```yaml
@@ -104,7 +105,7 @@ Error handling specification
 
 **3. Agent Behavior Matrix**
 - **From BMAD**: Scale-adaptive intelligence based on project level
-- **To SpecLang**: `@ref:speclang/agent-behavior-matrix`
+- **To SpecLang**: @ref:speclang/agent-behavior-matrix
 
 **Adoption**:
 Already implemented in @ref:specs/agent-behavior-matrix.spec.md:
@@ -119,7 +120,7 @@ id: "@speclang/agent-behavior-matrix"
 
 **4. IDE Integration Patterns**
 - **From BMAD**: Compiled agents for Codex, Cursor, Windsurf
-- **To SpecLang**: `@ref:speclang/opencode-plugin`
+- **To SpecLang**: @ref:speclang/opencode-plugin
 
 **Adoption**:
 Already implemented in @ref:specs/opencode-plugin.spec.md with:
@@ -133,12 +134,12 @@ Already implemented in @ref:specs/opencode-plugin.spec.md with:
 
 **5. Validation Tooling**
 - **From BMAD**: Schema validation, linting tools
-- **To SpecLang**: `@ref:speclang/validation-tool`
+- **To SpecLang**: @ref:speclang/validation-tool
 
 **Adoption**:
 Already implemented:
-- `@ref:speclang/validation-tool` – Validation tool spec
-- `@ref:speclang/speclang_parser` – Parser with validation
+- @ref:speclang/validation-tool – Validation tool spec
+- @ref:speclang/speclang_parser – Parser with validation
 - Header validation in @ref:specs/headers
 
 **Status**: Already adopted

@@ -1,8 +1,8 @@
-# speclang-header lines:12
+# speclang-header lines:11
 id: "@speclang/router/agents"
-parent: ""@ref:specs/router"part: 2/2
+parent: ""@ref:specs/routerpart: 2/2
 siblings:
-  prev: ""@ref:specs/router.spec.dir/routing"short: Agent sessions and registration
+  prev: ""@ref:specs/router.spec.dir/routingshort: Agent sessions and registration
 project_level: Alpha
 agent_support: agent_assisted
 tags: [router, agents, daemon, typescript]

@@ -1,5 +1,5 @@
-# speclang-header lines:9
-id: "@speclang/opencode-plugin.spec.dir/checklist"
+# speclang-header lines:10
+id: "@speclang/opencode-plugin-spec-dir/checklist"
 version: 0.2.0
 layer: 5
 imports: ["@speclang/opencode-plugin.spec.dir/overview"]

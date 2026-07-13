@@ -1,4 +1,4 @@
-# speclang-header lines:15
+# speclang-header lines:10
 id: "@speclang/implementation/index"
 version: 1.0.0
 layer: 1
@@ -32,5 +32,5 @@ status: active
 ## Notes
 
 - Some subdirectories may not yet have spec files.
-- The `codegen` directory currently lacks a spec file (referenced by `@ref:speclang/implementation.codegen`).
+- The `codegen` directory currently lacks a spec file (referenced by @ref:speclang/implementation.codegen).
 - This index is manually maintained.

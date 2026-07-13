@@ -1,6 +1,6 @@
 # speclang-header lines:10
 id: "@speclang/stdlib/mapping"
-parent: "@ref:specs/stdlib"
+parent: "@ref:specs/stdlib
 short: "Type mappings between languages"
 project_level: Alpha
 agent_support: agent_autonomous

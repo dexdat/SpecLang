@@ -1,5 +1,5 @@
-# speclang-header lines:12
-id: "@specs/daemon.dir/index"
+# speclang-header lines:10
+id: "@specs/daemon-dir/index"
 version: 1.0.0
 layer: 1
 project_level: Alpha
@@ -80,7 +80,7 @@ For understanding the daemon:
 ## Dependencies
 
 All files:
-- Reference parent: `@ref:specs/daemon`
+- Reference parent: @ref:specs/daemon
 - Reference siblings via `siblings.prev` and `siblings.next`
 - Reference `core.dir/entities.spec.md` for daemon entity definition
 

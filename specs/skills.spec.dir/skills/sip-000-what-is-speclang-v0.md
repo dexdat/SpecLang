@@ -114,7 +114,7 @@ Content starts here
 
 ### 4. Pointer Graph
 
-Every file references others via `@ref:path#block`. This creates a dependency graph that:
+Every file references others via @ref:path#block. This creates a dependency graph that:
 - Prevents context loss
 - Enables tracing
 - Supports cascading

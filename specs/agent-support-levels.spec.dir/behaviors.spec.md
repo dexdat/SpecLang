@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:11
 id: "@speclang/agent-support-levels/behaviors"
 version: 0.1.0
 layer: 2
@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [agent, support, behaviors, transitions, integration]
 short: Agent behavior matrix, transition guidelines, and integration with metadata
-parent: "@speclang/agent-support-levels"
+parent: "speclang/agent-support-levels"
 part: 2/2
 ---
 # Agent Support Levels - Behaviors
