@@ -2,13 +2,7 @@
 
 ## Active
 
-- [ ] **FIX-VALIDATE-002: Fix 68 spec reference format issues**
-  - **Priority:** medium
-  - **Source:** Discovery sweep 2026-07-12 — `speclang validate` shows 68 `[@validation/refs]` failures
-  - **Failures:** Invalid `@ref:` format — trailing backticks, parentheses, quotes, wrong prefixes (e.g. `@ref:speclang/implementation...` should be `@ref:specs/implementation...`)
-  - **Acceptance:** `speclang validate` shows 0 refs failures, refs category passes
-  - **Model:** deepseek-v4-flash
-  - **Files:** specs/ (various .spec.md files with broken @ref: lines)
+- [x] **FIX-VALIDATE-002: Fix 68 spec reference format issues** (commit e7df3871) — Improved `src/parser/header.ts` parser: tighter `REF_PATTERN` (excludes punctuation), CommonMark stack-based fence tracking (fixes `@ref:auth%';` SQL leak), new `normalizeMetadataRef()` for mangled YAML refs (strips trailing junk, merged-in fields). Result: refs errors 68 → 0, full suite 1739/1739 pass. Overall validate: 72 → 41 failures (blocks/autonomous remaining → FIX-VALIDATE-003).
 
 - [ ] **FIX-VALIDATE-003: Fix 57 block kind + 12 missing header fields**
   - **Priority:** medium
