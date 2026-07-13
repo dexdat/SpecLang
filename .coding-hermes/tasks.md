@@ -2,15 +2,7 @@
 
 ## Active
 
-- [ ] **FIX-TEST-004: Fix 2 daemon autonomous cascade test timeouts**
-  - **Priority:** medium
-  - **Source:** Foreman tick 2026-07-13 — 2 tests in tests/daemon/arch004-autonomous-cascade.test.ts timeout consistently at 5000ms:
-    - `autoRecascade=false keeps daemon in Converged state after convergence`
-    - `autoRecascade=true transitions back to Idle and emits armed after convergence`
-  - **Note:** These are consistent failures (not intermittent — fail every run)
-  - **Acceptance:** Both tests pass, `npx vitest run tests/daemon/arch004-autonomous-cascade.test.ts` passes
-  - **Model:** MiniMax-M3
-  - **Files:** tests/daemon/arch004-autonomous-cascade.test.ts
+- [x] **FIX-TEST-004: Fix 2 daemon autonomous cascade test timeouts** (stale — resolved by prior CI-007 ordering fix) — Both tests pass at ~3s, confirmed 2 consecutive runs. Same mechanism as FIX-TEST-001 resolution.
 
 ## Done
 
