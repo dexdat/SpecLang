@@ -2,19 +2,6 @@
 
 ## Active
 
-- [ ] **FIX-TEST-003: Fix 4 CLI get/search tests referencing wrong spec ID**
-  - **Priority:** high
-  - **Source:** Foreman tick 2026-07-13 — 4 tests in tests/cli.test.ts fail because they reference `@speclang/mcp.authentication` which doesn't exist. The spec was renamed to `@speclang/auth`.
-  - **Tests affected:**
-    - `search > should find specs matching query` — expects `@speclang/mcp.authentication` in results
-    - `get > should get spec by ID` — calls `get @speclang/mcp.authentication`
-    - `get > should support --json output` — calls `get @speclang/mcp.authentication --json`
-    - `get > should show blocks with --blocks flag` — calls `get @speclang/mcp.authentication --blocks`
-  - **Root cause:** Spec ID rename from `@speclang/mcp.authentication` → `@speclang/auth`. All 4 tests share same root cause and same file — combined task.
-  - **Acceptance:** All 4 tests pass, `npx vitest run tests/cli.test.ts` passes
-  - **Model:** MiniMax-M3
-  - **Files:** tests/cli.test.ts
-
 - [ ] **FIX-TEST-004: Fix 2 daemon autonomous cascade test timeouts**
   - **Priority:** medium
   - **Source:** Foreman tick 2026-07-13 — 2 tests in tests/daemon/arch004-autonomous-cascade.test.ts timeout consistently at 5000ms:
@@ -26,6 +13,8 @@
   - **Files:** tests/daemon/arch004-autonomous-cascade.test.ts
 
 ## Done
+
+- [x] **FIX-TEST-003: Fix 4 CLI get/search tests referencing wrong spec ID** (commit 0ca68981) — Replaced `@speclang/mcp.authentication` with `@speclang/auth` in tests/cli.test.ts. 32/32 CLI tests pass, 0 failures. ✅
 
 - [x] **FIX-TEST-002: Fix intermittent test timeouts in CLI test suite** (commit 7c349232) — Added timeout:15000 + retry:2 to `search > should filter by tags` and `index > should support --json output`. 5/5 consecutive runs pass. ✅
 
