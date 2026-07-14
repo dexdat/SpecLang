@@ -279,6 +279,7 @@ describe('CLI Commands', () => {
     });
 
     it('should abort cascade', async () => {
+      await execAsync(`${CLI} cascade trigger @speclang/mcp`);
       const { stdout } = await execAsync(`${CLI} cascade abort`);
       expect(stdout).toContain('Cascade aborted');
     });
