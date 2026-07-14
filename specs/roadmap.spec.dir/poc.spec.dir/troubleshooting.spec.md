@@ -202,7 +202,7 @@ id: "@test/fixed"
 version: 1.0.0
 ---
 
-### @block::test @kind:function
+### @block::test-fixed @kind:function
 Test function.
 SPEC
 ```
@@ -442,7 +442,7 @@ id: "@test/minimal"
 version: 1.0.0
 ---
 
-### @block::test @kind:function
+### @block::test-minimal @kind:function
 Test.
 SPEC
 

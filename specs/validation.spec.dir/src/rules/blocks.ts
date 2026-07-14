@@ -8,6 +8,7 @@ import { createError, createWarning } from '../types';
 
 /** Valid block kinds according to spec */
 const VALID_BLOCK_KINDS = [
+  // Primary kinds (most commonly used)
   'entity',
   'operation',
   'policy',
@@ -20,6 +21,45 @@ const VALID_BLOCK_KINDS = [
   'function',
   'question',
   'decision',
+  // Structural / organizational
+  'phase',
+  'check',
+  'module',
+  'directory',
+  'types',
+  'component',
+  'data',
+  'schema',
+  'endpoint',
+  'api',
+  'tool',
+  'protocol',
+  'pattern',
+  'concept',
+  'example',
+  'task',
+  'checklist',
+  'process',
+  'flow',
+  // OOP / type system
+  'class',
+  'interface',
+  'enum',
+  'type',
+  'const',
+  // Reference kinds
+  'refs',
+  'ref',
+  'reference',
+  // Misc
+  'table',
+  'acceptance',
+  'pseudocode',
+  'wireframe',
+  'math',
+  'sequence',
+  'todo',
+  'criteria',
 ];
 
 /**

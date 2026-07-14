@@ -144,7 +144,7 @@ describe('BlockParser', () => {
   
   it('should parse function block', () => {
     const markdown = `
-### @block::greet @kind:function
+### @block::greet-parser @kind:function
 Greets a user.
 
 **Parameters:**
@@ -232,7 +232,7 @@ Say hello.
   
   it('should parse code examples', () => {
     const markdown = `
-### @block::greet @kind:function
+### @block::greet-example @kind:function
 Greets a user.
 
 **Example:**
@@ -340,7 +340,7 @@ id: "@test/hello"
 version: 1.0.0
 ---
 
-### @block::greet @kind:function
+### @block::greet-file-change @kind:function
 Greets a user.
 
 **Parameters:**
@@ -411,7 +411,7 @@ id: "@test/hello"
 version: 1.0.0
 ---
 
-### @block::greet @kind:function
+### @block::greet-detect-change @kind:function
 Say hello.
 `);
     
@@ -523,7 +523,7 @@ id: "@test/hello"
 version: 1.0.0
 ---
 
-### @block::greet @kind:function
+### @block::greet-fixture @kind:function
 Greets a user.
 
 **Parameters:**

@@ -68,7 +68,8 @@ export const autonomousRule: ValidationRule = {
 
     // Check required fields for autonomous specs
     for (const field of REQUIRED_AUTONOMOUS_FIELDS) {
-      if (!spec.metadata[field]) {
+      const value = spec.metadata[field];
+      if (value === undefined || value === null) {
         results.push(createError(
           '@validation/autonomous',
           { file: spec.filepath, line: 'header' },

@@ -36,7 +36,7 @@ The cascade only generates code from TypeScript code blocks (```typescript ... `
 
 Our test spec has:
 ```markdown
-### @block::greeting @kind:function
+### @block::greeting-no-code @kind:function
 Generate a greeting message for a user.
 
 **Parameters:**
@@ -104,7 +104,7 @@ if (generatedFiles.length === 0) {
 Add TypeScript code blocks to specs:
 
 ```markdown
-### @block::greeting @kind:function
+### @block::greeting-desc @kind:function
 Generate a greeting message for a user.
 
 **Parameters:**
