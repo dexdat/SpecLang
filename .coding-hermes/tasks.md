@@ -2,19 +2,40 @@
 
 ## Active
 
-*Board clear — all tasks complete. Discovery sweep needed.*
+- [ ] **HILO-HYGIENE-001: Add .gitignore entries for Hilo cache files + track edges.jsonl**
+  - `.vfs/` directory is untracked. Hilo graph cache files (graph.db, graph.db.wal, .last_warm) must be gitignored
+  - `edges.jsonl` and `manifest.yaml` should be tracked for cross-machine sync
+  - Files: `.gitignore` (patch), `.vfs/graph/edges.jsonl` (git add), `.vfs/manifest.yaml` (git add)
+  - AC: `.vfs/graph/graph.db` gitignored, edges.jsonl tracked, `git status` clean
+  - Source: discovery sweep 2026-07-14
+
+- [ ] **DOCS-PRD-002: Track docs/PRD.html in git**
+  - `docs/PRD.html` is a 249-line PRD document, untracked since Jul 14
+  - Should be committed — it's project documentation
+  - Files: `docs/PRD.html` (git add)
+  - AC: PRD.html tracked, committed to git
+  - Source: discovery sweep 2026-07-14
+
+- [ ] **CLEANUP-ROOT-003: Archive root-level one-off Python scripts**
+  - Root-level scripts from prior FIX-VALIDATE cycles clutter repo root
+  - Tracked: `fix-yaml-headers.py`, `convert_to_symlinks.py`, `debug_symlink.py`, `test_compliance.py`, `test_symlink.py`
+  - Untracked: `fix-corrupted-headers.py`, `fix-yaml-quotes.py`, `generate_index.py`
+  - Move to `scripts/archive/` or delete if truly one-off
+  - Files: root-level *.py scripts
+  - AC: Root clean of one-off scripts, build+tests still pass
+  - Source: discovery sweep 2026-07-14
+
+- [ ] **CLEANUP-BIN-ORIG2-004: Archive or remove bin.orig2/ backup directory**
+  - `bin.orig2/` contains backup scripts (e2e tests, speclang binary, smoke tests)
+  - Listed as orphans by Hilo — no active dependencies
+  - Files: `bin.orig2/` directory
+  - AC: `bin.orig2/` removed or archived, build+tests still pass
+  - Source: discovery sweep 2026-07-14
 
 ## Done
 
 - [x] **FIX-TEST-005: Fix cascade abort test — trigger cascade before aborting** (commit 9457e697)
-  - Added `await execAsync(\`${CLI} cascade trigger @speclang/mcp\`)` before abort call
-  - Test now passes: 1 passed, 39 skipped. Guard: PASS.
-
 - [x] **FIX-VALIDATE-004: Fix 12 YAML header parse errors** (commit bfd46ca1)
-  - Fixed 4 missing closing quotes, 5 merged parent/part entries, 2 duplicate short keys, 1 reserved @ character
-  - Also fixed 1 missing short field on autonomous spec + 17 empty placeholder children entries
-  - Validate: 447/447 passed, 0 errors. Guard: PASS.
-
 - [x] **FIX-VALIDATE-003: Fix 57 block kind + 12 missing header fields** (commit 257ccc14)
 - [x] **FIX-VALIDATE-002: Fix 68 spec reference format issues** (commit e7df3871)
 - [x] **FIX-TEST-004: Fix 2 daemon autonomous cascade test timeouts** (stale — resolved by CI-007 ordering fix)

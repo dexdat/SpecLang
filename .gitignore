@@ -89,3 +89,8 @@ test.spec.md
 
 # Test temp files
 .tmp/
+
+# Hilo — local cache files (rebuildable)
+.vfs/graph/graph.db
+.vfs/graph/graph.db.wal
+.vfs/graph/.last_warm
