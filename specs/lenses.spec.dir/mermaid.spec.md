@@ -1,7 +1,7 @@
 # speclang-header lines:12
 id: "@speclang/lenses/mermaid"
 parent: "@ref:specs/lenses"
-depends_on: ["@ref:specs/lenses]
+depends_on: ["@ref:specs/lenses"]
 short: "Mermaid diagram generation lens"
 target: src/lenses/mermaid.ts
 project_level: Alpha

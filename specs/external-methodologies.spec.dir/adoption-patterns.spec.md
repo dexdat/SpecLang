@@ -1,11 +1,13 @@
-# speclang-header lines:9
+# speclang-header lines:10
 id: "@speclang/external-methodologies/adoption-patterns"
 version: 0.1.0
 layer: 2
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [bmad, patterns, adoption, mapping, workflow]
-parent: "@ref:specs/external-methodologiespart: "3/3""
+short: "Adoption Patterns: BMAD to SpecLang mapping"
+parent: "@ref:specs/external-methodologies"
+part: "3/3"
 ---
 
 # Adoption Patterns

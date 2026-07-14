@@ -7,7 +7,7 @@ status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Validation Scripts for Speclang
-parent: "@ref:speclang/scripts
+parent: "@ref:speclang/scripts"
 children:
     - ""
     - ""

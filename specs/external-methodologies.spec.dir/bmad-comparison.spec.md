@@ -6,7 +6,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [bmad, comparison, methodology, analysis]
 short: BMAD Comparison
-parent: "@ref:specs/external-methodologiespart: "1/3""
+parent: "@ref:specs/external-methodologies"
+part: "1/3"
 ---
 
 # BMAD Comparison

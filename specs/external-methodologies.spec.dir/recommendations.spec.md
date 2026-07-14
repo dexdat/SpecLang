@@ -6,7 +6,8 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [bmad, recommendations, adoption, patterns]
 short: "Recommendations: BMAD Patterns for SpecLang"
-parent: "@ref:specs/external-methodologiespart: "2/3""
+parent: "@ref:specs/external-methodologies"
+part: "2/3"
 ---
 
 # Recommendations: BMAD Patterns for SpecLang

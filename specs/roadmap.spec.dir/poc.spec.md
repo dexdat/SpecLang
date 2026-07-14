@@ -1,6 +1,7 @@
-# speclang-header lines:44
+# speclang-header lines:26
 id: "@speclang/roadmap/poc"
-parent: "@ref:specs/roadmapversion: 1.0.0
+parent: "@ref:specs/roadmap"
+version: 1.0.0
 layer: 1
 target: specs/roadmap.spec.dir/poc.spec.dir/
 short: "POC phase: File watcher to code generation"
@@ -8,26 +9,21 @@ project_level: POC
 agent_support: agent_assisted
 tags: [roadmap, poc, phase-1, daemon, cascade]
 children:
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-    - ""
-  - ""@ref:specs/roadmap.spec.dir/poc.spec.dir/package-json  - ""@ref:specs/roadmap.spec.dir/poc.spec.dir/tsconfig-json  - ""@ref:specs/roadmap.spec.dir/poc.spec.dir/header-parser  - ""@ref:specs/roadmap.spec.dir/poc.spec.dir/events  - ""@ref:specs/roadmap.spec.dir/poc.spec.dir/error-handling  - ""@ref:specs/roadmap.spec.dir/poc.spec.dir/template-registry  # Additional specs for complete coverage"
-  - ""@ref:specs/roadmap.spec.dir/poc.spec.dir/code-generator  - ""@ref:specs/roadmap.spec.dir/poc.spec.dir/path-utils  - ""@ref:specs/roadmap.spec.dir/poc.spec.dir/config-loader  - ""@ref:specs/roadmap.spec.dir/poc.spec.dir/build-integrationdepends_on:"
-  - ""@ref:specs/daemon  - ""@ref:specs/cascade  - ""@ref:specs/agents---"
+    - "@ref:specs/roadmap.spec.dir/poc.spec.dir/package-json"
+    - "@ref:specs/roadmap.spec.dir/poc.spec.dir/tsconfig-json"
+    - "@ref:specs/roadmap.spec.dir/poc.spec.dir/header-parser"
+    - "@ref:specs/roadmap.spec.dir/poc.spec.dir/events"
+    - "@ref:specs/roadmap.spec.dir/poc.spec.dir/error-handling"
+    - "@ref:specs/roadmap.spec.dir/poc.spec.dir/template-registry"
+    - "@ref:specs/roadmap.spec.dir/poc.spec.dir/code-generator"
+    - "@ref:specs/roadmap.spec.dir/poc.spec.dir/path-utils"
+    - "@ref:specs/roadmap.spec.dir/poc.spec.dir/config-loader"
+    - "@ref:specs/roadmap.spec.dir/poc.spec.dir/build-integration"
+depends_on:
+  - "@ref:specs/daemon"
+  - "@ref:specs/cascade"
+  - "@ref:specs/agents"
+---
 
 # POC Phase: Proof of Concept
 
