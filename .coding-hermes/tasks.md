@@ -2,13 +2,6 @@
 
 ## Active
 
-- [ ] **HILO-HYGIENE-001: Add .gitignore entries for Hilo cache files + track edges.jsonl**
-  - `.vfs/` directory is untracked. Hilo graph cache files (graph.db, graph.db.wal, .last_warm) must be gitignored
-  - `edges.jsonl` and `manifest.yaml` should be tracked for cross-machine sync
-  - Files: `.gitignore` (patch), `.vfs/graph/edges.jsonl` (git add), `.vfs/manifest.yaml` (git add)
-  - AC: `.vfs/graph/graph.db` gitignored, edges.jsonl tracked, `git status` clean
-  - Source: discovery sweep 2026-07-14
-
 - [ ] **DOCS-PRD-002: Track docs/PRD.html in git**
   - `docs/PRD.html` is a 249-line PRD document, untracked since Jul 14
   - Should be committed — it's project documentation
@@ -34,6 +27,10 @@
 
 ## Done
 
+- [x] **HILO-HYGIENE-001: Add .gitignore entries for Hilo cache files + track edges.jsonl** (commit 920fedbc)
+  - Added `.vfs/graph/graph.db`, `graph.db.wal`, `.last_warm` to .gitignore
+  - Tracked `edges.jsonl` (3700 lines) + `manifest.yaml` for cross-machine sync
+  - Guard: PASS. Build: PASS. Tests: 1748 passed.
 - [x] **FIX-TEST-005: Fix cascade abort test — trigger cascade before aborting** (commit 9457e697)
 - [x] **FIX-VALIDATE-004: Fix 12 YAML header parse errors** (commit bfd46ca1)
 - [x] **FIX-VALIDATE-003: Fix 57 block kind + 12 missing header fields** (commit 257ccc14)
