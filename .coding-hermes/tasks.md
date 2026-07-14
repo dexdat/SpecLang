@@ -6,6 +6,10 @@
 
 ## Done
 
+- [x] **FIX-TEST-005: Fix cascade abort test — trigger cascade before aborting** (commit 9457e697)
+  - Added `await execAsync(\`${CLI} cascade trigger @speclang/mcp\`)` before abort call
+  - Test now passes: 1 passed, 39 skipped. Guard: PASS.
+
 - [x] **FIX-VALIDATE-004: Fix 12 YAML header parse errors** (commit bfd46ca1)
   - Fixed 4 missing closing quotes, 5 merged parent/part entries, 2 duplicate short keys, 1 reserved @ character
   - Also fixed 1 missing short field on autonomous spec + 17 empty placeholder children entries
