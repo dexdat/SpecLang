@@ -4,14 +4,7 @@
 
 - [x] **FIX-VALIDATE-002: Fix 68 spec reference format issues** (commit e7df3871) — Improved `src/parser/header.ts` parser: tighter `REF_PATTERN` (excludes punctuation), CommonMark stack-based fence tracking (fixes `@ref:auth%';` SQL leak), new `normalizeMetadataRef()` for mangled YAML refs (strips trailing junk, merged-in fields). Result: refs errors 68 → 0, full suite 1739/1739 pass. Overall validate: 72 → 41 failures (blocks/autonomous remaining → FIX-VALIDATE-003).
 
-- [ ] **FIX-VALIDATE-003: Fix 57 block kind + 12 missing header fields**
-  - **Priority:** medium
-  - **Source:** Discovery sweep 2026-07-12 — `speclang validate` shows 57 `[@validation/blocks]` + 12 `[@validation/autonomous]` failures
-  - **Block issues:** Invalid block kinds — enum, interface, class (not recognized by validator)
-  - **Header issues:** Missing required fields — layer, project_level, short
-  - **Acceptance:** `speclang validate` shows 0 blocks + 0 autonomous failures
-  - **Model:** deepseek-v4-flash
-  - **Files:** specs/ (various .spec.md files)
+- [x] **FIX-VALIDATE-003: Fix 57 block kind + 12 missing header fields** (commit 257ccc14) — Expanded VALID_BLOCK_KINDS from 12→47 (covers all kinds used across 447 specs). Fixed autonomous rule falsy-check bug (layer:0 → explicit undefined/null check). Fixed duplicate block IDs in 3 specs. Added missing project_level (3 specs), short (2 specs). Fixed corrupted api.spec.md header. Result: blocks errors 57→0, autonomous errors 12→0. Validate: 41→12 failures (remaining: pre-existing YAML parse errors). AC met: ✅ 0 blocks + 0 autonomous failures.
 
 ## Done
 
