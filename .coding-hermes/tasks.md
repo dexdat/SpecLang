@@ -38,3 +38,10 @@
   - Root cause: GitHub Actions billing — "recent account payments have failed"
   - Resolution: billing/admin action required (add payment method to GitHub account)
   - No code changes needed — project is healthy locally
+
+## [ ] FIX-TEST-006: Unskip validate/check CLI tests — commands work, tests still skipped
+  - `tests/cli.test.ts`: describe('validate') — 3 tests skipped with TODO "validation code has bugs with index loading"
+  - `tests/cli.test.ts`: describe('check') — 5 tests skipped with same TODO
+  - Both `speclang validate` and `speclang check` commands WORK (verified 2026-07-15)
+  - Caveat: `validate --json` and `check --json` flags don't exist — adapt tests accordingly
+  - AC: all 8 skipped tests pass; remove stale TODO comments; adapt assertions to current CLI output
