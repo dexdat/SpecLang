@@ -44,3 +44,4 @@
 - [x] **CI-001 through CI-006** — All CI tasks complete
 - [x] **ARCH-001 through ARCH-004** — All architecture tasks complete
 - [x] **COMPLIANCE-001 + COMPLIANCE-002** — 100% dual-view compliance
+## [ ] Fix CI: test — 1 failure on main, investigate
