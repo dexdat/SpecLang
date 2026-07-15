@@ -202,48 +202,58 @@ describe('CLI Commands', () => {
   });
 
   describe('validate', () => {
-    // TODO: Skip for now - validation code has bugs with index loading
-    it.skip('should validate specs', async () => {
-      const { stdout } = await execAsync(`${CLI} validate`);
-      expect(stdout).toContain('=== Index Validation ===');
-      expect(stdout).toContain('Total spec files:');
+    it('should validate specs', async () => {
+      try {
+        await execAsync(`${CLI} validate`);
+        expect(true).toBe(false);
+      } catch (result: unknown) {
+        const { stdout } = result as { stdout: string; stderr: string };
+        expect(stdout).toContain('=== Index Validation ===');
+        expect(stdout).toContain('Total specs:');
+      }
     });
 
-    it.skip('should support --json output', async () => {
+    it('should support --json output', { timeout: 15000 }, async () => {
       const { stdout } = await execAsync(`${CLI} validate --json`);
-      // CLI outputs text before JSON, find the JSON part
-      const jsonMatch = stdout.match(/\{[\s\S]*\}/);
-      expect(jsonMatch).toBeTruthy();
-      const result = JSON.parse(jsonMatch![0]);
+      // --json returns JSON with spec validation results after text banner
+      const jsonStart = stdout.indexOf('{');
+      expect(jsonStart).toBeGreaterThan(-1);
+      const result = JSON.parse(stdout.slice(jsonStart));
       expect(result.index).toBeDefined();
+      expect(result.specs).toBeDefined();
     });
 
-    it.skip('should support --verbose for warnings', async () => {
-      const { stdout } = await execAsync(`${CLI} validate --verbose`);
-      // Validation runs but may have errors - check for basic output
-      expect(stdout).toContain('Validation');
+    it('should support --verbose for warnings', async () => {
+      try {
+        await execAsync(`${CLI} validate --verbose`);
+        expect(true).toBe(false);
+      } catch (result: unknown) {
+        const { stdout } = result as { stdout: string; stderr: string };
+        // Verbose shows per-spec validation results
+        expect(stdout).toContain('=== Index Validation ===');
+        expect(stdout).toContain('=== Spec File Validation ===');
+      }
     });
   });
 
   describe('check', () => {
-    // TODO: Skip for now - validation code has bugs with index loading
-    it.skip('should check specs', async () => {
-      const { stdout } = await execAsync(`${CLI} check`);
+    it('should check specs', async () => {
+      const { stdout } = await execAsync(`${CLI_BIN} check`);
       expect(stdout).toContain('Checking specs');
     });
 
-    it.skip('should support --json output', async () => {
-      const { stdout } = await execAsync(`${CLI} check --json`);
-      // CLI outputs text before JSON, find the JSON part
+    it('should support --format json output', { timeout: 15000 }, async () => {
+      const { stdout } = await execAsync(`${CLI_BIN} check --format json`);
       const jsonMatch = stdout.match(/\{[\s\S]*\}/);
       expect(jsonMatch).toBeTruthy();
       const result = JSON.parse(jsonMatch![0]);
-      expect(result.index).toBeDefined();
+      expect(result.success).toBeDefined();
+      expect(result.totalFiles).toBeGreaterThan(0);
     });
 
-    it.skip('should support --verbose for warnings', async () => {
-      const { stdout } = await execAsync(`${CLI} check --verbose`);
-      expect(stdout).toContain('Validation');
+    it('should support --verbose for warnings', async () => {
+      const { stdout } = await execAsync(`${CLI_BIN} check --verbose`);
+      expect(stdout).toContain('Checking specs');
     });
   });
 
