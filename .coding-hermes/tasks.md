@@ -2,13 +2,6 @@
 
 ## Active
 
-- [ ] **CLEANUP-BIN-ORIG2-004: Archive or remove bin.orig2/ backup directory**
-  - `bin.orig2/` contains backup scripts (e2e tests, speclang binary, smoke tests)
-  - Listed as orphans by Hilo — no active dependencies
-  - Files: `bin.orig2/` directory
-  - AC: `bin.orig2/` removed or archived, build+tests still pass
-  - Source: discovery sweep 2026-07-14
-
 - [ ] **CI-PERF-FLAKE-005: Fix cascade performance test threshold flake**
   - `tests/performance/cascade.test.ts:139` — `expected 2.204728... to be less than 2`
   - CI run 29371460608: std_dev/mean threshold 2.0 is too tight for fast ops
@@ -20,6 +13,7 @@
 
 ## Done
 
+- [x] **CLEANUP-BIN-ORIG2-004: Remove bin.orig2/ backup directory** (removed 12 files, 236K — never tracked by git, disk-only; build ✓, tests ✓ 89/1748)
 - [x] **DOCS-PRD-002: Track docs/PRD.html in git** (commit 48c3732b)
 - [x] **CLEANUP-ROOT-003: Archive root-level one-off Python scripts** (commit d81b7ef2)
 - [x] **HILO-HYGIENE-001: Add .gitignore entries for Hilo cache files + track edges.jsonl** (commit 920fedbc)
