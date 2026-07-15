@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] **CI-PERF-FLAKE-005: Fix cascade performance test threshold flake**
+- [x] **CI-PERF-FLAKE-005: Fix cascade performance test threshold flake**
   - `tests/performance/cascade.test.ts:139` — `expected 2.204728... to be less than 2`
   - CI run 29371460608: std_dev/mean threshold 2.0 is too tight for fast ops
   - Comment on line 137-138 already notes "variance is naturally high when operations are sub-millisecond"
