@@ -2,18 +2,6 @@
 
 ## Active
 
-- [x] **DOCS-PRD-002: Track docs/PRD.html in git** (commit 48c3732b)
-  - `docs/PRD.html` is a 249-line PRD document, untracked since Jul 14
-  - Should be committed — it's project documentation
-  - Files: `docs/PRD.html` (git add)
-  - AC: PRD.html tracked, committed to git
-  - Source: discovery sweep 2026-07-14
-
-- [x] **CLEANUP-ROOT-003: Archive root-level one-off Python scripts** (commit d81b7ef2)
-  - Root-level scripts from prior FIX-VALIDATE cycles clutter repo root
-  - Moved 5 scripts to scripts/archive/ + removed duplicate generate_index.py symlink
-  - Root clean. Build+tests pass (1748/64)
-
 - [ ] **CLEANUP-BIN-ORIG2-004: Archive or remove bin.orig2/ backup directory**
   - `bin.orig2/` contains backup scripts (e2e tests, speclang binary, smoke tests)
   - Listed as orphans by Hilo — no active dependencies
@@ -21,17 +9,25 @@
   - AC: `bin.orig2/` removed or archived, build+tests still pass
   - Source: discovery sweep 2026-07-14
 
+- [ ] **CI-PERF-FLAKE-005: Fix cascade performance test threshold flake**
+  - `tests/performance/cascade.test.ts:139` — `expected 2.204728... to be less than 2`
+  - CI run 29371460608: std_dev/mean threshold 2.0 is too tight for fast ops
+  - Comment on line 137-138 already notes "variance is naturally high when operations are sub-millisecond"
+  - Fix: bump threshold from 2.0 to 3.0 or use a different assertion strategy
+  - AC: test passes consistently in CI (≥3 consecutive green runs)
+  - NOTE: CI currently billing-blocked — "recent account payments have failed"
+  - Source: CI run 29371460608 investigation 2026-07-15
+
 ## Done
 
+- [x] **DOCS-PRD-002: Track docs/PRD.html in git** (commit 48c3732b)
+- [x] **CLEANUP-ROOT-003: Archive root-level one-off Python scripts** (commit d81b7ef2)
 - [x] **HILO-HYGIENE-001: Add .gitignore entries for Hilo cache files + track edges.jsonl** (commit 920fedbc)
-  - Added `.vfs/graph/graph.db`, `graph.db.wal`, `.last_warm` to .gitignore
-  - Tracked `edges.jsonl` (3700 lines) + `manifest.yaml` for cross-machine sync
-  - Guard: PASS. Build: PASS. Tests: 1748 passed.
 - [x] **FIX-TEST-005: Fix cascade abort test — trigger cascade before aborting** (commit 9457e697)
 - [x] **FIX-VALIDATE-004: Fix 12 YAML header parse errors** (commit bfd46ca1)
 - [x] **FIX-VALIDATE-003: Fix 57 block kind + 12 missing header fields** (commit 257ccc14)
 - [x] **FIX-VALIDATE-002: Fix 68 spec reference format issues** (commit e7df3871)
-- [x] **FIX-TEST-004: Fix 2 daemon autonomous cascade test timeouts** (stale — resolved by CI-007 ordering fix)
+- [x] **FIX-TEST-004: Fix 2 daemon autonomous cascade test timeouts** (stale — resolved by CI-007)
 - [x] **FIX-TEST-003: Fix 4 CLI get/search tests referencing wrong spec ID** (commit 0ca68981)
 - [x] **FIX-TEST-002: Fix intermittent test timeouts in CLI test suite** (commit 7c349232)
 - [x] **FIX-VALIDATE-001: Fix 313 spec validation failures** (commit 2c9fcac5)
@@ -40,4 +36,3 @@
 - [x] **CI-001 through CI-006** — All CI tasks complete
 - [x] **ARCH-001 through ARCH-004** — All architecture tasks complete
 - [x] **COMPLIANCE-001 + COMPLIANCE-002** — 100% dual-view compliance
-## [ ] Fix CI: test — 1 failure on main, investigate
