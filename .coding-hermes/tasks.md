@@ -31,4 +31,10 @@
 - [x] **ARCH-001 through ARCH-004** — All architecture tasks complete
 - [x] **COMPLIANCE-001 + COMPLIANCE-002** — 100% dual-view compliance
 
-## [ ] Fix CI: dexdat/SpecLang — run #83 — log access denied, check manually
+- [x] **CI-BILLING: dexdat/SpecLang CI — GitHub Actions billing blocked (infrastructure)**
+  - Investigated 2026-07-15: last 8 runs all fail in 3-5s (classic billing-exhaustion pattern)
+  - Last successful CI: run 29338099891 (2026-07-14). Since then: 1 cancelled + 8 consecutive failures
+  - Local verification: 1748/1748 tests pass, tsc build clean, GitReins guard PASS
+  - Root cause: GitHub Actions billing — "recent account payments have failed"
+  - Resolution: billing/admin action required (add payment method to GitHub account)
+  - No code changes needed — project is healthy locally
