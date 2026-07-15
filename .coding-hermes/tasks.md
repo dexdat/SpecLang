@@ -9,14 +9,10 @@
   - AC: PRD.html tracked, committed to git
   - Source: discovery sweep 2026-07-14
 
-- [ ] **CLEANUP-ROOT-003: Archive root-level one-off Python scripts**
+- [x] **CLEANUP-ROOT-003: Archive root-level one-off Python scripts** (commit d81b7ef2)
   - Root-level scripts from prior FIX-VALIDATE cycles clutter repo root
-  - Tracked: `fix-yaml-headers.py`, `convert_to_symlinks.py`, `debug_symlink.py`, `test_compliance.py`, `test_symlink.py`
-  - Untracked: `fix-corrupted-headers.py`, `fix-yaml-quotes.py`, `generate_index.py`
-  - Move to `scripts/archive/` or delete if truly one-off
-  - Files: root-level *.py scripts
-  - AC: Root clean of one-off scripts, build+tests still pass
-  - Source: discovery sweep 2026-07-14
+  - Moved 5 scripts to scripts/archive/ + removed duplicate generate_index.py symlink
+  - Root clean. Build+tests pass (1748/64)
 
 - [ ] **CLEANUP-BIN-ORIG2-004: Archive or remove bin.orig2/ backup directory**
   - `bin.orig2/` contains backup scripts (e2e tests, speclang binary, smoke tests)
