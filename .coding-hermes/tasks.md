@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] **DOCS-PRD-002: Track docs/PRD.html in git**
+- [x] **DOCS-PRD-002: Track docs/PRD.html in git** (commit 48c3732b)
   - `docs/PRD.html` is a 249-line PRD document, untracked since Jul 14
   - Should be committed — it's project documentation
   - Files: `docs/PRD.html` (git add)
