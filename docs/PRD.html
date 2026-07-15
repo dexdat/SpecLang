@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpecLang Product Requirements Document</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 1200px; margin: 0 auto; padding: 2rem; background: #0d1117; color: #c9d1d9; }
+  h1 { color: #58a6ff; font-size: 2rem; }
+  h2 { color: #f0883e; margin-top: 2.5rem; border-bottom: 1px solid #30363d; padding-bottom: 0.5rem; }
+  h3 { color: #bc8cff; margin-top: 1.5rem; }
+  .mermaid { background: #161b22; border-radius: 8px; padding: 1.5rem; margin: 1.5rem 0; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+  th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid #30363d; }
+  th { color: #58a6ff; font-weight: 600; background: #0d1117; }
+  code { background: #1c2128; padding: 2px 6px; border-radius: 3px; font-size: 0.85em; color: #79c0ff; }
+  .stats { display: flex; gap: 2rem; margin: 1.5rem 0; flex-wrap: wrap; }
+  .stat { background: #161b22; border-radius: 8px; padding: 1rem 1.5rem; text-align: center; min-width: 120px; }
+  .stat .num { font-size: 2rem; font-weight: 700; color: #58a6ff; }
+  .stat .label { color: #8b949e; font-size: 0.85rem; }
+  .stat.green .num { color: #3fb950; }
+  .stat.orange .num { color: #f0883e; }
+  .stat.purple .num { color: #bc8cff; }
+  tr:nth-child(even) { background: #161b22; }
+  .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-right: 4px; }
+  .badge-done { background: #1a3322; color: #3fb950; }
+  .badge-active { background: #1a2d44; color: #58a6ff; }
+  .badge-pending { background: #44361a; color: #f0883e; }
+  .badge-arch { background: #2d1a3d; color: #bc8cff; }
+  .section-intro { color: #8b949e; font-size: 1.05rem; margin: 0.5rem 0 1.5rem 0; line-height: 1.6; }
+  .principle { background: #161b22; border-left: 3px solid #f0883e; padding: 1rem 1.5rem; margin: 1rem 0; border-radius: 0 8px 8px 0; }
+  .principle h4 { color: #f0883e; margin: 0 0 0.5rem 0; }
+  .principle p { margin: 0; color: #8b949e; line-height: 1.5; }
+  .repo-link { color: #79c0ff; text-decoration: none; font-family: monospace; }
+  .repo-link:hover { text-decoration: underline; }
+  @media print { body { background: #fff; color: #000; } .mermaid { background: #f5f5f5; } tr:nth-child(even) { background: #f0f0f0; } }
+</style>
+</head>
+<body>
+
+<h1>📋 SpecLang — Product Requirements Document</h1>
+<p class="section-intro">
+  <strong>Mission:</strong> Specs are source code. Generated code is machine code.<br>
+  <strong>Repo:</strong> <a class="repo-link" href="https://github.com/dexdat/SpecLang">github.com/dexdat/SpecLang</a> &nbsp;|&nbsp;
+  <strong>HEAD:</strong> <code>4a8e1d3d</code> &nbsp;|&nbsp;
+  <strong>Branch:</strong> <code>main</code>
+</p>
+
+<div class="stats">
+  <div class="stat purple"><div class="num">446</div><div class="label">Spec Files</div></div>
+  <div class="stat green"><div class="num">1,747</div><div class="label">Tests Passing</div></div>
+  <div class="stat green"><div class="num">100%</div><div class="label">Compliance</div></div>
+  <div class="stat orange"><div class="num">1</div><div class="label">Pending Task</div></div>
+  <div class="stat"><div class="num">25</div><div class="label">Completed Tasks</div></div>
+  <div class="stat"><div class="num">1</div><div class="label">Test Failing</div></div>
+  <div class="stat"><div class="num">64</div><div class="label">Tests Skipped</div></div>
+</div>
+
+<h2>What Is SpecLang?</h2>
+
+<p class="section-intro">
+  SpecLang is a <strong>reactive multi-agent system</strong> where natural language specifications self-assemble into working code. Human writes specs. AI agents cascade — each owning their files at a specific depth in the dependency tree — until working, tested, type-safe code exists in any target language. Specs are the source of truth. Generated code is disposable.
+</p>
+
+<div class="mermaid">
+flowchart TD
+    HUMAN["👤 Human writes intent → North Star file"]
+    HUMAN --> WATCH["👁️ File change detected (inotify)"]
+    WATCH --> AGENT["🤖 Owning agent reacts — creates/updates files"]
+    AGENT --> CASCADE["🔄 Cascade continues until quiet (convergence)"]
+    CASCADE --> BUILD["🔨 Pipeline runs: build, test, deploy"]
+    BUILD --> COMMIT["📝 Clean git commits with perfect traceability"]
+    COMMIT --> DONE["✅ Working code in any language"]
+
+    style HUMAN fill:#4a9,stroke:#333,color:#fff
+    style WATCH fill:#bc8cff,stroke:#333,color:#fff
+    style AGENT fill:#f0883e,stroke:#333,color:#fff
+    style CASCADE fill:#58a6ff,stroke:#333,color:#fff
+    style BUILD fill:#3fb950,stroke:#333,color:#fff
+    style COMMIT fill:#79c0ff,stroke:#333,color:#fff
+    style DONE fill:#3fb950,stroke:#333,color:#fff
+</div>
+
+<h2>Core Principles</h2>
+
+<div class="principle">
+  <h4>1. Specs Are Source Code</h4>
+  <p>Review specs, not generated code. Specs version in git — code regenerates on demand. Specs describe intent; code describes implementation. The test: take only <code>specs/</code> to a new machine, run <code>speclang build</code>, get working code.</p>
+</div>
+
+<div class="principle">
+  <h4>2. Universal Headers</h4>
+  <p>Every file knows where it came from and what it depends on. YAML frontmatter with <code>@ref:</code> pointers create a deterministic dependency graph. No RAG, no probabilistic retrieval — explicit context by design.</p>
+</div>
+
+<div class="principle">
+  <h4>3. Agent Ownership by Depth</h4>
+  <p>Agents own files at specific depths in the dependency tree. North Star (depth 0) → Spec Writer (1-4) → Code Gen (5-6) → Test Writer (7-8). One agent per file. No conflicts.</p>
+</div>
+
+<div class="principle">
+  <h4>4. Spanning Tree Cascade</h4>
+  <p>Specs form a dependency tree. Changes cascade from root to leaves. The tree expands to whatever depth the system requires — no artificial layer limits. Convergence when no file changes for 30 seconds.</p>
+</div>
+
+<div class="principle">
+  <h4>5. Context Window Advantage</h4>
+  <p>Each agent owns one file and sees only its explicit dependencies. Working set = agent prompt + owned file + 2-4 dependencies. Always fits in context. Scales indefinitely — context is O(dependency depth), not O(codebase size).</p>
+</div>
+
+<div class="principle">
+  <h4>6. Git Is Memory</h4>
+  <p>Per-file commits with UUID-linked causality chains. Every change tracked to its origin. Git history provides full context — no separate memory bank needed.</p>
+</div>
+
+<div class="principle">
+  <h4>7. Autonomous Agent Depth</h4>
+  <p>Project maturity levels from POC to Enterprise determine spec depth requirements. At <code>agent_support: agent_autonomous</code>, specs carry enough information for agents to operate without human intervention.</p>
+</div>
+
+<h2>Agent Architecture</h2>
+
+<table>
+  <tr><th>Agent</th><th>Owns (Depth)</th><th>Role</th></tr>
+  <tr><td>North Star</td><td><code>project.scl</code> (0)</td><td>User intent, high-level direction</td></tr>
+  <tr><td>Spec Writer</td><td><code>specs/**/*.spec.md</code> (1–4)</td><td>Expands high-level specs into detailed specs</td></tr>
+  <tr><td>Code Gen</td><td><code>*.{ext}.spec</code> (5), <code>generated/**/*</code> (6)</td><td>Creates code-mapping specs, generates target language code</td></tr>
+  <tr><td>Test Writer</td><td><code>*.test.spec.*</code> (7–8)</td><td>Writes test specs, generates test code</td></tr>
+  <tr><td>Orchestrator</td><td>Temporary (failure recovery)</td><td>Handles failures, edits multiple files, releases control</td></tr>
+  <tr><td>Back Sync</td><td>Reads generated code</td><td>Syncs code changes back to specs</td></tr>
+</table>
+
+<h2>Completed Capabilities <span class="badge badge-done">DONE</span></h2>
+
+<table>
+  <tr><th>Feature</th><th>Status</th><th>Commit</th></tr>
+  <tr><td>Cascade coordination — spanning tree dependency resolution</td><td><span class="badge badge-done">DONE</span></td><td>—</td></tr>
+  <tr><td>Spec header parser — YAML frontmatter with @ref: extraction</td><td><span class="badge badge-done">DONE</span></td><td>—</td></tr>
+  <tr><td>Code generation — TypeScript + Python from specs</td><td><span class="badge badge-done">DONE</span></td><td>—</td></tr>
+  <tr><td>Automatic file watching — inotify on specs/, cascade on change</td><td><span class="badge badge-arch">ARCH-001</span></td><td><code>255184a4</code></td></tr>
+  <tr><td>Background daemon — speclangd start/stop/status</td><td><span class="badge badge-arch">ARCH-002</span></td><td><code>55d52b55</code></td></tr>
+  <tr><td>Parallel agent execution — swarm mode (non-blocking, per-wave)</td><td><span class="badge badge-arch">ARCH-003</span></td><td>—</td></tr>
+  <tr><td>Autonomous cascade — daemon + file watcher + parallel = no user gating</td><td><span class="badge badge-arch">ARCH-004</span></td><td><code>4a7fdd99</code></td></tr>
+  <tr><td>Spec validation — 376 header line counts fixed, 313→0 failures</td><td><span class="badge badge-done">FIX-VALIDATE-001</span></td><td><code>2c9fcac5</code></td></tr>
+  <tr><td>Robust @ref: extraction — handles trailing punctuation, nested fences</td><td><span class="badge badge-done">FIX-VALIDATE-002</span></td><td><code>e7df3871</code></td></tr>
+  <tr><td>Block kind validator — expanded from 12→47 valid kinds</td><td><span class="badge badge-done">FIX-VALIDATE-003</span></td><td><code>257ccc14</code></td></tr>
+  <tr><td>100% dual-view compliance — all 594 files symlinked from specs</td><td><span class="badge badge-done">COMPLIANCE</span></td><td><code>98ccac4c</code></td></tr>
+  <tr><td>GitHub Actions CI pipeline — build, test, lint, GitReins guard, Tier 2 evaluator</td><td><span class="badge badge-done">CI-003/004</span></td><td><code>64132309</code></td></tr>
+  <tr><td>Pre-commit hardening — secrets, build, diff-mode tests, gitleaks</td><td><span class="badge badge-done">CI-005</span></td><td><code>a9a92f5f</code></td></tr>
+  <tr><td>Test coverage reporting — vitest v8, GitHub artifact upload, summary table</td><td><span class="badge badge-done">CI-006</span></td><td><code>feb93680</code></td></tr>
+  <tr><td>GitReins quality gates — Tier 1 guard + Tier 2 LLM evaluator</td><td><span class="badge badge-done">DONE</span></td><td><code>bd96cf83</code></td></tr>
+</table>
+
+<h2>Pending Work <span class="badge badge-pending">1 TASK</span></h2>
+
+<table>
+  <tr><th>Task</th><th>Description</th><th>Priority</th></tr>
+  <tr>
+    <td><strong>FIX-VALIDATE-004</strong></td>
+    <td>Fix 12 YAML header parse errors — missing closing quotes (3), unexpected scalar at node end (4), duplicate map keys (2), reserved character @ in plain value (1), missing closing quote (2). Target: 0 YAML parse errors.</td>
+    <td>Medium</td>
+  </tr>
+</table>
+
+<h2>Quality Gates</h2>
+
+<table>
+  <tr><th>Gate</th><th>Status</th><th>Details</th></tr>
+  <tr><td>Build (tsc)</td><td>✅ PASS</td><td><code>npm run build</code> — clean</td></tr>
+  <tr><td>Tests (vitest)</td><td>⚠️ 1747/1812</td><td>1 failure, 64 skipped in 93 test files</td></tr>
+  <tr><td>Lint</td><td>✅ PASS</td><td>ESLint probe — graceful degradation when absent</td></tr>
+  <tr><td>Secrets</td><td>✅ PASS</td><td>GitReins guard — gitleaks with explicit rules</td></tr>
+  <tr><td>Static Analysis</td><td>✅ PASS</td><td>typescript-language-server + tsc</td></tr>
+  <tr><td>Compliance</td><td>✅ 100%</td><td>594/594 dual-view — all files symlinked from specs</td></tr>
+  <tr><td>Spec Validation</td><td>⚠️ 12 errors</td><td>YAML header parse errors — addressed by FIX-VALIDATE-004</td></tr>
+</table>
+
+<h2>Foreman SDLC Loop</h2>
+
+<div class="mermaid">
+flowchart LR
+    TICK["⏰ Tick fires (every 2h)"] --> SELF["0. Self-heal"]
+    SELF --> READ["1. Read .coding-hermes/tasks.md"]
+    READ --> PICK["🎯 Pick first [ ] task"]
+    PICK --> HILO["2. Hilo impact"]
+    HILO --> DUCK["3. DuckBrain recall"]
+    DUCK --> PREP["4. Pre-load context + compile prompt"]
+    PREP --> SPAWN["5. Spawn worker — hermes chat -q"]
+    SPAWN --> GUARD["6. GitReins guard"]
+    GUARD --> JUDGE["7. GitReins judge"]
+    JUDGE --> COMMIT["8. Commit + push"]
+    COMMIT --> OFFBY["9. Off-by-One submit"]
+    OFFBY --> DUCKW["10. DuckBrain write"]
+    DUCKW --> SCAN["1.6 Scan signals"]
+    SCAN --> NEXT["➡️ Next task"]
+
+    style TICK fill:#4a9,color:#fff
+    style SPAWN fill:#f90,color:#fff
+    style COMMIT fill:#49f,color:#fff
+</div>
+
+<h2>Project Maturity</h2>
+
+<table>
+  <tr><th>Dimension</th><th>Level</th><th>Notes</th></tr>
+  <tr><td>Core Architecture</td><td>Beta</td><td>Cascade, agents, codegen — functional, needs hardening</td></tr>
+  <tr><td>Daemon</td><td>Alpha</td><td>speclangd start/stop/status — functional, 4 E2E tests</td></tr>
+  <tr><td>File Watching</td><td>Alpha</td><td>inotify with glob-to-regex fix — 4 E2E tests</td></tr>
+  <tr><td>Parallel Agents</td><td>Alpha</td><td>Swarm mode with Promise.all — 11 tests, non-blocking</td></tr>
+  <tr><td>Autonomous Cascade</td><td>Alpha</td><td>Daemon + watcher + parallel = no user gating — 6 tests</td></tr>
+  <tr><td>Spec Validation</td><td>Beta</td><td>47 block kinds, header validation, @ref: extraction — 1 pending issue</td></tr>
+  <tr><td>CI/CD</td><td>Production</td><td>GitHub Actions with guard, judge, coverage — green</td></tr>
+  <tr><td>Compliance</td><td>Production</td><td>100% dual-view — all files spec-backed</td></tr>
+  <tr><td>Test Suite</td><td>Beta</td><td>1,747 passing, 64 skipped, 1 pre-existing failure</td></tr>
+</table>
+
+<h2>Foreman Configuration</h2>
+
+<table>
+  <tr><th>Parameter</th><th>Value</th></tr>
+  <tr><td>Cron Job</td><td><code>speclang-ci-foreman</code></td></tr>
+  <tr><td>Schedule</td><td><code>0 */2 * * *</code> (every 2 hours)</td></tr>
+  <tr><td>Foreman Model</td><td><code>deepseek-v4-pro</code> on <code>deepseek-foreman</code> (PAYG)</td></tr>
+  <tr><td>Worker Model</td><td>MiniMax-M3 (Python/TS), GLM 5.2 (Go), Grok 4.5 (general)</td></tr>
+  <tr><td>Skills</td><td><code>coding-hermes-foreman</code>, <code>coding-hermes-cron</code>, <code>hilo-usage</code>, <code>gitreins</code></td></tr>
+  <tr><td>Delivery</td><td>Telegram #17441 (SpecLang topic)</td></tr>
+</table>
+
+<h2>Escalation Path</h2>
+
+<div class="mermaid">
+flowchart TD
+    WORKER["🚀 Worker (spawned MiniMax-M3)<br/>Writes code, tests, verifies"]
+    WORKER --> FOREMAN["🎯 Foreman (speclang-ci-foreman)<br/>Inspects, plans, spawns, verifies"]
+    FOREMAN --> SUPERVISOR["🟢 Coding Hermes Supervisor<br/>Fleet heal, audit, rebalance"]
+    SUPERVISOR --> BANE["👤 Bane<br/>Strategy, architecture, new capabilities"]
+
+    style WORKER fill:#79c0ff,color:#fff
+    style FOREMAN fill:#f0883e,color:#fff
+    style SUPERVISOR fill:#4a9,color:#fff
+    style BANE fill:#4a9,color:#fff
+</div>
+
+<p style="text-align:center; color:#30363d; margin-top:3rem;">SpecLang PRD — Generated 2026-07-14 · 446 specs · 1,747 tests · 100% compliance · 25 completed tasks</p>
+
+<script>mermaid.initialize({startOnLoad:true,theme:'dark',securityLevel:'loose'});</script>
+</body>
+</html>
