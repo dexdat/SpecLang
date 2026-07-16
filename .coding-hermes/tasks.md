@@ -53,4 +53,10 @@
   - Local verification: 1751/1754 tests pass (3 flakes), tsc build clean, GitReins guard PASS
   - Resolution: billing/admin action required (add payment method to GitHub account)
 
-## [ ] — Board empty
+## [ ] DEPS-VULN-001: npm audit — 2 dev dependency vulnerabilities (@babel/core HIGH, esbuild MODERATE)
+  - @babel/core <=7.29.0: Arbitrary File Read via sourceMappingURL (GHSA-4x5r-pxfx-6jf8)
+  - esbuild: dev server request reading (GHSA-67mh-4wv8-2f99)
+  - Both require `npm audit fix --force` — may have breaking changes
+  - Production deps: 0 vulnerabilities ✓
+  - Fix: run `npm audit fix --force`, verify build + tests, commit lockfile
+  - Files: package-lock.json
