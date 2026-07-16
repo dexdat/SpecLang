@@ -41,7 +41,7 @@
   - Resolution: billing/admin action required (add payment method to GitHub account)
   - No code changes needed — project is healthy locally
 
-- [x] **DOC-README-001: Update README.md stale counts and outdated CLI commands** (commit pending)
+- [x] **DOC-README-001: Update README.md stale counts and outdated CLI commands** (commit 6ab5f986)
   - "419 specifications" → should be "471" (actual from _index.json, commit 86df303b)
   - "1229+ tests passing" → should be "1752+ tests passing"
   - `./bin/speclang index` and `./bin/speclang errors` no longer exist (CLI unknown command)
