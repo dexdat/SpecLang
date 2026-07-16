@@ -37,10 +37,12 @@ npm run build
 ```bash
 ./bin/speclang --help           # Show all commands
 ./bin/speclang validate         # Validate all specs
-./bin/speclang index            # Generate spec index
+./bin/speclang check            # Validate specs without generating
+./bin/speclang generate         # Generate code from specs
+./bin/speclang build            # Build code from specs
 ./bin/speclang cascade          # Run cascade (dry-run by default)
 ./bin/speclang status           # Show system status
-./bin/speclang errors           # List cascade errors
+./bin/speclang bootstrap        # Bootstrap SpecLang: verify specs, run cascade
 ```
 
 ### API Reference
@@ -52,13 +54,13 @@ For programmatic access, see:
 ## Current Status: Reality-Based Alpha
 
 **✅ What Works:**
-- 419 specifications with proper headers and references
+- 471 specifications with proper headers and references
 - Reference validation (all specs resolve correctly)
 - Autonomous validation (scores specs for agent readiness)
 - Hello World example (compiles and runs)
 - Explicit cascade protocol with verification gates
 - Working agent definitions for OpenCode
-- 1229+ tests passing
+- 1752+ tests passing
 
 **⚠️ Current Limitations:**
 - **No automatic file watching** - Coordinator must be invoked explicitly

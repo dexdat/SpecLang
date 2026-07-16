@@ -41,4 +41,11 @@
   - Resolution: billing/admin action required (add payment method to GitHub account)
   - No code changes needed — project is healthy locally
 
-## [ ] — Board empty
+- [x] **DOC-README-001: Update README.md stale counts and outdated CLI commands** (commit pending)
+  - "419 specifications" → should be "471" (actual from _index.json, commit 86df303b)
+  - "1229+ tests passing" → should be "1752+ tests passing"
+  - `./bin/speclang index` and `./bin/speclang errors` no longer exist (CLI unknown command)
+  - Add current CLI commands: check, generate, build, bootstrap, daemon subcommands
+  - Verify `specs/api.spec.md` and `specs/mcp.spec.md` exist (confirmed: both present)
+  - Files: README.md
+  - Type: DOC — foreman can fix mechanically (count updates + command list refresh)
