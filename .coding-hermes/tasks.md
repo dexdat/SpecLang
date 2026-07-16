@@ -9,6 +9,11 @@
   - Tests: 1751 pass / 3 fail (2 gitleaks config, 1 cascade timeout — all pre-existing flakes)
   - Fixed mechanically by foreman — no worker needed
 
+- [x] **DOC-README-003: Update README stale counts — 419→463 specs, 1229→1751 tests, stale date** (commit c4961148)
+  - Discovery sweep 2026-07-16: 4 embedded count references still said 419 specs / 1229 tests
+  - Also updated Last Updated date from 2026-03-22 → 2026-07-16
+  - Fixed mechanically by foreman — no worker needed
+
 - [x] **CI-PERF-FLAKE-005: Fix cascade performance test threshold flake** (commit bbe06108)
   - Already fixed in prior tick — threshold bumped 2.0→3.0, 9/9 perf tests pass locally
   - Board was stale; fix applied before this foreman tick
