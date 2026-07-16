@@ -53,7 +53,7 @@
   - Local verification: 1751/1754 tests pass (3 flakes), tsc build clean, GitReins guard PASS
   - Resolution: billing/admin action required (add payment method to GitHub account)
 
-- [x] **DEPS-VULN-001: npm audit — 2 dev dependency vulnerabilities (esbuild MODERATE, vite HIGH)** (commit TBD)
+- [x] **DEPS-VULN-001: npm audit — 2 dev dependency vulnerabilities (esbuild MODERATE, vite HIGH)** (commit e8331355)
   - npm audit fix --force: esbuild upgraded, vite 5.4.21→8.1.5, @vitejs/plugin-react peer dep warning (cosmetic)
   - Build: tsc clean ✓ | Tests: 1752 pass / 2 known flakes ✓ | Audit: 0 vulns ✓
   - Peer dep warning for plugin-react — cosmetic, does not affect build or tests
