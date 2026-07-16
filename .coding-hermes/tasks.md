@@ -4,6 +4,10 @@
 
 ## Done
 
+- [x] **DOC-README-004: Update README stale test count — 1751→1752 tests passing, 3→2 known flakes** (commit 0e899a04)
+  - Discovery sweep 2026-07-16: README said 1751 tests / 3 flakes, actual is 1752 passed / 2 failed (CI-005 gitleaks)
+  - Fixed mechanically by foreman — no worker needed
+
 - [x] **DOC-README-002: Update README stale counts — 471→463 specs, 1752+→1751 tests** (commit e276f6a0)
   - Discovery sweep 2026-07-16: _index.json has 463 entries, README said 471
   - Tests: 1751 pass / 3 fail (2 gitleaks config, 1 cascade timeout — all pre-existing flakes)
