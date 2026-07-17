@@ -54,7 +54,7 @@ For programmatic access, see:
 ## Current Status: Reality-Based Alpha
 
 **✅ What Works:**
-- 463 specifications with proper headers and references
+- 475 specifications with proper headers and references
 - Reference validation (all specs resolve correctly)
 - Autonomous validation (scores specs for agent readiness)
 - Hello World example (compiles and runs)
@@ -249,7 +249,7 @@ python3 scripts/validate_refs.py
 
 # 2. Run autonomous validation
 python3 scripts/validate_autonomous.py --project
-# Output: 463 specs validated
+# Output: 475 specs validated
 
 # 3. Try Hello World example
 npx tsc --noEmit --skipLibCheck src/examples/hello-world.ts
@@ -304,7 +304,7 @@ python3 generate_index.py
 ### File Structure
 
 ```
-specs/                    # Source of truth (463 specs)
+specs/                    # Source of truth (475 specs)
 ├── project.scl          # Layer 0 - North Star
 ├── core.spec.md         # Layer 1 - Core concepts
 ├── cascade.spec.md      # Layer 1 - Cascade system
@@ -341,7 +341,7 @@ scripts/                 # Tools
 
 ### ✅ Working
 
-- **Spec validation**: All 463 specs have valid headers and references
+- **Spec validation**: All 475 specs have valid headers and references
 - **Reference resolution**: `validate_refs.py` confirms 100% accuracy
 - **Autonomous validation**: Scores specs for agent readiness (0.75-1.05 confidence)
 - **Hello World**: Compiles successfully (proof of concept)
@@ -435,4 +435,4 @@ ISC
 **Status**: Alpha - One working example, solid foundation, much more to build.
 
 **Last Updated**: 2026-07-16
-**Specs**: 463 | **Examples**: 1 working | **Tests**: 1752 passing
+**Specs**: 475 | **Examples**: 1 working | **Tests**: 1752 passing
