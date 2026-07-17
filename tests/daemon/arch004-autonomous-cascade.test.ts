@@ -24,7 +24,7 @@
  * cascades automatically.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, afterAll, vi } from 'vitest';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import {
@@ -78,6 +78,19 @@ describe('ARCH-004: Autonomous cascade', () => {
     await fs.remove(TEST_DIR).catch(() => {});
     await fs.remove('.speclangrc.arch004').catch(() => {});
     // Clean up any stragglers from end-to-end test
+    const specs = await fs.readdir('specs').catch(() => []);
+    for (const f of specs) {
+      if (f.startsWith('_arch004_')) {
+        await fs.remove(`specs/${f}`).catch(() => {});
+      }
+    }
+  });
+
+  afterAll(async () => {
+    // Safety net: ensure ALL temp artifacts are removed after the suite,
+    // even if individual tests crashed before their per-test cleanup ran.
+    await fs.remove(TEST_DIR).catch(() => {});
+    await fs.remove('.speclangrc.arch004').catch(() => {});
     const specs = await fs.readdir('specs').catch(() => []);
     for (const f of specs) {
       if (f.startsWith('_arch004_')) {
