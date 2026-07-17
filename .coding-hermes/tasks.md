@@ -2,6 +2,12 @@
 
 ## Active
 
+- [ ] **FIX-TEST-007: Clean up temp artifacts left by arch004-autonomous-cascade test**
+  - Test at `tests/daemon/arch004-autonomous-cascade.test.ts:106,137` creates temp spec files (`specs/_arch004_test_*.spec.md`) and fixture dirs (`tests/daemon/fixtures/`) without cleanup
+  - These accumulate every test run, polluting the working tree
+  - Fix: add cleanup in test teardown (`afterAll`/`afterEach`) — delete temp specs and fixture dirs
+  - Files: `tests/daemon/arch004-autonomous-cascade.test.ts`
+
 ## Done
 
 - [x] **DOC-README-004: Update README stale test count — 1751→1752 tests passing, 3→2 known flakes** (commit 0e899a04)
