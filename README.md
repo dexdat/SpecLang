@@ -54,7 +54,7 @@ For programmatic access, see:
 ## Current Status: Reality-Based Alpha
 
 **✅ What Works:**
-- 475 specifications with proper headers and references
+- 463 specifications with proper headers and references
 - Reference validation (all specs resolve correctly)
 - Autonomous validation (scores specs for agent readiness)
 - Hello World example (compiles and runs)
@@ -435,4 +435,4 @@ ISC
 **Status**: Alpha - One working example, solid foundation, much more to build.
 
 **Last Updated**: 2026-07-16
-**Specs**: 475 | **Examples**: 1 working | **Tests**: 1752 passing
+**Specs**: 463 | **Examples**: 1 working | **Tests**: 1752 passing
