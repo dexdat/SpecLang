@@ -6,6 +6,10 @@
 
 ## Done
 
+- [x] **DOC-README-005: Update README stale spec count — 463→475 specs** (commit 79bed3f5)
+  - Discovery sweep 2026-07-17: README said 463 specs, CLI `speclang status` shows 475 (12 new specs)
+  - Fixed mechanically by foreman — 5 occurrences updated, no worker needed
+
 - [x] **FIX-TEST-007: Clean up temp artifacts left by arch004-autonomous-cascade test** (commit 9947a149)
   - Added `afterAll` safety net to ensure temp specs/fixtures/RcFile are removed even when individual tests crash
   - Prior `afterEach` existed but wasn't sufficient — artifacts still accumulated on disk
