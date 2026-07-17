@@ -435,4 +435,4 @@ ISC
 **Status**: Alpha - One working example, solid foundation, much more to build.
 
 **Last Updated**: 2026-07-16
-**Specs**: 463 | **Examples**: 1 working | **Tests**: 1752 passing
+**Specs**: 447 | **Examples**: 1 working | **Tests**: 1752 passing
