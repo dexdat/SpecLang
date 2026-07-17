@@ -2,13 +2,14 @@
 
 ## Active
 
-- [x] **FIX-TEST-007: Clean up temp artifacts left by arch004-autonomous-cascade test** (commit TBD)
-  - Test at `tests/daemon/arch004-autonomous-cascade.test.ts:106,137` creates temp spec files and fixture dirs during test runs
-  - **Already resolved:** `afterEach` at line 77 already handles cleanup — removes `TEST_DIR`, `.speclangrc.arch004`, and all `_arch004_*` spec files
-  - All 6 tests pass, no leftover artifacts after test run (verified 2026-07-17)
-  - No code changes needed — cleanup existed since original ARCH-004 commit
+(empty — all tasks done)
 
 ## Done
+
+- [x] **FIX-TEST-007: Clean up temp artifacts left by arch004-autonomous-cascade test** (commit 9947a149)
+  - Added `afterAll` safety net to ensure temp specs/fixtures/RcFile are removed even when individual tests crash
+  - Prior `afterEach` existed but wasn't sufficient — artifacts still accumulated on disk
+  - 6/6 tests pass, guard PASS, build clean — no temp artifacts after test run (verified 2026-07-17)
 
 - [x] **DOC-README-004: Update README stale test count — 1751→1752 tests passing, 3→2 known flakes** (commit 0e899a04)
   - Discovery sweep 2026-07-16: README said 1751 tests / 3 flakes, actual is 1752 passed / 2 failed (CI-005 gitleaks)
