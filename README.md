@@ -54,13 +54,13 @@ For programmatic access, see:
 ## Current Status: Reality-Based Alpha
 
 **✅ What Works:**
-- 463 specifications with proper headers and references
+- 448 specifications with proper headers and references
 - Reference validation (all specs resolve correctly)
 - Autonomous validation (scores specs for agent readiness)
 - Hello World example (compiles and runs)
 - Explicit cascade protocol with verification gates
 - Working agent definitions for OpenCode
-- 1752 tests passing (2 known flakes — CI-005 gitleaks config)
+- 1753 tests passing (2 known flakes — CI-005 gitleaks config, ARCH-004 cascade timeout)
 
 **⚠️ Current Limitations:**
 - **No automatic file watching** - Coordinator must be invoked explicitly
@@ -435,4 +435,4 @@ ISC
 **Status**: Alpha - One working example, solid foundation, much more to build.
 
 **Last Updated**: 2026-07-16
-**Specs**: 447 | **Examples**: 1 working | **Tests**: 1752 passing
+**Specs**: 448 | **Examples**: 1 working | **Tests**: 1753 passing
