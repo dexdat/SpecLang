@@ -60,7 +60,7 @@ For programmatic access, see:
 - Hello World example (compiles and runs)
 - Explicit cascade protocol with verification gates
 - Working agent definitions for OpenCode
-- 1754 tests passing (2 known flakes — 2 CI-005 gitleaks; arch004 cascade timeout resolved; all pass in isolation)
+- 1753 tests passing (1 known flake: arch004 autonomous cascade timeout; passes in isolation)
 
 **⚠️ Current Limitations:**
 - **No automatic file watching** - Coordinator must be invoked explicitly
@@ -435,4 +435,4 @@ ISC
 **Status**: Alpha - One working example, solid foundation, much more to build.
 
 **Last Updated**: 2026-07-18
-**Specs**: 475 | **Examples**: 1 working | **Tests**: 1752 passing
+**Specs**: 475 | **Examples**: 1 working | **Tests**: 1753 passing (1 known flake: arch004 cascade timeout)
