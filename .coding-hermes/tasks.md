@@ -2,7 +2,12 @@
 
 ## Active
 
-(empty — all tasks done)
+- [ ] **DEPS-UPDATE-002: Audit and update 18 outdated npm dependencies (2026-07-18)**
+  - Discovery sweep: `npm outdated --depth=0` shows 18 packages behind latest
+  - Major breaking changes: React 18→19, TypeScript 5.9→7.0, commander 14→15, chokidar 4→5, date-fns 3→4, js-yaml 4→5, zustand 4→5, @types/react 18→19
+  - Patch/minor only: @modelcontextprotocol/sdk 1.26→1.29, better-sqlite3 12.6→12.11, vitest 4.1→4.1.10, fs-extra 11.3→11.6, tailwindcss 3.4→4.3, @types/node 25→26, autoprefixer 10.4→10.5, @vitest/coverage-v8 4.1→4.1.10
+  - Review: which majors are safe to take vs hold; file separate task per major upgrade
+  - tsc build clean, npm audit clean (0 vulns), tests: 1728 pass / 26 fail (arch003 12 + arch004 2 + perf 1 + 11 other — all appear to be environment/flake not code regressions)
 
 ## Done
 
