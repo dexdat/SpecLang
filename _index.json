@@ -1,36 +1,36 @@
 {
   "version": "0.2.0",
-  "generated": "2026-07-18T09:42:02.265ZZ",
+  "generated": "2026-07-18T10:07:12.241ZZ",
   "specs": {
-    "@unknown/_arch004_e2e_1784367717636.spec.md": {
-      "id": "@unknown/_arch004_e2e_1784367717636.spec.md",
-      "file": "_arch004_e2e_1784367717636.spec.md",
+    "@unknown/_arch004_e2e_1784369226981.spec.md": {
+      "id": "@unknown/_arch004_e2e_1784369226981.spec.md",
+      "file": "_arch004_e2e_1784369226981.spec.md",
       "version": "0.0.0",
       "layer": 0,
       "project_level": "",
       "agent_support": "",
       "tags": [],
-      "short": "_arch004_e2e_1784367717636.spec.md",
+      "short": "_arch004_e2e_1784369226981.spec.md",
       "depends_on": [],
       "blocks": [],
-      "lastModified": "2026-07-18T09:41:57.636ZZ",
+      "lastModified": "2026-07-18T10:07:06.981ZZ",
       "lines": 6,
       "header_lines": 0,
       "status": "draft",
       "content_refs": []
     },
-    "@unknown/_arch004_e2e_1784367720743_b.spec.md": {
-      "id": "@unknown/_arch004_e2e_1784367720743_b.spec.md",
-      "file": "_arch004_e2e_1784367720743_b.spec.md",
+    "@unknown/_arch004_e2e_1784369230090_b.spec.md": {
+      "id": "@unknown/_arch004_e2e_1784369230090_b.spec.md",
+      "file": "_arch004_e2e_1784369230090_b.spec.md",
       "version": "0.0.0",
       "layer": 0,
       "project_level": "",
       "agent_support": "",
       "tags": [],
-      "short": "_arch004_e2e_1784367720743_b.spec.md",
+      "short": "_arch004_e2e_1784369230090_b.spec.md",
       "depends_on": [],
       "blocks": [],
-      "lastModified": "2026-07-18T09:42:00.743ZZ",
+      "lastModified": "2026-07-18T10:07:10.090ZZ",
       "lines": 6,
       "header_lines": 0,
       "status": "draft",
@@ -14966,8 +14966,8 @@
     }
   },
   "orphans": [
-    "@unknown/_arch004_e2e_1784367717636.spec.md",
-    "@unknown/_arch004_e2e_1784367720743_b.spec.md",
+    "@unknown/_arch004_e2e_1784369226981.spec.md",
+    "@unknown/_arch004_e2e_1784369230090_b.spec.md",
     "@speclang/agent-behavior-matrix/matrix",
     "@speclang/interceptor",
     "@speclang/agent-protocol/registry",
