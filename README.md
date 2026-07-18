@@ -60,7 +60,7 @@ For programmatic access, see:
 - Hello World example (compiles and runs)
 - Explicit cascade protocol with verification gates
 - Working agent definitions for OpenCode
-- 1753 tests passing (1 known flake: arch004 autonomous cascade timeout; passes in isolation)
+- 1738 tests passing (16 cascade timeout flakes in arch004; all pass in isolation)
 
 **⚠️ Current Limitations:**
 - **No automatic file watching** - Coordinator must be invoked explicitly
