@@ -54,13 +54,13 @@ For programmatic access, see:
 ## Current Status: Reality-Based Alpha
 
 **✅ What Works:**
-- 477 specifications with proper headers and references
+- 475 specifications with proper headers and references
 - Reference validation (all specs resolve correctly)
 - Autonomous validation (scores specs for agent readiness)
 - Hello World example (compiles and runs)
 - Explicit cascade protocol with verification gates
 - Working agent definitions for OpenCode
-- 1751 tests passing (3 known flakes — 2 CI-005 gitleaks + 1 arch004 cascade timeout; all pass in isolation)
+- 1752 tests passing (2 known flakes — 2 CI-005 gitleaks; arch004 cascade timeout resolved; all pass in isolation)
 
 **⚠️ Current Limitations:**
 - **No automatic file watching** - Coordinator must be invoked explicitly
