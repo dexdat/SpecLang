@@ -3,6 +3,8 @@
 ## Active
 
 - [ ] **DEPS-UPDATE-002: Audit and update outdated npm dependencies (2026-07-18)**
+  - [x] @types/node 25→26 — major bump (commit c940f6ba) — Build: tsc clean, Tests: 1746/1812 pass (8 pre-existing cascade flakes)
+  - Remaining: commander 15 (BLOCKED — ESM+Node 22), chokidar 5 (BLOCKED — ESM), date-fns 4 (unused), tailwindcss 4 (major rewrite), typescript 7.0 (HIGH, needs 5.9→6.x first), zustand 5 (unused)
   - Discovery sweep: `npm outdated --depth=0` showed 18 packages behind latest
   - Minor/patch bumps done (commits a1d6d899, 07093c08): mcp-sdk, better-sqlite3, fs-extra, vitest, autoprefixer, coverage-v8, @types/node, @types/react
   - Major upgrade done: js-yaml 4→5 (commit 42225848) — CJS path exists, 0 vulns, 1754/1754 tests pass
@@ -26,13 +28,10 @@
   - date-fns@4: type=module, has index.cjs fallback but exports-gated
   - Priority: LOW — bump when unused deps audit happens
 
-- [ ] **DEPS-UPDATE-002d: react 18→19 + react-dom + @types/react + @types/react-dom**
-  - Used in 5 UI dashboard files (src/ui-dashboard/, src/dashboard/)
-  - React 19: removed forwardRef, new ref handling, improved hooks, StrictMode changes
-  - react-dom@19: createRoot API stable since 18, minimal breaking changes expected
-  - @types/react@19 + @types/react-dom@19 needed in lockstep
-  - Priority: MEDIUM — dedicated migration task with full dashboard smoke test
-  - Key risk: zustand@4 has peerDep react>=18 (compatible); check all other UI deps
+- [x] **DEPS-UPDATE-002d: react 18→19 + react-dom + @types/react + @types/react-dom** (commit 2b58bb23)
+  - React 19.2.7, react-dom 19.2.7, @types/react 19.2.17, @types/react-dom 19.2.3
+  - Build: tsc clean | Tests: 1753/1812 pass (1 pre-existing cascade flake)
+  - npm audit: 0 vulns
 
 - [ ] **DEPS-UPDATE-002e: tailwindcss 3→4 — Major rewrite**
   - Used only for type annotation in tailwind.config.js
