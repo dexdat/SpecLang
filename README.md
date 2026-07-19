@@ -60,7 +60,7 @@ For programmatic access, see:
 - Hello World example (compiles and runs)
 - Explicit cascade protocol with verification gates
 - Working agent definitions for OpenCode
-- 1753 tests passing (1 pre-existing cascade flake; 58 skipped)
+- 1754 tests passing (1 pre-existing cascade flake; 58 skipped)
 
 **⚠️ Current Limitations:**
 - **No automatic file watching** - Coordinator must be invoked explicitly
