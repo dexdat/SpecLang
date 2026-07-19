@@ -1,7 +1,41 @@
 {
   "version": "0.2.0",
-  "generated": "2026-07-19T00:19:45.852ZZ",
+  "generated": "2026-07-19T00:32:14.452ZZ",
   "specs": {
+    "@unknown/_arch004_e2e_1784421128778.spec.md": {
+      "id": "@unknown/_arch004_e2e_1784421128778.spec.md",
+      "file": "_arch004_e2e_1784421128778.spec.md",
+      "version": "0.0.0",
+      "layer": 0,
+      "project_level": "",
+      "agent_support": "",
+      "tags": [],
+      "short": "_arch004_e2e_1784421128778.spec.md",
+      "depends_on": [],
+      "blocks": [],
+      "lastModified": "2026-07-19T00:32:08.778ZZ",
+      "lines": 6,
+      "header_lines": 0,
+      "status": "draft",
+      "content_refs": []
+    },
+    "@unknown/_arch004_e2e_1784421131886_b.spec.md": {
+      "id": "@unknown/_arch004_e2e_1784421131886_b.spec.md",
+      "file": "_arch004_e2e_1784421131886_b.spec.md",
+      "version": "0.0.0",
+      "layer": 0,
+      "project_level": "",
+      "agent_support": "",
+      "tags": [],
+      "short": "_arch004_e2e_1784421131886_b.spec.md",
+      "depends_on": [],
+      "blocks": [],
+      "lastModified": "2026-07-19T00:32:11.886ZZ",
+      "lines": 6,
+      "header_lines": 0,
+      "status": "draft",
+      "content_refs": []
+    },
     "@speclang/agent-behavior-matrix/matrix": {
       "id": "@speclang/agent-behavior-matrix/matrix",
       "file": "agent-behavior-matrix.spec.dir/matrix.spec.md",
@@ -14932,6 +14966,8 @@
     }
   },
   "orphans": [
+    "@unknown/_arch004_e2e_1784421128778.spec.md",
+    "@unknown/_arch004_e2e_1784421131886_b.spec.md",
     "@speclang/agent-behavior-matrix/matrix",
     "@speclang/interceptor",
     "@speclang/agent-protocol/registry",
@@ -15082,7 +15118,7 @@
       "@speclang/server -> @speclang/mcp",
       "@speclang/server -> @speclang/core"
     ],
-    "total_specs": 471,
+    "total_specs": 473,
     "total_refs": 13,
     "missing_ref_count": 17
   }

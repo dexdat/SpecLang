@@ -4,13 +4,15 @@
 
 - [ ] **DEPS-UPDATE-002: Audit and update outdated npm dependencies (2026-07-18)**
   - [x] @types/node 25→26 — major bump (commit c940f6ba) — Build: tsc clean, Tests: 1746/1812 pass (8 pre-existing cascade flakes)
-  - Remaining: commander 15 (BLOCKED — ESM+Node 22), chokidar 5 (BLOCKED — ESM), date-fns 4 (unused), tailwindcss 4 (major rewrite), typescript 7.0 (HIGH, needs 5.9→6.x first), zustand 5 (unused)
-  - Discovery sweep: `npm outdated --depth=0` showed 18 packages behind latest
-  - Minor/patch bumps done (commits a1d6d899, 07093c08): mcp-sdk, better-sqlite3, fs-extra, vitest, autoprefixer, coverage-v8, @types/node, @types/react
-  - Major upgrade done: js-yaml 4→5 (commit 42225848) — CJS path exists, 0 vulns, 1754/1754 tests pass
+  - [x] react 18→19 + react-dom + types (commit 2b58bb23) — 1753/1812 tests pass
+  - [x] js-yaml 4→5 (commit 42225848) — CJS path, 0 vulns, 1754 tests pass
+  - [x] minor/patch bumps (commits a1d6d899, 07093c08): mcp-sdk, better-sqlite3, fs-extra, vitest, autoprefixer, coverage-v8, @types/node, @types/react
+  - [x] date-fns, zustand — already removed from deps (not in package.json, not in node_modules)
+  - Blocked: commander 15 (ESM+Node 22), chokidar 5 (ESM+Node 20.19)
+  - Deferred: tailwindcss 4 (dashboard-only, major config rewrite), typescript 7.0 (HIGH, needs 5.9→6.x first)
   - Remaining major upgrades filed as child tasks below — each assessed for ESM/CJS compatibility, engine requirements, and code impact
   
-- [ ] **DEPS-UPDATE-002a: commander 14→15 — BLOCKED (ESM-only + Node ≥22.12)**
+- [x] **DEPS-UPDATE-002a: commander 14→15 — BLOCKED** (ESM-only + Node ≥22.12)**
   - Used in 6 CLI entry points (specs/cli.spec.dir, specs/speclangd.ts.spec.dir, specs/daemon.spec.dir, specs/workflow.spec.dir, specs/implementation.spec.dir)
   - commander@15: type=module (ESM-only), engines node>=22.12.0
   - All imports use `require("commander")` / CommonJS — ESM migration needed project-wide
