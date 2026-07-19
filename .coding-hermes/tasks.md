@@ -2,10 +2,21 @@
 
 ## Active
 
-- [x] **DEPS-POSTCSS-004: Bump postcss 8.5.19→8.5.20 (patch) — COMPLETE** (foreman tick 2026-07-19, commit 0bfc332f)
-  - Discovery sweep: `npm outdated` showed postcss 8.5.19→8.5.20 (patch bump within 8.x)
-  - Fixed mechanically by foreman: `npm install postcss@^8.5.20 --save-dev`
-  - Validation: tsc build ✓, 1754/1812 tests pass, 0 vulns
+- [x] **DOC-README-007: Update README stale test count — 1754→1753 (2026-07-19)** (commit pending)
+  - Discovery sweep: README said 1754 tests passing; actual is 1753 passing + 1 pre-existing cascade flake (58 skipped)
+  - `speclang status` confirms 475 specs — spec count was already correct
+  - CI: all recent runs billing-blocked (4-6s) — pre-existing infrastructure issue
+  - Fixed mechanically by foreman — no worker needed
+
+## [x] NEVER-DONE — 11-point audit 2026-07-19 (20:45 UTC, idle tick #2)
+- All 11 checks ran. 0 NEW actionable gaps.
+- Build: tsc --noEmit clean ✓
+- Tests: 1753 pass, 1 pre-existing cascade flake, 58 skipped
+- Vulns: 0 (npm audit --production)
+- CI: billing-blocked (pre-existing infrastructure)
+- 3 outdated deps (chokidar 5, commander 15, tailwindcss 4): already BLOCKED/DEFERRED
+- Spec count: 475 confirmed by `speclang status` ✓
+- DuckBrain idle-ticks counter: 2
 
 - [x] **DEPS-UPDATE-002: Audit and update outdated npm dependencies (2026-07-18) — COMPLETE** (foreman tick 2026-07-18)
   - [x] @types/node 25→26 — major bump (commit c940f6ba) — Build: tsc clean, Tests: 1746/1812 pass (8 pre-existing cascade flakes)
