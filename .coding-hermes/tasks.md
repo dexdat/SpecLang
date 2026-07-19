@@ -2,12 +2,54 @@
 
 ## Active
 
-- [ ] **DEPS-UPDATE-002: Audit and update 18 outdated npm dependencies (2026-07-18)**
-  - Discovery sweep: `npm outdated --depth=0` shows 18 packages behind latest
-  - Major breaking changes: React 18→19, TypeScript 5.9→7.0, commander 14→15, chokidar 4→5, date-fns 3→4, js-yaml 4→5, zustand 4→5, @types/react 18→19
-  - Patch/minor only: @modelcontextprotocol/sdk 1.26→1.29, better-sqlite3 12.6→12.11, vitest 4.1→4.1.10, fs-extra 11.3→11.6, tailwindcss 3.4→4.3, @types/node 25→26, autoprefixer 10.4→10.5, @vitest/coverage-v8 4.1→4.1.10
-  - Review: which majors are safe to take vs hold; file separate task per major upgrade
-  - tsc build clean, npm audit clean (0 vulns), tests: 1728 pass / 26 fail (arch003 12 + arch004 2 + perf 1 + 11 other — all appear to be environment/flake not code regressions)
+- [ ] **DEPS-UPDATE-002: Audit and update outdated npm dependencies (2026-07-18)**
+  - Discovery sweep: `npm outdated --depth=0` showed 18 packages behind latest
+  - Minor/patch bumps done (commits a1d6d899, 07093c08): mcp-sdk, better-sqlite3, fs-extra, vitest, autoprefixer, coverage-v8, @types/node, @types/react
+  - Major upgrade done: js-yaml 4→5 (commit 42225848) — CJS path exists, 0 vulns, 1754/1754 tests pass
+  - Remaining major upgrades filed as child tasks below — each assessed for ESM/CJS compatibility, engine requirements, and code impact
+  
+- [ ] **DEPS-UPDATE-002a: commander 14→15 — BLOCKED (ESM-only + Node ≥22.12)**
+  - Used in 6 CLI entry points (specs/cli.spec.dir, specs/speclangd.ts.spec.dir, specs/daemon.spec.dir, specs/workflow.spec.dir, specs/implementation.spec.dir)
+  - commander@15: type=module (ESM-only), engines node>=22.12.0
+  - All imports use `require("commander")` / CommonJS — ESM migration needed project-wide
+  - Node version requirement is 2 majors ahead of current env
+  - Priority: LOW — defer until Node upgrade + ESM migration planned
+
+- [ ] **DEPS-UPDATE-002b: chokidar 4→5 — BLOCKED (ESM-only + Node ≥20.19)**
+  - Direct dep, but no source imports found in src/ (unused or tooling-only)
+  - chokidar@5: type=module (ESM-only), engines node>=20.19.0
+  - TailwindCSS 3.x pulls chokidar@3.x transitively
+  - Priority: LOW — defer; consider removing if truly unused
+
+- [ ] **DEPS-UPDATE-002c: date-fns 3→4 — ESM-only, unused in src**
+  - Listed in devDependencies, no source imports found
+  - date-fns@4: type=module, has index.cjs fallback but exports-gated
+  - Priority: LOW — bump when unused deps audit happens
+
+- [ ] **DEPS-UPDATE-002d: react 18→19 + react-dom + @types/react + @types/react-dom**
+  - Used in 5 UI dashboard files (src/ui-dashboard/, src/dashboard/)
+  - React 19: removed forwardRef, new ref handling, improved hooks, StrictMode changes
+  - react-dom@19: createRoot API stable since 18, minimal breaking changes expected
+  - @types/react@19 + @types/react-dom@19 needed in lockstep
+  - Priority: MEDIUM — dedicated migration task with full dashboard smoke test
+  - Key risk: zustand@4 has peerDep react>=18 (compatible); check all other UI deps
+
+- [ ] **DEPS-UPDATE-002e: tailwindcss 3→4 — Major rewrite**
+  - Used only for type annotation in tailwind.config.js
+  - TailwindCSS 4: CSS-first config (no tailwind.config.js), new @theme directives, Catalyst UI
+  - Priority: LOW — only impacts dashboard styling; defer until UI refresh planned
+
+- [ ] **DEPS-UPDATE-002f: typescript 5.9→7.0 — Two-major jump**
+  - tsc is the build compiler — affects entire codebase
+  - TS 7.0: type=module on package (irrelevant for CLI usage), new strictness checks likely
+  - Current: 1754 tests pass on 5.9.3; TS 6.0 was skipped entirely
+  - Priority: HIGH — file as dedicated task with incremental approach (5.9→6.x first, then 6.x→7.0)
+  - Must not break CI; verify with --noEmit before committing
+
+- [ ] **DEPS-UPDATE-002g: zustand 4→5 — Safe but unused**
+  - zustand@5: type=commonjs, engines node>=12.20.0, peer react>=18 (✓)
+  - No source imports found in src/ — listed as dep but unused
+  - Priority: LOW — safe to bump anytime, or remove if confirmed unused
 
 ## Done
 
