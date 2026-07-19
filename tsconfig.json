@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "CommonJS",
-    "moduleResolution": "node",
+    "module": "Node16",
     "preserveSymlinks": true,
     "lib": ["ES2022"],
     "outDir": "./dist",
@@ -19,19 +18,19 @@
     "noImplicitAny": false,
     "allowJs": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/ui-dashboard/*"],
-      "sqlite.spec.dir/src/*": ["specs/sqlite.spec.dir/src/*"],
-      "indexer.spec.dir/src/*": ["specs/indexer.spec.dir/src/*"],
-      "parser.spec.dir/src/*": ["specs/parser.spec.dir/src/*"],
-      "mcp.spec.dir/src/*": ["specs/mcp.spec.dir/src/*"],
-      "cli.spec.dir/src/*": ["specs/cli.spec.dir/src/*"],
-      "autonomous.spec.dir/src/*": ["specs/autonomous.spec.dir/src/*"],
-      "guard.spec.dir/src/*": ["specs/guard.spec.dir/src/*"],
-      "meta.spec.dir/src/*": ["specs/meta.spec.dir/src/*"],
-      "agents.spec.dir/src/*": ["specs/agents.spec.dir/src/*"],
-      "project-layout.spec.dir/src/*": ["specs/project-layout.spec.dir/src/*"]
+      "*": ["./*"],
+      "@/*": ["./src/ui-dashboard/*"],
+      "sqlite.spec.dir/src/*": ["./specs/sqlite.spec.dir/src/*"],
+      "indexer.spec.dir/src/*": ["./specs/indexer.spec.dir/src/*"],
+      "parser.spec.dir/src/*": ["./specs/parser.spec.dir/src/*"],
+      "mcp.spec.dir/src/*": ["./specs/mcp.spec.dir/src/*"],
+      "cli.spec.dir/src/*": ["./specs/cli.spec.dir/src/*"],
+      "autonomous.spec.dir/src/*": ["./specs/autonomous.spec.dir/src/*"],
+      "guard.spec.dir/src/*": ["./specs/guard.spec.dir/src/*"],
+      "meta.spec.dir/src/*": ["./specs/meta.spec.dir/src/*"],
+      "agents.spec.dir/src/*": ["./specs/agents.spec.dir/src/*"],
+      "project-layout.spec.dir/src/*": ["./specs/project-layout.spec.dir/src/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],

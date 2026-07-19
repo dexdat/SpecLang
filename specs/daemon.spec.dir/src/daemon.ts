@@ -309,7 +309,7 @@ export class Daemon extends EventEmitter {
   private async executePipeline(convergenceResult: ConvergenceResult): Promise<void> {
     try {
       // Dynamic import to avoid circular dependencies
-      const { PipelineExecutor } = await import('../pipeline/executor');
+      const { PipelineExecutor } = await import('../pipeline/executor.js');
       
       console.log('[Daemon] Executing pipeline...');
       const executor = new PipelineExecutor({ verbose: true });

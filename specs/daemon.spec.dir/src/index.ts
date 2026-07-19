@@ -30,7 +30,7 @@ export async function startDaemon(options: {
   port: number;
   dashboard: boolean;
 }): Promise<void> {
-  const { Daemon } = await import('./daemon');
+  const { Daemon } = await import('./daemon.js');
   const fs = await import('fs');
   const path = await import('path');
   
