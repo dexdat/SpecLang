@@ -2,11 +2,20 @@
 
 ## Active
 
-- [x] **DOC-README-007: Update README stale test count — 1754→1753 (2026-07-19)** (commit pending)
-  - Discovery sweep: README said 1754 tests passing; actual is 1753 passing + 1 pre-existing cascade flake (58 skipped)
-  - `speclang status` confirms 475 specs — spec count was already correct
-  - CI: all recent runs billing-blocked (4-6s) — pre-existing infrastructure issue
-  - Fixed mechanically by foreman — no worker needed
+(empty — idle tick #3, all tasks complete)
+
+## [x] NEVER-DONE — 11-point audit 2026-07-19 (21:39 UTC, idle tick #3)
+- All 11 checks ran with concrete tool output. Findings: 0 NEW actionable gaps.
+- Build: tsc --noEmit clean ✓
+- Tests: 1754 pass, 58 skipped, 0 fail ✓
+- Vulns: 0 (npm audit --production) ✓
+- Outdated deps: 4 flagged (chokidar 5, commander 15, tailwindcss 4 — all BLOCKED/DEFERRED). yaml^2.8.2 already installed at 2.9.0 (cosmetic range bump only).
+- Spec count: 475 confirmed by `speclang status` ✓
+- Hilo: 3,488 edges across 1,570 files ✓
+- CI: billing-blocked (pre-existing infrastructure)
+- DuckBrain architecture entry still stale (spec_count=130, test_count missing) — updated below
+- Cooldown escalated: 1800s→3600s via scheduler API (idle tick #3 escalation)
+- DuckBrain idle-ticks counter: 3
 
 ## [x] NEVER-DONE — 11-point audit 2026-07-19 (20:45 UTC, idle tick #2)
 - All 11 checks ran. 0 NEW actionable gaps.
