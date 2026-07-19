@@ -2,6 +2,11 @@
 
 ## Active
 
+- [x] **DEPS-POSTCSS-004: Bump postcss 8.5.19→8.5.20 (patch) — COMPLETE** (foreman tick 2026-07-19, commit 0bfc332f)
+  - Discovery sweep: `npm outdated` showed postcss 8.5.19→8.5.20 (patch bump within 8.x)
+  - Fixed mechanically by foreman: `npm install postcss@^8.5.20 --save-dev`
+  - Validation: tsc build ✓, 1754/1812 tests pass, 0 vulns
+
 - [x] **DEPS-UPDATE-002: Audit and update outdated npm dependencies (2026-07-18) — COMPLETE** (foreman tick 2026-07-18)
   - [x] @types/node 25→26 — major bump (commit c940f6ba) — Build: tsc clean, Tests: 1746/1812 pass (8 pre-existing cascade flakes)
   - [x] react 18→19 + react-dom + types (commit 2b58bb23) — 1753/1812 tests pass
