@@ -26,10 +26,11 @@
   - Current run: 1754 pass / 0 fail / 58 skip — all green
   - The daemon cascade timeout resolved; root cause was pre-existing integration flake
 
-- [ ] **TEST-COVERAGE-001: Fix coverage report race condition (2026-07-19 never-done audit)**
-  - `npm run test:coverage` fails with `ENOENT: no such file or directory, open 'coverage/.tmp/coverage-0.json'`
-  - Error: "Something removed the coverage directory vitest created earlier"
-  - Likely multiple vitest processes or test teardown removing coverage dir
+- [x] **TEST-COVERAGE-001: Fix coverage report race condition (2026-07-19 foreman tick)** — FIXED (commit f28b5478)
+  - Root cause: vitest 4.1.10 V8 coverage provider has a known upstream race — parallel workers writing to coverage/.tmp/ simultaneously
+  - Fix: pre-create `coverage/.tmp` before run + limit to 1 worker during coverage (`--maxWorkers 1`)
+  - Verification: 1754 pass / 58 skip / 0 failures, coverage output generated successfully
+  - Duration: 84s (acceptable for CI — was N/A before)
 
 - [ ] **SPEC-ALIGNMENT-001: Dual-view compliance stuck at ~30% — 0% for docs/ and .opencode/ (2026-07-19 never-done audit)**
   - DUAL_VIEW_AUDIT.md reports: src/ 7 symlinks ✓, scripts/ 55%, docs/ 0%, .opencode/skills/ 0%, .opencode/agents/ no specs
