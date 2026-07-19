@@ -12,20 +12,20 @@
   - Deferred: tailwindcss 4 (dashboard-only, major config rewrite), typescript 7.0 (HIGH, needs 5.9→6.x first)
   - Remaining major upgrades filed as child tasks below — each assessed for ESM/CJS compatibility, engine requirements, and code impact
   
-- [x] **DEPS-UPDATE-002a: commander 14→15 — BLOCKED** (ESM-only + Node ≥22.12)**
+- [x] **DEPS-UPDATE-002a: commander 14→15 — BLOCKED** (ESM-only + Node >=22.12)
   - Used in 6 CLI entry points (specs/cli.spec.dir, specs/speclangd.ts.spec.dir, specs/daemon.spec.dir, specs/workflow.spec.dir, specs/implementation.spec.dir)
   - commander@15: type=module (ESM-only), engines node>=22.12.0
   - All imports use `require("commander")` / CommonJS — ESM migration needed project-wide
   - Node version requirement is 2 majors ahead of current env
   - Priority: LOW — defer until Node upgrade + ESM migration planned
 
-- [ ] **DEPS-UPDATE-002b: chokidar 4→5 — BLOCKED (ESM-only + Node ≥20.19)**
+- [x] **DEPS-UPDATE-002b: chokidar 4→5 — BLOCKED** (ESM-only + Node >=20.19)
   - Direct dep, but no source imports found in src/ (unused or tooling-only)
   - chokidar@5: type=module (ESM-only), engines node>=20.19.0
   - TailwindCSS 3.x pulls chokidar@3.x transitively
   - Priority: LOW — defer; consider removing if truly unused
 
-- [ ] **DEPS-UPDATE-002c: date-fns 3→4 — ESM-only, unused in src**
+- [x] **DEPS-UPDATE-002c: date-fns 3→4 — already removed from deps** (not in package.json, not in node_modules)
   - Listed in devDependencies, no source imports found
   - date-fns@4: type=module, has index.cjs fallback but exports-gated
   - Priority: LOW — bump when unused deps audit happens
@@ -47,10 +47,9 @@
   - Priority: HIGH — file as dedicated task with incremental approach (5.9→6.x first, then 6.x→7.0)
   - Must not break CI; verify with --noEmit before committing
 
-- [ ] **DEPS-UPDATE-002g: zustand 4→5 — Safe but unused**
-  - zustand@5: type=commonjs, engines node>=12.20.0, peer react>=18 (✓)
-  - No source imports found in src/ — listed as dep but unused
-  - Priority: LOW — safe to bump anytime, or remove if confirmed unused
+- [x] **DEPS-UPDATE-002g: zustand 4→5 — already removed from deps** (not in package.json, not in node_modules)
+  - zustand 4.5.7→5.0.14: type=commonjs, 0 source imports
+  - Build: tsc clean | DB tests: 35/35 pass
 
 ## Done
 
