@@ -20,7 +20,7 @@
     "start": "node bin/speclang start",
     "test": "TMPDIR=$PWD/.tmp vitest run",
     "test:watch": "TMPDIR=$PWD/.tmp vitest",
-    "test:coverage": "TMPDIR=$PWD/.tmp vitest run --coverage",
+    "test:coverage": "mkdir -p coverage/.tmp && TMPDIR=/home/kara/SpecLang/.tmp vitest run --coverage --maxWorkers 1",
     "cascade": "node bin/speclang cascade",
     "lint": "eslint src/**/*.ts",
     "clean": "rm -rf dist/",
