@@ -3716,3 +3716,44 @@
 {"from":"scripts/archive/test_symlink.py","to":"pkg:sys","rel":"imports","provenance":"ast_exact","confidence":1.0}
 {"from":"scripts/archive/test_symlink.py","to":"pkg:pathlib","rel":"imports","provenance":"ast_exact","confidence":1.0}
 {"from":"scripts/archive/test_symlink.py","to":"pkg:check_compliance","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/cascade/propagation.d.ts","to":"local:./coordinator/dependency.js","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/cascade/propagation.d.ts","to":"local:../swarm/queue.js","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/self-host-harness.modified.js","to":"pkg:path.join(sourceDir, 'daemon.spec')","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/self-host-harness.modified.js","to":"pkg:path.join(sourceDir, 'guard.spec')","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/self-host-harness.modified.js","to":"pkg:path.join(sourceDir, 'cascade-router.spec')","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/self-host-harness.modified.js","to":"pkg:path.join(sourceDir, 'pipeline.spec')","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/self-host-harness.modified.js","to":"pkg:path.join(sourceDir, 'assembler.spec')","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm_old/queue.d.ts","to":"pkg:events","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm_old/file-watcher.d.ts","to":"pkg:events","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm_old/file-watcher.js","to":"pkg:chokidar","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm_old/file-watcher.js","to":"pkg:events","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm_old/queue.js","to":"pkg:events","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/assemble-all.modified.js","to":"pkg:fast-glob","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm/index.js","to":"local:./agent-router","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm/index.js","to":"local:./queue","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm/index.js","to":"local:./file-watcher","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm/index.js","to":"local:./session-manager","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm/index.js","to":"local:./git-handler","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm/index.js","to":"local:./session-persistence","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm/queue.d.ts","to":"pkg:events","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm/file-watcher.d.ts","to":"pkg:events","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm/session-manager.js","to":"pkg:fs","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm/session-manager.js","to":"pkg:path","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm/git-handler.js","to":"pkg:child_process","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm/git-handler.js","to":"pkg:crypto","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm/git-handler.js","to":"pkg:path","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm/git-handler.js","to":"pkg:fs","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm/file-watcher.js","to":"pkg:chokidar","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm/file-watcher.js","to":"pkg:events","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm/agent-router.js","to":"pkg:fs","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm/agent-router.js","to":"pkg:path","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm/queue.js","to":"pkg:events","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/compiler/go/generator.js","to":"local:./types","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/compiler/go/generator.js","to":"local:./templates","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/compiler/go/generator.js","to":"local:./builtins","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/agents/communication.d.ts","to":"pkg:events","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/agents/communication.d.ts","to":"local:./types","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/agents/communication.js","to":"pkg:events","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm_backup/file-watcher.d.ts","to":"pkg:events","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm_backup/file-watcher.js","to":"pkg:chokidar","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/swarm_backup/file-watcher.js","to":"pkg:events","rel":"imports","provenance":"ast_exact","confidence":1.0}
