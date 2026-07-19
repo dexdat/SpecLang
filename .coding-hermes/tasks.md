@@ -136,12 +136,12 @@
   - Build: tsc clean ✓ | Tests: 1752 pass / 2 known flakes ✓ | Audit: 0 vulns ✓
   - Peer dep warning for plugin-react — cosmetic, does not affect build or tests
 
-- [ ] **BUG-CASCADE-ENOENT: Cascade fails with ENOENT when generated/ subdir missing** (foreman tick 2026-07-19)
-  - `./bin/speclang cascade specs/cascade.spec.md` fails: `ENOENT: no such file or directory, open 'generated/cascade/uuid_tracking.ts'`
-  - Reproduced: works after `mkdir -p generated/cascade`
-  - Expected: cascade should auto-create output directory (or parent) before writing generated files
-  - Impact: first-time cascade users hit this; workaround is manual `mkdir`
-  - Priority: MEDIUM
+- [x] **BUG-CASCADE-ENOENT: Cascade fails with ENOENT when generated/ subdir missing** (commit 98baa53d)
+  - Root cause: `generateCode()` writes `fs.writeFileSync(filePath, ...)` without ensuring parent directory exists
+  - Block names like `cascade/uuid-tracking` produce paths like `generated/cascade/uuid_tracking.ts`
+  - Fix: added `fs.mkdirSync(path.dirname(filePath), {recursive: true})` before both writeFileSync calls
+  - Verified: `rm -rf generated/cascade && ./bin/speclang cascade specs/cascade.spec.md` → 3 files generated
+  - Tests: 1753/1812 pass (1 pre-existing daemon timeout flake)
 
 - [ ] **DEAD-POC-REMOVE: `src/types/poc.ts` — 889 lines of unused generated code** (foreman tick 2026-07-19)
   - 44 exports, ZERO source-code imports (grep confirms no `from.*poc` in any non-test .ts file)
