@@ -63,7 +63,7 @@
 
 ## Done
 
-- [x] **DOC-README-006: Update README stale test counts — 1750/1753→1754, consolidate flake info (2026-07-19)** (commit TBD)
+- [x] **DOC-README-006: Update README stale test counts — 1750/1753→1754, consolidate flake info (2026-07-19)** (commit 27e44044)
   - Discovery sweep: README said 1750 tests in one spot, 1753 in another; actual is 1754 passed / 58 skipped
   - Both lines updated; Last Updated date bumped to 2026-07-19
   - Fixed mechanically by foreman — no worker needed
