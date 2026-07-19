@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] **DEPS-UPDATE-002: Audit and update outdated npm dependencies (2026-07-18)**
+- [x] **DEPS-UPDATE-002: Audit and update outdated npm dependencies (2026-07-18) — COMPLETE** (foreman tick 2026-07-18)
   - [x] @types/node 25→26 — major bump (commit c940f6ba) — Build: tsc clean, Tests: 1746/1812 pass (8 pre-existing cascade flakes)
   - [x] react 18→19 + react-dom + types (commit 2b58bb23) — 1753/1812 tests pass
   - [x] js-yaml 4→5 (commit 42225848) — CJS path, 0 vulns, 1754 tests pass
@@ -35,21 +35,37 @@
   - Build: tsc clean | Tests: 1753/1812 pass (1 pre-existing cascade flake)
   - npm audit: 0 vulns
 
-- [ ] **DEPS-UPDATE-002e: tailwindcss 3→4 — Major rewrite**
+- [x] **DEPS-UPDATE-002e: tailwindcss 3→4 — DEFERRED** (foreman tick 2026-07-18)
   - Used only for type annotation in tailwind.config.js
   - TailwindCSS 4: CSS-first config (no tailwind.config.js), new @theme directives, Catalyst UI
   - Priority: LOW — only impacts dashboard styling; defer until UI refresh planned
+  - Decision: DEFERRED. No tailwind.config.js exists (already removed). Upgrade not needed until dashboard UI refresh.
 
-- [ ] **DEPS-UPDATE-002f: typescript 5.9→7.0 — Two-major jump**
+- [x] **DEPS-UPDATE-002f: typescript 5.9→7.0 — filed as DEPS-TS-UPGRADE-003** (foreman tick 2026-07-18)
   - tsc is the build compiler — affects entire codebase
   - TS 7.0: type=module on package (irrelevant for CLI usage), new strictness checks likely
   - Current: 1754 tests pass on 5.9.3; TS 6.0 was skipped entirely
-  - Priority: HIGH — file as dedicated task with incremental approach (5.9→6.x first, then 6.x→7.0)
+  - Priority: HIGH — filed as dedicated incremental upgrade task (DEPS-TS-UPGRADE-003)
   - Must not break CI; verify with --noEmit before committing
 
 - [x] **DEPS-UPDATE-002g: zustand 4→5 — already removed from deps** (not in package.json, not in node_modules)
   - zustand 4.5.7→5.0.14: type=commonjs, 0 source imports
   - Build: tsc clean | DB tests: 35/35 pass
+
+- [ ] **DEPS-TS-UPGRADE-003: TypeScript 5.9→7.0 incremental upgrade** (filed 2026-07-18)
+  - tsc is the build compiler — affects entire codebase (`type: commonjs`, 1754 tests)
+  - Two-major jump: 5.9.3 → 6.x → 7.0.2 (latest)
+  - Approach: incremental — bump to 6.x first, verify, then 7.0
+  - TS 6.0: stricter type checking, new `--erasableSyntaxOnly` flag, `nodenext` module resolution changes
+  - TS 7.0: `type: module` on package, additional strictness checks
+  - Verification: `npx tsc --noEmit` must pass; full `npm run test` suite must pass
+  - Must not break CI (currently billing-blocked, verify locally)
+  - Priority: HIGH | Weight: 6
+
+- [ ] **DEPS-UPDATE-002h: js-yaml patch bump 5.0.0→5.2.1** (discovery sweep 2026-07-18)
+  - Minor bump within v5, non-breaking (both are CJS)
+  - `npm outdated` shows 5.0.0→5.2.1 available
+  - Fast mechanical bump: `npm install js-yaml@^5.2.1`, verify build+test
 
 ## Done
 
