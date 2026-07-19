@@ -41,7 +41,7 @@
   - Priority: LOW — only impacts dashboard styling; defer until UI refresh planned
   - Decision: DEFERRED. No tailwind.config.js exists (already removed). Upgrade not needed until dashboard UI refresh.
 
-- [x] **DEPS-UPDATE-002f: typescript 5.9→7.0 — filed as DEPS-TS-UPGRADE-003** (foreman tick 2026-07-18)
+- [x] **DEPS-UPDATE-002f: typescript 5.9→7.0 — Two-major jump** (commit 97efd05f)
   - tsc is the build compiler — affects entire codebase
   - TS 7.0: type=module on package (irrelevant for CLI usage), new strictness checks likely
   - Current: 1754 tests pass on 5.9.3; TS 6.0 was skipped entirely
