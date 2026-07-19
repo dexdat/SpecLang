@@ -143,16 +143,18 @@
   - Verified: `rm -rf generated/cascade && ./bin/speclang cascade specs/cascade.spec.md` → 3 files generated
   - Tests: 1753/1812 pass (1 pre-existing daemon timeout flake)
 
-- [ ] **DEAD-POC-REMOVE: `src/types/poc.ts` — 889 lines of unused generated code** (foreman tick 2026-07-19)
-  - 44 exports, ZERO source-code imports (grep confirms no `from.*poc` in any non-test .ts file)
-  - SPECLANG-GENERATED from specs/roadmap.spec.dir/poc.spec.dir/types.spec.md (2026-03-03)
-  - 889 lines of dead code. Either remove it or re-wire it if the POC types are still needed.
+- [x] **DEAD-POC-REMOVE: `src/types/poc.ts` — CANCELED — file is still actively imported** (foreman tick 2026-07-19)
+  - NEVER-DONE audit incorrectly claimed "ZERO source-code imports" — in reality, 30+ source files import from `../types/poc`
+  - Removing the symlink causes 83 tsc errors across parser, codegen, daemon, db, events, integration, and templates
+  - Key consumers: block-parser.ts, header-parser.ts, generator.ts, template-registry.ts, poc-db.ts, typed-emitter.ts, wire.ts, 8 templates/ files
+  - File is SPECLANG-GENERATED from specs/roadmap.spec.dir/poc.spec.dir/types.spec.md (2026-03-03)
+  - Verified: npx tsc --noEmit still 0 errors with file in place. Board task was wrong — no action needed.
   - Priority: LOW
 
-- [ ] **DUCKBRAIN-STALE: Architecture data says 130 specs (actual: 475), 1744 tests (actual: 1754)** (foreman tick 2026-07-19)
-  - DuckBrain `/project/speclang/architecture` entries from 2026-07-07: spec_count=130, test_count=1744
-  - Actual: 475 specs (CLI `speclang status`), 1754 tests pass
-  - Need to refresh DuckBrain with current counts and architecture state
+- [x] **DUCKBRAIN-STALE: Architecture data refreshed — 475 specs, 1754 tests** (foreman tick 2026-07-19)
+  - DuckBrain `/project/speclang/architecture` entry had spec_count=130 (actual: 475), test_count=1744 (actual: 1754)
+  - Wrote updated entry to DuckBrain namespace `speclang` with current counts: 475 specs, 1754 tests passing (58 skipped, 1812 total)
+  - 89 test files passing (4 skipped, 93 total). TypeScript 7.0.2. tsc --noEmit: clean. Vulns: 0.
   - Priority: LOW
 
 ## [x] NEVER-DONE — 11-point audit completed 2026-07-19 (foreman tick)
