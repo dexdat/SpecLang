@@ -135,3 +135,27 @@
   - npm audit fix --force: esbuild upgraded, vite 5.4.21→8.1.5, @vitejs/plugin-react peer dep warning (cosmetic)
   - Build: tsc clean ✓ | Tests: 1752 pass / 2 known flakes ✓ | Audit: 0 vulns ✓
   - Peer dep warning for plugin-react — cosmetic, does not affect build or tests
+
+- [ ] **BUG-CASCADE-ENOENT: Cascade fails with ENOENT when generated/ subdir missing** (foreman tick 2026-07-19)
+  - `./bin/speclang cascade specs/cascade.spec.md` fails: `ENOENT: no such file or directory, open 'generated/cascade/uuid_tracking.ts'`
+  - Reproduced: works after `mkdir -p generated/cascade`
+  - Expected: cascade should auto-create output directory (or parent) before writing generated files
+  - Impact: first-time cascade users hit this; workaround is manual `mkdir`
+  - Priority: MEDIUM
+
+- [ ] **DEAD-POC-REMOVE: `src/types/poc.ts` — 889 lines of unused generated code** (foreman tick 2026-07-19)
+  - 44 exports, ZERO source-code imports (grep confirms no `from.*poc` in any non-test .ts file)
+  - SPECLANG-GENERATED from specs/roadmap.spec.dir/poc.spec.dir/types.spec.md (2026-03-03)
+  - 889 lines of dead code. Either remove it or re-wire it if the POC types are still needed.
+  - Priority: LOW
+
+- [ ] **DUCKBRAIN-STALE: Architecture data says 130 specs (actual: 475), 1744 tests (actual: 1754)** (foreman tick 2026-07-19)
+  - DuckBrain `/project/speclang/architecture` entries from 2026-07-07: spec_count=130, test_count=1744
+  - Actual: 475 specs (CLI `speclang status`), 1754 tests pass
+  - Need to refresh DuckBrain with current counts and architecture state
+  - Priority: LOW
+
+## [x] NEVER-DONE — 11-point audit completed 2026-07-19 (foreman tick)
+- 3 findings filed above (BUG-CASCADE-ENOENT, DEAD-POC-REMOVE, DUCKBRAIN-STALE)
+- CI billing: pre-existing, already documented. Build: ✓. Tests: 1754/1812 ✓. Vulns: 0 ✓.
+- Outdated deps (chokidar 5, commander 15, tailwindcss 4): already BLOCKED/DEFERRED in board.
