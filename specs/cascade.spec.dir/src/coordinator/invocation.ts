@@ -22,6 +22,19 @@ export interface InvocationResult {
   error?: string;
   /** THINK-002: reasoning depth used for this invocation (if any). */
   thinking?: ThinkingLevel;
+  /** THINK-004: token-level metrics for this invocation (if collected). */
+  metrics?: InvocationMetrics;
+}
+
+/**
+ * THINK-004: token accounting per invocation — input/output/reasoning
+ * tokens captured from a single cascade phase run.
+ */
+export interface InvocationMetrics {
+  input_tokens: number;
+  output_tokens: number;
+  /** Reasoning tokens (if provider supports thinking/reasoning token tracking). */
+  reasoning_tokens?: number;
 }
 
 /**
@@ -34,7 +47,7 @@ export type AgentExecutorFn = (
   trigger: string,
   params?: Record<string, unknown>,
   thinking?: ThinkingLevel
-) => Promise<{ success: boolean; files: string[] }>;
+) => Promise<{ success: boolean; files: string[]; metrics?: InvocationMetrics }>;
 
 const defaultExecutor: AgentExecutorFn = async (agent, trigger, params, thinking) => {
   // Use dynamic import to keep child_process out of the module graph for
@@ -104,6 +117,7 @@ export class AgentInvoker {
         files_modified: result.files,
         duration_ms: Date.now() - start,
         thinking: options.thinking,
+        metrics: result.metrics,
       };
     } catch (error) {
       return {

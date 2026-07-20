@@ -188,6 +188,7 @@ cascade
   .command('trigger <spec-id>')
   .description('Trigger cascade for a spec')
   .option('--thinking <mapping>', 'Thinking levels by agent or phase (agent:level,...)')
+  .option('--metrics', 'Print per-phase token-breakdown after cascade')
   .option('--json', 'JSON output')
   .action(async (
     specId: string,

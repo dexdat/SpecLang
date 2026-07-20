@@ -6,6 +6,7 @@ import {
   AgentInvoker,
   InvocationOptions,
   InvocationResult,
+  InvocationMetrics,
   getAgentForTrigger,
 } from './invocation.js';
 import type { ThinkingLevel } from 'parser.spec.dir/src/types.js';
@@ -44,6 +45,12 @@ export interface CoordinatorOptions {
    * defaults entirely.
    */
   thinking?: Record<string, ThinkingLevel>;
+  /**
+   * THINK-004: when true, the cascade coordinator collects token-level
+   * metrics from each invocation and includes a token-breakdown summary
+   * in the cascade result and printed output.
+   */
+  metrics?: boolean;
 }
 
 /**
@@ -69,6 +76,12 @@ export class CascadeCoordinator {
   private options: CoordinatorOptions;
   private gates: VerificationGate[] = [];
   private invoker: AgentInvoker;
+  /**
+   * THINK-004: per-invocation metrics store. Index-aligned with
+   * `state.agents_invoked`. Entries are null when no metrics were
+   * collected for that invocation.
+   */
+  private invocationMetrics: (InvocationMetrics | null)[] = [];
 
   constructor(
     indexPath: string = '_index.json',
@@ -303,6 +316,15 @@ export class CascadeCoordinator {
 
       result.success = result.gatesFailed === 0;
       this.state.status = result.success ? 'completed' : 'failed';
+
+      // THINK-004: collate and optionally print the token metrics summary.
+      if (this.options.metrics) {
+        const summary = this.collateMetrics();
+        result.metrics_summary = summary;
+        if (this.options.verbose) {
+          this.printMetricsSummary(summary);
+        }
+      }
     } catch (error) {
       result.errors.push(error instanceof Error ? error.message : String(error));
       this.state.status = 'failed';
@@ -396,6 +418,8 @@ export class CascadeCoordinator {
       result: invocation.success ? 'success' : 'failure',
       files_modified: invocation.files_modified,
     });
+    // THINK-004: capture per-invocation metrics for later collation.
+    this.invocationMetrics.push(invocation.metrics ?? null);
   }
 
   private recordGateResults(
@@ -443,6 +467,87 @@ export class CascadeCoordinator {
     }
     return false;
   }
+
+  /**
+   * THINK-004: collate token metrics from all recorded invocations
+   * into a per-phase summary.
+   */
+  collateMetrics(): MetricsSummary {
+    const summary: MetricsSummary = {
+      total_input_tokens: 0,
+      total_output_tokens: 0,
+      total_reasoning_tokens: 0,
+      phases: {},
+    };
+
+    // Pair invocation agents with their metrics.
+    const agents = this.state.agents_invoked;
+    for (let i = 0; i < agents.length; i++) {
+      const metrics = this.invocationMetrics[i];
+      if (!metrics) continue;
+
+      const agent = agents[i].agent;
+      if (!summary.phases[agent]) {
+        summary.phases[agent] = {
+          input_tokens: 0,
+          output_tokens: 0,
+          reasoning_tokens: 0,
+          invocations: 0,
+        };
+      }
+      summary.phases[agent].input_tokens += metrics.input_tokens;
+      summary.phases[agent].output_tokens += metrics.output_tokens;
+      summary.phases[agent].reasoning_tokens += metrics.reasoning_tokens ?? 0;
+      summary.phases[agent].invocations++;
+    }
+
+    summary.total_input_tokens = Object.values(summary.phases).reduce(
+      (sum, p) => sum + p.input_tokens, 0
+    );
+    summary.total_output_tokens = Object.values(summary.phases).reduce(
+      (sum, p) => sum + p.output_tokens, 0
+    );
+    summary.total_reasoning_tokens = Object.values(summary.phases).reduce(
+      (sum, p) => sum + p.reasoning_tokens, 0
+    );
+
+    return summary;
+  }
+
+  /**
+   * THINK-004: print a human-readable token-breakdown summary to stdout.
+   */
+  printMetricsSummary(summary: MetricsSummary): void {
+    const phaseEntries = Object.entries(summary.phases);
+    if (phaseEntries.length === 0) {
+      console.log('\\n📊 Metrics: No token data collected.');
+      return;
+    }
+
+    console.log('\\n📊 Token Metrics Summary');
+    console.log('═'.repeat(60));
+    for (const [agent, phase] of phaseEntries) {
+      const total = phase.input_tokens + phase.output_tokens + phase.reasoning_tokens;
+      console.log(`\\n  ${agent} (${phase.invocations} invocation${phase.invocations !== 1 ? 's' : ''})`);
+      console.log(`    Input:     ${phase.input_tokens.toLocaleString()} tokens`);
+      console.log(`    Output:    ${phase.output_tokens.toLocaleString()} tokens`);
+      if (phase.reasoning_tokens > 0) {
+        console.log(`    Reasoning: ${phase.reasoning_tokens.toLocaleString()} tokens`);
+      }
+      console.log(`    Total:     ${total.toLocaleString()} tokens`);
+    }
+
+    console.log('\\n' + '═'.repeat(60));
+    console.log('  Grand Total');
+    console.log(`    Input:     ${summary.total_input_tokens.toLocaleString()} tokens`);
+    console.log(`    Output:    ${summary.total_output_tokens.toLocaleString()} tokens`);
+    if (summary.total_reasoning_tokens > 0) {
+      console.log(`    Reasoning: ${summary.total_reasoning_tokens.toLocaleString()} tokens`);
+    }
+    const grandTotal = summary.total_input_tokens + summary.total_output_tokens + summary.total_reasoning_tokens;
+    console.log(`    Total:     ${grandTotal.toLocaleString()} tokens`);
+    console.log('═'.repeat(60));
+  }
 }
 
 export interface CascadeResult {
@@ -459,4 +564,26 @@ export interface CascadeResult {
   waves?: number;
   /** ARCH-003: max agents invoked concurrently within a single wave. */
   parallelism?: number;
+  /**
+   * THINK-004: per-phase token breakdown. Present when `metrics: true`
+   * is passed in CoordinatorOptions.
+   */
+  metrics_summary?: MetricsSummary;
+}
+
+/**
+ * THINK-004: token-breakdown summary across all cascade phases.
+ */
+export interface MetricsSummary {
+  /** Total tokens consumed across all phases. */
+  total_input_tokens: number;
+  total_output_tokens: number;
+  total_reasoning_tokens: number;
+  /** Per-phase breakdown, keyed by agent name. */
+  phases: Record<string, {
+    input_tokens: number;
+    output_tokens: number;
+    reasoning_tokens: number;
+    invocations: number;
+  }>;
 }

@@ -10,6 +10,8 @@ import { loadIndex, getSpecsDir, getDatabase } from '../utils.js';
 export interface CascadeOptions {
   json?: boolean;
   thinking?: CoordinatorOptions['thinking'];
+  /** THINK-004: collect and print per-phase token metrics. */
+  metrics?: boolean;
 }
 
 interface CascadeState {
@@ -18,6 +20,8 @@ interface CascadeState {
   triggeredAt: number | null;
   specs: string[];
   thinking?: CoordinatorOptions['thinking'];
+  /** THINK-004: metrics flag for this cascade. */
+  metrics?: boolean;
 }
 
 /**
@@ -96,7 +100,8 @@ async function cascadeTrigger(specId: string, options: CascadeOptions): Promise<
     currentSpec: specId,
     triggeredAt: Date.now(),
     specs: dependents,
-    thinking: options.thinking
+    thinking: options.thinking,
+    metrics: options.metrics,
   };
   
   saveCascadeState(state);
