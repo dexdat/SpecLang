@@ -1,9 +1,16 @@
 import { AgentInvocation } from './state.js';
+import type { ThinkingLevel } from '../../../parser.spec.dir/src/types.js';
 
 export interface InvocationOptions {
   agent: string;
   trigger: string;
   params?: Record<string, unknown>;
+  /**
+   * THINK-002: reasoning depth for this invocation. When set, the executor
+   * passes `--thinking <level>` to the underlying `speclang agent` CLI call
+   * so the runtime can gate token usage per cascade phase.
+   */
+  thinking?: ThinkingLevel;
 }
 
 export interface InvocationResult {
@@ -13,6 +20,8 @@ export interface InvocationResult {
   files_modified: string[];
   duration_ms?: number;
   error?: string;
+  /** THINK-002: reasoning depth used for this invocation (if any). */
+  thinking?: ThinkingLevel;
 }
 
 /**
@@ -23,10 +32,11 @@ export interface InvocationResult {
 export type AgentExecutorFn = (
   agent: string,
   trigger: string,
-  params?: Record<string, unknown>
+  params?: Record<string, unknown>,
+  thinking?: ThinkingLevel
 ) => Promise<{ success: boolean; files: string[] }>;
 
-const defaultExecutor: AgentExecutorFn = async (agent, trigger, params) => {
+const defaultExecutor: AgentExecutorFn = async (agent, trigger, params, thinking) => {
   // Use dynamic import to keep child_process out of the module graph for
   // pure-orchestration callers (tests, embeds).
   const { execFile } = await import('child_process');
@@ -36,6 +46,9 @@ const defaultExecutor: AgentExecutorFn = async (agent, trigger, params) => {
   const paramsStr = params ? ` ${JSON.stringify(params)}` : '';
   const args = ['agent', agent, '--trigger', trigger];
   if (params) args.push('--params', JSON.stringify(params));
+  // THINK-002: forward the reasoning-depth gate to the agent CLI so the
+  // runtime can budget tokens per cascade phase.
+  if (thinking) args.push('--thinking', thinking);
 
   try {
     const { stdout } = await execFileAsync('speclang', args, {
@@ -78,13 +91,19 @@ export class AgentInvoker {
     }
 
     try {
-      const result = await this.executor(options.agent, options.trigger, options.params);
+      const result = await this.executor(
+        options.agent,
+        options.trigger,
+        options.params,
+        options.thinking
+      );
       return {
         success: result.success,
         agent: options.agent,
         timestamp,
         files_modified: result.files,
         duration_ms: Date.now() - start,
+        thinking: options.thinking,
       };
     } catch (error) {
       return {
@@ -94,6 +113,7 @@ export class AgentInvoker {
         files_modified: [],
         duration_ms: Date.now() - start,
         error: error instanceof Error ? error.message : String(error),
+        thinking: options.thinking,
       };
     }
   }

@@ -8,6 +8,7 @@ import {
   InvocationResult,
   getAgentForTrigger,
 } from './invocation.js';
+import type { ThinkingLevel } from '../../../parser.spec.dir/src/types.js';
 
 export interface VerificationGate {
   name: string;
@@ -35,7 +36,32 @@ export interface CoordinatorOptions {
    * = unbounded (all agents in a wave fire in parallel).
    */
   concurrency?: number;
+  /**
+   * THINK-002: reasoning-depth map by agent name. When set, the coordinator
+   * looks up the agent for each cascade node and forwards the configured
+   * ThinkingLevel to the invocation. Agents not present in the map fall back
+   * to DEFAULT_THINKING_BY_AGENT. Pass an explicit `{}` to disable the
+   * defaults entirely.
+   */
+  thinking?: Record<string, ThinkingLevel>;
 }
+
+/**
+ * THINK-002: default reasoning-depth per agent role.
+ *   - spec-writer (spec_expand)  → low
+ *   - code-gen    (code_generate) → high
+ *   - test-writer                 → medium
+ *   - coordinator (spec_read)     → none
+ *
+ * Token budget scales roughly with reasoning depth, so gating here is the
+ * primary lever for reducing cascade token usage.
+ */
+export const DEFAULT_THINKING_BY_AGENT: Record<string, ThinkingLevel> = {
+  'speclang-spec-writer': 'low',
+  'speclang-code-gen': 'high',
+  'speclang-test-writer': 'medium',
+  'speclang-coordinator': 'none',
+};
 
 export class CascadeCoordinator {
   private tracker: DependencyTracker;
@@ -203,13 +229,37 @@ export class CascadeCoordinator {
   /**
    * Build the per-node InvocationOptions used by the swarm.
    * Exposed so tests can verify routing logic without running the cascade.
+   *
+   * THINK-002: resolves the reasoning-depth for the node's agent from
+   * `options.thinking` (user overrides) falling back to
+   * DEFAULT_THINKING_BY_AGENT. Pass `thinking: {}` in CoordinatorOptions to
+   * disable thinking entirely.
    */
   buildInvocation(node: TreeNode): InvocationOptions {
-    return {
-      agent: getAgentForTrigger(node.filePath),
+    const agent = getAgentForTrigger(node.filePath);
+    const thinking = this.resolveThinking(agent);
+    const opts: InvocationOptions = {
+      agent,
       trigger: node.filePath,
       params: { layer: node.layer, type: node.type, id: node.id },
     };
+    if (thinking !== undefined) {
+      opts.thinking = thinking;
+    }
+    return opts;
+  }
+
+  /**
+   * THINK-002: look up the ThinkingLevel for an agent.
+   * User-supplied `options.thinking` wins over the defaults. Returns
+   * `undefined` when the caller explicitly disabled gating with `{}`.
+   */
+  private resolveThinking(agent: string): ThinkingLevel | undefined {
+    const overrides = this.options.thinking;
+    if (overrides !== undefined) {
+      return overrides[agent];
+    }
+    return DEFAULT_THINKING_BY_AGENT[agent];
   }
 
   /**

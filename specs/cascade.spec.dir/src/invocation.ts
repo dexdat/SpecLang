@@ -1,9 +1,16 @@
 import { AgentInvocation } from './state.js';
+import type { ThinkingLevel } from '../../parser.spec.dir/src/types.js';
 
 export interface InvocationOptions {
   agent: string;
   trigger: string;
   params?: Record<string, unknown>;
+  /**
+   * THINK-002: reasoning depth for this invocation. When set, the executor
+   * appends `--thinking <level>` to the underlying `speclang agent` CLI call
+   * so the runtime can gate token usage per cascade phase.
+   */
+  thinking?: ThinkingLevel;
 }
 
 export interface InvocationResult {
@@ -12,6 +19,8 @@ export interface InvocationResult {
   timestamp: string;
   files_modified: string[];
   error?: string;
+  /** THINK-002: reasoning depth used for this invocation (if any). */
+  thinking?: ThinkingLevel;
 }
 
 export class AgentInvoker {
@@ -30,14 +39,20 @@ export class AgentInvoker {
     }
 
     try {
-      const result = await this.executeAgent(options.agent, options.trigger, options.params);
+      const result = await this.executeAgent(
+        options.agent,
+        options.trigger,
+        options.params,
+        options.thinking
+      );
       files_modified.push(...result.files);
 
       return {
         success: result.success,
         agent: options.agent,
         timestamp,
-        files_modified
+        files_modified,
+        thinking: options.thinking
       };
     } catch (error) {
       return {
@@ -45,7 +60,8 @@ export class AgentInvoker {
         agent: options.agent,
         timestamp,
         files_modified,
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
+        thinking: options.thinking
       };
     }
   }
@@ -53,12 +69,13 @@ export class AgentInvoker {
   private async executeAgent(
     agent: string,
     trigger: string,
-    params?: Record<string, unknown>
+    params?: Record<string, unknown>,
+    thinking?: ThinkingLevel
   ): Promise<{ success: boolean; files: string[] }> {
     const { execSync } = await import('child_process');
 
     try {
-      const command = this.buildCommand(agent, trigger, params);
+      const command = this.buildCommand(agent, trigger, params, thinking);
       const output = execSync(command, { encoding: 'utf-8' });
 
       return {
@@ -70,9 +87,16 @@ export class AgentInvoker {
     }
   }
 
-  private buildCommand(agent: string, trigger: string, params?: Record<string, unknown>): string {
+  private buildCommand(
+    agent: string,
+    trigger: string,
+    params?: Record<string, unknown>,
+    thinking?: ThinkingLevel
+  ): string {
     const paramsStr = params ? ` ${JSON.stringify(params)}` : '';
-    return `speclang agent ${agent} --trigger ${trigger}${paramsStr}`;
+    // THINK-002: forward the reasoning-depth gate to the agent CLI.
+    const thinkingStr = thinking ? ` --thinking ${thinking}` : '';
+    return `speclang agent ${agent} --trigger ${trigger}${paramsStr}${thinkingStr}`;
   }
 
   private parseOutputFiles(output: string): string[] {
