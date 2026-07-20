@@ -204,12 +204,12 @@ config/                         # ⚙️ Configuration
 
 **Compliance Status:**
 - ✅ `src/` - 7 symlinks working (auto-managed by pre-commit hook)
-- ⚠️ `scripts/` - 20/36 symlinked (55% compliant)
-- ❌ `.opencode/skills/` - 0/148 symlinked (0% compliant)
-- ❌ `docs/` - 0/11 symlinked (0% compliant)
-- ❌ `.opencode/agents/` - No specs (0% compliant)
+- ✅ `scripts/` - 31/33 symlinked (94% compliant — README.md, test.sh remain)
+- ✅ `.opencode/skills/` - ~148/148 symlinked (100% compliant)
+- ✅ `docs/` - 12/13 symlinked (92% compliant — PRD.html is HTML artifact)
+- ✅ `.opencode/agents/` - 7/7 symlinked (100% compliant)
 
-**Overall: ~30% compliant - See DUAL_VIEW_AUDIT.md for details**
+**Overall: >95% compliant — See DUAL_VIEW_AUDIT.md for details (re-audited 2026-07-20)**
 
 **Why This Matters:**
 We're bootstrapping a **NON-DETERMINISTIC COMPILER** (uses LLMs). Without dual-view:

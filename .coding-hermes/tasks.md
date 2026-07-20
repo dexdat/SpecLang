@@ -98,10 +98,10 @@
   - Verification: 1754 pass / 58 skip / 0 failures, coverage output generated successfully
   - Duration: 84s (acceptable for CI — was N/A before)
 
-- [ ] **SPEC-ALIGNMENT-001: Dual-view compliance stuck at ~30% — 0% for docs/ and .opencode/ (2026-07-19 never-done audit)**
-  - DUAL_VIEW_AUDIT.md reports: src/ 7 symlinks ✓, scripts/ 55%, docs/ 0%, .opencode/skills/ 0%, .opencode/agents/ no specs
-  - AGENTS.md compliance section flagged this but no active work item
-  - Creates risk of divergence between specs and working code
+- [x] **SPEC-ALIGNMENT-001: Dual-view compliance stuck at ~30% — 0% for docs/ and .opencode/ (2026-07-19 never-done audit)** — DISPROVEN (2026-07-20 foreman tick)
+  - DUAL_VIEW_AUDIT.md was 5 months stale (dated 2026-02-23). Symlink migration completed Jul 12.
+  - Actual: docs/ 12/13 symlinked (only PRD.html real — HTML artifact), .opencode/skills/ 100%, .opencode/agents/ 100%, scripts/ 31/33
+  - Overall compliance >95%, not ~30%. DUAL_VIEW_AUDIT.md updated with re-audit.
 
 - [ ] **PITFALL-WORKFLOW-001: workflow commands are stubs with TODO placeholders (2026-07-19 never-done audit)**
   - `specs/workflow.spec.dir/src/commands.ts`: 4 TODOs (converge/commit, rollback, pipeline run, registry download)

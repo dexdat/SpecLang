@@ -1,8 +1,10 @@
 # SpecLang Dual-View Pattern Audit
 
-**Date**: 2026-02-23  
-**Status**: ⚠️ INCOMPLETE - Major gaps found  
+**Date**: 2026-02-23 (original) | **Re-audited**: 2026-07-20  
+**Status**: ✅ LARGELY COMPLETE — >95% compliance (original audit was stale)  
 **Principle**: EVERYTHING in the repo should follow specs/ → [symlink] → location
+
+> **2026-07-20 Re-audit**: The original February audit claimed ~30% compliance. This was stale — the symlink migration happened in July (commits from Jul 12). Actual state verified by foreman tick with `ls -la` on each directory.
 
 ---
 
@@ -209,4 +211,34 @@ The non-deterministic compiler needs deterministic specs!
 ---
 
 **Related**: See `CODEBASE_REVIEW.md` for full codebase audit.
-**Last Updated**: 2026-02-23
+**Last Updated**: 2026-02-23 (original) | 2026-07-20 (re-audit)
+
+---
+
+## 🔄 2026-07-20 Re-Audit — Actual Current State
+
+The February audit's claims were disproven by filesystem inspection. The symlink migration happened in July 2026 (commits from Jul 12) and was never reflected in this document.
+
+### Actual Compliance (verified with `ls -la`)
+
+| Location | Files | Symlinked | Real | Status |
+|----------|-------|-----------|------|--------|
+| docs/ | 13 .md + 1 .html | 12 symlinks | PRD.html (HTML artifact) | ✅ 92% |
+| .opencode/skills/ | ~148 files | ALL symlinked | 0 real files | ✅ 100% |
+| .opencode/agents/ | 7 files | ALL symlinked | 0 real files | ✅ 100% |
+| .opencode/tools/ | 1 file | symlinked | 0 real files | ✅ 100% |
+| scripts/ | 33 source files | 31 symlinked | README.md, test.sh | ✅ 94% |
+| src/ | 45+ dirs | 7 symlinks (pre-commit hook) | N/A (different pattern) | ✅ Working |
+| config/ | 1 file | N/A | mcp-defaults.yaml (config data) | ✅ N/A |
+
+**Overall Compliance**: >95% (not ~30% as the Feb audit claimed)
+
+### Remaining Minor Gaps
+
+1. **scripts/README.md** — Real file, no corresponding spec. Low priority (docs, not code).
+2. **scripts/test.sh** — 341-byte shell script. Low priority.
+3. **docs/PRD.html** — HTML artifact (generated), does not need a spec. Expected.
+
+### Verdict
+
+The original SPEC-ALIGNMENT-001 task claiming "~30% compliance" was based on a 5-month-old stale audit. The actual symlink migration was completed in July 2026. No significant dual-view work remains. ✅
