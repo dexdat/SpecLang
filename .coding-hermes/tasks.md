@@ -18,11 +18,13 @@
   - **Acceptance:** `speclang cascade --thinking=code_generate:high,spec_read:none` per provider ✓
   - **Changes:** provider-adapter.ts (+122 lines), agent.ts (+243 lines), CLI thinking flag wired, 14 daemon tests pass
   - **Validation:** tsc clean, 1779/1779 non-flake tests pass, 2 pre-existing daemon flakes unchanged
-- [ ] **THINK-004: Token accounting — measure savings from thinking gating**
+- [x] **THINK-004: Token accounting — measure savings from thinking gating** (commit 756d729e)
   - **Priority:** LOW
-  - **Acceptance:** `speclang cascade --metrics` shows token breakdown
+  - **Acceptance:** `speclang cascade --metrics` shows token breakdown ✓
+  - **Changes:** bin/speclang (+`--metrics` flag + handler), runner (+metrics passthrough + CascadeCoordinator delegation)
+  - **Validation:** tsc clean, 1794/1852 tests pass (0 failures), E2E: `speclang cascade --metrics` shows Input/Output/Total token output
 
-(2 active: THINK-003, THINK-004. THINK-001 completed remotely. THINK-002 completed by parallel agent (d9f7f3fa, race condition — this foreman's implementation superseded).)
+(0 active. THINK-001 completed remotely. THINK-002 completed by parallel agent (d9f7f3fa, race condition). THINK-003 completed remotely (a29dc620). THINK-004 completed by foreman (756d729e).)
 
 ## [x] NEVER-DONE — 11-point audit 2026-07-19 (23:45 UTC, idle tick #5)
 - All 11 checks ran with concrete tool output. Findings: 0 NEW actionable gaps.
