@@ -8,7 +8,7 @@ import {
   InvocationResult,
   getAgentForTrigger,
 } from './invocation.js';
-import type { ThinkingLevel } from '../../../parser.spec.dir/src/types.js';
+import type { ThinkingLevel } from 'parser.spec.dir/src/types.js';
 
 export interface VerificationGate {
   name: string;
