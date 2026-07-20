@@ -1,10 +1,11 @@
 # SpecLang CI — Coding Hermes Tasks
 
 ## Active
-- [ ] **THINK-001: Spec header `thinking:` field — control reasoning layer per spec**
+- [x] **THINK-001: Spec header `thinking:` field — control reasoning layer per spec** (commit e51e4cc3)
   - **Priority:** HIGH
   - **Concept:** Add `thinking:` to spec headers (none/low/medium/high). Raw spec reading doesn't need deep thought. Only code gen + final merges do.
-  - **Acceptance:** `speclang validate` recognizes `thinking:` as valid header field
+  - **Acceptance:** `speclang validate` recognizes `thinking:` as valid header field ✓
+  - **Changes:** types.ts (+ThinkingLevel), fields.ts (+THINKING_LEVELS, +FIELD_DEFINITIONS), header-validator.ts (+knownFields)
 - [ ] **THINK-002: Runtime thinking gating — control reasoning by cascade phase**
   - **Priority:** HIGH
   - **Concept:** Runtime controls reasoning per operation (spec_read:none, spec_expand:low, spec_merge:medium, code_generate:high).
