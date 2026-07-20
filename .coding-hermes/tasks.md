@@ -6,10 +6,13 @@
   - **Concept:** Add `thinking:` to spec headers (none/low/medium/high). Raw spec reading doesn't need deep thought. Only code gen + final merges do.
   - **Acceptance:** `speclang validate` recognizes `thinking:` as valid header field ✓
   - **Changes:** types.ts (+ThinkingLevel), fields.ts (+THINKING_LEVELS, +FIELD_DEFINITIONS), header-validator.ts (+knownFields)
-- [ ] **THINK-002: Runtime thinking gating — control reasoning by cascade phase**
+- [x] **THINK-002: Runtime thinking gating — control reasoning by cascade phase** (commit d9f7f3fa)
   - **Priority:** HIGH
   - **Concept:** Runtime controls reasoning per operation (spec_read:none, spec_expand:low, spec_merge:medium, code_generate:high).
-  - **Acceptance:** Cascade runs with configurable thinking levels; token usage measurably lower
+  - **Acceptance:** Cascade runs with configurable thinking levels; token usage measurably lower ✓
+  - **Changes:** coordinator/invocation.ts (+thinking on InvocationOptions, --thinking in executor), invocation.ts (+thinking in buildCommand), coordinator/index.ts (+CoordinatorOptions.thinking, DEFAULT_THINKING_BY_AGENT, resolveThinking), implementation mirror synced
+  - **Tests:** 13/13 pass (tests/daemon/think002-thinking-gating.test.ts)
+  - **Note:** --thinking flag flows to speclang agent CLI; honoring it at provider level is THINK-003
 - [ ] **THINK-003: Provider adapter — map thinking levels to OpenAI-compatible reasoning params**
   - **Priority:** MEDIUM
   - **Acceptance:** `speclang cascade --thinking=code_generate:high,spec_read:none` per provider
