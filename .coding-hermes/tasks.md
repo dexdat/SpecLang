@@ -20,7 +20,7 @@
   - **Priority:** LOW
   - **Acceptance:** `speclang cascade --metrics` shows token breakdown
 
-(empty — idle tick #5, 11-point audit: 0 NEW actionable gaps. Remote merge brought TEST-COVERAGE-001 + WIRING-SPECLANGD-001 closures)
+(2 active: THINK-003, THINK-004. THINK-001 completed remotely. THINK-002 completed by parallel agent (d9f7f3fa, race condition — this foreman's implementation superseded).)
 
 ## [x] NEVER-DONE — 11-point audit 2026-07-19 (23:45 UTC, idle tick #5)
 - All 11 checks ran with concrete tool output. Findings: 0 NEW actionable gaps.
