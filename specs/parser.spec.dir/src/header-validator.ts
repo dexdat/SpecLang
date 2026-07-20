@@ -496,6 +496,7 @@ export function validateUnknownFields(metadata: Partial<SpecMetadata>): Validati
     'tags', 'short', 'target', 'status', 'depends_on', 'refs',
     'children', 'parent', 'part', 'owned_by', 'session_id', 'lines',
     'siblings', 'generated', 'caused_by', 'change_id', 'part_of',
+    'thinking',
   ]);
   
   for (const key of Object.keys(metadata)) {

@@ -12,6 +12,7 @@ import type {
   ProjectLevel,
   AgentSupport,
   SpecStatus,
+  ThinkingLevel,
 } from './types';
 
 // ============================================================================
@@ -69,6 +70,13 @@ export const SPEC_STATUSES: readonly SpecStatus[] = [
   'deprecated',
   'active',
   'generated',
+] as const;
+
+export const THINKING_LEVELS: readonly ThinkingLevel[] = [
+  'none',
+  'low',
+  'medium',
+  'high',
 ] as const;
 
 // ============================================================================
@@ -206,6 +214,15 @@ export const FIELD_DEFINITIONS: Record<string, FieldDefinition> = {
     description: 'Part number for split specs',
     example: '2/5',
     pattern: PART_PATTERN,
+    category: 'metadata',
+  },
+  thinking: {
+    name: 'thinking',
+    type: 'enum',
+    required: false,
+    description: 'LLM reasoning depth for this spec (none/low/medium/high)',
+    example: 'medium',
+    enumValues: THINKING_LEVELS,
     category: 'metadata',
   },
 

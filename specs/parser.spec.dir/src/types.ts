@@ -27,6 +27,9 @@ export type AgentSupport = 'human_only' | 'agent_assisted' | 'agent_autonomous';
 /** Valid spec status */
 export type SpecStatus = 'draft' | 'stable' | 'deprecated' | 'active' | 'generated';
 
+/** Valid thinking/reasoning levels for LLM processing */
+export type ThinkingLevel = 'none' | 'low' | 'medium' | 'high';
+
 /** Valid block kinds */
 export type BlockKind = 
   | 'entity' 
@@ -96,6 +99,8 @@ export interface SpecMetadata {
   change_id?: string;
   /** Cascade ID this belongs to */
   part_of?: string;
+  /** Thinking/reasoning level for LLM processing */
+  thinking?: ThinkingLevel;
   /** Custom additional fields */
   [key: string]: unknown;
 }
