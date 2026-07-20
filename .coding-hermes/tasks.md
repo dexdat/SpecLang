@@ -1,6 +1,20 @@
 # SpecLang CI — Coding Hermes Tasks
 
 ## Active
+- [ ] **THINK-001: Spec header `thinking:` field — control reasoning layer per spec**
+  - **Priority:** HIGH
+  - **Concept:** Add `thinking:` to spec headers (none/low/medium/high). Raw spec reading doesn't need deep thought. Only code gen + final merges do.
+  - **Acceptance:** `speclang validate` recognizes `thinking:` as valid header field
+- [ ] **THINK-002: Runtime thinking gating — control reasoning by cascade phase**
+  - **Priority:** HIGH
+  - **Concept:** Runtime controls reasoning per operation (spec_read:none, spec_expand:low, spec_merge:medium, code_generate:high).
+  - **Acceptance:** Cascade runs with configurable thinking levels; token usage measurably lower
+- [ ] **THINK-003: Provider adapter — map thinking levels to OpenAI-compatible reasoning params**
+  - **Priority:** MEDIUM
+  - **Acceptance:** `speclang cascade --thinking=code_generate:high,spec_read:none` per provider
+- [ ] **THINK-004: Token accounting — measure savings from thinking gating**
+  - **Priority:** LOW
+  - **Acceptance:** `speclang cascade --metrics` shows token breakdown
 
 (empty — idle tick #5, 11-point audit: 0 NEW actionable gaps. Remote merge brought TEST-COVERAGE-001 + WIRING-SPECLANGD-001 closures)
 
