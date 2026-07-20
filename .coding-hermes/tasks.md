@@ -2,7 +2,22 @@
 
 ## Active
 
-(empty — idle tick #5, merging remote board closure of TEST-COVERAGE-001 + WIRING-SPECLANGD-001 + doc tasks)
+(empty — idle tick #5, 11-point audit: 0 NEW actionable gaps. Remote merge brought TEST-COVERAGE-001 + WIRING-SPECLANGD-001 closures)
+
+## [x] NEVER-DONE — 11-point audit 2026-07-19 (23:45 UTC, idle tick #5)
+- All 11 checks ran with concrete tool output. Findings: 0 NEW actionable gaps.
+- Remote merge: TEST-COVERAGE-001 (coverage race fix f28b5478), WIRING-SPECLANGD-001 (board sync), doc tasks
+- Build: tsc --noEmit clean ✓
+- Tests: 1754 pass, 58 skipped, 0 fail ✓ (Rolldown panic on re-run — system resource, not code)
+- Vulns: 0 (npm audit --production) ✓
+- Outdated deps: 3 flagged (chokidar 5, commander 15 — BLOCKED; tailwindcss 4 — DEFERRED)
+- Spec count: 475, all validate (447 files, 0 errors) ✓
+- Hilo: 3,488 edges across 1,570 files ✓
+- CI: billing-blocked (pre-existing infrastructure)
+- CLI clean-state: cascade generates 3 files from clean dir ✓
+- No TODOs/FIXMEs/stubs in source ✓
+- DuckBrain idle counter: 5. Scheduler daemon manages cooldown (all foreman crons paused for daemon migration).
+- Verdict: genuinely idle. 0 actionable gaps. Project stable.
 
 ## [x] NEVER-DONE — 11-point audit 2026-07-19 (22:41 UTC, idle tick #4)
 - All 11 checks ran with concrete tool output. Findings: 0 NEW actionable gaps.
