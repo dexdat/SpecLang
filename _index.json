@@ -1,6 +1,6 @@
 {
   "version": "0.2.0",
-  "generated": "2026-07-19T21:37:13.300ZZ",
+  "generated": "2026-07-20T17:22:44.376ZZ",
   "specs": {
     "@speclang/agent-behavior-matrix/matrix": {
       "id": "@speclang/agent-behavior-matrix/matrix",
@@ -1113,6 +1113,23 @@
       "header_lines": 11,
       "status": "draft",
       "target": "src/cascade/index.ts",
+      "content_refs": []
+    },
+    "@specs/cascade/provider-adapter": {
+      "id": "@specs/cascade/provider-adapter",
+      "file": "cascade.spec.dir/provider-adapter.spec.md",
+      "version": "1.0.0",
+      "layer": 4,
+      "project_level": "",
+      "agent_support": "",
+      "tags": [],
+      "short": "provider-adapter.spec.md",
+      "depends_on": [],
+      "blocks": [],
+      "lastModified": "2026-07-20T17:06:31.663ZZ",
+      "lines": 2572,
+      "header_lines": 10,
+      "status": "draft",
       "content_refs": []
     },
     "@speclang/cascade/triggers": {
@@ -14943,6 +14960,7 @@
     "@bugs/cli-missing-generate-command",
     "@speclang/bugs",
     "@specs/cascade/implementation",
+    "@specs/cascade/provider-adapter",
     "@specs/codegen",
     "@specs/compiler",
     "@specs/compiler/phases",
@@ -15082,7 +15100,7 @@
       "@speclang/server -> @speclang/mcp",
       "@speclang/server -> @speclang/core"
     ],
-    "total_specs": 471,
+    "total_specs": 472,
     "total_refs": 13,
     "missing_ref_count": 17
   }

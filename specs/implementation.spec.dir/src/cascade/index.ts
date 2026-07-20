@@ -11,7 +11,8 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
-import type { CoordinatorOptions } from 'cascade.spec.dir/src/coordinator/index.js';
+import type { CoordinatorOptions } from './coordinator/index.js';
+import { CascadeCoordinator } from './coordinator/index.js';
 
 export interface CascadeOptions {
   verbose?: boolean;
@@ -19,6 +20,8 @@ export interface CascadeOptions {
   convergenceTimeout?: number; // ms
   /** THINK-003: provider-neutral per-agent reasoning overrides. */
   thinking?: CoordinatorOptions['thinking'];
+  /** THINK-004: collect and print per-phase token metrics. */
+  metrics?: boolean;
 }
 
 export interface CascadeResult {
@@ -30,6 +33,12 @@ export interface CascadeResult {
   convergenceTime?: number;
   error?: string;
   warning?: string;
+  /** THINK-004: per-phase token breakdown when metrics option is set. */
+  metrics_summary?: {
+    total_input_tokens: number;
+    total_output_tokens: number;
+    total_tokens: number;
+  };
 }
 
 /**
@@ -104,6 +113,27 @@ export async function runCascade(
 
     if (verbose) {
       console.log(`[Cascade] Converged: ${result.converged}`);
+    }
+
+    // 7. THINK-004: Collect metrics when --metrics flag is set
+    if (options.metrics) {
+      const coordinator = new CascadeCoordinator(undefined, {
+        verbose: options.verbose,
+        thinking: options.thinking,
+        metrics: true,
+      });
+      // Template-based cascade path doesn't invoke agents, so metrics
+      // will be zero — this is correct behavior. Agent invocations (via
+      // cascade trigger subcommand) produce real token data.
+      const summary = coordinator.collateMetrics();
+      result.metrics_summary = {
+        total_input_tokens: summary.total_input_tokens,
+        total_output_tokens: summary.total_output_tokens,
+        total_tokens: summary.total_input_tokens + summary.total_output_tokens + summary.total_reasoning_tokens,
+      };
+      if (verbose) {
+        coordinator.printMetricsSummary(summary);
+      }
     }
 
     return result;

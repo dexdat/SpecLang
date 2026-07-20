@@ -61,6 +61,7 @@ program
   .option('-d, --dir <directory>', 'Project directory', '.')
   .option('-v, --verbose', 'Show detailed output')
   .option('--thinking <mapping>', 'Thinking levels by agent or phase (agent:level,...)')
+  .option('--metrics', 'Collect and print per-phase token metrics')
   .action(async (spec, options) => {
     const specPath = path.resolve(options.dir, spec);
     
@@ -80,7 +81,8 @@ program
         : undefined;
       const result = await runCascade(specPath, {
         verbose: options.verbose,
-        thinking
+        thinking,
+        metrics: options.metrics
       });
       
       if (result.success) {
@@ -92,6 +94,12 @@ program
         }
         if (result.filesGenerated.length > 0) {
           result.filesGenerated.forEach(f => console.log(`   - ${f}`));
+        }
+        if (options.metrics && result.metrics_summary) {
+          console.log('\n📊 Token Metrics:');
+          console.log(`   Input:  ${result.metrics_summary.total_input_tokens.toLocaleString()} tokens`);
+          console.log(`   Output: ${result.metrics_summary.total_output_tokens.toLocaleString()} tokens`);
+          console.log(`   Total:  ${result.metrics_summary.total_tokens.toLocaleString()} tokens`);
         }
       } else {
         console.error('\n❌ Cascade failed:', result.error);
