@@ -24,6 +24,7 @@
       "sqlite.spec.dir/src/*": ["./specs/sqlite.spec.dir/src/*"],
       "indexer.spec.dir/src/*": ["./specs/indexer.spec.dir/src/*"],
       "parser.spec.dir/src/*": ["./specs/parser.spec.dir/src/*"],
+      "cascade.spec.dir/src/*": ["./specs/cascade.spec.dir/src/*"],
       "mcp.spec.dir/src/*": ["./specs/mcp.spec.dir/src/*"],
       "cli.spec.dir/src/*": ["./specs/cli.spec.dir/src/*"],
       "autonomous.spec.dir/src/*": ["./specs/autonomous.spec.dir/src/*"],

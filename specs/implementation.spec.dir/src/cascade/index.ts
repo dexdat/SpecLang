@@ -11,11 +11,14 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
+import type { CoordinatorOptions } from 'cascade.spec.dir/src/coordinator/index.js';
 
 export interface CascadeOptions {
   verbose?: boolean;
   maxDepth?: number;
   convergenceTimeout?: number; // ms
+  /** THINK-003: provider-neutral per-agent reasoning overrides. */
+  thinking?: CoordinatorOptions['thinking'];
 }
 
 export interface CascadeResult {

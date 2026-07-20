@@ -4,10 +4,12 @@
  */
 
 import * as fs from 'fs';
+import type { CoordinatorOptions } from 'cascade.spec.dir/src/coordinator/index.js';
 import { loadIndex, getSpecsDir, getDatabase } from '../utils.js';
 
 export interface CascadeOptions {
   json?: boolean;
+  thinking?: CoordinatorOptions['thinking'];
 }
 
 interface CascadeState {
@@ -15,6 +17,7 @@ interface CascadeState {
   currentSpec: string | null;
   triggeredAt: number | null;
   specs: string[];
+  thinking?: CoordinatorOptions['thinking'];
 }
 
 /**
@@ -92,7 +95,8 @@ async function cascadeTrigger(specId: string, options: CascadeOptions): Promise<
     active: true,
     currentSpec: specId,
     triggeredAt: Date.now(),
-    specs: dependents
+    specs: dependents,
+    thinking: options.thinking
   };
   
   saveCascadeState(state);

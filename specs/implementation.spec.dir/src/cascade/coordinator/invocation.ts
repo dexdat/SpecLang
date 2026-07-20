@@ -1,5 +1,5 @@
 import { AgentInvocation } from './state.js';
-import type { ThinkingLevel } from '../../../../../parser.spec.dir/src/types.js';
+import type { ThinkingLevel } from 'parser.spec.dir/src/types.js';
 
 export interface InvocationOptions {
   agent: string;
@@ -7,7 +7,7 @@ export interface InvocationOptions {
   params?: Record<string, unknown>;
   /**
    * THINK-002: reasoning depth for this invocation. When set, the executor
-   * appends `--thinking <level>` to the underlying `speclang agent` CLI call
+   * passes `--thinking <level>` to the underlying `speclang agent` CLI call
    * so the runtime can gate token usage per cascade phase.
    */
   thinking?: ThinkingLevel;
@@ -18,99 +18,146 @@ export interface InvocationResult {
   agent: string;
   timestamp: string;
   files_modified: string[];
+  duration_ms?: number;
   error?: string;
   /** THINK-002: reasoning depth used for this invocation (if any). */
   thinking?: ThinkingLevel;
 }
 
+/**
+ * Pluggable executor signature — defaults to spawning a child process, but
+ * tests can inject a deterministic stub to prove parallelism without
+ * shelling out (no flaky CI from real `speclang agent` invocations).
+ */
+export type AgentExecutorFn = (
+  agent: string,
+  trigger: string,
+  params?: Record<string, unknown>,
+  thinking?: ThinkingLevel
+) => Promise<{ success: boolean; files: string[] }>;
+
+const defaultExecutor: AgentExecutorFn = async (agent, trigger, params, thinking) => {
+  // Use dynamic import to keep child_process out of the module graph for
+  // pure-orchestration callers (tests, embeds).
+  const { execFile } = await import('child_process');
+  const { promisify } = await import('util');
+  const execFileAsync = promisify(execFile);
+
+  const paramsStr = params ? ` ${JSON.stringify(params)}` : '';
+  const args = ['agent', agent, '--trigger', trigger];
+  if (params) args.push('--params', JSON.stringify(params));
+  // THINK-002: forward the reasoning-depth gate to the agent CLI so the
+  // runtime can budget tokens per cascade phase.
+  if (thinking) args.push('--thinking', thinking);
+
+  try {
+    const { stdout } = await execFileAsync('speclang', args, {
+      encoding: 'utf-8',
+      timeout: 30_000,
+    });
+    return { success: true, files: parseOutputFiles(stdout) };
+  } catch {
+    return { success: false, files: [] };
+  }
+};
+
+function parseOutputFiles(output: string): string[] {
+  const files: string[] = [];
+  for (const line of output.split('\n')) {
+    const match = line.match(/Created: (.+)/);
+    if (match) files.push(match[1]);
+  }
+  return files;
+}
+
 export class AgentInvoker {
   private verbose: boolean;
+  private executor: AgentExecutorFn;
 
-  constructor(verbose: boolean = false) {
+  constructor(verbose: boolean = false, executor: AgentExecutorFn = defaultExecutor) {
     this.verbose = verbose;
+    this.executor = executor;
   }
 
+  /**
+   * Invoke a single agent. Async; safe to call concurrently from many callers.
+   */
   async invoke(options: InvocationOptions): Promise<InvocationResult> {
-    const timestamp = new Date().toISOString();
-    const files_modified: string[] = [];
+    const start = Date.now();
+    const timestamp = new Date(start).toISOString();
 
     if (this.verbose) {
       console.log(`[AgentInvoker] Invoking agent: ${options.agent} for trigger: ${options.trigger}`);
     }
 
     try {
-      const result = await this.executeAgent(
+      const result = await this.executor(
         options.agent,
         options.trigger,
         options.params,
         options.thinking
       );
-      files_modified.push(...result.files);
-
       return {
         success: result.success,
         agent: options.agent,
         timestamp,
-        files_modified,
-        thinking: options.thinking
+        files_modified: result.files,
+        duration_ms: Date.now() - start,
+        thinking: options.thinking,
       };
     } catch (error) {
       return {
         success: false,
         agent: options.agent,
         timestamp,
-        files_modified,
+        files_modified: [],
+        duration_ms: Date.now() - start,
         error: error instanceof Error ? error.message : String(error),
-        thinking: options.thinking
+        thinking: options.thinking,
       };
     }
   }
 
-  private async executeAgent(
-    agent: string,
-    trigger: string,
-    params?: Record<string, unknown>,
-    thinking?: ThinkingLevel
-  ): Promise<{ success: boolean; files: string[] }> {
-    const { execSync } = await import('child_process');
+  /**
+   * Invoke N agents in parallel (swarm execution).
+   *
+   * All invocations are kicked off synchronously and resolved via Promise.all,
+   * so wall-clock time is bounded by the slowest agent — NOT the sum of all
+   * agent times. This is the core ARCH-003 primitive.
+   *
+   * @param optionsList - List of invocation requests
+   * @param concurrency - Optional cap on concurrent invocations (default: unlimited)
+   * @returns Array of InvocationResult in the same order as optionsList
+   */
+  async invokeMany(
+    optionsList: InvocationOptions[],
+    concurrency?: number
+  ): Promise<InvocationResult[]> {
+    if (optionsList.length === 0) return [];
 
-    try {
-      const command = this.buildCommand(agent, trigger, params, thinking);
-      const output = execSync(command, { encoding: 'utf-8' });
-
-      return {
-        success: true,
-        files: this.parseOutputFiles(output)
-      };
-    } catch {
-      return { success: false, files: [] };
+    if (concurrency === undefined || concurrency >= optionsList.length) {
+      // Unbounded swarm: kick off every invocation, wait for all.
+      return Promise.all(optionsList.map((opts) => this.invoke(opts)));
     }
-  }
 
-  private buildCommand(
-    agent: string,
-    trigger: string,
-    params?: Record<string, unknown>,
-    thinking?: ThinkingLevel
-  ): string {
-    const paramsStr = params ? ` ${JSON.stringify(params)}` : '';
-    // THINK-002: forward the reasoning-depth gate to the agent CLI.
-    const thinkingStr = thinking ? ` --thinking ${thinking}` : '';
-    return `speclang agent ${agent} --trigger ${trigger}${paramsStr}${thinkingStr}`;
-  }
+    // Bounded swarm: round-robin over N worker slots.
+    const results: InvocationResult[] = new Array(optionsList.length);
+    let next = 0;
 
-  private parseOutputFiles(output: string): string[] {
-    const files: string[] = [];
-    const lines = output.split('\n');
-
-    for (const line of lines) {
-      const match = line.match(/Created: (.+)/);
-      if (match) {
-        files.push(match[1]);
+    const worker = async (): Promise<void> => {
+      while (true) {
+        const idx = next++;
+        if (idx >= optionsList.length) return;
+        results[idx] = await this.invoke(optionsList[idx]);
       }
-    }
+    };
 
-    return files;
+    const workers = Array.from(
+      { length: Math.max(1, concurrency) },
+      () => worker()
+    );
+    await Promise.all(workers);
+    return results;
   }
 
   createInvocationRecord(
@@ -121,7 +168,7 @@ export class AgentInvoker {
       agent: result.agent,
       timestamp: result.timestamp,
       result: result.success ? 'success' : 'failure',
-      files_modified: files
+      files_modified: files,
     };
   }
 }

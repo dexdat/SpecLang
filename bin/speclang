@@ -60,6 +60,7 @@ program
   .description('Run a cascade on a spec file')
   .option('-d, --dir <directory>', 'Project directory', '.')
   .option('-v, --verbose', 'Show detailed output')
+  .option('--thinking <mapping>', 'Thinking levels by agent or phase (agent:level,...)')
   .action(async (spec, options) => {
     const specPath = path.resolve(options.dir, spec);
     
@@ -72,9 +73,14 @@ program
     console.log(`   Spec: ${specPath}`);
     
     try {
+      const { parseThinkingOverrides } = require('../dist/src/cascade/provider-adapter.js');
       const { runCascade } = require('../dist/src/cascade/index.js');
+      const thinking = options.thinking
+        ? parseThinkingOverrides(options.thinking)
+        : undefined;
       const result = await runCascade(specPath, {
-        verbose: options.verbose
+        verbose: options.verbose,
+        thinking
       });
       
       if (result.success) {
@@ -98,6 +104,58 @@ program
         process.exit(1);
       }
       throw err;
+    }
+  });
+
+// Agent command
+program
+  .command('agent [agent]')
+  .description('Run a cascade agent for a trigger using a provider-aware thinking level')
+  .requiredOption('--trigger <path>', 'Trigger path used for agent selection')
+  .option('--thinking <level>', 'Thinking level (none, low, medium, high)', 'medium')
+  .option('--params <json>', 'Agent parameters as JSON')
+  .option('--provider <provider>', 'LLM provider (openai, openrouter, anthropic, google)')
+  .option('--model <model>', 'Provider model name')
+  .option('--base-url <url>', 'Provider API base URL')
+  .option('--api-key <key>', 'Provider API key')
+  .option('--dry-run', 'Show the mapped request parameters without calling the provider')
+  .option('--json', 'Emit JSON output')
+  .action(async (agent, options) => {
+    try {
+      const { runAgent } = require('../dist/src/cascade/agent.js');
+      let params;
+      if (options.params) {
+        try {
+          params = JSON.parse(options.params);
+        } catch {
+          throw new Error('--params must be valid JSON');
+        }
+      }
+
+      const result = await runAgent({
+        agent,
+        trigger: options.trigger,
+        thinking: options.thinking,
+        params,
+        provider: options.provider,
+        model: options.model,
+        baseUrl: options.baseUrl,
+        apiKey: options.apiKey,
+        dryRun: options.dryRun || false
+      });
+
+      if (options.json || result.dryRun) {
+        console.log(JSON.stringify(result, null, 2));
+      } else if (result.content) {
+        console.log(result.content);
+      }
+    } catch (err) {
+      if (err.code === 'MODULE_NOT_FOUND') {
+        console.error('\n❌ SpecLang not built. Run: npm run build\n');
+      } else {
+        console.error(`\n❌ Agent failed: ${err.message}\n`);
+      }
+      process.exit(1);
     }
   });
 

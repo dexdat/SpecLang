@@ -187,9 +187,24 @@ cascade
 cascade
   .command('trigger <spec-id>')
   .description('Trigger cascade for a spec')
+  .option('--thinking <mapping>', 'Thinking levels by agent or phase (agent:level,...)')
   .option('--json', 'JSON output')
-  .action(async (specId: string, options: CascadeOptions) => {
-    await cascadeCommand('trigger', specId, options);
+  .action(async (
+    specId: string,
+    options: CascadeOptions & { thinking?: string }
+  ) => {
+    let thinking: CascadeOptions['thinking'];
+    if (options.thinking) {
+      const { parseThinkingOverrides } = await import(
+        'cascade.spec.dir/src/provider-adapter.js'
+      );
+      thinking = parseThinkingOverrides(options.thinking);
+    }
+    const opts: CascadeOptions = {
+      ...options,
+      thinking,
+    };
+    await cascadeCommand('trigger', specId, opts);
   });
 
 cascade
@@ -198,6 +213,47 @@ cascade
   .option('--json', 'JSON output')
   .action(async (options: CascadeOptions) => {
     await cascadeCommand('abort', undefined, options);
+  });
+
+// ============================================================================
+// AGENT COMMAND
+// ============================================================================
+
+program
+  .command('agent [agent]')
+  .description('Run a cascade agent for a trigger')
+  .requiredOption('--trigger <path>', 'Trigger path used for agent selection')
+  .option('--thinking <level>', 'Thinking level (none, low, medium, high)', 'medium')
+  .option('--params <json>', 'Agent parameters as JSON')
+  .option('--provider <provider>', 'LLM provider')
+  .option('--model <model>', 'Provider model name')
+  .option('--base-url <url>', 'Provider API base URL')
+  .option('--api-key <key>', 'Provider API key')
+  .option('--dry-run', 'Map the request without calling the provider')
+  .option('--json', 'JSON output')
+  .action(async (agent: string | undefined, options: any) => {
+    const { runAgent } = await import('cascade.spec.dir/src/agent.js');
+    let params: Record<string, unknown> | undefined;
+    if (options.params) {
+      params = JSON.parse(options.params);
+    }
+    const result = await runAgent({
+      agent,
+      trigger: options.trigger,
+      thinking: options.thinking,
+      params,
+      provider: options.provider,
+      model: options.model,
+      baseUrl: options.baseUrl,
+      apiKey: options.apiKey,
+      dryRun: options.dryRun || false,
+    });
+
+    if (options.json || result.dryRun) {
+      console.log(JSON.stringify(result, null, 2));
+    } else if (result.content) {
+      console.log(result.content);
+    }
   });
 
 // ============================================================================
