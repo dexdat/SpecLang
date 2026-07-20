@@ -13,9 +13,11 @@
   - **Changes:** coordinator/invocation.ts (+thinking on InvocationOptions, --thinking in executor), invocation.ts (+thinking in buildCommand), coordinator/index.ts (+CoordinatorOptions.thinking, DEFAULT_THINKING_BY_AGENT, resolveThinking), implementation mirror synced
   - **Tests:** 13/13 pass (tests/daemon/think002-thinking-gating.test.ts)
   - **Note:** --thinking flag flows to speclang agent CLI; honoring it at provider level is THINK-003
-- [ ] **THINK-003: Provider adapter — map thinking levels to OpenAI-compatible reasoning params**
+- [x] **THINK-003: Provider adapter — map thinking levels to OpenAI-compatible reasoning params** (commit a29dc620)
   - **Priority:** MEDIUM
-  - **Acceptance:** `speclang cascade --thinking=code_generate:high,spec_read:none` per provider
+  - **Acceptance:** `speclang cascade --thinking=code_generate:high,spec_read:none` per provider ✓
+  - **Changes:** provider-adapter.ts (+122 lines), agent.ts (+243 lines), CLI thinking flag wired, 14 daemon tests pass
+  - **Validation:** tsc clean, 1779/1779 non-flake tests pass, 2 pre-existing daemon flakes unchanged
 - [ ] **THINK-004: Token accounting — measure savings from thinking gating**
   - **Priority:** LOW
   - **Acceptance:** `speclang cascade --metrics` shows token breakdown
