@@ -1,12 +1,14 @@
 # SpecLang — Model Router Task Matrix
 
-**Core purpose:** A meta-circular specification-driven compiler — specs/ are the source of truth, src/ is generated. TypeScript/Node.js, 476 specs, 1794+ tests, self-hosting bootstrap.
+**Core purpose:** A meta-circular specification-driven compiler — specs/ are the source of truth, src/ is generated. TypeScript/Node.js, 448 specs, 1791+ tests, self-hosting bootstrap.
 
 ## Active Tasks
 
 | ID | Task | Priority | Complexity | Deps | Tags | Model | Reasoning | Fallback |
 |----|------|----------|------------|------|------|-------|-----------|----------|
-| CI-INVESTIGATE-001 | CI failing 3 consecutive runs — "Build, test, and guard" job fails. Local build+tests pass clean (1794 pass). Logs inaccessible in cron context. Likely environment/infra — needs log access to root-cause. | High | 2 | — | +ci, +investigation | DeepSeek V4 Pro | CI diagnostics — environment mismatch, resource exhaustion, or pre-existing issue | GLM-5.2 |
+| CI-INVESTIGATE-001 | CI failing 3 consecutive runs — "Build, test, and guard" job fails. Local build+tests mostly pass (1791 pass, 3 fail). Logs inaccessible in cron context. Likely environment/infra — needs log access to root-cause. | High | 2 | — | +ci, +investigation | DeepSeek V4 Pro | CI diagnostics — environment mismatch, resource exhaustion, or pre-existing issue | GLM-5.2 |
+| TEST-REGRESSION-001 | 3 CLI tests failing (cli.test.ts: filter by layer, filter by tags, list all specs). Regression from idle tick #11 (was 1794 pass/0 fail, now 1791 pass/3 fail). Root cause unknown — may be related to better-sqlite3 rebuild or stale TMPDIR state. | High | 3 | — | +testing, +regression | DeepSeek V4 Pro | Test regression investigation — root-cause then fix | GLM-5.2 |
+| TEST-INFRA-001 | Default vitest worker pool exhausts system resources (Rolldown panic: thread pool init EAGAIN). Workaround: --maxWorkers=1 --no-file-parallelism. Needs investigation: ulimit -n is 1024, may need increase for 96 test files. | Medium | 2 | — | +infra, +testing | DeepSeek V4 Flash | Infra tuning — ulimit or vitest config change | GLM-5.2 |
 | PITFALL-WORKFLOW-001 | Implement workflow command stubs (converge/commit, rollback, pipeline run, registry download) | Medium | 5 | — | ++code-generation, +architecture | GLM-5.2 | 7 TODOs across 2 files; bounded implementation with clear spec references | DeepSeek V4 Pro |
 | PITFALL-MCP-001 | Implement MCP one-shot search/get (2 stubs in server.ts) | Low | 3 | — | ++code-generation, +api-use | DeepSeek V4 Flash | 2 stub methods; straightforward MCP protocol implementation | MiniMax M3 |
 | PITFALL-DOWNGRADE-001 | Implement downgrade transition workflow (5 stubs across triggers/notification/audit/executor/planner) | Low | 6 | — | ++code-generation, ++architecture | GLM-5.2 | 5 files of stubbed downgrade logic; cross-cutting feature | DeepSeek V4 Pro |
@@ -15,9 +17,9 @@
 
 **Assumptions:** TypeScript 7.0.2, Node 22+, pnpm; CI billing is admin/human action; React 19 migration complete; tailwindcss 4 upgrade deferred.
 
-**Routing Notes:** All active pitfall tasks are stubs/TODOs — well-scoped, no new architecture needed. GLM-5.2 for multi-file workflow/downgrade tasks. DeepSeek V4 Flash for simple 2-method MCP stubs. CI-BILLING-001 is human-blocked — no model can fix it. CI-INVESTIGATE-001 needs CI log access to diagnose — may be environment/infra (not code).
+**Routing Notes:** TEST-REGRESSION-001 is the highest-priority actionable task — 3 real test failures. TEST-INFRA-001 is a quick infra fix (ulimit or vitest config). CI-INVESTIGATE-001 blocked on log access. Pitfall tasks blocked until test regression resolved (worker can't verify). CI-BILLING-001 is human-blocked.
 
-**Execution Order:** CI-INVESTIGATE-001 → PITFALL-MCP-001 → PITFALL-WORKFLOW-001 → PITFALL-DOWNGRADE-001 (CI first, then ascending complexity). CI-BILLING-001 is independent.
+**Execution Order:** TEST-REGRESSION-001 → TEST-INFRA-001 → PITFALL-MCP-001 → PITFALL-WORKFLOW-001 → PITFALL-DOWNGRADE-001. CI-INVESTIGATE-001 blocked on log access.
 
 **Escalation Conditions:** Any pitfall task touches >5 files → split. Tests reveal cross-cutting issues → escalate to DeepSeek V4 Pro. Security-relevant code paths → escalate to GPT-5.6 Sol.
 
@@ -28,25 +30,27 @@
 **DEPS:** React 18→19, TypeScript 5.9→7.0, js-yaml 4→5, postcss patch, @types/node 25→26. Commander 15 + chokidar 5 blocked (ESM-only).
 **FIX/VALIDATE:** 313 spec validation fixes, 68 reference format fixes, 57 block kind fixes, 12 YAML header fixes, cascade abort test fix, CLI test fixes.
 **ARCH-001 through ARCH-004:** Architecture tasks complete. COMPLIANCE-001 + 002: 100% dual-view compliance.
-**Discovery Sweeps:** 11 idle ticks. 1 NEW actionable gap this tick (CI-INVESTIGATE-001). Cooldown at 43200s (12h) — re-fixed after daemon restart reversion (1st reversion). Build clean, 1794 pass / 58 skip / 0 fail.
+**Discovery Sweeps:** 12 idle ticks. 2 NEW actionable gaps this tick (TEST-REGRESSION-001, TEST-INFRA-001). better-sqlite3 build fixed (pnpm-workspace.yaml committed). Cooldown at 43200s (12h). Build nearly clean: 1791 pass / 58 skip / 3 fail.
 
-### Idle Tick #11 — 11-Point Audit Results (2026-07-21 01:03)
+### Idle Tick #12 — 11-Point Audit Results (2026-07-21 03:50)
 
 | Check | Result | Detail |
 |-------|--------|--------|
-| 1. Spec Alignment | PASS | 449 specs, 448 validated (0 failures, 540 warnings) |
+| 1. Spec Alignment | PASS | 448 specs, 448 validated (0 failures, 540 warnings) |
 | 2. Doc Coverage | PASS | LICENSE + README present |
-| 3. Test Gaps | PASS | 96 test files, 1794 pass / 58 skip / 0 fail |
-| 4. Package Upgrades | PASS (blocked) | chokidar 5 (ESM-only), commander 15 (ESM-only), tailwindcss 4 (deferred) |
+| 3. Test Gaps | **FAIL** | 3 CLI tests failing (regression from 0 fail). Default worker pool exhausts system resources (needs --maxWorkers=1). |
+| 4. Package Upgrades | PASS (blocked) | chokidar 5 (ESM-only), commander 15 (ESM-only), tailwindcss 4 (deferred). better-sqlite3 13 available. |
 | 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/, 0 stubs found |
-| 6. Performance | PASS | 27 benchmark test files |
-| 7. CLI/Endpoint | PASS | `speclang validate` passes all 448 specs |
-| 8. CI/CD | **FAIL** | 3 consecutive failures — "Build, test, and guard" job fails. Logs inaccessible (cron). Created CI-INVESTIGATE-001. |
-| 9. DuckBrain Sync | PASS | 9 entries in speclang namespace |
-| 10. Code Quality | PASS (cleaned) | Removed stale test-temp-bootstrap/ + test-temp-meta/. No untracked files. |
+| 6. Performance | PASS | 3 benchmark test files (cascade, daemon, mcp) |
+| 7. CLI/Endpoint | PASS | `speclang validate` passes all 448 specs. bin/speclang executable. |
+| 8. CI/CD | **FAIL** | 3 consecutive failures — "Build, test, and guard" job fails. Billing also blocked. |
+| 9. DuckBrain Sync | PASS | 5 entries in speclang namespace |
+| 10. Code Quality | PASS (cleaned) | Oxlint 449 warnings/6 errors are speclang-header artifacts in generated files. Fixed: better-sqlite3 native build (pnpm-workspace.yaml committed). Committed untracked pnpm-lock.yaml. |
 | 11. Middle-Out Wiring | PASS | CLI wired (bin/speclang), daemon wired (src/speclangd.ts) |
 
-**Scheduler Health:** Cooldown reverted 43200s→1800s (daemon restart). Re-fixed via API PUT → 43200s. **1st reversion** — warning tracked.
+**Scheduler Health:** Cooldown at 43200s (12h). 1st reversion (idle tick #11 re-fix) — warning tracked.
 **GitReins Sync:** DEPS-REACT-19 complete (matches board). No stale tasks.
+**Hilo:** 3,545 edges across 1,584 files — Hilo=useful.
+**This tick actions:** Fixed better-sqlite3 native bindings (pnpm-workspace.yaml committed, pnpm-lock.yaml committed). Identified 2 new gaps: TEST-REGRESSION-001 (3 CLI failures), TEST-INFRA-001 (worker pool resource exhaustion).
 
 ## [ ] NEVER-DONE — Run coding-hermes-never-done 11-point audit
