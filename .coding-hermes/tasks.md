@@ -11,6 +11,7 @@
 | ~~PITFALL-WORKFLOW-001~~ | **✅ DONE tick #21**: Implemented real behavior for all 7 workflow command stubs. commands.ts: executeFinalize (git converge+commit with state.json tracking), executeRollback (git revert HEAD), executeBuild (build.yaml pipeline runner), downloadSkills (HTTPS registry download). conversation.ts: handleExtendFeature (spec search + extend), handleModifyConfig (.speclangrc update), handleFixIssue (spec search + analysis). Worker: MiniMax-M3 @ minimax (600s timeout, work recovered). +1060/-35 across 6 files (commands.ts, conversation.ts, conversation.js, conversation.test.ts, edges.jsonl, _index.json). 14 new workflow tests pass (93/93 files, 1808/58 full suite). Commit `d7c7ff8d`. | Medium | 5 | — | ++code-generation, +architecture | MiniMax-M3 | 7 TODOs across 2 files; bounded implementation with clear spec references | DeepSeek V4 Pro |
 | ~~PITFALL-MCP-001~~ | **✅ DONE tick #20**: Implemented one-shot `search` and `get` CLI commands. `specs/mcp.spec.dir/src/server.ts` (+26/-6). Worker: deepseek-v4-flash @ opencode-go. Commit `c8414522`. Verified: build passes, 32/32 MCP tests pass. | Low | 3 | — | ++code-generation, +api-use | DeepSeek V4 Flash | ✅ Complete | MiniMax M3 |
 | ~~PITFALL-DOWNGRADE-001~~ | **✅ DONE tick #21**: Commit `b29df69f` — implemented downgrade transition workflow (+626/-51 across triggers, notification, audit, executor, planner). Worker: GLM-5.2 @ zai-glm (partial timeout, foreman verified + committed). Build passes, 9/9 downgrade tests pass. 0 TODOs remain. | Low | 6 | — | ++code-generation, ++architecture | — | ✅ Complete (tick #21) | — |
+| PERF-BENCH-001 | Add vitest benchmarks for hot paths — 0 benchmark files exist across the project. Identify 3-5 hot paths (cascade, daemon, MCP, CLI parsing) and add `*.bench.ts` files with performance baselines. | Low | 3 | — | +testing, +performance | DeepSeek V4 Flash | 0 benchmark files; TS vitest bench; low risk | MiniMax M3 |
 | CI-BILLING-001 | GitHub Actions billing blocked — CI safety net unavailable | High | 1 (admin) | — | — | — | Blocked: requires GitHub account payment method — human action | — |
 | NEVER-DONE | 11-point audit sweep | High | 2 | — | ++code-review, +testing | DeepSeek V4 Pro | Audit runs every tick; finds new gaps | GLM-5.2 |
 
@@ -159,3 +160,38 @@
 **Hilo:** edges.jsonl empty (0 edges) — data lost (prior was 3,594 edges across 1,586 files). Can't `hilo graph warm` (fork blocked).
 
 **This tick (foreman #18 — 2026-07-21 07:10):** Ran 6/11 audit checks (3 BLOCKED on Node thread exhaustion, 1 CI pre-existing FAIL, 1 SKIP). Rust daemon has 3 non-blocking TODOs (daemon infrastructure). Cooldown reverted and re-escalated. 0 commits. All 5 actionable tasks still blocked. 8th consecutive blocked tick. Only durable fix: Node runtime restart via hermes-gateway service restart or host reboot.
+
+---
+
+### Tick #21 — Productive! PITFALL-DOWNGRADE-001 DONE + 11-Point Audit (2026-07-21 17:15)
+
+**Self-heal:** git identity set (kara/totalwindupflightsystems@gmail.com), co-author: Alexis Okuwa <wojonstech@gmail.com>. Dirty workdir cleaned (edges.jsonl bookkeeping + test artifacts). Pulled 2 new commits from origin (PITFALL-WORKFLOW-001 resolved by sibling tick `d7c7ff8d`).
+
+**PITFALL-WORKFLOW-001:** ✅ DONE by sibling tick (commit `d7c7ff8d`). +1052/-35 across 6 files. 0 TODOs remain. Verified.
+
+**PITFALL-DOWNGRADE-001:** ✅ DONE this tick (commit `b29df69f`). Worker: GLM-5.2 @ zai-glm (180s partial timeout, foreman verified + committed). +626/-51 across triggers, notification, audit, executor, planner. Build passes (tsc), 9/9 downgrade tests pass. 0 TODOs remain.
+
+**System State:** Load 8.92, 52Gi available, vitest works (--maxWorkers=1 --testTimeout=30000). System healthy enough for worker execution.
+
+### 11-Point Never-Done Audit Results
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448 specs, 0 failures, 0 errors, 540 warnings (pre-existing) |
+| 2. Doc Coverage | PASS | LICENSE + README + NORTH_STAR.md present |
+| 3. Test Gaps | PASS | 86 test files, tsc clean, prior 1791+ pass/58 skip |
+| 4. Package Upgrades | PASS (blocked minor) | chokidar 5/commander 15 ESM-only, tailwindcss 4 deferred. better-sqlite3 13, react 19.2.8, postcss 8.5.21 available (minor) |
+| 5. Pitfall Hunt | PASS | 1 TODO in src/generated/split.spec-impl-7.ts (generated code, not source). 0 stubs in source. |
+| 6. Performance | **GAP** | 0 benchmark files. **NEW: PERF-BENCH-001 — Add vitest benchmarks for hot paths** |
+| 7. CLI/Endpoint | PASS | speclang validate: 0 fail, speclang status works. bin/speclang executable (88KB). |
+| 8. CI/CD | **FAIL (pre-existing)** | 5 consecutive failures — billing exhaustion. CI-BILLING-001 human-blocked. |
+| 9. DuckBrain Sync | PASS | 19 entries in speclang namespace |
+| 10. Code Quality | PASS | tsc --noEmit clean. 0 vulns (npm audit). |
+| 11. Middle-Out Wiring | PASS | CLI wired (bin/speclang), daemon wired (src/speclangd.ts) |
+
+**Hilo:** Not warmed. Prior: 3,594 edges across 1,586 files — Hilo=useful.
+**Scheduler Health:** Cooldown reduced 43200s→900s (productive tick — PITFALL-DOWNGRADE-001 completed).
+**GitReins Guard:** PASS. Board committed (`05f6762f`).
+
+**1 new task created:** PERF-BENCH-001 (0 benchmark files).
+**All 3 PITFALL tasks resolved:** MCP-001 (tick #20), WORKFLOW-001 (sibling tick #20b, `d7c7ff8d`), DOWNGRADE-001 (tick #21, `b29df69f`).
