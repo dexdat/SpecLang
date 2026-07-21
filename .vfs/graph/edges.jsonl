@@ -3804,3 +3804,5 @@
 {"from":"tests/daemon/think003-provider-adapter.test.ts","to":"pkg:vitest","rel":"imports","provenance":"ast_exact","confidence":1.0}
 {"from":"tests/daemon/think003-provider-adapter.test.ts","to":"local:../../specs/cascade.spec.dir/src/provider-adapter.ts","rel":"imports","provenance":"ast_exact","confidence":1.0}
 {"from":"tests/daemon/think003-provider-adapter.test.ts","to":"local:../../specs/cascade.spec.dir/src/agent.ts","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"specs/mcp.spec.dir/src/server.ts","to":"local:./tools/search.js","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"specs/mcp.spec.dir/src/server.ts","to":"local:./tools/specs.js","rel":"imports","provenance":"ast_exact","confidence":1.0}
