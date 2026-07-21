@@ -15,6 +15,8 @@ import { loadConfig, getArg, getArgInt, getArgBool } from './config.js';
 import { createAuth, MCPAuth } from './auth.js';
 import { createSSEManager, SSEManager } from './sse.js';
 import type { MCPServerConfig } from './types.js';
+import { SearchToolHandler } from './tools/search.js';
+import { SpecsToolHandler } from './tools/specs.js';
 
 // ============================================================================
 // MCP SERVER
@@ -370,27 +372,45 @@ async function main() {
         }
         break;
         
-      case 'search':
+      case 'search': {
         // One-shot search
         const query = args.slice(1).join(' ');
         if (!query) {
           console.error('Usage: speclang-mcp search <query>');
           process.exit(1);
         }
-        // TODO: Implement one-shot search
-        console.log('Search not implemented yet');
+        try {
+          const config = loadConfig();
+          const db = createDatabase({ path: config.database, wal: true, verbose: false });
+          const searchHandler = new SearchToolHandler(db);
+          const result = await searchHandler.handleSearch({ query });
+          console.log(JSON.stringify(result, null, 2));
+        } catch (error) {
+          console.error(JSON.stringify({ error: error instanceof Error ? error.message : String(error) }));
+          process.exit(1);
+        }
         break;
+      }
         
-      case 'get':
+      case 'get': {
         // One-shot get
         const specId = args[1];
         if (!specId) {
           console.error('Usage: speclang-mcp get <spec-id>');
           process.exit(1);
         }
-        // TODO: Implement one-shot get
-        console.log('Get not implemented yet');
+        try {
+          const config = loadConfig();
+          const db = createDatabase({ path: config.database, wal: true, verbose: false });
+          const specsHandler = new SpecsToolHandler(db);
+          const result = await specsHandler.handleGetSpec({ id: specId, include_content: true });
+          console.log(JSON.stringify(result, null, 2));
+        } catch (error) {
+          console.error(JSON.stringify({ error: error instanceof Error ? error.message : String(error) }));
+          process.exit(1);
+        }
         break;
+      }
         
       default:
         console.error(`Unknown command: ${command}`);
