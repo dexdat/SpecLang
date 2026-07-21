@@ -56,6 +56,26 @@
 - Cooldown re-fixed to 43200s via API PUT
 - Verdict: genuinely idle. Parallel foreman (SPE-007 tick #7) already did productive work this tick window. 0 NEW actionable gaps. Project stable.
 
+## [x] NEVER-DONE — 11-point audit 2026-07-21 (04:35 UTC, idle tick #10)
+
+- All 11 checks ran with concrete tool output. Findings: 0 NEW actionable gaps.
+- Build: tsc --noEmit clean ✓
+- Tests: 1794 pass, 58 skip, 0 fail ✓ (full suite — 92 test files)
+- Vulns: 0 (npm audit --production) ✓
+- Outdated deps: 3 flagged (chokidar 5, commander 15 — BLOCKED; tailwindcss 4 — DEFERRED)
+- Spec count: 449 spec files, speclang cascade works from clean state ✓
+- Hilo: 3,545 edges across 1,584 files ✓
+- CI: billing-blocked (pre-existing — all 5 latest runs fail)
+- CLI E2E: cascade completes with real spec — 0 new gaps ✓
+- Perf tests: 25/25 pass ✓
+- TODOs in src/: 0 ✓
+- LICENSE: confirmed exists on disk ✓
+- DuckBrain: tick entry written to /projects/speclang/ticks/2026-07-21-04-35 ✓
+- Cooldown: 43200s already set — no change needed
+- Cleared: stale test-temp-bootstrap, test-temp-meta dirs + _index.json drift (mechanical)
+- 4 pre-existing gaps unchanged (PITFALL-WORKFLOW-001, PITFALL-MCP-001, PITFALL-DOWNGRADE-001, CI-BILLING-001)
+- Verdict: genuinely idle. 0 NEW actionable gaps. Project stable.
+
 ## [x] NEVER-DONE — 11-point audit 2026-07-20 (22:56 UTC, idle tick #9 — parallel-tick collision with tick #8)
 
 - All checks ran with concrete tool output. Findings: 0 NEW actionable gaps. Tick #8 (01:49 UTC) completed same audit window.
