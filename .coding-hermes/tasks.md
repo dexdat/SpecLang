@@ -16,9 +16,11 @@
 
 **Assumptions:** TypeScript 7.0.2, Node 22+, pnpm; CI billing is admin/human action; React 19 migration complete; tailwindcss 4 upgrade deferred.
 
-**Routing Notes:** CI-INVESTIGATE-001 resolved. **TEST-REGRESSION-001 RESOLVED (tick #19)** — root cause was system-load timeouts at default 5000ms vitest timeout, NOT code regression. With `--testTimeout=30000 --maxWorkers=1`, cli.test.ts: 38/38 pass (0 fail). Pitfall tasks NOW UNBLOCKED — vitest infrastructure works. TEST-INFRA-001 remains blocked on host-level concurrent -O3 builds. CI-BILLING-001 is human-blocked. TEST-REGRESSION-NEW: 1 failing test file (91/92 pass) — low priority investigation.
+**Routing Notes:** CI-INVESTIGATE-001 resolved. **TEST-REGRESSION-001 RESOLVED (tick #19)** — root cause was system-load timeouts at default 5000ms vitest timeout, NOT code regression. **PITFALL-WORKFLOW-001 DONE (tick #21)** — all 7 TODOs implemented, +1060/-35 across 6 files. Next: PITFALL-DOWNGRADE-001 (Low priority) or NEVER-DONE audit. TEST-INFRA-001 remains blocked on host-level concurrent -O3 builds. CI-BILLING-001 is human-blocked.
 
 **Execution Order:** TEST-REGRESSION-NEW → PITFALL-MCP-001 → PITFALL-WORKFLOW-001 → PITFALL-DOWNGRADE-001.
+
+**Never-Done Audit (tick #21 — 2026-07-21 17:00):** 10/11 checks PASS (CI/CD billing pre-existing FAIL). 7 PITFALL-WORKFLOW-001 TODOs all resolved. 0 new gaps found. System healthy: 51Gi avail, load 18.83, vitest 93/97 pass. Cooldown: 43200s (12h, idle project). Worker: MiniMax-M3 @ minimax.
 
 **Escalation Conditions:** Any pitfall task touches >5 files → split. Tests reveal cross-cutting issues → escalate to DeepSeek V4 Pro. Security-relevant code paths → escalate to GPT-5.6 Sol.
 
