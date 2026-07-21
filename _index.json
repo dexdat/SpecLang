@@ -1,6 +1,6 @@
 {
   "version": "0.2.0",
-  "generated": "2026-07-20T17:22:44.376ZZ",
+  "generated": "2026-07-21T01:20:36.047ZZ",
   "specs": {
     "@speclang/agent-behavior-matrix/matrix": {
       "id": "@speclang/agent-behavior-matrix/matrix",
@@ -1120,16 +1120,21 @@
       "file": "cascade.spec.dir/provider-adapter.spec.md",
       "version": "1.0.0",
       "layer": 4,
-      "project_level": "",
-      "agent_support": "",
-      "tags": [],
-      "short": "provider-adapter.spec.md",
+      "project_level": "Alpha",
+      "agent_support": "agent_autonomous",
+      "tags": [
+        "cascade",
+        "thinking",
+        "provider",
+        "cli"
+      ],
+      "short": "Provider-aware mapping from abstract thinking levels to LLM API parameters",
       "depends_on": [],
       "blocks": [],
-      "lastModified": "2026-07-20T17:06:31.663ZZ",
-      "lines": 2572,
+      "lastModified": "2026-07-21T00:40:43.204ZZ",
+      "lines": 2574,
       "header_lines": 10,
-      "status": "draft",
+      "status": "active",
       "content_refs": []
     },
     "@speclang/cascade/triggers": {
