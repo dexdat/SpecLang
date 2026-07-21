@@ -123,3 +123,33 @@
 **Hilo:** Not warmed (Node-dependent). Prior: 3,594 edges across 1,586 files.
 
 **This tick (foreman #17 — 2026-07-21 06:50):** Ran 10/11 audit checks (1 new regression: Code Quality dropped from PASS to BLOCKED — tsc crashes). System memory healthy but Node thread creation still broken — vitest, tsc, npm all crash with same WorkerThreadsTaskRunner assertion. 0 commits. All 5 actionable tasks still blocked. 7th consecutive blocked tick — triggering self-pause per never-done policy. Resolution requires Node/host restart (hermes-gateway service).
+
+### Idle Tick #18 — 11-Point Audit Results (2026-07-21 07:10)
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 122 spec files on disk, 476 specs per `speclang status` |
+| 2. Doc Coverage | PASS | LICENSE + README present, NORTH_STAR.md symlinked |
+| 3. Test Gaps | **BLOCKED (THREADS)** | Node WorkerThreadsTaskRunner still broken. `npx tsc --noEmit`: EAGAIN. Direct `tsc`: Go runtime mgc.go crash. Same as ticks #14-17. |
+| 4. Package Upgrades | PASS (blocked) | chokidar 5/commander 15 ESM-only, tailwindcss 4 deferred |
+| 5. Pitfall Hunt | PASS (TS) / **NOTE (Rust)** | TypeScript src/: 0 TODO/FIXME. Rust daemon: 3 TODOs (ipc.rs:26, router.rs:22, convergence.rs:38) — daemon infrastructure, not coding-hermes scope |
+| 6. Performance | **BLOCKED** | vitest bench crashes (same thread exhaustion) |
+| 7. CLI/Endpoint | PASS | `speclang status` works, `speclang validate` starts |
+| 8. CI/CD | **FAIL** | Billing-blocked (pre-existing, human action) |
+| 9. DuckBrain Sync | PASS | 10 entries in speclang namespace |
+| 10. Code Quality | **BLOCKED** | tsc --noEmit crashes (EAGAIN). `node --version` works (runtime OK, fork broken) |
+| 11. Middle-Out Wiring | PASS | CLI wired (bin/speclang), daemon wired (src/speclangd.ts) |
+
+**System State:** Load 2.41, 48Gi available, 2,470 threads. Swap 13GB/31GB. Node runtime itself works but `uv_thread_create` / `fork` still fails — Node WorkerThreadsTaskRunner assertion persists.
+
+**Scheduler Health:** Cooldown was reverted 43200→900 (fleet TOML/daemon restart). **1st reversion** — re-escalated to 43200s, verified with GET. 8th consecutive blocked tick (#12 partial, #13-18 fully blocked).
+
+**Cooldown Reversion Tracking:**
+
+| Reversion # | Tick | From | To | Action |
+|-------------|------|------|----|--------|
+| 1 | #18 | 43200 | 900 | Re-fixed to 43200s |
+
+**Hilo:** edges.jsonl empty (0 edges) — data lost (prior was 3,594 edges across 1,586 files). Can't `hilo graph warm` (fork blocked).
+
+**This tick (foreman #18 — 2026-07-21 07:10):** Ran 6/11 audit checks (3 BLOCKED on Node thread exhaustion, 1 CI pre-existing FAIL, 1 SKIP). Rust daemon has 3 non-blocking TODOs (daemon infrastructure). Cooldown reverted and re-escalated. 0 commits. All 5 actionable tasks still blocked. 8th consecutive blocked tick. Only durable fix: Node runtime restart via hermes-gateway service restart or host reboot.
