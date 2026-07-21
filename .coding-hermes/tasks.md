@@ -7,7 +7,7 @@
 | ID | Task | Priority | Complexity | Deps | Tags | Model | Reasoning | Fallback |
 |----|------|----------|------------|------|------|-------|-----------|----------|
 | TEST-REGRESSION-001 | 3 CLI tests failing (cli.test.ts: filter by layer, filter by tags, list all specs). Regression from idle tick #11 (was 1794 pass/0 fail, now 1791 pass/3 fail). Root cause unknown — may be related to better-sqlite3 rebuild or stale TMPDIR state. | High | 3 | — | +testing, +regression | DeepSeek V4 Pro | Test regression investigation — root-cause then fix | GLM-5.2 |
-| TEST-INFRA-001 | Default vitest worker pool exhausts system resources (Rolldown panic: thread pool init EAGAIN). Workaround: --maxWorkers=1 --no-file-parallelism. Needs investigation: ulimit -n is 1024, may need increase for 96 test files. | Medium | 2 | — | +infra, +testing | DeepSeek V4 Flash | Infra tuning — ulimit or vitest config change | GLM-5.2 |
+| TEST-INFRA-001 | **ESCALATED→SYSTEM_LEVEL**: System memory pressure (12GB/31GB swap). Thread count recovered (2,484 from 5,051) but git lstat EAGAIN, vitest timeout, npx fork blocked. Root cause: memory pressure, likely from prior thread spike — needs host memory investigation (dmesg OOM, process audit). | **BLOCKED** | 2 (sys) | — | +infra, +testing, ++system | — | Host-level admin — memory pressure investigation | — |
 | PITFALL-WORKFLOW-001 | Implement workflow command stubs (converge/commit, rollback, pipeline run, registry download) | Medium | 5 | — | ++code-generation, +architecture | GLM-5.2 | 7 TODOs across 2 files; bounded implementation with clear spec references | DeepSeek V4 Pro |
 | PITFALL-MCP-001 | Implement MCP one-shot search/get (2 stubs in server.ts) | Low | 3 | — | ++code-generation, +api-use | DeepSeek V4 Flash | 2 stub methods; straightforward MCP protocol implementation | MiniMax M3 |
 | PITFALL-DOWNGRADE-001 | Implement downgrade transition workflow (5 stubs across triggers/notification/audit/executor/planner) | Low | 6 | — | ++code-generation, ++architecture | GLM-5.2 | 5 files of stubbed downgrade logic; cross-cutting feature | DeepSeek V4 Pro |
@@ -54,3 +54,48 @@
 **This tick (foreman #13 — 2026-07-21 03:51):** Investigated CI-INVESTIGATE-001 via `gh run view` + `gh api` — confirmed all 5 recent CI runs fail in 2-6s with 0 steps executed (empty ZIP logs). This is GitHub Actions billing/infrastructure exhaustion, not code. CI resolution blocked on CI-BILLING-001 (human action). Committed pnpm-workspace.yaml + pnpm-lock.yaml (better-sqlite3 native build fix). Board updated: CI-INVESTIGATE-001 marked resolved, TEST-REGRESSION-001 and TEST-INFRA-001 remain as next actionable tasks.
 
 ## [ ] NEVER-DONE — Run coding-hermes-never-done 11-point audit
+### Idle Tick #14 — 11-Point Audit Results (2026-07-21 04:44)
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 476 specs, speclang status works |
+| 2. Doc Coverage | PASS | LICENSE + README present |
+| 3. Test Gaps | **BLOCKED (SYSTEM)** | TEST-INFRA-001 escalated: system-level thread pool exhaustion. Rolldown panics (EAGAIN) even with RAYON_NUM_THREADS=1. Node WorkerThreadsTaskRunner fails uv_thread_create. fork() EAGAIN for basic shell commands. 5,051 threads. NOT a vitest config fix — needs host investigation. |
+| 4. Package Upgrades | PASS (blocked) | chokidar 5 (ESM-only), commander 15 (ESM-only), tailwindcss 4 (deferred) |
+| 5. Pitfall Hunt | **BLOCKED** | PITFALL-MCP-001, PITFALL-DOWNGRADE-001, PITFALL-WORKFLOW-001 all confirmed genuinely open on origin/main. Stub TODOs verified in source files. Local fixes from prior ticks lost in git reset. Can't spawn workers (tests unrunnable). |
+| 6. Performance | SKIP | Can't run tests |
+| 7. CLI/Endpoint | PASS | speclang status + validate work |
+| 8. CI/CD | **FAIL** | Billing-blocked (pre-existing). Also system thread exhaustion would break CI too. |
+| 9. DuckBrain Sync | PASS | Tick entry written |
+| 10. Code Quality | PASS | tsc --noEmit clean. 0 vulns. |
+| 11. Middle-Out Wiring | PASS | CLI wired (bin/speclang) |
+
+**Scheduler Health:** Cooldown at 900s (was reset by productive tick #12). Now escalated to 43200s (system-blocked, 0 actionable tasks).
+**Hilo:** 3,594 edges across 1,586 files — Hilo=useful (but also blocked by thread exhaustion for warm).
+**TEST-INFRA-001 Escalation:** System-level thread pool exhaustion confirmed. Rolldown panics with EAGAIN. Node can't create WorkerThreads. Even `hilo graph warm` and `ps -eLf` fail with fork() EAGAIN. 5,051 threads on system, 486,230 max — not a hard limit issue, likely cgroup or memory pressure. Needs host-level investigation (check /proc/sys/kernel/threads-max vs cgroup pids.max, OOM killer log, zombie count).
+**PITFALL Verification:** All 3 pitfall tasks confirmed genuinely open — grep found TODOs in source files on origin/main. Local commits 0f5e2471/2582e69c/02a7221b were on divergent branch and lost in reset. These tasks are real and need workers — blocked on TEST-INFRA-001.
+**This tick (foreman #14 — 2026-07-21 04:44):** Self-heal: reset to origin/main (19 commits behind). Confirmed system-level thread exhaustion blocking all testing. Board updated. 0 commits. Cooldown escalated to 43200s. Genuinely blocked.
+
+**Foreman #15 (2026-07-21 04:42 cron):** BLOCKED — no change. PID exhaustion worsened (cgroup operations returning EAGAIN, not just fork). Even `cat /sys/fs/cgroup/.../pids.max` fails. 0 commits, 0 actions. All 5 actionable tasks blocked on system resources. CI-BILLING-001 still blocked (human action). 4th consecutive blocked tick (#12 partial, #13 blocked, #14 blocked, #15 blocked). Consider self-pause per empty-board-loop policy (7 idle ticks → pause).
+
+### Idle Tick #16 — 11-Point Audit Results (2026-07-21 05:09)
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 122 spec files on disk, 476 specs per DuckBrain |
+| 2. Doc Coverage | PASS | LICENSE + README present |
+| 3. Test Gaps | **BLOCKED (MEMORY)** | System memory pressure persists: 12GB/31GB swap, load 9.2. vitest times out (>60s), npx fork blocked. Thread count recovered (2,484 from 5,051) but memory pressure same root cause. TEST-REGRESSION-001 still uninvestigable. |
+| 4. Package Upgrades | PASS (blocked) | chokidar 5 (ESM-only), commander 15 (ESM-only), tailwindcss 4 (deferred). better-sqlite3 13 available but non-blocking. |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/. 3 PITFALL tasks on board remain genuine (verified prior ticks). |
+| 6. Performance | **BLOCKED** | Can't run vitest bench |
+| 7. CLI/Endpoint | PASS | bin/speclang + daemon src/speclangd.ts exist |
+| 8. CI/CD | **FAIL** | Billing-blocked (pre-existing, human action) |
+| 9. DuckBrain Sync | PASS | 10 entries in speclang namespace |
+| 10. Code Quality | PASS | npm audit: 0 vulns |
+| 11. Middle-Out Wiring | PASS | CLI wired (bin/speclang), daemon wired (src/speclangd.ts) |
+
+**System State:** Threads recovered (2,484/486,230) but memory pressure persists — 12GB/31GB swap used, load 9.2. Git commit times out (GIT_THREADS=1 lstat EAGAIN). vitest run times out (>60s). npx fork blocked. **Root cause shifted from thread exhaustion to memory pressure** — swap usage 12GB suggests OOM or memory leak from prior thread spike. Needs: check dmesg for OOM killer, identify memory-hog process, potentially restart affected services.
+
+**Scheduler Health:** Cooldown at 43200s (from tick #14). 5th consecutive blocked tick.
+**Hilo:** Can't warm (fork EAGAIN). Prior: 3,594 edges across 1,586 files.
+**This tick (foreman #16 — 2026-07-21 05:09):** Ran 8/11 audit checks (3 blocked on system resources). System partially recovered (threads down 50%) but memory pressure blocks git commit, test execution, and worker spawn. 0 commits. All 5 actionable tasks still blocked. TEST-INFRA-001 updated: root cause is memory pressure, not thread count. Next step: host-level memory investigation (dmesg OOM, process memory audit) — requires human or daemon restart.
