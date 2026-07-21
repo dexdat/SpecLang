@@ -74,4 +74,34 @@
 
 **Scheduler Health:** Cooldown at 43200s (12h).
 
+### Foreman #23 — NEVER-DONE Audit (2026-07-21 18:01)
+
+**System State:** Fully recovered. Load 11.03, 54Gi avail, 782 threads. Node v22.22.3, TypeScript 7.0.2. vitest: 93/97 files passed (1808/1866 tests), 111s. Hilo: 3,700 edges across 1,583 files (5 languages). speclang validate: 448/448 pass.
+
+**11-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | LICENSE, README, NORTH_STAR.md (symlinked) all present |
+| 3. Test Gaps | PASS | 93/97 files, 1808/1866 tests pass, 58 skip |
+| 4. Package Upgrades | PASS (blocked minor) | better-sqlite3 13.0.1 available (non-blocking). ESM-only majors (chokidar 5, commander 15, tailwindcss 4) remain blocked |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/ |
+| 6. Performance | PASS | 4 bench files: cascade, daemon, mcp, monitor |
+| 7. CLI/Endpoint | PASS | speclang --help + validate work |
+| 8. CI/CD | **FAIL (pre-existing)** | All 5 recent runs fail in 2-6s with 0 steps (billing — CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | PASS | 19 keys in speclang namespace |
+| 10. Code Quality | **NOTED** | tsc --noEmit clean. npm audit: 2 moderate vulns (@hono/node-server, pre-existing) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+
+**Actions Taken:**
+1. Resolved merge conflict in tasks.md (tick #21 origin vs local #22 — both kept)
+2. Committed bookkeeping (_index.json, package bumps)
+3. Ran full 11-point audit — 0 new gaps requiring tasks
+
+**Scheduler Health:** Cooldown at 43200s (12h, idle project — all PITFALL tasks complete, only CI-BILLING-001 human-blocked remains).
+**Hilo:** 3,700 edges, 1,583 files — useful.
+**GitReins:** Board committed.
+**Next:** No pending code tasks. Wait for new issues or CI billing resolution.
+
 ## [ ] NEVER-DONE — Run coding-hermes-never-done 11-point audit
