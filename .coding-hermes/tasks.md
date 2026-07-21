@@ -26,7 +26,26 @@
 
 (0 active. THINK-001 completed remotely. THINK-002 completed by parallel agent (d9f7f3fa, race condition). THINK-003 completed remotely (a29dc620). THINK-004 completed by foreman (756d729e).)
 
-## [x] NEVER-DONE — 11-point audit 2026-07-19 (23:45 UTC, idle tick #5)
+- [x] **YAML-FIX-001: Fix unquoted @ in provider-adapter.spec.md YAML header** (commit 8eb25ede)
+  - THINK-003 added spec with `id: @specs/cascade/provider-adapter` — `@` is reserved YAML char
+  - Validation: 447→448 passed, 1→0 errors. Fix: quote with `"`
+- [x] **SEC-VULN-001: Fix body-parser DoS vulnerability** (commit 8eb25ede)
+  - npm audit --production: 1 LOW — body-parser 2.0.0→2.2.2 DoS (GHSA-v422-hmwv-36x6)
+  - Fix: `npm audit fix` — 0 vulns
+
+## [x] NEVER-DONE — 11-point audit 2026-07-20 (19:39 UTC, idle tick #6 — RESET: 2 fixes found)
+- Build: tsc --noEmit clean ✓
+- Tests: 1794 pass, 58 skipped, 0 fail ✓
+- Vulns: 0 (npm audit fix applied — body-parser) ✓
+- Outdated deps: 3 flagged (chokidar 5, commander 15 — BLOCKED; tailwindcss 4 — DEFERRED)
+- Spec count: 476, all validate (448 files, 0 errors) ✓
+- Hilo: 3,545 edges across 1,584 files ✓
+- CI: billing-blocked (pre-existing infrastructure)
+- CLI clean-state: cascade generates files from clean dir ✓ (verified prior ticks)
+- No TODOs/FIXMEs/stubs in src/ ✓
+- 4 known spec-level stubs persist: PITFALL-WORKFLOW-001, PITFALL-MCP-001, PITFALL-DOWNGRADE-001, CI-BILLING-001
+- DuckBrain idle counter: RESET to 1 (active tick — found + fixed 2 real items)
+- Verdict: ACTIVE tick. 2 foreman-direct fixes committed. Scheduler cooldown reset to 900s.
 - All 11 checks ran with concrete tool output. Findings: 0 NEW actionable gaps.
 - Remote merge: TEST-COVERAGE-001 (coverage race fix f28b5478), WIRING-SPECLANGD-001 (board sync), doc tasks
 - Build: tsc --noEmit clean ✓
