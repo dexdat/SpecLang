@@ -3810,3 +3810,6 @@
 {"from":"specs/workflow.spec.dir/src/commands.ts","to":"pkg:https","rel":"imports","provenance":"ast_exact","confidence":1.0}
 {"from":"specs/workflow.spec.dir/src/commands.ts","to":"pkg:url","rel":"imports","provenance":"ast_exact","confidence":1.0}
 {"from":"specs/workflow.spec.dir/src/commands.ts","to":"pkg:http","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/workflow/commands.js","to":"pkg:child_process","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/workflow/commands.js","to":"pkg:url","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"dist/src/workflow/commands.js","to":"pkg:http","rel":"imports","provenance":"ast_exact","confidence":1.0}
