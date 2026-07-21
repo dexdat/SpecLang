@@ -2,7 +2,13 @@
 // DO NOT EDIT MANUALLY
 // Source: specs/transition-workflows.spec.dir/downgrade.spec.md
 
-import type { DowngradePlan, DowngradeTarget, DowngradeTrigger } from './types';
+import type {
+  DowngradePlan,
+  DowngradeTarget,
+  DowngradeTrigger,
+  MaturityLevel,
+  TransitionChecklist,
+} from './types';
 import { getDowngradeType } from './types';
 
 /**
@@ -42,9 +48,76 @@ export class DowngradePlanner {
     };
   }
   
-  private getChecklists(current: DowngradeTarget, target: DowngradeTarget): any[] {
-    // TODO: Implement based on downgrade.spec.md
-    return [];
+  private getChecklists(
+    current: DowngradeTarget,
+    target: DowngradeTarget
+  ): TransitionChecklist[] {
+    const fromLevel = (current.project_level ?? 'POC') as MaturityLevel;
+    const toLevel = (target.project_level ?? fromLevel) as MaturityLevel;
+
+    const preDowngrade: TransitionChecklist = {
+      from: fromLevel,
+      to: toLevel,
+      checks: [
+        {
+          category: 'documentation',
+          description: 'Confirm downgrade is necessary (root cause analysis)',
+          required: true,
+          automated: true,
+        },
+        {
+          category: 'documentation',
+          description: 'Ensure no data loss will occur',
+          required: true,
+          automated: false,
+        },
+        {
+          category: 'documentation',
+          description: 'Verify rollback path exists',
+          required: true,
+          automated: false,
+        },
+        {
+          category: 'documentation',
+          description: 'Check dependencies can handle downgrade',
+          required: true,
+          automated: false,
+        },
+      ],
+    };
+
+    const postDowngrade: TransitionChecklist = {
+      from: fromLevel,
+      to: toLevel,
+      checks: [
+        {
+          category: 'testing',
+          description: 'Validate spec integrity after downgrade',
+          required: true,
+          automated: false,
+        },
+        {
+          category: 'testing',
+          description: 'Run tests at target level',
+          required: true,
+          automated: false,
+        },
+        {
+          category: 'testing',
+          description: 'Ensure all references still resolve',
+          required: true,
+          automated: false,
+        },
+        {
+          category: 'testing',
+          description: 'Confirm agent behavior adjusts appropriately',
+          required: true,
+          automated: false,
+        },
+      ],
+    };
+
+    return [preDowngrade, postDowngrade];
   }
   
   private getRequiredApprovals(type: string, target: DowngradeTarget, emergency: boolean): string[] {
