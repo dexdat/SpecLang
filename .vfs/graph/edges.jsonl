@@ -3806,3 +3806,7 @@
 {"from":"tests/daemon/think003-provider-adapter.test.ts","to":"local:../../specs/cascade.spec.dir/src/agent.ts","rel":"imports","provenance":"ast_exact","confidence":1.0}
 {"from":"specs/mcp.spec.dir/src/server.ts","to":"local:./tools/search.js","rel":"imports","provenance":"ast_exact","confidence":1.0}
 {"from":"specs/mcp.spec.dir/src/server.ts","to":"local:./tools/specs.js","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"specs/workflow.spec.dir/src/commands.ts","to":"pkg:child_process","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"specs/workflow.spec.dir/src/commands.ts","to":"pkg:https","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"specs/workflow.spec.dir/src/commands.ts","to":"pkg:url","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"specs/workflow.spec.dir/src/commands.ts","to":"pkg:http","rel":"imports","provenance":"ast_exact","confidence":1.0}
