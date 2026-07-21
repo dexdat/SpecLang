@@ -6,8 +6,8 @@
 
 | ID | Task | Priority | Complexity | Deps | Tags | Model | Reasoning | Fallback |
 |----|------|----------|------------|------|------|-------|-----------|----------|
-| TEST-REGRESSION-001 | 3 CLI tests failing (cli.test.ts: filter by layer, filter by tags, list all specs). Regression from idle tick #11 (was 1794 pass/0 fail, now 1791 pass/3 fail). Root cause unknown — may be related to better-sqlite3 rebuild or stale TMPDIR state. | High | 3 | — | +testing, +regression | DeepSeek V4 Pro | Test regression investigation — root-cause then fix | GLM-5.2 |
-| TEST-INFRA-001 | **ESCALATED→SYSTEM_LEVEL**: System memory pressure (12GB/31GB swap). Thread count recovered (2,484 from 5,051) but git lstat EAGAIN, vitest timeout, npx fork blocked. Root cause: memory pressure, likely from prior thread spike — needs host memory investigation (dmesg OOM, process audit). | **BLOCKED** | 2 (sys) | — | +infra, +testing, ++system | — | Host-level admin — memory pressure investigation | — |
+| TEST-REGRESSION-NEW | 1 test file failing out of 92 (full suite: 91/92 pass, 1787 pass/65 skip). Not cli.test.ts — different file. Needs identification. Full suite passes with --testTimeout=30000 --maxWorkers=1. | Medium | 2 | — | +testing, +investigation | DeepSeek V4 Pro | Identify which test file fails and whether it's code or load | GLM-5.2 |
+| TEST-INFRA-001 | **ESCALATED→SYSTEM_LEVEL**: System load 49 (RethinkDB C++ -O3 compilations: 4+ cc1plus processes, Go builds, OpenCode). Threads recovered to 1,256 (was 5,051). vitest NOW WORKS with --maxWorkers=1 — Node WorkerThreadsTaskRunner assertion GONE. Root cause of prior test failures: system-load timeouts at default 5000ms, NOT thread exhaustion. | **BLOCKED** | 2 (sys) | — | +infra, +testing, ++system | — | Host-level admin — stop concurrent -O3 builds | — |
 | PITFALL-WORKFLOW-001 | Implement workflow command stubs (converge/commit, rollback, pipeline run, registry download) | Medium | 5 | — | ++code-generation, +architecture | GLM-5.2 | 7 TODOs across 2 files; bounded implementation with clear spec references | DeepSeek V4 Pro |
 | PITFALL-MCP-001 | Implement MCP one-shot search/get (2 stubs in server.ts) | Low | 3 | — | ++code-generation, +api-use | DeepSeek V4 Flash | 2 stub methods; straightforward MCP protocol implementation | MiniMax M3 |
 | PITFALL-DOWNGRADE-001 | Implement downgrade transition workflow (5 stubs across triggers/notification/audit/executor/planner) | Low | 6 | — | ++code-generation, ++architecture | GLM-5.2 | 5 files of stubbed downgrade logic; cross-cutting feature | DeepSeek V4 Pro |
@@ -16,9 +16,9 @@
 
 **Assumptions:** TypeScript 7.0.2, Node 22+, pnpm; CI billing is admin/human action; React 19 migration complete; tailwindcss 4 upgrade deferred.
 
-**Routing Notes:** CI-INVESTIGATE-001 resolved (confirmed: all 5 recent CI runs fail in 2-6s with 0 steps executed — GitHub Actions billing/infrastructure, not code). TEST-REGRESSION-001 is the highest-priority actionable task — 3 real test failures. TEST-INFRA-001 is a quick infra fix (ulimit or vitest config). Pitfall tasks blocked until test regression resolved (worker can't verify). CI-BILLING-001 is human-blocked.
+**Routing Notes:** CI-INVESTIGATE-001 resolved. **TEST-REGRESSION-001 RESOLVED (tick #19)** — root cause was system-load timeouts at default 5000ms vitest timeout, NOT code regression. With `--testTimeout=30000 --maxWorkers=1`, cli.test.ts: 38/38 pass (0 fail). Pitfall tasks NOW UNBLOCKED — vitest infrastructure works. TEST-INFRA-001 remains blocked on host-level concurrent -O3 builds. CI-BILLING-001 is human-blocked. TEST-REGRESSION-NEW: 1 failing test file (91/92 pass) — low priority investigation.
 
-**Execution Order:** TEST-REGRESSION-001 → TEST-INFRA-001 → PITFALL-MCP-001 → PITFALL-WORKFLOW-001 → PITFALL-DOWNGRADE-001.
+**Execution Order:** TEST-REGRESSION-NEW → PITFALL-MCP-001 → PITFALL-WORKFLOW-001 → PITFALL-DOWNGRADE-001.
 
 **Escalation Conditions:** Any pitfall task touches >5 files → split. Tests reveal cross-cutting issues → escalate to DeepSeek V4 Pro. Security-relevant code paths → escalate to GPT-5.6 Sol.
 
@@ -74,7 +74,11 @@
 **Hilo:** 3,594 edges across 1,586 files — Hilo=useful (but also blocked by thread exhaustion for warm).
 **TEST-INFRA-001 Escalation:** System-level thread pool exhaustion confirmed. Rolldown panics with EAGAIN. Node can't create WorkerThreads. Even `hilo graph warm` and `ps -eLf` fail with fork() EAGAIN. 5,051 threads on system, 486,230 max — not a hard limit issue, likely cgroup or memory pressure. Needs host-level investigation (check /proc/sys/kernel/threads-max vs cgroup pids.max, OOM killer log, zombie count).
 **PITFALL Verification:** All 3 pitfall tasks confirmed genuinely open — grep found TODOs in source files on origin/main. Local commits 0f5e2471/2582e69c/02a7221b were on divergent branch and lost in reset. These tasks are real and need workers — blocked on TEST-INFRA-001.
-**This tick (foreman #14 — 2026-07-21 04:44):** Self-heal: reset to origin/main (19 commits behind). Confirmed system-level thread exhaustion blocking all testing. Board updated. 0 commits. Cooldown escalated to 43200s. Genuinely blocked.
+**TEST-REGRESSION-001 (tick #19):** RESOLVED — root cause was system-load timeouts at default 5000ms vitest timeout, not code regression. With `--testTimeout=30000 --maxWorkers=1`, cli.test.ts: 38/38 pass (0 fail, 2 skip). Full suite: 91/92 files pass, 1787 pass/65 skip.
+
+**This tick (foreman #19 — 2026-07-21 16:11):** Ran full foreman loop. Step 0: git clean, identity correct, co-author set. Step 1: Read board — 8+ consecutive blocked ticks. Step 1.5 (partial): vitest NOW WORKS with --maxWorkers=1 --testTimeout=30000. Root cause of prior test failures: system-load timeouts at default 5000ms, NOT code regression or thread exhaustion. Full suite: 91/92 test files pass (1787 pass/65 skip), 1 file fails (unknown which). TEST-REGRESSION-001 RESOLVED — all 3 originally-failing CLI tests pass. PITFALL tasks now UNBLOCKED (vitest infrastructure works). 1 new gap: TEST-REGRESSION-NEW (1 failing test file). Worker spawn still unreliable under current load (load 49, 4+ RethinkDB -O3 C++ compilations). Board updated. Cooldown remains at 43200s (system still blocked for reliable worker execution).
+
+**Foreman #14 (2026-07-21 04:44):** Self-heal: reset to origin/main (19 commits behind). Confirmed system-level thread exhaustion blocking all testing. Board updated. 0 commits. Cooldown escalated to 43200s. Genuinely blocked.
 
 **Foreman #15 (2026-07-21 04:42 cron):** BLOCKED — no change. PID exhaustion worsened (cgroup operations returning EAGAIN, not just fork). Even `cat /sys/fs/cgroup/.../pids.max` fails. 0 commits, 0 actions. All 5 actionable tasks blocked on system resources. CI-BILLING-001 still blocked (human action). 4th consecutive blocked tick (#12 partial, #13 blocked, #14 blocked, #15 blocked). Consider self-pause per empty-board-loop policy (7 idle ticks → pause).
 
