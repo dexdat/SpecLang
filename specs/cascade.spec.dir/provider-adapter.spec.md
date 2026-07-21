@@ -1,5 +1,5 @@
 # speclang-header lines:10
-id: @specs/cascade/provider-adapter
+id: "@specs/cascade/provider-adapter"
 version: 1.0.0
 layer: 4
 project_level: Alpha
