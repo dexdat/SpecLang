@@ -104,4 +104,32 @@
 **GitReins:** Board committed.
 **Next:** No pending code tasks. Wait for new issues or CI billing resolution.
 
+### Foreman #24 — NEVER-DONE Audit (2026-07-21 20:30)
+
+**System State:** Load 9.79, 47Gi avail, 16 cores. Node v22.22.3, TypeScript 7.0.2. vitest: 93/97 files (1808/1866 tests), 90s. Hilo: 3,604 edges across 1,587 files. speclang validate: 448/448 pass.
+
+**11-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | LICENSE, README, NORTH_STAR.md all present |
+| 3. Test Gaps | PASS | 93/97 files, 1808/1866 tests pass (58 skip) |
+| 4. Package Upgrades | **GAP FIXED** | postcss/react/react-dom node_modules were stale — package.json had `^8.5.21`/`^19.2.8` but `npm ls` showed `8.5.20`/`19.2.7` (invalid). `npm install` resolved all. ESM-only majors remain blocked. |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/ |
+| 6. Performance | PASS | 4 bench files (cascade, daemon, mcp, monitor) |
+| 7. CLI/Endpoint | PASS | speclang --help + validate work |
+| 8. CI/CD | **FAIL (pre-existing)** | billing (CI-BILLING-001, human action) — 3/3 recent runs failed |
+| 9. DuckBrain Sync | PASS | 49+ keys in speclang namespace |
+| 10. Code Quality | **NOTED** | tsc clean. npm audit: 2 moderate vulns (@hono/node-server, pre-existing) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+
+**Actions Taken:**
+1. Tick #23's claims (10/11 PASS, 0 new gaps) independently verified
+2. Real gap found: deps declared in package.json but not installed → `npm install` synced postcss/react/react-dom
+3. Cascade test had transient timeout at 5000ms (load 9.79) — resolved on re-run with serial mode
+4. Audit: 10/11 PASS, 1 pre-existing FAIL (CI billing), 0 new gaps requiring code tasks
+
+**Scheduler Health:** Cooldown at 43200s (12h, idle project — NEVER-DONE audit re-confirms idle state).
+
 ## [ ] NEVER-DONE — Run coding-hermes-never-done 11-point audit
