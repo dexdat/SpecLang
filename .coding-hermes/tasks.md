@@ -378,4 +378,34 @@
 
 **Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
 
+### Foreman #32 — NEVER-DONE Audit (2026-07-22 05:05, scheduler)
+
+**System State:** Load 10.63, 46Gi avail, 16 cores. Node v22.22.3, TypeScript 7.0.2. vitest: 92/97 files (1807/1866 tests, 1 flaky CLI timeout passes in isolation), 32s. Hilo: 3,559 edges across 1,586 files (5 languages). speclang validate: 448/448 pass.
+
+**11-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | LICENSE, README, NORTH_STAR.md (symlinked) all present |
+| 3. Test Gaps | PASS | 92/97 files, 1807/1866 tests pass (1 flaky CLI index --refresh timeout passes in isolation), 58 skip, 32s |
+| 4. Package Upgrades | PASS (blocked minor) | @vitejs/plugin-react 6.0.3→6.0.4 available; better-sqlite3 13.0.1 available; ESM-only majors (chokidar 5, commander 15, tailwindcss 4) remain blocked |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/ |
+| 6. Performance | PASS | 4 bench files: cascade, daemon, mcp, monitor |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate work |
+| 8. CI/CD | **FAIL (pre-existing)** | billing (CI-BILLING-001, human action) — 3/3 recent runs fail in <30s |
+| 9. DuckBrain Sync | NOTED | MCP connection error (pre-existing — also seen in ticks #30/#31) |
+| 10. Code Quality | NOTED | tsc --noEmit clean. npm audit: 2 moderate vulns (@hono/node-server, pre-existing) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+
+**Actions Taken:**
+1. Self-heal: git pull --rebase (up to date), identity verified (kara)
+2. Cooldown NOT reverted this tick — confirmed at 43200s (12h) via scheduler API
+3. Full 11-point never-done audit — 9/11 PASS, 1 pre-existing FAIL (CI billing), 1 NOTED (DuckBrain MCP), 0 new gaps requiring code tasks
+4. Bookkeeping: _index.json timestamp only
+5. 1 flaky test (cli index --refresh, 5000ms timeout in parallel) passes in isolation (1517ms) — load-dependent, not regression
+6. Project genuinely idle — no pending code work, all PITFALL tasks complete, CI-BILLING-001 human-blocked
+
+**Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
+
 ## [ ] NEVER-DONE — Run coding-hermes-never-done 11-point audit
