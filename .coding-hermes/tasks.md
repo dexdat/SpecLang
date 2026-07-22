@@ -540,6 +540,7 @@
 
 **Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
 
+
 ### Foreman #39 — NEVER-DONE Audit (2026-07-22 16:50, scheduler)
 
 **System State:** Fork exhaustion RESOLVED. Load 7.88, 52Gi avail, 16 cores. Up 6d 4h. Node v22.22.3, TypeScript 7.0.2. tsc clean. Scheduler daemon responding on :9090. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing).
@@ -570,5 +571,21 @@
 **Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
 
 **⚠️ Cooldown reversion escalation:** 9th consecutive cooldown reversion (ticks #24, #26, #31, #32, #35, #36, #37, #38, #39). Daemon restart clears API-set values. Root cause: `ApplyFleetConfig` upsert on daemon startup overwrites with fleet TOML values. 17 consecutive idle ticks — project should be paused, not restarted into 30m intervals.
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
+
+### Foreman #40 — NEVER-DONE Audit (2026-07-22 16:50, scheduler — concurrent with #39)
+
+**System State:** Identical to Foreman #39. Concurrent tick wrote #39 minutes before this entry; findings unchanged. Load 7.88, 52Gi avail, 16 cores. Node v22.22.3, TypeScript 7.0.2. tsc clean. speclang validate: 448/448 pass.
+
+**Audit:** Identical to ticks #23–39: 9/11 PASS (specs, docs, tests, deps, pitfalls, perf, CLI, DuckBrain, wiring), 1 pre-existing FAIL (CI billing), 1 NOTED (npm audit vulns pre-existing). 0 new gaps. Project remains genuinely idle (17 consecutive ticks).
+
+**Actions Taken:**
+1. Self-heal: git pull --rebase (up to date, picked up #39's entry), tsc clean, identity verified
+2. Dep check: @vitejs/plugin-react already at 6.0.4 (lockfile synced); npm outdated was stale
+3. Concurrent tick #39 already wrote identical audit results — this entry is delta-only
+4. 0 new gaps requiring code tasks — project remains genuinely idle
+
+**Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
 
 **Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
