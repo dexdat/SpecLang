@@ -3818,3 +3818,5 @@
 {"from":"tests/workflow/conversation.test.ts","to":"pkg:path","rel":"imports","provenance":"ast_exact","confidence":1.0}
 {"from":"tests/workflow/conversation.test.ts","to":"pkg:os","rel":"imports","provenance":"ast_exact","confidence":1.0}
 {"from":"tests/workflow/conversation.test.ts","to":"local:../../specs/workflow.spec.dir/src/conversation.js","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"_fix_cooldown.py","to":"pkg:json,","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"_check_cooldown.py","to":"pkg:json,","rel":"imports","provenance":"ast_exact","confidence":1.0}
