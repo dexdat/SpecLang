@@ -12,6 +12,7 @@
 | ~~PITFALL-MCP-001~~ | **✅ DONE tick #20**: Implemented one-shot `search` and `get` CLI commands. `specs/mcp.spec.dir/src/server.ts` (+26/-6). Worker: deepseek-v4-flash @ opencode-go. Commit `c8414522`. Verified: build passes, 32/32 MCP tests pass. | Low | 3 | — | ++code-generation, +api-use | DeepSeek V4 Flash | ✅ Complete | MiniMax M3 |
 | ~~PITFALL-DOWNGRADE-001~~ | **✅ DONE tick #21**: Implemented downgrade transition workflow (5 stubs across triggers/notification/audit/executor/planner). +626/-51 across 5 files. 9/9 downgrade tests pass. Worker: GLM-5.2 @ zai-glm. Commit `b29df69f`. | Low | 6 | — | ++code-generation, ++architecture | GLM-5.2 | ✅ Complete | DeepSeek V4 Pro |
 | CI-BILLING-001 | GitHub Actions billing blocked — CI safety net unavailable | High | 1 (admin) | — | — | — | Blocked: requires GitHub account payment method — human action | — |
+| U01 | Usability & coverage audit — find gaps in endpoint wiring, UX flow, error handling, edge cases, test coverage | High | 3±1 | — | +++testing, ++endpoint-verification, ++code-review, +e2e, -vision | DS-V4-Flash | Medium | GLM-5.2 |
 | NEVER-DONE | 11-point audit sweep | High | 2 | — | ++code-review, +testing | DeepSeek V4 Pro | Audit runs every tick; finds new gaps | GLM-5.2 |
 
 **Assumptions:** TypeScript 7.0.2, Node 22+, pnpm; CI billing is admin/human action; React 19 migration complete; tailwindcss 4 upgrade deferred.
