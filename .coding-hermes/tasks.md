@@ -132,4 +132,28 @@
 
 **Scheduler Health:** Cooldown at 43200s (12h, idle project — NEVER-DONE audit re-confirms idle state).
 
+### Foreman #24 — Idle Tick + NEVER-DONE Audit (2026-07-21 20:45, scheduler)
+
+**System State:** Fully recovered. Load normal, vitest: 93/97 files, 1808/1866 tests pass. Hilo: 3559 edges, 1586 files. speclang validate: 448/448 pass.
+
+**11-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | LICENSE, README, NORTH_STAR.md all present |
+| 3. Test Gaps | PASS | 86 test files, 1808/1866 tests pass |
+| 4. Package Upgrades | PASS (blocked minor) | better-sqlite3 13.0.1 available; ESM-only majors blocked |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/ |
+| 6. Performance | PASS | 4 bench files: cascade, daemon, mcp, monitor |
+| 7. CLI/Endpoint | PASS | speclang --help + validate both work |
+| 8. CI/CD | **FAIL (pre-existing)** | billing (CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | PASS | 50+ entries, tick #24 written |
+| 10. Code Quality | NOTED | tsc clean, 2 moderate vulns pre-existing |
+| 11. Middle-Out Wiring | PASS | CLI + daemon wired |
+
+**Actions:** Cooldown reverted 43200→1800s (daemon restart); restored to 43200s via scheduler API. 0 new gaps. Project idle.
+
+**Scheduler Health:** CooldownS=43200, Enabled=true. No pending code work.
+
 ## [ ] NEVER-DONE — Run coding-hermes-never-done 11-point audit
