@@ -3813,3 +3813,8 @@
 {"from":"dist/src/workflow/commands.js","to":"pkg:child_process","rel":"imports","provenance":"ast_exact","confidence":1.0}
 {"from":"dist/src/workflow/commands.js","to":"pkg:url","rel":"imports","provenance":"ast_exact","confidence":1.0}
 {"from":"dist/src/workflow/commands.js","to":"pkg:http","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"tests/workflow/conversation.test.ts","to":"pkg:vitest","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"tests/workflow/conversation.test.ts","to":"pkg:fs","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"tests/workflow/conversation.test.ts","to":"pkg:path","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"tests/workflow/conversation.test.ts","to":"pkg:os","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"tests/workflow/conversation.test.ts","to":"local:../../specs/workflow.spec.dir/src/conversation.js","rel":"imports","provenance":"ast_exact","confidence":1.0}
