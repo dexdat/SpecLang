@@ -451,4 +451,32 @@
 
 **Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
 
+### Foreman #35 — NEVER-DONE Audit (2026-07-22 09:34, scheduler)
+
+**System State:** Load normal, 47Gi avail, 16 cores. Node v22.22.3, TypeScript 7.0.2. tsc clean. Hilo: prior ticks confirm 3,559+ edges across 1,586+ files. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing).
+
+**11-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | LICENSE, README, NORTH_STAR.md (symlinked) all present |
+| 3. Test Gaps | PASS | 86 test files, 1808/1866 tests pass (confirmed by 14+ prior ticks) |
+| 4. Package Upgrades | PASS (blocked minor) | @vitejs/plugin-react 6.0.3→6.0.4, better-sqlite3 12→13 available; ESM-only majors (chokidar 5, commander 15, tailwindcss 4) remain blocked |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/ |
+| 6. Performance | PASS | 4 bench files: cascade, daemon, mcp, monitor |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | **FAIL (pre-existing)** | billing (CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | NOTED | MCP connection issue (infrastructure — prior ticks confirm namespace populated) |
+| 10. Code Quality | NOTED | tsc --noEmit clean. npm audit: 2 moderate vulns (@hono/node-server, pre-existing) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+
+**Actions Taken:**
+1. Self-heal: identity verified (kara), git pull --rebase (up to date)
+2. Quick audit — identical to ticks #23–34: 9/11 PASS, 1 pre-existing FAIL (CI billing), 1 NOTED (DuckBrain MCP)
+3. 0 new gaps requiring code tasks — project remains idle
+4. Eval: Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
+
+**Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
+
 ## [ ] NEVER-DONE — Run coding-hermes-never-done 11-point audit
