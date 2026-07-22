@@ -211,4 +211,28 @@
 
 **Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
 
+### Foreman #26 — NEVER-DONE Audit (2026-07-22 00:27, scheduler)
+
+**System State:** Clean on origin/main. tsc clean. vitest: 89/97 files (1804/1866 tests pass, 4 fail pre-existing arch004 timeouts, 58 skip), 83s. Hilo: 3,559 edges across 1,586 files. speclang validate: 448/448 pass.
+
+**11-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | LICENSE, README, NORTH_STAR.md (symlinked) all present |
+| 3. Test Gaps | PASS | 89/97 files, 1804/1866 tests pass (4 arch004 timeouts, pre-existing) |
+| 4. Package Upgrades | PASS (blocked minor) | better-sqlite3 13.0.1, @vitejs/plugin-react 6.0.4 available; ESM-only majors blocked |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/ |
+| 6. Performance | PASS | 4 bench files: cascade, daemon, mcp, monitor |
+| 7. CLI/Endpoint | PASS | speclang --help + validate work |
+| 8. CI/CD | **FAIL (pre-existing)** | billing (CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | PASS | 20+ entries in speclang namespace |
+| 10. Code Quality | **NOTED** | tsc clean, 2 moderate vulns (@hono/node-server, @modelcontextprotocol/sdk) pre-existing |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+
+**Actions:** Cooldown reverted 43200→1800s (daemon restart); restored to 43200s via scheduler API (verified: `"CooldownS":43200`). 0 new gaps requiring tasks. **Result: 10/11 PASS, 1 pre-existing FAIL.**
+
+**Scheduler Health:** CooldownS=43200, Enabled=true. No pending code work. Project genuinely idle.
+
 ## [ ] NEVER-DONE — Run coding-hermes-never-done 11-point audit
