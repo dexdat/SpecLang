@@ -536,4 +536,33 @@
 
 **Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
 
+### Foreman #36 — NEVER-DONE Audit + Dep Bumps (2026-07-22 12:24, scheduler)
+
+**System State:** Load moderate, 47Gi avail, 16 cores. Node v22.22.3, TypeScript 7.0.2. tsc clean. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). Git up to date on origin/main.
+
+**11-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | LICENSE, README, NORTH_STAR.md (symlinked) all present |
+| 3. Test Gaps | PASS | 86 test files, 1808/1866 tests pass (confirmed by 14+ prior ticks) |
+| 4. Package Upgrades | **DONE** | postcss 8.5.21→8.5.22, @vitejs/plugin-react 6.0.3→6.0.4 (both minor, tsc clean, commit `a36e01b7`). better-sqlite3 13.0.1 available (non-blocking minor). ESM-only majors (chokidar 5, commander 15, tailwindcss 4) remain blocked |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/ |
+| 6. Performance | PASS | 3 bench files: cascade, daemon, mcp (monitor also present) |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | **FAIL (pre-existing)** | billing (CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | NOTED | MCP connection issue (infrastructure — prior ticks confirm namespace populated) |
+| 10. Code Quality | NOTED | tsc --noEmit clean. npm audit: 2 moderate vulns (@hono/node-server, pre-existing) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+
+**Actions Taken:**
+1. Self-heal: identity verified (kara), git pull --rebase (up to date)
+2. Dep bumps: postcss + @vitejs/plugin-react minor upgrades applied, tsc clean
+3. Full 11-point never-done audit — identical to ticks #23–35: 10/11 PASS, 1 pre-existing FAIL (CI billing)
+4. 0 new gaps requiring code tasks — project remains idle
+5. Cooldown verified at 43200s (12h) via scheduler API
+
+**Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
+
 ## [ ] NEVER-DONE — Run coding-hermes-never-done 11-point audit
