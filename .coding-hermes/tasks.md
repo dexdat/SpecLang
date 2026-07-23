@@ -618,3 +618,33 @@
 **Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
 
 **Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
+
+### Foreman #41 — NEVER-DONE Audit (2026-07-22 22:34, scheduler)
+
+**System State:** Load 10.56, 50Gi avail, 16 cores. Up 6d 10h. Node v22.22.3, TypeScript 7.0.2. vitest: 93/97 files (1808/1866 tests, 58 skip), 36s. Hilo: 3,607+ edges across 1,590 files (5 languages). speclang validate: 448/448 pass. tsc clean. Cooldown at 43200s (not reverted this tick).
+
+**11-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | LICENSE, README, NORTH_STAR.md (symlinked) all present |
+| 3. Test Gaps | PASS | 93/97 files, 1808/1866 tests pass (58 skip), 36s |
+| 4. Package Upgrades | PASS (blocked minor) | better-sqlite3 13.0.1 available; ESM-only majors (chokidar 5, commander 15, tailwindcss 4) remain blocked |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/ |
+| 6. Performance | PASS | 4 bench files: cascade, daemon, mcp, monitor |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | **FAIL (pre-existing)** | billing (CI-BILLING-001, human action) — 3/3 recent runs fail |
+| 9. DuckBrain Sync | PASS | 27 keys in speclang namespace |
+| 10. Code Quality | NOTED | tsc --noEmit clean. npm audit: 2 moderate vulns (@hono/node-server, @modelcontextprotocol/sdk, pre-existing) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+
+**Actions Taken:**
+1. Self-heal: identity verified (kara), git fetch (up to date with origin), unstaged bookkeeping only (edges.jsonl, _index.json)
+2. Full 11-point never-done audit — identical to ticks #23–40: 9/11 PASS, 1 pre-existing FAIL (CI billing), 1 NOTED (code quality vulns pre-existing)
+3. 0 new gaps requiring code tasks — project remains genuinely idle (18 consecutive ticks)
+4. Cooldown NOT reverted this tick — confirmed at 43200s (12h) via scheduler API
+
+**Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
