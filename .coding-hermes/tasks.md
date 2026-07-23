@@ -749,3 +749,29 @@
 **⚠️ 11th cooldown reversion.** Root cause unchanged: `ApplyFleetConfig` upsert on daemon restart. Fleet TOML needs updating for idle projects to prevent the 43200→1800 reset on every restart.
 
 **Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
+
+### Foreman #45 — Idle Tick (2026-07-23 04:56, scheduler)
+
+**System State:** Load 7.48, 51Gi avail, 16 cores. Node v22.22.3, TypeScript 7.0.2. tsc --noEmit clean. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). Git up to date on origin/main. npm audit: 0 high/crit vulns.
+
+**Quick Verification (minimal — 23 prior ticks confirm idle):**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| Build | PASS | tsc --noEmit clean |
+| CLI | PASS | speclang validate works |
+| CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+| Deps | PASS | 0 outdated (all current) |
+
+**Actions Taken:**
+1. Self-heal: identity verified (kara), git pull --rebase (up to date)
+2. **Cooldown reverted 43200→1800s (12th occurrence, daemon restart).** Restored to 43200s via scheduler API. Verified: `CooldownS=43200, Enabled=True`.
+3. 0 new gaps requiring code tasks — project remains genuinely idle (**24 consecutive ticks**).
+4. Board update only (no code changes). No worker spawn.
+
+**Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
+
+**⚠️ 12th cooldown reversion.** Root cause unchanged: `ApplyFleetConfig` upsert on daemon restart overwrites with fleet TOML defaults. Fleet TOML needs updating for idle projects to prevent the 43200→1800 reset on every restart. 24 consecutive idle ticks — project should remain at 12h.
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
