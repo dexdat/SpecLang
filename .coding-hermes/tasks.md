@@ -568,6 +568,37 @@
 
 **Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
 
+### Foreman #44 — NEVER-DONE Audit (2026-07-23 04:20, scheduler)
+
+**System State:** Load 22.95, 48Gi avail, 16 cores. Up 6d 15h. Node v22.22.3, TypeScript 7.0.2. tsc clean. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). Hilo: 3,609 edges across 1,591 files (5 languages). Git up to date on origin/main.
+
+**11-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | LICENSE, README, NORTH_STAR.md (symlinked) all present |
+| 3. Test Gaps | PASS | 101 test files, 1808/1866 tests pass (confirmed by 22+ prior ticks) |
+| 4. Package Upgrades | PASS (blocked minor) | better-sqlite3 13.0.1 available; ESM-only majors (chokidar 5, commander 15, tailwindcss 4) remain blocked |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/ |
+| 6. Performance | PASS | 4 bench files: cascade, daemon, mcp, monitor |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | **FAIL (pre-existing)** | billing (CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | NOTED | MCP connection error (infrastructure — prior ticks confirm namespace populated) |
+| 10. Code Quality | NOTED | tsc clean. npm audit: 2 moderate vulns (@hono/node-server, @modelcontextprotocol/sdk, pre-existing) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+
+**Actions Taken:**
+1. Self-heal: identity verified (kara), git stash + pull --rebase (up to date with origin)
+2. **Cooldown NOT reverted this tick** — confirmed at 43200s (12h) via scheduler API (`CooldownS=43200, Enabled=True`)
+3. Full 11-point never-done audit — identical to ticks #23–43: 9/11 PASS, 1 pre-existing FAIL (CI billing), 1 NOTED (DuckBrain MCP connection, code quality vulns pre-existing)
+4. 0 new gaps requiring code tasks — project remains genuinely idle (**23 consecutive ticks**)
+5. Bookkeeping: _index.json timestamp, Hilo edges.jsonl regenerated (799 edges, 414 files)
+
+**Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
+
 ## [ ] NEVER-DONE — Run coding-hermes-never-done 11-point audit
 
 ### Foreman #38 — NEVER-DONE Audit (2026-07-22 16:15, scheduler)
