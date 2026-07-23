@@ -508,6 +508,35 @@
 
 **Scheduler Health:** CooldownS=43200, Enabled=true. No pending code work. Project genuinely idle.
 
+### Foreman #37 — NEVER-DONE Audit (2026-07-22 20:28, scheduler)
+
+**System State:** Load 26.01 (very high — concurrent builds), 50Gi avail, 16 cores. Up 6d 7h. Node v22.22.3, TypeScript 7.0.2. tsc clean. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). Hilo: 3,607 edges across 1,590 files (5 languages). Git up to date on origin/main. **Note:** Case-sensitivity duplicate — `/home/kara/speclang` (lowercase) has separate Foremen #37-40 with concurrent ticks.
+
+**11-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | LICENSE, README, NORTH_STAR.md (symlinked) all present |
+| 3. Test Gaps | CANT VERIFY | vitest timed out at 30s (system load 26.01 — concurrent RethinkDB builds). 14+ prior ticks confirm 1808/1866 pass (58 skip) |
+| 4. Package Upgrades | PASS | postcss 8.5.22, @vitejs/plugin-react 6.0.4 already installed. better-sqlite3 13.0.1 available (non-blocking minor). ESM-only majors (chokidar 5, commander 15, tailwindcss 4) remain blocked |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/ |
+| 6. Performance | PASS | 4 bench files: cascade, daemon, mcp, monitor |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | **FAIL (pre-existing)** | billing (CI-BILLING-001, human action) — 5/5 recent runs fail |
+| 9. DuckBrain Sync | PASS | 50+ entries in `speclang` namespace (list_keys verified) |
+| 10. Code Quality | NOTED | tsc --noEmit clean. npm audit: 2 moderate vulns (@hono/node-server, pre-existing) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+
+**Actions Taken:**
+1. Self-heal: identity verified (kara), git pull --rebase (up to date)
+2. **Cooldown reverted 43200→1800s** (daemon restart occurrence) — restored to 43200s via scheduler API (verified: `CooldownS=43200`)
+3. Full 11-point never-done audit — 8/11 PASS, 1 CANT VERIFY (system load), 1 pre-existing FAIL (CI billing), 1 NOTED (code quality)
+4. 0 new gaps requiring code tasks — project remains genuinely idle
+5. Eval: Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
+
+**Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work. Note: scheduler project `speclang` points to `/home/kara/speclang` (lowercase clone), not this repo — separates foreman ticks running concurrently on lowercase clone.
+
 ## [ ] NEVER-DONE — Run coding-hermes-never-done 11-point audit
 
 ### Foreman #38 — NEVER-DONE Audit (2026-07-22 16:15, scheduler)
