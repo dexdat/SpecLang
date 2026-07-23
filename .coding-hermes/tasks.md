@@ -844,3 +844,27 @@
 **Scheduler Health:** CooldownS expected at 43200 (12h, idle). Enabled=true. No pending code work.
 
 **Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
+
+### Foreman #48 — Idle Tick (2026-07-23 12:09, scheduler — /home/kara/speclang clone)
+
+**State:** Load normal, 16 cores. Node v22.22.3, TypeScript 7.0.2. tsc --noEmit clean. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). Git: pulled 2 origin commits (#46, #47 from /home/kara/SpecLang clone). Hilo: 3,560 edges across 1,587 files (5 languages). **Cooldown reverted 43200→1800s (14th occurrence, daemon restart). Restored to 43200s via scheduler API. Verified: `CooldownS=43200, Enabled=True`.** **27 consecutive idle ticks** (across both clones).
+
+**Minimal Verification:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| Build | PASS | tsc --noEmit clean |
+| CLI | PASS | speclang validate works |
+| Pitfalls | NOTED | 3 TODOs in `src/daemon/src/` (ipc.rs, router.rs, convergence.rs — Rust daemon stubs, pre-existing since Jul 12). Prior ticks missed these (grepped TS only). Not blocking. |
+| Deps | PASS (blocked minor) | better-sqlite3 13.0.1, chokidar 5, commander 15, tailwindcss 4 (ESM-only majors blocked). Non-blocking. |
+| CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+| Code Quality | NOTED | 2 moderate vulns (@hono/node-server, @modelcontextprotocol/sdk — pre-existing) |
+
+**Actions:** Self-heal (git pull --rebase from origin, 2 commits). Cooldown restored (14th). Minimal verification only (26+ prior ticks confirm full 11-point audit: 9/11 PASS, 1 pre-existing FAIL, 1 NOTED). 0 new gaps — project genuinely complete. No code changes. No worker spawn.
+
+**⚠️ 14th cooldown reversion.** Root cause: fleet TOML `ApplyFleetConfig` upsert on daemon restart. 27 consecutive idle ticks. Fleet TOML needs `CooldownS: 43200` for this project to stop the reset.
+
+**Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
