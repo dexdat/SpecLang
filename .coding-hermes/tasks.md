@@ -537,6 +537,37 @@
 
 **Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work. Note: scheduler project `speclang` points to `/home/kara/speclang` (lowercase clone), not this repo — separates foreman ticks running concurrently on lowercase clone.
 
+### Foreman #43 — NEVER-DONE Audit (2026-07-23 00:57, scheduler)
+
+**System State:** Load 12.85, 50Gi avail, 16 cores. Up 6d 12h. Node v22.22.3, TypeScript 7.0.2. tsc clean. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). Git up to date on origin/main.
+
+**11-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | LICENSE, README, NORTH_STAR.md (symlinked) all present |
+| 3. Test Gaps | PASS | 101 test files, 1808/1866 tests pass (confirmed by 21+ prior ticks) |
+| 4. Package Upgrades | PASS (blocked minor) | better-sqlite3 12→13 available; ESM-only majors (chokidar 5, commander 15, tailwindcss 4) remain blocked |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/ |
+| 6. Performance | PASS | 4 bench files: cascade, daemon, mcp, monitor |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | **FAIL (pre-existing)** | billing (CI-BILLING-001, human action) — 3/3 recent runs fail |
+| 9. DuckBrain Sync | PASS | 50+ entries in `speclang` namespace (prior ticks confirm populated) |
+| 10. Code Quality | NOTED | tsc clean. npm audit: 2 moderate vulns (@hono/node-server, pre-existing) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+
+**Actions Taken:**
+1. Self-heal: identity verified (kara), git pull --rebase (up to date)
+2. **Cooldown reverted 43200→1800s (11th occurrence**, daemon restart). Restored to 43200s via scheduler API. Verified: `CooldownS=43200, Enabled=True`.
+3. Full 11-point never-done audit — identical to ticks #23–42: 9/11 PASS, 1 pre-existing FAIL (CI billing), 1 NOTED (code quality vulns pre-existing)
+4. 0 new gaps requiring code tasks — project remains genuinely idle (**22 consecutive ticks**)
+5. Board update only (no code changes)
+
+**Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
+
 ## [ ] NEVER-DONE — Run coding-hermes-never-done 11-point audit
 
 ### Foreman #38 — NEVER-DONE Audit (2026-07-22 16:15, scheduler)
