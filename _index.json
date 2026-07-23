@@ -1,7 +1,24 @@
 {
   "version": "0.2.0",
-  "generated": "2026-07-23T03:36:11.918ZZ",
+  "generated": "2026-07-23T10:01:30.947ZZ",
   "specs": {
+    "@unknown/_arch004_test_1784800866409.spec.md": {
+      "id": "@unknown/_arch004_test_1784800866409.spec.md",
+      "file": "_arch004_test_1784800866409.spec.md",
+      "version": "0.0.0",
+      "layer": 0,
+      "project_level": "",
+      "agent_support": "",
+      "tags": [],
+      "short": "_arch004_test_1784800866409.spec.md",
+      "depends_on": [],
+      "blocks": [],
+      "lastModified": "2026-07-23T10:01:06.409ZZ",
+      "lines": 8,
+      "header_lines": 0,
+      "status": "draft",
+      "content_refs": []
+    },
     "@speclang/agent-behavior-matrix/matrix": {
       "id": "@speclang/agent-behavior-matrix/matrix",
       "file": "agent-behavior-matrix.spec.dir/matrix.spec.md",
@@ -960,7 +977,7 @@
         "flow",
         "process"
       ],
-      "short": "Cascade Protocol Flow and Multi‑Tree Generation",
+      "short": "Cascade Protocol Flow and Multi\u2011Tree Generation",
       "depends_on": [],
       "blocks": [],
       "lastModified": "2026-07-13T03:25:25.635ZZ",
@@ -4036,7 +4053,7 @@
         "typescript",
         "communication"
       ],
-      "short": "Inter‑Process Communication system",
+      "short": "Inter\u2011Process Communication system",
       "depends_on": [],
       "blocks": [
         "ipc"
@@ -14954,6 +14971,7 @@
     }
   },
   "orphans": [
+    "@unknown/_arch004_test_1784800866409.spec.md",
     "@speclang/agent-behavior-matrix/matrix",
     "@speclang/interceptor",
     "@speclang/agent-protocol/registry",
@@ -15105,8 +15123,9 @@
       "@speclang/server -> @speclang/mcp",
       "@speclang/server -> @speclang/core"
     ],
-    "total_specs": 472,
+    "total_specs": 473,
     "total_refs": 13,
     "missing_ref_count": 17
-  }
+  },
+  "last_updated": "2026-07-23T12:17:48-05:00"
 }
