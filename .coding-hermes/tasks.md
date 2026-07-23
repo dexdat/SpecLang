@@ -775,3 +775,11 @@
 **⚠️ 12th cooldown reversion.** Root cause unchanged: `ApplyFleetConfig` upsert on daemon restart overwrites with fleet TOML defaults. Fleet TOML needs updating for idle projects to prevent the 43200→1800 reset on every restart. 24 consecutive idle ticks — project should remain at 12h.
 
 **Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
+
+### Foreman #46 — Idle Tick (2026-07-23 08:10, scheduler)
+
+**State:** Pulled 2 new commits (#43-#45, all idle). tsc clean. speclang validate: 448/448 (0 fail, 540 warnings pre-existing). Cooldown reverted 43200→1800 (13th) → restored via API → GET `CooldownS=43200` confirmed. **25 consecutive idle ticks.** 0 new gaps. No code changes. No worker spawn.
+
+**⚠️ 13th cooldown reversion.** Root cause unchanged: fleet TOML `ApplyFleetConfig` upsert on daemon restart. 25 idle ticks — project genuinely complete.
+
+**Eval:** Tier1=N/A, Audit=N/A, Tier3=N/A, Hilo=useful
