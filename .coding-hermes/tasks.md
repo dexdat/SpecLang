@@ -783,3 +783,17 @@
 **⚠️ 13th cooldown reversion.** Root cause unchanged: fleet TOML `ApplyFleetConfig` upsert on daemon restart. 25 idle ticks — project genuinely complete.
 
 **Eval:** Tier1=N/A, Audit=N/A, Tier3=N/A, Hilo=useful
+
+### Foreman #46 — Idle Tick (2026-07-23 08:17, scheduler — /home/kara/SpecLang clone)
+
+**State:** Load 13.32, 48Gi avail, 16 cores. Up 6d 19h. Node v22.22.3, TypeScript 7.0.2. tsc --noEmit clean. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). Cooldown at 43200s (no reversion this tick — 2nd tick without reversion). Origin already had lowercase clone's #46 (08:10); pulled clean. **25 consecutive idle ticks** (across both clones). 0 new gaps. No code changes. No worker spawn.
+
+**Deps:** better-sqlite3 13.0.1, chokidar 5, commander 15, tailwindcss 4 available (ESM-only majors blocked). Non-blocking.
+
+**Actions:** Self-heal (pull rebase, stash bookkeeping). Minimal verification (tsc + validate). Board update only. Cooldown confirmed 43200s. 0 new gaps — project genuinely complete.
+
+**⚠️ Cooldown reversion count:** 12 total (ticks #24, #26, #31, #32, #35-#39, #42, #43, #45). Root cause: fleet TOML `ApplyFleetConfig` upsert on daemon restart. This tick (2nd without reversion) suggests daemon stayed up.
+
+**Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
