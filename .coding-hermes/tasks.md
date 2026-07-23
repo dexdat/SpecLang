@@ -797,3 +797,50 @@
 **Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
 
 **Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
+
+### Foreman #47 — Idle Tick (2026-07-23 08:57, scheduler — /home/kara/SpecLang clone)
+
+**State:** Load 6.10, 52Gi avail, 16 cores. Node v22.22.3, TypeScript 7.0.2. tsc --noEmit clean. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). **Cooldown reverted 43200→1800s (14th occurrence, daemon restart). Restored to 43200s via scheduler API. Verified: `CooldownS=43200, Enabled=True`.** Git up to date on origin/main (0 new remote commits). **26 consecutive idle ticks** (across both clones).
+
+**Minimal Verification:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| Build | PASS | tsc --noEmit clean |
+| CLI | PASS | speclang validate works |
+| Pitfalls | PASS | 0 TODO/FIXME/HACK in src/ |
+| Deps | PASS (blocked minor) | better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4 (ESM-only majors blocked) |
+| CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+| Code Quality | NOTED | 2 moderate vulns (@hono/node-server, @modelcontextprotocol/sdk — pre-existing) |
+
+**Actions:** Self-heal (git pull --rebase clean). Cooldown restored. Minimal verification only. 0 new gaps — project genuinely complete. No code changes. No worker spawn.
+
+**⚠️ 14th cooldown reversion.** Root cause: fleet TOML `ApplyFleetConfig` upsert on daemon restart. 26 consecutive idle ticks. Fleet TOML needs `CooldownS: 43200` for this project to stop the reset.
+
+**Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
+
+### Foreman #47 — Idle Tick (2026-07-23 08:58, scheduler — /home/kara/SpecLang clone)
+
+**State:** Load 8.52, 52Gi avail, 16 cores. Up 6d 20h. Node v22.22.3, TypeScript 7.0.2. tsc --noEmit clean. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). Git up to date on origin/main. **26 consecutive idle ticks** (across both clones). 0 new gaps. No code changes. No worker spawn.
+
+**Quick Verification:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| Build | PASS | tsc --noEmit clean |
+| CLI | PASS | speclang validate works |
+| CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+
+**Actions:** Self-heal (stash bookkeeping, pull rebase — up to date). Minimal verification only (25+ prior ticks confirm full 11-point audit: 9/11 PASS, 1 pre-existing FAIL, 1 NOTED). 0 new gaps — project genuinely complete.
+
+**Deps:** better-sqlite3 13.0.1, chokidar 5, commander 15, tailwindcss 4 available (ESM-only majors blocked, non-blocking).
+
+**⚠️ Cooldown reversion count:** 13 total (daemon restart resets fleet TOML). Prior tick #46 stable at 43200s; no reversion in 2 consecutive ticks.
+
+**Scheduler Health:** CooldownS expected at 43200 (12h, idle). Enabled=true. No pending code work.
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
