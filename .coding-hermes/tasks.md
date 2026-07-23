@@ -599,6 +599,30 @@
 
 **Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
 
+### Foreman #50 — Idle Tick (2026-07-23 13:12, scheduler — /home/kara/SpecLang clone)
+
+**State:** Load 8.44, 50Gi avail, 16 cores. Up 7d 0h. Node v22.22.3, TypeScript 7.0.2. tsc --noEmit clean. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). Git up to date on origin/main. **Cooldown reverted 43200→1800s (15th occurrence, daemon restart). Restored to 43200s via scheduler API. Verified: `CooldownS=43200, Enabled=True`.** **29th consecutive idle tick** (across both clones).
+
+**Minimal Verification:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| Build | PASS | tsc --noEmit clean |
+| CLI | PASS | speclang validate works |
+| Pitfalls | PASS | 0 TODO/FIXME/HACK in src/**/*.ts. 3 pre-existing Rust daemon TODOs (ipc.rs, router.rs, convergence.rs — unchanged since Jul 12) |
+| Deps | PASS (blocked minor) | better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4 (ESM-only majors blocked). Non-blocking. |
+| CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+| Code Quality | NOTED | tsc clean. npm audit: 2 moderate vulns (@hono/node-server, @modelcontextprotocol/sdk — pre-existing) |
+
+**Actions:** Self-heal (stash bookkeeping, pull rebase — up to date). Cooldown restored (15th). Minimal verification only (28+ prior ticks confirm full 11-point audit: 9/11 PASS, 1 pre-existing FAIL, 1 NOTED). 0 new gaps — project genuinely complete. Board update only. No worker spawn.
+
+**⚠️ 15th cooldown reversion.** Root cause: fleet TOML `ApplyFleetConfig` upsert on daemon restart. 29 consecutive idle ticks. Fleet TOML needs `CooldownS: 43200` for this project to stop the reset.
+
+**Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. Weight=10. No pending code work.
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
+
 ## [ ] NEVER-DONE — Run coding-hermes-never-done 11-point audit
 
 ### Foreman #38 — NEVER-DONE Audit (2026-07-22 16:15, scheduler)
