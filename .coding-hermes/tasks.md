@@ -1095,3 +1095,47 @@
 
 **Eval:** Tier1=N/A, Audit=N/A, Tier3=N/A, Hilo=useful
 
+### Foreman #56 — Idle Tick + Duplicate Entry Confirmation (2026-07-24 04:11, scheduler — /home/kara/speclang)
+
+**State:** Load 12.68, 49Gi avail, 16 cores. Up 7d 15h. Node v22.22.3, TypeScript 7.0.2. tsc --noEmit clean. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). Git: pulled origin/main (Foreman #53→#55 commits), up to date. **35th consecutive idle tick** (across both clones).
+
+**⚠️ CONFIRMED: Duplicate scheduler entries.** Foreman #55 discovered two entries. This tick independently verified:
+
+| Entry | Workdir | Cooldown Before | Cooldown After |
+|-------|---------|----------------|----------------|
+| **SpecLang** (uppercase) | `/home/kara/SpecLang` | 1800s | **43200s** |
+| speclang (lowercase) | `/home/kara/speclang` | 900s | **43200s** |
+
+**Root cause of "cooldown reversion"**: Foreman #55's SpecLang fix reverted (1800s). This tick's own speclang fix also reverted (900s). Both restored to 43200s in one batch PUT. The 20th+ reversion incidents are explained by: (a) duplicate entries — ticks fixed the wrong entry, (b) genuine fleet TOML `ApplyFleetConfig` upsert on daemon restart, (c) Case-sensitive SQLite allowing both to coexist.
+
+**Minimal Verification:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| Build | PASS | tsc --noEmit clean |
+| Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/ |
+| Deps | PASS (blocked minor) | js-yaml 5.2.1→5.2.2, fs-extra 11.3.6→11.4.0 (applied by #54). better-sqlite3 12→13, chokidar 4→5 (ESM), commander 14→15 (ESM), tailwindcss 3→4 (ESM-only majors blocked) |
+| CLI | PASS | speclang validate works |
+| CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+| DuckBrain | NOTED | MCP connection error (infrastructure — prior ticks confirm namespace populated) |
+| Code Quality | NOTED | tsc clean. npm audit: 2 moderate vulns (@hono/node-server, @modelcontextprotocol/sdk — pre-existing) |
+| Duplicate Check | **FIXED** | Both SpecLang + speclang entries now at CooldownS=43200 |
+
+**Actions:**
+1. Self-heal: git pull --rebase (3 commits from Foreman #53/#54/#55), identity: kara, merge clean
+2. **CRITICAL**: Independently confirmed Foreman #55's duplicate discovery. SpecLang=1800s, speclang=900s on arrival. Fixed both to 43200s. Verified: GET shows `CooldownS=43200` for both.
+3. Minimal verification only (34+ prior ticks confirm full 11-point audit: 9/11 PASS, 1 pre-existing FAIL, 1 NOTED)
+4. 0 new gaps requiring code tasks — project genuinely complete
+5. 2 untracked temp dirs (test-temp-bootstrap, test-temp-meta) — non-blocking
+6. No code changes, no worker spawn.
+
+**⚠️ ESCALATION TO BANE:** 35 consecutive idle ticks across 10+ days. All code tasks complete. Duplicate scheduler entries (SpecLang + speclang) causing wasteful double-tick PAYG burn. **Recommendation:**
+1. Disable or delete ONE of the duplicate scheduler entries
+2. Set fleet TOML `CooldownS: 43200` for idle projects to prevent restart reversions
+3. If project truly complete, consider disabling both
+
+**Scheduler Health:** SpecLang CooldownS=43200 (verified), speclang CooldownS=43200 (verified). Both Enabled=true. No pending code work.
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
+
