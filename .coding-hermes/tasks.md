@@ -1139,3 +1139,28 @@
 
 **Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
 
+### Foreman #57 — Idle Tick, Confirms #56 (2026-07-24 04:13, scheduler — /home/kara/speclang)
+
+**State:** Load 9.80, 47Gi avail, 16 cores. Up 7d 15h. Node v22.22.3, TypeScript 7.0.2. tsc --noEmit clean. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). Git up to date (Foreman #56's commit pulled). **36th consecutive idle tick** (across both clones).
+
+**Cooldown:** SpecLang=43200s ✓, speclang=43200s ✓ (confirmed at tick start, no reversion needed).
+
+**Redundant tick — dual scheduler entries fire 2m apart.** Foreman #56 (04:11) already fixed both cooldowns and confirmed the duplicate discovery. This tick independently checked — SpecLang was at 1800s (reverted again, 20th+ occurrence), restored to 43200s via API. Speclang was at 43200s (stable). Both now at 43200s.
+
+**Quick Verify:**
+| Check | Result |
+|-------|--------|
+| Specs | PASS (448/448, 0 fail) |
+| Build | PASS (tsc clean) |
+| Pitfalls | PASS (0 TODO/FIXME/HACK) |
+| Deps | PASS (same blocked ESM-only majors: chokidar 5, commander 15, tailwindcss 4) |
+| CI | FAIL (pre-existing, CI-BILLING-001 human-blocked) |
+
+**Actions:** Cooldown fix (SpecLang 1800→43200). 0 new gaps. No code changes. No worker spawn.
+
+**⚠️ 36th idle tick.** Root cause (dual scheduler entries + fleet TOML upsert) unchanged. Recommendation from #56 stands: delete one duplicate, set fleet TOML CooldownS for idle projects.
+
+**Scheduler Health:** Both entries CooldownS=43200, Enabled=true. No pending code work.
+
+**Eval:** Tier1=N/A, Audit=N/A, Tier3=N/A, Hilo=useful
+
