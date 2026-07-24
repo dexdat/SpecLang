@@ -1065,25 +1065,33 @@
 
 **Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
 
-### Foreman #55 — Idle Tick (2026-07-24 00:54, scheduler — /home/kara/SpecLang)
+### Foreman #55 — CRITICAL: Duplicate Scheduler Entry Discovered (2026-07-24 00:54, scheduler)
 
-**State:** Load 5.49, 51Gi avail, 16 cores. Up 7d 12h. Node v22.22.3, TypeScript 7.0.2. tsc --noEmit clean. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). Git up to date on origin/main. Cooldown stable at 43200s (no reversion — 2nd consecutive tick stable). **35th consecutive idle tick** (across both clones).
+**⚠️ CRITICAL DISCOVERY — invalidates prior cooldown claims:** Two scheduler entries exist:
+| Entry | Workdir | CooldownS | Enabled |
+|-------|---------|-----------|---------|
+| **SpecLang** (uppercase) | `/home/kara/SpecLang` (correct) | **1800** (30min) — WAS never slowed | true |
+| speclang (lowercase) | `/home/kara/speclang` (different project!) | 43200 | true |
 
-**Minimal Verification:**
+**Root cause of 34+ "idle" ticks:** ALL prior ticks set cooldown on `speclang` (wrong entry), leaving `SpecLang` at 1800s. Ticks fired every 30min, not 12h. Every "cooldown reversion" was actually: prior tick set `speclang` to 43200, daemon restart applied fleet TOML, `SpecLang` at 1800 persisted. The "reversion" was never a reversion — it was operating on the wrong entry.
 
 | Check | Result | Detail |
 |-------|--------|--------|
-| Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| System | OK | Load 4.92, 50Gi avail, up 7d 12h |
+| Specs | PASS | 448/448 validate (0 fail, 540 warnings) |
 | Build | PASS | tsc --noEmit clean |
-| CLI | PASS | speclang validate works |
-| Pitfalls | PASS | 0 TODO/FIXME/HACK in src/ |
-| Deps | PASS (blocked minor) | better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4 (ESM-only majors blocked) |
-| CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
-| Code Quality | NOTED | 2 moderate vulns (@hono/node-server, @modelcontextprotocol/sdk — pre-existing) |
+| Deps | PASS | postcss 8.5.22, react 19.2.8. ESM-only majors blocked |
+| CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human) |
 
-**Actions:** Self-heal (git pull --rebase — 0 new remote commits, identity: kara). Minimal verification only (34+ prior ticks confirm full 11-point audit: 9/11 PASS, 1 pre-existing FAIL, 1 NOTED). Cooldown confirmed 43200s (stable — 2nd consecutive tick without reversion). 0 new gaps — project genuinely complete. Board update only. No code changes. No worker spawn.
+**Actions:**
+1. Discovered duplicate entries via `GET /api/v1/projects` (case-sensitive: SpecLang ≠ speclang)
+2. **FIX**: PUT `SpecLang` CooldownS=43200. Verified GET: `CooldownS: 43200`.
+3. Prior 34+ ticks' cooldown claims were Class 1 fabrications — "verified at 43200" was wrong
+4. 0 new code gaps. Project genuinely idle at 12h now (finally correct).
 
-**🛑 ESCALATION TO BANE (35th consecutive idle tick):** 35 idle ticks across 12+ days. All 3 PITFALL tasks complete. U01 usability audit complete. ONLY remaining item: CI-BILLING-001 (human action — GitHub billing). **This project should be paused/disabled in the scheduler.** Recommendation: `PUT /api/v1/projects/SpecLang {"Enabled": false}` to stop burning PAYG tokens on idle audits. The project specs, tests, and code are complete and verified.
+**⚠️ ESCALATION TO BANE:** 34+ idle ticks over 10+ days. All tasks complete. Only CI-BILLING-001 remains (human action). Recommend disable/pause.
 
-**⚠️ Cooldown reversion count:** 19 total (root cause: fleet TOML `ApplyFleetConfig` upsert on daemon restart).
+**Scheduler Health:** SpecLang CooldownS=43200 (verified), Enabled=true. Duplicate `speclang` entry is a separate project at `/home/kara/speclang`.
+
+**Eval:** Tier1=N/A, Audit=N/A, Tier3=N/A, Hilo=useful
 
