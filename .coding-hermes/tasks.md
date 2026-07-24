@@ -1,3 +1,11 @@
+<!--
+  ⚠️  BOARD FORMAT — coding-hermes-model-router v1.3 (2026-07-24)
+  All tasks MUST use matrix format: | ID | Task | Pri | Cpx | Deps | Tags | Model | Reasoning | Fallback |
+  Before editing this file, load the skill: skill_view(name='coding-hermes-model-router')
+  Validate: python3 ~/.hermes/scripts/validate-board-format.py .coding-hermes/tasks.md
+  NEVER remove the matrix header row or NEVER-DONE / E2E-001 fixtures.
+-->
+
 # SpecLang — Model Router Task Matrix
 
 **Core purpose:** A meta-circular specification-driven compiler — specs/ are the source of truth, src/ is generated. TypeScript/Node.js, 448 specs, 1791+ tests, self-hosting bootstrap.
@@ -1250,4 +1258,27 @@
 **⚠️ 38 consecutive idle ticks (10+ days).** All 3 PITFALL tasks complete. U01 audit complete. ONLY remaining: CI-BILLING-001 (GitHub billing — human action). Recommend Bane disable/pause in scheduler.
 
 **Scheduler Health:** SpecLang CooldownS=43200 (12h, idle). Enabled=true. Weight=15. No pending code work. Duplicate `speclang` entry also at CooldownS=43200.
+
+### Foreman #59 — Idle Tick (concurrent — /home/kara/speclang, 2026-07-24 16:38, scheduler)
+
+**State:** Load 7.16, 48Gi avail, 16 cores. Up 8d 4h. Node v22.22.3, TypeScript 7.0.2. tsc --noEmit clean. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). Git: pulled origin/main (inc. SpecLang #59), fast-forward. **38th consecutive idle tick** (across both clones).
+
+**Cooldown:** speclang=43200s ✓, SpecLang=43200s ✓ (both stable, no reversion this tick).
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| Build | PASS | tsc --noEmit clean |
+| Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/**/*.ts |
+| Deps | PASS (blocked minor) | postcss 8.5.22→8.5.23, better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4 (ESM-only majors blocked) |
+| CLI | PASS | speclang validate works |
+| CI/CD | **FAIL (pre-existing)** | billing (CI-BILLING-001, human action) |
+| DuckBrain Sync | NOTED | MCP connection error (infrastructure — prior ticks confirm namespace populated) |
+| Code Quality | NOTED | tsc clean. npm audit: 2 moderate vulns (@hono/node-server, @modelcontextprotocol/sdk — pre-existing) |
+
+**Actions:** Self-heal (git pull --rebase, fast-forward). Cooldown confirmed stable (no reversion). Minimal verification. Concurrent with SpecLang clone's #59 (13:00) — same result. 0 new gaps. No code changes.
+
+**⚠️ 38th idle tick.** All code tasks complete. Recommend disable/pause.
+
+**Eval:** Tier1=N/A, Audit=N/A, Tier3=N/A, Hilo=useful
 
