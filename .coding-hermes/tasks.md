@@ -1196,3 +1196,24 @@
 
 **Eval:** Tier1=N/A, Audit=N/A, Tier3=N/A, Hilo=useful
 
+### Foreman #58 — Idle Tick (2026-07-24 04:34, scheduler — /home/kara/speclang)
+
+**State:** Load normal, 16 cores. Node v22.22.3, TypeScript 7.0.2. tsc --noEmit clean. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). Git up to date on origin/main. **37th consecutive idle tick** (across both clones).
+
+**Cooldown:** speclang=900s (reverted — 20th+ occurrence, fleet TOML upsert on daemon restart). SpecLang=43200s (stable). Fixed speclang 900→43200s via scheduler API. VERIFIED: `CooldownS=43200, Enabled=True`.
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| Build | PASS | tsc --noEmit clean |
+| Deps | PASS (blocked minor) | better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4 (ESM-only majors blocked) |
+| CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+
+**Actions:** Minimal verification (36+ prior ticks confirm full 11-point audit). 0 new gaps. No code changes. No worker spawn.
+
+**⚠️ 37th idle tick.** ALL code tasks complete. Only CI-BILLING-001 (human action) remains. Dual scheduler entries persist (SpecLang + speclang) — both at 43200s after fix. Recommend disable/pause.
+
+**Scheduler Health:** speclang CooldownS=43200 (verified), SpecLang CooldownS=43200. Both Enabled=true. No pending code work.
+
+**Eval:** Tier1=N/A, Audit=N/A, Tier3=N/A, Hilo=useful
+
