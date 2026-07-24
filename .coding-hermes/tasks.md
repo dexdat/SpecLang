@@ -911,8 +911,52 @@
 
 **Actions:** Self-heal (stash bookkeeping, pull rebase clean). Cooldown confirmed 43200s (no reversion — 3rd straight stable tick). Minimal verification only (27+ prior ticks confirm). 0 new gaps — project genuinely complete. Board update + bookkeeping. No worker spawn.
 
-**⚠️ Cooldown reversion count:** 14 total. 3rd consecutive tick without reversion — daemon uptime stable.
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
 
-**Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. Weight=15. No pending code work.
+### Foreman #50 — Idle Tick (2026-07-23 16:16, scheduler — /home/kara/speclang clone)
+
+**State:** Load 10.95, 48Gi avail, 16 cores. Up 7d 3h. Node v22.22.3, TypeScript 7.0.2. tsc --noEmit clean. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). Git: pulled 3 origin commits (#47–#49 from /home/kara/SpecLang clone), clean fast-forward. Hilo: 3,559 edges across 1,586 files (5 languages). **Cooldown reverted 43200→1800s on BOTH entries (SpecLang + speclang, 15th/16th occurrence, daemon restart). Restored both to 43200s via scheduler API. Verified: `SpecLang: CooldownS=43200, speclang: CooldownS=43200`.** **29th consecutive idle tick** (across both clones).
+
+**Minimal Verification:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| Build | PASS | tsc --noEmit clean |
+| CLI | PASS | speclang validate works |
+| Pitfalls | PASS | 0 TODO/FIXME/HACK in src/**/*.ts. 3 pre-existing Rust daemon TODOs (ipc.rs, router.rs, convergence.rs — unchanged since Jul 12) |
+| Deps | PASS (blocked minor) | better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4 (ESM-only majors blocked), fs-extra 11.3.6→11.4.0 (minor, non-blocking) |
+| CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+| Code Quality | NOTED | 2 moderate vulns (@hono/node-server, @modelcontextprotocol/sdk — pre-existing) |
+
+**Actions:** Self-heal (git pull --rebase, 3 origin commits). Cooldown restored on BOTH entries (15th/16th reversion). Minimal verification only (28+ prior ticks confirm full 11-point audit: 9/11 PASS, 1 pre-existing FAIL, 1 NOTED). 0 new gaps — project genuinely complete. No code changes. No worker spawn.
+
+**⚠️ 15th/16th cooldown reversion.** Root cause: fleet TOML `ApplyFleetConfig` upsert on daemon restart. Both `SpecLang` (Weight=10) and `speclang` (Weight=15) entries reverted simultaneously. 29 consecutive idle ticks. Fleet TOML needs `CooldownS: 43200` for idle projects.
+
+**Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
 
 **Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
+
+### Foreman #51 — Idle Tick (2026-07-23 20:30, scheduler — /home/kara/speclang clone)
+
+**State:** Load 26.06, 46Gi avail, 16 cores. Up 7d 7h. Node v22.22.3, TypeScript 7.0.2. tsc --noEmit clean. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). Git up to date on origin/main (0 new remote commits). **Cooldown reverted 43200→1800s on BOTH entries (16th occurrence, daemon restart). Restored both to 43200s via scheduler API. Verified: `speclang: CooldownS=43200, SpecLang: CooldownS=43200`, both `Enabled=True`.** **30th consecutive idle tick** (across both clones).
+
+**Minimal Verification:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| Build | PASS | tsc --noEmit clean |
+| CLI | PASS | speclang validate works |
+| Deps | PASS (blocked minor) | better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4 (ESM-only majors blocked), fs-extra 11.3.6→11.4.0, js-yaml 5.2.1→5.2.2 (minors available, non-blocking) |
+| CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+| Code Quality | NOTED | 2 moderate vulns (@hono/node-server, @modelcontextprotocol/sdk — pre-existing) |
+
+**Actions:** Self-heal (git pull --rebase clean). Cooldown restored on both entries (16th reversion). Minimal verification only (29+ prior ticks confirm full 11-point audit: 9/11 PASS, 1 pre-existing FAIL, 1 NOTED). 0 new gaps — project genuinely complete. No code changes. No worker spawn.
+
+**⚠️ 16th cooldown reversion.** Root cause unchanged: fleet TOML `ApplyFleetConfig` upsert on daemon restart. 30 consecutive idle ticks across both scheduler entries. Fleet TOML needs `CooldownS: 43200` for idle projects to stop the 43200→1800 reset on every daemon restart.
+
+**Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. Weight=15 (speclang) + 10 (SpecLang). No pending code work.
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
+
