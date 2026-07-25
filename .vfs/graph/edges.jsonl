@@ -3827,3 +3827,5 @@
 {"from":"_scheduler_check.py","to":"pkg:json,","rel":"imports","provenance":"ast_exact","confidence":1.0}
 {"from":"_scheduler_fix.py","to":"pkg:json,","rel":"imports","provenance":"ast_exact","confidence":1.0}
 {"from":"_scheduler_fix.py","to":"pkg:os","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"_scheduler_get_speclang.py","to":"pkg:json,","rel":"imports","provenance":"ast_exact","confidence":1.0}
+{"from":"_scheduler_query.py","to":"pkg:json,","rel":"imports","provenance":"ast_exact","confidence":1.0}

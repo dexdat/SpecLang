@@ -1,3 +1,28 @@
+<!--
+  ⚠️  BOARD FORMAT — coding-hermes-model-router v1.3 (2026-07-24)
+  All tasks MUST use matrix format: | ID | Task | Pri | Cpx | Deps | Tags | Model | Reasoning | Fallback |
+  Before editing this file, load the skill: skill_view(name='coding-hermes-model-router')
+  Validate: python3 ~/.hermes/scripts/validate-board-format.py .coding-hermes/tasks.md
+- [ ] **GITREINS-JUDGE — Configure LLM evaluator for commit quality review**
+  | 🔴 Critical | — | — | deepseek-v4-flash @ deepseek-foreman | GITREINS_LLM_API_KEY in ~/.hermes/.env | foreman-direct |
+
+  Run: `python3 ~/.hermes/scripts/check-gitreins-judge.py .` to verify.
+  Default limits (adjust per-project based on codebase size and task complexity):
+  - Fast/small projects: `max_iterations: 50`, `max_time: 10m`, tokens: `0.2M/0.4M`
+  - Large repos (Go monorepos, 100+ files): `max_iterations: 100`, `max_time: 30m`, tokens: `1M/2M`
+  - C++/Rust (slow compiles): `max_time: 30m` minimum
+  - Scheduler/production infra: `max_time: 30m`, tokens: `1M/2M`
+  Supervisor auto-flags projects where limits are too low for codebase size.
+
+| 🔴 Critical | — | — | deepseek-v4-flash @ deepseek-foreman | GITREINS_LLM_API_KEY in ~/.hermes/.env | foreman-direct |
+
+  Run: `python3 ~/.hermes/scripts/check-gitreins-judge.py .` to verify.
+  If missing, create/edit .gitreins/config.yaml with evaluator section using deepseek-v4-flash.
+  This is CRITICAL for code quality — no automated review of worker output without it.
+
+  NEVER remove the matrix header row or NEVER-DONE / E2E-001 fixtures.
+-->
+
 # SpecLang — Model Router Task Matrix
 
 **Core purpose:** A meta-circular specification-driven compiler — specs/ are the source of truth, src/ is generated. TypeScript/Node.js, 448 specs, 1791+ tests, self-hosting bootstrap.
@@ -1282,4 +1307,37 @@
 **⚠️ 39 consecutive idle ticks (10+ days).** All 3 PITFALL tasks complete. U01 audit complete. ONLY remaining: CI-BILLING-001 (GitHub billing — human action). Recommend Bane disable/pause in scheduler.
 
 **Scheduler Health:** SpecLang CooldownS=43200 (12h, idle). Enabled=true. Weight=15. No pending code work. Duplicate `speclang` entry also at CooldownS=43200.
+
+### Foreman #61 — NEVER-DONE Audit (2026-07-25 01:19, scheduler — /home/kara/SpecLang)
+
+**System State:** Load 2.45, 50Gi avail, 16 cores. Up 8d 12h. Node v22.22.3, TypeScript 7.0.2. tsc --noEmit clean. vitest: 93/97 files (1808/1866 tests, 58 skip), 29s. Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). Git: pulled origin (1 commit from lowercase clone — merge conflict resolved, origin authoritative). **Scheduler: Cooldown confirmed 43200s for both SpecLang + speclang entries. No reversion this tick.** **40th consecutive idle tick.**
+
+**11-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | LICENSE + README.md present. NORTH_STAR.md symlinked (docs/→specs/) |
+| 3. Test Gaps | PASS | 93/97 files, 1808/1866 tests pass (58 skip), 29s — vitest ran successfully this tick |
+| 4. Package Upgrades | PASS (blocked minor) | postcss 8.5.22→8.5.23 available. better-sqlite3 12→13, chokidar 4→5 (ESM), commander 14→15 (ESM), tailwindcss 3→4 (ESM-only majors blocked) |
+| 5. Pitfall Hunt | NOTED | 0 TODO/FIXME/HACK in src/**/*.ts. 3 pre-existing Rust daemon TODOs (ipc.rs, router.rs, convergence.rs — unchanged since Jul 12) |
+| 6. Performance | PASS | 4 bench files: cascade, daemon, mcp, monitor |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | PASS | tick #61 written to `speclang` namespace |
+| 10. Code Quality | NOTED | tsc clean. npm audit: 2 moderate vulns (@hono/node-server, @modelcontextprotocol/sdk — pre-existing) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+
+**Actions Taken:**
+1. Self-heal: git stash + pull --rebase (1 new origin commit from lowercase clone). Merge conflict in tasks.md — origin authoritative. Identity: kara.
+2. vitest success: 93/97, 1808/1866, 29s — first clean run in 4 ticks (system load low at 2.45, threads recovered)
+3. Scheduler: No cooldown reversion needed. Both entries verified at 43200s via GET API.
+4. Deps: postcss 8.5.22→8.5.23 available (minor, non-blocking). All ESM-only majors unchanged.
+5. Full 11-point never-done audit — 9/11 PASS, 1 pre-existing FAIL (CI billing), 1 NOTED (code quality + Rust daemon TODOs pre-existing)
+6. 0 new gaps requiring code tasks — project remains genuinely idle (40 consecutive ticks)
+7. Eval: Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
+
+**⚠️ 40 consecutive idle ticks (10+ days).** All 3 PITFALL tasks complete. U01 audit complete. ONLY remaining: CI-BILLING-001 (GitHub billing — human). **Recommendation: Bane should disable/delete duplicate `speclang` scheduler entry. Both entries fire to same Telegram topic (17441), doubling idle-tick cost.**
+
+**Scheduler Health:** SpecLang CooldownS=43200 (12h, idle). Enabled=true. Weight=15. No pending code work. Duplicate `speclang` also at 43200s — same Telegram topic.
 
