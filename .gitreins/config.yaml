@@ -20,10 +20,10 @@ guards:
     lint: true
     tests: true
 evaluator:
-  max_iterations: 50
-  max_time: 10m
-  max_input_tokens: 0.2M
-  max_output_tokens: 0.4M
+  max_iterations: 100
+  max_time: 30m
+  max_input_tokens: 0.5M
+  max_output_tokens: 0.5M
   tool_call_weight: 0.1
   fast_track: auto
 
@@ -52,7 +52,7 @@ pipeline:
       run: npx vitest run --passWithNoTests 2>&1 | tail -3
   - id: tier2
     type: ai_eval
-    true:
+    "on":
     - pre-eval
     condition: 'true'
-    max_iterations: 25
+    max_iterations: 100
