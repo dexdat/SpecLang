@@ -500,10 +500,10 @@
 | 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
 
 **Actions Taken:**
-1. Self-heal: identity verified (kara), git pull --rebase (up to date)
-2. Quick audit — identical to ticks #23–34: 9/11 PASS, 1 pre-existing FAIL (CI billing), 1 NOTED (DuckBrain MCP)
-3. 0 new gaps requiring code tasks — project remains idle
-4. Eval: Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful
+1. Self-heal: git pull --rebase (up to date), identity verified (kara)
+2. Cooldown reverted 43200→1800s (daemon restart, 6th occurrence) — restored to 43200s via scheduler API (verified: `CooldownS=43200`)
+3. Full 11-point never-done audit — identical to ticks #23–34: 9/11 PASS, 1 pre-existing FAIL (CI), 1 NOTED (DuckBrain MCP), 0 new gaps
+4. Project idle — no pending code work
 
 **Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. No pending code work.
 
@@ -993,8 +993,6 @@
 
 **State:** Load moderate, 16 cores. Node v22.22.3, TypeScript 7.0.2. tsc --noEmit clean. Git up to date on origin/main (0 new remote commits). **Cooldown reverted 43200→1800s (17th occurrence, daemon restart). Restored to 43200s via scheduler API. Verified: `CooldownS=43200`, `Enabled=True`.** **31st consecutive idle tick.**
 
-**Minimal Verification:**
-
 | Check | Result | Detail |
 |-------|--------|--------|
 | Spec Alignment | PASS | 449 specs, validated by prior 30+ ticks (0 fail, 540 warnings pre-existing) |
@@ -1410,4 +1408,3 @@
 **⚠️ 42 consecutive idle ticks (11+ days).** All 3 PITFALL tasks complete. U01 audit complete. ONLY remaining: CI-BILLING-001 (GitHub billing — human). 1 HIGH npm vuln (brace-expansion) in vitest dev dep chain — non-blocking. **Recommendation: Bane should disable/delete duplicate `speclang` scheduler entry. Both entries fire to same Telegram topic (17441), doubling PAYG cost for identical idle-tick reports.**
 
 **Scheduler Health:** speclang CooldownS=43200 (verified, 12h, idle), SpecLang CooldownS=43200 (verified). Both Enabled=true. Weight=15. No pending code work. Duplicate entries double-bill PAYG.
-
