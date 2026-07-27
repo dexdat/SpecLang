@@ -161,3 +161,42 @@
 **⚠️ 43 consecutive idle ticks (12+ days).** All pitfall tasks complete. U01 complete. Duplicate `speclang` entry disabled. ONLY remaining: CI-BILLING-001 (human action — GitHub billing). Recommend Bane review whether to reduce cooldown further or pause/disable.
 
 **Scheduler Health:** SpecLang CooldownS=43200 (12h, idle). Enabled=true. Weight=15. No pending code work. Duplicate `speclang` entry still disabled ✅.
+
+---
+
+### Foreman #66 — NEVER-DONE Audit (2026-07-27, scheduler)
+
+**System State:** Load 26.54 (RethinkDB C++ -O3 compilations, gitleaks, mypy across repos — host-level). 45Gi avail, 16 cores. Up 10d 16h. Node v22.22.3, TypeScript 7.0.2. vitest: 93/97 files (1808/1866 tests, 58 skip), 28s — clean run, **0 flakes despite high load**. Hilo: 3,711 edges across 1,576 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean.
+
+**Scheduler:** SpecLang at CooldownS=43200 (12h), Enabled=true — stable, no reversion. Duplicate `speclang` (lowercase) still Enabled=false — ✅ no reversion.
+
+**11-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | LICENSE + README.md + NORTH_STAR.md (symlinked at docs/) all present |
+| 3. Test Gaps | PASS | 93/97 files, 1808/1866 tests pass, 58 skip, 28s — 0 flakes (improved from tick #65's 3) |
+| 4. Package Upgrades | PASS (blocked minor) | postcss 8.5.22→8.5.23 available (minor). better-sqlite3 12→13, chokidar 4→5 (ESM), commander 14→15 (ESM), tailwindcss 3→4 (ESM-only majors remain blocked) |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in `src/**/*.ts` |
+| 6. Performance | PASS | 4 bench files: cascade, daemon, mcp, monitor |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | **FAIL (pre-existing)** | billing (CI-BILLING-001, human action) — no GitHub Actions runs possible |
+| 9. DuckBrain Sync | PASS(ish) | MCP recovered mid-tick (hermes mcp test duckbrain); tick #66 written to speclang namespace |
+| 10. Code Quality | NOTED | tsc --noEmit clean. npm audit: 2 moderate vulns (@hono/node-server, @modelcontextprotocol/sdk — pre-existing, known breaking-fix path) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+
+**Actions Taken:**
+1. Self-heal: identity verified (kara), git checkout _index.json + pull --rebase (up to date)
+2. Verified scheduler: SpecLang CooldownS=43200 (stable 12h), duplicate `speclang` still Enabled=false ✅
+3. Full 11-point never-done audit — 10/11 PASS, 1 pre-existing FAIL (CI billing), 1 NOTED (code quality vulns pre-existing)
+4. 0 test flakes despite load 26.54 — improved from tick #65 (vitest 28s vs 57s)
+5. DuckBrain MCP recovered and tick #66 written to speclang namespace
+6. 0 new gaps requiring code tasks — **project remains genuinely idle (44 consecutive idle ticks, 12+ days)**
+7. Cleaned untracked test artifacts: .vitest-result.json, test-temp-bootstrap/, test-temp-meta/
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=recovered
+
+**⚠️ 44 consecutive idle ticks (12+ days).** All pitfall tasks complete. U01 complete. Duplicate `speclang` entry disabled. No cooldown reversion. ONLY remaining: CI-BILLING-001 (human action — GitHub billing). Recommend Bane review whether to reduce cooldown further or disable.
+
+**Scheduler Health:** SpecLang CooldownS=43200 (12h, idle). Enabled=true. Weight=15. No pending code work. Duplicate `speclang` entry still disabled ✅.
