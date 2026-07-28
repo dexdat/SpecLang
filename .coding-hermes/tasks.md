@@ -239,3 +239,43 @@
 **⚠️ 44 consecutive idle ticks (12+ days).** All pitfall tasks complete. U01 complete. Duplicate `speclang` entry disabled. No cooldown reversion. ONLY remaining: CI-BILLING-001 (human action — GitHub billing). Recommend Bane review whether to reduce cooldown further or disable.
 
 **Scheduler Health:** SpecLang CooldownS=43200 (12h, idle). Enabled=true. Weight=15. No pending code work. Duplicate `speclang` entry still disabled ✅.
+
+
+---
+
+### Foreman #68 — NEVER-DONE Audit (2026-07-28, scheduler)
+
+**System State:** Load 5.50, 45Gi avail, 16 cores. Up 12d 3h. Node v22.22.3, TypeScript 7.0.2. vitest: 92/97 files (1807/1866 tests, 1 load-flake, 58 skip), 58.87s. Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean.
+
+**Scheduler:** CooldownS=43200 (12h, stable), Enabled=true, Weight=15. No cooldown reversion.
+
+**11-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | **FIXED THIS TICK** | 4 missing docs found: SECURITY.md, CODEOWNERS, SUPPORT.md, CODE_OF_CONDUCT.md — created. Now 9/9 present. Prior 46 ticks claimed "PASS" while only checking LICENSE+README+NORTH_STAR (3 of 9 required files). Fabrication chain broken. |
+| 3. Test Gaps | PASS | 92/97 files, 1807/1866 tests pass (1 load-flake: cli.test.ts > index --refresh timeout at 5s; passes in isolation), 58 skip, 58.87s |
+| 4. Package Upgrades | PASS (blocked minor) | postcss 8.5.22→8.5.24 (patch). @modelcontextprotocol/sdk 1.29→1.30, @types/node 26.1.1→26.1.2. ESM-only majors remain blocked (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4) |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/**/*.ts |
+| 6. Performance | PASS | 4 bench files: cascade, daemon, mcp, monitor |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | **FAIL (pre-existing)** | billing (CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | NOTED | MCP connected, namespace speclang exists |
+| 10. Code Quality | NOTED | tsc --noEmit clean. npm audit: 2 moderate vulns pre-existing |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+
+**Actions Taken:**
+1. Self-heal: identity verified (kara), git checkout _index.json + pull --rebase (up to date), cleaned debug_parse.js
+2. Ground truth: ALL authoritative sources queried fresh — vitest, Hilo, GitReins, scheduler, npm outdated, ls for NEVER-DONE docs
+3. **FOUND: 4 missing NEVER-DONE docs (SECURITY.md, CODEOWNERS, SUPPORT.md, CODE_OF_CONDUCT.md)** — prior 46 ticks claimed "PASS" for doc coverage but only verified 3 of 9 files. Self-fix rule applied (gap >3 ticks): created all 4 docs. Now 9/9 present.
+4. Scheduler CooldownS=43200 stable — no reversion this tick
+5. 1 load-dependent test flake (cli.test.ts index --refresh timeout) — same pattern as prior ticks
+6. 0 new gaps requiring code tasks — **project remains genuinely idle (46 consecutive idle ticks, 12+ days)**
+7. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected
+
+**⚠️ 46 consecutive idle ticks (12+ days).** All tasks complete. Duplicate disabled. 4 missing docs self-fixed this tick. ONLY remaining: CI-BILLING-001 (human action — GitHub billing). **Recommend Bane disable/pause the SpecLang scheduler entry.**
+
+**Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. Weight=15. No pending code work.
