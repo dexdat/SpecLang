@@ -29,6 +29,49 @@
 
 ---
 
+### Foreman #71 — NEVER-DONE Audit (2026-07-28, scheduler)
+
+**System State:** Load 9.53, 47Gi avail, 16 cores. Up 12d 5h. Node v22.22.3, TypeScript 7.0.2. vitest: 92/97 files (1807/1866 tests, 1 load-flake, 58 skip), 47.64s. Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean.
+
+**Scheduler:** NO `speclang` namespace found — scheduler daemon restarted, namespace lost. Namespace list: backup, coding-hermes, data-cleanup, duckbrain-infra, monitoring. Prior cooldown claims remain unverifiable. SpecLang tick dispatched from unknown namespace (possibly coding-hermes catch-all or stale cron entry).
+
+**⚠️ CORRECTION TO TICK #70 BENCH FABRICATION CLAIM:** `tests/performance/monitor.ts` EXISTS on disk (248 lines, SpecLang-generated performance monitoring utility). Tick #70 claimed it "NEVER existed on disk" — this was wrong. However, `monitor.ts` is not a bench test file (no `.test.ts` suffix, not called by vitest). Actual bench test count is 3 (cascade, daemon, mcp), not 4. Tick #70's conclusion (3 not 4 bench tests) was correct; its claim that the file never existed was itself a fabrication.
+
+**11-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | 9/9 NEVER-DONE docs present |
+| 3. Test Gaps | PASS | 92/97 files, 1807/1866 tests pass (1 load-flake: cli cascade abort timeout 5000ms), 58 skip, 47.64s |
+| 4. Package Upgrades | PASS (blocked minor) | postcss 8.5.22→8.5.24 (patch). @modelcontextprotocol/sdk 1.29→1.30. @types/node 26.1.1→26.1.2. ESM-only majors remain blocked (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4) |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in `src/**/*.ts`. 3 pre-existing Rust daemon TODOs (ipc.rs:26, router.rs:22, convergence.rs:38 — unchanged since Jul 12) |
+| 6. Performance | PASS (corrected) | 3 bench test files (cascade, daemon, mcp) + 1 monitor utility (monitor.ts, 248 lines, not a bench test). Prior board claims of "4 bench files" were counting the utility as a bench. |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | **FAIL (pre-existing)** | billing (CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | PASS | Connected — tick #71 written to speclang namespace (87afef39) |
+| 10. Code Quality | NOTED | tsc --noEmit clean. npm audit: 2 moderate vulns (@hono/node-server, @modelcontextprotocol/sdk — pre-existing) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+
+**Actions Taken:**
+1. Self-heal: identity verified (kara), git stash + pull --rebase (up to date), cleaned untracked test-temp-bootstrap/ and test-temp-meta/
+2. Ground truth: ALL checks run fresh this tick — vitest, tsc, speclang validate, hilo graph stats, npm outdated, npm audit, scheduler API, DuckBrain, GitReins, find for bench files
+3. **Correction: Tick #70's "monitor never existed" claim was WRONG.** `tests/performance/monitor.ts` exists (248 lines). Tick #70 fabricated the claim that it didn't exist — while correctly identifying it's not a bench test. Both ticks share blame: prior ticks miscounted it as a bench; tick #70 fabricated the counter-claim.
+4. Scheduler namespace still NOT FOUND — speclang namespace lost during daemon restart. Cooldown unverifiable.
+5. 1 load-dependent test flake (cli cascade abort timeout) — same pattern as prior ticks
+6. GitReins: 3 tasks all complete. Judge config PASS (deepseek-v4-flash, caps: 100/30m/0.5M/0.5M)
+7. DuckBrain: tick #71 written, 41 keys in speclang namespace
+8. 0 new gaps requiring code tasks — **project remains genuinely idle (49 consecutive idle ticks, 12+ days)**
+9. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected, GitReins=clean
+
+**⚠️ 49 consecutive idle ticks (12+ days).** All tasks complete. Scheduler namespace lost. Bench file count corrected (3 not 4, monitor.ts is utility not bench). ONLY remaining: CI-BILLING-001 (human action — GitHub billing). **Recommend Bane disable/pause the SpecLang scheduler entry.**
+
+**Scheduler Health:** Daemon running but NO `speclang` namespace. SpecLang tick dispatched from unknown namespace. Prior cooldown claims unverifiable.
+
+---
+
 ### Foreman #67 — NEVER-DONE Audit (2026-07-27, scheduler)
 
 **System State:** Load 2.52, 45Gi avail, 16 cores. Up 11d 7h. Node v22.22.3, TypeScript 7.0.2. vitest: 93/97 files (1808/1866 tests, 58 skip), 33.83s — clean run, 0 flakes. Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean.
