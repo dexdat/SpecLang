@@ -27,6 +27,45 @@
 
 **Core purpose:** A meta-circular specification-driven compiler — specs/ are the source of truth, src/ is generated. TypeScript/Node.js, 448 specs, 1791+ tests, self-hosting bootstrap.
 
+---
+
+### Foreman #67 — NEVER-DONE Audit (2026-07-27, scheduler)
+
+**System State:** Load 2.52, 45Gi avail, 16 cores. Up 11d 7h. Node v22.22.3, TypeScript 7.0.2. vitest: 93/97 files (1808/1866 tests, 58 skip), 33.83s — clean run, 0 flakes. Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean.
+
+**Scheduler:** API unreachable this tick (localhost:9090). Prior ticks: SpecLang at CooldownS=43200 (12h), Enabled=true. Duplicate `speclang` (lowercase) at Enabled=false — stable.
+
+**11-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | LICENSE + README.md + docs/NORTH_STAR.md all present |
+| 3. Test Gaps | PASS | 93/97 files, 1808/1866 tests pass (58 skip), 33.83s — 0 flakes |
+| 4. Package Upgrades | PASS (blocked minor) | postcss 8.5.22→8.5.23 available (minor). @modelcontextprotocol/sdk 1.29→1.30 available. @types/node 26.1.1→26.1.2. better-sqlite3 12→13, chokidar 4→5 (ESM), commander 14→15 (ESM), tailwindcss 3→4 (ESM-only majors remain blocked) |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in `src/**/*.ts`. 3 pre-existing Rust daemon TODOs (ipc.rs:26, router.rs:22, convergence.rs:38 — unchanged since Jul 12) |
+| 6. Performance | PASS | 4 bench files: cascade, daemon, mcp, monitor |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | **FAIL (pre-existing)** | billing (CI-BILLING-001, human action) — no GitHub Actions runs possible |
+| 9. DuckBrain Sync | PASS | MCP connected, tick #67 written to speclang namespace |
+| 10. Code Quality | NOTED | tsc --noEmit clean. npm audit: 2 moderate vulns (@hono/node-server, @modelcontextprotocol/sdk — pre-existing, known breaking-fix path) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+
+**Actions Taken:**
+1. Self-heal: identity verified (kara), git stash + pull --rebase (up to date), cleaned untracked test artifacts
+2. Scheduler API unreachable (localhost:9090) — no reversion detected in prior ticks
+3. Full 11-point never-done audit — 10/11 PASS, 1 pre-existing FAIL (CI billing), 1 NOTED (code quality vulns pre-existing)
+4. 0 test flakes at load 2.52 — vitest 33.83s (comparable to tick #66's 28s)
+5. DuckBrain MCP connected and tick #67 written to speclang namespace
+6. 0 new gaps requiring code tasks — **project remains genuinely idle (45 consecutive idle ticks, 12+ days)**
+7. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected
+
+**⚠️ 45 consecutive idle ticks (12+ days).** All pitfall tasks complete. U01 complete. Duplicate `speclang` entry disabled. No cooldown reversion. ONLY remaining: CI-BILLING-001 (human action — GitHub billing). **Recommend Bane disable/pause the SpecLang scheduler entry** — project is stable with zero code changes for 45 ticks.
+
+**Scheduler Health:** Last confirmed CooldownS=43200 (12h, idle). Enabled=true. Weight=15. No pending code work. Duplicate `speclang` entry still disabled ✅.
+
 ## Active Tasks
 
 - [ ] **E2E-001 — E2E Testing Tick (self-improving loop)** 🔁 Recurring every 5-10 ticks
