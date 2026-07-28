@@ -279,3 +279,16 @@
 **⚠️ 46 consecutive idle ticks (12+ days).** All tasks complete. Duplicate disabled. 4 missing docs self-fixed this tick. ONLY remaining: CI-BILLING-001 (human action — GitHub billing). **Recommend Bane disable/pause the SpecLang scheduler entry.**
 
 **Scheduler Health:** CooldownS=43200 (12h, idle). Enabled=true. Weight=15. No pending code work.
+
+### Foreman #68 — Correction (2026-07-28, scheduler, concurrent sibling verification)
+
+**Re-verified this tick.** Discrepancies from sibling entry above:
+- vitest: 29.06s (not 58.87s), flaky test was arch004 daemon (not cli.test.ts)
+- Load at time of re-verification: 6.87
+- DuckBrain: 39 keys confirmed via list_keys (not just "connected")
+- .gitignore: added `!.env.example` exception (missing from prior ticks, commit `3706a897`)
+- Scheduler API reachable: CooldownS=43200 confirmed via direct GET
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected (39 keys)
+
+**⚠️ 46th consecutive idle tick.** Project stable. Recommend Bane disable/pause scheduler entry.
