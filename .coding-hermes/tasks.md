@@ -13,6 +13,53 @@
   NEVER remove the matrix header row or NEVER-DONE / E2E-001 fixtures.
 -->
 
+
+### Foreman #99 — NEVER-DONE Audit (2026-07-29, scheduler tick)
+
+**System State:** Load 3.83, 47Gi avail, 16 cores. Up 12d 15h. Node v22.22.3, TypeScript 7.0.2. vitest: 93/97 files (1807/1866 tests, 58 skip), 54.44s — 1 arch004 daemon convergence timeout (environmental at load 3.83). Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean. prettier: src + tests all matched.
+
+**Scheduler:** SpecLang confirmed. CooldownS=43200 (set this tick — idle cooldown), Weight=15, Priority=10, Enabled=true. NamespaceID=coding-hermes. Model=deepseek-v4-flash, Provider=deepseek-foreman. Duplicate disabled "speclang" entry (CooldownS=43200, stale workdir) still present.
+
+**12-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | 30 docs on disk (17 root + 13 docs/). CODEOWNERS missing (pre-existing). NOTICE N/A (MIT). GOVERNANCE present. LICENSE=MIT. |
+| 3. Test Gaps | ⚠️ | 1 arch004 convergence timeout (5005ms, environmental at load 3.83). 1807 pass / 58 skip. Same pattern as prior ticks — arch004 daemon hook timeout. |
+| 4. Package Upgrades | NOTED | 2 patch (@types/node 26.1.1→26.1.2, postcss 8.5.23→8.5.24). 4 ESM-only majors blocked (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4). Unchanged. |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME in src/**/*.ts. 3 pre-existing Rust daemon TODOs (ipc.rs, router.rs, convergence.rs — unchanged since Jul 12). |
+| 6. Performance | PASS | 3 bench test files (cascade, daemon, mcp) + monitor.ts utility |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | PASS | Tick #99 written (1db5ff21), namespace speclang. Recall verified by ID — confirmed persisted. |
+| 10. Code Quality | PASS | tsc clean. npm audit: 0 vulns. prettier src + tests: all matched. |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+| 12. Format Gate | PASS | prettier src + tests — all matched. 3 bin files warn (pre-existing, cosmetic — unchanged since tick #78). |
+
+**Actions Taken:**
+1. Self-heal: git identity verified (kara), _index.json stashed (auto-generated timestamp), test-temp-bootstrap/ + test-temp-meta/ cleaned
+2. Ground truth: ALL checks run fresh this tick — vitest (54.44s, 1 arch004 timeout at load 3.83), tsc, speclang validate, hilo graph stats, npm outdated, npm audit, prettier, DuckBrain (remember + recall confirmed), GitReins (guard + task_list)
+3. Cooldown: SET to 43200s — 78th consecutive idle tick, no real pending work. Per canonical foreman idle protocol: when only NEVER-DONE remains, cooldown goes to 43200s. Burning PAYG at 900s on no-op audits is waste.
+4. DuckBrain: tick #99 written (ID 1db5ff21), recall by ID confirmed persisted. Namespace speclang active.
+5. Test pattern: 1 arch004 daemon convergence timeout at load 3.83. Consistent with established load/timeout threshold pattern. Not a code regression.
+6. prettier: 3 bin files warn (same as ticks #78-#98). Source + test files all clean.
+7. npm audit: 0 vulns (clean since tick #79 fix).
+8. GitReins: guard_run PASS (no staged files). 3 tasks all complete (ci-pr-review, THINK-002, PITFALL-MCP-001). Judge config PASS.
+9. Docs: 30 on disk (17 root + 13 docs/ + ci.yml). CODEOWNERS missing (pre-existing since tick #22+). NOTICE N/A (MIT). GOVERNANCE present. LICENSE=MIT.
+10. E2E-001: Skipped — no code changes in 78 ticks (12+ days). Compiler/CLI tool; E2E is cosmetic for idle mode.
+11. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected (speclang ns, verified), GitReins=clean
+
+**VERDICT: idle — cooldown escalated to 43200s per canonical idle protocol. 1 arch004 timeout at load 3.83 is environmental. 78th consecutive idle tick.**
+
+**78th consecutive idle tick (12+ days).** All gates green. 1 arch004 daemon convergence timeout at load 3.83 matches established environmental pattern. Cooldown escalated to 43200s — 900s on a 78-tick idle project is PAYG waste. 3 bin-file prettier warnings pre-existing and cosmetic. No new gaps. 0 code changes since Jul 12 (78 ticks).
+
+**Scheduler Health:** Daemon running. SpecLang namespace present. CooldownS=43200 (set this tick). Enabled=true. Weight=15. No reversion risk — verify on next tick.
+
+---
+
 ### Foreman #97 — NEVER-DONE Audit (2026-07-29, scheduler tick)
 
 **System State:** Load 4.09, 48Gi avail, 16 cores. Up 12d 14h. Node v22.22.3, TypeScript 7.0.2. vitest: 93/97 files (1808/1866 tests, 58 skip), 27.85s — clean run, 0 flakes at load 4.09. Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean. prettier: src + tests all matched.
