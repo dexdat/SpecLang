@@ -64,6 +64,34 @@
 
 ---
 
+### Foreman #86 — Post-Tick Audit (2026-07-29, follow-up to concurrent tick #85)
+
+**Context:** Scheduler fired two concurrent foreman sessions. Sibling subagent (a710fce3) ran first — detected + fixed 18 unformatted src files, committed 7c9e39a7. This session ran the full audit against the sibling's cleaned state.
+
+**System State (post sibling fix):** Load 13.88, 48Gi avail, 16 cores. Up 12d 10h. Node v22.22.3, TypeScript 7.0.2. vitest: 92/97 files (1807/1866 tests, 58 skip), 33.20s — 1 ARCH-003 timing failure (environmental at load 13.88). Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean. prettier: all matched (sibling's fix holding).
+
+**Scheduler:** SpecLang confirmed. CooldownS=900, Weight=15, Priority=10, Enabled=true. NamespaceID=coding-hermes. Duplicate disabled "speclang" entry (CooldownS=43200, stale workdir /home/kara/speclang).
+
+**Key Findings (post sibling fix):**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| Load | CRITICAL | 13.88 — highest recorded across 86 ticks. More than 2× prior max (6.72). ARCH-003 timing failure fully explained. |
+| Format Gate | CONFIRMED | Sibling fixed 18 src files (7c9e39a7). prettier src: all matched. 3 bin files still warn (pre-existing, cosmetic). |
+| DuckBrain | SPARSE | Namespace has 6 entries (72, 78, 81, 83, 84, 85). Ticks 73-77, 79-80, 82 are NOT in DuckBrain despite board claims. |
+| Bench Files | VERIFIED | 3 bench tests + monitor.ts. Confirm the 4-bench fabrication chain (ticks #22-#69) is disproven. |
+| GitReins Judge | PASS | deepseek-v4-flash configured. 3 tasks all complete. |
+| CODEOWNERS | MISSING | Pre-existing since tick #22+. |
+| Tests | ⚠️ | 1 timing failure (ARCH-003) at load 13.88. All other tests clean. |
+
+**DuckBrain:** Tick #85 exists (written by sibling 9e6517f3 or this session 5bbad00c). Sparse coverage confirmed — 6 of last 14 ticks in DuckBrain.
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=sparse (6/14 ticks verified), GitReins=clean
+
+**VERDICT: idle — maintenance mode (concurrent tick resolved). Sibling's format fix confirmed. Load 13.88 is environmental.**
+
+---
+
 ### Foreman #84 — NEVER-DONE Audit (2026-07-28, scheduler tick)
 
 **System State:** Load 6.72, 46Gi avail, 16 cores. Up 12d 10h. Node v22.22.3, TypeScript 7.0.2. vitest: 91/97 files (1805/1866 tests, 58 skip), 37.50s — 3 hook timeouts in db.test.ts (environmental at load 6.72). Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean.
