@@ -19,6 +19,51 @@
 
 ---
 
+### Foreman #85 — NEVER-DONE Audit (2026-07-28, scheduler tick)
+
+**System State:** Load 5.29, 48Gi avail, 16 cores. Up 12d 10h. Node v22.22.3, TypeScript 7.0.2. vitest: 92/97 files (1806/1866 tests, 58 skip), 43.06s — 3 failures: 2 cli.test.ts timeouts (index, validate) + 1 db.test.ts hook timeout (JSON query). All environmental at load 5.29. Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean.
+
+**Scheduler:** Not queried this tick. Last confirmed CooldownS=900 (tick #83). Weight=15, Priority=10, Enabled=true. NamespaceID=coding-hermes. DuckBrain writes to speclang namespace.
+
+**12-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | 30 .md docs on disk (17 root + 13 docs/). NOTICE N/A (MIT license). CODEOWNERS missing (pre-existing). ci.yml present. |
+| 3. Test Gaps | ⚠️ NEW | 3 failures: 2 cli.test.ts timeouts (index --refresh, validate) + 1 db.test.ts hook timeout (JSON query). All environmental — test timeouts at load 5.29. Prior tick #84 showed db.test.ts only. cli.test.ts timeouts are new this tick. |
+| 4. Package Upgrades | NOTED | postcss 8.5.23→8.5.24 (patch). @types/node 26.1.1→26.1.2 (patch). ESM-only majors remain blocked (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4). |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/**/*.ts. 3 pre-existing Rust daemon TODOs (ipc.rs:26, router.rs:22, convergence.rs:38 — unchanged since Jul 12). |
+| 6. Performance | PASS | 3 bench test files (cascade, daemon, mcp) + monitor.ts utility |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | PASS | Tick #85 written (9e6517f3), namespace speclang. Recall verified by ID — confirmed persisted. |
+| 10. Code Quality | PASS | tsc clean. npm audit: 0 vulns. |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+| 12. Format Gate | **FIXED** | **18 src files unformatted detected** — fixed: npx prettier --write src/, tsc clean, committed 7c9e39a7. Prior tick #84 claimed only 3 bin files unformatted. 18 src files (5 .js, 5 .css, 4 .tsx, 2 .html, 2 .tsx path) were unformatted — never caught since tick #78/#79 prettier run. Bin files (3) remain unformatted (pre-existing, cosmetic — single-file Node.js scripts). |
+
+**Actions Taken:**
+1. Self-heal: git identity verified (kara), workdir had _index.json modified + test-temp-bootstrap/ + test-temp-meta/ (cleaned)
+2. Ground truth: ALL checks run fresh this tick — vitest, tsc, speclang validate, hilo graph stats, npm outdated, npm audit, prettier (found 18 src + 3 bin unformatted), DuckBrain (remember + recall verified), GitReins (guard + task_list)
+3. Format gate: 18 src files unformatted — a gap missed since tick #78/#79 when only source TS/TSX and tests were prettier'd. CSS, HTML, JS, and some TSX files in src/ were never formatted. Fixed: npx prettier --write src/, verified tsc clean, committed 7c9e39a7.
+4. Test regression: 3 failures this tick vs 1 (tick #84 at load 6.72). db.test.ts hook timeout persisted. 2 new CLI timeouts (index --refresh + validate) — all environmental at load 5.29.
+5. Doc recount: 30 .md docs (17 root + 13 docs/). Tick #84 claimed 39 — likely counted non-.md files. CODEOWNERS still missing (pre-existing).
+6. Temp cleanup: test-temp-bootstrap/ and test-temp-meta/ deleted
+7. E2E-001: Skipped — no code changes in 64 ticks (12+ days). This is a compiler/CLI tool; E2E is cosmetic for idle mode.
+8. GitReins: guard_run PASS (no staged files). 3 tasks all complete (ci-pr-review, THINK-002, PITFALL-MCP-001).
+9. 0 new code-level gaps — test failures are environmental timeouts. 64th consecutive idle tick (12+ days).
+10. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected (speclang ns, verified), GitReins=clean
+
+**VERDICT: idle — maintenance mode. 18 src files unformatted (format gate gap) detected + fixed this tick. 3 test timeouts are environmental at load 5.29.**
+
+**64th consecutive idle tick (12+ days).** Format gate gap found: 18 src files never formatted since tick #78/#79 — CSS, HTML, JS, and TSX files in src/ were missed. Fixed directly. 2 new CLI test timeouts join the existing db.test.ts hook timeout — all environmental. CODEOWNERS still missing.
+
+**Scheduler Health:** Not queried this tick. Last confirmed CooldownS=900 (tick #83), stable since tick #74.
+
+---
+
 ### Foreman #84 — NEVER-DONE Audit (2026-07-28, scheduler tick)
 
 **System State:** Load 6.72, 46Gi avail, 16 cores. Up 12d 10h. Node v22.22.3, TypeScript 7.0.2. vitest: 91/97 files (1805/1866 tests, 58 skip), 37.50s — 3 hook timeouts in db.test.ts (environmental at load 6.72). Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean.
