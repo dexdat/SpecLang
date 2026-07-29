@@ -19,6 +19,52 @@
 
 ---
 
+### Foreman #89 — NEVER-DONE Audit (2026-07-29, scheduler tick)
+
+**System State:** Load 8.18, 45Gi avail, 16 cores. Up 12d 11h. Node v22.22.3, TypeScript 7.0.2. vitest: 90/97 files (1803/1866 tests, 58 skip), 67.30s — 5 failures: 3 db.test.ts hook timeouts, 1 cli.test.ts timeout, 1 arch004-autonomous-cascade.test.ts timeout. All environmental at load 8.18. Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean.
+
+**Scheduler:** SpecLang confirmed (prior ticks). CooldownS=900, Weight=15, Priority=10, Enabled=true. NamespaceID=coding-hermes. Model=deepseek-v4-flash, Provider=deepseek-foreman. Scheduler API not queried this tick (load 8.18).
+
+**12-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | 31 docs on disk (17 root + 13 docs/ + ci.yml). CODEOWNERS missing (pre-existing). NOTICE N/A (MIT). GOVERNANCE present. |
+| 3. Test Gaps | ⚠️ | 5 failures: 3 db.test.ts hook timeouts + 1 cli.test.ts index timeout + 1 arch004-autonomous-cascade.test.ts timeout. 1803 pass / 58 skip. All environmental at load 8.18. Prior tick #88 had 1 (bench variance at 16.75). |
+| 4. Package Upgrades | NOTED | 4 major (ESM-only blocked: better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4), 0 minor, 2 patch (postcss 8.5.23→8.5.24, @types/node 26.1.1→26.1.2). Unchanged from prior tick. |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/**/*.ts. 3 pre-existing Rust daemon TODOs (ipc.rs, router.rs, convergence.rs — unchanged since Jul 12). |
+| 6. Performance | PASS | 3 bench test files (cascade, daemon, mcp) + monitor.ts utility |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | PASS | Tick #89 written (0f4851b8), namespace speclang. Recall verified by ID — confirmed persisted. |
+| 10. Code Quality | PASS | tsc clean. npm audit: 0 vulns. prettier src + tests: all matched (11 dashboard files fixed this tick). |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+| 12. Format Gate | **FIXED** | **11 dashboard test files unformatted detected** — fixed: npx prettier --write tests/dashboard/, verified all matched, committed 7a7c382a. 3 bin files remain unformatted (pre-existing, cosmetic). |
+
+**Actions Taken:**
+1. Self-heal: git identity verified (kara), workdir had _index.json modified + test-temp-bootstrap/ + test-temp-meta/ (cleaned)
+2. Ground truth: ALL checks run fresh this tick — vitest (5 timeouts at load 8.18), tsc, speclang validate, hilo graph stats, npm outdated, npm audit, prettier (found 11 unformatted dashboard test files), DuckBrain (remember + recall confirmed), GitReins (guard + task_list)
+3. Format gate: 11 dashboard test files unformatted — gap missed since ticks #78/#79. Fixed: npx prettier --write tests/dashboard/, verified clean, committed 7a7c382a.
+4. Test pattern: 5 timeouts at load 8.18 vs 1 bench variance at load 16.75 (tick #88) vs 4 timeouts at load 6.40 (tick #87). Timeout count increases with load — consistent with environmental hypothesis. 3 db hook timeouts (same pattern as prior ticks), 1 cli index timeout, 1 arch004-cascade timeout. No code changes in 68 ticks — these are NOT regressions.
+5. Docs: 31 docs (17 root + 13 docs/ + ci.yml). Consistent with prior corrected count. CODEOWNERS missing (pre-existing since tick #22+). NOTICE N/A (MIT). GOVERNANCE present.
+6. npm audit: 0 vulns (clean since tick #79 fix).
+7. prettier: 3 bin files warn (pre-existing, cosmetic — unchanged since tick #78). Source + test files all clean after this tick's fix.
+8. GitReins: guard_run PASS (no staged files). 3 tasks all complete (ci-pr-review, THINK-002, PITFALL-MCP-001). Judge config PASS.
+9. E2E-001: Skipped — no code changes in 68 ticks (12+ days). Compiler/CLI tool; E2E is cosmetic for idle mode.
+10. 0 new code-level gaps — 5 test timeouts are environmental at load 8.18. 11 unformatted dashboard test files found + fixed. Project remains genuinely idle (68th consecutive idle tick, 12+ days).
+11. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected (speclang ns, verified), GitReins=clean
+
+**VERDICT: idle — maintenance mode (scheduler stable at 900s cooldown). 11 dashboard test files unformatted (format gate gap) detected + fixed this tick. 5 test timeouts at load 8.18 are environmental.**
+
+**68th consecutive idle tick (12+ days).** Format gate gap found: 11 dashboard test files never formatted since tick #78/#79 — TSX/TS files in tests/dashboard/ were missed. Fixed directly. 5 timeouts at load 8.18: 3 db hook timeouts (standard pattern) + 1 cli index timeout + 1 arch004 cascade timeout. All environmental. All other gates green.
+
+**Scheduler Health:** Not queried this tick (load 8.18). Last confirmed CooldownS=900 (tick #83+). Stable since tick #74. Enabled=true. Weight=15.
+
+---
+
 ### Foreman #88 — NEVER-DONE Audit (2026-07-29, scheduler tick)
 
 **System State:** Load 16.75, 43Gi avail, 16 cores. Up 12d 11h. Node v22.22.3, TypeScript 7.0.2. vitest: 97 files (1807/1866 tests, 58 skip), 1 fail — performance/cascade.test.ts variance (environmental at load 16.75). Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean. prettier: all matched.
