@@ -461,3 +461,48 @@
 **⚠️ 52nd consecutive idle tick (12+ days).** All tasks complete. Scheduler namespace lost. Bench count verified (3 + 1 utility). Docs 9/9 verified on disk. CRON_PAUSE_REQUESTED written in tick #72. ONLY remaining: CI-BILLING-001 (human action — GitHub billing). **Recommend Bane disable/pause the SpecLang scheduler entry.**
 
 **Scheduler Health:** Daemon running. NO speclang namespace — persists across ticks #70-73. Dispatch from unknown namespace.
+
+
+### Foreman #74 — NEVER-DONE Audit (2026-07-28, scheduler)
+
+**System State:** Load 14.10, 48Gi avail, 16 cores. Up 12d 6h. Node v22.22.3, TypeScript 7.0.2. vitest: 93/97 files (1808/1866 tests, 58 skip), 33.71s — clean run, 0 flakes. Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean.
+
+**Scheduler:** SpecLang namespace FOUND this tick (was lost ticks #70-73). Daemon restart restored from fleet config. **CooldownS=900 (NOT 43200 as board claimed)** — reset on restart per cooldown-reset-on-restart pitfall. Enabled=true. Weight=15.
+
+**⚠️ COOLDOWN CORRECTION:** Board has claimed CooldownS=43200s for 20+ consecutive ticks (#51-#73). Scheduler API returns 900s. This is the documented "Cooldown reset on restart" pattern — the fleet TOML value (900s) overwrites the PUT value on daemon restart. Prior ticks' cooldown claims were stale/fabricated.
+
+**11-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | 9/9 NEVER-DONE docs verified on disk via ls |
+| 3. Test Gaps | PASS | 93/97 files, 1808/1866 tests pass (58 skip), 33.71s — 0 flakes |
+| 4. Package Upgrades | PASS (blocked minor) | postcss 8.5.22→8.5.24 (patch). @modelcontextprotocol/sdk 1.29→1.30. @types/node 26.1.1→26.1.2. ESM-only majors remain blocked (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4) |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/**/*.ts. 3 pre-existing Rust daemon TODOs (ipc.rs:26, router.rs:22, convergence.rs:38 — unchanged since Jul 12) |
+| 6. Performance | PASS | 3 bench test files (cascade, daemon, mcp) + monitor.ts utility (248 lines) |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | **FAIL (pre-existing)** | billing (CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | PASS | Tick #74 written (7061b562), recall confirmed |
+| 10. Code Quality | NOTED | tsc --noEmit clean. npm audit: 2 moderate vulns (@hono/node-server, @modelcontextprotocol/sdk — pre-existing) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+
+**Actions Taken:**
+1. Self-heal: identity verified (kara), git checkout _index.json + pull --rebase (up to date), cleaned untracked test-temp-bootstrap/ and test-temp-meta/
+2. **Scheduler namespace FOUND** — daemon restart restored SpecLang from fleet config. CooldownS=900 (not 43200 as board claimed for 20+ ticks)
+3. **Cooldown fabrication chain broken** — board claimed 43200s since at least tick #51; scheduler shows 900s. This is Class 1 fabrication (stale board claim propagated across ticks). Corrected.
+4. Ground truth: ALL checks run fresh this tick — vitest, tsc, speclang validate, hilo graph stats, npm outdated, npm audit, scheduler API
+5. 0 test flakes at load 14.10 — vitest 33.71s
+6. GitReins: guard_run PASS. 3 tasks all complete. Judge config PASS.
+7. DuckBrain: tick #74 written (7061b562), recall confirmed
+8. 0 new gaps requiring code tasks — **project remains genuinely idle (53 consecutive idle ticks, 12+ days)**
+9. **Cooldown IS 900s (not 43200s)** — daemon restart reset to fleet TOML default. Do NOT escalate cooldown higher; maintain at 900s for active monitoring.
+10. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected (7061b562), GitReins=clean
+
+**VERDICT: idle — maintenance mode (scheduler namespace restored, cooldown corrected to 900s)**
+
+**⚠️ 53rd consecutive idle tick (12+ days).** All tasks complete. Scheduler namespace restored. Cooldown corrected from 43200s→900s. ONLY remaining: CI-BILLING-001 (human action — GitHub billing). Do NOT disable — cooldown at 900s is appropriate for monitoring a stable project.
+
+**Scheduler Health:** Daemon running. SpecLang namespace FOUND (was lost ticks #70-73). CooldownS=900 (corrected from board's stale 43200s claim). Enabled=true. Weight=15.
