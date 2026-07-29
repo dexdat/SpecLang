@@ -2,7 +2,7 @@
 /* DO NOT EDIT MANUALLY */
 /* Source: specs/ui.dir/visual-design.spec.md */
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap");
 
 .font-display {
   font-family: var(--font-display);
@@ -93,8 +93,18 @@
 }
 
 /* Status text */
-.text-success { color: var(--color-success); }
-.text-warning { color: var(--color-warning); }
-.text-error { color: var(--color-error); }
-.text-muted { color: var(--color-text-muted); }
-.text-dimmed { color: var(--color-text-dimmed); }
+.text-success {
+  color: var(--color-success);
+}
+.text-warning {
+  color: var(--color-warning);
+}
+.text-error {
+  color: var(--color-error);
+}
+.text-muted {
+  color: var(--color-text-muted);
+}
+.text-dimmed {
+  color: var(--color-text-dimmed);
+}

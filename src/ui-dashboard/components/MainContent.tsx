@@ -3,8 +3,8 @@
  * Generated from: @implementation/ui-dashboard
  */
 
-import React from 'react';
-import type { CascadeState, AgentStatus, FileWatcherStatus } from '../types';
+import React from "react";
+import type { CascadeState, AgentStatus, FileWatcherStatus } from "../types";
 
 interface MainContentProps {
   cascadeState?: CascadeState;
@@ -15,9 +15,9 @@ interface MainContentProps {
 
 const AgentCard: React.FC<{ agent: AgentStatus }> = ({ agent }) => {
   const statusColor = {
-    active: 'text-green-400',
-    idle: 'text-gray-400',
-    error: 'text-red-400',
+    active: "text-green-400",
+    idle: "text-gray-400",
+    error: "text-red-400",
   }[agent.status];
 
   return (
@@ -26,9 +26,7 @@ const AgentCard: React.FC<{ agent: AgentStatus }> = ({ agent }) => {
         <span className="font-mono text-sm">{agent.name}</span>
         <span className={`text-xs ${statusColor}`}>{agent.status}</span>
       </div>
-      <div className="text-xs text-gray-500">
-        Tasks: {agent.tasksCompleted}
-      </div>
+      <div className="text-xs text-gray-500">Tasks: {agent.tasksCompleted}</div>
     </div>
   );
 };
@@ -36,29 +34,35 @@ const AgentCard: React.FC<{ agent: AgentStatus }> = ({ agent }) => {
 const StatusCard: React.FC<{
   title: string;
   value: string | number;
-  status?: 'success' | 'warning' | 'error' | 'info';
-}> = ({ title, value, status = 'info' }) => {
+  status?: "success" | "warning" | "error" | "info";
+}> = ({ title, value, status = "info" }) => {
   const statusColors = {
-    success: 'text-green-400',
-    warning: 'text-yellow-400',
-    error: 'text-red-400',
-    info: 'text-blue-400',
+    success: "text-green-400",
+    warning: "text-yellow-400",
+    error: "text-red-400",
+    info: "text-blue-400",
   };
 
   return (
     <div className="bg-gray-900 border border-gray-800 rounded p-4">
       <div className="text-xs text-gray-500 mb-1">{title}</div>
-      <div className={`text-2xl font-mono ${statusColors[status]}`}>{value}</div>
+      <div className={`text-2xl font-mono ${statusColors[status]}`}>
+        {value}
+      </div>
     </div>
   );
 };
 
-const FileWatcherCard: React.FC<{ status: FileWatcherStatus }> = ({ status }) => (
+const FileWatcherCard: React.FC<{ status: FileWatcherStatus }> = ({
+  status,
+}) => (
   <div className="bg-gray-900 border border-gray-800 rounded p-4">
     <div className="flex items-center justify-between mb-2">
       <span className="font-mono text-sm">File Watcher</span>
-      <span className={`text-xs ${status.isWatching ? 'text-green-400' : 'text-gray-400'}`}>
-        {status.isWatching ? 'Watching' : 'Stopped'}
+      <span
+        className={`text-xs ${status.isWatching ? "text-green-400" : "text-gray-400"}`}
+      >
+        {status.isWatching ? "Watching" : "Stopped"}
       </span>
     </div>
     <div className="text-xs text-gray-500">
@@ -74,7 +78,7 @@ export const MainContent: React.FC<MainContentProps> = ({
   cascadeState,
   agents = [],
   fileWatcher,
-  activeView = 'overview',
+  activeView = "overview",
 }) => {
   const renderOverview = () => (
     <div className="space-y-6">
@@ -84,7 +88,7 @@ export const MainContent: React.FC<MainContentProps> = ({
           <StatusCard
             title="Queue Depth"
             value={cascadeState?.queueDepth ?? 0}
-            status={cascadeState?.queueDepth === 0 ? 'success' : 'warning'}
+            status={cascadeState?.queueDepth === 0 ? "success" : "warning"}
           />
           <StatusCard
             title="Convergence Time"
@@ -93,7 +97,7 @@ export const MainContent: React.FC<MainContentProps> = ({
           />
           <StatusCard
             title="Active Agents"
-            value={agents.filter((a) => a.status === 'active').length}
+            value={agents.filter((a) => a.status === "active").length}
             status="info"
           />
           <StatusCard
@@ -131,16 +135,18 @@ export const MainContent: React.FC<MainContentProps> = ({
         <div className="flex items-center gap-4">
           <div
             className={`w-4 h-4 rounded-full ${
-              cascadeState?.status === 'running'
-                ? 'bg-green-500 animate-pulse'
-                : cascadeState?.status === 'converged'
-                  ? 'bg-blue-500'
-                  : cascadeState?.status === 'error'
-                    ? 'bg-red-500'
-                    : 'bg-gray-500'
+              cascadeState?.status === "running"
+                ? "bg-green-500 animate-pulse"
+                : cascadeState?.status === "converged"
+                  ? "bg-blue-500"
+                  : cascadeState?.status === "error"
+                    ? "bg-red-500"
+                    : "bg-gray-500"
             }`}
           />
-          <span className="font-mono capitalize">{cascadeState?.status ?? 'idle'}</span>
+          <span className="font-mono capitalize">
+            {cascadeState?.status ?? "idle"}
+          </span>
         </div>
       </div>
     </div>
@@ -148,9 +154,9 @@ export const MainContent: React.FC<MainContentProps> = ({
 
   const renderContent = () => {
     switch (activeView) {
-      case 'cascade':
+      case "cascade":
         return renderCascade();
-      case 'agents':
+      case "agents":
         return (
           <div className="space-y-4">
             <h2 className="text-lg font-mono">Agents</h2>

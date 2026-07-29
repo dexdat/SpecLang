@@ -3,7 +3,7 @@
  * Generated from: @implementation/ui-dashboard
  */
 
-import React from 'react';
+import React from "react";
 
 interface NavItem {
   id: string;
@@ -18,17 +18,17 @@ interface SidebarProps {
 }
 
 const defaultNavItems: NavItem[] = [
-  { id: 'overview', label: 'Overview', icon: '◉' },
-  { id: 'cascade', label: 'Cascade', icon: '⟳', badge: 0 },
-  { id: 'agents', label: 'Agents', icon: '◈' },
-  { id: 'files', label: 'File Watcher', icon: '◫' },
-  { id: 'specs', label: 'Specs', icon: '☰' },
-  { id: 'logs', label: 'Logs', icon: '☷' },
-  { id: 'settings', label: 'Settings', icon: '⚙' },
+  { id: "overview", label: "Overview", icon: "◉" },
+  { id: "cascade", label: "Cascade", icon: "⟳", badge: 0 },
+  { id: "agents", label: "Agents", icon: "◈" },
+  { id: "files", label: "File Watcher", icon: "◫" },
+  { id: "specs", label: "Specs", icon: "☰" },
+  { id: "logs", label: "Logs", icon: "☷" },
+  { id: "settings", label: "Settings", icon: "⚙" },
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({
-  activeItem = 'overview',
+  activeItem = "overview",
   onItemClick,
 }) => {
   const handleItemClick = (itemId: string) => {
@@ -46,8 +46,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button
                 className={`w-full flex items-center justify-between px-3 py-2 rounded text-sm transition-colors ${
                   activeItem === item.id
-                    ? 'bg-gray-800 text-white'
-                    : 'text-gray-400 hover:bg-gray-900 hover:text-white'
+                    ? "bg-gray-800 text-white"
+                    : "text-gray-400 hover:bg-gray-900 hover:text-white"
                 }`}
                 onClick={() => handleItemClick(item.id)}
               >

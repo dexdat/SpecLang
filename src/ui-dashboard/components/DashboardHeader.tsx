@@ -3,8 +3,8 @@
  * Generated from: @implementation/ui-dashboard
  */
 
-import React from 'react';
-import { CascadeIndicator } from './CascadeIndicator';
+import React from "react";
+import { CascadeIndicator } from "./CascadeIndicator";
 
 interface DashboardHeaderProps {
   queueDepth?: number;
@@ -29,7 +29,8 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             Queue depth: <span className="text-green-400">{queueDepth}</span>
           </span>
           <span className="text-sm text-gray-400">
-            Convergence: <span className="text-yellow-400">{convergenceTime}s</span>
+            Convergence:{" "}
+            <span className="text-yellow-400">{convergenceTime}s</span>
           </span>
           <button
             className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-sm"

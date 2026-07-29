@@ -5,27 +5,27 @@
 /* Main entry point - imports all CSS modules */
 
 /* Design tokens */
-@import './variables.css';
+@import "./variables.css";
 
 /* CSS Reset */
-@import './reset.css';
+@import "./reset.css";
 
 /* Grid background texture */
-@import './grid.css';
+@import "./grid.css";
 
 /* Typography system */
-@import './typography.css';
+@import "./typography.css";
 
 /* Component styles */
-@import './components.css';
+@import "./components.css";
 
 /* Utility classes */
-@import './utilities.css';
+@import "./utilities.css";
 
 /* Themes - base theme (brutalist-dark) applied by default */
-@import './themes/brutalist-dark.css';
-@import './themes/brutalist-light.css';
-@import './themes/high-contrast.css';
+@import "./themes/brutalist-dark.css";
+@import "./themes/brutalist-light.css";
+@import "./themes/high-contrast.css";
 
 /* Default theme */
 :root {
