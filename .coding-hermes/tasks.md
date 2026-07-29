@@ -19,6 +19,51 @@
 
 ---
 
+### Foreman #83 — NEVER-DONE Audit (2026-07-28, scheduler tick)
+
+**System State:** Load 3.98, 46Gi avail, 16 cores. Up 12d 9h. Node v22.22.3, TypeScript 7.0.2. vitest: 93/97 files (1808/1866 tests, 58 skip), 28.39s — clean run, 0 flakes. Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean.
+
+**Scheduler:** SpecLang confirmed. CooldownS=900, Weight=15, Priority=10, Enabled=true. NamespaceID=coding-hermes. DuckBrain writes to speclang namespace.
+
+**12-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | 30 docs verified on disk (17 root, 13 docs/) |
+| 3. Test Gaps | PASS | 93/97 files, 1808/1866 tests pass (58 skip), 28.39s — 0 flakes at load 3.98 |
+| 4. Package Upgrades | NOTED | postcss 8.5.23→8.5.24 (patch). @types/node 26.1.1→26.1.2 (patch). ESM-only majors remain blocked (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4). |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/**/*.ts |
+| 6. Performance | PASS | 3 bench test files (cascade, daemon, mcp) + monitor.ts utility |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | PASS | Tick #83 written (47d05a04), namespace speclang. Recall verified by ID — confirmed persisted. |
+| 10. Code Quality | PASS | tsc clean. npm audit: 0 vulns. prettier src: all matched. prettier bin: 3 warnings (pre-existing). |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+| 12. Format Gate | PASS | prettier src — all matched. 3 bin files warn (pre-existing, cosmetic). |
+
+**Actions Taken:**
+1. Self-heal: git identity verified (kara), git pull --rebase (up to date), workdir shows _index.json modified (auto-generated timestamp)
+2. Ground truth: ALL checks run fresh this tick — vitest, tsc, speclang validate, hilo graph stats, npm outdated, npm audit, prettier, scheduler API (/api/v1/projects — confirmed SpecLang: W=15, P=10, CooldownS=900, Enabled=true), DuckBrain (remember + recall verified), GitReins
+3. Scheduler: SpecLang confirmed (Weight=15, Priority=10, CooldownS=900, Enabled=true, namespace=coding-hermes). Stable. API at /api/v1/projects (corrected — prior ticks used /api/namespaces which returned 404).
+4. Temp cleanup: test-temp-bootstrap/ and test-temp-meta/ directories deleted (test run artifacts from prior ticks)
+5. DuckBrain: tick #83 written (ID 47d05a04), recall verified by ID — confirmed persisted
+6. npm audit: 0 vulnerabilities. Confirmed clean (tick #79 fix still holds).
+7. prettier: 3 bin files unformatted (same as ticks #79-#82). Source + test files all clean.
+8. GitReins: guard_run PASS (no staged files). 3 tasks all complete (ci-pr-review, THINK-002, PITFALL-MCP-001). Judge config PASS.
+9. 0 new code-level gaps — project remains genuinely idle (62 consecutive idle ticks, 12+ days)
+10. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected (speclang ns, verified), GitReins=clean
+
+**VERDICT: idle — maintenance mode (scheduler stable at 900s cooldown).**
+
+**62nd consecutive idle tick (12+ days).** All gates green. 3 bin-file prettier warnings are pre-existing and cosmetic. No new gaps. DuckBrain write verified. Scheduler confirmed at CooldownS=900, stable.
+
+**Scheduler Health:** Daemon running. SpecLang namespace present. CooldownS=900 (confirmed via /api/v1/projects). Enabled=true. Weight=15. No cooldown reversion since tick #74 restoration.
+
+---
+
 ### Foreman #80 — NEVER-DONE Audit (2026-07-28, scheduler tick)
 
 **System State:** Load 3.70, 46Gi avail, 16 cores. Up 12d 8h. Node v22.22.3, TypeScript 7.0.2. vitest: 92/97 files (1807/1866 tests, 58 skip), 27.48s — 1 performance variance failure (environmental). Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean. prettier: all matched.
