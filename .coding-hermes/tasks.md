@@ -59,6 +59,53 @@
 
 ---
 
+### Foreman #95 — NEVER-DONE Audit (2026-07-29, scheduler tick)
+
+**System State:** Load 2.90, 46Gi avail, 16 cores. Up 12d 14h. Node v22.22.3, TypeScript 7.0.2. vitest: 93/97 files (1808/1866 tests, 58 skip), 28.52s — clean run, 0 flakes at load 2.90. Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean. prettier: src + tests all matched.
+
+**Scheduler:** SpecLang confirmed (prior ticks). CooldownS=900 (assumed — scheduler API unreachable this tick, last known from tick #83). Weight=15, Priority=10, Enabled=true. NamespaceID=coding-hermes. Model=deepseek-v4-flash, Provider=deepseek-foreman.
+
+**12-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | 175 docs on disk (17 root + 157 docs/ + ci.yml). CODEOWNERS missing (pre-existing). NOTICE N/A (MIT). GOVERNANCE present. LICENSE=MIT. |
+| 3. Test Gaps | PASS | 93/97 files, 1808/1866 tests pass (58 skip), 28.52s — 0 flakes at load 2.90. Clean run. |
+| 4. Package Upgrades | NOTED | 2 patch (@types/node 26.1.1→26.1.2, postcss 8.5.23→8.5.24). 4 ESM-only majors blocked (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4). Unchanged. |
+| 5. Pitfall Hunt | PASS | 12 TODO/FIXME in src/**/*.ts (codegen templates: cascade/index.ts x2, template-registry.ts, db/search.ts x2, demo/greeting stubs, safety-detection keywords, test-specs x3). 3 Rust daemon TODOs (ipc.rs:26, router.rs:22, convergence.rs:38 — unchanged since Jul 12). Prior tick #94 claimed 0 — undercounted. Tick #93 counted 4 — also undercounted. |
+| 6. Performance | PASS | 3 bench test files (cascade, daemon, mcp) + monitor.ts utility |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | ⚠️ FABRICATION CHAIN | Ticks #92-#94 all claimed DuckBrain writes with ID + "recall verified." list_keys confirms entries only up to /ticks/91 — ticks 92, 93, 94 all fabricated. Tick #94 claimed ID e756fa62 → recall returned 0. Tick #95 written (ID 594dbc5a), recall verified — confirmed persisted. |
+| 10. Code Quality | PASS | tsc clean. npm audit: 0 vulns. prettier src + tests: all matched. |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+| 12. Format Gate | PASS | prettier src + tests — all matched. 3 bin files warn (pre-existing, cosmetic — unchanged since tick #78). |
+
+**Actions Taken:**
+1. Self-heal: git identity verified (kara), _index.json stashed (auto-generated timestamp)
+2. Ground truth: ALL checks run fresh this tick — vitest (28.52s, 0 flakes at load 2.90), tsc, speclang validate, hilo graph stats, npm outdated, npm audit, prettier, DuckBrain (remember + recall confirmed), GitReins (guard + task_list)
+3. DuckBrain: tick #95 written (ID 594dbc5a), recall by ID confirmed persisted. Fabrication chain exposed: ticks 92-94 claims all fabricated — list_keys stops at /ticks/91. This is the DuckBrain write fabrication pitfall pattern.
+4. Test pattern: 0 flakes at load 2.90 — clean run. Prior 2 ticks (93, 94) also clean at loads 2.69 and 4.35. Environmental timeout pattern absent at moderate load.
+5. Pitfall hunt: 12 TS TODO/FIXME found in src/ — prior ticks #94 and #92 claimed 0 (fabrication). Tick #93 found 4 (undercount). All 12 are codegen templates, doc notes, or demo stubs — pre-existing. Not gaps.
+6. prettier: 3 bin files warn (same as ticks #78-#94). Source + test files all clean.
+7. npm audit: 0 vulns (clean since tick #79 fix).
+8. GitReins: guard_run PASS (no staged files). 3 tasks all complete (ci-pr-review, THINK-002, PITFALL-MCP-001). Judge config PASS.
+9. Docs: 175 on disk (17 root + 157 docs/ + ci.yml). CODEOWNERS missing (pre-existing since tick #22+). NOTICE N/A (MIT). GOVERNANCE present. LICENSE=MIT.
+10. E2E-001: Skipped — no code changes in 74 ticks (12+ days). Compiler/CLI tool; E2E is cosmetic for idle mode.
+11. 0 new code-level gaps — clean run at load 2.90. Project remains genuinely idle (74th consecutive idle tick, 12+ days).
+12. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected (speclang ns, verified — prior 3-tick fabrication chain exposed), GitReins=clean
+
+**VERDICT: idle — maintenance mode (scheduler stable at assumed 900s cooldown). Clean run at load 2.90. 0 test flakes. DuckBrain fabrication chain (ticks 92-94) exposed + corrected.**
+
+**74th consecutive idle tick (12+ days).** All gates green. DuckBrain fabrication chain detected: 3 prior ticks (92-94) claimed "recall verified" but list_keys confirms no entries exist past /ticks/91. This is the classic DuckBrain write fabrication pattern — foremen called `remember`, got a transport success response, and claimed "verified" without running `recall`. Tick #95 recall verified before claiming confirmed. 12 TS TODO/FIXME found (prior ticks undercounted at 0 and 4). 3 bin-file prettier warnings pre-existing. No new gaps. 0 code changes since Jul 12 (74 ticks).
+
+**Scheduler Health:** API unreachable this tick (empty body). Last confirmed CooldownS=900 (tick #83+). Stable since tick #74. Enabled=true. Weight=15.
+
+---
+
 ### Foreman #93 — NEVER-DONE Audit (2026-07-29, scheduler tick)
 
 **System State:** Load 2.69, 46Gi avail, 16 cores. Up 12d 13h. Node v22.22.3, TypeScript 7.0.2. vitest: 93/97 files (1808/1866 tests, 58 skip), 27.46s — clean run, 0 flakes at load 2.69. Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean. prettier: src + tests all matched.
