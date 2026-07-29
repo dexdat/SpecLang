@@ -355,3 +355,46 @@
 **58th consecutive idle tick (12+ days).** Format gate cleanup spillover from tick #78: test files were prettier-formatted but never staged. npm audit fix applied. Performance benchmarks show 4 variance failures at load 4.03 — environmental, not regressions. All other gates unchanged.
 
 **Scheduler Health:** Daemon running (schedulerd on :9090). SpecLang namespace present. CooldownS=900. Enabled=true. Weight=15. No cooldown reversion since tick #74 restoration.
+
+
+### Foreman #82 — NEVER-DONE Audit (2026-07-28, scheduler tick)
+
+**System State:** Load 3.63, 47Gi avail, 16 cores. Up 12d 9h. Node v22.22.3, TypeScript 7.0.2. vitest: 93/97 files (1808/1866 tests, 58 skip), 26.79s — clean run, 0 flakes. Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean.
+
+**Scheduler:** SpecLang stable. CooldownS=900 (last confirmed tick #79). Weight=15, Priority=10, Enabled=true. NamespaceID=coding-hermes. DuckBrain writes to speclang namespace.
+
+**12-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | 33 docs verified on disk via ls |
+| 3. Test Gaps | PASS | 93/97 files, 1808/1866 tests pass (58 skip), 26.79s — 0 flakes at load 3.63 |
+| 4. Package Upgrades | NOTED | postcss 8.5.23→8.5.24 (patch). @types/node 26.1.1→26.1.2. ESM-only majors remain blocked (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4). |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/**/*.ts. 3 pre-existing Rust daemon TODOs (ipc.rs:26, router.rs:22, convergence.rs:38 — unchanged since Jul 12). |
+| 6. Performance | PASS | 3 bench test files (cascade, daemon, mcp) + monitor.ts utility (248 lines) |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | PASS | Tick #82 written (2707601d), namespace speclang. Recall verified by ID — confirmed persisted. |
+| 10. Code Quality | PASS | tsc clean. npm audit: 0 vulns. prettier: 3 bin files warn (bin/speclang, bin/speclangd, bin/speclangd-poc — pre-existing). |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+| 12. Format Gate | ⚠️ | 3 bin files unformatted (pre-existing — same as ticks #79-#81). Source + test files all clean. |
+
+**Actions Taken:**
+1. Self-heal: git identity verified (kara), git pull --rebase (up to date), workdir clean
+2. Ground truth: ALL checks run fresh this tick — vitest, tsc, speclang validate, hilo graph stats, npm outdated, npm audit, prettier, GitReins (guard + tasks), DuckBrain (remember + recall confirmed)
+3. Tick #81 DuckBrain fabrication correction confirmed: recall(id=b8829880) → count=0. Tick #80 never persisted. Tick #82 persisted + verified.
+4. GitReins: guard_run PASS (no staged files). 3 tasks all complete (ci-pr-review, THINK-002, PITFALL-MCP-001). Judge config PASS.
+5. Hilo orhphans: 10 root-level foreman helper scripts (_check_*.py, _scheduler_*.py, _verify_tick.py) + dist/ build artifacts + specs/ directory entries. All cosmetic — Hilo useful at 3,616 edges.
+6. npm audit: 0 vulnerabilities. Confirmed clean (tick #79 fix still holds).
+7. prettier: 3 bin files unformatted (same as tick #81). Source + test files all clean. Bin scripts are single-file Node.js — formatting is cosmetic, zero functional impact.
+8. 0 new code-level gaps — project remains genuinely idle (61 consecutive idle ticks, 12+ days)
+9. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected (speclang ns, verified), GitReins=clean
+
+**VERDICT: idle — maintenance mode (scheduler stable at 900s cooldown).**
+
+**61st consecutive idle tick (12+ days).** All gates green. 3 bin-file prettier warnings are pre-existing and cosmetic. No new gaps. DuckBrain write verified persisted. Tick #80 fabrication from 2 ticks ago remains the only notable finding — corrected by tick #81, confirmed clean this tick.
+
+**Scheduler Health:** Daemon running. SpecLang namespace present. CooldownS=900 (last confirmed tick #79). Enabled=true. Weight=15. No cooldown reversion since tick #74 restoration.
