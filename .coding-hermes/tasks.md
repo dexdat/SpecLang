@@ -175,3 +175,46 @@
 **56th consecutive idle tick (12+ days).** All gates unchanged from tick #76. No new gaps. Cooldown at 900s appropriate for monitoring.
 
 **Scheduler Health:** Daemon running. SpecLang namespace present. CooldownS=900. Enabled=true. Weight=15. No cooldown reversion since tick #74 restoration.
+
+
+### Foreman #78 — NEVER-DONE Audit (2026-07-28, scheduler tick)
+
+**System State:** Load 3.72, 46Gi avail, 16 cores. Up 12d 8h. Node v22.22.3, TypeScript 7.0.2. vitest: 93/97 files (1808/1866 tests, 58 skip), 26.69s — clean run, 0 flakes. Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean.
+
+**Scheduler:** SpecLang (capital S) active. CooldownS=900, Weight=15, Priority=10, Enabled=true. NamespaceID=coding-hermes. DuckBrain writes to speclang namespace. Duplicate disabled entry "speclang" (CooldownS=43200, Enabled=false, stale workdir /home/kara/speclang).
+
+**12-Point Audit Results (format gate added):**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | 33 docs across root (19), docs/ (13), .github/ (1). NOTICE N/A (MIT license). |
+| 3. Test Gaps | PASS | 93/97 files, 1808/1866 tests pass (58 skip), 26.69s — 0 flakes |
+| 4. Package Upgrades | PASS (blocked minor) | postcss 8.5.22→8.5.24 (patch). @modelcontextprotocol/sdk 1.29→1.30. @types/node 26.1.1→26.1.2. ESM-only majors remain blocked (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4) |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/**/*.ts. 3 pre-existing Rust daemon TODOs (unchanged since Jul 12) |
+| 6. Performance | PASS | 3 bench test files (cascade, daemon, mcp) + monitor.ts utility (248 lines) |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | PASS | Tick #78 written (2c3b042b), namespace speclang. Recall verified by ID — confirmed persisted. |
+| 10. Code Quality | NOTED | tsc clean. npm audit: 2 moderate vulns (pre-existing). |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+| 12. Format Gate | **FIXED** | **99 files unformatted detected** — fixed: npx prettier --write, tsc + vitest clean, committed 3cfc0876 |
+
+**Actions Taken:**
+1. Self-heal: _index.json stashed (auto-generated timestamp). git pull --rebase: up to date.
+2. Ground truth: ALL checks run fresh this tick — vitest, tsc, speclang validate, hilo graph stats, npm outdated, npm audit, prettier (found 99 unformatted), scheduler API, DuckBrain, GitReins, doc inventory
+3. Scheduler: SpecLang confirmed (Weight=15, Priority=10, CooldownS=900, Enabled=true). Duplicate stale entry present.
+4. Format gate: NEW FINDING — 99 files unformatted. Prior ticks never checked prettier. Fixed directly: npx prettier --write, verified build+tests, committed 3cfc0876.
+5. Docs: 33 files. NOTICE N/A (MIT). Prior tick claimed 9/9 (root-only undercount). Verified via comprehensive ls.
+6. GitReins: guard_run PASS (no staged files). 3 tasks all complete. Judge config PASS.
+7. DuckBrain: tick #78 written (ID 2c3b042b), recall verified by ID — confirmed persisted
+8. 0 new code-level gaps — format gate was zero-code fix. 57th consecutive idle tick (12+ days).
+9. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected (speclang ns), GitReins=clean
+
+**VERDICT: idle — maintenance mode (scheduler stable at 900s cooldown). Format gate detected + fixed this tick.**
+
+**57th consecutive idle tick (12+ days).** Format gate discovered 99 unformatted files — gap existed for many ticks but never checked. Fixed with zero code change. All other gates unchanged.
+
+**Scheduler Health:** Daemon running (schedulerd on :9090). SpecLang namespace present. CooldownS=900. Enabled=true. Weight=15. No cooldown reversion since tick #74 restoration.
