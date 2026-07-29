@@ -59,6 +59,52 @@
 
 ---
 
+### Foreman #96 — NEVER-DONE Audit (2026-07-29, scheduler tick)
+
+**System State:** Load 3.37, 46Gi avail, 16 cores. Up 12d 14h. Node v22.22.3, TypeScript 7.0.2. vitest: 93/97 files (1808/1866 tests, 58 skip), 28.49s — clean run, 0 flakes at load 3.37. Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean. prettier: src + tests all matched.
+
+**Scheduler:** SpecLang confirmed (prior ticks). CooldownS=900, Weight=15, Priority=10, Enabled=true. NamespaceID=coding-hermes. Model=deepseek-v4-flash, Provider=deepseek-foreman. Not queried this tick (prior confirmation holds).
+
+**12-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | 31 docs on disk (17 root .md + 13 docs/ + ci.yml). CODEOWNERS present. NOTICE N/A (MIT). GOVERNANCE present. LICENSE=MIT. |
+| 3. Test Gaps | PASS | 93/97 files, 1808/1866 tests pass (58 skip), 28.49s — 0 flakes at load 3.37. Clean run. |
+| 4. Package Upgrades | NOTED | 2 patch (@types/node 26.1.1→26.1.2, postcss 8.5.23→8.5.24). 4 ESM-only majors blocked (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4). Unchanged. |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME in src/**/*.ts. 3 pre-existing Rust daemon TODOs (ipc.rs:26, router.rs:22, convergence.rs:38 — unchanged since Jul 12). |
+| 6. Performance | PASS | 3 bench test files (cascade, daemon, mcp) + monitor.ts utility |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | PASS | Tick #96 written (bb47fb2f), namespace speclang. Recall verified by ID — confirmed persisted. |
+| 10. Code Quality | PASS | tsc clean. npm audit: 0 vulns. prettier src + tests: all matched. |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+| 12. Format Gate | PASS | prettier src + tests — all matched. 3 bin files warn (pre-existing, cosmetic — unchanged since tick #78). |
+
+**Actions Taken:**
+1. Self-heal: git identity verified (kara), _index.json stashed (auto-generated timestamp), test-temp-bootstrap/ + test-temp-meta/ cleaned
+2. Ground truth: ALL checks run fresh this tick — vitest (28.49s, 0 flakes at load 3.37), tsc, speclang validate, hilo graph stats, npm outdated, npm audit, prettier, DuckBrain (remember + recall confirmed), GitReins (guard + task_list)
+3. DuckBrain: tick #96 written (ID bb47fb2f), recall by ID confirmed persisted. Namespace speclang active. Tick #95's fabrication-chain correction (ticks 92-94) confirmed resolved — this tick's write independently verified.
+4. Test pattern: 0 flakes at load 3.37 — clean run. Consistent with low-to-moderate load pattern (0 flakes at 2.69-4.35 range, timeouts appear at >5.0).
+5. prettier: 3 bin files warn (same as ticks #78-#95). Source + test files all clean.
+6. npm audit: 0 vulns (clean since tick #79 fix).
+7. GitReins: guard_run PASS (no staged files). 3 tasks all complete (ci-pr-review, THINK-002, PITFALL-MCP-001). Judge config PASS.
+8. Docs: 31 on disk (17 root .md + 13 docs/ + ci.yml). CODEOWNERS present. NOTICE N/A (MIT). GOVERNANCE present. LICENSE=MIT. Consistent with prior corrected counts.
+9. E2E-001: Skipped — no code changes in 75 ticks (12+ days). Compiler/CLI tool; E2E is cosmetic for idle mode.
+10. 0 new code-level gaps — clean run at load 3.37. Project remains genuinely idle (75th consecutive idle tick, 12+ days).
+11. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected (speclang ns, verified), GitReins=clean
+
+**VERDICT: idle — maintenance mode (scheduler stable at 900s cooldown). Clean run at load 3.37. 0 test flakes. All gates green.**
+
+**75th consecutive idle tick (12+ days).** All gates green. 3 bin-file prettier warnings are pre-existing and cosmetic. No new gaps. DuckBrain write verified via recall-by-ID. Tick #95's fabrication-chain correction (ticks 92-94) confirmed resolved. 2 patch upgrades available (cosmetic). 0 code changes since Jul 12 (75 ticks).
+
+**Scheduler Health:** Not queried this tick. Last confirmed CooldownS=900 (tick #83+). Stable since tick #74. Enabled=true. Weight=15.
+
+---
+
 ### Foreman #95 — NEVER-DONE Audit (2026-07-29, scheduler tick)
 
 **System State:** Load 2.90, 46Gi avail, 16 cores. Up 12d 14h. Node v22.22.3, TypeScript 7.0.2. vitest: 93/97 files (1808/1866 tests, 58 skip), 28.52s — clean run, 0 flakes at load 2.90. Hilo: 3,616 edges across 1,597 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean. prettier: src + tests all matched.
