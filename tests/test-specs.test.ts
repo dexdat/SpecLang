@@ -14,20 +14,17 @@
 // @ref: @speclang/test-specs/examples
 // ---
 
-import { describe, it, expect, beforeAll } from 'vitest';
-import * as path from 'path';
-import * as fs from 'fs/promises';
-import type {
-  TestSpec,
-  TestScenario
-} from '../src/test-specs';
+import { describe, it, expect, beforeAll } from "vitest";
+import * as path from "path";
+import * as fs from "fs/promises";
+import type { TestSpec, TestScenario } from "../src/test-specs";
 import {
   TestSpecParser,
   TestGenerator,
   TestRunner,
   TestSpecReporter,
-  TestResultSync
-} from '../src/test-specs';
+  TestResultSync,
+} from "../src/test-specs";
 
 // Sample test spec content for parsing tests
 const sampleTestSpec = `# speclang-header lines:12
@@ -72,63 +69,71 @@ Then: validation result is correct
 | ABCDEF | false | missing lowercase and numbers |
 `;
 
-describe('TestSpecParser', () => {
+describe("TestSpecParser", () => {
   let parser: TestSpecParser;
 
   beforeAll(() => {
     parser = new TestSpecParser();
   });
 
-  it('should parse test spec with scenarios', () => {
+  it("should parse test spec with scenarios", () => {
     const spec = parser.parse(sampleTestSpec);
 
-    expect(spec.id).toBe('@tests/auth/login');
-    expect(spec.version).toBe('1.0.0');
-    expect(spec.target).toBe('@specs/auth#login');
-    expect(spec.tags).toEqual(['auth', 'login', 'critical']);
+    expect(spec.id).toBe("@tests/auth/login");
+    expect(spec.version).toBe("1.0.0");
+    expect(spec.target).toBe("@specs/auth#login");
+    expect(spec.tags).toEqual(["auth", "login", "critical"]);
     expect(spec.scenarios).toHaveLength(3);
   });
 
-  it('should parse scenario with given/when/then', () => {
+  it("should parse scenario with given/when/then", () => {
     const spec = parser.parse(sampleTestSpec);
     const scenario = spec.scenarios[0];
 
-    expect(scenario.name).toBe('Successful login with valid credentials');
+    expect(scenario.name).toBe("Successful login with valid credentials");
     expect(scenario.given).toHaveLength(2);
-    expect(scenario.given[0]).toContain('registered user');
-    expect(scenario.when).toContain('submits login');
+    expect(scenario.given[0]).toContain("registered user");
+    expect(scenario.when).toContain("submits login");
     expect(scenario.then).toHaveLength(2);
-    expect(scenario.then[0]).toContain('JWT token');
+    expect(scenario.then[0]).toContain("JWT token");
   });
 
-  it('should parse parameterized tests with examples', () => {
+  it("should parse parameterized tests with examples", () => {
     const spec = parser.parse(sampleTestSpec);
     const scenario = spec.scenarios[2];
 
     expect(scenario.examples).toBeDefined();
-    expect(scenario.examples?.headers).toEqual(['password', 'is_valid', 'reason']);
+    expect(scenario.examples?.headers).toEqual([
+      "password",
+      "is_valid",
+      "reason",
+    ]);
     expect(scenario.examples?.rows).toHaveLength(3);
-    expect(scenario.examples?.rows[0]).toEqual(['Abc123!@', 'true', 'meets all requirements']);
+    expect(scenario.examples?.rows[0]).toEqual([
+      "Abc123!@",
+      "true",
+      "meets all requirements",
+    ]);
   });
 
-  it('should throw error for invalid spec without header', () => {
+  it("should throw error for invalid spec without header", () => {
     expect(() => {
-      parser.parse('# No header here\n## Scenario: Test');
-    }).toThrow('No YAML header found');
+      parser.parse("# No header here\n## Scenario: Test");
+    }).toThrow("No YAML header found");
   });
 
-  it('should throw error for spec without id', () => {
+  it("should throw error for spec without id", () => {
     expect(() => {
       parser.parse(`---
 version: 1.0.0
 ---
 
 # Test`);
-    }).toThrow('must have an id');
+    }).toThrow("must have an id");
   });
 });
 
-describe('TestGenerator', () => {
+describe("TestGenerator", () => {
   let parser: TestSpecParser;
   let generator: TestGenerator;
 
@@ -137,82 +142,84 @@ describe('TestGenerator', () => {
     generator = new TestGenerator();
   });
 
-  it('should generate TypeScript test code', () => {
+  it("should generate TypeScript test code", () => {
     const spec = parser.parse(sampleTestSpec);
-    const code = generator.generate(spec, 'typescript');
+    const code = generator.generate(spec, "typescript");
 
-    expect(code).toContain('@speclang-generated');
+    expect(code).toContain("@speclang-generated");
     expect(code).toContain("describe('Login flow tests'");
     expect(code).toContain("it('Successful login");
-    expect(code).toContain('expect(result.token).toBeDefined()');
+    expect(code).toContain("expect(result.token).toBeDefined()");
   });
 
-  it('should generate Python test code', () => {
+  it("should generate Python test code", () => {
     const spec = parser.parse(sampleTestSpec);
-    const code = generator.generate(spec, 'python');
+    const code = generator.generate(spec, "python");
 
-    expect(code).toContain('# @speclang-generated');
-    expect(code).toContain('class TestLoginflowtests');
-    expect(code).toContain('def test_successful_login');
+    expect(code).toContain("# @speclang-generated");
+    expect(code).toContain("class TestLoginflowtests");
+    expect(code).toContain("def test_successful_login");
   });
 
-  it('should generate Go test code', () => {
+  it("should generate Go test code", () => {
     const spec = parser.parse(sampleTestSpec);
-    const code = generator.generate(spec, 'go');
+    const code = generator.generate(spec, "go");
 
-    expect(code).toContain('// @speclang-generated');
-    expect(code).toContain('func TestLoginflowtests');
+    expect(code).toContain("// @speclang-generated");
+    expect(code).toContain("func TestLoginflowtests");
     expect(code).toContain('t.Run("Successful login with valid credentials"');
   });
 
-  it('should generate parameterized tests', () => {
+  it("should generate parameterized tests", () => {
     const spec = parser.parse(sampleTestSpec);
-    const code = generator.generate(spec, 'typescript');
+    const code = generator.generate(spec, "typescript");
 
-    expect(code).toContain('describe(\'Parameterized password validation\'');
-    expect(code).toContain('params.password');
+    expect(code).toContain("describe('Parameterized password validation'");
+    expect(code).toContain("params.password");
     expect(code).toContain("'Abc123!@'");
   });
 
-  it('should translate Given to setup code', () => {
+  it("should translate Given to setup code", () => {
     const spec = parser.parse(sampleTestSpec);
-    const code = generator.generate(spec, 'typescript');
+    const code = generator.generate(spec, "typescript");
 
     // Check that "registered user" is translated
     expect(code).toContain("email: 'user@example.com'");
   });
 
-  it('should translate When to action code', () => {
+  it("should translate When to action code", () => {
     const spec = parser.parse(sampleTestSpec);
-    const code = generator.generate(spec, 'typescript');
+    const code = generator.generate(spec, "typescript");
 
     // Check that login action is translated
-    expect(code).toContain("await login('user@example.com', 'correct-password')");
+    expect(code).toContain(
+      "await login('user@example.com', 'correct-password')",
+    );
   });
 
-  it('should translate Then to assertions', () => {
+  it("should translate Then to assertions", () => {
     const spec = parser.parse(sampleTestSpec);
-    const code = generator.generate(spec, 'typescript');
+    const code = generator.generate(spec, "typescript");
 
     // Check JWT assertion
-    expect(code).toContain('expect(result.token).toBeDefined()');
+    expect(code).toContain("expect(result.token).toBeDefined()");
     // Check 401 assertion
-    expect(code).toContain('expect(result.status).toBe(401)');
+    expect(code).toContain("expect(result.status).toBe(401)");
     // Check error message assertion
     expect(code).toContain("expect(result.error).toBe('Invalid credentials')");
   });
 });
 
-describe('TestSpecReporter', () => {
+describe("TestSpecReporter", () => {
   let reporter: TestSpecReporter;
 
   beforeAll(() => {
     reporter = new TestSpecReporter();
   });
 
-  it('should format a test report', () => {
+  it("should format a test report", () => {
     const report = {
-      specId: '@tests/auth/login',
+      specId: "@tests/auth/login",
       totalScenarios: 3,
       passed: 2,
       failed: 1,
@@ -220,67 +227,67 @@ describe('TestSpecReporter', () => {
       duration: 150,
       results: [
         {
-          specId: '@tests/auth/login',
-          scenarioName: 'Successful login',
-          status: 'passed' as const,
+          specId: "@tests/auth/login",
+          scenarioName: "Successful login",
+          status: "passed" as const,
           duration: 50,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         {
-          specId: '@tests/auth/login',
-          scenarioName: 'Wrong password',
-          status: 'failed' as const,
+          specId: "@tests/auth/login",
+          scenarioName: "Wrong password",
+          status: "failed" as const,
           duration: 100,
-          error: 'Expected 401, got 500',
-          timestamp: Date.now()
-        }
-      ]
+          error: "Expected 401, got 500",
+          timestamp: Date.now(),
+        },
+      ],
     };
 
     const output = reporter.formatReport(report);
 
-    expect(output).toContain('Test Report: @tests/auth/login');
-    expect(output).toContain('Passed: 2');
-    expect(output).toContain('Failed: 1');
-    expect(output).toContain('✓ Successful login');
-    expect(output).toContain('✗ Wrong password');
-    expect(output).toContain('Expected 401, got 500');
+    expect(output).toContain("Test Report: @tests/auth/login");
+    expect(output).toContain("Passed: 2");
+    expect(output).toContain("Failed: 1");
+    expect(output).toContain("✓ Successful login");
+    expect(output).toContain("✗ Wrong password");
+    expect(output).toContain("Expected 401, got 500");
   });
 
-  it('should format a summary of multiple reports', () => {
+  it("should format a summary of multiple reports", () => {
     const reports = [
       {
-        specId: '@tests/auth/login',
+        specId: "@tests/auth/login",
         totalScenarios: 3,
         passed: 2,
         failed: 1,
         skipped: 0,
         duration: 150,
-        results: []
+        results: [],
       },
       {
-        specId: '@tests/auth/logout',
+        specId: "@tests/auth/logout",
         totalScenarios: 2,
         passed: 2,
         failed: 0,
         skipped: 0,
         duration: 50,
-        results: []
-      }
+        results: [],
+      },
     ];
 
     const output = reporter.formatSummary(reports);
 
-    expect(output).toContain('Specs: 2');
-    expect(output).toContain('Scenarios: 5');
-    expect(output).toContain('Passed: 4');
-    expect(output).toContain('Failed: 1');
+    expect(output).toContain("Specs: 2");
+    expect(output).toContain("Scenarios: 5");
+    expect(output).toContain("Passed: 4");
+    expect(output).toContain("Failed: 1");
   });
 
-  it('should format failures only', () => {
+  it("should format failures only", () => {
     const reports = [
       {
-        specId: '@tests/auth/login',
+        specId: "@tests/auth/login",
         totalScenarios: 2,
         passed: 1,
         failed: 1,
@@ -288,35 +295,35 @@ describe('TestSpecReporter', () => {
         duration: 100,
         results: [
           {
-            specId: '@tests/auth/login',
-            scenarioName: 'Failed scenario',
-            status: 'failed' as const,
+            specId: "@tests/auth/login",
+            scenarioName: "Failed scenario",
+            status: "failed" as const,
             duration: 50,
-            error: 'Test error',
-            timestamp: Date.now()
-          }
-        ]
-      }
+            error: "Test error",
+            timestamp: Date.now(),
+          },
+        ],
+      },
     ];
 
     const output = reporter.formatFailures(reports);
 
-    expect(output).toContain('Failed Tests');
-    expect(output).toContain('✗ Failed scenario');
-    expect(output).toContain('Test error');
+    expect(output).toContain("Failed Tests");
+    expect(output).toContain("✗ Failed scenario");
+    expect(output).toContain("Test error");
   });
 
-  it('should get summary statistics', () => {
+  it("should get summary statistics", () => {
     const reports = [
       {
-        specId: '@tests/auth/login',
+        specId: "@tests/auth/login",
         totalScenarios: 3,
         passed: 2,
         failed: 1,
         skipped: 0,
         duration: 150,
-        results: []
-      }
+        results: [],
+      },
     ];
 
     const stats = reporter.getSummaryStats(reports);
@@ -328,40 +335,40 @@ describe('TestSpecReporter', () => {
     expect(stats.passRate).toBeCloseTo(66.67, 1);
   });
 
-  it('should format JSON output', () => {
+  it("should format JSON output", () => {
     const report = {
-      specId: '@tests/auth/login',
+      specId: "@tests/auth/login",
       totalScenarios: 1,
       passed: 1,
       failed: 0,
       skipped: 0,
       duration: 100,
-      results: []
+      results: [],
     };
 
     const json = reporter.formatJson(report);
     const parsed = JSON.parse(json);
 
-    expect(parsed.specId).toBe('@tests/auth/login');
+    expect(parsed.specId).toBe("@tests/auth/login");
     expect(parsed.passed).toBe(1);
   });
 });
 
-describe('TestSpec Integration', () => {
-  it('should parse and generate a complete test', () => {
+describe("TestSpec Integration", () => {
+  it("should parse and generate a complete test", () => {
     const parser = new TestSpecParser();
     const generator = new TestGenerator();
 
     const spec = parser.parse(sampleTestSpec);
-    const code = generator.generate(spec, 'typescript');
+    const code = generator.generate(spec, "typescript");
 
     // Should have all three scenarios
-    expect(code).toContain('Successful login');
-    expect(code).toContain('Login fails');
-    expect(code).toContain('Parameterized');
+    expect(code).toContain("Successful login");
+    expect(code).toContain("Login fails");
+    expect(code).toContain("Parameterized");
   });
 
-  it('should handle edge cases in parsing', () => {
+  it("should handle edge cases in parsing", () => {
     const edgeCaseSpec = `# speclang-header lines:5
 id: "@tests/edge"
 version: 1.0.0
@@ -381,11 +388,11 @@ Then: nothing occurs
 
     expect(spec.scenarios).toHaveLength(1);
     expect(spec.scenarios[0].given).toHaveLength(1);
-    expect(spec.scenarios[0].when).toContain('nothing happens');
+    expect(spec.scenarios[0].when).toContain("nothing happens");
     expect(spec.scenarios[0].then).toHaveLength(1);
   });
 
-  it('should handle scenario with only when and then', () => {
+  it("should handle scenario with only when and then", () => {
     const minimalSpec = `# speclang-header lines:5
 id: "@tests/minimal"
 version: 1.0.0
@@ -402,13 +409,13 @@ Then: a result is returned
 
     expect(spec.scenarios).toHaveLength(1);
     expect(spec.scenarios[0].given).toHaveLength(0);
-    expect(spec.scenarios[0].when).toContain('an action occurs');
+    expect(spec.scenarios[0].when).toContain("an action occurs");
     expect(spec.scenarios[0].then).toHaveLength(1);
   });
 });
 
-describe('Natural Language Translation', () => {
-  it('should handle password validation translation', () => {
+describe("Natural Language Translation", () => {
+  it("should handle password validation translation", () => {
     const validatorSpec = `# speclang-header lines:5
 id: "@tests/validator"
 version: 1.0.0
@@ -425,14 +432,14 @@ Then: validation result is correct
     const generator = new TestGenerator();
 
     const spec = parser.parse(validatorSpec);
-    const code = generator.generate(spec, 'typescript');
+    const code = generator.generate(spec, "typescript");
 
     // Should contain validation logic
-    expect(code).toContain('validatePassword');
-    expect(code).toContain('params.password');
+    expect(code).toContain("validatePassword");
+    expect(code).toContain("params.password");
   });
 
-  it('should handle account locking scenarios', () => {
+  it("should handle account locking scenarios", () => {
     const lockSpec = `# speclang-header lines:5
 id: "@tests/lock"
 version: 1.0.0
@@ -450,12 +457,12 @@ Then: the account is locked for 15 minutes
     const generator = new TestGenerator();
 
     const spec = parser.parse(lockSpec);
-    const code = generator.generate(spec, 'typescript');
+    const code = generator.generate(spec, "typescript");
 
-    expect(code).toContain('Locked for 15 minutes');
+    expect(code).toContain("Locked for 15 minutes");
   });
 
-  it('should handle token expiry scenarios', () => {
+  it("should handle token expiry scenarios", () => {
     const expirySpec = `# speclang-header lines:5
 id: "@tests/token"
 version: 1.0.0
@@ -472,24 +479,24 @@ Then: token expires in 24 hours
     const generator = new TestGenerator();
 
     const spec = parser.parse(expirySpec);
-    const code = generator.generate(spec, 'typescript');
+    const code = generator.generate(spec, "typescript");
 
-    expect(code).toContain('24 * 60 * 60');
+    expect(code).toContain("24 * 60 * 60");
   });
 });
 
-describe('Error Handling', () => {
-  it('should throw on unsupported language', () => {
+describe("Error Handling", () => {
+  it("should throw on unsupported language", () => {
     const parser = new TestSpecParser();
     const generator = new TestGenerator();
     const spec = parser.parse(sampleTestSpec);
 
     expect(() => {
-      generator.generate(spec, 'java' as any);
-    }).toThrow('Unsupported language');
+      generator.generate(spec, "java" as any);
+    }).toThrow("Unsupported language");
   });
 
-  it('should handle empty scenarios gracefully', () => {
+  it("should handle empty scenarios gracefully", () => {
     const emptySpec = `# speclang-header lines:5
 id: "@tests/empty"
 version: 1.0.0

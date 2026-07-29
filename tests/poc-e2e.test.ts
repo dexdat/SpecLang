@@ -1,21 +1,29 @@
 /**
  * E2E Test: Demo Workflow
- * 
+ *
  * Tests the complete end-to-end flow from spec to working code
  * as described in specs/roadmap.spec.dir/poc.spec.dir/demo-workflow.spec.md
  */
 
-import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
-import { existsSync, readFileSync, writeFileSync, mkdirSync, rmSync } from 'fs';
-import { join } from 'path';
-import { symlink, unlink } from 'fs/promises';
-import { execSync } from 'child_process';
+import {
+  describe,
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  afterEach,
+} from "vitest";
+import { existsSync, readFileSync, writeFileSync, mkdirSync, rmSync } from "fs";
+import { join } from "path";
+import { symlink, unlink } from "fs/promises";
+import { execSync } from "child_process";
 
-const TEST_DIR = join(process.cwd(), 'test-e2e-output');
-const SPECS_DIR = join(TEST_DIR, 'specs');
-const SRC_DIR = join(TEST_DIR, 'src');
+const TEST_DIR = join(process.cwd(), "test-e2e-output");
+const SPECS_DIR = join(TEST_DIR, "specs");
+const SRC_DIR = join(TEST_DIR, "src");
 
-describe('E2E: Demo Workflow', () => {
+describe("E2E: Demo Workflow", () => {
   beforeAll(() => {
     // Create test directories
     mkdirSync(TEST_DIR, { recursive: true });
@@ -30,8 +38,8 @@ describe('E2E: Demo Workflow', () => {
     }
   });
 
-  describe('Step 1: Create Spec', () => {
-    it('should create a greeting spec file', () => {
+  describe("Step 1: Create Spec", () => {
+    it("should create a greeting spec file", () => {
       const specContent = `# speclang-header lines:10
 id: "@test/greeting"
 version: 1.0.0
@@ -59,48 +67,48 @@ greet("World") // "Hello, World!"
 \`\`\`
 `;
 
-      const specPath = join(SPECS_DIR, 'greeting.spec.md');
-      writeFileSync(specPath, specContent, 'utf-8');
+      const specPath = join(SPECS_DIR, "greeting.spec.md");
+      writeFileSync(specPath, specContent, "utf-8");
 
       expect(existsSync(specPath)).toBe(true);
-      
-      const content = readFileSync(specPath, 'utf-8');
-      expect(content).toContain('# speclang-header');
+
+      const content = readFileSync(specPath, "utf-8");
+      expect(content).toContain("# speclang-header");
       expect(content).toContain('id: "@test/greeting"');
-      expect(content).toContain('### @block:greet @kind:function');
+      expect(content).toContain("### @block:greet @kind:function");
     });
   });
 
-  describe('Step 2: Parse Spec', () => {
-    it('should parse spec header correctly', () => {
+  describe("Step 2: Parse Spec", () => {
+    it("should parse spec header correctly", () => {
       // This simulates what HeaderParser would do
-      const specPath = join(SPECS_DIR, 'greeting.spec.md');
-      const content = readFileSync(specPath, 'utf-8');
-      
+      const specPath = join(SPECS_DIR, "greeting.spec.md");
+      const content = readFileSync(specPath, "utf-8");
+
       // Check header parsing
       const headerMatch = content.match(/# speclang-header lines:(\d+)/);
       expect(headerMatch).toBeTruthy();
-      expect(headerMatch![1]).toBe('10');
-      
+      expect(headerMatch![1]).toBe("10");
+
       const idMatch = content.match(/id: "([^"]+)"/);
       expect(idMatch).toBeTruthy();
-      expect(idMatch![1]).toBe('@test/greeting');
+      expect(idMatch![1]).toBe("@test/greeting");
     });
 
-    it('should parse block definition correctly', () => {
-      const specPath = join(SPECS_DIR, 'greeting.spec.md');
-      const content = readFileSync(specPath, 'utf-8');
-      
+    it("should parse block definition correctly", () => {
+      const specPath = join(SPECS_DIR, "greeting.spec.md");
+      const content = readFileSync(specPath, "utf-8");
+
       // Check block parsing
       const blockMatch = content.match(/### @block:(\w+) @kind:(\w+)/);
       expect(blockMatch).toBeTruthy();
-      expect(blockMatch![1]).toBe('greet');
-      expect(blockMatch![2]).toBe('function');
+      expect(blockMatch![1]).toBe("greet");
+      expect(blockMatch![2]).toBe("function");
     });
   });
 
-  describe('Step 3: Generate Code', () => {
-    it('should generate TypeScript code from spec', () => {
+  describe("Step 3: Generate Code", () => {
+    it("should generate TypeScript code from spec", () => {
       // Simulate code generation
       const generatedCode = `// SPECLANG-GENERATED: function
 // Source: @test/greeting#greet
@@ -118,21 +126,21 @@ export function greet(name: string): string {
 }
 `;
 
-      const generatedDir = join(SPECS_DIR, 'test-greeting.spec.dir', 'src');
+      const generatedDir = join(SPECS_DIR, "test-greeting.spec.dir", "src");
       mkdirSync(generatedDir, { recursive: true });
-      
-      const generatedPath = join(generatedDir, 'greet.ts');
-      writeFileSync(generatedPath, generatedCode, 'utf-8');
+
+      const generatedPath = join(generatedDir, "greet.ts");
+      writeFileSync(generatedPath, generatedCode, "utf-8");
 
       expect(existsSync(generatedPath)).toBe(true);
-      
-      const content = readFileSync(generatedPath, 'utf-8');
-      expect(content).toContain('// SPECLANG-GENERATED: function');
-      expect(content).toContain('export function greet(name: string): string');
-      expect(content).toContain('@param name - Person to greet');
+
+      const content = readFileSync(generatedPath, "utf-8");
+      expect(content).toContain("// SPECLANG-GENERATED: function");
+      expect(content).toContain("export function greet(name: string): string");
+      expect(content).toContain("@param name - Person to greet");
     });
 
-    it('should generate barrel export', () => {
+    it("should generate barrel export", () => {
       const barrelContent = `// SPECLANG-GENERATED: barrel export
 // Source: @test/greeting
 // DO NOT EDIT MANUALLY
@@ -140,19 +148,26 @@ export function greet(name: string): string {
 export * from './greet';
 `;
 
-      const barrelPath = join(SPECS_DIR, 'test-greeting.spec.dir', 'src', 'index.ts');
-      writeFileSync(barrelPath, barrelContent, 'utf-8');
+      const barrelPath = join(
+        SPECS_DIR,
+        "test-greeting.spec.dir",
+        "src",
+        "index.ts",
+      );
+      writeFileSync(barrelPath, barrelContent, "utf-8");
 
       expect(existsSync(barrelPath)).toBe(true);
-      expect(readFileSync(barrelPath, 'utf-8')).toContain("export * from './greet'");
+      expect(readFileSync(barrelPath, "utf-8")).toContain(
+        "export * from './greet'",
+      );
     });
   });
 
-  describe('Step 4: Create Symlink', () => {
-    it('should create symlink in src directory', async () => {
-      const sourceDir = join('..', 'specs', 'test-greeting.spec.dir', 'src');
-      const linkPath = join(SRC_DIR, 'test-greeting');
-      
+  describe("Step 4: Create Symlink", () => {
+    it("should create symlink in src directory", async () => {
+      const sourceDir = join("..", "specs", "test-greeting.spec.dir", "src");
+      const linkPath = join(SRC_DIR, "test-greeting");
+
       // Create relative symlink (simulating what the daemon would do)
       await symlink(sourceDir, linkPath);
 
@@ -160,25 +175,30 @@ export * from './greet';
     });
   });
 
-  describe('Step 5: Verify Generated Code Compiles', () => {
-    it('should verify generated code is valid TypeScript', () => {
-      const generatedPath = join(SPECS_DIR, 'test-greeting.spec.dir', 'src', 'greet.ts');
-      const content = readFileSync(generatedPath, 'utf-8');
+  describe("Step 5: Verify Generated Code Compiles", () => {
+    it("should verify generated code is valid TypeScript", () => {
+      const generatedPath = join(
+        SPECS_DIR,
+        "test-greeting.spec.dir",
+        "src",
+        "greet.ts",
+      );
+      const content = readFileSync(generatedPath, "utf-8");
 
       // Check TypeScript syntax patterns
-      expect(content).toMatch(/export function \w+\(/);  // Function declaration
-      expect(content).toMatch(/:\s*string/);  // Type annotations
-      expect(content).toMatch(/\/\*\*/);  // JSDoc comment
-      expect(content).toMatch(/@param/);  // JSDoc @param
-      expect(content).toMatch(/@returns/);  // JSDoc @returns
+      expect(content).toMatch(/export function \w+\(/); // Function declaration
+      expect(content).toMatch(/:\s*string/); // Type annotations
+      expect(content).toMatch(/\/\*\*/); // JSDoc comment
+      expect(content).toMatch(/@param/); // JSDoc @param
+      expect(content).toMatch(/@returns/); // JSDoc @returns
     });
 
-    it('should check all expected files exist', () => {
+    it("should check all expected files exist", () => {
       const files = [
-        join(SPECS_DIR, 'greeting.spec.md'),
-        join(SPECS_DIR, 'test-greeting.spec.dir', 'src', 'greet.ts'),
-        join(SPECS_DIR, 'test-greeting.spec.dir', 'src', 'index.ts'),
-        join(SRC_DIR, 'test-greeting')
+        join(SPECS_DIR, "greeting.spec.md"),
+        join(SPECS_DIR, "test-greeting.spec.dir", "src", "greet.ts"),
+        join(SPECS_DIR, "test-greeting.spec.dir", "src", "index.ts"),
+        join(SRC_DIR, "test-greeting"),
       ];
 
       for (const file of files) {
@@ -187,14 +207,32 @@ export * from './greet';
     });
   });
 
-  describe('Complete Cascade Flow', () => {
-    it('should complete full workflow in correct order', async () => {
+  describe("Complete Cascade Flow", () => {
+    it("should complete full workflow in correct order", async () => {
       // This test verifies the entire flow works end-to-end
       const steps = [
-        { name: 'spec created', check: () => existsSync(join(SPECS_DIR, 'greeting.spec.md')) },
-        { name: 'code generated', check: () => existsSync(join(SPECS_DIR, 'test-greeting.spec.dir', 'src', 'greet.ts')) },
-        { name: 'barrel created', check: () => existsSync(join(SPECS_DIR, 'test-greeting.spec.dir', 'src', 'index.ts')) },
-        { name: 'symlink created', check: () => existsSync(join(SRC_DIR, 'test-greeting')) }
+        {
+          name: "spec created",
+          check: () => existsSync(join(SPECS_DIR, "greeting.spec.md")),
+        },
+        {
+          name: "code generated",
+          check: () =>
+            existsSync(
+              join(SPECS_DIR, "test-greeting.spec.dir", "src", "greet.ts"),
+            ),
+        },
+        {
+          name: "barrel created",
+          check: () =>
+            existsSync(
+              join(SPECS_DIR, "test-greeting.spec.dir", "src", "index.ts"),
+            ),
+        },
+        {
+          name: "symlink created",
+          check: () => existsSync(join(SRC_DIR, "test-greeting")),
+        },
       ];
 
       for (const step of steps) {

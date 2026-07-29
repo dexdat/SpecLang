@@ -8,10 +8,10 @@
  * Also patches os.tmpdir() to ensure consistency even if TMPDIR is not set
  * in the test environment.
  */
-import { join, resolve } from 'path';
-import { mkdirSync } from 'fs';
+import { join, resolve } from "path";
+import { mkdirSync } from "fs";
 
-const PROJECT_TMP = join(process.cwd(), '.tmp');
+const PROJECT_TMP = join(process.cwd(), ".tmp");
 
 // Ensure the directory exists
 mkdirSync(PROJECT_TMP, { recursive: true });

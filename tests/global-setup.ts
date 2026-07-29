@@ -6,11 +6,11 @@
  *
  * CI-002: Fixes /tmp EDQUOT by redirecting to project-local .tmp/
  */
-import { join } from 'path';
-import { mkdirSync } from 'fs';
+import { join } from "path";
+import { mkdirSync } from "fs";
 
 export function setup() {
-  const projectTmp = join(process.cwd(), '.tmp');
+  const projectTmp = join(process.cwd(), ".tmp");
   mkdirSync(projectTmp, { recursive: true });
   process.env.TMPDIR = projectTmp;
 }

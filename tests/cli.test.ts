@@ -3,10 +3,10 @@
  * Source: @speclang/mcp.cli
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-import path from 'path';
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { exec } from "child_process";
+import { promisify } from "util";
+import path from "path";
 
 const execAsync = promisify(exec);
 
@@ -36,7 +36,7 @@ function parseJsonFromOutput(stdout: string): unknown {
   const candidates: string[] = [];
   for (let i = 0; i < trimmed.length; i++) {
     const c = trimmed[i];
-    if (c === '[' || c === '{') {
+    if (c === "[" || c === "{") {
       candidates.push(trimmed.slice(i));
       // First candidate is usually enough; only try one more at the
       // very end (covers the rare case where JSON is bracketed by
@@ -52,7 +52,7 @@ function parseJsonFromOutput(stdout: string): unknown {
     }
   }
   throw new Error(
-    `Could not parse JSON from CLI output. Raw output:\n${stdout}`
+    `Could not parse JSON from CLI output. Raw output:\n${stdout}`,
   );
 }
 
@@ -97,23 +97,23 @@ const tmpConfig = `
   "exclude": ["node_modules", "dist", "specs"]
 }
 `;
-const tmpConfigPath = '.speclang/tmp/cli-test-tsconfig.json';
-const fs = require('fs');
-fs.mkdirSync('.speclang/tmp', { recursive: true });
+const tmpConfigPath = ".speclang/tmp/cli-test-tsconfig.json";
+const fs = require("fs");
+fs.mkdirSync(".speclang/tmp", { recursive: true });
 fs.writeFileSync(tmpConfigPath, tmpConfig);
 
 const CLI = `npx tsx --tsconfig ${tmpConfigPath} src/cli/index.ts`;
-const CLI_BIN = './bin/speclang';
+const CLI_BIN = "./bin/speclang";
 
-describe('CLI Commands', () => {
-  describe('search', () => {
-    it('should find specs matching query', async () => {
+describe("CLI Commands", () => {
+  describe("search", () => {
+    it("should find specs matching query", async () => {
       const { stdout } = await execAsync(`${CLI} search auth`);
-      expect(stdout).toContain('Found');
-      expect(stdout).toContain('@speclang/auth');
+      expect(stdout).toContain("Found");
+      expect(stdout).toContain("@speclang/auth");
     });
 
-    it.skip('should support --json output', async () => {
+    it.skip("should support --json output", async () => {
       // SKIP: `speclang search` does not support --json flag (unimplemented feature).
       // Re-enable when search command gains --json output support.
       const { stdout } = await execAsync(`${CLI} search auth --json`);
@@ -121,36 +121,36 @@ describe('CLI Commands', () => {
       expect(Array.isArray(result)).toBe(true);
     });
 
-    it.skip('should support --quiet output', async () => {
+    it.skip("should support --quiet output", async () => {
       // SKIP: `speclang search` does not support --quiet flag (unimplemented feature).
       // Re-enable when search command gains --quiet output support.
       const { stdout } = await execAsync(`${CLI} search auth --quiet`);
-      const lines = stdout.trim().split('\n');
+      const lines = stdout.trim().split("\n");
       expect(lines.length).toBeGreaterThan(0);
       // IDs only, no other text
-      lines.forEach(line => {
-        expect(line.startsWith('@')).toBe(true);
+      lines.forEach((line) => {
+        expect(line.startsWith("@")).toBe(true);
       });
     });
 
-    it('should filter by layer', async () => {
+    it("should filter by layer", async () => {
       const { stdout } = await execAsync(`${CLI} search mcp --layer 3`);
-      expect(stdout).toContain('layer 3');
+      expect(stdout).toContain("layer 3");
     });
 
-    it('should filter by tags', { timeout: 15000, retry: 2 }, async () => {
+    it("should filter by tags", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await execAsync(`${CLI} search mcp --tags mcp`);
-      expect(stdout).toContain('Found');
+      expect(stdout).toContain("Found");
     });
   });
 
-  describe('list', () => {
-    it('should list all specs', async () => {
+  describe("list", () => {
+    it("should list all specs", async () => {
       const { stdout } = await execAsync(`${CLI} list`);
-      expect(stdout).toContain('Total specs:');
+      expect(stdout).toContain("Total specs:");
     });
 
-    it('should support --json output', async () => {
+    it("should support --json output", async () => {
       const { stdout } = await execAsync(`${CLI} list --json`);
       // Tolerate leading progress text that some CLI builds emit
       // before JSON (e.g. "Generating..." banners). The helper finds
@@ -161,89 +161,89 @@ describe('CLI Commands', () => {
       expect(result.length).toBeGreaterThan(0);
     });
 
-    it('should filter by layer', async () => {
+    it("should filter by layer", async () => {
       const { stdout } = await execAsync(`${CLI} list --layer 0`);
-      expect(stdout).toContain('Layer 0');
+      expect(stdout).toContain("Layer 0");
     });
 
-    it('should filter by prefix', async () => {
+    it("should filter by prefix", async () => {
       const { stdout } = await execAsync(`${CLI} list --prefix @speclang`);
-      expect(stdout).toContain('@speclang');
+      expect(stdout).toContain("@speclang");
     });
   });
 
-  describe('get', () => {
-    it('should get spec by ID', async () => {
+  describe("get", () => {
+    it("should get spec by ID", async () => {
       const { stdout } = await execAsync(`${CLI} get @speclang/auth`);
-      expect(stdout).toContain('@speclang/auth');
-      expect(stdout).toContain('Version:');
-      expect(stdout).toContain('Layer:');
+      expect(stdout).toContain("@speclang/auth");
+      expect(stdout).toContain("Version:");
+      expect(stdout).toContain("Layer:");
     });
 
-    it('should support --json output', async () => {
+    it("should support --json output", async () => {
       const { stdout } = await execAsync(`${CLI} get @speclang/auth --json`);
       const result = parseJsonFromOutput(stdout) as { id: string };
-      expect(result.id).toBe('@speclang/auth');
+      expect(result.id).toBe("@speclang/auth");
     });
 
-    it('should show blocks with --blocks flag', async () => {
+    it("should show blocks with --blocks flag", async () => {
       const { stdout } = await execAsync(`${CLI} get @speclang/auth --blocks`);
-      expect(stdout).toContain('Blocks:');
+      expect(stdout).toContain("Blocks:");
     });
 
-    it('should error on unknown spec', async () => {
+    it("should error on unknown spec", async () => {
       try {
         await execAsync(`${CLI} get @unknown/spec`);
         expect(true).toBe(false); // Should not reach here
       } catch (result: unknown) {
         const { stderr } = result as { stdout: string; stderr: string };
-        expect(stderr).toContain('Spec not found');
+        expect(stderr).toContain("Spec not found");
       }
     });
   });
 
-  describe('validate', () => {
-    it('should validate specs', async () => {
+  describe("validate", () => {
+    it("should validate specs", async () => {
       try {
         await execAsync(`${CLI} validate`);
         expect(true).toBe(false);
       } catch (result: unknown) {
         const { stdout } = result as { stdout: string; stderr: string };
-        expect(stdout).toContain('=== Index Validation ===');
-        expect(stdout).toContain('Total specs:');
+        expect(stdout).toContain("=== Index Validation ===");
+        expect(stdout).toContain("Total specs:");
       }
     });
 
-    it('should support --json output', { timeout: 15000 }, async () => {
+    it("should support --json output", { timeout: 15000 }, async () => {
       const { stdout } = await execAsync(`${CLI} validate --json`);
       // --json returns JSON with spec validation results after text banner
-      const jsonStart = stdout.indexOf('{');
+      const jsonStart = stdout.indexOf("{");
       expect(jsonStart).toBeGreaterThan(-1);
       const result = JSON.parse(stdout.slice(jsonStart));
       expect(result.index).toBeDefined();
       expect(result.specs).toBeDefined();
     });
 
-    it('should support --verbose for warnings', async () => {
+    it("should support --verbose for warnings", async () => {
       try {
         await execAsync(`${CLI} validate --verbose`);
         expect(true).toBe(false);
       } catch (result: unknown) {
         const { stdout } = result as { stdout: string; stderr: string };
         // Verbose shows per-spec validation results
-        expect(stdout).toContain('=== Index Validation ===');
-        expect(stdout).toContain('=== Spec File Validation ===');
+        expect(stdout).toContain("=== Index Validation ===");
+        expect(stdout).toContain("=== Spec File Validation ===");
       }
     });
   });
 
-  describe('check', () => {
-    it('should check specs', async () => {
+  describe("check", () => {
+    it("should check specs", async () => {
       const { stdout } = await execAsync(`${CLI_BIN} check`);
-      expect(stdout).toContain('Checking specs');
+      expect(stdout).toContain("Checking specs");
     });
 
-    it('should support --format json output', { timeout: 15000 }, async () => {
+    it("should support --format json output", { timeout: 15000 }, async () => {
       const { stdout } = await execAsync(`${CLI_BIN} check --format json`);
       const jsonMatch = stdout.match(/\{[\s\S]*\}/);
       expect(jsonMatch).toBeTruthy();
@@ -252,240 +252,259 @@ describe('CLI Commands', () => {
       expect(result.totalFiles).toBeGreaterThan(0);
     });
 
-    it('should support --verbose for warnings', async () => {
+    it("should support --verbose for warnings", async () => {
       const { stdout } = await execAsync(`${CLI_BIN} check --verbose`);
-      expect(stdout).toContain('Checking specs');
+      expect(stdout).toContain("Checking specs");
     });
   });
 
-  describe('index', () => {
-    it('should show index stats', async () => {
+  describe("index", () => {
+    it("should show index stats", async () => {
       const { stdout } = await execAsync(`${CLI} index`);
-      expect(stdout).toContain('=== Spec Index ===');
-      expect(stdout).toContain('Total specs:');
+      expect(stdout).toContain("=== Spec Index ===");
+      expect(stdout).toContain("Total specs:");
     });
 
-    it('should support --json output', { timeout: 15000, retry: 2 }, async () => {
-      const { stdout } = await execAsync(`${CLI} index --json`);
-      const result = parseJsonFromOutput(stdout) as { specs: unknown };
-      expect(result.specs).toBeDefined();
-    });
+    it(
+      "should support --json output",
+      { timeout: 15000, retry: 2 },
+      async () => {
+        const { stdout } = await execAsync(`${CLI} index --json`);
+        const result = parseJsonFromOutput(stdout) as { specs: unknown };
+        expect(result.specs).toBeDefined();
+      },
+    );
 
-    it('should refresh index with --refresh', async () => {
+    it("should refresh index with --refresh", async () => {
       const { stdout } = await execAsync(`${CLI} index --refresh`);
       // The refresh may have errors but should show refreshing activity
-      expect(stdout).toContain('Refreshing');
+      expect(stdout).toContain("Refreshing");
     });
   });
 
-  describe('cascade', () => {
-    it('should show cascade status', async () => {
+  describe("cascade", () => {
+    it("should show cascade status", async () => {
       const { stdout } = await execAsync(`${CLI} cascade status`);
-      expect(stdout).toContain('=== Cascade Status ===');
+      expect(stdout).toContain("=== Cascade Status ===");
     });
 
-    it('should trigger cascade', async () => {
-      const { stdout } = await execAsync(`${CLI} cascade trigger @speclang/mcp`);
-      expect(stdout).toContain('=== Cascade Triggered ===');
+    it("should trigger cascade", async () => {
+      const { stdout } = await execAsync(
+        `${CLI} cascade trigger @speclang/mcp`,
+      );
+      expect(stdout).toContain("=== Cascade Triggered ===");
     });
 
-    it('should abort cascade', async () => {
+    it("should abort cascade", async () => {
       await execAsync(`${CLI} cascade trigger @speclang/mcp`);
       const { stdout } = await execAsync(`${CLI} cascade abort`);
-      expect(stdout).toContain('Cascade aborted');
+      expect(stdout).toContain("Cascade aborted");
     });
 
-    it('should support --json output', async () => {
+    it("should support --json output", async () => {
       const { stdout } = await execAsync(`${CLI} cascade status --json`);
       const result = parseJsonFromOutput(stdout);
       expect(result.active).toBeDefined();
     });
   });
 
-  describe('generate', () => {
-    it('should run dry-run by default', async () => {
+  describe("generate", () => {
+    it("should run dry-run by default", async () => {
       const { stdout } = await execAsync(`${CLI} generate --dry-run`);
-      expect(stdout).toContain('=== Code Generation ===');
-      expect(stdout).toContain('DRY RUN');
+      expect(stdout).toContain("=== Code Generation ===");
+      expect(stdout).toContain("DRY RUN");
     });
 
-    it('should support --json output', async () => {
+    it("should support --json output", async () => {
       const { stdout } = await execAsync(`${CLI} generate --dry-run --json`);
       const result = parseJsonFromOutput(stdout);
-      expect(result.target).toBe('typescript');
+      expect(result.target).toBe("typescript");
     });
   });
 
-  describe('server', () => {
-    it('should show help', async () => {
+  describe("server", () => {
+    it("should show help", async () => {
       const { stdout } = await execAsync(`${CLI} server --help`);
-      expect(stdout).toContain('--port');
-      expect(stdout).toContain('--daemon');
-      expect(stdout).toContain('--http');
+      expect(stdout).toContain("--port");
+      expect(stdout).toContain("--daemon");
+      expect(stdout).toContain("--http");
     });
   });
 
-  describe('help', () => {
-    it('should show main help', async () => {
+  describe("help", () => {
+    it("should show main help", async () => {
       const { stdout } = await execAsync(`${CLI} --help`);
-      expect(stdout).toContain('SpecLang - Specs are source code');
-      expect(stdout).toContain('search');
-      expect(stdout).toContain('get');
-      expect(stdout).toContain('list');
-      expect(stdout).toContain('validate');
-      expect(stdout).toContain('generate');
-      expect(stdout).toContain('server');
-      expect(stdout).toContain('index');
-      expect(stdout).toContain('cascade');
+      expect(stdout).toContain("SpecLang - Specs are source code");
+      expect(stdout).toContain("search");
+      expect(stdout).toContain("get");
+      expect(stdout).toContain("list");
+      expect(stdout).toContain("validate");
+      expect(stdout).toContain("generate");
+      expect(stdout).toContain("server");
+      expect(stdout).toContain("index");
+      expect(stdout).toContain("cascade");
     });
 
-    it('should show command help', async () => {
+    it("should show command help", async () => {
       const { stdout } = await execAsync(`${CLI} search --help`);
-      expect(stdout).toContain('--tags');
-      expect(stdout).toContain('--layer');
-      expect(stdout).toContain('--json');
-      expect(stdout).toContain('--quiet');
+      expect(stdout).toContain("--tags");
+      expect(stdout).toContain("--layer");
+      expect(stdout).toContain("--json");
+      expect(stdout).toContain("--quiet");
     });
   });
 
-  describe('new', () => {
-    const testProjectDir = '.speclang/tmp/test-new-project';
-    const fs = require('fs');
-    
+  describe("new", () => {
+    const testProjectDir = ".speclang/tmp/test-new-project";
+    const fs = require("fs");
+
     // Cleanup before and after tests
     beforeAll(() => {
       if (fs.existsSync(testProjectDir)) {
         fs.rmSync(testProjectDir, { recursive: true, force: true });
       }
     });
-    
+
     afterAll(() => {
       if (fs.existsSync(testProjectDir)) {
         fs.rmSync(testProjectDir, { recursive: true, force: true });
       }
     });
 
-    it('should create a new minimal project', async () => {
-      const { stdout } = await execAsync(`${CLI_BIN} new test-new-project --dir ${testProjectDir}`);
-      expect(stdout).toContain('Creating new speclang project');
-      expect(stdout).toContain('Created .speclangrc');
-      expect(stdout).toContain('Created initial spec');
-      
+    it("should create a new minimal project", async () => {
+      const { stdout } = await execAsync(
+        `${CLI_BIN} new test-new-project --dir ${testProjectDir}`,
+      );
+      expect(stdout).toContain("Creating new speclang project");
+      expect(stdout).toContain("Created .speclangrc");
+      expect(stdout).toContain("Created initial spec");
+
       // Verify directory structure
       expect(fs.existsSync(testProjectDir)).toBe(true);
-      expect(fs.existsSync(path.join(testProjectDir, 'specs'))).toBe(true);
-      expect(fs.existsSync(path.join(testProjectDir, 'src'))).toBe(true);
-      expect(fs.existsSync(path.join(testProjectDir, 'tests'))).toBe(true);
+      expect(fs.existsSync(path.join(testProjectDir, "specs"))).toBe(true);
+      expect(fs.existsSync(path.join(testProjectDir, "src"))).toBe(true);
+      expect(fs.existsSync(path.join(testProjectDir, "tests"))).toBe(true);
     });
 
-    it('should create .speclangrc with correct content', async () => {
-      const speclangrcPath = path.join(testProjectDir, '.speclangrc');
+    it("should create .speclangrc with correct content", async () => {
+      const speclangrcPath = path.join(testProjectDir, ".speclangrc");
       expect(fs.existsSync(speclangrcPath)).toBe(true);
-      
-      const speclangrc = JSON.parse(fs.readFileSync(speclangrcPath, 'utf-8'));
-      expect(speclangrc.version).toBe('0.1.0');
-      expect(speclangrc.name).toBe('test-new-project');
-      expect(speclangrc.targets).toContain('typescript');
+
+      const speclangrc = JSON.parse(fs.readFileSync(speclangrcPath, "utf-8"));
+      expect(speclangrc.version).toBe("0.1.0");
+      expect(speclangrc.name).toBe("test-new-project");
+      expect(speclangrc.targets).toContain("typescript");
     });
 
-    it('should create initial spec file', async () => {
-      const specPath = path.join(testProjectDir, 'specs', 'main.spec.md');
+    it("should create initial spec file", async () => {
+      const specPath = path.join(testProjectDir, "specs", "main.spec.md");
       expect(fs.existsSync(specPath)).toBe(true);
-      
-      const specContent = fs.readFileSync(specPath, 'utf-8');
-      expect(specContent).toContain('# test-new-project');
-      expect(specContent).toContain('speclang-header');
+
+      const specContent = fs.readFileSync(specPath, "utf-8");
+      expect(specContent).toContain("# test-new-project");
+      expect(specContent).toContain("speclang-header");
     });
 
-    it('should support http template', async () => {
-      const httpProjectDir = '.speclang/tmp/test-http-project';
-      
+    it("should support http template", async () => {
+      const httpProjectDir = ".speclang/tmp/test-http-project";
+
       // Cleanup first
       if (fs.existsSync(httpProjectDir)) {
         fs.rmSync(httpProjectDir, { recursive: true, force: true });
       }
-      
-      const { stdout } = await execAsync(`${CLI_BIN} new http-project --dir ${httpProjectDir} --template http`);
-      expect(stdout).toContain('Template: http');
-      
-      const specPath = path.join(httpProjectDir, 'specs', 'main.spec.md');
-      const specContent = fs.readFileSync(specPath, 'utf-8');
-      expect(specContent).toContain('/health');
-      expect(specContent).toContain('/status');
-      
+
+      const { stdout } = await execAsync(
+        `${CLI_BIN} new http-project --dir ${httpProjectDir} --template http`,
+      );
+      expect(stdout).toContain("Template: http");
+
+      const specPath = path.join(httpProjectDir, "specs", "main.spec.md");
+      const specContent = fs.readFileSync(specPath, "utf-8");
+      expect(specContent).toContain("/health");
+      expect(specContent).toContain("/status");
+
       // Cleanup
       fs.rmSync(httpProjectDir, { recursive: true, force: true });
     });
 
-    it('should support --bare flag', async () => {
-      const bareProjectDir = '.speclang/tmp/test-bare-project';
-      
+    it("should support --bare flag", async () => {
+      const bareProjectDir = ".speclang/tmp/test-bare-project";
+
       // Cleanup first
       if (fs.existsSync(bareProjectDir)) {
         fs.rmSync(bareProjectDir, { recursive: true, force: true });
       }
-      
-      const { stdout } = await execAsync(`${CLI_BIN} new bare-project --dir ${bareProjectDir} --bare`);
-      expect(stdout).toContain('Creating new speclang project');
-      
+
+      const { stdout } = await execAsync(
+        `${CLI_BIN} new bare-project --dir ${bareProjectDir} --bare`,
+      );
+      expect(stdout).toContain("Creating new speclang project");
+
       // Should not create initial spec with --bare
-      const specPath = path.join(bareProjectDir, 'specs', 'main.spec.md');
+      const specPath = path.join(bareProjectDir, "specs", "main.spec.md");
       expect(fs.existsSync(specPath)).toBe(false);
-      
+
       // Should still create directory structure
-      expect(fs.existsSync(path.join(bareProjectDir, 'specs'))).toBe(true);
-      expect(fs.existsSync(path.join(bareProjectDir, 'src'))).toBe(true);
-      expect(fs.existsSync(path.join(bareProjectDir, 'tests'))).toBe(true);
-      
+      expect(fs.existsSync(path.join(bareProjectDir, "specs"))).toBe(true);
+      expect(fs.existsSync(path.join(bareProjectDir, "src"))).toBe(true);
+      expect(fs.existsSync(path.join(bareProjectDir, "tests"))).toBe(true);
+
       // Cleanup
       fs.rmSync(bareProjectDir, { recursive: true, force: true });
     });
 
-    it('should fail with invalid project name', async () => {
+    it("should fail with invalid project name", async () => {
       try {
         await execAsync(`${CLI_BIN} new 123-invalid --dir .speclang/tmp`);
         expect(true).toBe(false); // Should not reach here
       } catch (result: unknown) {
         const { stderr } = result as { stdout: string; stderr: string };
-        expect(stderr).toContain('Invalid project name');
+        expect(stderr).toContain("Invalid project name");
       }
     });
 
-    it('should fail when directory exists without --force', async () => {
+    it("should fail when directory exists without --force", async () => {
       // First create a project
       if (!fs.existsSync(testProjectDir)) {
         fs.mkdirSync(testProjectDir, { recursive: true });
       }
-      
+
       try {
-        await execAsync(`${CLI_BIN} new test-new-project --dir ${testProjectDir}`);
+        await execAsync(
+          `${CLI_BIN} new test-new-project --dir ${testProjectDir}`,
+        );
         expect(true).toBe(false); // Should not reach here
       } catch (result: unknown) {
         const { stderr } = result as { stdout: string; stderr: string };
-        expect(stderr).toContain('Directory already exists');
+        expect(stderr).toContain("Directory already exists");
       }
     });
 
-    it('should overwrite with --force flag', async () => {
+    it("should overwrite with --force flag", async () => {
       // First create a project
       if (!fs.existsSync(testProjectDir)) {
         fs.mkdirSync(testProjectDir, { recursive: true });
       }
-      
+
       // Add a file to verify it gets overwritten
-      fs.writeFileSync(path.join(testProjectDir, 'old-file.txt'), 'old content');
-      
-      const { stdout } = await execAsync(`${CLI_BIN} new test-new-project --dir ${testProjectDir} --force`);
-      expect(stdout).toContain('Creating new speclang project');
+      fs.writeFileSync(
+        path.join(testProjectDir, "old-file.txt"),
+        "old content",
+      );
+
+      const { stdout } = await execAsync(
+        `${CLI_BIN} new test-new-project --dir ${testProjectDir} --force`,
+      );
+      expect(stdout).toContain("Creating new speclang project");
     });
 
-    it('should show help for new command', async () => {
+    it("should show help for new command", async () => {
       const { stdout } = await execAsync(`${CLI_BIN} new --help`);
-      expect(stdout).toContain('--dir');
-      expect(stdout).toContain('--template');
-      expect(stdout).toContain('--bare');
-      expect(stdout).toContain('--force');
-      expect(stdout).toContain('--no-git');
+      expect(stdout).toContain("--dir");
+      expect(stdout).toContain("--template");
+      expect(stdout).toContain("--bare");
+      expect(stdout).toContain("--force");
+      expect(stdout).toContain("--no-git");
     });
   });
 });
