@@ -2,108 +2,108 @@
 // Tests for DependencyTracker — reads @ref: headers, builds dependency graph
 // Source: specs/cascade.spec.md (Queue System, §107-108: "Read header dependencies")
 
-import { describe, test, expect, beforeEach } from 'vitest';
-import * as path from 'path';
+import { describe, test, expect, beforeEach } from "vitest";
+import * as path from "path";
 import {
   DependencyTracker,
   DependencyGraph,
-  TreeNode
-} from '../../src/cascade/coordinator/dependency.js';
+  TreeNode,
+} from "../../src/cascade/coordinator/dependency.js";
 
-const INDEX_PATH = path.resolve(process.cwd(), '_index.json');
+const INDEX_PATH = path.resolve(process.cwd(), "_index.json");
 
-describe('DependencyTracker', () => {
+describe("DependencyTracker", () => {
   let tracker: DependencyTracker;
 
   beforeEach(() => {
     tracker = new DependencyTracker(INDEX_PATH);
   });
 
-  describe('loadIndex()', () => {
-    test('should load _index.json and build graph', () => {
+  describe("loadIndex()", () => {
+    test("should load _index.json and build graph", () => {
       tracker.loadIndex();
       // After loading, the graph should have nodes
       const specs = tracker.getNodesByLayer(1);
       expect(specs.length).toBeGreaterThan(0);
     });
 
-    test('should throw on missing index file', () => {
-      const bad = new DependencyTracker('/nonexistent/_index.json');
-      expect(() => bad.loadIndex()).toThrow('Index file not found');
+    test("should throw on missing index file", () => {
+      const bad = new DependencyTracker("/nonexistent/_index.json");
+      expect(() => bad.loadIndex()).toThrow("Index file not found");
     });
   });
 
-  describe('getNode()', () => {
+  describe("getNode()", () => {
     beforeEach(() => {
       tracker.loadIndex();
     });
 
-    test('should find a spec by its ID', () => {
+    test("should find a spec by its ID", () => {
       // @speclang/core is properly indexed in _index.json
-      const node = tracker.getNode('@speclang/core');
+      const node = tracker.getNode("@speclang/core");
       expect(node).toBeDefined();
-      expect(node!.id).toBe('@speclang/core');
-      expect(node!.type).toBe('spec');
+      expect(node!.id).toBe("@speclang/core");
+      expect(node!.type).toBe("spec");
     });
 
-    test('should find @speclang/header by ID', () => {
-      const node = tracker.getNode('@speclang/header');
+    test("should find @speclang/header by ID", () => {
+      const node = tracker.getNode("@speclang/header");
       expect(node).toBeDefined();
-      expect(node!.id).toBe('@speclang/header');
-      expect(node!.filePath).toContain('header.spec.md');
+      expect(node!.id).toBe("@speclang/header");
+      expect(node!.filePath).toContain("header.spec.md");
     });
 
-    test('should return undefined for unknown ID', () => {
-      const node = tracker.getNode('@nonexistent/spec');
+    test("should return undefined for unknown ID", () => {
+      const node = tracker.getNode("@nonexistent/spec");
       expect(node).toBeUndefined();
     });
   });
 
-  describe('getDependencies()', () => {
+  describe("getDependencies()", () => {
     beforeEach(() => {
       tracker.loadIndex();
     });
 
-    test('should return dependency IDs for a spec that has @ref: references', () => {
+    test("should return dependency IDs for a spec that has @ref: references", () => {
       // @speclang/header has depends_on references
-      const headerNode = tracker.getNode('@speclang/header');
+      const headerNode = tracker.getNode("@speclang/header");
       expect(headerNode).toBeDefined();
-      const deps = tracker.getDependencies('@speclang/header');
+      const deps = tracker.getDependencies("@speclang/header");
       expect(Array.isArray(deps)).toBe(true);
       // Header spec depends on other specs
       expect(deps.length).toBeGreaterThanOrEqual(0);
     });
 
-    test('should return empty array for spec with no dependencies', () => {
-      const deps = tracker.getDependencies('@test/test');
+    test("should return empty array for spec with no dependencies", () => {
+      const deps = tracker.getDependencies("@test/test");
       expect(Array.isArray(deps)).toBe(true);
     });
   });
 
-  describe('getDependents()', () => {
+  describe("getDependents()", () => {
     beforeEach(() => {
       tracker.loadIndex();
     });
 
-    test('should find specs that depend on a given spec', () => {
+    test("should find specs that depend on a given spec", () => {
       // The core spec is widely referenced
-      const dependents = tracker.getDependents('@speclang/core');
+      const dependents = tracker.getDependents("@speclang/core");
       // There should be dependents
       expect(Array.isArray(dependents)).toBe(true);
     });
 
-    test('should return empty array for unreferenced specs', () => {
-      const dependents = tracker.getDependents('@nonexistent/spec');
+    test("should return empty array for unreferenced specs", () => {
+      const dependents = tracker.getDependents("@nonexistent/spec");
       expect(dependents).toEqual([]);
     });
   });
 
-  describe('getNodesByLayer()', () => {
+  describe("getNodesByLayer()", () => {
     beforeEach(() => {
       tracker.loadIndex();
     });
 
-    test('should return specs at a specific layer', () => {
+    test("should return specs at a specific layer", () => {
       const layer0 = tracker.getNodesByLayer(0);
       const layer1 = tracker.getNodesByLayer(1);
 
@@ -116,53 +116,53 @@ describe('DependencyTracker', () => {
       }
     });
 
-    test('should return empty array for empty layer', () => {
+    test("should return empty array for empty layer", () => {
       const layer999 = tracker.getNodesByLayer(999);
       expect(layer999).toEqual([]);
     });
   });
 
-  describe('getTree()', () => {
+  describe("getTree()", () => {
     beforeEach(() => {
       tracker.loadIndex();
     });
 
-    test('should return spec tree', () => {
-      const specTree = tracker.getTree('spec');
+    test("should return spec tree", () => {
+      const specTree = tracker.getTree("spec");
       expect(specTree.length).toBeGreaterThan(0);
       for (const node of specTree) {
-        expect(node.type).toBe('spec');
+        expect(node.type).toBe("spec");
       }
     });
 
-    test('should return code tree', () => {
-      const codeTree = tracker.getTree('code');
+    test("should return code tree", () => {
+      const codeTree = tracker.getTree("code");
       expect(Array.isArray(codeTree)).toBe(true);
     });
 
-    test('should return test tree', () => {
-      const testTree = tracker.getTree('test');
+    test("should return test tree", () => {
+      const testTree = tracker.getTree("test");
       expect(Array.isArray(testTree)).toBe(true);
     });
 
-    test('should return doc tree', () => {
-      const docTree = tracker.getTree('doc');
+    test("should return doc tree", () => {
+      const docTree = tracker.getTree("doc");
       expect(Array.isArray(docTree)).toBe(true);
     });
 
-    test('should return empty array for unknown tree type', () => {
-      const unknown = tracker.getTree('unknown');
+    test("should return empty array for unknown tree type", () => {
+      const unknown = tracker.getTree("unknown");
       expect(unknown).toEqual([]);
     });
   });
 
-  describe('getOrderedForCascade()', () => {
+  describe("getOrderedForCascade()", () => {
     beforeEach(() => {
       tracker.loadIndex();
     });
 
-    test('should return topologically sorted nodes', () => {
-      const ordered = tracker.getOrderedForCascade('@speclang/core');
+    test("should return topologically sorted nodes", () => {
+      const ordered = tracker.getOrderedForCascade("@speclang/core");
       expect(ordered.length).toBeGreaterThan(0);
 
       // Every ordered node should appear after its dependencies
@@ -182,33 +182,33 @@ describe('DependencyTracker', () => {
       }
     });
 
-    test('should handle self-cycle gracefully (visited set prevents infinite loop)', () => {
+    test("should handle self-cycle gracefully (visited set prevents infinite loop)", () => {
       // getOrderedForCascade uses a visited set — should not loop infinitely
-      const ordered = tracker.getOrderedForCascade('@speclang/core');
-      const ids = ordered.map(n => n.id);
+      const ordered = tracker.getOrderedForCascade("@speclang/core");
+      const ids = ordered.map((n) => n.id);
       const uniqueIds = new Set(ids);
       expect(uniqueIds.size).toBe(ids.length); // No duplicates
     });
 
-    test('should handle unknown trigger ID', () => {
-      const ordered = tracker.getOrderedForCascade('@nonexistent/spec');
+    test("should handle unknown trigger ID", () => {
+      const ordered = tracker.getOrderedForCascade("@nonexistent/spec");
       expect(ordered).toEqual([]);
     });
   });
 
-  describe('Graph integrity', () => {
+  describe("Graph integrity", () => {
     beforeEach(() => {
       tracker.loadIndex();
     });
 
-    test('should have nodes with valid file paths', () => {
+    test("should have nodes with valid file paths", () => {
       const layer1 = tracker.getNodesByLayer(1);
       for (const node of layer1) {
         expect(node.filePath).toBeTruthy();
       }
     });
 
-    test('should handle large graph (254 specs)', () => {
+    test("should handle large graph (254 specs)", () => {
       const allLayers = new Set<number>();
       for (let i = 0; i <= 10; i++) {
         const nodes = tracker.getNodesByLayer(i);
@@ -219,51 +219,51 @@ describe('DependencyTracker', () => {
       expect(allLayers.size).toBeGreaterThanOrEqual(3);
     });
 
-    test('should determine correct types for files', () => {
+    test("should determine correct types for files", () => {
       // spec files under specs/
-      const coreNode = tracker.getNode('@speclang/core');
+      const coreNode = tracker.getNode("@speclang/core");
       expect(coreNode).toBeDefined();
-      expect(coreNode!.type).toBe('spec');
+      expect(coreNode!.type).toBe("spec");
 
       // Also verify @speclang/header type is 'spec'
-      const headerNode = tracker.getNode('@speclang/header');
+      const headerNode = tracker.getNode("@speclang/header");
       expect(headerNode).toBeDefined();
-      expect(headerNode!.type).toBe('spec');
+      expect(headerNode!.type).toBe("spec");
     });
   });
 
-  describe('CascadeState management', () => {
+  describe("CascadeState management", () => {
     beforeEach(() => {
       tracker.loadIndex();
     });
 
-    test('should create initial state from trigger file', () => {
-      const state = tracker.createInitialState('project.scl', 10);
+    test("should create initial state from trigger file", () => {
+      const state = tracker.createInitialState("project.scl", 10);
       expect(state.cascade_id).toMatch(/^cascade-/);
       expect(state.depth).toBe(0);
       expect(state.max_depth).toBe(10);
-      expect(state.status).toBe('running');
-      expect(state.trigger_file).toBe('project.scl');
+      expect(state.status).toBe("running");
+      expect(state.trigger_file).toBe("project.scl");
       expect(state.agents_invoked).toEqual([]);
       expect(state.verification_results).toEqual([]);
     });
   });
 });
 
-describe('DependencyTracker — integration with real index', () => {
-  test('should load actual _index.json with 254 specs', () => {
+describe("DependencyTracker — integration with real index", () => {
+  test("should load actual _index.json with 254 specs", () => {
     const tracker = new DependencyTracker(INDEX_PATH);
     tracker.loadIndex();
 
     // Core and header specs should be findable
-    const core = tracker.getNode('@speclang/core');
+    const core = tracker.getNode("@speclang/core");
     expect(core).toBeDefined();
 
-    const header = tracker.getNode('@speclang/header');
+    const header = tracker.getNode("@speclang/header");
     expect(header).toBeDefined();
 
     // Should find dependents for widely-referenced specs
-    const dependents = tracker.getDependents('@speclang/core');
+    const dependents = tracker.getDependents("@speclang/core");
     // Core is widely referenced — it should have dependents
     expect(Array.isArray(dependents)).toBe(true);
 

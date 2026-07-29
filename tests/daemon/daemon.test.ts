@@ -1,6 +1,6 @@
 /**
  * Integration tests for speclangd daemon
- * 
+ *
  * Tests:
  * 1. Detect file creation in specs/
  * 2. Detect file modification
@@ -11,15 +11,24 @@
  * 7. Persist state across restart
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import * as fs from 'fs-extra';
-import * as path from 'path';
-import { Daemon, FileEventKind, Config, Watcher, Router, ConvergenceDetector, DaemonCommandKind, SessionStore } from '../../src/daemon/index';
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import * as fs from "fs-extra";
+import * as path from "path";
+import {
+  Daemon,
+  FileEventKind,
+  Config,
+  Watcher,
+  Router,
+  ConvergenceDetector,
+  DaemonCommandKind,
+  SessionStore,
+} from "../../src/daemon/index";
 
-const TEST_DIR = 'tests/daemon/fixtures/test-project';
+const TEST_DIR = "tests/daemon/fixtures/test-project";
 const SPECS_DIR = `${TEST_DIR}/specs`;
 
-describe('speclangd daemon', () => {
+describe("speclangd daemon", () => {
   let daemon: Daemon;
 
   beforeEach(async () => {
@@ -33,322 +42,338 @@ describe('speclangd daemon', () => {
     await fs.remove(TEST_DIR);
   });
 
-  describe('SessionStore', () => {
-    it('should create a new session', () => {
+  describe("SessionStore", () => {
+    it("should create a new session", () => {
       const store = new SessionStore(300000);
-      
-      const session = store.create('agent-1', 'spec-agent');
-      
+
+      const session = store.create("agent-1", "spec-agent");
+
       expect(session).toBeDefined();
-      expect(session.agentId).toBe('agent-1');
-      expect(session.role).toBe('spec-agent');
-      expect(session.status).toBe('idle');
+      expect(session.agentId).toBe("agent-1");
+      expect(session.role).toBe("spec-agent");
+      expect(session.status).toBe("idle");
       expect(session.ownedFiles).toEqual([]);
     });
 
-    it('should get session by ID', () => {
+    it("should get session by ID", () => {
       const store = new SessionStore(300000);
-      
-      const created = store.create('agent-1', 'spec-agent');
+
+      const created = store.create("agent-1", "spec-agent");
       const retrieved = store.get(created.id);
-      
+
       expect(retrieved).toBeDefined();
-      expect(retrieved?.agentId).toBe('agent-1');
+      expect(retrieved?.agentId).toBe("agent-1");
     });
 
-    it('should get session by agent ID', () => {
+    it("should get session by agent ID", () => {
       const store = new SessionStore(300000);
-      
-      store.create('agent-1', 'spec-agent');
-      const session = store.getByAgent('agent-1');
-      
+
+      store.create("agent-1", "spec-agent");
+      const session = store.getByAgent("agent-1");
+
       expect(session).toBeDefined();
-      expect(session?.agentId).toBe('agent-1');
+      expect(session?.agentId).toBe("agent-1");
     });
 
-    it('should set session status', () => {
+    it("should set session status", () => {
       const store = new SessionStore(300000);
-      
-      const session = store.create('agent-1', 'spec-agent');
-      store.setStatus(session.id, 'busy');
-      
+
+      const session = store.create("agent-1", "spec-agent");
+      store.setStatus(session.id, "busy");
+
       const updated = store.get(session.id);
-      expect(updated?.status).toBe('busy');
+      expect(updated?.status).toBe("busy");
     });
 
-    it('should add owned files', () => {
+    it("should add owned files", () => {
       const store = new SessionStore(300000);
-      
-      const session = store.create('agent-1', 'spec-agent');
-      store.addOwnedFile(session.id, 'specs/auth.spec.md');
-      store.addOwnedFile(session.id, 'specs/users.spec.md');
-      
+
+      const session = store.create("agent-1", "spec-agent");
+      store.addOwnedFile(session.id, "specs/auth.spec.md");
+      store.addOwnedFile(session.id, "specs/users.spec.md");
+
       const updated = store.get(session.id);
-      expect(updated?.ownedFiles).toContain('specs/auth.spec.md');
-      expect(updated?.ownedFiles).toContain('specs/users.spec.md');
+      expect(updated?.ownedFiles).toContain("specs/auth.spec.md");
+      expect(updated?.ownedFiles).toContain("specs/users.spec.md");
     });
 
-    it('should check file ownership', () => {
+    it("should check file ownership", () => {
       const store = new SessionStore(300000);
-      
-      const session = store.create('agent-1', 'spec-agent');
-      store.addOwnedFile(session.id, 'specs/auth.spec.md');
-      
-      expect(store.ownsFile(session.id, 'specs/auth.spec.md')).toBe(true);
-      expect(store.ownsFile(session.id, 'specs/missing.spec.md')).toBe(false);
+
+      const session = store.create("agent-1", "spec-agent");
+      store.addOwnedFile(session.id, "specs/auth.spec.md");
+
+      expect(store.ownsFile(session.id, "specs/auth.spec.md")).toBe(true);
+      expect(store.ownsFile(session.id, "specs/missing.spec.md")).toBe(false);
     });
 
-    it('should remove owned files', () => {
+    it("should remove owned files", () => {
       const store = new SessionStore(300000);
-      
-      const session = store.create('agent-1', 'spec-agent');
-      store.addOwnedFile(session.id, 'specs/auth.spec.md');
-      store.removeOwnedFile(session.id, 'specs/auth.spec.md');
-      
+
+      const session = store.create("agent-1", "spec-agent");
+      store.addOwnedFile(session.id, "specs/auth.spec.md");
+      store.removeOwnedFile(session.id, "specs/auth.spec.md");
+
       const updated = store.get(session.id);
-      expect(updated?.ownedFiles).not.toContain('specs/auth.spec.md');
+      expect(updated?.ownedFiles).not.toContain("specs/auth.spec.md");
     });
 
-    it('should end a session', () => {
+    it("should end a session", () => {
       const store = new SessionStore(300000);
-      
-      const session = store.create('agent-1', 'spec-agent');
+
+      const session = store.create("agent-1", "spec-agent");
       const result = store.end(session.id);
-      
+
       expect(result).toBe(true);
       expect(store.get(session.id)).toBeNull();
     });
 
-    it('should list all sessions', () => {
+    it("should list all sessions", () => {
       const store = new SessionStore(300000);
-      
-      store.create('agent-1', 'spec-agent');
-      store.create('agent-2', 'code-agent');
-      
+
+      store.create("agent-1", "spec-agent");
+      store.create("agent-2", "code-agent");
+
       const sessions = store.list();
       expect(sessions).toHaveLength(2);
     });
 
-    it('should get agent status', () => {
+    it("should get agent status", () => {
       const store = new SessionStore(300000);
-      
-      store.create('agent-1', 'spec-agent');
-      const status = store.getAgentStatus('agent-1');
-      
+
+      store.create("agent-1", "spec-agent");
+      const status = store.getAgentStatus("agent-1");
+
       expect(status).toBeDefined();
-      expect(status?.id).toBe('agent-1');
-      expect(status?.status).toBe('idle');
+      expect(status?.id).toBe("agent-1");
+      expect(status?.status).toBe("idle");
     });
 
-    it('should emit events on session creation', () => {
+    it("should emit events on session creation", () => {
       const store = new SessionStore(300000);
       const handler = vi.fn();
-      
-      store.on('session.created', handler);
-      store.create('agent-1', 'spec-agent');
-      
+
+      store.on("session.created", handler);
+      store.create("agent-1", "spec-agent");
+
       expect(handler).toHaveBeenCalled();
     });
 
-    it('should emit events on status change', () => {
+    it("should emit events on status change", () => {
       const store = new SessionStore(300000);
       const handler = vi.fn();
-      
-      const session = store.create('agent-1', 'spec-agent');
-      store.on('status.changed', handler);
-      store.setStatus(session.id, 'busy');
-      
-      expect(handler).toHaveBeenCalledWith('agent-1', 'busy');
+
+      const session = store.create("agent-1", "spec-agent");
+      store.on("status.changed", handler);
+      store.setStatus(session.id, "busy");
+
+      expect(handler).toHaveBeenCalledWith("agent-1", "busy");
     });
   });
 
-  describe('Watcher', () => {
+  describe("Watcher", () => {
     // Note: File event detection tests are inherently flaky due to polling-based simulation
     // These tests verify the pattern matching logic which is deterministic
-    
-    it('should match spec.md files', () => {
+
+    it("should match spec.md files", () => {
       const config = new Config();
       const watcher = new Watcher(config.get());
-      
+
       // Test pattern matching via the private method
       // We can test this indirectly through events
       expect(true).toBe(true); // Placeholder - pattern matching tested in integration
     });
 
-    it('should match .scl files', () => {
+    it("should match .scl files", () => {
       const config = new Config();
       const watcher = new Watcher(config.get());
-      
+
       expect(true).toBe(true); // Placeholder
     });
   });
 
-  describe('Router', () => {
-    it('should route spec files to spec-agent', () => {
+  describe("Router", () => {
+    it("should route spec files to spec-agent", () => {
       const router = new Router();
-      
+
       const task = router.route({
         kind: FileEventKind.Create,
-        path: 'specs/auth.spec.md',
+        path: "specs/auth.spec.md",
         timestamp: Date.now(),
       });
-      
+
       expect(task).toBeDefined();
-      expect(task?.kind).toBe('spec_writer');
+      expect(task?.kind).toBe("spec_writer");
     });
 
-    it('should route generated go files to code-agent-go', () => {
+    it("should route generated go files to code-agent-go", () => {
       const router = new Router();
-      
+
       const task = router.route({
         kind: FileEventKind.Create,
-        path: 'generated/auth.go',
+        path: "generated/auth.go",
         timestamp: Date.now(),
       });
-      
+
       expect(task).toBeDefined();
-      expect(task?.kind).toBe('code_gen');
+      expect(task?.kind).toBe("code_gen");
     });
 
-    it('should route project.scl to northstar', () => {
+    it("should route project.scl to northstar", () => {
       const router = new Router();
-      
+
       const task = router.route({
         kind: FileEventKind.Modify,
-        path: 'project.scl',
+        path: "project.scl",
         timestamp: Date.now(),
       });
-      
+
       expect(task).toBeDefined();
-      expect(task?.kind).toBe('spec_writer');
+      expect(task?.kind).toBe("spec_writer");
     });
   });
 
-  describe('ConvergenceDetector', () => {
-    it('should detect convergence after quiet period', async () => {
+  describe("ConvergenceDetector", () => {
+    it("should detect convergence after quiet period", async () => {
       const config = new Config();
       await config.load();
-      
+
       // Set short quiet period for testing
       const testConfig = config.get();
       testConfig.convergence.quietPeriod = 2; // 2 seconds
-      
+
       const detector = new ConvergenceDetector(testConfig);
-      
+
       // Simulate events
-      detector.onEvent({ kind: FileEventKind.Create, path: 'specs/test.spec.md', timestamp: Date.now() });
-      detector.onEvent({ kind: FileEventKind.Modify, path: 'specs/test2.spec.md', timestamp: Date.now() });
-      
+      detector.onEvent({
+        kind: FileEventKind.Create,
+        path: "specs/test.spec.md",
+        timestamp: Date.now(),
+      });
+      detector.onEvent({
+        kind: FileEventKind.Modify,
+        path: "specs/test2.spec.md",
+        timestamp: Date.now(),
+      });
+
       expect(detector.isConverged()).toBe(false);
-      
+
       // Wait for quiet period
-      await new Promise(resolve => setTimeout(resolve, 2500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2500));
+
       expect(detector.isConverged()).toBe(true);
-      
+
       detector.stop();
     });
 
-    it('should reset timer on new event', async () => {
+    it("should reset timer on new event", async () => {
       const config = new Config();
       await config.load();
-      
+
       const testConfig = config.get();
       testConfig.convergence.quietPeriod = 2;
-      
+
       const detector = new ConvergenceDetector(testConfig);
-      
-      detector.onEvent({ kind: FileEventKind.Create, path: 'specs/test.spec.md', timestamp: Date.now() });
-      
+
+      detector.onEvent({
+        kind: FileEventKind.Create,
+        path: "specs/test.spec.md",
+        timestamp: Date.now(),
+      });
+
       // Wait but not long enough to converge
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // New event should reset timer
-      detector.onEvent({ kind: FileEventKind.Modify, path: 'specs/test2.spec.md', timestamp: Date.now() });
-      
+      detector.onEvent({
+        kind: FileEventKind.Modify,
+        path: "specs/test2.spec.md",
+        timestamp: Date.now(),
+      });
+
       // Should still not be converged
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       expect(detector.isConverged()).toBe(false);
-      
+
       // Wait remaining time
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       expect(detector.isConverged()).toBe(true);
-      
+
       detector.stop();
     });
   });
 
-  describe('Daemon integration', () => {
-    it('should start and stop without errors', async () => {
+  describe("Daemon integration", () => {
+    it("should start and stop without errors", async () => {
       const daemon = new Daemon();
-      
+
       await daemon.start();
       expect(daemon.isRunning()).toBe(true);
-      
+
       await daemon.stop();
       expect(daemon.isRunning()).toBe(false);
     });
 
-    it.skip('should restart correctly', async () => {
+    it.skip("should restart correctly", async () => {
       const daemon = new Daemon();
-      
+
       await daemon.start();
       expect(daemon.isRunning()).toBe(true);
-      
+
       await daemon.restart();
       expect(daemon.isRunning()).toBe(true);
-      
+
       await daemon.stop();
       expect(daemon.isRunning()).toBe(false);
     });
 
-    it.skip('should health check return true when running', async () => {
+    it.skip("should health check return true when running", async () => {
       const daemon = new Daemon();
-      
+
       await daemon.start();
       expect(daemon.healthCheck()).toBe(true);
-      
+
       await daemon.stop();
       expect(daemon.healthCheck()).toBe(false);
     });
 
-    it('should process status command', async () => {
+    it("should process status command", async () => {
       const daemon = new Daemon();
-      
+
       await daemon.start();
       const status = daemon.getStatus();
-      
+
       expect(status.status).toBeDefined();
       expect(status.cascadeDepth).toBe(0);
-      
+
       await daemon.stop();
     });
 
-    it('should process pause and resume commands', async () => {
+    it("should process pause and resume commands", async () => {
       const daemon = new Daemon();
-      
+
       await daemon.start();
       expect(daemon.isPaused()).toBe(false);
-      
+
       await daemon.processCommand({ kind: DaemonCommandKind.Pause });
       expect(daemon.isPaused()).toBe(true);
-      
+
       await daemon.processCommand({ kind: DaemonCommandKind.Resume });
       expect(daemon.isPaused()).toBe(false);
-      
+
       await daemon.stop();
     });
 
-    it('should process abort command', async () => {
+    it("should process abort command", async () => {
       const daemon = new Daemon();
-      
+
       await daemon.start();
       await daemon.processCommand({ kind: DaemonCommandKind.Abort });
-      
+
       const status = daemon.getStatus();
       // After abort, status could be idle, converged, or cascading (depending on timing)
-      expect(['idle', 'converged', 'cascading']).toContain(status.status);
-      
+      expect(["idle", "converged", "cascading"]).toContain(status.status);
+
       await daemon.stop();
     });
   });

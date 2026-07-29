@@ -3,35 +3,35 @@
  * Source: @speclang/mcp
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { CommandsToolHandler } from '../../src/mcp/tools/commands.js';
-import type { SpecLangDB } from '../../src/db/index.js';
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { CommandsToolHandler } from "../../src/mcp/tools/commands.js";
+import type { SpecLangDB } from "../../src/db/index.js";
 
 // Mock database
 const createMockDb = () => ({
   prepare: vi.fn(() => ({
     get: vi.fn(() => ({})),
     run: vi.fn(() => ({ changes: 1 })),
-    all: vi.fn(() => [])
+    all: vi.fn(() => []),
   })),
-  transaction: vi.fn((fn: () => void) => fn())
+  transaction: vi.fn((fn: () => void) => fn()),
 });
 
-describe('CommandsToolHandler', () => {
+describe("CommandsToolHandler", () => {
   let handler: CommandsToolHandler;
   let mockDb: ReturnType<typeof createMockDb>;
 
   beforeEach(() => {
     mockDb = createMockDb();
     const db = {
-      getDatabase: () => mockDb
+      getDatabase: () => mockDb,
     } as unknown as SpecLangDB;
     handler = new CommandsToolHandler(db);
     vi.clearAllMocks();
   });
 
-  describe('handleGetStatus', () => {
-    it('should return correct status counts', async () => {
+  describe("handleGetStatus", () => {
+    it("should return correct status counts", async () => {
       const mockPrepare = mockDb.prepare as ReturnType<typeof vi.fn>;
       mockPrepare
         .mockReturnValueOnce({ get: () => ({ count: 2 }) })
@@ -48,7 +48,7 @@ describe('CommandsToolHandler', () => {
       expect(result.last_build).toBe(1704067200);
     });
 
-    it('should detect convergence when no activity', async () => {
+    it("should detect convergence when no activity", async () => {
       const mockPrepare = mockDb.prepare as ReturnType<typeof vi.fn>;
       mockPrepare
         .mockReturnValueOnce({ get: () => ({ count: 0 }) })
@@ -65,46 +65,46 @@ describe('CommandsToolHandler', () => {
     });
   });
 
-  describe('handleQueryCommands', () => {
-    it('should query pending commands with default params', async () => {
+  describe("handleQueryCommands", () => {
+    it("should query pending commands with default params", async () => {
       const mockCommands = [
         {
-          command_id: 'cmd-1',
-          cascade_id: 'cascade-1',
-          action: 'generate',
-          target_file: 'src/auth.ts',
-          session_id: 'session-1',
+          command_id: "cmd-1",
+          cascade_id: "cascade-1",
+          action: "generate",
+          target_file: "src/auth.ts",
+          session_id: "session-1",
           payload: '{"key": "value"}',
           priority: 10,
-          status: 'pending',
+          status: "pending",
           created_at: 1704067200,
-          updated_at: 1704067200
-        }
+          updated_at: 1704067200,
+        },
       ];
 
       (mockDb.prepare as ReturnType<typeof vi.fn>).mockReturnValue({
-        all: () => mockCommands
+        all: () => mockCommands,
       });
 
       const result = await handler.handleQueryCommands({});
 
       expect(result).toHaveLength(1);
-      expect(result[0].command_id).toBe('cmd-1');
-      expect(result[0].payload).toEqual({ key: 'value' });
+      expect(result[0].command_id).toBe("cmd-1");
+      expect(result[0].payload).toEqual({ key: "value" });
     });
   });
 
-  describe('handleInsertCommand', () => {
-    it('should insert command and return id', async () => {
+  describe("handleInsertCommand", () => {
+    it("should insert command and return id", async () => {
       (mockDb.prepare as ReturnType<typeof vi.fn>).mockReturnValue({
-        run: vi.fn(() => ({ changes: 1 }))
+        run: vi.fn(() => ({ changes: 1 })),
       });
 
       const result = await handler.handleInsertCommand({
-        cascade_id: 'cascade-1',
-        action: 'generate',
-        target_file: 'src/auth.ts',
-        priority: 10
+        cascade_id: "cascade-1",
+        action: "generate",
+        target_file: "src/auth.ts",
+        priority: 10,
       });
 
       expect(result.command_id).toBeDefined();
@@ -112,63 +112,63 @@ describe('CommandsToolHandler', () => {
     });
   });
 
-  describe('handleUpdateCommand', () => {
-    it('should update command status', async () => {
+  describe("handleUpdateCommand", () => {
+    it("should update command status", async () => {
       (mockDb.prepare as ReturnType<typeof vi.fn>).mockReturnValue({
-        run: vi.fn(() => ({ changes: 1 }))
+        run: vi.fn(() => ({ changes: 1 })),
       });
 
       const result = await handler.handleUpdateCommand({
-        command_id: 'cmd-1',
-        status: 'completed'
+        command_id: "cmd-1",
+        status: "completed",
       });
 
       expect(result.updated).toBe(true);
     });
   });
 
-  describe('handleDeleteCommand', () => {
-    it('should delete command', async () => {
+  describe("handleDeleteCommand", () => {
+    it("should delete command", async () => {
       (mockDb.prepare as ReturnType<typeof vi.fn>).mockReturnValue({
-        run: vi.fn(() => ({ changes: 1 }))
+        run: vi.fn(() => ({ changes: 1 })),
       });
 
       const result = await handler.handleDeleteCommand({
-        command_id: 'cmd-1'
+        command_id: "cmd-1",
       });
 
       expect(result.deleted).toBe(true);
     });
   });
 
-  describe('handleGetNextCommand', () => {
-    it('should return highest priority pending command', async () => {
+  describe("handleGetNextCommand", () => {
+    it("should return highest priority pending command", async () => {
       const mockCommand = {
-        command_id: 'cmd-1',
-        cascade_id: 'cascade-1',
-        action: 'generate',
-        target_file: 'src/auth.ts',
-        session_id: 'session-1',
+        command_id: "cmd-1",
+        cascade_id: "cascade-1",
+        action: "generate",
+        target_file: "src/auth.ts",
+        session_id: "session-1",
         payload: null,
         priority: 10,
-        status: 'pending',
+        status: "pending",
         created_at: 1704067200,
-        updated_at: 1704067200
+        updated_at: 1704067200,
       };
 
       (mockDb.prepare as ReturnType<typeof vi.fn>).mockReturnValue({
-        get: () => mockCommand
+        get: () => mockCommand,
       });
 
       const result = await handler.handleGetNextCommand();
 
       expect(result).not.toBeNull();
-      expect(result?.command_id).toBe('cmd-1');
+      expect(result?.command_id).toBe("cmd-1");
     });
 
-    it('should return null when no pending commands', async () => {
+    it("should return null when no pending commands", async () => {
       (mockDb.prepare as ReturnType<typeof vi.fn>).mockReturnValue({
-        get: () => undefined
+        get: () => undefined,
       });
 
       const result = await handler.handleGetNextCommand();
@@ -177,10 +177,10 @@ describe('CommandsToolHandler', () => {
     });
   });
 
-  describe('handleClearCompleted', () => {
-    it('should clear old completed commands', async () => {
+  describe("handleClearCompleted", () => {
+    it("should clear old completed commands", async () => {
       (mockDb.prepare as ReturnType<typeof vi.fn>).mockReturnValue({
-        run: vi.fn(() => ({ changes: 5 }))
+        run: vi.fn(() => ({ changes: 5 })),
       });
 
       const result = await handler.handleClearCompleted({});

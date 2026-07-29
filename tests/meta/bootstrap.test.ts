@@ -17,8 +17,10 @@ describe("MetaBootstrap", () => {
     await fs.ensureDir(testProjectRoot);
     await fs.ensureDir(path.join(testProjectRoot, "src", "db"));
     await fs.ensureDir(path.join(testProjectRoot, "specs"));
-    await fs.ensureDir(path.join(testProjectRoot, "specs", "implementation.spec.dir"));
-    
+    await fs.ensureDir(
+      path.join(testProjectRoot, "specs", "implementation.spec.dir"),
+    );
+
     // Create a minimal test TypeScript file
     await fs.writeFile(
       path.join(testProjectRoot, "src", "db", "index.ts"),
@@ -34,7 +36,7 @@ export class Database {
   }
 }
 `,
-      "utf-8"
+      "utf-8",
     );
 
     bootstrap = new MetaBootstrap(testProjectRoot);
@@ -51,7 +53,7 @@ export class Database {
 
   it("should run dry-run bootstrap", async () => {
     const result = await bootstrap.run(true);
-    
+
     expect(result).toBeDefined();
     expect(result.duration).toBeGreaterThan(0);
     // In dry-run mode, we expect it to at least attempt phases
@@ -60,14 +62,14 @@ export class Database {
 
   it("should generate specs from code", async () => {
     const specs = await bootstrap.generateSpecsFromCode();
-    
+
     // This may return empty if directories don't exist or are empty
     expect(Array.isArray(specs)).toBe(true);
   });
 
   it("should validate self-consistency", async () => {
     const validation = await bootstrap.validateSelfConsistency();
-    
+
     expect(validation).toBeDefined();
     expect(typeof validation.passed).toBe("boolean");
     expect(typeof validation.totalSpecs).toBe("number");
@@ -76,7 +78,7 @@ export class Database {
 
   it("should verify equivalence", async () => {
     const equivalence = await bootstrap.verifyEquivalence();
-    
+
     expect(equivalence).toBeDefined();
     expect(typeof equivalence.verified).toBe("boolean");
     expect(Array.isArray(equivalence.differences)).toBe(true);
@@ -84,7 +86,7 @@ export class Database {
 
   it("should get source-spec mappings", async () => {
     const mappings = await bootstrap.getSourceSpecMappings();
-    
+
     expect(Array.isArray(mappings)).toBe(true);
   });
 });

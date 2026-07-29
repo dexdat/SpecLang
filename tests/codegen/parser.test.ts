@@ -3,12 +3,12 @@
  * Source: @speclang/codegen @block:parser-test
  */
 
-import { describe, it, expect } from 'vitest';
-import { parseCodeSpecContent } from '../../src/codegen/parser';
+import { describe, it, expect } from "vitest";
+import { parseCodeSpecContent } from "../../src/codegen/parser";
 
-describe('codegen/parser', () => {
-  describe('parseCodeSpecContent', () => {
-    it('should parse a basic spec with code blocks', () => {
+describe("codegen/parser", () => {
+  describe("parseCodeSpecContent", () => {
+    it("should parse a basic spec with code blocks", () => {
       // Use flexible format - no lines count
       const content = `# speclang-header
 id: "@test/example"
@@ -23,15 +23,15 @@ export interface User {
 }
 `;
 
-      const spec = parseCodeSpecContent(content, 'test.spec');
-      
-      expect(spec.header.id).toBe('@test/example');
-      expect(spec.header.version).toBe('1.0.0');
-      expect(spec.target.language).toBe('typescript');
+      const spec = parseCodeSpecContent(content, "test.spec");
+
+      expect(spec.header.id).toBe("@test/example");
+      expect(spec.header.version).toBe("1.0.0");
+      expect(spec.target.language).toBe("typescript");
       expect(spec.blocks.length).toBeGreaterThan(0);
     });
 
-    it('should extract code blocks with correct kind', () => {
+    it("should extract code blocks with correct kind", () => {
       const content = `# speclang-header
 id: "@test/kinds"
 version: "1.0.0"
@@ -41,12 +41,12 @@ version: "1.0.0"
 function test(): void {}
 `;
 
-      const spec = parseCodeSpecContent(content, 'test.spec');
-      
-      expect(spec.blocks[0]?.kind).toBe('function');
+      const spec = parseCodeSpecContent(content, "test.spec");
+
+      expect(spec.blocks[0]?.kind).toBe("function");
     });
 
-    it('should extract references from blocks', () => {
+    it("should extract references from blocks", () => {
       const content = `# speclang-header
 id: "@test/refs"
 version: "1.0.0"
@@ -56,12 +56,12 @@ version: "1.0.0"
 some content
 `;
 
-      const spec = parseCodeSpecContent(content, 'test.spec');
-      
-      expect(spec.blocks[0]?.refs).toContain('specs/auth#login');
+      const spec = parseCodeSpecContent(content, "test.spec");
+
+      expect(spec.blocks[0]?.refs).toContain("specs/auth#login");
     });
 
-    it('should handle multiple blocks', () => {
+    it("should handle multiple blocks", () => {
       const content = `# speclang-header
 id: "@test/multi"
 version: "1.0.0"
@@ -74,21 +74,21 @@ const a = 1;
 const b = 2;
 `;
 
-      const spec = parseCodeSpecContent(content, 'test.spec');
-      
+      const spec = parseCodeSpecContent(content, "test.spec");
+
       expect(spec.blocks.length).toBe(2);
     });
 
-    it('should default to typescript target', () => {
+    it("should default to typescript target", () => {
       const content = `# speclang-header
 id: "@test/default"
 version: "1.0.0"
 ---
 `;
 
-      const spec = parseCodeSpecContent(content, 'test.spec');
-      
-      expect(spec.target.language).toBe('typescript');
+      const spec = parseCodeSpecContent(content, "test.spec");
+
+      expect(spec.target.language).toBe("typescript");
     });
   });
 });
