@@ -13,6 +13,53 @@
   NEVER remove the matrix header row or NEVER-DONE / E2E-001 fixtures.
 -->
 
+### Foreman #104 — NEVER-DONE Audit (2026-07-31, scheduler tick — /home/kara/speclang)
+
+**System State:** Load 14.64 (spiked 19.60 at tick start), 48Gi avail, 16 cores. Up 15d 4h. Node v22.22.3, TypeScript 7.0.2. vitest: 2 runs @ --maxWorkers=1 — run 1: 1 db.test.ts flake; run 2: 1 arch003 timing flake (490ms vs 480ms wall-clock floor). Both suspect files pass in isolation (46/46). 1807/1866 pass (58 skip) both runs. Hilo: 3,561 edges across 1,588 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean. prettier: src + tests all matched.
+
+**Scheduler:** ⚠️ **COOLDOWN REVERSION DETECTED + FIXED.** Live GET showed speclang entry at CooldownS=900, DecayRate=1 (UpdatedAt 15:19:26 local) — tick #103's 43200 had reverted. Daemon restarted 10:39:33 local (same restart event that reverted h3-sdk-go, chimera-v2, deepseek-dashboard, Hivemind — documented fleet pattern). PUT `{"CooldownS": 43200, "DecayRate": 0}` → GET-verified: CooldownS=43200, DecayRate=0, Enabled=true, UpdatedAt 22:06:29Z. Disabled sibling `SpecLang` entry unchanged (43200, Enabled=false). **No fleet.toml entry for speclang — will revert again on next daemon restart. Flagged for scheduler maintainer.**
+
+**12-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | 31 docs on disk (17 root + 13 docs/ + ci.yml). All 8 OSS files present (CODEOWNERS, GOVERNANCE.md, SUPPORT.md, LICENSE, CONTRIBUTING.md, CHANGELOG.md, SECURITY.md, CODE_OF_CONDUCT.md). NOTICE N/A (MIT) |
+| 3. Test Gaps | ⚠️ 1 flake/run at load ~15 | 1807/1866 pass (58 skip) ×2 runs. Run 1: db.test.ts; run 2: arch003 wall-clock (490 vs 480ms). Both pass in isolation (46/46) — established high-load pattern (cf. ticks #92, #99) |
+| 4. Package Upgrades | NOTED | NEW: vite 8.1.5→8.2.0 (minor), @modelcontextprotocol/sdk 1.29.0→1.30.0 (minor), @types/react 19.2.17→19.2.18, @types/react-dom 19.2.3→19.2.4 (patches). Known: @types/node 26.1.1→26.1.2, postcss 8.5.23→8.5.25, @vitejs/plugin-react 6.0.4→6.0.5. 4 ESM-only majors blocked (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4) |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/**/*.ts (incl. workflow/ module) |
+| 6. Performance | PASS | 3 bench test files (cascade, daemon, mcp) + monitor.ts utility |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | PASS | Tick #104 written (7e11945c), recall-by-ID verified (count=1) |
+| 10. Code Quality | PASS | tsc clean. npm audit: 0 vulns. prettier src + tests: all matched |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+| 12. Format Gate | PASS | prettier src + tests all matched |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main (0 unpushed, counted against live upstream `main@{upstream}`). Sibling clone /home/kara/SpecLang has nothing new (its HEAD 02279548 already in history since tick #103). No concurrent foreman session (ps verified).
+2. **Cooldown reversion fixed**: PUT CooldownS=43200 + DecayRate=0, GET-verified both fields + Enabled=true. 6th+ project on the daemon-restart reversion list. fleet.toml entry recommended for permanence — scheduler maintainer scope (not edited here).
+3. Ground truth: ALL checks run fresh this tick — vitest ×2 (99-146s, 1 flake each at load ~15), tsc --noEmit, speclang validate, hilo graph stats, npm outdated, npm audit, prettier, GitReins guard + tasks, DuckBrain (remember + recall-by-ID verified).
+4. GitReins: guard_run PASS (Tier 1: secrets/tests/static_analysis/lsp; gitleaks 30s timeout → built-in scanner fallback, same as tick #103). **PITFALL-WORKFLOW-001 CLOSED** — in_progress since 07-21; all 6 criteria verified implemented (functions present, zero TODOs, builds clean); task_complete judged COMPLETE (completed_at 22:16:38Z, judge=deepseek-v4-flash). Prior ticks' "3 tasks complete (ci-pr-review, THINK-002, PITFALL-MCP-001)" was stale — current gitignored tasks.yaml has DEPS-REACT-19 + PITFALL-WORKFLOW-001, both now complete.
+5. Flake forensics: different test failed each run (db.test.ts then arch003) at load ~15; both pass in isolation — load-induced timing contention, same class as ticks #92/#99. Not a regression.
+6. npm outdated: 4 new non-blocking updates (vite 8.2.0, MCP SDK 1.30.0, @types/react, @types/react-dom) + 2 known patches + 4 ESM-only blocked majors. npm audit: 0 vulns (clean since tick #79).
+7. Cleanup: test-temp-bootstrap/ + test-temp-meta/ removed (vitest regenerates). _index.json + edges.jsonl restored (`git checkout`) — board-only tick, warm delta (3701 vs 3561) not committed per protocol.
+8. DuckBrain: tick #104 written (ID 7e11945c), recall by ID confirmed persisted. Namespace speclang.
+9. E2E-001: Skipped — no code changes in 82 ticks (13+ days). Compiler/CLI tool; E2E cosmetic for idle mode.
+10. Board hygiene: folded uncommitted NEVER-DONE model edit (deepseek-v4-flash, made earlier today — fleet GA) into this tick's commit.
+11. 0 new code-level gaps — project remains genuinely idle (82nd consecutive idle tick, 13+ days).
+12. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected (speclang ns, ID 7e11945c verified), GitReins=clean
+
+**VERDICT: idle — maintenance mode. Cooldown reversion (900s) detected and re-fixed to 43200 + DecayRate=0 (GET-verified, Enabled=true). 1 timing flake per vitest run at load ~15 (different test each run, passes in isolation — environmental). PITFALL-WORKFLOW-001 closed. All gates green.**
+
+**82nd consecutive idle tick (13+ days).** The tick's real find: daemon restart at 10:39:33 local reverted speclang's cooldown 43200→900 despite tick #103's verification — the API-set pause does not survive restarts without a fleet.toml entry. Re-fixed via API; flagged for scheduler maintainer. Vitest flakes at load ~15 confirmed environmental (both suspect files pass in isolation 46/46). PITFALL-WORKFLOW-001 closed after code verification. 4 new non-blocking dep updates. 0 code changes since Jul 12 (82 ticks).
+
+**Scheduler Health:** CooldownS=43200 (API GET-verified this tick), DecayRate=0, Enabled=true, Weight=15. Daemon restarted 10:39:33 local — reversion risk persists until fleet.toml entry added.
+
+---
+
 ### Foreman #103 — NEVER-DONE Audit (2026-07-31, scheduler tick — /home/kara/speclang)
 
 **System State:** Load 11.98, 46Gi avail, 16 cores. Up 15d 1h. Node v22.22.3, TypeScript 7.0.2. vitest: 93/97 files (1808/1866 tests, 58 skip), 111.97s — clean run, 0 flakes at load ~12 (ran with --maxWorkers=1). Hilo: 3,561 edges across 1,588 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean. prettier: src + tests all matched (3 bin files warn — pre-existing since tick #78, cosmetic).
@@ -1093,7 +1140,7 @@
 | ID | Task | Priority | Complexity | Deps | Tags | Model | Reasoning | Fallback |
 |----|------|----------|------------|------|------|-------|-----------|----------|
 | CI-BILLING-001 | GitHub Actions billing blocked — CI safety net unavailable | High | 1 (admin) | — | — | — | Blocked: requires GitHub account payment method — human action | — |
-| NEVER-DONE | 11-point audit sweep | High | 2 | — | ++code-review, +testing | DeepSeek V4 Pro | Audit runs every tick; finds new gaps | GLM-5.2 |
+| NEVER-DONE | 11-point audit sweep | High | 2 | — | ++code-review, +testing | deepseek-v4-flash | Audit runs every tick; finds new gaps | GLM-5.2 |
 
 **Assumptions:** TypeScript 7.0.2, Node 22+, pnpm; CI billing is admin/human action; React 19 migration complete; tailwindcss 4 upgrade deferred.
 
@@ -1101,7 +1148,7 @@
 
 **Execution Order:** NEVER-DONE audit runs every tick.
 
-**Escalation Conditions:** Any pitfall task touches >5 files → split. Tests reveal cross-cutting issues → escalate to DeepSeek V4 Pro. Security-relevant code paths → escalate to GPT-5.6 Sol.
+**Escalation Conditions:** Any pitfall task touches >5 files → split. Tests reveal cross-cutting issues → escalate to deepseek-v4-flash. Security-relevant code paths → escalate to GPT-5.6 Sol.
 
 ## Completed Summary
 
