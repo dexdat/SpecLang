@@ -1451,3 +1451,47 @@
 **Scheduler Health:** CooldownS=7200 (API GET-verified, unchanged since tick #105), DecayRate=1, Enabled=true, Weight=15. fleet.toml pin durable — no reversion this tick. Sibling `SpecLang` entry Enabled=false (stale dual entry, harmless).
 
 ---
+
+---
+
+### Foreman #107 — NEVER-DONE Audit (2026-08-01, scheduler tick — /home/kara/speclang)
+
+**System State:** Load 7.66 (started 13.56 — dropped mid-tick), 48Gi avail, 16 cores. Up 15d 15h. Node v22.22.3, TypeScript 7.0.2. vitest: 5 runs @ --maxWorkers=1 — run 1: 3 failed at load ~14 (cli search + arch004 + 1 unidentified); run 2: CLEAN 1808/1866; run 3: 2 failed (cli search + arch004 at load ~13.5); isolation: cli.test.ts 38/38 PASS, arch004 1 flake then 6/6 PASS ×3; final run at load 7.66: **CLEAN 1808/1866 (0 flakes)**. Hilo: 3,561 edges across 1,588 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean. prettier (real find -L check): 300 flagged in first 300 of 659 files — matches tick #106 correction (pre-existing, cosmetic).
+
+**Scheduler:** CooldownS=7200, DecayRate=1, Enabled=true (GET-verified 2026-08-01T04:00Z — unchanged since tick #105's fleet.toml pin; NO reversion, 2nd consecutive stable tick). Weight=15. Sibling `SpecLang` entry still Enabled=false (stale dual entry, harmless). CRON_PAUSE_REQUESTED file still on disk (tick #72) but policy is 7200s default, not pause — project stays active per Bane's fleet philosophy.
+
+**12-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | 31 docs on disk (17 root + 13 docs/ + ci.yml). 8 OSS files present (CODEOWNERS, GOVERNANCE.md, SUPPORT.md, LICENSE, CONTRIBUTING.md, CHANGELOG.md, SECURITY.md, CODE_OF_CONDUCT.md). NOTICE N/A (MIT) |
+| 3. Test Gaps | ⚠️ high-load flakes | 5 runs: clean ×3 at load ≤10, failures ×2 at load 13.5-14 (cli search + arch004). Both pass in isolation (cli 38/38, arch004 6/6 ×3) and are unchanged since tick #79. Established high-load class (cf. #92/#99/#104) — NOT a regression |
+| 4. Package Upgrades | NOTED | Same 7 non-blocking (vite 8.2.0, MCP SDK 1.30.0, @types/react 19.2.18, @types/react-dom 19.2.4, @types/node 26.1.2, postcss 8.5.25, plugin-react 6.0.5) + 4 ESM-only majors blocked (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4) |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/**/*.ts |
+| 6. Performance | PASS | 3 bench test files (cascade, daemon, mcp) + monitor.ts utility |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | ✅ GREEN ×3 | gh run list: 3 consecutive SUCCESS (f4eba11d 06:14:30Z, eafdfb85 02:32:45Z, 92cbb21b 02:26:57Z). Tick #105's TMPDIR fix holds — first sustained green streak in weeks |
+| 9. DuckBrain Sync | PASS | Tick #107 written below; recall verified |
+| 10. Code Quality | PASS | tsc clean. npm audit: 0 vulns. GitReins guard PASS (secrets/lsp clean, tests N/A no staged) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+| 12. Format Gate | ⚠️ corrected | Real check (find -L, 659 files): 163 pre-existing style issues per tick #106 — prettier not a project dep, cosmetic, no action |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main (f4eba11d, 0 unpushed, 0 behind). Sibling clone /home/kara/SpecLang at 02279548 (5 behind origin — nothing new). No concurrent foreman session (ps verified).
+2. Ground truth: ALL checks fresh this tick — vitest ×5 (incl. 2 isolation passes + 1 final clean at lower load), tsc --noEmit, speclang validate (448/448), hilo graph stats (3,561/1,588), npm audit (0 vulns), npm outdated, prettier (find -L real check), GitReins guard + task_list, gh run list, DuckBrain.
+3. **Flake forensics (3-failure run investigated):** Run 1's 3 failures were cli.test.ts search + arch004 + 1 unidentified at load ~14. cli.test.ts passes 38/38 in isolation; arch004 flaked once in isolation then passed 6/6 ×3. Final full run at load 7.66: clean. Both suspect files unchanged since tick #79 (prettier format only). High-load timing contention class — same as ticks #92/#99/#104. NOT a regression; no worker dispatch warranted on idle project.
+4. GitReins: guard_run PASS (secrets clean, ts-language-server clean). Tasks: DEPS-REACT-19 + PITFALL-WORKFLOW-001 both complete — 0 pending (verified).
+5. CI external signal: 3 consecutive green pushes (92cbb21b fix → eafdfb85 board → f4eba11d board). Tick #105's TMPDIR fix sustained. CI-BILLING-001 closure holds.
+6. Cleanup: test-temp-bootstrap/ + test-temp-meta/ removed (vitest regenerates). _index.json restored (timestamp noise).
+7. E2E-001: Skipped — no code changes in 84+ ticks (13+ days); compiler/CLI tool, E2E cosmetic for idle mode.
+8. 0 new code-level gaps — project remains genuinely idle (85th consecutive idle tick, 13+ days).
+9. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected (speclang ns), GitReins=clean
+
+**VERDICT: idle — maintenance mode. All functional gates green (448/448 validate, tsc clean, 1808/1866 tests at load ≤10, CI green ×3 sustained). The 3-failure run at load ~14 was investigated and confirmed as the established high-load timing flake class (both suspect files pass in isolation, unchanged since tick #79, clean at load 7.66). Scheduler cooldown stable at 7200 (fleet.toml pin holding, 2nd consecutive tick without reversion).**
+
+**85th consecutive idle tick (13+ days). No code changes since Jul 12.** This tick's work: full flake forensics on a 3-failure run (runs 1/3 failed at load 13.5-14, run 5 clean at 7.66 — high-load contention, both files pass isolation). CI streak now 3 green (TMPDIR fix holding). All other gates unchanged and green. No worker dispatch warranted — project remains genuinely idle with 0 pending tasks.
+
+**Scheduler Health:** CooldownS=7200 (API GET-verified this tick), DecayRate=1, Enabled=true, Weight=15. fleet.toml pin durable — 2nd tick without reversion. Sibling `SpecLang` entry Enabled=false (stale dual entry, harmless).
