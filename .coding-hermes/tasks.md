@@ -1734,3 +1734,49 @@
 **89th consecutive idle tick (13+ days). No code changes since Jul 12.** The tick's value: (1) cleanest test run since tick #108 — 0 flakes at load 8.64 (load normalized from today's 24-33 spike window); (2) fleet.toml ground truth updated: entry EXISTS at line 500 (policy-script regeneration 22s after tick fire), contradicting tick #110's 11:04 grep — the re-add landed at the correct 7200 and matches the DB exactly, converting durability from by-absence to explicit pin (reversion risk resolved); (3) cooldown 7200 stable 7 ticks; (4) CI green streak ×7 sustained. No worker dispatch warranted — 0 pending tasks.
 
 **Scheduler Health:** CooldownS=7200 (API GET-verified this tick), DecayRate=1, Enabled=true, Weight=15. fleet.toml speclang entry NOW PRESENT at 7200 (re-added by policy script 15:04:58) — explicit pin, reversion window closed. Sibling `SpecLang` entry Enabled=false (stale dual entry, harmless).
+### Foreman #112 — NEVER-DONE Audit (2026-08-01, scheduler tick — /home/kara/speclang)
+
+**System State:** Load 23.33 (15m avg 29.15 — siblings active: ring-runner Kimi K3 worker RR-VFX-01 + ai_plays_poke hilo warm), 47Gi avail, 16 cores. Up 16d 5h. Node v22.22.3, TypeScript 7.0.2. vitest ×2 @ --maxWorkers=1: run 1 = 4 flakes (1804/1866, 58 skip — db.test.ts, arch004 timeout 5s, cli.test.ts validate + 1); run 2 = 1 flake (1807/1866 — cli.test.ts only). Isolation re-run of the 3 suspect files: 79/79 pass. Hilo: warm 3700/1583, stats 3,686 edges across 1,627 files (4 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean.
+
+**Scheduler:** CooldownS=7200, DecayRate=1, Enabled=true (API GET verified). fleet.toml speclang entry present (line 500, cooldown_s=7200 — re-added by policy script, durable across daemon restarts, supersedes #110 by-absence claim). Sibling `SpecLang` entry remains Enabled=false. Deliver=telegram:-1003310984808:17441.
+
+**12-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | 31 docs on disk (17 root + 13 docs/ + ci.yml). All 8 OSS files present (CODEOWNERS, GOVERNANCE.md, SUPPORT.md, LICENSE, CONTRIBUTING.md, CHANGELOG.md, SECURITY.md, CODE_OF_CONDUCT.md). NOTICE N/A (MIT) |
+| 3. Test Gaps | ⚠️ 4 flakes/run 1, 1 flake/run 2 at load ~23 | Different tests each run (db, arch004, cli) — all pass in isolation 79/79. Same load-flake class as ticks #92/#99/#104 but amplified by sibling load (ring-runner + ai_plays_poke at tick time) |
+| 4. Package Upgrades | NOTED | NEW this tick: @modelcontextprotocol/sdk 1.29.0→1.30.0, vite 8.1.5→8.2.0, @types/react 19.2.17→19.2.18, @types/react-dom 19.2.3→19.2.4, js-yaml 5.2.2→5.2.3 (patch), @types/better-sqlite3 7.6.13→9.6.0 (types-only major, non-blocking). Known: @types/node 26.1.1→26.1.2, postcss 8.5.23→8.5.25, @vitejs/plugin-react 6.0.4→6.0.5. 4 ESM-only majors blocked (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4) |
+| 5. Pitfall Hunt | PASS | 3 pre-existing Rust daemon TODOs (ipc.rs, router.rs, convergence.rs — unchanged since Jul 12). 0 in src/**/*.ts |
+| 6. Performance | PASS | 3 bench test files (cascade, daemon, mcp) + monitor.ts utility |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | FAIL (pre-existing) | billing (CI-BILLING-001, human action) |
+| 9. DuckBrain Sync | PASS | Tick #112 written (f1213227), recall-by-ID verified (count=1) |
+| 10. Code Quality | PASS | tsc clean. npm audit: 0 vulns. prettier (corrected gate, see Actions) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+| 12. Format Gate | ⚠️ corrected | 548 files flagged via `find -L` resolved-path check — ALL pre-existing Jul 12 symlink-migration debt in specs/*.spec.dir/ (documented since tick #106), prettier NOT a project dep (grep package.json = 0). Cosmetic, no action — corrected line, not vacuous PASS |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main (9655d1e4, 0 unpushed, counted against live upstream). Clean tree. No concurrent speclang foreman session (siblings present but different projects: ring-runner worker PID 137444/137550, ai_plays_poke warm PID 218869/219566 — verified via /proc cwd pattern).
+2. Cooldown: 7200 (fleet.toml pin + API GET-verified). No PUT needed — fleet.toml entry is the durable mechanism (policy script re-added at 7200 per Bane 07-31 directive).
+3. Ground truth: ALL checks run fresh this tick — vitest ×2 (186s + rerun, flakes at load 23), isolation re-run of 3 suspect files (79/79), tsc --noEmit, speclang validate (448/448), hilo warm + stats (3700/1583 warm, 3686/1627 stats), npm outdated, npm audit (0 vulns), prettier find -L resolved-path check (548 pre-existing), GitReins guard + tasks, DuckBrain (remember + recall-by-ID verified).
+4. GitReins: guard_run PASS (Tier 1: secrets/tests/static_analysis/lsp — gitleaks 30s timeout → built-in scanner fallback, same as ticks #103/#104). tasks.yaml: 2 tasks both complete (DEPS-REACT-19, PITFALL-WORKFLOW-001). Evaluator configured (deepseek-v4-flash).
+5. Flake forensics: run 1 = 4 failures (db.test.ts migrate, arch004 5s timeout, cli.test.ts, +1), run 2 = 1 failure (cli.test.ts only). All 3 suspect files pass in isolation 79/79 — load-induced contention amplified by sibling processes at tick time (load 23 vs prior ticks' 12-15). Not a regression. Established pattern since tick #92.
+6. npm outdated: 6 new non-blocking updates (MCP SDK 1.30.0, vite 8.2.0, @types/react, @types/react-dom, js-yaml, @types/better-sqlite3) + 2 known patches + 4 ESM-only blocked majors. npm audit: 0 vulns (clean since tick #79).
+7. Format gate corrected: quoted-glob "src/**/*.ts" matches 0 files (dual-view symlink trap — documented reference format-gate-symlink-false-pass). Real check via `find -L ... -exec realpath` → 548 flagged, all specs/*.spec.dir/ with Jul 12 mtimes. Pre-existing debt, cosmetic, prettier not a dep — no worker dispatch, no mass-format.
+8. Cleanup: _index.json restored (`git checkout`) — auto-generated timestamp noise. edges.jsonl clean this tick (warm delta was cache-only, file untouched — no restore needed).
+9. DuckBrain: tick #112 written (ID f1213227), recall by ID confirmed persisted. Namespace speclang.
+10. E2E-001: Skipped — no code changes in 90 ticks (13+ days). Compiler/CLI tool; E2E cosmetic for idle mode.
+11. 0 new code-level gaps — project remains genuinely idle (90th consecutive idle tick, 13+ days).
+12. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected (speclang ns, ID f1213227 verified), GitReins=clean
+
+**VERDICT: idle — maintenance mode. Cooldown stable at 7200 via fleet.toml pin (no PUT needed this tick). 4 flakes run 1 / 1 flake run 2 at load 23.33 (sibling-loaded tick) — all pass in isolation 79/79, environmental. Format gate line corrected to honest ⚠️ (548 pre-existing Jul 12 symlink-debt files, prettier not a dep). All real gates green.**
+
+**90th consecutive idle tick (13+ days).** The tick's findings: (1) cooldown stable — fleet.toml pin is doing its job (no reversion to fix, unlike #103/#104); (2) flake count rose with load (4 at load 23 vs 1-2 at load 12-15) — confirms load-flake class, siblings ring-runner + ai_plays_poke were active; (3) format gate corrected from vacuous PASS to honest ⚠️ with 548 pre-existing files (documented debt since tick #106). 0 code changes since Jul 12 (90 ticks). 6 new non-blocking dep updates.
+
+**Scheduler Health:** CooldownS=7200 (API GET-verified + fleet.toml pin line 500), DecayRate=1, Enabled=true, Weight=15. Stable — fleet.toml entry now the durable mechanism.
+
+---
