@@ -1537,3 +1537,48 @@
 **Scheduler Health:** CooldownS=7200 (API GET-verified this tick), DecayRate=1, Enabled=true, Weight=15. fleet.toml pin durable — 3rd tick without reversion. Sibling `SpecLang` entry Enabled=false (stale dual entry, harmless).
 
 ---
+
+### Foreman #109 — NEVER-DONE Audit (2026-08-01, scheduler tick — /home/kara/speclang)
+
+**System State:** Load 24.64 (spiked from ring-runner Terra + mythos GLM workers running concurrently), 16 cores, up 15d 21h. Node v22.22.3, TypeScript 7.0.2. vitest ×2 @ --maxWorkers=1: run 1 = 7 failed (1801 pass); run 2 = 4 failed (1804 pass). Both runs: db.test.ts + arch004-autonomous-cascade + (run 1 only) e2e spec-to-code timeouts — ALL pass in isolation (41/41 + 9/9). High-load timing flake class (timeouts at 5s on execSync/daemon convergence), same as ticks #92/#99/#104 but amplified by 24.64 load. Hilo: 3,561 edges across 1,588 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean. npm audit: 0 vulns.
+
+**Scheduler:** ⚠️ **COOLDOWN REVERSION #5 DETECTED + FIXED.** Live GET at tick start: CooldownS=900, DecayRate=1, UpdatedAt 15:23:10Z — the 7200 set by tick #105's fleet.toml pin had reverted (daemon restart event; documented fleet pattern — API PUTs revert without a fleet.toml entry; tick #105's pin apparently not durable as claimed). PUT `{"CooldownS": 7200}` → GET-verified: CooldownS=7200, DecayRate=1, Enabled=true, UpdatedAt 15:38:08Z. **Per corrected Bane 07-31 matrix: 0 pending → 7200s (2h default). 43200 retired — NOT set.** CRON_PAUSE_REQUESTED file still on disk (stale from tick #72 era; project correctly at 7200 not paused).
+
+**12-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | 31 docs on disk (17 root + 13 docs/ + ci.yml). All 8 OSS files present (CODEOWNERS, GOVERNANCE.md, SUPPORT.md, LICENSE, CONTRIBUTING.md, CHANGELOG.md, SECURITY.md, CODE_OF_CONDUCT.md). NOTICE N/A (MIT) |
+| 3. Test Gaps | ⚠️ flake@load24 | 1801→1804/1866 pass across 2 runs; 7→4 fails. db.test.ts (2), arch004 (2), e2e spec-to-code (3, run 1 only). All pass isolation (41/41 + 9/9) — environmental (load 24.64 from sibling workers), NOT regression. No code changes since Jul 12 |
+| 4. Package Upgrades | NOTED | Same 7 non-blocking (vite 8.2.0, MCP SDK 1.30.0, @types/react 19.2.18, @types/react-dom 19.2.4, @types/node 26.1.2, postcss 8.5.25, plugin-react 6.0.5, js-yaml 5.2.3) + 4 ESM-only majors blocked (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4) |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/**/*.ts |
+| 6. Performance | PASS | 3 bench test files (cascade, daemon, mcp) + monitor.ts utility |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | ✅ GREEN ×5 | gh run list: 5 consecutive SUCCESS (2aeddf8d 11:56:34Z, 890ebc93 09:27:58Z, f4eba11d 06:14:30Z, eafdfb85 02:32:45Z, 92cbb21b 02:26:57Z). Tick #105 TMPDIR fix holds — longest green streak |
+| 9. DuckBrain Sync | PASS | Tick #109 written (a563ef73); namespace speclang populated (50+ keys), recall verified |
+| 10. Code Quality | PASS | tsc clean. npm audit: 0 vulns. GitReins guard PASS (secrets/lsp clean, gitleaks 30s timeout → built-in scanner fallback, same as #103/#104) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+| 12. Format Gate | ⚠️ corrected | tick #108's find -L real check methodology holds. Re-verified this tick: prettier NOT a project dependency (no .prettierrc, not in package.json); generated spec code style (single-quote, trailing-comma multiline imports) diverges from prettier defaults — 978/1005 generated files flagged vs defaults, cosmetic/pre-existing since Jul 12, no action. Quoted-glob `"src/**/*.ts"` still false-passes (matches 0 files) — do NOT use it; use find -L or shell-expanded globs |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main (2aeddf8d, 0 unpushed, 0 behind). No concurrent foreman session in speclang (ps verified; ring-runner + mythos siblings in other repos, unrelated). Sibling clone /home/kara/SpecLang stale at 02279548 (in history since tick #103, nothing new).
+2. **Cooldown reversion fixed**: PUT CooldownS=7200, GET-verified (CooldownS=7200, DecayRate=1, Enabled=true). 5th reversion — tick #105's fleet.toml pin claim did NOT survive. Scheduler maintainer scope: add real fleet.toml entry for speclang to stop this recurring.
+3. Ground truth: ALL checks fresh this tick — vitest ×2 (248s + 178s, flakes at load 24.64), isolation re-runs (db+arch004 41/41, e2e 9/9), tsc --noEmit, speclang validate, hilo graph stats, npm audit/outdated, prettier (find -L + shell-glob verification), GitReins guard + task list, gh run list, DuckBrain.
+4. GitReins: guard_run PASS (Tier 1: secrets/static_analysis/lsp; gitleaks 30s timeout → built-in scanner). Tasks: DEPS-REACT-19 + PITFALL-WORKFLOW-001 both complete — 0 pending (verified). Judge config present (deepseek-v4-flash).
+5. Flake forensics: run 1 = 7 fails (db 2, arch004 2, e2e spec-to-code 3 — 5000ms execSync/daemon timeouts); run 2 = 4 fails (db 2, arch004 2). Isolation: db+arch004 = 41/41 PASS, e2e spec-to-code = 9/9 PASS. High-load timing contention at 24.64 — environmental, established class. NOT a regression.
+6. Format gate verification: tick #108's correction confirmed correct. Quoted glob false-pass reproduced (0 files matched, exit 0) — noted as do-not-use. Real state: generated-code style divergence, cosmetic, prettier not a dep. NO mass-format (would churn 978 files against codegen style).
+7. Cleanup: test-temp-bootstrap/ + test-temp-meta/ removed (vitest regenerates). _index.json restored (timestamp noise — 932-line lastModified churn). No edges.jsonl delta (no warm, board-only tick).
+8. E2E-001: Skipped — no code changes in 86+ ticks (13+ days); compiler/CLI tool, E2E cosmetic for idle mode.
+9. 0 new code-level gaps — project remains genuinely idle (87th consecutive idle tick, 13+ days).
+10. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected (speclang ns, a563ef73 verified), GitReins=clean
+
+**VERDICT: idle — maintenance mode. All functional gates green (448/448 validate, tsc clean, 1804/1866 tests with flake@load24 class all passing isolation, CI green ×5 sustained). Cooldown reversion #5 fixed to 7200 (corrected matrix; GET-verified). Format gate methodology confirmed corrected (tick #108).**
+
+**87th consecutive idle tick (13+ days). No code changes since Jul 12.** Real find this tick: cooldown reverted AGAIN (5th time) — tick #105's fleet.toml pin is not durable; flagged for scheduler maintainer. High-load flake class amplified (7→4 fails across 2 runs at load 24.64, all pass isolation 50/50). Format gate false-pass root-caused and documented (quoted glob matches 0 files; prettier not a dep; generated style cosmetic). No worker dispatch warranted — genuinely idle.
+
+**Scheduler Health:** CooldownS=7200 (API GET-verified this tick), DecayRate=1, Enabled=true, Weight=15. Reversion #5 — fleet.toml entry still missing, next daemon restart will revert again. Sibling `SpecLang` entry Enabled=false (stale dual entry, harmless).
+
+---
