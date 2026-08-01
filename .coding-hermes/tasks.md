@@ -1647,3 +1647,45 @@
 **Board state:** Two #109 entries (45c30301 + 061ccc3f) both document the same fire; this note supersedes the sibling's fleet.toml claim. Next tick = #110.
 
 ---
+### Foreman #110 — NEVER-DONE Audit (2026-08-01, scheduler tick — /home/kara/speclang)
+
+**System State:** Load 33.53 at tick start (ring-runner Kimi k3 worker + sibling foreman ticks h3-sdk-python/wojons-mythos + muster go test concurrent — highest sustained load window in board history), 16 cores, up 15d 22h. Node v22.22.3, TypeScript 7.0.2. vitest @ --maxWorkers=1 (188.56s): **3 failed at load 33.53** (1805 pass, 58 skip) — tests/cli.test.ts "should abort cascade" (execAsync timeout) + arch004 convergence ×2 (5000ms wall-clock). **Isolation re-runs: cli.test.ts 38/38 PASS + 2 skip; arch004 6/6 PASS** — established high-load flake class (cf. #92/#99/#104/#107/#109), NOT regression. speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean. Hilo: 3,561 edges / 1,588 files (unchanged). npm audit: 0 vulns. npm outdated: same 8 non-blocking + 4 ESM-only majors blocked (+ @types/better-sqlite3 types major).
+
+**Scheduler:** ✅ CooldownS=7200, DecayRate=1, Enabled=true (GET-verified this tick, UpdatedAt 15:38:08Z = first #109 session's PUT). **No reversion to fix — 6th consecutive tick holding 7200.** Daemon restart at 10:33 local did NOT revert.
+
+**12-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | 31 docs on disk (17 root + 13 docs/ + ci.yml). 8 OSS files present (CODEOWNERS, GOVERNANCE, SUPPORT, LICENSE, CONTRIBUTING, CHANGELOG, SECURITY, CODE_OF_CONDUCT). NOTICE N/A (MIT) |
+| 3. Test Gaps | ⚠️ 3 fail @ load 33.53 | cli.test.ts abort-cascade + arch004 ×2 (5000ms timeouts). ALL pass isolation (38/38 + 6/6). Extreme-load amplification of established class — NOT regression |
+| 4. Package Upgrades | NOTED | Same 8 non-blocking (vite 8.2.0, MCP SDK 1.30.0, @types/react 19.2.18, @types/react-dom 19.2.4, @types/node 26.1.2, postcss 8.5.25, plugin-react 6.0.5, js-yaml 5.2.3) + 4 ESM-only majors blocked (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4) + @types/better-sqlite3 9.6.0 types major |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/**/*.ts |
+| 6. Performance | PASS | 3 bench test files (cascade, daemon, mcp) + monitor.ts utility |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | ✅ GREEN | gh run list (dexdat/SpecLang): 5 consecutive SUCCESS (2aeddf8d 11:56:34Z, 890ebc93 09:27:58Z, f4eba11d 06:14:30Z, eafdfb85 02:32:45Z, 92cbb21b 02:26:57Z) + 2 board-commit runs in_progress/cancelled (superseded pushes). TMPDIR fix holds |
+| 9. DuckBrain Sync | PASS | Tick #110 written; namespace speclang has 16 tick keys + 14 findings; recall verified |
+| 10. Code Quality | PASS | tsc clean. npm audit: 0 vulns. GitReins guard PASS (secrets/lsp clean) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+| 12. Format Gate | ⚠️ corrected | find -L real check: 676 TS/TSX files. Pre-existing style divergence in generated/symlinked specs — prettier not a dep, cosmetic, no action (methodology per #108/#109) |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main (4f5cfd10, 0 unpushed, 0 behind). **Three sibling sessions ran #109 concurrently today** (45c30301 10:53, 061ccc3f 10:55, 4f5cfd10 10:58 cross-verification) — all board commits in this repo; no live concurrent process at tick time (ps verified: only ring-runner worker in /home/kara/ring-runner, unrelated). Sibling clone /home/kara/SpecLang stale at 02279548.
+2. **FLEET.TOML CLAIM CORRECTED (6th instance):** both #109 entries + the cross-verification commit claimed "fleet.toml pin verified present at 7200". **Ground truth this tick: `grep -i speclang fleet.toml` → NO MATCH (exit 1). fleet.toml has exactly 4 entries (uhlp 900, chimera-v2 43200, hermes-canopy 900, helios 43200).** The cooldown survives restarts NOT because of a fleet.toml pin but because there is NO speclang entry → ApplyFleetConfig (loader.go:391-411) does not re-pin speclang at daemon start → the scheduler-DB value (7200) persists untouched. This is the durable-by-absence mechanism. Tick #105's "corrected pin to 7200" edit was later reverted when the scheduler foreman restored its curated fleet.toml (Jul 31 20:15; per DuckBrain finding 1db5b2c0) — and that removal accidentally made the DB value stable. **Fleet maintainer note: do NOT re-add a speclang entry unless you want 900/43200 re-pinning behavior; the current no-entry state is the safest.**
+3. Ground truth: ALL checks fresh this tick — vitest (188.56s, 3 fail @ load 33.53), isolation re-runs (cli 38/38, arch004 6/6), tsc --noEmit, speclang validate (448/448), hilo graph stats (3,561/1,588), npm audit (0 vulns), npm outdated, GitReins guard + task list, gh run list (dexdat/SpecLang), DuckBrain (remember + list_keys + recall verified), fleet.toml grep.
+4. GitReins: guard_run PASS (secrets clean, ts-language-server clean). Tasks: DEPS-REACT-19 + PITFALL-WORKFLOW-001 both complete — 0 pending (verified). Judge config present (deepseek-v4-flash, GITREINS_LLM_API_KEY).
+5. Flake forensics: 3 failures all 5000ms wall-clock timeouts at load 33.53 (highest sustained load in board history). Isolation: cli 38/38 PASS, arch004 6/6 PASS. Same class as #92/#99/#104/#107/#109 — environmental, NOT regression.
+6. CI external signal: 5 consecutive green pushes. Runs 30706936591/30707017403 cancelled (superseded by later board pushes — normal GitHub behavior on rapid board commits), run 30707117038 in_progress for the cross-verification commit. TMPDIR fix (tick #105) sustained.
+7. Cleanup: test-temp-bootstrap/ + test-temp-meta/ removed (vitest regenerates). _index.json restored (timestamp noise). No edges.jsonl delta (no warm, board-only tick).
+8. E2E-001: Skipped — no code changes in 87+ ticks (13+ days); compiler/CLI tool, E2E cosmetic for idle mode.
+9. 0 new code-level gaps — project remains genuinely idle (88th consecutive idle tick, 13+ days).
+10. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected (speclang ns, tick #110 verified), GitReins=clean
+
+**VERDICT: idle — maintenance mode. All functional gates green (448/448 validate, tsc clean, CI green ×5 sustained). 3 test failures at load 33.53 forensically confirmed as the established high-load flake class (all pass isolation). Cooldown stable at 7200 (6th consecutive tick, no reversion). REAL FIND: fleet.toml "pin" claims are wrong — no speclang entry exists (grep-verified), and the durability is by-absence (ApplyFleetConfig doesn't re-pin unlisted projects).**
+
+**88th consecutive idle tick (13+ days). No code changes since Jul 12.** The tick's value: (1) load 33.53 — highest sustained load in board history — 3 failures all confirmed high-load flake class via isolation re-runs; (2) fleet.toml claim chain finally grounded: NO speclang entry exists (grep exit 1), contradicting 3 commits today; durability is by-absence, not by pin — flagging fleet maintainer to keep it that way; (3) cooldown 7200 stable 6 ticks running; (4) CI green streak ×5 sustained (TMPDIR fix from tick #105). No worker dispatch warranted — 0 pending tasks.
+
+**Scheduler Health:** CooldownS=7200 (API GET-verified this tick), DecayRate=1, Enabled=true, Weight=15. No fleet.toml entry for speclang — durable-by-absence (do NOT re-add). Sibling `SpecLang` entry Enabled=false (stale dual entry, harmless).
