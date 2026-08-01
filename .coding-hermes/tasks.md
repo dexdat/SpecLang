@@ -1582,3 +1582,48 @@
 **Scheduler Health:** CooldownS=7200 (API GET-verified this tick), DecayRate=1, Enabled=true, Weight=15. Reversion #5 — fleet.toml entry still missing, next daemon restart will revert again. Sibling `SpecLang` entry Enabled=false (stale dual entry, harmless).
 
 ---
+
+### Foreman #109 — NEVER-DONE Audit (2026-08-01, scheduler tick — /home/kara/speclang)
+
+**System State:** Load 29.35 at tick start (highest in board history — ring-runner Terra spec worker + muster go test + 2 sibling foreman ticks h3-sdk-python/wojons-mythos concurrent), 16 cores. Up 15d 22h. Node v22.22.3, TypeScript 7.0.2. vitest (infra-spawned run at 10:33, --maxWorkers=1): 1804/1866 tests pass (58 skip), **4 failed at load ~29** (177.84s): db.test.ts Graph Queries ×2 (10.6s/32.7s — contention) + arch004 convergence ×2 (5018ms/5003ms — 5000ms wall-clock timeout). Isolation: db.test.ts 39/39 PASS (incl. both graph queries); arch004 2/6 fail in isolation at load 29 (timing-sensitive, unchanged since tick #79 — extreme-load amplification of established class). speclang validate: **448/448 pass, 0 fail** (one spurious failure mid-tick was the arch004 test's own temp file `specs/_arch004_test_*.spec.md`, created+deleted by the concurrent test run — re-verified clean twice). tsc clean. Hilo: 3,561 edges across 1,588 files (unchanged). npm audit: 0 vulns. Prettier (realpath-resolved sample): pre-existing style issues in symlinked specs per tick #106 correction — cosmetic, prettier not a project dep, no action.
+
+**Scheduler:** ✅ CooldownS=7200, DecayRate=1, Enabled=true (GET-verified 2026-08-01T15:33:54Z = this tick's fire). **Daemon restarted 10:33 local (tick time) — cooldown SURVIVED at 7200 → fleet.toml pin (tick #105 fix) proven durable across restarts; the tick #104 reversion risk is empirically retired (4th consecutive stable tick).** Sibling `SpecLang` entry still Enabled=false (stale dual entry, harmless).
+
+**12-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing; spurious 1-fail explained as concurrent test temp file) |
+| 2. Doc Coverage | PASS | 31 docs on disk (17 root + 13 docs/ + ci.yml). 8 OSS files present (CODEOWNERS, GOVERNANCE, SUPPORT, LICENSE, CONTRIBUTING, CHANGELOG, SECURITY, CODE_OF_CONDUCT). NOTICE N/A (MIT) |
+| 3. Test Gaps | ⚠️ 4 fail at load 29 | db.test.ts graph queries (pass 39/39 isolation) + arch004 convergence (timing-sensitive, unchanged since #79). Extreme-load amplification of known class (cf. #92/#99/#104/#107) — NOT a regression |
+| 4. Package Upgrades | NOTED | 13 total: 8 non-blocking (vite 8.2.0, MCP SDK 1.30.0, @types/react 19.2.18, @types/react-dom 19.2.4, @types/node 26.1.2, postcss 8.5.25, plugin-react 6.0.5, js-yaml 5.2.3) + 4 ESM-only majors blocked (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4) + @types/better-sqlite3 9.6.0 (types major) |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/**/*.ts. 3 pre-existing Rust daemon TODOs (ipc.rs, router.rs, convergence.rs — unchanged since Jul 12) |
+| 6. Performance | PASS | 3 bench test files (cascade, daemon, mcp) + monitor.ts utility |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | ✅ GREEN ×5 | gh run list: 5 consecutive SUCCESS (2aeddf8d 11:56:34Z, 890ebc9 09:27:58Z, f4eba11 06:14:30Z, eafdfb8 02:32:45Z, 92cbb21 02:26:57Z). Tick #105's TMPDIR fix holds — longest green streak in board history |
+| 9. DuckBrain Sync | PASS | Tick #109 written (6041c98f); recall-by-ID verified (count=1) |
+| 10. Code Quality | PASS | tsc clean. npm audit: 0 vulns. GitReins guard PASS (secrets/lsp clean) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+| 12. Format Gate | ⚠️ corrected | Real check (realpath-resolved sample): pre-existing style issues in symlinked specs per tick #106 — cosmetic, no action |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main (2aeddf8d, 0 unpushed, 0 behind, fetch clean). Sibling clone /home/kara/SpecLang stale (no new commits). No concurrent speclang foreman session (ps verified — only sibling ticks in OTHER repos: h3-sdk-python, wojons-mythos).
+2. **Flake forensics (4-failure run at load 29):** db.test.ts graph queries failed at 10.6s/32.7s (normal <2s) — heavy contention; both pass in isolation 39/39. arch004 convergence failed at 5018ms/5003ms = the 5000ms wall-clock timeout; fails in isolation too at load 29 (2/6) but is the known timing-sensitive test unchanged since tick #79 (tick #107: passes 6/6 ×3 at load ~13). Extreme load (29.35 — highest ever on this board) amplifies both classes. NOT regressions; no worker dispatch.
+3. **Mystery dirty files solved:** mid-tick git status showed 11 style-only-modified SPECLANG-GENERATED spec files + test-temp dirs — these are the arch004 test's cascade run REGENERATING code from specs mid-test (codegen emits double quotes/no trailing ws) and creating temp dirs; test cleanup restores via git checkout. Observed during the concurrent infra vitest run; worktree CLEAN at tick end. Not external noise, not prettier — no action.
+4. **Validate spurious failure explained:** concurrent arch004 test created `specs/_arch004_test_1785598654898.spec.md` (epoch-ms name) which validate flags ("No speclang-header") — deleted by test completion. Re-verified 448/448 twice.
+5. Ground truth: ALL checks fresh this tick — infra vitest (177.84s, 4 fail at load 29), isolation run db 39/39 + arch004 2/6, tsc --noEmit, speclang validate ×2, hilo graph stats (3,561/1,588), npm audit (0 vulns), npm outdated, prettier realpath sample, GitReins guard + task_list, gh run list (5 green), DuckBrain (remember + recall verified).
+6. GitReins: guard_run PASS (secrets clean, ts-language-server clean). Tasks: DEPS-REACT-19 + PITFALL-WORKFLOW-001 both complete — 0 pending (verified).
+7. CI external signal: 5 consecutive green pushes (92cbb21b fix → eafdfb85 → f4eba11d → 890ebc93 → 2aeddf8d). TMPDIR fix sustained; CI-BILLING-001 closure holds.
+8. E2E-001: Skipped — no code changes in 86+ ticks (13+ days); compiler/CLI tool, E2E cosmetic for idle mode.
+9. 0 new code-level gaps — project remains genuinely idle (87th consecutive idle tick, 13+ days).
+10. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected (speclang ns, 6041c98f verified), GitReins=clean
+
+**VERDICT: idle — maintenance mode. All functional gates green (448/448 validate, tsc clean, CI green ×5 sustained). 4 test failures at load 29.35 (highest in board history) forensically confirmed as the established high-load flake class — db graph queries pass in isolation, arch004 is timing-sensitive and unchanged since tick #79. Daemon restarted at tick time and cooldown survived at 7200 — fleet.toml pin proven durable (4th consecutive stable tick).**
+
+**87th consecutive idle tick (13+ days). No code changes since Jul 12.** The tick's real value: (1) load 29.35 extreme-load run forensically closed — 4 failures all attributable to contention/timing, zero code regressions; (2) the daemon restart at 10:33 (the exact event class that caused tick #104's reversion) no longer reverts the cooldown — fleet.toml pin works; (3) the "mystery" mid-tick dirty spec files are the arch004 test's cascade regenerating code mid-run (cleaned up by the test itself) — closed as a non-issue; (4) validate's spurious 1-fail explained the same way (test temp file). CI streak 5 green. No worker dispatch warranted — 0 pending tasks.
+
+**Scheduler Health:** CooldownS=7200 (API GET-verified this tick), DecayRate=1, Enabled=true, Weight=15. Daemon restarted 10:33 local — cooldown survived (fleet.toml pin durable, 4th tick). Sibling `SpecLang` entry Enabled=false (stale dual entry, harmless).
+
+---
