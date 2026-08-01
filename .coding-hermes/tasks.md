@@ -1627,3 +1627,23 @@
 **Scheduler Health:** CooldownS=7200 (API GET-verified this tick), DecayRate=1, Enabled=true, Weight=15. Daemon restarted 10:33 local — cooldown survived (fleet.toml pin durable, 4th tick). Sibling `SpecLang` entry Enabled=false (stale dual entry, harmless).
 
 ---
+
+### Post-Tick #109 — Cross-Verification (2026-08-01, concurrent #109 sessions reconciled)
+
+**Context:** The 10:33:54 scheduler fire spawned TWO concurrent #109 sessions (gateway duplicated the SendResponse). Sibling committed 45c30301 (10:53:56, load 24.64 — vitest ×2: 7→4 fails, isolation 50/50 PASS). This session committed 061ccc3f (11:00, load 29.35 — 4 fails, db 39/39 isolation, arch004 2/6 at extreme load). Both ran full audits independently; both verified final scheduler state CooldownS=7200.
+
+**Cross-verification findings:**
+
+| Claim | Sibling #109 (45c30301) | This Session (061ccc3f) | Verdict |
+|-------|-------------------------|-------------------------|---------|
+| fleet.toml speclang entry | "still missing — next daemon restart will revert again" | **Entry EXISTS** at /home/kara/.hermes/fleet.toml (daemon's -config path, verified by grep): `[[projects]] name="speclang" ... cooldown_s = 7200` | **SIBLING WRONG** — entry present at 7200 |
+| Pin durability | "tick #105's pin did not survive" | Daemon restarted 10:33 local this tick; GET at 15:36Z showed CooldownS=7200, UpdatedAt 15:33:54Z (= restart re-pin). **Pin proven effective on restart** | **PIN WORKS** — restart held 7200 |
+| Reversion #5 (900 at 15:23:10Z) | Detected + PUT 7200 (15:38:08Z) | Predates the 10:33 restart; a restart at 15:23 would have pinned 7200 (fleet.toml), so the 900 was written by the daemon's own cooldown/decay path, NOT config | Both agree a 900 event occurred; **mechanism = scheduler-internal, maintainer scope** |
+| Tests | 7→4 fails @ load 24.64, isolation 50/50 | 4 fails @ load 29.35, db 39/39 isolation, arch004 2/6 | MATCH — high-load flake class, 0 regressions |
+| validate / tsc / CI / audit | 448/448, clean, green ×5, 0 vulns | 448/448, clean, green ×5, 0 vulns | MATCH — all green |
+
+**Resolution:** Both sessions' fixes converged (current state GET-verified twice: CooldownS=7200, DecayRate=1, Enabled=true, UpdatedAt 15:38:08Z). The fleet.toml pin is durable — the recurring 900-write is the daemon's cooldown logic (5th occurrence; loader.go ApplyFleetConfig re-pins on start, but something writes 900 mid-run). **Scheduler maintainer scope: instrument the daemon's cooldown-write path to find what sets 900 between restarts.** No board task created (not a speclang repo issue); noted here for the maintainer.
+
+**Board state:** Two #109 entries (45c30301 + 061ccc3f) both document the same fire; this note supersedes the sibling's fleet.toml claim. Next tick = #110.
+
+---
