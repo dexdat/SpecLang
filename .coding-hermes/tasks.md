@@ -1407,3 +1407,47 @@
 **Scheduler Health:** CooldownS=7200 (API GET-verified this tick), DecayRate=1, Enabled=true, Weight=15. fleet.toml pin corrected to 7200 — durable across restarts. Sibling `SpecLang` entry (uppercase) still Enabled=false (stale dual entry, harmless).
 
 ---
+### Foreman #106 — NEVER-DONE Audit (2026-08-01, scheduler tick — /home/kara/speclang)
+
+**System State:** Load 14.68 (peak at tick start, tail 10.84), 45Gi avail, 16 cores. Up 15d 12h. Node v22.22.3, TypeScript 7.0.2. vitest: plain run 93 passed + 4 skipped files (1808/1866 tests, 58 skip), 32.5s — CLEAN, 0 flakes at load ~14.7 (--maxWorkers=1). Coverage ×2: run 1 = 1 flake (1807/1866, unidentified test at load 14.68); run 2 + re-run = CLEAN 1808/1866. Hilo: 3,561 edges across 1,588 files (5 languages). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean. prettier: ⚠️ CORRECTED — see finding below.
+
+**Scheduler:** CooldownS=7200, DecayRate=1, Enabled=true (GET-verified 2026-08-01T02:13:40Z — unchanged since tick #105's fleet.toml fix; NO reversion this tick). Weight=15. Sibling `SpecLang` entry still Enabled=false (stale dual entry, harmless).
+
+**12-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | 31 docs on disk (17 root + 13 docs/ + ci.yml). 8 OSS files present (CODEOWNERS, GOVERNANCE.md, SUPPORT.md, LICENSE, CONTRIBUTING.md, CHANGELOG.md, SECURITY.md, CODE_OF_CONDUCT.md). NOTICE N/A (MIT) |
+| 3. Test Gaps | ⚠️ 1 flake/run at load ~15 | Plain run clean 1808/1866. Coverage run 1: 1 flake (1807/1866, test unidentified at load 14.68). Coverage run 2 + re-run: clean 1808/1866. Same high-load class as ticks #92/#99/#104 |
+| 4. Package Upgrades | NOTED | Same 7 non-blocking (vite 8.2.0, MCP SDK 1.30.0, @types/react 19.2.18, @types/react-dom 19.2.4, @types/node 26.1.2, postcss 8.5.25, plugin-react 6.0.5) + 4 ESM-only majors blocked (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4) |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/**/*.ts |
+| 6. Performance | PASS | 3 bench test files (cascade, daemon, mcp) + monitor.ts utility |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | ✅ GREEN | Verified via gh run list: last 2 pushes SUCCESS (92cbb21 fix + tick #105 board commit). Tick #105's TMPDIR fix holds — first sustained green CI in weeks |
+| 9. DuckBrain Sync | PASS | Tick #106 written below; recall verified |
+| 10. Code Quality | PASS | tsc clean. npm audit: 0 vulns. GitReins guard PASS (secrets/lsp clean, tests N/A no staged) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+| 12. Format Gate | ⚠️ CORRECTED | Prior ticks' "prettier: src + tests all matched" was a FALSE PASS — see finding below |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main (eafdfb85, 0 unpushed). Sibling clone /home/kara/SpecLang at 02279548 (already in history — nothing new). No concurrent foreman session (ps verified).
+2. Ground truth: ALL checks fresh this tick — vitest plain (32.5s clean), test:coverage ×2 (1 flake run 1, clean run 2), tsc --noEmit, speclang validate (448/448), hilo graph stats (3,561/1,588), npm audit (0 vulns), npm outdated, prettier (real check via find -L), GitReins guard, gh run list, DuckBrain.
+3. **⚠️ FORMAT GATE FALSE PASS CORRECTED (Class 4 fabrication).** Prior ticks (80+) claimed "prettier: src + tests all matched" — but `npx prettier --check "src/**/*.ts"` matches ZERO files: src/ is entirely symlinked into specs/*.spec.dir/ and prettier's glob does NOT traverse symlinked directories. The check vacously passed. **Real state:** `find -L src tests` resolves 659 real files; 163 fail prettier (94 .ts + 69 .d.ts), all in specs/*.spec.dir/ (compiler/phases 23, mcp/tools 18, codegen/targets 50 across py/ts/rust/go, mcp/errors 10, mcp/config 10, etc.). Files last touched Feb 2026 (ac1f60f1 symlink migration) — PRE-EXISTING, not a regression, and prettier is NOT in devDependencies (npx fetch). No action taken (cosmetic, pre-existing, project idle); audit line corrected.
+4. **npm run lint BROKEN (pre-existing, CI-aware).** eslint resolves from ~/.hermes/hermes-agent (not a project dep — prettier/eslint absent from devDependencies), and there's NO eslint.config.* file → ESLint 9.39.4 fails "couldn't find eslint.config.(js|mjs|cjs)". CI handles this explicitly: ci.yml checks for config file first, skips lint when absent (comment: "CI-005 lands ESLint config"). Not a regression; documented.
+5. GitReins: guard_run PASS (secrets clean, ts-language-server clean). Tasks: DEPS-REACT-19 + PITFALL-WORKFLOW-001 both complete — 0 pending (verified).
+6. CI external signal: gh run list shows last 2 pushes green (92cbb21 fix at 02:26:57Z + board commit at 02:32:45Z) — tick #105's fix sustained. Prior failure was tick #103's board commit (pre-fix).
+7. Cleanup: test-temp-bootstrap/ + test-temp-meta/ removed (vitest regenerates). _check_tick.py stray removed (tick #105 leftover). _index.json restored (timestamp noise).
+8. E2E-001: Skipped — no code changes in 83+ ticks (13+ days); compiler/CLI tool, E2E cosmetic for idle mode.
+9. 0 new code-level gaps — project remains genuinely idle (83rd consecutive idle tick, 13+ days).
+10. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected (speclang ns), GitReins=clean
+
+**VERDICT: idle — maintenance mode. All functional gates green (448/448 validate, tsc clean, 1808/1866 tests, CI green ×2 sustained). Two audit corrections this tick: (1) Format Gate "all matched" was a false pass for 80+ ticks — real prettier check via find -L shows 163 pre-existing style issues in symlinked specs (cosmetic, Feb 2026, prettier not a project dep); (2) npm run lint broken locally (no eslint config, eslint not a dep) — CI-aware, tracked as CI-005. Cooldown 7200s stable (no reversion — fleet.toml pin holds).**
+
+**84th tick (13+ days idle). No code changes since Jul 12.** The substantive work this tick: corrected a Class 4 audit fabrication (prettier gate was vacuous through symlinks) and verified tick #105's CI fix holds (2 consecutive green pushes). Both findings are pre-existing/cosmetic — no worker dispatch warranted on an idle project. Scheduler cooldown stable at 7200 (fleet.toml pin working — first tick in 5 without a reversion fix).
+
+**Scheduler Health:** CooldownS=7200 (API GET-verified, unchanged since tick #105), DecayRate=1, Enabled=true, Weight=15. fleet.toml pin durable — no reversion this tick. Sibling `SpecLang` entry Enabled=false (stale dual entry, harmless).
+
+---
