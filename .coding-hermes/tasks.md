@@ -1139,7 +1139,7 @@
 
 | ID | Task | Priority | Complexity | Deps | Tags | Model | Reasoning | Fallback |
 |----|------|----------|------------|------|------|-------|-----------|----------|
-| CI-BILLING-001 | GitHub Actions billing blocked — CI safety net unavailable | High | 1 (admin) | — | — | — | Blocked: requires GitHub account payment method — human action | — |
+| CI-BILLING-001 | ~~GitHub Actions billing blocked~~ **STALE — corrected tick #105**: CI runs execute (public repo, free minutes); real failure was hardcoded TMPDIR in test:coverage (fixed 2026-07-31, CI re-run pending) | High | 1 (admin) | — | — | — | Corrected: not billing — code fix applied; verify next CI run | — |
 | NEVER-DONE | 11-point audit sweep | High | 2 | — | ++code-review, +testing | deepseek-v4-flash | Audit runs every tick; finds new gaps | GLM-5.2 |
 
 **Assumptions:** TypeScript 7.0.2, Node 22+, pnpm; CI billing is admin/human action; React 19 migration complete; tailwindcss 4 upgrade deferred.
@@ -1375,3 +1375,34 @@
 **61st consecutive idle tick (12+ days).** All gates green. 3 bin-file prettier warnings are pre-existing and cosmetic. No new gaps. DuckBrain write verified persisted. Tick #80 fabrication from 2 ticks ago remains the only notable finding — corrected by tick #81, confirmed clean this tick.
 
 **Scheduler Health:** Daemon running. SpecLang namespace present. CooldownS=900 (last confirmed tick #79). Enabled=true. Weight=15. No cooldown reversion since tick #74 restoration.
+
+### Foreman #105 — NEVER-DONE Audit (2026-07-31, scheduler tick — /home/kara/speclang)
+
+**System State:** Load 9.91 (peak 10.71), 45Gi avail, 16 cores. Up 15d 8h. Node v22.22.3, TypeScript 7.0.2. vitest: 93 passed + 4 skipped files, 1808/1866 tests (58 skip), 95.64s — CLEAN, 0 flakes at load ~10 (--maxWorkers=1). Coverage run ×2: 1808 pass + coverage artifacts generated (after TMPDIR fix). Hilo: 3,561 edges across 1,588 files (5 languages; warm delta 3701/1584 not committed per board-only protocol). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean. prettier: src + tests all matched.
+
+**Scheduler:** ⚠️ **COOLDOWN REVERTED AGAIN — ROOT CAUSE FOUND THIS TICK.** Live GET showed speclang at CooldownS=900 (Enabled=true) — tick #104's 43200 fix reverted. Root cause: **fleet.toml (line 472-483) HAS a speclang entry pinned at cooldown_s=900** — tick #104's "no fleet.toml entry" claim was WRONG. `ApplyFleetConfig` (scheduler loader.go:391-411, commit 67c5c0c) re-pins cooldown/model/enabled from fleet.toml at EVERY daemon start; the systemd unit passes `-config ~/.hermes/fleet.toml`. Any API PUT is overwritten at next restart.
+
+**Policy correction (important):** Bane's corrected cooldown matrix (2026-07-31, supervisor skill v2.43.1 + fleet-cooldown-policy.py): 1+ real pending → 900s (15m fast); **0 real pending → 7200s (2h DEFAULT)**. The 43200s self-pause applied by ticks #99-#104 is the OLD protocol — "nothing sits paused because it's done". Also: DecayRate=0 is now REJECTED by the API ("0 causes permanent starvation — urgency never grows"); minimum is 1.
+
+**Actions Taken:**
+1. Self-heal: HEAD 9d855f3f, origin/main 7f17495a — tick #104's commit was NEVER PUSHED (found this tick; pushed with this tick's commit). Sibling clone /home/kara/SpecLang at 02279548 (nothing new). No concurrent foreman session (ps verified).
+2. **Cooldown fixed per CORRECT policy**: PUT CooldownS=7200 (not 43200) + DecayRate=1 → GET-verified: CooldownS=7200, Enabled=true, UpdatedAt 02:13:40Z. First PUT with DecayRate=0 was REJECTED by the API (starvation guard) — tick #104's claimed DecayRate=0 is now impossible.
+3. **fleet.toml pin corrected (durable fix)**: speclang entry cooldown_s 900→7200 (surgical one-line edit; TOML validated, 43 pins intact). Daemon restarts now re-pin 7200, not 900. The policy script CANNOT fix this itself — its directionality rule "only reduce, never increase" leaves 900 below target forever.
+4. **🚨 REAL GAP FOUND — CI FAILURE MISATTRIBUTED FOR 20+ TICKS.** Board claimed "CI-BILLING-001 (billing, human action)" but CI runs ARE executing (public repo, free minutes) and failing at **"Generate coverage report (CI-006)"** with exit 1. Root cause: `test:coverage` in package.json hardcodes `TMPDIR=/home/kara/SpecLang/.tmp` (a LOCAL machine path from commit f28b5478 "coverage race condition fix") — GitHub runners don't have that path, so vitest fails to create temp files and ALL 97 test files fail under coverage. **Verified locally:** `TMPDIR=/nonexistent-dir npx vitest run --coverage` → 97/97 files failed; `TMPDIR=$PWD/.tmp` → 1808 pass + coverage-final.json + index.html generated.
+5. **FIX APPLIED**: package.json `test:coverage` now uses `TMPDIR=$PWD/.tmp` (same pattern as `npm test`). `npm run build` passes post-fix. Coverage artifacts verified on disk. CI-BILLING-001 task on board is STALE — real fix was code, not billing. CI will re-run on push; expected green.
+6. GitReins: guard_run PASS (workdir=/home/kara/speclang: secrets clean, ts-language-server clean, tests/static N/A — no staged files). Tasks: DEPS-REACT-19 + PITFALL-WORKFLOW-001 both complete (no pending).
+7. npm outdated: same 4 ESM-only majors blocked (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4) + 7 non-blocking updates (vite 8.2.0, MCP SDK 1.30.0, @types/react 19.2.18, @types/react-dom 19.2.4, @types/node 26.1.2, postcss 8.5.25, plugin-react 6.0.5). npm audit: 0 vulns.
+8. Cleanup: coverage/ dir has real artifacts now (gitignored? verified below). _index.json + edges.jsonl restored (git checkout — board-only tick, warm delta not committed).
+9. E2E-001: Skipped — no code changes in 82+ ticks (13+ days); compiler/CLI tool, E2E cosmetic for idle mode. (package.json script change doesn't alter runtime behavior.)
+10. 12-Point Audit: 1 Spec PASS, 2 Docs PASS (31 on disk), 3 Tests PASS (clean run 0 flakes), 4 Upgrades NOTED, 5 Pitfalls PASS (0 TODO/FIXME in src/**/*.ts; 3 pre-existing Rust daemon TODOs unchanged), 6 Perf PASS, 7 CLI PASS (tsc + validate + --help), 8 CI **FIXED THIS TICK** (was misattributed billing; real cause hardcoded TMPDIR; fix verified locally, CI re-run pending push), 9 DuckBrain verified below, 10 Code Quality PASS, 11 Wiring PASS, 12 Format PASS.
+11. Bookkeeping: tasks.md updated; CI-BILLING-001 marked stale/corrected.
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected (speclang ns), GitReins=clean
+
+**VERDICT: idle — maintenance mode with REAL FIND. Cooldown reversion root-caused to fleet.toml pin (900→7200 corrected, durable across restarts). CI failure misattributed to billing for 20+ ticks — actual cause hardcoded local TMPDIR in test:coverage, FIXED and verified locally. Policy correction: 7200s default (not 43200 self-pause) per Bane 2026-07-31 matrix.**
+
+**83rd tick (13+ days idle), but the first in weeks with a substantive fix.** Two stale claims corrected: (1) "no fleet.toml entry" was wrong — entry existed at 900, now pinned 7200; (2) "CI-BILLING-001 billing" was wrong — CI runs execute and failed on a hardcoded path, now fixed. Both corrected with verification (GET-verified cooldown, local coverage repro, post-fix build). CI re-run pending push.
+
+**Scheduler Health:** CooldownS=7200 (API GET-verified this tick), DecayRate=1, Enabled=true, Weight=15. fleet.toml pin corrected to 7200 — durable across restarts. Sibling `SpecLang` entry (uppercase) still Enabled=false (stale dual entry, harmless).
+
+---
