@@ -1911,3 +1911,45 @@
 **Scheduler Health:** CooldownS=7200 (API GET-verified this tick), DecayRate=1, Enabled=true, Weight=15. fleet.toml speclang entry present (line 500, cooldown_s=7200) — explicit pin durable across daemon restarts. Sibling `SpecLang` entry Enabled=false (stale dual entry, harmless).
 
 ---
+### Foreman #116 — NEVER-DONE Audit (2026-08-02, scheduler tick — /home/kara/speclang)
+
+**System State:** Load 9.38 (1m avg, 16 cores, up 16d 14h). Node v22.22.3, TypeScript 7.0.2. vitest @ --maxWorkers=1 (117.76s): **93 files passed | 4 skipped (97), 1808/1866 tests pass (58 skip), 0 flakes at load ~9.4** — third consecutive clean run at load >9 (cf. #114: 10.35, #115: 10.68). speclang validate: 448/448 pass (0 fail, 540 warnings pre-existing). tsc clean. Hilo: 3,686 edges / 1,627 files (unchanged from #112–#115). npm audit: 0 vulns. npm outdated: 13 items unchanged (8 non-blocking + 4 ESM-only majors blocked + @types/better-sqlite3 types major).
+
+**Scheduler:** ✅ CooldownS=7200, DecayRate=1, Enabled=true (API GET-verified via /api/v1/projects, UpdatedAt 2026-08-02T02:38:04Z). **11th consecutive tick holding 7200 — no reversion to fix.** fleet.toml speclang entry present (line 500, cooldown_s=7200 — explicit pin, durable). Sibling `SpecLang` entry still Enabled=false (stale dual entry, harmless). Deliver=telegram:-1003310984808:17441.
+
+**12-Point Audit Results:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Spec Alignment | PASS | 448/448 validate (0 fail, 540 warnings pre-existing) |
+| 2. Doc Coverage | PASS | 31 docs on disk (17 root + 13 docs/ + ci.yml). All 8 OSS files present (CODEOWNERS, GOVERNANCE.md, SUPPORT.md, LICENSE, CONTRIBUTING.md, CHANGELOG.md, SECURITY.md, CODE_OF_CONDUCT.md). NOTICE N/A (MIT) |
+| 3. Test Gaps | PASS | 93 files passed (4 skipped), 1808/1866 tests pass (58 skip), 117.76s — **0 flakes at load 9.38** (3rd consecutive clean run at load >9) |
+| 4. Package Upgrades | NOTED | 13 total unchanged: 8 non-blocking (vite 8.2.0, MCP SDK 1.30.0, @types/react 19.2.18, @types/react-dom 19.2.4, @types/node 26.1.2, postcss 8.5.25, plugin-react 6.0.5, js-yaml 5.2.3) + 4 ESM-only majors blocked (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4) + @types/better-sqlite3 9.6.0 (types major) |
+| 5. Pitfall Hunt | PASS | 0 TODO/FIXME/HACK in src/**/*.ts (fresh grep this tick). 3 pre-existing Rust daemon TODOs (ipc.rs, router.rs, convergence.rs — unchanged since Jul 12) |
+| 6. Performance | PASS | 3 bench test files (cascade, daemon, mcp) + monitor.ts utility |
+| 7. CLI/Endpoint | PASS | tsc clean, speclang --help + validate both work |
+| 8. CI/CD | ✅ GREEN ×12 | gh run list (dexdat/SpecLang): 30735116090 (#115 board, SUCCESS 5m4s 06:00:32Z), 30730962117 (#114, SUCCESS 4m50s), 30726672302 (#113, SUCCESS 5m6s), 30722381831 (#112, SUCCESS 4m44s), 30716354765 (#111, SUCCESS 4m45s). TMPDIR fix (tick #105) holds — longest green streak in board history |
+| 9. DuckBrain Sync | PASS | Tick #116 written (3829e99b-af69-4eb4-80aa-c7ea90e2d167); recall-by-ID verified (count=1) |
+| 10. Code Quality | PASS | tsc clean. npm audit: 0 vulns. GitReins guard PASS (gitleaks 30s timeout → built-in scanner fallback, same as #103/#104; secrets/lsp clean) |
+| 11. Middle-Out Wiring | PASS | CLI (bin/speclang) + daemon (src/speclangd.ts) wired |
+| 12. Format Gate | PASS | prettier src+tests all matched (ran this tick). No source changes (idle) |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main (e34fa45f, 0 unpushed, 0 behind, fetch clean). No concurrent speclang foreman session (ps verified — only hivemind-worker + dexdat-memory dogfood workers, different projects). Sibling clone /home/kara/SpecLang stale at 02279548 (tick #102, no new commits).
+2. Scheduler: CooldownS=7200 confirmed via GET — 11th consecutive tick stable. No PUT needed; fleet.toml pin (line 500) is the durable mechanism.
+3. Ground truth: ALL checks fresh this tick — vitest (117.76s, 0 flakes), tsc --noEmit, speclang validate (448/448), hilo graph stats (3,686/1,627), npm audit (0 vulns), npm outdated (13), prettier (all matched), GitReins guard PASS + task_list (2 complete, 0 pending), gh run list, scheduler GET, fleet.toml grep.
+4. GitReins: guard_run PASS (secrets/lsp clean; gitleaks 30s timeout → built-in scanner fallback — established pattern). Tasks: DEPS-REACT-19 complete (07-19) + PITFALL-WORKFLOW-001 complete (07-31) — 0 pending (verified via task_list).
+5. Cleanup: test-temp-bootstrap/ + test-temp-meta/ removed (vitest regenerates, shutil script). _index.json restored (timestamp noise). No edges.jsonl delta (no warm this tick).
+6. E2E-001: Skipped — no code changes in 94 ticks (13+ days); compiler/CLI tool, E2E cosmetic for idle mode.
+7. 0 new code-level gaps — project remains genuinely idle (94th consecutive idle tick, 13+ days).
+8. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (TypeScript), Audit=N/A, Tier3=N/A, Hilo=useful, DuckBrain=connected (speclang ns, tick #116 verified), GitReins=clean
+
+**VERDICT: idle — maintenance mode. All functional gates green (448/448 validate, tsc clean, 1808/1866 tests 0 flakes at load 9.38, CI green ×12 sustained). Cooldown stable at 7200 for the 11th consecutive tick (fleet.toml pin line 500). No worker dispatch warranted — 0 pending tasks.**
+
+**94th consecutive idle tick (13+ days). No code changes since Jul 12.** The tick's value: (1) third consecutive 0-flake vitest run at load >9 — load-normalized stability confirmed (9.38 this tick vs 10.68 last); (2) cooldown 7200 stable 11 ticks running, fleet.toml pin verified at line 500 — reversion window stays closed; (3) CI green streak ×12 sustained (TMPDIR fix from tick #105 holding); (4) npm outdated 13 items unchanged — no new pending upgrades. 0 code changes since Jul 12 (94 ticks).
+
+**Scheduler Health:** CooldownS=7200 (API GET-verified this tick), DecayRate=1, Enabled=true, Weight=15. fleet.toml speclang entry present (line 500, cooldown_s=7200) — explicit pin durable across daemon restarts. Sibling `SpecLang` entry Enabled=false (stale dual entry, harmless).
+
+---
