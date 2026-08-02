@@ -1953,3 +1953,43 @@
 **Scheduler Health:** CooldownS=7200 (API GET-verified this tick), DecayRate=1, Enabled=true, Weight=15. fleet.toml speclang entry present (line 500, cooldown_s=7200) — explicit pin durable across daemon restarts. Sibling `SpecLang` entry Enabled=false (stale dual entry, harmless).
 
 ---
+
+---
+
+### Foreman #117 — Idle Tick (2026-08-02, scheduler tick — /home/kara/speclang)
+
+**System State:** Cheap-idle audit per canonical ladder (idle #95 ≥ 5 → git status + remote + scheduler pin + DuckBrain counter). No vitest run this tick — no code changes in 20+ days (0 since Jul 12); suite verified clean at #116 (0 flakes at load 9.38).
+
+**Scheduler:** CooldownS=7200 (API GET-verified via check_scheduler_project.py), Enabled=true, Priority=10, Weight=15, DecayRate=1. fleet.toml pin stable — 12th tick at 7200. UpdatedAt 2026-08-02T02:38:04Z (policy script re-add). CRON_PAUSE_REQUESTED still on disk but stale (tick #72 era, pre-07-31 policy); current directive = 7200 cooldown, NOT full pause — pin respected, no pause action taken.
+
+**12-Point Audit Results (cheap subset):**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Git state | PASS | Working tree clean, 0 unpushed vs origin/main (fetch + log verified) |
+| 2. CI | PASS | gh run list: last 3 runs all success (billing block RESOLVED — first green runs since CI-BILLING-001 era; #114-#116 all success) |
+| 3. Scheduler | PASS | CooldownS=7200 GET-verified, Enabled=true, pin durable |
+| 4. Issues | PASS | 0 open issues on dexdat/SpecLang |
+| 5. Stashes | PASS | 0 stashes (no stale failed-approach debris) |
+| 6. Sibling | PASS | No concurrent foreman process (ps verified), no double-fire |
+| 7. DuckBrain | PASS | Tick #117 written (26a18a2f), recall-by-ID verified (count=1) |
+| 8. Board | PASS | 0 matrix rows, 0 implicit-pending tasks, no open `## [ ]` entries |
+| 9. E2E-001 | SKIPPED | No code changes in 95+ ticks — cosmetic for idle mode (established pattern) |
+| 10. Deps | NOTED | 2 patch pending (@types/node, postcss) + 4 ESM-only blocked majors — unchanged, non-blocking (no audit run this tick per cheap ladder) |
+| 11. Cooldown policy | PASS | 7200 per Bane 07-31 directive; no PUT issued (pin durable) |
+| 12. Bookkeeping | PASS | tasks.md updated, commit + push |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main (0 unpushed). No sibling session (ps). Working tree clean.
+2. Scheduler pin verified live: CooldownS=7200, Enabled=true — 12th consecutive tick stable via fleet.toml (supersedes API-PUT reversion era).
+3. CI: billing block resolved — 3 latest runs green (was FAIL pre-existing CI-BILLING-001 for 20+ days). Confirmed via gh run list.
+4. DuckBrain: tick #117 written (ID 26a18a2f), recall-by-ID confirmed persisted. Namespace speclang.
+5. No worker spawned — 0 pending tasks, genuine idle (95th consecutive).
+6. No guard/judge run — no code changes, nothing staged.
+7. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (no code), Audit=cheap-subset, Hilo=not-run (no code), DuckBrain=connected (speclang ns, 26a18a2f verified), GitReins=clean
+
+**VERDICT: idle — maintenance mode. 95th consecutive idle tick (20+ days no code changes). Cooldown 7200s stable via fleet.toml pin (12th tick). CI billing block RESOLVED — 3 green runs. All other signals clean: 0 issues, 0 stashes, 0 unpushed, no sibling. Project remains genuinely feature-complete for current phase.**
+
+**Scheduler Health:** CooldownS=7200 (API GET-verified this tick), Enabled=true, Weight=15, Priority=10. fleet.toml pin durable. Stale CRON_PAUSE_REQUESTED noted (superseded by 07-31 cooldown policy).
