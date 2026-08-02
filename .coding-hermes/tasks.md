@@ -1993,3 +1993,43 @@
 **VERDICT: idle — maintenance mode. 95th consecutive idle tick (20+ days no code changes). Cooldown 7200s stable via fleet.toml pin (12th tick). CI billing block RESOLVED — 3 green runs. All other signals clean: 0 issues, 0 stashes, 0 unpushed, no sibling. Project remains genuinely feature-complete for current phase.**
 
 **Scheduler Health:** CooldownS=7200 (API GET-verified this tick), Enabled=true, Weight=15, Priority=10. fleet.toml pin durable. Stale CRON_PAUSE_REQUESTED noted (superseded by 07-31 cooldown policy).
+
+---
+
+### Foreman #118 — Idle Tick (2026-08-02, scheduler tick — /home/kara/speclang)
+
+**System State:** Cheap-idle audit per canonical ladder (idle #96 ≥ 5 → git status + remote + scheduler pin + DuckBrain counter). No vitest run this tick — no code changes in 20+ days (0 since Jul 12); suite verified clean at #116 (0 flakes at load 9.38). **Host rebooted at tick start (uptime 0 min, 13:43 local) — daemon auto-restarted cleanly.**
+
+**Scheduler:** CooldownS=7200 (API GET-verified via /api/v1/projects), Enabled=true, Priority=10, Weight=15, DecayRate=1. fleet.toml pin stable — 13th tick at 7200 (line 500, cooldown_s=7200). UpdatedAt 2026-08-02T18:42:12Z — pin re-applied by policy script at daemon start; **held through host reboot** (no reversion). CRON_PAUSE_REQUESTED still on disk but stale (tick #72 era, pre-07-31 policy); current directive = 7200 cooldown, NOT full pause — pin respected, no pause action taken.
+
+**12-Point Audit Results (cheap subset):**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Git state | PASS | Working tree clean, 0 unpushed vs origin/main (fetch + log verified) |
+| 2. CI | PASS | gh run list: last 4 runs all success (#114–#117; 30744080404, 30739391728, 30735116090, 30730962117) — billing block resolved era holds |
+| 3. Scheduler | PASS | CooldownS=7200 GET-verified, Enabled=true, pin durable through reboot |
+| 4. Issues | PASS | 0 open issues on dexdat/SpecLang |
+| 5. Stashes | PASS | 0 stashes (no stale failed-approach debris) |
+| 6. Sibling | PASS | No concurrent foreman process (ps verified), no double-fire |
+| 7. DuckBrain | PASS | Tick #118 written (08e67336), recall-by-ID verified (count=1) |
+| 8. Board | PASS | 0 matrix rows, 0 implicit-pending tasks, no open `## [ ]` entries |
+| 9. E2E-001 | SKIPPED | No code changes in 96+ ticks — cosmetic for idle mode (established pattern) |
+| 10. Deps | NOTED | 2 patch pending (@types/node, postcss) + 4 ESM-only blocked majors — unchanged, non-blocking (no audit run this tick per cheap ladder) |
+| 11. Cooldown policy | PASS | 7200 per Bane 07-31 directive; no PUT issued (pin durable) |
+| 12. Bookkeeping | PASS | tasks.md updated, commit + push |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main (c5e7510c, 0 unpushed, 0 behind, fetch clean). No sibling session (ps). Working tree clean.
+2. Scheduler pin verified live after host reboot: CooldownS=7200, Enabled=true — 13th consecutive tick stable via fleet.toml (policy script re-applied at daemon start 18:42:12Z; reversion window closed).
+3. CI: green streak sustained — 4 latest runs all success (#114–#117), TMPDIR fix from tick #105 continues to hold.
+4. DuckBrain: tick #118 written (ID 08e67336), recall-by-ID confirmed persisted. Namespace speclang.
+5. No worker spawned — 0 pending tasks, genuine idle (96th consecutive).
+6. No guard/judge run — no code changes, nothing staged.
+7. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (no code), Audit=cheap-subset, Hilo=not-run (no code), DuckBrain=connected (speclang ns, 08e67336 verified), GitReins=clean
+
+**VERDICT: idle — maintenance mode. 96th consecutive idle tick (20+ days no code changes). Cooldown 7200s stable via fleet.toml pin (13th tick) — survived host reboot via policy-script re-apply. CI green ×4 sustained. All other signals clean: 0 issues, 0 stashes, 0 unpushed, no sibling. Project remains genuinely feature-complete for current phase.**
+
+**Scheduler Health:** CooldownS=7200 (API GET-verified this tick), Enabled=true, Weight=15, Priority=10. fleet.toml pin durable (line 500, cooldown_s=7200). Sibling `SpecLang` entry still Enabled=false (stale dual entry, harmless).
