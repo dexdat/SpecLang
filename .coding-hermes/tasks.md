@@ -2467,3 +2467,56 @@
 **VERDICT: idle + security fix — 107th consecutive idle tick (22+ days no code changes) with a real finding resolved. npm audit 1 HIGH (brace-expansion DoS, GHSA-rgw5-rvv9-x895) → overrides pin ^5.0.9 → 0 vulns, full suite green (1808 pass, 0 flakes). Cooldown 7200s stable via fleet.toml pin (24th tick). CI green ×19 sustained. All other signals clean: 0 issues, 0 stashes, 0 unpushed, no sibling. Validator 448/448. First audit finding since tick #79 — advisories are now being published faster than the monthly dep cadence; consider checking npm audit on a tighter cycle if this recurs.**
 
 **Scheduler Health:** CooldownS=7200 (API GET-verified this tick), Enabled=true, Weight=15, Priority=10. fleet.toml pin durable (24th tick, survived host reboot). Stale CRON_PAUSE_REQUESTED still on disk (tick #72 era, superseded by 07-31 cooldown policy — pin respected, no pause action). Disk trending up: 91%→94% (105G free) — monitor.
+
+### Foreman #130 — Idle Tick + DEP-SEC-FIX ×2 + CI Flake Root-Caused (2026-08-03, scheduler tick — /home/kara/speclang)
+
+**System State:** Cheap-idle audit per canonical ladder (idle #108 ≥ 5 → git status + remote + scheduler pin + validator + deps + DuckBrain counter) + **2 NEW high npm advisories fixed** + **first CI failure in 19 runs diagnosed (test-isolation race)**. Load 2.89→7.04 (1m at tick start), 52Gi avail, up 1d 1h45m (host rebooted 13:42:03 Aug 2). 16 cores. Node v22.22.3, npm 10.9.8. vitest run after dep change: **1808/1866 pass (58 skip), 93/97 files, 28.74s, 0 flakes at DEFAULT parallelism** (CI-equivalent — no --maxWorkers needed this time). Disk 95% (94G free — continued uptrend, now 91%→94%→95%, monitor).
+
+**Scheduler:** CooldownS=7200 (API GET-verified via check_scheduler_project.py), Enabled=true, DecayRate=1, Priority=10, Weight=15, UpdatedAt 2026-08-02T18:42:12Z — unchanged since #122, **25th tick at 7200 via fleet.toml pin** (survived host reboot). Sibling `SpecLang` entry still Enabled=false — stale dual entry, harmless.
+
+**NEW FINDINGS — 2 npm audit HIGH (runtime deps, second advisory wave since #79/#129):**
+- GHSA-7p8r-x3mc-p8w7 — fast-uri 3.0.0–3.1.4: host confusion via backslash authority introducer. Chain: @modelcontextprotocol/sdk@1.30.0 → ajv@8.18.0 → fast-uri@3.1.4.
+- GHSA-mwp4-54f8-5fhr + GHSA-4xrf-jv44-h6hh + GHSA-22jq-vg5j-6vgg — ip-address ≤10.3.0: SSRF/trust-boundary bypasses (leading-zero octets, CIDR special-use suppression, IPv4-mapped/NAT64 misclassification). Chain: @modelcontextprotocol/sdk@1.30.0 → express-rate-limit@8.5.2 → ip-address@10.2.0.
+- Fix applied (foreman-direct, mechanical dep pin, same pattern as #129): `"overrides": {"fast-uri": "^3.1.5", "ip-address": "^10.3.1"}` — 3.1.5 satisfies ajv's `^3.0.1`; 10.4.0 satisfies express-rate-limit's `^10.2.0`. Lockfile delta: 12 lines (2 packages + integrity). Full `npm audit fix` rejected — churns optional platform packages.
+- Verified: npm audit → **0 vulnerabilities**; `npm run build` (tsc) clean; vitest 1808/1866 pass (58 skip), 0 flakes; GitReins guard PASS (gitleaks 30s timeout → built-in scanner fallback).
+
+**CI FAILURE DIAGNOSED (run 30840622380, #129's commit d650726e — first red in 19 runs):**
+- Failure: `tests/cascade_new/dependency-graph.test.ts > getDependents() > should return empty array for unreferenced specs` — `SyntaxError: Unterminated string in JSON at position 229372` at src/cascade/coordinator/dependency.ts:61 (loadIndex JSON.parse). Local repro in isolation: PASS.
+- Root cause (proven this tick): tests/daemon/* spawn `bin/speclangd` in repo root → daemon startup REGENERATES the tracked root `_index.json` (421KB, `generated` timestamp bump — verified: vitest run dirties it, diff = timestamp only) → under CI's default vitest parallelism, cascade graph tests read the file mid-write → torn read. Daemon tests write their OWN index to mkdtemp dirs (think002/arch003/think004), but the spawned daemon binary writes cwd `_index.json`.
+- Confirmation: `gh run rerun --failed` → **PASSED** (4m51s) — flake confirmed non-reproducing, NOT a regression from the brace-expansion pin (build step passed on original run; failure is file-race, unrelated to dep).
+- **Board task TEST-ISOLATION-001 created** (gitreins, pending) — worker fix: spawn speclangd with cwd=temp dir or point daemon at temp index path; gate: `git status` clean for _index.json after full `npm test`.
+
+**12-Point Audit Results (cheap subset + sec fixes):**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Git state | PASS | Working tree clean pre-fix, 0 unpushed vs origin/main (d650726e, fetch + rev-parse verified), 0 behind, 0 stashes |
+| 2. CI | ⚠️ FLAKE→GREEN | Run 30840622380 (#129 commit) FAILED at tests (torn-read race, see above) → rerun PASSED 20:28:45Z. 5/5 latest effective runs green (×19 + rerun). TEST-ISOLATION-001 created |
+| 3. Scheduler | PASS | CooldownS=7200 GET-verified, Enabled=true, pin durable (25th tick, survived host reboot) |
+| 4. Issues | PASS | 0 open issues on dexdat/SpecLang |
+| 5. Stashes | PASS | 0 stashes (no stale failed-approach debris) |
+| 6. Sibling | PASS | No concurrent speclang foreman process (ps verified) |
+| 7. DuckBrain | PASS | Tick #130 written (38900b40), recall-by-ID verified (count=1) |
+| 8. Board | PASS | validate-board-format PASS (0 matrix rows); TEST-ISOLATION-001 added to gitreins tasks (pending) |
+| 9. E2E-001 | SKIPPED | No code changes in 100+ ticks — cosmetic for idle mode (established pattern) |
+| 10. Deps | FIXED | 2 HIGH vulns (fast-uri GHSA-7p8r-x3mc-p8w7, ip-address ×3 GHSAs) → overrides pin → 0 vulns. npm outdated: 13 items identical to #128/#129 (4 ESM-only blocked majors + non-blocking) |
+| 11. Cooldown policy | PASS | 7200 per Bane 07-31 directive; no PUT issued (pin durable via fleet.toml) |
+| 12. Bookkeeping | PASS | tasks.md appended, commit + push |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main (d650726e, 0 unpushed, 0 behind, fetch clean). No sibling session (ps verified). Working tree clean.
+2. Scheduler pin verified live: CooldownS=7200 via check_scheduler_project.py — 25th consecutive tick stable via fleet.toml pin, survived host reboot.
+3. **SEC-FIX ×2: fast-uri pinned ^3.1.5 + ip-address pinned ^10.3.1** (GHSA-7p8r-x3mc-p8w7 host confusion; GHSA-mwp4-54f8-5fhr/4xrf-jv44-h6hh/22jq-vg5j-6vgg SSRF bypasses). npm audit back to 0 vulns. Full suite re-run: build clean + vitest 1808 pass / 58 skip, 0 flakes at default parallelism. Guard PASS. Advisory wave 2 within 24h of #129's brace-expansion fix — advisories now outpacing the monthly dep cadence; tight audit cycle recommended.
+4. **CI flake root-caused (not load noise this time)**: daemon spawn regenerating tracked _index.json during parallel vitest → torn read. Rerun green. TEST-ISOLATION-001 recorded for worker fix next dispatch.
+5. GitReins: task_list — 2 complete (DEPS-REACT-19, PITFALL-WORKFLOW-001), 0 pending, 0 in_progress + TEST-ISOLATION-001 created (pending). Guard PASS (Tier 1 4/4; gitleaks 30s timeout → built-in scanner fallback). No judge run — mechanical dep pin, no acceptance-criteria task.
+6. Validator gate: speclang validate 448/448 pass (0 fail, 540 warnings pre-existing) — run fresh this tick.
+7. DuckBrain: tick #130 written (ID 38900b40), recall-by-ID confirmed persisted. Namespace speclang.
+8. No worker spawned — dep pin is foreman-direct mechanical exception; TEST-ISOLATION-001 queued for worker dispatch (not critical-path — CI rerun green).
+9. Cleanup: _index.json restored (git checkout, daemon-regenerated timestamp noise), test-temp-bootstrap/ + test-temp-meta/ removed (vitest regenerates), .tmp cleared.
+10. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (no code logic change), Audit=cheap-subset + sec fix + flake forensics, Hilo=not-run (no code), DuckBrain=connected (speclang ns, verified), GitReins=clean + 1 new pending task
+
+**VERDICT: idle + security fixes + CI flake diagnosed — 108th consecutive idle tick (22+ days no code changes) with 2 real findings handled. npm audit 2 HIGH (fast-uri host confusion, ip-address SSRF bypasses — runtime deps under @modelcontextprotocol/sdk) → overrides pin → 0 vulns, full suite green (1808 pass, 0 flakes at CI-parallelism). First CI failure in 19 runs root-caused as test-isolation race (daemon spawn regenerates tracked _index.json → parallel torn read), rerun green, TEST-ISOLATION-001 created for worker. Cooldown 7200s stable via fleet.toml pin (25th tick). All other signals clean: 0 issues, 0 stashes, 0 unpushed, no sibling. Validator 448/448. Two advisory waves in 24h — npm audit now warrants checking every tick.**
+
+**Scheduler Health:** CooldownS=7200 (API GET-verified this tick), Enabled=true, Weight=15, Priority=10. fleet.toml pin durable (25th tick, survived host reboot). Stale CRON_PAUSE_REQUESTED still on disk (tick #72 era, superseded by 07-31 cooldown policy — pin respected, no pause action). Disk trending up: 91%→94%→95% (94G free) — monitor; host-level cleanup likely needed soon.
