@@ -97,18 +97,47 @@ const tmpConfig = `
   "exclude": ["node_modules", "dist", "specs"]
 }
 `;
-const tmpConfigPath = ".speclang/tmp/cli-test-tsconfig.json";
+const REPO_ROOT = path.resolve(__dirname, "..");
+const tmpConfigPath = path.join(
+  REPO_ROOT,
+  ".speclang",
+  "tmp",
+  "cli-test-tsconfig.json",
+);
 const fs = require("fs");
-fs.mkdirSync(".speclang/tmp", { recursive: true });
+fs.mkdirSync(path.dirname(tmpConfigPath), { recursive: true });
 fs.writeFileSync(tmpConfigPath, tmpConfig);
 
-const CLI = `npx tsx --tsconfig ${tmpConfigPath} src/cli/index.ts`;
+// TEST-ISOLATION-001: the tsx CLI's `validate` command regenerates the spec
+// index via generateIndex() whose default outputPath is '_index.json'
+// relative to the process cwd. Running it from the repo root rewrites the
+// TRACKED _index.json while parallel cascade tests read it → torn reads
+// (SyntaxError at dependency.ts loadIndex, CI flake 1/19 runs). Isolate the
+// spawn: run every tsx CLI subprocess from a per-test temp cwd (mkdtemp
+// under .tmp/, which is gitignored) and point SPECLANG_DIR at the real repo
+// specs so search/list/get/validate still resolve them.
+const CLI_CWD = fs.mkdtempSync(path.join(REPO_ROOT, ".tmp", "cli-test-"));
+// `index --refresh` writes .speclang/speclang.db + .speclang/_index.json;
+// pre-create the dir so the DB open succeeds in the temp cwd.
+fs.mkdirSync(path.join(CLI_CWD, ".speclang"), { recursive: true });
+process.env.SPECLANG_DIR = path.join(REPO_ROOT, "specs");
+
+const CLI = `npx tsx --tsconfig ${tmpConfigPath} ${path.join(REPO_ROOT, "src", "cli", "index.ts")}`;
 const CLI_BIN = "./bin/speclang";
+const cliExec = (cmd: string) => execAsync(cmd, { cwd: CLI_CWD });
+
+afterAll(() => {
+  try {
+    fs.rmSync(CLI_CWD, { recursive: true, force: true });
+  } catch {
+    // Temp dir cleanup is best-effort; .tmp/ is gitignored either way.
+  }
+});
 
 describe("CLI Commands", () => {
   describe("search", () => {
     it("should find specs matching query", async () => {
-      const { stdout } = await execAsync(`${CLI} search auth`);
+      const { stdout } = await cliExec(`${CLI} search auth`);
       expect(stdout).toContain("Found");
       expect(stdout).toContain("@speclang/auth");
     });
@@ -116,7 +145,7 @@ describe("CLI Commands", () => {
     it.skip("should support --json output", async () => {
       // SKIP: `speclang search` does not support --json flag (unimplemented feature).
       // Re-enable when search command gains --json output support.
-      const { stdout } = await execAsync(`${CLI} search auth --json`);
+      const { stdout } = await cliExec(`${CLI} search auth --json`);
       const result = parseJsonFromOutput(stdout);
       expect(Array.isArray(result)).toBe(true);
     });
@@ -124,7 +153,7 @@ describe("CLI Commands", () => {
     it.skip("should support --quiet output", async () => {
       // SKIP: `speclang search` does not support --quiet flag (unimplemented feature).
       // Re-enable when search command gains --quiet output support.
-      const { stdout } = await execAsync(`${CLI} search auth --quiet`);
+      const { stdout } = await cliExec(`${CLI} search auth --quiet`);
       const lines = stdout.trim().split("\n");
       expect(lines.length).toBeGreaterThan(0);
       // IDs only, no other text
@@ -134,24 +163,24 @@ describe("CLI Commands", () => {
     });
 
     it("should filter by layer", async () => {
-      const { stdout } = await execAsync(`${CLI} search mcp --layer 3`);
+      const { stdout } = await cliExec(`${CLI} search mcp --layer 3`);
       expect(stdout).toContain("layer 3");
     });
 
     it("should filter by tags", { timeout: 15000, retry: 2 }, async () => {
-      const { stdout } = await execAsync(`${CLI} search mcp --tags mcp`);
+      const { stdout } = await cliExec(`${CLI} search mcp --tags mcp`);
       expect(stdout).toContain("Found");
     });
   });
 
   describe("list", () => {
     it("should list all specs", async () => {
-      const { stdout } = await execAsync(`${CLI} list`);
+      const { stdout } = await cliExec(`${CLI} list`);
       expect(stdout).toContain("Total specs:");
     });
 
     it("should support --json output", async () => {
-      const { stdout } = await execAsync(`${CLI} list --json`);
+      const { stdout } = await cliExec(`${CLI} list --json`);
       // Tolerate leading progress text that some CLI builds emit
       // before JSON (e.g. "Generating..." banners). The helper finds
       // the first `[` or `{` and parses from there.
@@ -162,38 +191,38 @@ describe("CLI Commands", () => {
     });
 
     it("should filter by layer", async () => {
-      const { stdout } = await execAsync(`${CLI} list --layer 0`);
+      const { stdout } = await cliExec(`${CLI} list --layer 0`);
       expect(stdout).toContain("Layer 0");
     });
 
     it("should filter by prefix", async () => {
-      const { stdout } = await execAsync(`${CLI} list --prefix @speclang`);
+      const { stdout } = await cliExec(`${CLI} list --prefix @speclang`);
       expect(stdout).toContain("@speclang");
     });
   });
 
   describe("get", () => {
     it("should get spec by ID", async () => {
-      const { stdout } = await execAsync(`${CLI} get @speclang/auth`);
+      const { stdout } = await cliExec(`${CLI} get @speclang/auth`);
       expect(stdout).toContain("@speclang/auth");
       expect(stdout).toContain("Version:");
       expect(stdout).toContain("Layer:");
     });
 
     it("should support --json output", async () => {
-      const { stdout } = await execAsync(`${CLI} get @speclang/auth --json`);
+      const { stdout } = await cliExec(`${CLI} get @speclang/auth --json`);
       const result = parseJsonFromOutput(stdout) as { id: string };
       expect(result.id).toBe("@speclang/auth");
     });
 
     it("should show blocks with --blocks flag", async () => {
-      const { stdout } = await execAsync(`${CLI} get @speclang/auth --blocks`);
+      const { stdout } = await cliExec(`${CLI} get @speclang/auth --blocks`);
       expect(stdout).toContain("Blocks:");
     });
 
     it("should error on unknown spec", async () => {
       try {
-        await execAsync(`${CLI} get @unknown/spec`);
+        await cliExec(`${CLI} get @unknown/spec`);
         expect(true).toBe(false); // Should not reach here
       } catch (result: unknown) {
         const { stderr } = result as { stdout: string; stderr: string };
@@ -205,7 +234,7 @@ describe("CLI Commands", () => {
   describe("validate", () => {
     it("should validate specs", async () => {
       try {
-        await execAsync(`${CLI} validate`);
+        await cliExec(`${CLI} validate`);
         expect(true).toBe(false);
       } catch (result: unknown) {
         const { stdout } = result as { stdout: string; stderr: string };
@@ -215,7 +244,7 @@ describe("CLI Commands", () => {
     });
 
     it("should support --json output", { timeout: 15000 }, async () => {
-      const { stdout } = await execAsync(`${CLI} validate --json`);
+      const { stdout } = await cliExec(`${CLI} validate --json`);
       // --json returns JSON with spec validation results after text banner
       const jsonStart = stdout.indexOf("{");
       expect(jsonStart).toBeGreaterThan(-1);
@@ -226,7 +255,7 @@ describe("CLI Commands", () => {
 
     it("should support --verbose for warnings", async () => {
       try {
-        await execAsync(`${CLI} validate --verbose`);
+        await cliExec(`${CLI} validate --verbose`);
         expect(true).toBe(false);
       } catch (result: unknown) {
         const { stdout } = result as { stdout: string; stderr: string };
@@ -260,7 +289,7 @@ describe("CLI Commands", () => {
 
   describe("index", () => {
     it("should show index stats", async () => {
-      const { stdout } = await execAsync(`${CLI} index`);
+      const { stdout } = await cliExec(`${CLI} index`);
       expect(stdout).toContain("=== Spec Index ===");
       expect(stdout).toContain("Total specs:");
     });
@@ -269,14 +298,14 @@ describe("CLI Commands", () => {
       "should support --json output",
       { timeout: 15000, retry: 2 },
       async () => {
-        const { stdout } = await execAsync(`${CLI} index --json`);
+        const { stdout } = await cliExec(`${CLI} index --json`);
         const result = parseJsonFromOutput(stdout) as { specs: unknown };
         expect(result.specs).toBeDefined();
       },
     );
 
     it("should refresh index with --refresh", async () => {
-      const { stdout } = await execAsync(`${CLI} index --refresh`);
+      const { stdout } = await cliExec(`${CLI} index --refresh`);
       // The refresh may have errors but should show refreshing activity
       expect(stdout).toContain("Refreshing");
     });
@@ -284,7 +313,7 @@ describe("CLI Commands", () => {
 
   describe("cascade", () => {
     it("should show cascade status", async () => {
-      const { stdout } = await execAsync(`${CLI} cascade status`);
+      const { stdout } = await cliExec(`${CLI} cascade status`);
       expect(stdout).toContain("=== Cascade Status ===");
     });
 
@@ -296,13 +325,13 @@ describe("CLI Commands", () => {
     });
 
     it("should abort cascade", async () => {
-      await execAsync(`${CLI} cascade trigger @speclang/mcp`);
-      const { stdout } = await execAsync(`${CLI} cascade abort`);
+      await cliExec(`${CLI} cascade trigger @speclang/mcp`);
+      const { stdout } = await cliExec(`${CLI} cascade abort`);
       expect(stdout).toContain("Cascade aborted");
     });
 
     it("should support --json output", async () => {
-      const { stdout } = await execAsync(`${CLI} cascade status --json`);
+      const { stdout } = await cliExec(`${CLI} cascade status --json`);
       const result = parseJsonFromOutput(stdout);
       expect(result.active).toBeDefined();
     });
@@ -310,13 +339,13 @@ describe("CLI Commands", () => {
 
   describe("generate", () => {
     it("should run dry-run by default", async () => {
-      const { stdout } = await execAsync(`${CLI} generate --dry-run`);
+      const { stdout } = await cliExec(`${CLI} generate --dry-run`);
       expect(stdout).toContain("=== Code Generation ===");
       expect(stdout).toContain("DRY RUN");
     });
 
     it("should support --json output", async () => {
-      const { stdout } = await execAsync(`${CLI} generate --dry-run --json`);
+      const { stdout } = await cliExec(`${CLI} generate --dry-run --json`);
       const result = parseJsonFromOutput(stdout);
       expect(result.target).toBe("typescript");
     });
@@ -324,7 +353,7 @@ describe("CLI Commands", () => {
 
   describe("server", () => {
     it("should show help", async () => {
-      const { stdout } = await execAsync(`${CLI} server --help`);
+      const { stdout } = await cliExec(`${CLI} server --help`);
       expect(stdout).toContain("--port");
       expect(stdout).toContain("--daemon");
       expect(stdout).toContain("--http");
@@ -333,7 +362,7 @@ describe("CLI Commands", () => {
 
   describe("help", () => {
     it("should show main help", async () => {
-      const { stdout } = await execAsync(`${CLI} --help`);
+      const { stdout } = await cliExec(`${CLI} --help`);
       expect(stdout).toContain("SpecLang - Specs are source code");
       expect(stdout).toContain("search");
       expect(stdout).toContain("get");
@@ -346,7 +375,7 @@ describe("CLI Commands", () => {
     });
 
     it("should show command help", async () => {
-      const { stdout } = await execAsync(`${CLI} search --help`);
+      const { stdout } = await cliExec(`${CLI} search --help`);
       expect(stdout).toContain("--tags");
       expect(stdout).toContain("--layer");
       expect(stdout).toContain("--json");

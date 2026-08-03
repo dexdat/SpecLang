@@ -3,6 +3,7 @@
  */
 
 import { execFileSync } from "child_process";
+import * as fs from "fs-extra";
 import * as path from "path";
 import { describe, expect, it, vi } from "vitest";
 
@@ -139,25 +140,28 @@ describe("THINK-003 — agent runtime", () => {
   });
 
   it("exposes agent and cascade thinking flags in the public CLI", () => {
-    const agentHelp = execFileSync(
-      "node",
-      ["bin/speclang", "agent", "--help"],
-      {
-        cwd: REPO_ROOT,
-        encoding: "utf-8",
-      },
+    // TEST-ISOLATION-001: spawn the CLI from a per-test temp cwd (never the
+    // repo root) so no CLI code path can regenerate the tracked _index.json.
+    const cliCwd = fs.mkdtempSync(
+      path.join(REPO_ROOT, ".tmp", "think003-cli-"),
     );
-    const cascadeHelp = execFileSync(
-      "node",
-      ["bin/speclang", "cascade", "--help"],
-      {
-        cwd: REPO_ROOT,
-        encoding: "utf-8",
-      },
-    );
+    try {
+      const agentHelp = execFileSync(
+        "node",
+        [path.join(REPO_ROOT, "bin", "speclang"), "agent", "--help"],
+        { cwd: cliCwd, encoding: "utf-8" },
+      );
+      const cascadeHelp = execFileSync(
+        "node",
+        [path.join(REPO_ROOT, "bin", "speclang"), "cascade", "--help"],
+        { cwd: cliCwd, encoding: "utf-8" },
+      );
 
-    expect(agentHelp).toContain("--trigger <path>");
-    expect(agentHelp).toContain("--thinking <level>");
-    expect(cascadeHelp).toContain("--thinking <mapping>");
+      expect(agentHelp).toContain("--trigger <path>");
+      expect(agentHelp).toContain("--thinking <level>");
+      expect(cascadeHelp).toContain("--thinking <mapping>");
+    } finally {
+      fs.removeSync(cliCwd);
+    }
   });
 });
