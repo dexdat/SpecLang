@@ -2421,3 +2421,49 @@
 **VERDICT: idle — maintenance mode. 106th consecutive idle tick (22+ days no code changes). Cooldown 7200s stable via fleet.toml pin (23rd tick, survived host reboot). CI green ×18 sustained. All other signals clean: 0 issues, 0 stashes, 0 unpushed, no sibling. Validator 448/448. Project remains genuinely feature-complete for current phase.**
 
 **Scheduler Health:** CooldownS=7200 (API GET-verified this tick), Enabled=true, Weight=15, Priority=10. fleet.toml pin durable. Stale CRON_PAUSE_REQUESTED still on disk (tick #72 era, superseded by 07-31 cooldown policy — pin respected, no pause action).
+
+### Foreman #129 — Idle Tick + SEC-FIX (2026-08-03, scheduler tick — /home/kara/speclang)
+
+**System State:** Cheap-idle audit per canonical ladder (idle #107 ≥ 5 → git status + remote + scheduler pin + validator + deps + DuckBrain counter) + **NEW SECURITY FINDING fixed this tick**. Load 1.03 (1m), 52Gi avail, up 23h27m (host rebooted 13:42:03 Aug 2). 16 cores. Node v22.22.3, npm 10.9.8. Disk 94% (105G free — trending up from 91% at #128, watch). No vitest run planned → run after dep change (86.44s, 1808 pass / 58 skip, 0 flakes at load 1.03, 93/97 files).
+
+**Scheduler:** CooldownS=7200 (API GET-verified via check_scheduler_project.py), Enabled=true, DecayRate=1, Priority=10, Weight=15, UpdatedAt 2026-08-02T18:42:12Z — unchanged since #122, **24th tick at 7200 via fleet.toml pin** (survived host reboot). Sibling `SpecLang` entry (uppercase, /home/kara/SpecLang) still Enabled=false — stale dual entry, harmless.
+
+**NEW FINDING — npm audit 1 HIGH (first vuln since tick #79):**
+- GHSA-rgw5-rvv9-x895 — brace-expansion 4.0.0–5.0.8: DoS via unbounded intermediate arrays (bypasses CVE-2026-14257 mitigation). Runtime dep chain: speclang → glob@13.0.6 → minimatch@10.2.5 → brace-expansion@5.0.8.
+- Fix applied (foreman-direct, mechanical dep pin): `"overrides": {"brace-expansion": "^5.0.9"}` in package.json — 5.0.9 satisfies minimatch's `^5.0.5` range, no API change. Lockfile delta: single package bump 5.0.8→5.0.9 (6 lines). Full `npm audit fix` rejected — would have churned 20+ optional platform packages (tslib, lightningcss, @typescript/typescript-*), not a targeted fix.
+- Verified: npm audit → **0 vulnerabilities**; `npm run build` (tsc) clean; vitest 1808/1866 pass (58 skip), 93/97 files, 86.44s, 0 flakes; GitReins guard PASS (gitleaks 30s timeout → built-in scanner fallback, same as #103/#104).
+
+**12-Point Audit Results (cheap subset + sec fix):**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Git state | PASS | Working tree clean pre-fix, 0 unpushed vs origin/main (b59734be, fetch + rev-parse verified), 0 behind, 0 stashes |
+| 2. CI | PASS | 5/5 latest runs all success (2026-08-03T07:36Z → 16:07Z; 30794300722 → 30830676059) — green streak extended to ×19 |
+| 3. Scheduler | PASS | CooldownS=7200 GET-verified, Enabled=true, pin durable (24th tick, survived host reboot) |
+| 4. Issues | PASS | 0 open issues on dexdat/SpecLang |
+| 5. Stashes | PASS | 0 stashes (no stale failed-approach debris) |
+| 6. Sibling | PASS | No concurrent speclang foreman process (ps verified — only schedulerd on :9090) |
+| 7. DuckBrain | PASS | Tick #129 written (370d625e), recall-by-ID verified (count=1) |
+| 8. Board | PASS | 0 new matrix rows, 0 implicit-pending tasks, validate-board-format PASS (4 historical fixture rows) |
+| 9. E2E-001 | SKIPPED | No code changes in 100+ ticks — cosmetic for idle mode (established pattern) |
+| 10. Deps | FIXED | 1 HIGH vuln (brace-expansion, GHSA-rgw5-rvv9-x895) → overrides pin ^5.0.9 → 0 vulns. npm outdated: 13 items identical to #128 (4 ESM-only blocked majors: better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4; + @types/better-sqlite3 + 8 non-blocking incl. vite 8.2.0, MCP SDK 1.30.0) |
+| 11. Cooldown policy | PASS | 7200 per Bane 07-31 directive; no PUT issued (pin durable via fleet.toml) |
+| 12. Bookkeeping | PASS | tasks.md appended, commit + push |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main (b59734be, 0 unpushed, 0 behind, fetch clean). No sibling session (ps verified). Working tree clean.
+2. Scheduler pin verified live: CooldownS=7200 via check_scheduler_project.py — 24th consecutive tick stable via fleet.toml pin, survived host reboot.
+3. CI: green streak sustained — 5/5 latest runs success, ×19 (new run 30830676059 at 16:07:09Z for #128's commit).
+4. **SEC-FIX: brace-expansion override pinned to ^5.0.9** (GHSA-rgw5-rvv9-x895 high DoS). npm audit back to 0 vulns. Full suite re-run: build clean + vitest 1808 pass / 58 skip, 0 flakes. Guard PASS. This is the first dep fix since tick #79's audit-clean state — advisory likely published between #128 and #129.
+5. GitReins: task_list — 2 tasks both complete (DEPS-REACT-19, PITFALL-WORKFLOW-001), 0 pending, 0 in_progress. No judge run — mechanical dep pin, no acceptance-criteria task.
+6. Validator gate: speclang validate 448/448 pass (0 fail, 540 warnings pre-existing) — run fresh this tick.
+7. DuckBrain: tick #129 written, recall-by-ID confirmed persisted. Namespace speclang.
+8. No worker spawned — dep pin is foreman-direct mechanical exception; 0 pending tasks, genuine idle otherwise.
+9. Off-by-one: submitted problem_class `nodejs-npm-transitive-vuln-override-pin` (brace-expansion chain, override-vs-full-audit-fix decision).
+10. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (no code logic change), Audit=cheap-subset + sec fix, Hilo=not-run (no code), DuckBrain=connected (speclang ns, verified), GitReins=clean
+
+**VERDICT: idle + security fix — 107th consecutive idle tick (22+ days no code changes) with a real finding resolved. npm audit 1 HIGH (brace-expansion DoS, GHSA-rgw5-rvv9-x895) → overrides pin ^5.0.9 → 0 vulns, full suite green (1808 pass, 0 flakes). Cooldown 7200s stable via fleet.toml pin (24th tick). CI green ×19 sustained. All other signals clean: 0 issues, 0 stashes, 0 unpushed, no sibling. Validator 448/448. First audit finding since tick #79 — advisories are now being published faster than the monthly dep cadence; consider checking npm audit on a tighter cycle if this recurs.**
+
+**Scheduler Health:** CooldownS=7200 (API GET-verified this tick), Enabled=true, Weight=15, Priority=10. fleet.toml pin durable (24th tick, survived host reboot). Stale CRON_PAUSE_REQUESTED still on disk (tick #72 era, superseded by 07-31 cooldown policy — pin respected, no pause action). Disk trending up: 91%→94% (105G free) — monitor.
