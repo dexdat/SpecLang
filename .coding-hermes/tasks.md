@@ -2152,3 +2152,41 @@
 **VERDICT: idle — maintenance mode. 99th consecutive idle tick (20+ days no code changes). Cooldown 7200s stable via fleet.toml pin (16th tick). CI green ×9 sustained. All other signals clean: 0 issues, 0 stashes, 0 unpushed, no sibling. Project remains genuinely feature-complete for current phase.**
 
 **Scheduler Health:** CooldownS=7200 (API GET-verified this tick), Enabled=true, Weight=15, Priority=10. fleet.toml pin durable. Stale CRON_PAUSE_REQUESTED still on disk (tick #72 era, superseded by 07-31 cooldown policy — pin respected, no pause action).
+
+### Foreman #122 — Idle Tick (2026-08-02, scheduler tick — /home/kara/speclang)
+
+**System State:** Cheap-idle audit per canonical ladder (idle #100 ≥ 5 → git status + remote + scheduler pin + DuckBrain counter). No vitest run this tick — no code changes in 20+ days (0 since Jul 12); suite verified clean at #116 (0 flakes at load 9.38). Load 12.09 (1m), 48Gi avail, up 8h36m.
+
+**Scheduler:** CooldownS=7200 (API GET-verified via /api/v1/projects), Enabled=true, Priority=10, Weight=15, DecayRate=1. fleet.toml pin stable — 17th tick at 7200 (UpdatedAt 2026-08-02T18:42:12Z). Sibling `SpecLang` entry (uppercase, /home/kara/SpecLang) still Enabled=false with CooldownS=43200 — stale dual entry, harmless.
+
+**12-Point Audit Results (cheap subset):**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Git state | PASS | Working tree clean, 0 unpushed vs origin/main (b7cb7759, fetch + log verified), 0 behind, 0 stashes |
+| 2. CI | PASS | gh run list: last 10 runs all success (#112–#121; 30726672302 → 30776361185) — TMPDIR fix (tick #105) holds |
+| 3. Scheduler | PASS | CooldownS=7200 GET-verified, Enabled=true, pin durable (17th tick) |
+| 4. Issues | PASS | 0 open issues on dexdat/SpecLang |
+| 5. Stashes | PASS | 0 stashes (no stale failed-approach debris) |
+| 6. Sibling | PASS | No concurrent speclang foreman process (ps verified) |
+| 7. DuckBrain | PASS | Tick #122 written (0984515e), recall-by-ID verified (count=1) |
+| 8. Board | PASS | 0 new matrix rows, 0 implicit-pending tasks, validate-board-format PASS (4 historical fixture rows: GITREINS-JUDGE comment, E2E-001, CI-BILLING-001, NEVER-DONE) |
+| 9. E2E-001 | SKIPPED | No code changes in 100+ ticks — cosmetic for idle mode (established pattern) |
+| 10. Deps | NOTED | 13 items unchanged from #116 (8 non-blocking + 4 ESM-only blocked majors + @types/better-sqlite3) — no audit run per cheap ladder |
+| 11. Cooldown policy | PASS | 7200 per Bane 07-31 directive; no PUT issued (pin durable via fleet.toml) |
+| 12. Bookkeeping | PASS | tasks.md updated, commit + push |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main (b7cb7759, 0 unpushed, 0 behind, fetch clean). No sibling session (ps — only mythos worker + scheduler daemon). Working tree clean.
+2. Scheduler pin verified live: CooldownS=7200, Enabled=true — 17th consecutive tick stable via fleet.toml pin.
+3. CI: green streak sustained — 10 latest runs all success (#112–#121).
+4. GitReins: task_list — 2 tasks both complete (DEPS-REACT-19, PITFALL-WORKFLOW-001), 0 pending. No guard/judge run — no code changes, nothing staged.
+5. DuckBrain: tick #122 written (ID 0984515e), recall-by-ID confirmed persisted. Namespace speclang.
+6. No worker spawned — 0 pending tasks, genuine idle (100th consecutive).
+7. Bookkeeping: tasks.md updated
+
+**Eval:** Tier1=N/A (no code), Audit=cheap-subset, Hilo=not-run (no code), DuckBrain=connected (speclang ns, 0984515e verified), GitReins=clean
+
+**VERDICT: idle — maintenance mode. 100th consecutive idle tick (20+ days no code changes). Cooldown 7200s stable via fleet.toml pin (17th tick). CI green ×10 sustained. All other signals clean: 0 issues, 0 stashes, 0 unpushed, no sibling. Project remains genuinely feature-complete for current phase.**
+
+**Scheduler Health:** CooldownS=7200 (API GET-verified this tick), Enabled=true, Weight=15, Priority=10. fleet.toml pin durable. Stale CRON_PAUSE_REQUESTED still on disk (tick #72 era, superseded by 07-31 cooldown policy — pin respected, no pause action).
