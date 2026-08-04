@@ -2578,3 +2578,48 @@
 **VERDICT: productive tick — 109-tick idle streak BROKEN. npm audit 1 MODERATE (hono ReDoS GHSA-8j4g-w8fx-2239 — 3rd advisory wave in 24h) → overrides pin ^4.12.34 → 0 vulns, committed + pushed (2e5c725f). TEST-ISOLATION-001 COMPLETED END-TO-END: worker commit 4980a4f3 (root cause refined — tsx CLI validate regenerated tracked root _index.json, not the daemon), independent verification (2× 1808/58 at default parallelism, _index.json clean, guard 4/4), judge PASS 5/5 after gitreins cap config fix (0875f6ed: 2M + structural keys). First code change in 22+ days. Cooldown 7200s stable (26th tick). DuckBrain gap flagged: /ticks/129 + /ticks/130 claimed but absent. CI green streak ×19+ intact.**
 
 **Scheduler Health:** CooldownS=7200 (API GET-verified this tick), Enabled=true, Weight=15, Priority=10. fleet.toml pin durable (26th tick, survived host reboot). Stale CRON_PAUSE_REQUESTED still on disk (#72 era, superseded by 07-31 cooldown policy — pin respected, no pause action). Disk trending up: 91%→94%→95% (99G free) — monitor.
+
+---
+
+### Foreman #132 — Idle Tick #1 Post-Reset (2026-08-03, scheduler tick — /home/kara/speclang)
+
+**System State:** Load 14.64 at start (1m; fleet workers in flight — helix, eduos tsservers visible in ps), 16 cores, up 1d 5h. Node v22.22.3. First tick AFTER the 109-tick idle streak was broken at #131 (TEST-ISOLATION-001 completed with judge PASS 5/5). Full suite at DEFAULT parallelism: **1808/1866 pass, 58 skip, 93 passed + 4 skipped files, 31.73s, 0 flakes** — and critically, **tracked root _index.json stayed clean after the run** (TEST-ISOLATION-001 AC #2 verified holding; the isolation fix is durable). speclang validate: 448/448 (0 fail, 540 pre-existing warnings). tsc clean. npm audit: **0 vulnerabilities** (4th consecutive clean tick after the 3-wave advisory storm #129/#130/#131).
+
+**Scheduler:** CooldownS=7200 (API GET-verified via check_scheduler_project.py: Enabled=true, DecayRate=1, Priority=10, Weight=15, UpdatedAt 2026-08-02T18:42:12Z — unchanged since #122), **27th tick at 7200 via fleet.toml pin** (survived host reboot Aug 2). Sibling `SpecLang` entry still Enabled=false — stale dual entry, harmless. Stale CRON_PAUSE_REQUESTED still on disk (#72 era, superseded by 07-31 cooldown policy — no pause action).
+
+**12-Point Audit Results (cheap subset per idle ladder — idle #1 post-reset):**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Git state | PASS | Clean pre-tick, HEAD 73d0f3ce == origin/main (fetch verified), 0 unpushed, 0 behind, 0 stashes |
+| 2. CI | PASS | 8 latest runs on dexdat/SpecLang all green, incl. #131 final commit 73d0f3ce (23:34:39Z). Green streak ×20+ sustained. 2e5c725f hono pin shows "cancelled" (superseded by board commit pushed same batch — not a failure) |
+| 3. Scheduler | PASS | CooldownS=7200 GET-verified, Enabled=true, pin durable (27th tick) |
+| 4. Issues | PASS | 0 open issues on dexdat/SpecLang |
+| 5. Stashes | PASS | 0 stashes |
+| 6. Sibling | PASS | No concurrent speclang foreman (pgrep verified; other-fleet processes expected) |
+| 7. DuckBrain | ⚠️ GAP PERSISTS | /ticks/132 written (b5d72c97), recall-by-ID verified count=1. /ticks/129 + /ticks/130 STILL absent — gap flagged at #131 confirmed, not self-healed. Status key refreshed (580302f4) |
+| 8. Board | PASS | validate-board-format PASS (0 matrix rows). GitReins: 3 complete (DEPS-REACT-19, PITFALL-WORKFLOW-001, TEST-ISOLATION-001), 0 pending |
+| 9. E2E-001 | SKIPPED | No prod code change — cosmetic for idle mode (established pattern) |
+| 10. Deps | PASS | npm audit 0 vulns. npm outdated: 12 items unchanged from #131 (8 non-blocking + 4 ESM-only blocked majors) |
+| 11. Cooldown policy | PASS | 7200 per Bane 07-31 directive; no PUT issued (pin durable via fleet.toml) |
+| 12. Bookkeeping | PASS | tasks.md appended, commit + push |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main (73d0f3ce, fetch clean), 0 unpushed/behind, 0 stashes, no sibling foreman (pgrep verified). Working tree clean.
+2. Scheduler pin verified live: CooldownS=7200 via check_scheduler_project.py — 27th consecutive tick stable via fleet.toml pin, survived host reboot.
+3. Full suite re-run at DEFAULT parallelism (CI-equivalent): 1808/1866 pass, 58 skip, 0 flakes, 31.73s — **_index.json clean after run** → TEST-ISOLATION-001 fix verified durable (the AC #2 gate that the worker's fix was built to satisfy).
+4. npm audit: 0 vulns (4th consecutive clean tick after 3 advisory waves in 24h at #129-131). npm outdated: 12 items identical to #131. No new advisories — audit cadence stays every-tick.
+5. GitReins: guard_run PASS 4/4 (secrets clean, ts-language-server clean; tests/static N/A — no staged files). task_list: 3 complete, 0 pending. No judge run — no acceptance-criteria task in flight.
+6. Validator gate: speclang validate 448/448 (0 fail, 540 pre-existing warnings) — run fresh.
+7. DuckBrain: /ticks/132 written (ID b5d72c97), recall-by-ID confirmed persisted count=1. Status key /project/SpecLang/status refreshed (580302f4). **Gap confirmed persisting: /ticks/129 + /ticks/130 absent from list_keys despite #129/#130 claiming recall-verified writes** — second tick confirming; fabrication-chain pattern (cf. ticks 92-96) or alternate-key write; recommend a one-time audit of those two ticks' claim vs DuckBrain HTTP log if it recurs at #133.
+8. Off-by-one: health ok (uptime 31h0m19s). Nothing to submit — idle audit tick, no problem solved.
+9. Cleanup: test-temp-bootstrap/ + test-temp-meta/ removed (vitest regenerates them). No other dirt.
+10. E2E-001: Skipped — no prod code change; established idle pattern.
+11. 0 new code-level gaps — idle #1 post-reset; board genuinely empty (0 matrix rows, 0 gitreins pending).
+12. Bookkeeping: tasks.md appended
+
+**Eval:** Tier1=PASS (guard 4/4), Audit=cheap-subset (idle #1), Hilo=not-run (no code), DuckBrain=connected (speclang ns, /ticks/132 verified; 129/130 gap persists), GitReins=clean (3 complete / 0 pending)
+
+**VERDICT: idle #1 post-reset — clean maintenance tick after the 109-tick streak broke at #131. Full suite 1808/1866 at DEFAULT parallelism, 0 flakes, _index.json stays clean (TEST-ISOLATION-001 fix verified durable, AC #2). npm audit 0 vulns (4th tick clean). tsc clean, validate 448/448, guard 4/4, CI green ×20+. Cooldown 7200s stable via fleet.toml pin (27th tick). DuckBrain gap /ticks/129+130 persists (flagged 2nd tick). 0 pending tasks, 0 new gaps.**
+
+**Scheduler Health:** CooldownS=7200 (API GET-verified this tick), Enabled=true, Weight=15, Priority=10. fleet.toml pin durable (27th tick, survived host reboot). Stale CRON_PAUSE_REQUESTED still on disk (#72 era, superseded — no pause action). Disk 96% (80G free) — uptrend continues (91%→94%→95%→96%); host-level cleanup needed soon, flagging for supervisor.
