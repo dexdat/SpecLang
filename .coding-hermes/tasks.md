@@ -2713,3 +2713,49 @@
 **VERDICT: idle #3 post-reset — clean maintenance tick. validate 448/448, tsc clean, prettier matched, guard 4/4, npm audit 0 vulns (6th clean), CI green ×22+. Cooldown 7200s stable via fleet.toml pin (29th tick). DuckBrain gap /ticks/129+130 persists 4th tick with claimed-#130-ID recall=0 — HTTP-log audit still outstanding. 0 pending tasks, 0 new gaps.**
 
 **Scheduler Health:** CooldownS=7200 (API GET-verified this tick), Enabled=true, Weight=15, Priority=10. fleet.toml pin durable (29th tick, survived host reboot). Stale CRON_PAUSE_REQUESTED still on disk (#72 era, superseded — no pause action). Disk 98% (49G free) — worsening (97%→98%, 65G→49G free since #133); host-level cleanup needed urgently, flagging for supervisor.
+
+
+---
+
+### Foreman #135 — Idle Tick #4 Post-Reset (2026-08-04, scheduler tick — /home/kara/speclang)
+
+**System State:** Load 5.69 (1m), 48Gi avail, 16 cores, up 1d 14h (host reboot Aug 2 — fleet.toml pin held). Node v22.22.3. No code changes since TEST-ISOLATION-001 (commit 4980a4f3). speclang validate: 448/448 (0 fail, 540 pre-existing warnings) — run fresh. tsc clean. prettier src + tests all matched. npm audit: **0 vulnerabilities** (7th consecutive clean tick). npm outdated: 12 items — 7 non-blocking (js-yaml 5.2.2→5.2.3, vite 8.1.5→8.2.0, @types/react 19.2.17→19.2.18, @types/react-dom 19.2.3→19.2.4, postcss 8.5.23→8.5.25, @types/node 26.1.1→26.1.2, @vitejs/plugin-react 6.0.4→6.0.5) + 4 ESM-only blocked majors (better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4) + @types/better-sqlite3 (types-for-v13).
+
+**Scheduler:** ⚠️ **COOLDOWN 7200 → 10800 — autoSlowdown idle escalation (by design, not reversion).** API GET + raw DB both show CooldownS=10800, Enabled=true, DecayRate=1, Priority=10, Weight=15. Root cause found in scheduler log: `2026/08/04 01:06:56 slowdown.go:51: SLOWDOWN: speclang idle → cooldown 7200s → 10800s (180m)` — fired 6s after tick #134's idle verdict completed (01:06:50). The scheduler's autoSlowdown (internal/scheduler/slowdown.go) multiplies idle-tick cooldowns 1.5x via a **raw UPDATE that bypasses updated_at** — which is why the API row's UpdatedAt still reads 08-02T18:42:12Z (last daemon-restart pin). This tick fired at 04:16:55, ~10800s after #134's completion — confirming 10800 is the live effective value. fleet.toml pin (cooldown_s=7200) still in place; it re-applies on next daemon restart. No PUT issued — 7200 is the restart floor, autoSlowdown is the scheduler's own idle ladder (escalation only, never clobbers operator-set cooldowns ≥3600s). Flagging for supervisor: "7200 stable ×29" framing in #122–#134 was accurate at tick-time reads; the value now drifts upward after each idle verdict, and autoSlowdown's raw UPDATE makes drift invisible to UpdatedAt-based monitoring.
+
+**12-Point Audit Results (cheap subset per idle ladder — idle #4 post-reset):**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Git state | PASS | Clean pre-tick, HEAD 1bf7c816 == origin/main (fetch verified), 0 unpushed, 0 behind, 0 stashes |
+| 2. CI | PASS | 5 latest runs all success (incl. #134 board commit 30882866731, 4m58s). Green streak ×23+ |
+| 3. Scheduler | ⚠️ NOTED | CooldownS=10800 live (autoSlowdown escalation from 7200, log-verified root cause), Enabled=true, pin floor 7200 at restart |
+| 4. Issues | PASS | 0 open issues on dexdat/SpecLang |
+| 5. Stashes | PASS | 0 stashes |
+| 6. Sibling | PASS | No concurrent speclang foreman (ps verified — only asce workers active) |
+| 7. DuckBrain | ⚠️ GAP PERSISTS (5th tick) | /ticks/135 written (97771cbc), recall-by-ID verified count=1. /ticks/129 + /ticks/130 STILL absent — full key dump (33 keys, hasMore=false) confirms chain runs ...128 → 131 → 132 → 133 → 134. HTTP-log audit still outstanding |
+| 8. Board | PASS | validate-board-format PASS (0 matrix rows). GitReins: 3 complete (DEPS-REACT-19, PITFALL-WORKFLOW-001, TEST-ISOLATION-001), 0 pending |
+| 9. E2E-001 | SKIPPED | No prod code change — cosmetic for idle mode (established pattern) |
+| 10. Deps | PASS | npm audit 0 vulns (7th clean tick). npm outdated: 12 items, all non-blocking/blocked-ESM (js-yaml 5.2.3 new this tick) |
+| 11. Cooldown policy | NOTED | 7200 per Bane 07-31 directive remains the fleet.toml pin; live value 10800 via scheduler idle ladder — escalation allowed by design (slowdown.go), no PUT issued |
+| 12. Bookkeeping | PASS | tasks.md appended, commit + push |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main (1bf7c816, fetch clean), 0 unpushed/behind, 0 stashes, no sibling foreman (ps verified). Working tree clean (only vitest-regenerated test-temp dirs, removed).
+2. Scheduler deep-dive (the tick's real work): API GET + check_scheduler_project.py + raw scheduler.db query + scheduler.log forensics. **Root cause of the 7200→10800 drift: autoSlowdown idle escalation** (1.5x multiplier on idle verdicts, raw UPDATE bypassing updated_at). Single SLOWDOWN event for speclang since Aug 1: 01:06:56 local, right after #134. Value confirmed live (this tick spawned ~10800s after #134). fleet.toml pin intact — will re-floor to 7200 at next daemon restart.
+3. Validator gate: speclang validate 448/448 (0 fail, 540 pre-existing warnings) — run fresh.
+4. GitReins: guard_run PASS 4/4 (secrets via built-in scanner after gitleaks 30s timeout — same fallback as #103/#104/#133/#134; tests/static_analysis/lsp clean). task_list: 3 complete, 0 pending → idle ladder confirmed (no dispatch). Judge config intact (2M caps from #131, not reverted).
+5. Deps: npm audit 0 vulns (7th consecutive clean tick). npm outdated: 12 items — js-yaml 5.2.2→5.2.3 newly appeared; rest identical to #134. No new advisories.
+6. tsc --noEmit clean. prettier src + tests all matched. 0 TODO/FIXME/HACK in src/**/*.ts (3 pre-existing Rust daemon TODOs in src/daemon/src/{ipc,router,convergence}.rs unchanged since Jul 12 — noted, not new).
+7. DuckBrain: /ticks/135 written (ID 97771cbc-cd98-444d-85ec-794d01002898), recall-by-ID confirmed persisted count=1. **Gap confirmed 5th consecutive tick: /ticks/129 + /ticks/130 absent from full key dump (33 keys, hasMore=false); chain runs ...128 → 131 → 132 → 133 → 134. One-time HTTP-log audit (recommended #132, outstanding) flagged again for supervisor.**
+8. Off-by-one: health ok (uptime 38h39m). Nothing to submit — idle audit tick, no problem solved.
+9. Cleanup: test-temp-bootstrap/ + test-temp-meta/ removed (vitest regenerates; scanner-blocked rm -r worked via python shutil). Working tree clean.
+10. E2E-001: Skipped — no prod code change; established idle pattern.
+11. 0 new code-level gaps — idle #4 post-reset; board genuinely empty (0 matrix rows, 0 gitreins pending).
+12. Bookkeeping: tasks.md appended
+
+**Eval:** Tier1=PASS (guard 4/4), Audit=cheap-subset (idle #4), Hilo=not-run (no code), DuckBrain=connected (speclang ns, /ticks/135 verified count=1; 129/130 gap persists 5th tick), GitReins=clean (3 complete / 0 pending)
+
+**VERDICT: idle #4 post-reset — clean maintenance tick. validate 448/448, tsc clean, prettier matched, guard 4/4, npm audit 0 vulns (7th clean), CI green ×23+. Cooldown drifted 7200→10800 via scheduler autoSlowdown idle escalation (log-verified: slowdown.go 1.5x on #134's idle verdict, raw UPDATE bypasses updated_at) — by design, fleet.toml re-floors at restart. DuckBrain gap /ticks/129+130 persists 5th tick. 0 pending tasks, 0 new gaps.**
+
+**Scheduler Health:** CooldownS=10800 (API GET + raw DB verified this tick; live — next tick fired 10800s after #134), Enabled=true, Weight=15, Priority=10. fleet.toml pin 7200 = restart floor (30th tick). Stale CRON_PAUSE_REQUESTED still on disk (#72 era, superseded — no pause action). Disk improved 98%→84% (291G free) — host-level cleanup evidently done since #134.
