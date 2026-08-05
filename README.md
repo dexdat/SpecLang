@@ -4,15 +4,15 @@ A specification-driven multi-agent system where specs cascade through dependency
 
 ## Installation
 
-### From npm (recommended)
-```bash
-npm install -g speclang
-speclang --help
-```
+> ⚠️ **Warning:** Do **NOT** `npm install -g speclang`. The `speclang` package on
+> npm (v0.1.x) is an **unrelated project** (Specific-Language/speclang). This
+> repository (`dexdat/SpecLang`, package.json `speclang` 1.0.0) is **not published
+> to npm yet** — install from source below.
 
-### From source
+### From source (recommended)
+
 ```bash
-# Clone the repository
+# Clone THIS repository
 git clone https://github.com/dexdat/SpecLang.git
 cd SpecLang
 
@@ -22,8 +22,12 @@ npm install
 # Build the TypeScript project
 npm run build
 
-# Verify installation
+# Run directly from the repo (no global install needed)
 ./bin/speclang --help
+
+# Optional: expose a global `speclang` command for this repo's code
+npm link
+speclang --help
 ```
 
 ### Prerequisites
