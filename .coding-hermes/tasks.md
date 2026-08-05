@@ -2931,3 +2931,47 @@
 **VERDICT: idle #8 post-reset — clean maintenance tick. validate 448/448, tsc clean, prettier tests matched, guard 4/4, npm audit 0 vulns (11th clean), CI green ×36. Cooldown batch-reset RECURRED (21:09:41Z — 2nd event today, fleet.toml mtime exact match, asce/h3-sdk-go-foreman also hit) — PUT restored to 10800, GET-verified. DuckBrain gap /ticks/129+130 persists 9th tick. 0 pending tasks, 0 new gaps.**
 
 **Scheduler Health:** CooldownS=10800 (API GET verified — PUT-restored after 2nd batch reset), Enabled=true, Weight=15, Priority=10, UpdatedAt 21:44:00Z (this tick's PUT restore). fleet.toml pin 10800 intact (mtime 16:09:41 local = the batch-write source event). Stale CRON_PAUSE_REQUESTED still on disk (#72 era, superseded — no pause action). Disk 90% (182G free).
+
+
+### Foreman #140 — Idle Tick #9 Post-Reset (2026-08-04, scheduler tick — /home/kara/speclang)
+
+**System State:** Load 5.68 (1m at tick start), 49Gi avail, 16 cores, up 2d 6h46m. Node v22.22.3. No code changes since TEST-ISOLATION-001 (commit 4980a4f3). speclang validate: 448/448 (0 fail, 540 pre-existing warnings) — run fresh. tsc --noEmit clean. prettier: tests all matched (src symlinks skipped, dual-view pattern). npm audit: **0 vulnerabilities** (12th consecutive clean tick). npm outdated: 12 items — identical set to #138/#139 (7 non-blocking: js-yaml 5.2.3, vite 8.2.0, @types/react 19.2.18, @types/react-dom 19.2.4, postcss 8.5.25, @types/node 26.1.2, @vitejs/plugin-react 6.0.5 + 4 ESM-only blocked majors: better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4 + @types/better-sqlite3). Disk 92% (148G free).
+
+**Scheduler:** WARN — **COOLDOWN REVERTED TO 900 THIRD TIME — RESTORED VIA PUT.** Live GET at tick start: cooldown_s=900, UpdatedAt=2026-08-05T01:17:21Z (~10 min pre-tick — fresh, NOT the frozen autoSlowdown tell). **Correlation with fleet.toml mtime BROKEN this event: fleet.toml mtime = 17:50:18 local (22:50:18Z) != 01:17:21Z reset timestamp** — the #137/#139 fleet-auto-heal hypothesis (fleet.toml write = the reset source) does not explain this 3rd event; either a second write path or a periodic batch job. Prior events: 13:11:21Z (#137), 21:09:41Z (#139). Event window matches fleet batch pattern. **PUT {"CooldownS":10800} → HTTP 200, GET-verified: cooldown_s=10800, decay_rate=1, enabled=true, UpdatedAt 01:32:17Z.**
+
+**12-Point Audit Results (cheap subset per idle ladder — idle #9 post-reset):**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Git state | PASS | Clean pre-tick, HEAD 39652732 == origin/main (fetch verified), 0 unpushed, 0 behind, 0 stashes |
+| 2. CI | PASS | 5 latest runs all success (incl. #139 board commit 30953876322, 5m19s). Green streak ×37+ (last failure Jul 31 18:46Z) |
+| 3. Scheduler | FIXED | cooldown_s was 900 (3rd fleet-wide batch reset 01:17:21Z; fleet.toml mtime NO LONGER correlates — hypothesis weakened) → PUT restored 10800, GET-verified (UpdatedAt 01:32:17Z) |
+| 4. Issues | PASS | 0 open issues on dexdat/SpecLang (unchanged) |
+| 5. Stashes | PASS | 0 stashes |
+| 6. Sibling | PASS | No concurrent speclang foreman (ps verified — only scheduler workers) |
+| 7. DuckBrain | GAP PERSISTS (10th tick) | /ticks/140 written (4c9ce3a5), recall-by-ID verified count=1. Key dump (hasMore=false) confirms /ticks/129 + /ticks/130 STILL absent; chain runs ...128 → 131 → 132 → ... → 140. Known fabrication-era holes (101-107, 112-114, 120-122, 96/98) unchanged; 129/130 remain the tracked pair. HTTP-log audit still outstanding |
+| 8. Board | PASS | Tracked-markdown board, append-only. GitReins: 3 complete (DEPS-REACT-19, PITFALL-WORKFLOW-001, TEST-ISOLATION-001), 0 pending, 0 in_progress |
+| 9. E2E-001 | SKIPPED | No prod code change — cosmetic for idle mode (established pattern) |
+| 10. Deps | PASS | npm audit 0 vulns (12th clean tick). npm outdated: 12 items, identical set vs #138/#139 |
+| 11. Cooldown policy | FIXED | fleet.toml pin 10800 intact; live value was 900 (3rd batch reset) → PUT 10800. Recurrence (3 events/day) escalated for supervisor |
+| 12. Bookkeeping | PASS | tasks.md appended, commit + push |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main (39652732, fetch verified), 0 unpushed/behind, 0 stashes, no sibling speclang foreman (ps verified).
+2. Scheduler: live GET → cooldown_s=900, UpdatedAt 2026-08-05T01:17:21Z (fresh — NOT the frozen autoSlowdown tell). **fleet.toml mtime (22:50:18Z) does NOT match the reset timestamp — first event without mtime correlation; #137/#139 fleet-auto-heal hypothesis weakened.** **PUT {"CooldownS":10800} → HTTP 200 → GET-verified cooldown_s=10800, UpdatedAt 01:32:17Z.**
+3. Validator gate: speclang validate 448/448 (0 fail, 540 pre-existing warnings) — run fresh.
+4. GitReins: guard_run PASS 4/4 (secrets/tests skipped-no-staged, static_analysis N/A TS, lsp typescript-language-server clean). task_list: 3 complete, 0 pending, 0 in_progress → idle ladder confirmed (no dispatch).
+5. Deps: npm audit 0 vulns (12th consecutive clean tick). npm outdated: 12 items — identical set to #138/#139. No new advisories.
+6. tsc --noEmit clean. prettier: tests all matched. TODO hunt: TS grep finds 0 via symlinked src/ (grep does not follow symlinks — dual-view pattern; documented 5 template-literal markers in specs/ sources unchanged, pre-existing since Mar) + 3 pre-existing Rust daemon TODOs (ipc.rs:26, router.rs:22, convergence.rs:38, unchanged since Jul 12) — none new.
+7. DuckBrain: /ticks/140 written (ID 4c9ce3a5-45cc-4ed2-b52b-763425cf94ff), recall-by-ID verified persisted count=1. **Gap confirmed 10th consecutive tick: /ticks/129 + /ticks/130 absent from key dump (hasMore=false); chain ...128 → 131 → 132 → ... → 140. One-time HTTP-log audit (recommended #132, outstanding) re-flagged for supervisor.**
+8. Off-by-one: health ok. Nothing to submit — idle audit tick, no problem solved.
+9. Cleanup: working tree clean throughout (no test-temp dirs; guard's suite skipped — no staged files; TEST-ISOLATION-001 fix holding).
+10. E2E-001: Skipped — no prod code change; established idle pattern.
+11. 0 new code-level gaps — idle #9 post-reset; board genuinely empty (0 matrix rows, 0 gitreins pending).
+12. Bookkeeping: tasks.md appended
+
+**Eval:** Tier1=PASS (guard 4/4), Audit=cheap-subset (idle #9), Hilo=not-run (no code), DuckBrain=connected (speclang ns, /ticks/140 verified count=1; 129/130 gap persists 10th tick), GitReins=clean (3 complete / 0 pending)
+
+**VERDICT: idle #9 post-reset — clean maintenance tick. validate 448/448, tsc clean, prettier tests matched, guard 4/4, npm audit 0 vulns (12th clean), CI green ×37. Cooldown batch-reset RECURRED 3rd time (01:17:21Z — fleet.toml mtime correlation BROKEN this event) — PUT restored to 10800, GET-verified. DuckBrain gap /ticks/129+130 persists 10th tick. 0 pending tasks, 0 new gaps.**
+
+**Scheduler Health:** CooldownS=10800 (API GET verified — PUT-restored after 3rd batch reset), Enabled=true, Weight=15, Priority=10, UpdatedAt 01:32:17Z (this tick's PUT restore). fleet.toml pin 10800 intact (mtime 22:50:18Z — no longer matches reset timestamp; recurrence source now unexplained → supervisor escalation). Stale CRON_PAUSE_REQUESTED still on disk (#72 era, superseded — no pause action). Disk 92% (148G free).
