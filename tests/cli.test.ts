@@ -267,13 +267,39 @@ describe("CLI Commands", () => {
   });
 
   describe("check", () => {
+    // TEST-ISOLATION-002: `speclang check` validates specs/** relative to the
+    // project dir and exits non-zero on any failure. Running it from the repo
+    // root raced with tests/daemon/arch004-autonomous-cascade.test.ts, which
+    // writes throwaway temp specs (no valid speclang-header) into the real
+    // specs/ while vitest runs test files in parallel → torn reads failed the
+    // check once exit codes became honest (SL-GAP-004). Run check against a
+    // throwaway fixture project under .speclang/tmp (gitignored) instead,
+    // mirroring the "validate exit codes" block below.
+    const checkDir = ".speclang/tmp/cli-check";
+
+    beforeAll(() => {
+      fs.rmSync(checkDir, { recursive: true, force: true });
+      fs.mkdirSync(path.join(checkDir, "specs"), { recursive: true });
+      // Valid: same header shape the `speclang new` templates produce.
+      fs.writeFileSync(
+        path.join(checkDir, "specs", "valid.spec.md"),
+        '# speclang-header lines:6\nid: "@test/check-valid"\nversion: 1.0.0\nlayer: 1\ntags: [test]\n---\n',
+      );
+    });
+
+    afterAll(() => {
+      fs.rmSync(checkDir, { recursive: true, force: true });
+    });
+
     it("should check specs", async () => {
-      const { stdout } = await execAsync(`${CLI_BIN} check`);
+      const { stdout } = await execAsync(`${CLI_BIN} check -d ${checkDir}`);
       expect(stdout).toContain("Checking specs");
     });
 
     it("should support --format json output", { timeout: 15000 }, async () => {
-      const { stdout } = await execAsync(`${CLI_BIN} check --format json`);
+      const { stdout } = await execAsync(
+        `${CLI_BIN} check -d ${checkDir} --format json`,
+      );
       const jsonMatch = stdout.match(/\{[\s\S]*\}/);
       expect(jsonMatch).toBeTruthy();
       const result = JSON.parse(jsonMatch![0]);
@@ -282,7 +308,9 @@ describe("CLI Commands", () => {
     });
 
     it("should support --verbose for warnings", async () => {
-      const { stdout } = await execAsync(`${CLI_BIN} check --verbose`);
+      const { stdout } = await execAsync(
+        `${CLI_BIN} check -d ${checkDir} --verbose`,
+      );
       expect(stdout).toContain("Checking specs");
     });
   });
