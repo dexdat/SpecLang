@@ -3073,3 +3073,50 @@
 **VERDICT: idle #11 post-reset — clean maintenance tick. validate 448/448, tsc clean, prettier tests matched, guard 4/4, npm audit 0 vulns (14th clean), CI green ×39. Cooldown HELD at 10800 — 2nd consecutive tick with no batch reset and no restore PUT. DuckBrain gap /ticks/129+130 persists 12th tick. Disk 98% (51G free, trend continues). 0 pending tasks, 0 new gaps.**
 
 **Scheduler Health:** CooldownS=10800 (API GET verified — held at pin, no PUT needed), Enabled=true, Weight=15, Priority=10, UpdatedAt 05:05:31Z (unchanged — value = pin). fleet.toml pin 10800 intact. Batch-reset recurrence did NOT fire this window (2nd clean window after 3 consecutive: 13:11:21Z, 21:09:41Z, 01:17:21Z) — watch next tick. Stale CRON_PAUSE_REQUESTED still on disk (#72 era, superseded — no pause action). Disk 98% (51G free, trend continues — escalated).
+### Foreman #143 — Productive Tick: SL-GAP-001..004 Fixes (2026-08-05, scheduler tick — /home/kara/speclang)
+
+**Context:** First productive tick after 82+ idle. Stand-in PM sweep (commit 19c32bff, 09:52 local) added 4 real gaps to the board. Foreman verified all 4 (reproduced), created gitreins tasks, dispatched 2 parallel workers (deepseek-v4-flash @ deepseek-foreman, coding-hermes-worker skill), independently verified, all judged PASS.
+
+**System State:** Load moderate, 16 cores. Node v22.22.3, TypeScript 7.0.2. Speclang daemon running (uptime since Aug 4).
+
+**PM Gap Verification (foreman, pre-dispatch):**
+| Gap | Pri | Verified? | Detail |
+|-----|-----|-----------|--------|
+| SL-GAP-001 | P0 | ✅ repro'd | `speclang new` → generated spec fails own validate: "Failed to parse header YAML: Source contains multiple documents". Root cause: template `lines:8` vs parser `lines.slice(1, lineCount)` requiring last line = `---` (correct: `lines:6`) |
+| SL-GAP-004 | P2 | ✅ repro'd | 0-file validate exits 0 silently; ALSO found: broken-spec validate exits 0 (exit-code plumbing broken generally) |
+| SL-GAP-002 | P1 | ✅ confirmed | README:9 `npm install -g speclang` = wrong package (npm speclang@0.1.x is unrelated project); stale speclang-0.1.0.tgz (Jul 12, 1,124-line CLI vs current 2,458) |
+| SL-GAP-003 | P1 | ✅ confirmed | NORTH_STAR:309/313 "just specs" absolute claims vs actual dual-view compliance (596/601 non-exempt, 99.2%) |
+
+**Workers (2 parallel, disjoint files):**
+| Worker | Tasks | Commits | Judge |
+|--------|-------|---------|-------|
+| A (code) | SL-GAP-001, SL-GAP-004 | 963fb0f1 (template lines:8→lines:6 ×2 templates), cb371b29 (exit codes: 0-file warning + non-zero; JSON format truncation fixed via process.exitCode) | COMPLETE ×2, PASS (2026-08-05T15:22:16Z / 15:25:48Z) |
+| B (docs) | SL-GAP-002, SL-GAP-003 | a8cbf57f (README from-source install + warning, tgz removed), d457b72e (NORTH_STAR/README honest compliance claims, real figures) | COMPLETE ×2, PASS 4/4 (15:10:48Z / 15:15:02Z) |
+
+**Foreman Independent Verification (not worker claims):**
+| Gate | Result |
+|------|--------|
+| npm run build (tsc) | PASS, exit 0 |
+| `speclang new t1 && validate` (minimal) | ✅ Passed: 1, exit 0 |
+| `speclang new t2 --template http && validate` | ✅ Passed: 1, exit 0 |
+| Empty dir validate | ⚠️ "No spec files found…" warning, exit 1 |
+| Broken spec validate | ❌ Failed: 1, exit 1 |
+| Repo self-validate | 448/448, exit 0 |
+| npm test (full, 1869) | 1810 passed / 1 failed / 58 skip — arch004 daemon 5000ms timeout, passes 6/6 isolated (13.6s) = known load flake (cf. #92/#99/#104), NOT regression |
+| GitReins guard | PASS 4/4 (gitleaks 30s timeout → built-in scanner fallback, same as #142) |
+| gitreins task list | 7/7 complete (3 prior + 4 new) |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main at tick start (19c32bff, PM commit already pushed). No sibling foreman (ps verified). PM sweep landed mid-tick (09:52) — reconciled, no collision.
+2. Scheduler: live GET → cooldown_s=900, updated_at 13:14:14Z, enabled=true. **fleet.toml has NO speclang block (grep-verified — #142's "pin 10800 intact" was stale/cargo-cult).** 900 = policy-correct fast mode (4 real pending tasks) — NO PUT. Note: pinless + daemon restart ⇒ 900 default; supervisor may add fleet.toml block if slower cadence wanted post-completion.
+3. Exit-code bonus fix: worker A found validate JSON output truncated at 146KB by process.exit(1) mid-stream — switched to process.exitCode (stdout drains), JSON now complete (448 reports).
+4. Docs honesty: NORTH_STAR now scopes specs-only bootstrap as goal with real compliance figures (596/601 non-exempt, 99.2%, 5 legacy scripts/archive/ files named); README warns against `npm install -g speclang`.
+5. Cleanup: test-temp-bootstrap/ + test-temp-meta/ removed (vitest regenerates). dagger.db untracked artifact left (pre-existing, not ours).
+6. 0 new gaps introduced. Board tasks SL-GAP-001..004 → complete.
+
+**Eval:** Tier1=PASS 4/4, Audit=productive-subset, Hilo=not-run (worker-owned code), DuckBrain=write #143, GitReins=7/7 complete, judge PASS ×4
+
+**VERDICT: productive tick — all 4 PM gaps closed with judge PASS and independent foreman verification. First-user workflow (`speclang new` → validate) fixed end-to-end; validate exit codes now honest (0-file warning + non-zero on failure); packaging/claims docs corrected. 448/448 self-validate, build clean, guard PASS. 1 test flake (arch004, environmental, passes isolated).**
+
+**Scheduler Health:** cooldown_s=900 (policy-correct: 4 pending at write time, now 0 — next policy run may raise to 7200; no fleet.toml pin, restart-revert risk noted for supervisor), Enabled=true, Weight=15, Priority=10. No duplicate fires. Stale CRON_PAUSE_REQUESTED on disk (#72 era — superseded, now genuinely obsolete since board was productive).
+
