@@ -1259,7 +1259,7 @@ program
       let initialSpec = '';
       if (!options.bare) {
         if (options.template === 'http' || options.template === 'api') {
-          initialSpec = `# speclang-header lines:8
+          initialSpec = `# speclang-header lines:6
 id: "@${name}/api"
 version: 0.1.0
 layer: 1
@@ -1278,7 +1278,7 @@ GET /status - Service status endpoint
 `;
         } else {
           // minimal template
-          initialSpec = `# speclang-header lines:8
+          initialSpec = `# speclang-header lines:6
 id: "@${name}/main"
 version: 0.1.0
 layer: 1
