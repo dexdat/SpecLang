@@ -306,11 +306,32 @@ Or check the SIPs in `.opencode/skills/`:
 
 ## The Ultimate Test
 
+### Goal / Target State
+
 > A developer should be able to take only the `specs/` folder to a new machine, run `speclang build`, and get working code.
 
 No dependencies. No lock files. No node_modules. No venv.
 
 Just specs. And from specs, everything else flows.
+
+### Current Status (2026-08-05 — alpha bootstrap)
+
+The paragraph above is the **target**, not today's reality. SpecLang is bootstrapping: the compiler, CLI, daemon, and tests are hand-written TypeScript, and only a subset of `src/` is symlinked from `specs/` via the dual-view pattern. A `specs/`-only workflow is not yet supported end-to-end — "take only specs/ to a new machine" is the convergence goal, not a documented workflow.
+
+Dual-view compliance today (`python3 scripts/check_compliance.py --report`):
+
+| Metric | Count |
+|--------|-------|
+| Compliance rate | 99.2% |
+| ✅ Compliant (following dual-view pattern) | 596 |
+| ⚠️ Partial | 0 |
+| ❌ Non-compliant (no spec source) | 5 |
+| 🚫 Exempt | 160 |
+| 📊 Total (non-exempt) | 601 |
+
+The 5 non-compliant files are legacy scripts under `scripts/archive/`: `test_compliance.py`, `convert_to_symlinks.py`, `debug_symlink.py`, `fix-yaml-headers.py`, `test_symlink.py`.
+
+Until the bootstrap completes, the working path is the full repository (specs + hand-written `src/` + tooling), not `specs/` alone.
 
 ---
 

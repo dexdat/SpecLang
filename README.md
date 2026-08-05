@@ -64,6 +64,7 @@ For programmatic access, see:
 - Hello World example (compiles and runs)
 - Explicit cascade protocol with verification gates
 - Working agent definitions for OpenCode
+- Dual-view compliance: 99.2% — 596 files follow the specs→working-location pattern (5 legacy `scripts/archive/` scripts lack spec sources; 160 exempt; see `scripts/check_compliance.py --report`, 2026-08-05)
 - 1754 tests passing (1 pre-existing cascade flake; 58 skipped)
 
 **⚠️ Current Limitations:**
