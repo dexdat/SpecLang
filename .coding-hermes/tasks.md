@@ -3120,3 +3120,49 @@
 
 **Scheduler Health:** cooldown_s=900 (policy-correct: 4 pending at write time, now 0 — next policy run may raise to 7200; no fleet.toml pin, restart-revert risk noted for supervisor), Enabled=true, Weight=15, Priority=10. No duplicate fires. Stale CRON_PAUSE_REQUESTED on disk (#72 era — superseded, now genuinely obsolete since board was productive).
 
+
+### Foreman #144 — Productive Tick: TEST-ISOLATION-002 (2026-08-05, scheduler tick — /home/kara/speclang)
+
+**Context:** Started as apparent idle tick (0 pending gitreins, 2 unchecked fixture rows only). CI signal scan caught run 31021593012 RED — the FIRST CI run containing the SL-GAP-004 exit-code fix (cb371b29). Foreman forensics found a real test-isolation gap unmasked by the honest exit codes; dispatched worker; judged PASS.
+
+**CI Finding (foreman, pre-dispatch):**
+| Signal | Detail |
+|--------|--------|
+| Run | 31021593012 (push of #143 board chore 881b4324, 15:41Z) — failure, 2m6s, "Run tests" step |
+| Failures | `tests/cli.test.ts > CLI Commands > check > should check specs` + `should support --format json output` — both "Error: Command failed: ./bin/speclang check" |
+| stderr | `Error validating specs/_arch004_e2e_1785944609669.spec.md: No speclang-header declaration found` / `_b.spec.md: File not found` |
+| Root cause | arch004-autonomous-cascade.test.ts writes invalid temp specs (`specs/_arch004_e2e_<ts>.spec.md`, content `# one\n`, no header) into the REAL specs/ dir because the daemon watcher monitors specs/ at CWD (test lines 75-77/194-195/209-210); cli.test.ts "check" tests run `./bin/speclang check` from repo root → validates ALL of specs/ → sees arch004's torn temp files. Pre-SL-GAP-004, check exited 0 despite broken files (exit-code bug) → race masked; the fix made check exit non-zero → execAsync throws |
+| Classification | TEST-ISOLATION-002 — same class as TEST-ISOLATION-001 (parallel test files sharing repo-root state); NOT a prod regression (check behavior correct per SL-GAP-004) |
+
+**Worker (1, code):**
+| Worker | Task | Commit | Judge |
+|--------|------|--------|-------|
+| A (deepseek-v4-flash @ deepseek-foreman, pid 623605) | TEST-ISOLATION-002 | b46907f5 (cli check tests hermetic: `./bin/speclang check -d .speclang/tmp/cli-check/` — existing `-d/--dir` option src/cli/index.ts:92, gitignored fixture w/ valid spec, beforeAll/afterAll lifecycle; NO prod code touched) | COMPLETE, PASS 6/6 (2026-08-05T17:40Z CLI) |
+
+**Foreman Independent Verification (not worker claims):**
+| Gate | Result |
+|------|--------|
+| git show b46907f5 | 1 file, tests/cli.test.ts only (+31/−3) |
+| npm run build (tsc) | PASS, exit 0 |
+| ./bin/speclang validate | 448/448, 0 fail (540 pre-existing warnings) |
+| ./bin/speclang check (repo root) | exit 0 (criterion: no prod behavior change) |
+| Concurrent race repro: `npx vitest run tests/cli.test.ts tests/daemon/arch004-autonomous-cascade.test.ts` | 2 files passed, 47 passed / 2 skipped — race closed at default parallelism |
+| Worker full suite ×2 (default parallelism) | 1811 passed / 58 skipped both runs, 0 flakes |
+| GitReins guard | PASS 4/4 (gitleaks 30s timeout → built-in scanner fallback, same as #142/#143) |
+| gitreins task list | 8/8 complete (7 prior + TEST-ISOLATION-002), 0 pending |
+| specs/ after suite | clean, 0 _arch004_ stragglers |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main at tick start (881b4324); no sibling speclang foreman (only wojons-mythos worker in ps); 0 behind/0 ahead pre-dispatch.
+2. CI forensics: `gh run view 31021593012` → failing step; `--log-failed` empty (known quirk) → full job log via `gh api .../actions/jobs/92359382085/logs` → failed-tests block identified.
+3. Root cause confirmed by reading arch004 test (temp specs in real specs/, daemon watches CWD) + cli.test.ts check block (repo-root scan) + meta check implementation (src/cli/commands/meta.ts:79 → executeMetaCommand("check") → SelfConsistencyValidator).
+4. Task TEST-ISOLATION-002 created (6 ACs), worker prompt with verified facts written to /tmp, worker dispatched via `hermes chat -q` (deepseek-v4-flash @ deepseek-foreman, coding-hermes-worker skill).
+5. Judge via CLI `gitreins task complete TEST-ISOLATION-002` → PASS 6/6 (hermetic fixture, assertions hold, suite green ×2, no prod change, specs/ clean, guard 4/4).
+6. Deps: npm outdated = same 13-item set (8 non-blocking + 5 ESM-only blocked majors), npm audit = 0 vulns — no action.
+7. 0 new gaps introduced. dagger.db untracked artifact pre-existing (not ours). CI for fix commit b46907f5 pending (pushed with this board chore).
+
+**Eval:** Tier1=PASS 4/4, Audit=productive (CI-driven), Hilo=not-run (test-only change, no src impact), DuckBrain=/ticks/144 written (id 85eeecab-077e-49d1-9658-5ebcdf598335, recall-by-ID verified count=1; 129/130 gap persists 13th tick), GitReins=8/8 complete, judge PASS 6/6
+
+**VERDICT: productive tick — TEST-ISOLATION-002 closed with judge PASS 6/6 and independent foreman verification (build clean, 448/448, repo-root check exit 0, concurrent cli+arch004 run green = race closed). First CI red since #130 root-caused: SL-GAP-004's honest exit codes unmasked a pre-existing parallel-test race (arch004 temp specs in real specs/ vs repo-root check scan). Fix is test-only and hermetic. Worker full suite 1811/1869 ×2 clean, guard 4/4.**
+
+**Scheduler Health:** CooldownS=900 (policy-correct — no fleet.toml pin for speclang, #143 grep-verified; NO PUT), Enabled=true, Weight=15, Priority=10, DecayRate=1. latest_tick SpawnedAt 12:19:30 matches this fire (no duplicate; daemon healthy, db connected, uptime 5h36m, spawns_http=70/exec=0, 6 active ticks at write — project GET timed out twice under full concurrency, retried OK). Stale CRON_PAUSE_REQUESTED on disk (#72 era — superseded, board productive). Disk 98% (51G free, host-level trend — escalated by prior ticks, re-flagged for supervisor).
