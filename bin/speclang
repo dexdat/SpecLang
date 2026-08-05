@@ -407,13 +407,14 @@ program
     
     try {
       const { validateCommand } = require('../dist/src/validation/cli.js');
-      await validateCommand({
+      const result = await validateCommand({
         files: files.length > 0 ? files : ['specs/**/*.spec.md'],
         projectDir,
         strict: options.strict || false,
         verbose: options.verbose || false,
         format: options.format || 'text'
       });
+      process.exitCode = result.success ? 0 : 1;
     } catch (err) {
       if (err.code === 'MODULE_NOT_FOUND') {
         console.error('\n❌ SpecLang not built. Run: npm run build');
@@ -473,13 +474,14 @@ program
     
     try {
       const { validateCommand } = require('../dist/src/validation/cli.js');
-      await validateCommand({
+      const result = await validateCommand({
         files: files.length > 0 ? files : ['specs/**/*.spec.md'],
         projectDir,
         strict: options.strict || false,
         verbose: options.verbose || false,
         format: options.format || 'text'
       });
+      process.exitCode = result.success ? 0 : 1;
     } catch (err) {
       if (err.code === 'MODULE_NOT_FOUND') {
         console.error('\n❌ SpecLang not built. Run: npm run build');

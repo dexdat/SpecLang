@@ -245,15 +245,22 @@ id: "@test/invalid"
 
       writeFileSync(invalidSpecPath, specContent, "utf-8");
 
-      // Run validate command
-      const result = execSync(
-        `node ${join(process.cwd(), "bin/speclang")} validate ${invalidSpecPath}`,
-        { cwd: TEST_DIR, encoding: "utf-8", stdio: "pipe" },
-      );
+      // Run validate command. SL-GAP-004: failure must exit non-zero, so
+      // execSync throws — catch it and assert on the reported output.
+      let stdout = "";
+      try {
+        execSync(
+          `node ${join(process.cwd(), "bin/speclang")} validate ${invalidSpecPath}`,
+          { cwd: TEST_DIR, encoding: "utf-8", stdio: "pipe" },
+        );
+        expect(true).toBe(false); // Should not reach here — must exit non-zero
+      } catch (err) {
+        stdout = (err as { stdout?: string }).stdout ?? "";
+      }
 
       // Validate should report failure
-      expect(result).toContain("Failed: 1");
-      expect(result).toContain("Errors: 1");
+      expect(stdout).toContain("Failed: 1");
+      expect(stdout).toContain("Errors: 1");
     });
 
     it("should detect broken references", () => {
@@ -274,15 +281,22 @@ This spec references a non-existent spec.
 
       writeFileSync(invalidSpecPath, specContent, "utf-8");
 
-      // Run validate command with --strict
-      const result = execSync(
-        `node ${join(process.cwd(), "bin/speclang")} validate ${invalidSpecPath} --strict`,
-        { cwd: TEST_DIR, encoding: "utf-8", stdio: "pipe" },
-      );
+      // Run validate command with --strict. SL-GAP-004: failure must exit
+      // non-zero, so execSync throws — catch it and assert on the output.
+      let stdout = "";
+      try {
+        execSync(
+          `node ${join(process.cwd(), "bin/speclang")} validate ${invalidSpecPath} --strict`,
+          { cwd: TEST_DIR, encoding: "utf-8", stdio: "pipe" },
+        );
+        expect(true).toBe(false); // Should not reach here — must exit non-zero
+      } catch (err) {
+        stdout = (err as { stdout?: string }).stdout ?? "";
+      }
 
       // Validate should report broken reference
-      expect(result).toContain("Failed: 1");
-      expect(result).toContain("Errors: 1");
+      expect(stdout).toContain("Failed: 1");
+      expect(stdout).toContain("Errors: 1");
     });
   });
 

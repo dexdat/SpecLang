@@ -55,6 +55,12 @@ export async function validateCommand(options: ValidateOptions): Promise<Validat
 
   const uniqueFiles = [...new Set(allFiles)];
 
+  if (uniqueFiles.length === 0) {
+    console.warn(
+      "⚠️ No spec files found matching specs/**/*.spec.md. Run 'speclang new <name>' to create a project."
+    );
+  }
+
   const reports: any[] = [];
   let totalErrors = 0;
   let totalWarnings = 0;
@@ -87,7 +93,7 @@ export async function validateCommand(options: ValidateOptions): Promise<Validat
   }
 
   const result: ValidateResult = {
-    success: totalErrors === 0,
+    success: totalErrors === 0 && uniqueFiles.length > 0,
     totalFiles: uniqueFiles.length,
     passedFiles,
     failedFiles: uniqueFiles.length - passedFiles,

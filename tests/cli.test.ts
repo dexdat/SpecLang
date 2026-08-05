@@ -287,6 +287,70 @@ describe("CLI Commands", () => {
     });
   });
 
+  describe("validate exit codes", () => {
+    // SL-GAP-004: `speclang validate` must exit non-zero when nothing was
+    // checked (0 files) or when any spec fails. Runs bin/speclang (CLI_BIN)
+    // against throwaway projects under .speclang/tmp (gitignored).
+    const exitCodeBase = ".speclang/tmp/validate-exit-codes";
+    const emptyDir = path.join(exitCodeBase, "empty");
+    const brokenDir = path.join(exitCodeBase, "broken");
+    const validDir = path.join(exitCodeBase, "valid");
+
+    beforeAll(() => {
+      fs.rmSync(exitCodeBase, { recursive: true, force: true });
+      fs.mkdirSync(path.join(emptyDir, "specs"), { recursive: true });
+      fs.mkdirSync(path.join(brokenDir, "specs"), { recursive: true });
+      fs.mkdirSync(path.join(validDir, "specs"), { recursive: true });
+      // Broken: missing required `version` field → parse throws.
+      fs.writeFileSync(
+        path.join(brokenDir, "specs", "broken.spec.md"),
+        '# speclang-header lines:6\nid: "@test/broken"\nlayer: 1\ntags: [x]\n---\n',
+      );
+      // Valid: same header shape the `speclang new` templates produce.
+      fs.writeFileSync(
+        path.join(validDir, "specs", "valid.spec.md"),
+        '# speclang-header lines:6\nid: "@test/valid"\nversion: 1.0.0\nlayer: 1\ntags: [test]\n---\n',
+      );
+    });
+
+    afterAll(() => {
+      fs.rmSync(exitCodeBase, { recursive: true, force: true });
+    });
+
+    it("should warn and exit non-zero when no spec files are found", async () => {
+      try {
+        await execAsync(`${CLI_BIN} validate -d ${emptyDir}`);
+        expect(true).toBe(false); // Should not reach here — exit code must be non-zero
+      } catch (result: unknown) {
+        const { stdout, stderr } = result as {
+          stdout: string;
+          stderr: string;
+        };
+        expect(stdout + stderr).toContain("No spec files found");
+      }
+    });
+
+    it("should exit non-zero when a spec fails validation", async () => {
+      try {
+        await execAsync(`${CLI_BIN} validate -d ${brokenDir}`);
+        expect(true).toBe(false); // Should not reach here — exit code must be non-zero
+      } catch (result: unknown) {
+        const { stdout, stderr } = result as {
+          stdout: string;
+          stderr: string;
+        };
+        expect(stdout + stderr).toContain("Failed: 1");
+      }
+    });
+
+    it("should exit 0 when all specs validate", async () => {
+      const { stdout } = await execAsync(
+        `${CLI_BIN} validate -d ${validDir}`,
+      );
+      expect(stdout).toContain("Passed: 1");
+    });
+  });
+
   describe("index", () => {
     it("should show index stats", async () => {
       const { stdout } = await cliExec(`${CLI} index`);
