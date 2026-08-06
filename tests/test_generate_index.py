@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 from datetime import datetime
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / 'scripts'))
 
 from generate_index import parse_header, get_spec_files
 
@@ -137,9 +137,9 @@ short: Test spec 2
 # Content""")
     
     monkeypatch.chdir(tmp_path)
-    # Run generate_index.py via subprocess (script is in project root)
+    # Run generate_index.py via subprocess (script lives in scripts/)
     import subprocess
-    generate_index_path = Path(__file__).parent.parent / 'generate_index.py'
+    generate_index_path = Path(__file__).parent.parent / 'scripts' / 'generate_index.py'
     result = subprocess.run(
         [sys.executable, str(generate_index_path)],
         capture_output=True,
@@ -147,15 +147,14 @@ short: Test spec 2
         cwd=tmp_path
     )
     # Should succeed
-    assert result.returncode == 0
+    assert result.returncode == 0, result.stderr
     
-    # Check _index.json exists
+    # Check _index.json exists (whole-file pretty-printed JSON with specs keyed by id)
     index_file = tmp_path / '_index.json'
     assert index_file.exists()
-    entries = []
     with open(index_file, 'r') as f:
-        for line in f:
-            entries.append(json.loads(line))
+        data = json.load(f)
+    entries = list(data['specs'].values())
     assert len(entries) == 2
     ids = {e['id'] for e in entries}
     assert '@test/spec1' in ids
