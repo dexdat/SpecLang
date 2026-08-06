@@ -1,4 +1,4 @@
-# speclang-header lines:10
+# speclang-header lines:12
 id: "@speclang/dynamic-split/token-budget"
 version: 0.1.0
 layer: 2
@@ -6,6 +6,8 @@ tags: [splitting, tokens, budget, limits]
 parent: "@ref:speclang/dynamic-split"
 
 order: 2
+project_level: Alpha
+agent_support: agent_autonomous
 short: "Token counting, budget overhead, and limits"
 ---
 
@@ -82,7 +84,7 @@ BudgetOverhead:
     - Per sibling link: +30 tokens
     
   optimization:
-    - Use short refs (e.g., @ref:auth/login)
+    - Use short refs (e.g., auth/login)
     - Minimize header fields
     - Combine sibling links into single field
 ```

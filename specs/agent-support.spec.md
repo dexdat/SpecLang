@@ -56,7 +56,7 @@ ImplementationDetails:
 ### @block::children @kind:entity
 
 ChildSpecs:
-  - "@ref:speclang/agent-support/human-only – Human-only agent support module
+  - "@ref:speclang/agent-support-levels/levels – Agent support level definitions
 
 ### @block::usage @kind:entity
 

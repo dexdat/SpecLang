@@ -1,7 +1,7 @@
 # speclang-header lines:9
 id: "@speclang/speclang"
 version: 0.1.0
-layer: "0"
+layer: 0
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [meta, self-specifying, tutorial]

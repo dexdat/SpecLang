@@ -1,7 +1,10 @@
-# speclang-header lines:7
+# speclang-header lines:10
 id: "@speclang/scripts/integration-test"
 version: 1.0.0
 layer: 5
+project_level: Alpha
+agent_support: agent_assisted
+short: End-to-end dogfooding harness
 target: scripts/integration-test.py
 tags: [scripts, integration-test, dogfooding, end-to-end]
 ---
@@ -47,5 +50,5 @@ class IntegrationTest:
   `datetime`.
 - Working SpecLang install reachable via PATH or as `python3 -m speclang`.
 
-@ref:docs/dogfooding
+docs/dogfooding
 @ref:specs/compliance §Dual-View Pattern

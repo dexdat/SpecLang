@@ -17,6 +17,6 @@ Spec validation rules. Checked on every write.
 
 ## Children
 
-- "@ref:speclang/validation/rules – Core validation rules
-- @ref:speclang/validation/tool – Validation tool and flow
-- @ref:speclang/validation/language-blocks – Language block validation rules
+- @ref:speclang/autonomous-validation/rules – Core validation rules
+- @ref:speclang/validation-tool – Validation tool and flow
+- @ref:speclang/autonomous-validation/rules – Language block validation rules

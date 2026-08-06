@@ -38,49 +38,49 @@ When implementing the POC, these are the ONLY specs you need to read and impleme
 #### Foundation (Read These First)
 | Spec | Purpose | Implementation File |
 |------|---------|---------------------|
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/installation] | **How to install and setup** | - |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/types] | **TypeScript types & interfaces** | `src/types/poc.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/database] | **SQLite database schema** | `src/db/poc-db.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/cli] | **CLI interface & commands** | - |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/installation | **How to install and setup** | - |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/types | **TypeScript types & interfaces** | `src/types/poc.ts` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/database | **SQLite database schema** | `src/db/poc-db.ts` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/cli | **CLI interface & commands** | - |
 
 #### UX & User Experience
 | Spec | Purpose | Implementation File |
 |------|---------|---------------------|
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/user-flows] | **User interaction flows** | - |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/troubleshooting] | **Problem solving guide** | - |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/user-flows | **User interaction flows** | - |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/troubleshooting | **Problem solving guide** | - |
 
 #### Implementation Components
 | Spec | Purpose | Implementation File |
 |------|---------|---------------------|
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/poc-daemon] | Main entry point | `src/daemon/poc-daemon.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/simple-agent] | Single agent that processes specs | `src/daemon/simple-agent.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/file-watcher] | File change detection | `src/daemon/file-watcher.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/event-routing] | Simple event routing | `src/daemon/event-router.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/convergence] | Detect cascade completion | `src/daemon/convergence.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/block-parser] | Parse @block: from markdown | `src/parser/block-parser.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/header-parser] | Parse spec headers (YAML) | `src/parser/header-parser.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/templates] | Code generation templates | `src/codegen/templates/*.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/template-registry] | Template loading/management | `src/codegen/template-registry.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/code-generator] | Code generator orchestrator | `src/codegen/generator.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/path-utils] | Path resolution utilities | `src/utils/path-utils.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/code-generation] | Code generation overview | `src/codegen/index.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/events] | Event system interface | `src/events/typed-emitter.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/error-handling] | Error recovery strategies | `src/errors/handler.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/config-loader] | Configuration loading | `src/config/loader.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/build-integration] | Build integration | `src/build/integration.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/package-json] | Package dependencies | `package.json` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/tsconfig-json] | TypeScript config | `tsconfig.json` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/tests] | **Complete test suite** | `tests/**/*.test.ts` |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/integration] | Component wiring guide | - |
-| [@ref:specs/roadmap.spec.dir/poc.spec.dir/demo-workflow] | Happy path example | - |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/poc-daemon | Main entry point | `src/daemon/poc-daemon.ts` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/simple-agent | Single agent that processes specs | `src/daemon/simple-agent.ts` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/file-watcher | File change detection | `src/daemon/file-watcher.ts` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/event-routing | Simple event routing | `src/daemon/event-router.ts` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/convergence | Detect cascade completion | `src/daemon/convergence.ts` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/block-parser | Parse @block: from markdown | `src/parser/block-parser.ts` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/header-parser | Parse spec headers (YAML) | `src/parser/header-parser.ts` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/templates | Code generation templates | `src/codegen/templates/*.ts` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/template-registry | Template loading/management | `src/codegen/template-registry.ts` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/code-generator | Code generator orchestrator | `src/codegen/generator.ts` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/path-utils | Path resolution utilities | `src/utils/path-utils.ts` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/code-generation | Code generation overview | `src/codegen/index.ts` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/events | Event system interface | `src/events/typed-emitter.ts` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/error-handling | Error recovery strategies | `src/errors/handler.ts` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/config-loader | Configuration loading | `src/config/loader.ts` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/build-integration | Build integration | `src/build/integration.ts` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/package-json | Package dependencies | `package.json` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/tsconfig-json | TypeScript config | `tsconfig.json` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/tests | **Complete test suite** | `tests/**/*.test.ts` |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/integration | Component wiring guide | - |
+| @ref:specs/roadmap.spec.dir/poc.spec.dir/demo-workflow | Happy path example | - |
 
 ### Reference Specs (for context only)
 
 These specs provide background but are NOT directly implemented for POC:
 
-- [@ref:specs/daemon] - Full daemon architecture (MVP)
-- [@ref:specs/cascade] - Full cascade system (MVP)
-- [@ref:specs/agents] - Full multi-agent system (MVP)
+- @ref:speclang/daemon - Full daemon architecture (MVP)
+- @ref:speclang/cascade - Full cascade system (MVP)
+- @ref:speclang/agents - Full multi-agent system (MVP)
 
 ### Implementation Priority
 
@@ -242,30 +242,30 @@ Then: Convergence is detected and logged
 ### Phase 1: Foundation (Read These Specs First)
 
 #### P1.1 - Project Setup
-- [ ] **Create project structure** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/installation]
+- [ ] **Create project structure** - @ref:specs/roadmap.spec.dir/poc.spec.dir/installation
   - Run `npm init`
   - Create directory structure
-- [ ] **Configure TypeScript** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/tsconfig-json]
+- [ ] **Configure TypeScript** - @ref:specs/roadmap.spec.dir/poc.spec.dir/tsconfig-json
   - Set `target: ES2022`, `module: NodeNext`
   - Set `outDir: ./dist`, `rootDir: ./src`
-- [ ] **Install dependencies** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/package-json]
+- [ ] **Install dependencies** - @ref:specs/roadmap.spec.dir/poc.spec.dir/package-json
   - `chokidar`, `sqlite3`, `commander`, `js-yaml`, `glob`
   - dev: `@types/node`, `typescript`, `jest`, `@types/jest`
-- [ ] **Define all types** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/types]
+- [ ] **Define all types** - @ref:specs/roadmap.spec.dir/poc.spec.dir/types
   - Export: `FileEvent`, `ParsedBlock`, `BlockKind`, `POCError`, `POCConfig`, `Template`
   - Export: `ConvergenceEvent`, `ConvergenceState`, `DaemonStats`
 
 #### P1.2 - Core Utilities
-- [ ] **Implement path utilities** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/path-utils]
+- [ ] **Implement path utilities** - @ref:specs/roadmap.spec.dir/poc.spec.dir/path-utils
   - `slugifySpecId(specId: string): string`
   - `resolveSpecPaths(specId: string): Paths`
   - `resolveBlockOutputPath(specId: string, blockId: string): string`
   - `ensureSpecDirectories(specId: string): Promise<void>`
-- [ ] **Implement config loader** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/config-loader]
+- [ ] **Implement config loader** - @ref:specs/roadmap.spec.dir/poc.spec.dir/config-loader
   - Load from `.speclang/config.yaml`
   - Merge with defaults
   - Validate settings
-- [ ] **Implement error handling** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/error-handling]
+- [ ] **Implement error handling** - @ref:specs/roadmap.spec.dir/poc.spec.dir/error-handling
   - `POCError` class with `toUserMessage()`
   - `ErrorHandler` with recovery strategies
   - Error codes: WATCH_ERROR, PARSE_ERROR, GENERATION_ERROR, etc.
@@ -273,20 +273,20 @@ Then: Convergence is detected and logged
 ### Phase 2: File Watching & Events
 
 #### P2.1 - Event System
-- [ ] **Implement TypedEventEmitter** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/events]
+- [ ] **Implement TypedEventEmitter** - @ref:specs/roadmap.spec.dir/poc.spec.dir/events
   - `on<K>(event: K, handler: (data: T[K]) => void)`
   - `emit<K>(event: K, data: T[K])`
   - Event types: FileWatcherEvents, ConvergenceEvents
 
 #### P2.2 - File Watcher
-- [ ] **Implement FileWatcher** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/file-watcher]
+- [ ] **Implement FileWatcher** - @ref:specs/roadmap.spec.dir/poc.spec.dir/file-watcher
   - Use `chokidar` for watching
   - Debounce: 300ms (POC_CONSTANTS.DEBOUNCE_MS)
   - Events: 'change', 'ready', 'error'
   - Filter: ignore *.tmp, .git/, node_modules/
 
 #### P2.3 - Convergence Detection
-- [ ] **Implement ConvergenceDetector** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/convergence]
+- [ ] **Implement ConvergenceDetector** - @ref:specs/roadmap.spec.dir/poc.spec.dir/convergence
   - Quiet period: 5000ms (POC_CONSTANTS.CONVERGENCE_MS)
   - Track files changed
   - Emit 'converged' event with duration, filesChanged
@@ -294,14 +294,14 @@ Then: Convergence is detected and logged
 ### Phase 3: Spec Parsing
 
 #### P3.1 - Header Parser
-- [ ] **Implement HeaderParser** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/header-parser]
+- [ ] **Implement HeaderParser** - @ref:specs/roadmap.spec.dir/poc.spec.dir/header-parser
   - Parse `# speclang-header lines:N` marker
   - Extract: id, version, layer, short, tags
   - Validate required fields (id, version, layer)
   - Return `SpecHeader` interface
 
 #### P3.2 - Block Parser
-- [ ] **Implement BlockParser** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/block-parser]
+- [ ] **Implement BlockParser** - @ref:specs/roadmap.spec.dir/poc.spec.dir/block-parser
   - Regex: `/^###\s+@block:([a-zA-Z0-9_-]+)\s+@kind:(\w+)/gm`
   - Parse parameters: `name: type - description`
   - Parse optional: `name?: type - description`
@@ -312,26 +312,26 @@ Then: Convergence is detected and logged
 ### Phase 4: Code Generation
 
 #### P4.1 - Templates
-- [ ] **Implement function template** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/templates]
+- [ ] **Implement function template** - @ref:specs/roadmap.spec.dir/poc.spec.dir/templates
   - Generate: `export function name(params): returnType`
   - Add JSDoc comments
   - Handle optional parameters with `?`
-- [ ] **Implement class template** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/templates]
+- [ ] **Implement class template** - @ref:specs/roadmap.spec.dir/poc.spec.dir/templates
   - Generate: `export class Name`
   - Include properties with optional marker
-- [ ] **Implement interface template** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/templates]
+- [ ] **Implement interface template** - @ref:specs/roadmap.spec.dir/poc.spec.dir/templates
   - Generate: `export interface Name`
   - Handle optional properties with `?`
 
 #### P4.2 - Template Registry
-- [ ] **Implement TemplateRegistry** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/template-registry]
+- [ ] **Implement TemplateRegistry** - @ref:specs/roadmap.spec.dir/poc.spec.dir/template-registry
   - `register(kind: BlockKind, template: Template)`
   - `get(kind: BlockKind): Template`
   - `loadFromFile(filePath: string)`
   - Built-ins: function, class, interface, type, enum, constant
 
 #### P4.3 - Code Generator
-- [ ] **Implement CodeGenerator** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/code-generator]
+- [ ] **Implement CodeGenerator** - @ref:specs/roadmap.spec.dir/poc.spec.dir/code-generator
   - `generate(specId, header, block): GeneratedFile`
   - Add SPECLANG-GENERATED header
   - Write to: `specs/{slug}.spec.dir/src/{blockId}.ts`
@@ -341,7 +341,7 @@ Then: Convergence is detected and logged
 ### Phase 5: Agent & Daemon
 
 #### P5.1 - Simple Agent
-- [ ] **Implement SimpleAgent** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/simple-agent]
+- [ ] **Implement SimpleAgent** - @ref:specs/roadmap.spec.dir/poc.spec.dir/simple-agent
   - `onFileChanged(event: FileEvent): Promise<void>`
   - Parse spec with BlockParser
   - Generate code for each block
@@ -349,12 +349,12 @@ Then: Convergence is detected and logged
   - Handle Windows fallback (copy vs symlink)
 
 #### P5.2 - Event Router
-- [ ] **Implement EventRouter** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/event-routing]
+- [ ] **Implement EventRouter** - @ref:specs/roadmap.spec.dir/poc.spec.dir/event-routing
   - Simple routing: all events → SimpleAgent
   - `route(event: FileEvent): Promise<void>`
 
 #### P5.3 - POC Daemon
-- [ ] **Implement PocDaemon** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/poc-daemon]
+- [ ] **Implement PocDaemon** - @ref:specs/roadmap.spec.dir/poc.spec.dir/poc-daemon
   - Wire components:
     - FileWatcher → EventRouter → SimpleAgent
     - FileWatcher → ConvergenceDetector
@@ -365,7 +365,7 @@ Then: Convergence is detected and logged
 ### Phase 6: Database & State
 
 #### P6.1 - Database
-- [ ] **Implement POCDatabase** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/database]
+- [ ] **Implement POCDatabase** - @ref:specs/roadmap.spec.dir/poc.spec.dir/database
   - Tables: file_events, cascades, tasks, specs, generated_files
   - SQL column names: snake_case
   - TypeScript: camelCase
@@ -374,23 +374,23 @@ Then: Convergence is detected and logged
 ### Phase 7: Integration & Testing
 
 #### P7.1 - Component Integration
-- [ ] **Wire all components** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/integration]
+- [ ] **Wire all components** - @ref:specs/roadmap.spec.dir/poc.spec.dir/integration
   - Daemon creates and connects all components
   - Event flow: FileWatcher → Router → Agent → CodeGen
 
 #### P7.2 - Build Integration
-- [ ] **Implement build integration** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/build-integration]
+- [ ] **Implement build integration** - @ref:specs/roadmap.spec.dir/poc.spec.dir/build-integration
   - Run `npm run build` after convergence
   - Verify generated code compiles
 
 #### P7.3 - CLI
-- [ ] **Create CLI entry** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/cli]
+- [ ] **Create CLI entry** - @ref:specs/roadmap.spec.dir/poc.spec.dir/cli
   - `./bin/speclangd-poc`
   - Parse arguments with commander
   - Start/stop daemon
 
 #### P7.4 - Tests
-- [ ] **Write test suite** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/tests]
+- [ ] **Write test suite** - @ref:specs/roadmap.spec.dir/poc.spec.dir/tests
   - Unit: FileWatcher, BlockParser, CodeGenerator
   - Integration: Daemon, Cascade
   - E2E: Demo workflow
@@ -398,14 +398,14 @@ Then: Convergence is detected and logged
 ### Phase 8: Demo & Documentation
 
 #### P8.1 - Demo Workflow
-- [ ] **Implement demo** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/demo-workflow]
+- [ ] **Implement demo** - @ref:specs/roadmap.spec.dir/poc.spec.dir/demo-workflow
   - Create `specs/greeting.spec.md`
   - Edit file
   - Verify code generates in < 5 seconds
   - Run `npm run build` successfully
 
 #### P8.2 - Documentation
-- [ ] **Update troubleshooting** - [@ref:specs/roadmap.spec.dir/poc.spec.dir/troubleshooting]
+- [ ] **Update troubleshooting** - @ref:specs/roadmap.spec.dir/poc.spec.dir/troubleshooting
   - Document common errors
   - Document error codes
 

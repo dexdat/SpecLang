@@ -132,7 +132,7 @@ Before:
 
 Also updates references:
   # In other specs:
-  @ref:specs/Auth#login → @ref:specs/auth#login
+  specs/Auth#login → @ref:specs/auth#login
 ```
 
 ## Safety Features

@@ -29,4 +29,4 @@ Components:
 
 refs:
 - @ref:specs/safety-nets
-- @ref:specs/safety-confidence
+- safety-confidence – Confidence scoring system

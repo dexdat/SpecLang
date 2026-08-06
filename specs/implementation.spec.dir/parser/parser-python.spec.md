@@ -3,7 +3,7 @@ id: "@speclang/implementation-parser"
 version: 0.1.0
 layer: 5
 target: src/parser/speclang_parser.py
-parent: "@ref:speclang/implementationimports:"
+parent: "@ref:speclang/implementation"
 tags: [parser, headers, validation, python]
 short: Python header parser and validator for Speclang specs
 project_level: Alpha

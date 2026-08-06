@@ -538,7 +538,7 @@ ImplementationGuidelines:
 ## References
 
 - "@ref:specs/git-history/rollback - Git rollback strategies
-- @ref:specs/mcp/error-handling - MCP error handling
+- @ref:speclang/mcp-error-handling - MCP error handling
 - @ref:specs/safety-nets/fallback - Safety net fallback protocols
 - @ref:specs/cascade/continuous-improvement - Continuous improvement loop
-- @ref:specs/validation/rules - Validation error types
+- @ref:speclang/autonomous-validation/rules - Validation error types

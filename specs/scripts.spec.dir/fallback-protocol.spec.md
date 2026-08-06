@@ -141,6 +141,6 @@ The fallback-protocol integrates with:
 # @block:refs @kind:note
 - @ref:speclang/safety-nets - Safety net specifications
 - @ref:speclang/safety-nets/fallback - Fallback protocol definition
-- @ref:speclang/autonomous - Autonomous agent configuration
+- @ref:speclang/autonomous-validation - Autonomous agent configuration
 - @ref:speclang/validation - Validation system
 ```

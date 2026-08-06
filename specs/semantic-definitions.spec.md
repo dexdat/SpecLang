@@ -13,8 +13,8 @@ This spec has been split into sub‑specs for better organization:
 
 ## Sub‑specs
 
-1. **[@ref:speclang/semantic-definitions/layer-mapping]** – Layer mapping definitions and interactions
-2. **[@ref:speclang/semantic-definitions/project-levels]** – Project level and agent support definitions and interactions
+1. @ref:speclang/semantic-definitions/layer-mapping – Layer mapping definitions and interactions
+2. @ref:speclang/semantic-definitions/project-levels – Project level and agent support definitions and interactions
 
 ## Purpose
 

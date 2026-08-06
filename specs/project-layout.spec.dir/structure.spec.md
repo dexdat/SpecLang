@@ -226,6 +226,6 @@ steps:
   11. run validation to ensure project structure is correct
   12. output success message with next steps
 
-refs: [""@ref:speclang/cli#new"]
+refs: [ "@ref:speclang/cli-spec#new" ]
 ```
 

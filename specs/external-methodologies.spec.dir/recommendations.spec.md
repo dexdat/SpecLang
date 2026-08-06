@@ -76,7 +76,7 @@ validation_rules:
 
 **Adoption**:
 Create template specs for:
-- API specs (see @ref:specs/api)
+- API specs (see @ref:speclang/api-spec)
 - Component specs (see @ref:specs/core)
 - Test specs (see @ref:specs/test-specs)
 - Validation specs (see @ref:specs/validation)
@@ -138,7 +138,7 @@ Already implemented in @ref:specs/opencode-plugin.spec.md with:
 **Adoption**:
 Already implemented:
 - @ref:speclang/validation-tool – Validation tool spec
-- @ref:speclang/speclang_parser – Parser with validation
+- @ref:speclang/parser – Parser with validation
 - Header validation in @ref:specs/headers
 
 **Status**: Already adopted

@@ -274,7 +274,7 @@ ContinuousImprovementConfiguration:
     - Can be disabled for manual control
     
   integration_with_config_schema:
-    - "@ref:specs/config/schema defines ContinuousImprovementConfig
+    - "@ref:speclang/config-spec-dir/schema defines ContinuousImprovementConfig
     - All loop control parameters type-safe
     - Validation ensures safe values
     
@@ -310,5 +310,5 @@ This is the future of software development: continuous, collaborative, and adapt
 - "@ref:specs/mcp/messages - MCP message protocol
 - @ref:specs/project-maturity-levels/depth-requirements - Depth requirements by scope
 - @ref:specs/cascade - Cascade system
-- @ref:specs/config/schema - Configuration schema including loop control
+- @ref:speclang/config-spec-dir/schema - Configuration schema including loop control
 - @ref:specs/git-history - Git as memory system

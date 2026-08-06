@@ -281,7 +281,7 @@ id: "@tests/auth/login"
 version: 1.0.0
 layer: 10
 target: "tests/auth/login.test.ts"
-spec_under_test: ""@ref:specs/auth---
+spec_under_test: "@ref:specs/auth"
 
 # Login Tests
 

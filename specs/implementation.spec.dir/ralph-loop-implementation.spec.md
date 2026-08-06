@@ -2,7 +2,7 @@
 id: "@speclang/implementation-ralph-loop"
 version: 0.1.0
 layer: 3
-parent: "@ref:speclang/implementationimports:"
+parent: "@ref:speclang/implementation"
 tags: [ralph-loop, implementation, typescript, orchestration, validation]
 short: TypeScript implementation of Ralph Loop dual-agent system with steering packets
 project_level: Alpha

@@ -7,12 +7,12 @@ short: Python Code Generator
 imports: ["@speclang/core", "@speclang/stdlib", "@speclang/compiler.spec.dir/targets"]
 project_level: Alpha
 agent_support: agent_autonomous
-parent: "@ref:specs/compiler.spec.dir/targets"
-references: 
-      - "\"@ref:src/compiler/python/types.ts"
-      - "\"@ref:src/compiler/python/templates.ts"
-      - "\"@ref:src/compiler/python/builtins.ts"
-      - "\"@ref:src/compiler/targets/python.ts"
+parent: "@ref:speclang/compiler-spec-dir/targets"
+references:
+      - "src/compiler/python/types.ts"
+      - "src/compiler/python/templates.ts"
+      - "src/compiler/python/builtins.ts"
+      - "src/compiler/targets/python.ts"
 ---
 
 # Python Code Generator

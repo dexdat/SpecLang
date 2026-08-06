@@ -13,8 +13,8 @@ This spec has been split into sub‑specs for better organization:
 
 ## Sub‑specs
 
-1. **[@ref:speclang/agent-behavior-matrix/matrix]** – Core behavior matrix definitions
-2. **[@ref:speclang/agent-behavior-matrix/transitions]** – Transition workflows and fallback protocols
+1. @ref:speclang/agent-behavior-matrix/matrix – Core behavior matrix definitions
+2. @ref:speclang/agent-behavior-matrix/transitions – Transition workflows and fallback protocols
 
 ## Purpose
 

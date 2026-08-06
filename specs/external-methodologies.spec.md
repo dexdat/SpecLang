@@ -26,9 +26,9 @@ This spec analyzes external methodologies—particularly BMAD (Breakthrough Meth
 
 This spec is split into sub-specs:
 
-- **[@ref:specs/external-methodologies.spec.dir/bmad-comparison]** – Detailed comparison between SpecLang and BMAD
-- **[@ref:specs/external-methodologies.spec.dir/recommendations]** – Specific recommendations for adopting BMAD patterns  
-- **[@ref:specs/external-methodologies.spec.dir/adoption-patterns]** – How to map external patterns to SpecLang
+- @ref:speclang/external-methodologies/bmad-comparison – Detailed comparison between SpecLang and BMAD
+- @ref:speclang/external-methodologies/recommendations – Specific recommendations for adopting BMAD patterns
+- @ref:speclang/external-methodologies/adoption-patterns – How to map external patterns to SpecLang
 
 See [external-methodologies.spec.dir/_index.md](./external-methodologies.spec.dir/_index.md) for directory overview.
 

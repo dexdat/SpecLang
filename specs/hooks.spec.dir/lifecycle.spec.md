@@ -68,4 +68,4 @@ export interface HookContext {
 }
 ```
 
-Note: Hook and HookResult types are defined in the pipeline types spec (@ref:specs/pipeline/types).
+Note: Hook and HookResult types are defined in the pipeline types spec (@ref:speclang/pipeline/hooks).

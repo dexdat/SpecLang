@@ -770,8 +770,8 @@ ContentTypes:
 
 ## References
 
-- "@ref:specs/api.spec - API overview
+- @ref:speclang/api-spec - API overview
 - @ref:specs/mcp - MCP server specification
-- @ref:specs/validation/rules - Validation rules
+- @ref:speclang/autonomous-validation/rules - Validation rules
 - @ref:specs/cascade - Cascade system
 - @ref:specs/cascade/error-handling - Error handling

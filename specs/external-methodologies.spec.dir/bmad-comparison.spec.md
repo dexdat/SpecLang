@@ -51,7 +51,7 @@ BMAD is an AI-driven development framework that provides:
 | **Header Format** | YAML frontmatter with `speclang-header` | YAML frontmatter in `.agent.yaml` |
 | **Content Format** | Flexible markdown blocks | Template-driven markdown |
 | **File Extension** | `.spec.md`, `.scl`, `.spec.yaml` | `.agent.yaml` → compiled `.md` |
-| **References** | @ref:path/to/spec#block | Workflow phase implicit refs |
+| **References** | @ref:domain/path#block | Workflow phase implicit refs |
 | **Splitting** | `.spec.dir/` sub-specs | Workflow step outputs |
 | **Validation** | @ref:speclang/autonomous-validation | `tools/schema/agent.js` schema validation |
 | **Compilation** | Parse and execute | YAML → Markdown with XML injection |

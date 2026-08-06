@@ -347,9 +347,9 @@ rm -rf ~/.speclang
 ### @poc/installation/next-steps
 
 After installation:
-1. Read [@ref:specs/roadmap.spec.dir/poc.spec.dir/demo-workflow] - Complete walkthrough
-2. Try [@ref:specs/roadmap.spec.dir/poc.spec.dir/cli] - CLI reference
-3. Check [@ref:specs/roadmap.spec.dir/poc.spec.dir/troubleshooting] - If issues arise
+1. Read @ref:specs/roadmap.spec.dir/poc.spec.dir/demo-workflow - Complete walkthrough
+2. Try @ref:specs/roadmap.spec.dir/poc.spec.dir/cli - CLI reference
+3. Check @ref:specs/roadmap.spec.dir/poc.spec.dir/troubleshooting - If issues arise
 
 **Start Building:**
 ```bash

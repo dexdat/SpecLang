@@ -20,8 +20,8 @@ This spec defines authentication for the MCP server, including:
 
 ## Sub‑specs
 
-1. **[@ref:speclang/auth/entities]** – Authentication entities (`MCPAuthConfig`, `MCPAuth`)
-2. **[@ref:speclang/auth/flows]** – Authentication flows (`createAuth`, middleware usage)
+1. @ref:speclang/auth/entities – Authentication entities (`MCPAuthConfig`, `MCPAuth`)
+2. @ref:speclang/auth/flows – Authentication flows (`createAuth`, middleware usage)
 
 ## Purpose
 

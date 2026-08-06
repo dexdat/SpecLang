@@ -699,6 +699,6 @@ export const productionBehaviorResolver = new ProductionAgentBehaviorResolver();
 
 ## References
 
-- "@ref:specs/project-maturity-levels/levels - Level definitions
-- @ref:specs/maturity/levels/beta - Beta level (previous level)
-- @ref:specs/maturity/levels/startup - Startup level (next level)
+- @ref:speclang/project-maturity-levels/levels - Level definitions
+- @ref:speclang/maturity/levels/beta - Beta level (previous level)
+- Startup level (next level)

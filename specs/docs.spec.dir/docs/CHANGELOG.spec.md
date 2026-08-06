@@ -79,5 +79,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## References
 
-- "@ref:specs/docs
-- @ref:specs/release
+- docs – Documentation spec
+- release – Release process

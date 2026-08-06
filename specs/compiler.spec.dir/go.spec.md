@@ -7,12 +7,12 @@ short: Go Code Generator
 imports: ["@speclang/core", "@speclang/stdlib", "@speclang/compiler.spec.dir/targets"]
 project_level: Alpha
 agent_support: agent_autonomous
-parent: "@ref:specs/compiler.spec.dir/targets"
-references: 
-      - "\"@ref:src/compiler/go/types.ts"
-      - "\"@ref:src/compiler/go/templates.ts"
-      - "\"@ref:src/compiler/go/builtins.ts"
-      - "\"@ref:src/compiler/targets/go.ts"
+parent: "@ref:speclang/compiler-spec-dir/targets"
+references:
+      - "src/compiler/go/types.ts"
+      - "src/compiler/go/templates.ts"
+      - "src/compiler/go/builtins.ts"
+      - "src/compiler/targets/go.ts"
 ---
 
 # Go Code Generator

@@ -66,7 +66,7 @@ CurrentState:
 # @block:implementation/existing-code-map @kind:table
 | Code Location | Spec Reference | Status | Notes |
 |---------------|----------------|--------|-------|
-| scripts/generate_index.py | @ref:specs/indexer | ✅ Working | Indexes specs, validates refs |
+| scripts/generate_index.py | @ref:speclang/scripts-generate-index | ✅ Working | Indexes specs, validates refs |
 | src/parser/* | @ref:specs/parser | ⚠️ Partial | Header parsing works |
 | src/speclangd.ts | @ref:specs/daemon | ⚠️ Partial | TypeScript daemon draft |
 | src/speclang-mcp.ts | @ref:specs/mcp | ⚠️ Partial | MCP server draft |
@@ -74,7 +74,7 @@ CurrentState:
 | src/codegen.ts | @ref:specs/compiler | ❌ Stub | Code generation |
 | src/db/* | @ref:specs/sqlite | ⚠️ Partial | SQLite database |
 | src/ralph-loop.ts | @ref:specs/cascade | ⚠️ Partial | Cascade loop |
-| src/guard/* | @ref:specs/guard | ❌ Not started | File access control |
+| src/guard/* | @ref:speclang/opencode-plugin-spec-dir/ownership-guard | ❌ Not started | File access control |
 | src/pipeline/* | @ref:specs/pipeline | ❌ Not started | Build pipeline |
 
 Legend:
@@ -132,7 +132,7 @@ Phase1:
     - "@ref:specs/headers
     - "@ref:specs/parser
     - "@ref:specs/spec-format
-    - "@ref:specs/validation/rules
+    - "@ref:speclang/autonomous-validation/rules
 ```
 
 ### Phase 2: Daemon & Events (Week 3-4)
@@ -236,7 +236,7 @@ Phase3:
     - "@ref:specs/agent-protocol
     - "@ref:specs/cascade
     - "@ref:specs/cascade.spec.dir/error-handling
-    - "@ref:specs/guard
+    - "@ref:speclang/opencode-plugin-spec-dir/ownership-guard
     - "@ref:specs/skills
 ```
 
@@ -542,11 +542,11 @@ DevSetup:
 
 ## References
 
-- "@ref:specs/000-bootstrap - Bootstrap primer
-- @ref:specs/project.scl - North Star vision
+- @ref:speclang/bootstrap - Bootstrap primer
+- @ref:northstar - North Star vision
 - @ref:specs/core - Core architecture
 - @ref:specs/compiler - Code generation
 - @ref:specs/daemon - File watcher
 - @ref:specs/cascade - Reactive loop
 - @ref:specs/agent-protocol - Agent system
-- @ref:docs/CONTEXT.md - Session context
+- docs/CONTEXT.md - Session context

@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [examples, auth, security, entities]
 short: Authentication example spec
-parent: "@ref:speclang/examples"
+parent: "@ref:speclang/examples-spec"
 
 target: src/examples/auth.ts
 ---
@@ -79,6 +79,6 @@ JWT configuration:
 
 ## References
 
-- Parent: @ref:speclang/examples
-- Related: @ref:specs/examples.spec.dir/api (API design example)
+- Parent: @ref:speclang/examples-spec
+- Related: @ref:speclang/examples/api (API design example)
 - Core: @ref:speclang/core

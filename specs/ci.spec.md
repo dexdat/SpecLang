@@ -10,7 +10,7 @@ target: .github/workflows/ci.yml
 status: active
 depends_on:
     - "@ref:speclang/core"
-    - "@ref:speclang/build"
+    - "@ref:speclang/pipeline/build"
 ---
 
 # GitHub Actions CI Workflow

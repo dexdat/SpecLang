@@ -6,7 +6,7 @@ project_level: Alpha
 agent_support: agent_autonomous
 tags: [examples, api, design, endpoints]
 short: API design example spec
-parent: "@ref:speclang/examples"
+parent: "@ref:speclang/examples-spec"
 
 target: src/examples/api.ts
 ---
@@ -98,6 +98,6 @@ Standard error codes:
 
 ## References
 
-- Parent: @ref:speclang/examples
-- Related: @ref:specs/examples.spec.dir/auth (authentication example)
+- Parent: @ref:speclang/examples-spec
+- Related: @ref:speclang/examples/auth (authentication example)
 - Core: @ref:speclang/core

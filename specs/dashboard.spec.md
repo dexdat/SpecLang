@@ -1,7 +1,11 @@
-# speclang-header lines:6
+# speclang-header lines:10
 id: "@specs/dashboard"
 version: 1.0.0
 layer: 5
+project_level: Alpha
+agent_support: agent_assisted
+tags: [dashboard, ui]
+short: Dashboard module spec
 target: src/dashboard/
 ---
 
@@ -29,4 +33,4 @@ Tailwind CSS configuration for dashboard styling.
 ## Dependencies
 
 @ref:specs/ui-dashboard
-@ref:specs/react
+@ref:speclang/ui-dashboard/visual-design

@@ -24,7 +24,7 @@ The Safety Confidence Scoring system:
 
 - "@ref:speclang/safety-nets
 - @ref:speclang/autonomous-validation
-- @ref:speclang/security
+- security – Security module
 
 ## @block:implementation @kind:note
 

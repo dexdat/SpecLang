@@ -1,7 +1,11 @@
-# speclang-header lines:6
+# speclang-header lines:10
 id: "@specs/meta"
 version: 1.0.0
 layer: 5
+project_level: Alpha
+agent_support: agent_assisted
+tags: [meta, codegen, validation]
+short: Meta-programming utilities spec
 target: src/meta/
 ---
 
@@ -29,5 +33,5 @@ Main meta module entry point.
 ## Dependencies
 
 @ref:specs/compiler
-@ref:specs/codegen
+@ref:speclang/implementation-codegen
 @ref:specs/validation

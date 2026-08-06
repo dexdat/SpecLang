@@ -79,6 +79,6 @@ Package configuration is defined in `package.json`:
 
 ## References
 
-- "@ref:specs/scripts.hard-checks
-- @ref:specs/docs/packaging-strategy
+- @ref:specs/scripts.hard-checks
+- docs/packaging-strategy
 - @ref:specs/deployment

@@ -1,7 +1,9 @@
-# speclang-header lines:9
+# speclang-header lines:11
 id: "@bugs/integration-test-template"
 version: 1.0.0
 layer: 5
+project_level: Alpha
+agent_support: agent_assisted
 tags: [bug, template, documentation]
 short: Template for documenting bugs found during dogfooding
 severity: low
@@ -68,5 +70,5 @@ Describe the proper architectural fix
 
 ## Related
 
-- Related specs: @ref:specs/related-spec
-- Similar bugs: @ref:specs/bugs/other-bug
+- Related specs: <spec-id>
+- Similar bugs: <bug-id>

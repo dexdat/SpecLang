@@ -3,7 +3,7 @@ id: "@speclang/implementation-sqlite-db"
 version: 0.1.0
 layer: 5
 target: src/db/speclang_db.py
-parent: "@ref:speclang/implementationimports:"
+parent: "@ref:speclang/implementation"
 tags: [sqlite, database, python, connection]
 short: Python SQLite database module for Speclang
 project_level: Alpha

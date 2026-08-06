@@ -142,7 +142,7 @@ python3 scripts/validate_autonomous.py specs/ --suggest
 
 ```speclang
 # @block:refs @kind:note
-- @ref:speclang/autonomous - Autonomous agent specification
+- @ref:speclang/autonomous-validation - Autonomous agent specification
 - @ref:speclang/headers - Header format with agent_support field
 - @ref:speclang/scripts.validate-specs - General spec validation
 ```

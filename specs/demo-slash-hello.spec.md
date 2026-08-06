@@ -8,7 +8,7 @@ tags: [demo, hello-world, example]
 short: Hello world demo directory
 status: draft
 ---
-parent: "@ref:specs/demo
+parent: "@ref:@demo/hello"
 
 # Hello World Demo Directory
 
@@ -35,7 +35,7 @@ HelloDemo:
 
 ```speclang
 # @block:hello/main @kind:reference
-@ref:specs/hello.spec.md
+@ref:@demo/hello
 ```
 
 ## Source Implementation

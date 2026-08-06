@@ -14,7 +14,7 @@ short: Compliance verification for dual-view pattern
 
 Part of Speclang Quality Assurance.
 
-Parent: @ref:specs/quality
+Parent: @ref:speclang/validation
 
 ## Compliance System
 

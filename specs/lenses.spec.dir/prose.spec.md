@@ -50,7 +50,7 @@ To install SpecLang:
    ./bin/speclang bootstrap
    ```
 
-See @ref:specs/getting-started for more details.
+See the getting-started guide for more details.
 ```
 
 **Structured prose with sections:**
@@ -108,7 +108,7 @@ Generates formatted prose in multiple output formats.
 - **Horizontal rules:** Section dividers
 
 **Cross-references:**
-- **Internal references:** @ref:specs/path#block links
+- **Internal references:** @ref:domain/path#block links
 - **External references:** URLs to external documentation
 - **Block references:** References to specific blocks within specs
 - **File references:** Links to generated code files
@@ -174,8 +174,8 @@ Formats extracted prose for various output targets.
 Manages cross-references within prose content.
 
 **Reference resolution:**
-- **Internal spec references:** Resolve @ref:specs/path to actual spec titles
-- **Block references:** Resolve @ref:specs/path#block to block content
+- **Internal spec references:** Resolve @ref:domain/path to actual spec titles
+- **Block references:** Resolve @ref:domain/path#block to block content
 - **External references:** Validate URLs and fetch metadata
 - **File references:** Link to generated code files in repository
 
@@ -243,11 +243,11 @@ SpecLang is a **reactive multi-agent system** where natural language specificati
 
 ## Key Benefits
 
-- @ref:specs/context-preservation - Zero context loss between specs and code
-- @ref:specs/autonomous-agents - Specs detailed enough for full AI autonomy
-- @ref:specs/perfect-traceability - Every generated file traces back to its spec
+- context-preservation - Zero context loss between specs and code
+- autonomous-agents - Specs detailed enough for full AI autonomy
+- perfect-traceability - Every generated file traces back to its spec
 
-See @ref:specs/getting-started for installation instructions.
+See the getting-started guide for installation instructions.
 ```
 
 **Example 2: Step-by-step guide**

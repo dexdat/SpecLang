@@ -38,8 +38,8 @@ CommonIssues:
     - @block:name @kind:type → @block:name @kind:type
   
   references:
-    - "@ref:specs/foo → @ref:specs/foo.spec
-    - "@ref:foo → @ref:specs/foo
+    - "specs/foo → specs/foo.spec.md
+    - "foo → specs/foo.spec.md
   
   line_count:
     - Header says lines:10 but has 12 lines

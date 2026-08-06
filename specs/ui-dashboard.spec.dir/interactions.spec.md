@@ -26,7 +26,7 @@ Handles user interactions in the dashboard.
 - Coordinate with cascade control
 
 **Dependencies:**
-- @ref:specs/ui-dashboard/spec-editor
+- @ref:specs/ui-dashboard/visual-design
 - @ref:specs/cascade#triggers
 
 ## Drag and Drop

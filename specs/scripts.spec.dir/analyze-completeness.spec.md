@@ -154,6 +154,6 @@ Completeness Analysis:
 # @block:refs @kind:note
 - @ref:speclang/safety-nets - Safety net specifications
 - @ref:speclang/safety-nets/analysis - Analysis component
-- @ref:speclang/autonomous - Autonomous requirements
+- @ref:speclang/autonomous-validation - Autonomous requirements
 - @ref:speclang/validation - Validation rules
 ```

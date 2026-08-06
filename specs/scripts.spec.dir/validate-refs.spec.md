@@ -42,17 +42,17 @@ Broken references cause cascade failures and confusion. This script:
 # @block:ref-types @kind:entity
 ReferenceTypes:
   block_ref:
-    - pattern: ""@ref:path/to/spec#block-name    - targets: Specific @block: in a spec file
+    - pattern: ""@ref:path/to/file#block-id    - targets: Specific @block: in a spec file
     - example: ""@ref:specs/auth#login  
   file_ref:
-    - pattern: ""@ref:path/to/spec    - targets: Entire spec file
+    - pattern: ""@ref:path/to/file    - targets: Entire spec file
     - example: ""@ref:specs/auth  
   project_ref:
-    - pattern: ""@ref:project-name    - targets: project.scl or northstar
+    - pattern: ""@ref:northstar    - targets: project.scl or northstar
     - example: ""@ref:northstar  
   external_ref:
-    - pattern: ""@ref:external/package    - targets: External spec or resource
-    - example: ""@ref:npm:express"```
+    - pattern: "external/package    - targets: External spec or resource
+    - example: "npm:express"
 
 ## Implementation
 
@@ -80,9 +80,9 @@ def validate_refs(spec_dir: str, fix: bool = False,
 | Issue | Example | Fix |
 |-------|---------|-----|
 | Missing block | #block:login → #block:auth | Update ref or create block |
-| Wrong path | @ref:auth#login | @ref:specs/auth#login |
-| Case mismatch | @ref:Auth#Login | @ref:auth#login |
-| Deleted file | @ref:old-spec | Remove or update ref |
+| Wrong path | auth#login | @ref:specs/auth#login |
+| Case mismatch | Auth#Login | @ref:specs/auth#login |
+| Deleted file | old-spec | Remove or update ref |
 | Old format | @ref:specs/auth.login | @ref:specs/auth#login |
 ```
 
@@ -92,7 +92,7 @@ def validate_refs(spec_dir: str, fix: bool = False,
 # @block:rules @kind:note
 1. File exists: Referenced spec file must exist
 2. Block exists: Referenced @block: must be in file
-3. Valid syntax: Reference must match @ref:pattern
+3. Valid syntax: Reference must match @ref:domain/path
 4. No cycles: Warn about circular dependencies
 5. Case sensitive: Paths are case-sensitive on most systems
 
@@ -119,7 +119,8 @@ python3 scripts/validate_refs.py specs/auth.spec.md
 python3 scripts/validate_refs.py specs/ --json
 
 # Check specific reference pattern
-python3 scripts/validate_refs.py specs/ --pattern ""@ref:northstar```
+python3 scripts/validate_refs.py specs/ --pattern "@ref:northstar"
+```
 
 ## Output Format
 
@@ -134,7 +135,7 @@ Details:
   - specs/auth.spec.md:5 @ref:specs/users#model
     → ERROR: Block 'model' not found in specs/users.spec.md
   
-  - specs/api.spec.md:10 @ref:specs/old-file
+  - specs/api.spec.md:10 specs/old-file
     → ERROR: File not found
 
 Suggestions:

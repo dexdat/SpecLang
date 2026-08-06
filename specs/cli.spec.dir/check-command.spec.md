@@ -5,7 +5,7 @@ layer: 1
 tags: [cli, commands]
 project_level: Alpha
 agent_support: agent_assisted
-parent: "@ref:specs/cli.spec.dir/commands"
+parent: "@ref:speclang/cli-spec-dir/commands"
 
 short: CLI check command
 

@@ -8,7 +8,7 @@ tags: [example, greeting, demo]
 short: Greeting example directory
 status: draft
 ---
-parent: "@ref:specs/examples
+parent: "@ref:@examples/greeting"
 
 # Greeting Examples Directory
 

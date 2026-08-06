@@ -1,14 +1,15 @@
-# speclang-header lines:12
+# speclang-header lines:13
 id: "@speclang/lenses/mermaid"
 parent: "@ref:specs/lenses"
-depends_on: ["@ref:specs/lenses"]
+depends_on:
+  - "@ref:specs/lenses"
 short: "Mermaid diagram generation lens"
 target: src/lenses/mermaid.ts
 project_level: Alpha
 agent_support: agent_autonomous
 tags: [lenses, mermaid, diagrams, visualization]
 version: 0.1.0
-layer: "4"
+layer: 4
 ---
 
 # Mermaid Diagram Lens

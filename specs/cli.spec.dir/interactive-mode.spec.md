@@ -5,7 +5,7 @@ layer: 1
 tags: [cli, interactive]
 project_level: Alpha
 agent_support: agent_assisted
-parent: "@ref:specs/cli.spec"
+parent: "@ref:speclang/cli-spec"
 
 short: CLI interactive mode
 ---
