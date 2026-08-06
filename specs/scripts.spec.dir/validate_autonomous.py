@@ -115,9 +115,29 @@ def load_index() -> Dict[str, Any]:
     entries = []
     try:
         with open('_index.json', 'r') as f:
-            for line in f:
-                if line.strip():
-                    entries.append(json.loads(line))
+            # Canonical format (generate_index.py): one pretty-printed JSON
+            # document, e.g. {"version": ..., "generated": ..., "specs": {id: entry}}.
+            try:
+                data = json.load(f)
+            except json.JSONDecodeError:
+                # Fall back to legacy JSONL format (one JSON object per line).
+                f.seek(0)
+                for line in f:
+                    if line.strip():
+                        entries.append(json.loads(line))
+            else:
+                if isinstance(data, dict):
+                    specs = data.get('specs')
+                    if isinstance(specs, dict):
+                        entries = list(specs.values())
+                    elif isinstance(specs, list):
+                        entries = specs
+                    elif specs is None:
+                        # Bare mapping of spec id -> entry
+                        entries = [v for v in data.values()
+                                   if isinstance(v, dict) and 'id' in v]
+                elif isinstance(data, list):
+                    entries = data
     except FileNotFoundError:
         print("Warning: _index.json not found. Run generate_index.py first.")
         return {}
@@ -508,9 +528,16 @@ def main():
         # Use _index.json to get all spec files
         if index:
             for spec_id, entry in index.items():
-                path = entry.get('path')
-                if path and os.path.isfile(path):
-                    files.append(path)
+                # Canonical entries use 'file' (relative to specs/); legacy
+                # JSONL entries used 'path' (already root-prefixed).
+                path = entry.get('file', entry.get('path'))
+                if path:
+                    if not os.path.isfile(path):
+                        candidate = os.path.join('specs', path)
+                        if os.path.isfile(candidate):
+                            path = candidate
+                    if os.path.isfile(path):
+                        files.append(path)
         else:
             print("Error: No index available. Run generate_index.py first.")
             sys.exit(1)
