@@ -261,7 +261,7 @@ npx tsc --noEmit --skipLibCheck src/examples/hello-world.ts
 # Output: (no errors = success)
 
 # 4. Generate spec index
-python3 generate_index.py
+python3 scripts/generate_index.py
 # Output: Created _index.json with 153 entries
 ```
 
