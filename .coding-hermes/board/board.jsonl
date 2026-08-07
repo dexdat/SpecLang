@@ -1,16 +1,1 @@
-{
-  "project": "SpecLang",
-  "namespace": "speclang",
-  "version": 2,
-  "last_tick": null,
-  "ticks_total": 0,
-  "ticks_idle": 0,
-  "cooldown_s": 900,
-  "service_port": null,
-  "service_url": null,
-  "health_endpoint": null,
-  "git_branch": "main",
-  "git_remote": "origin",
-  "last_commit": "6313dd8c",
-  "updated_at": "2026-08-07T01:50:19.540529"
-}
+{"project":"SpecLang","namespace":"speclang","version":2,"last_tick":"2026-08-07 08:10:38.000000","ticks_total":152,"ticks_idle":1,"cooldown_s":7200,"service_port":null,"service_url":null,"health_endpoint":null,"git_branch":"main","git_remote":"origin","last_commit":"2850fc10","updated_at":"2026-08-07 08:10:38.000000"}
