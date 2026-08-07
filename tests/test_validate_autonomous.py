@@ -241,7 +241,7 @@ def test_cli_help():
     """Test CLI help output."""
     import subprocess
     result = subprocess.run(
-        [sys.executable, 'validate_autonomous.py', '--help'],
+        [sys.executable, 'scripts/validate_autonomous.py', '--help'],
         capture_output=True,
         text=True,
         cwd=Path(__file__).parent.parent
