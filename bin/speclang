@@ -193,7 +193,7 @@ program
       const { execSync } = require('child_process');
       try {
         const count = parseInt(
-          execSync(`find "${specsDir}" -name "*.spec*" -type f | wc -l`, 
+          execSync(`find "${specsDir}" \\( -name "*.spec.md" -o -name "*.scl" \\) -type f | wc -l`, 
             { encoding: 'utf-8' }).trim()
         );
         console.log(`   Specs: ${count}`);
