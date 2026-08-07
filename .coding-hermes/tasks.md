@@ -3380,3 +3380,48 @@
 **VERDICT: idle #3 post-productive — clean maintenance tick. guard 4/4 (passed at load 15.1), validate 448/448 (535 warnings, corpus fix holding), npm audit 0 vulns (17th clean), CI push-trigger STABLE 2nd tick (31132312505 SUCCESS on #148 push — anomaly fully resolved). DuckBrain chain 148 → 149 verified. Cooldown 600 = autoSlowdown decay (frozen UpdatedAt, no PUT). Disk 64%. 0 pending tasks, 0 new gaps.**
 
 **Scheduler Health:** CooldownS=600 (live GET — autoSlowdown decay below fleet.toml pin 900; UpdatedAt frozen 2026-08-05T13:14:14Z = decay tell, no external write → NO PUT), Enabled=true, Weight=15, Priority=10, DecayRate=1. Stale CRON_PAUSE_REQUESTED still on disk (#72 era, superseded — no pause action). Disk 64% (638G free).
+
+### Foreman #150 — Idle Tick #4 Post-Productive (2026-08-06, scheduler tick — /home/kara/speclang)
+
+**Context:** Fourth idle tick after the 4-tick productive era (#143-146 closed SL-GAP-001..009, judge PASS ×9). Board fully drained: 0 open rows (8 ✅ PM-gap rows; SL-GAP-006 closed inside #145 without its own row — not missing), gitreins 13/13 complete / 0 pending → idle ladder confirmed (no dispatch). All gates run fresh this tick.
+
+**System State:** Load 14.21 (1m; 15m avg 10.55 — host busy, guard still passed 4/4), 652G free (63% used), 16 cores, up 4d 7h. Node v22.22.3. No code changes since #149 (HEAD fb4a7e4c). speclang validate: 448/448 (0 fail, 535 warnings — SL-GAP-007 corpus fix holding). npm audit: **0 vulnerabilities** (18th consecutive clean tick). npm outdated: 12 items — identical set to #149 (7 non-blocking: js-yaml 5.2.3, vite 8.2.1, @types/react 19.2.18, @types/react-dom 19.2.4, postcss 8.5.26, @types/node 26.1.2, @vitejs/plugin-react 6.0.5 + 5 ESM-only blocked majors: better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4, @types/better-sqlite3 9.6.0).
+
+**Scheduler:** CooldownS=600 live (fleet.toml pin 900, line 487 — autoSlowdown decay; UpdatedAt frozen 2026-08-05T13:14:14Z = decay tell, NOT external write → **NO PUT** per fleet policy), Enabled=true, Weight=15, Priority=10, DecayRate=1. Daemon restarted today 14:27 local — cooldown survived (fleet.toml pin protects; no reversion this time). Sibling `SpecLang` (uppercase, stale workdir) still Enabled=false — normal.
+
+**12-Point Audit Results (cheap subset per idle ladder — idle #4 post-productive):**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Git state | PASS | HEAD fb4a7e4c == origin/main (fetch verified), 0 unpushed, 0 behind, 0 stashes, clean tree (dagger.db untracked = pre-existing artifact, not ours) |
+| 2. CI | **PASS — STABLE 3rd tick** | Push run 31136095860 for the #149 board chore (fb4a7e4c) = **SUCCESS** — push-trigger webhook delivery confirmed STABLE (3rd consecutive green push run; anomaly from #145-147 fully resolved). 31132312505 (#148) + 31130662746 (#147) also green. 0 new reds since 31127798259 (infra runner-acquisition, #146-era) |
+| 3. Scheduler | PASS | cooldown_s=600 live, UpdatedAt frozen 2026-08-05 (autoSlowdown decay from 900 pin — no PUT). Daemon restart today 14:27 caused no reversion |
+| 4. GitReins | PASS | 13/13 complete (task_list directly verified — status counts {complete: 13}), 0 pending, 0 in_progress. MCP task_list serves gitreins workdir tasks — CLI/tasks.yaml authoritative (same caveat as #149) |
+| 5. Guard | PASS | Tier 1 4/4 at load 14.2 (secrets no-staged-scan, tests diff-skip, static_analysis N/A, lsp typescript-language-server clean) |
+| 6. Validator | PASS | speclang validate 448/448, 0 fail, 535 warnings, exit 0 |
+| 7. DuckBrain | GAP PERSISTS (19th tick) | /ticks/150 written (ID 147ba06f-7898-467b-bbd2-ffd7322461bb), recall-by-ID verified. Chain continues 149 → 150. /ticks/129 + /ticks/130 still absent (exact-key recall = No memories) — 19th consecutive tick; HTTP-log audit still outstanding |
+| 8. Board | PASS | Tracked-markdown board, append-only. All 8 PM-gap rows ✅ (no hygiene needed). validate-board-format.py false-positive quirk (#143-era tables) unchanged — documented #147, not board state |
+| 9. E2E-001 | SKIPPED | No prod code change — cosmetic for idle mode (established pattern) |
+| 10. Deps | PASS | npm audit 0 vulns (18th clean). npm outdated: 12 items, identical set vs #149 |
+| 11. Cooldown policy | PASS | fleet.toml pin 900 intact (line 487); live 600 = autoSlowdown decay (frozen UpdatedAt) — policy-correct, no PUT |
+| 12. Bookkeeping | PASS | tasks.md appended (this entry), commit + push |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main (fb4a7e4c, fetch verified), 0 unpushed/behind, 0 stashes, no sibling speclang foreman (ps verified).
+2. Guard (idle ticks run it every time, post-#131 practice): Tier 1 PASS 4/4 at load 14.21.
+3. Validator gate: speclang validate 448/448 (0 fail, 535 warnings), exit 0 — corpus fix from SL-GAP-007 holding.
+4. CI signal: push run 31136095860 = SUCCESS on the #149 push — push-trigger delivery STABLE 3rd consecutive tick. Anomaly (broken #145-147) confirmed resolved; this tick's push will be 4th confirmation.
+5. Deps: npm audit 0 vulns (18th consecutive clean). npm outdated: 12-item set identical to #148. No new advisories.
+6. DuckBrain: /ticks/150 written (ID 147ba06f), recall-by-ID verified. Gap /ticks/129+130 confirmed 19th consecutive tick — re-flagged for supervisor (finding key exists: /findings/speclang/ticks-129-130-duckbrain-gap-2026-08-04).
+7. Off-by-one: health ok. Nothing to submit — idle audit tick, no problem solved.
+8. E2E-001: Skipped — no prod code change; established idle pattern.
+9. Judge config: evaluator section present in .gitreins/config.yaml (100 iter / 30m / 2M in / 0.5M out) — GITREINS-JUDGE header task remains satisfied.
+10. 0 new code-level gaps — idle #4 post-productive; board genuinely empty (0 open rows, 0 gitreins pending).
+11. Disk: 63% used, 652G free — resolved host trend holds. No action.
+12. Bookkeeping: tasks.md appended (this entry), commit + push.
+
+**Eval:** Tier1=PASS (guard 4/4 at load 14.2), Audit=cheap-subset (idle #4), Hilo=not-run (no code), DuckBrain=connected (speclang ns, /ticks/150 verified; 129/130 gap persists 19th tick), GitReins=clean (13 complete / 0 pending)
+
+**VERDICT: idle #4 post-productive — clean maintenance tick. guard 4/4 (passed at load 14.2), validate 448/448 (535 warnings, corpus fix holding), npm audit 0 vulns (18th clean), CI push-trigger STABLE 3rd tick (31136095860 SUCCESS on #149 push — anomaly fully resolved). DuckBrain chain 149 → 150 verified. Cooldown 600 = autoSlowdown decay (frozen UpdatedAt, no PUT; daemon restarted today 14:27 without reversion). Disk 63%. 0 pending tasks, 0 new gaps.**
+
+**Scheduler Health:** CooldownS=600 (live GET — autoSlowdown decay below fleet.toml pin 900; UpdatedAt frozen 2026-08-05T13:14:14Z = decay tell, no external write → NO PUT), Enabled=true, Weight=15, Priority=10, DecayRate=1. Daemon restarted 14:27 local today — cooldown survived (pin protects). Stale CRON_PAUSE_REQUESTED still on disk (#72 era, superseded — no pause action). Disk 63% (652G free).
