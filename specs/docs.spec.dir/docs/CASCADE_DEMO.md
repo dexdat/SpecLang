@@ -21,7 +21,7 @@ This demonstrates the cascade with a minimal example that actually works.
 
 ### The Spec
 
-File: specs/examples/hello-world.spec.md
+File: specs/examples.spec.dir/hello-world.spec.md
 
 Contains:
 - Proper speclang-header
@@ -32,7 +32,7 @@ Contains:
 
 Coordinator (you) invokes: @speclang-spec-writer
 
-Task: Create specs/examples/hello-world.spec.md
+Task: Create specs/examples.spec.dir/hello-world.spec.md
 
 **Result:** Spec created
 
@@ -44,7 +44,7 @@ Command: python3 scripts/validate_refs.py
 
 ### Step 3: Verification Gate 2 - Spec Validation
 
-Command: python3 scripts/validate_autonomous.py --file specs/examples/hello-world.spec.md
+Command: python3 scripts/validate_autonomous.py --file specs/examples.spec.dir/hello-world.spec.md
 
 **Result:** PASSED (confidence: 1.0)
 
@@ -117,7 +117,7 @@ Coordinator presents results and asks: Continue with next example?
 ## Running the Demo
 
 1. Validate references: python3 scripts/validate_refs.py
-2. Check spec validation: python3 scripts/validate_autonomous.py --file specs/examples/hello-world.spec.md
+2. Check spec validation: python3 scripts/validate_autonomous.py --file specs/examples.spec.dir/hello-world.spec.md
 3. Verify compilation: npx tsc --noEmit --skipLibCheck src/examples/hello-world.ts
 4. Check steering packets: cat .speclang/steering_packets.json | grep architecture-redesign
 

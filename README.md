@@ -269,7 +269,7 @@ python3 scripts/generate_index.py
 
 ```bash
 # 1. Start cascade with a spec
-@speclang-coordinator start-cascade specs/examples/hello-world.spec.md
+@speclang-coordinator start-cascade specs/examples.spec.dir/hello-world.spec.md
 
 # 2. Coordinator will:
 #    - Read the spec
@@ -280,7 +280,7 @@ python3 scripts/generate_index.py
 
 # 3. Generate code
 @speclang-code-gen
-#    - Read specs/examples/hello-world.spec.md
+#    - Read specs/examples.spec.dir/hello-world.spec.md
 #    - Extract TypeScript block
 #    - Generate src/examples/hello-world.ts
 #    - Verify compilation
@@ -415,7 +415,7 @@ scripts/                 # Tools
 
 - `docs/CASCADE_DEMO.md` - Working example walkthrough
 - `specs/cascade-protocol.spec.md` - Full protocol specification
-- `specs/examples/hello-world.spec.md` - Minimal working example
+- `specs/examples.spec.dir/hello-world.spec.md` - Minimal working example
 - `.opencode/agents/` - Agent definitions
 
 ---
