@@ -3425,3 +3425,48 @@
 **VERDICT: idle #4 post-productive — clean maintenance tick. guard 4/4 (passed at load 14.2), validate 448/448 (535 warnings, corpus fix holding), npm audit 0 vulns (18th clean), CI push-trigger STABLE 3rd tick (31136095860 SUCCESS on #149 push — anomaly fully resolved). DuckBrain chain 149 → 150 verified. Cooldown 600 = autoSlowdown decay (frozen UpdatedAt, no PUT; daemon restarted today 14:27 without reversion). Disk 63%. 0 pending tasks, 0 new gaps.**
 
 **Scheduler Health:** CooldownS=600 (live GET — autoSlowdown decay below fleet.toml pin 900; UpdatedAt frozen 2026-08-05T13:14:14Z = decay tell, no external write → NO PUT), Enabled=true, Weight=15, Priority=10, DecayRate=1. Daemon restarted 14:27 local today — cooldown survived (pin protects). Stale CRON_PAUSE_REQUESTED still on disk (#72 era, superseded — no pause action). Disk 63% (652G free).
+
+### Foreman #151 — Idle Tick #5 Post-Productive (2026-08-06, scheduler tick — /home/kara/speclang)
+
+**Context:** Fifth idle tick after the 4-tick productive era (#143-146 closed SL-GAP-001..009, judge PASS ×9). Board fully drained: 0 open rows (8 ✅ PM-gap rows), gitreins 13/13 complete / 0 pending → idle ladder confirmed. Guard behaved anomalously this tick (run 1 FAIL with config-ignoring stage signature) — resolved via retry + independent full-suite verification; no repo regression.
+
+**System State:** Load 3.27 (1m; 15m avg 5.41 — much lighter than #150's 14.2), 622G free (65% used), 16 cores, up 4d 9h. Node v22.22.3. No code changes since #150 (HEAD c18ed891). speclang validate: 448/448 (0 fail, 535 warnings — SL-GAP-007 corpus fix holding). npm audit: **0 vulnerabilities** (19th consecutive clean tick). npm outdated: 12 items — identical set to #150 (7 non-blocking: js-yaml 5.2.3, vite 8.2.1, @types/react 19.2.18, @types/react-dom 19.2.4, postcss 8.5.26, @types/node 26.1.2, @vitejs/plugin-react 6.0.5 + 5 ESM-only blocked majors: better-sqlite3 13, chokidar 5, commander 15, tailwindcss 4, @types/better-sqlite3 9.6.0).
+
+**Scheduler:** CooldownS=7200 live == fleet.toml pin 7200 (line 492 — **pin UPDATED from 900 by the fleet-cooldown-policy run (Bane 08-07 3-speed rollout: 900 priority / 7200 baseline / 43200 completed); #150's "pin 900" claim superseded**). UpdatedAt fresh 2026-08-07T03:46:23Z = external write (policy run), value matches pin → policy-correct, **NO PUT**. Enabled=true, Weight=15, Priority=10, DecayRate=1. Daemon (schedulerd, restarted 14:27 local) held without reversion; scheduler.log shows no SLOWDOWN near 03:46Z (external PUT, not decay). Single slot acquisition for this tick at 22:56:26 — no duplicate. Sibling `SpecLang` (uppercase, stale workdir) still Enabled=false — normal.
+
+**12-Point Audit Results (cheap subset per idle ladder — idle #5 post-productive):**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| 1. Git state | PASS | HEAD c18ed891 == origin/main (fetch verified), 0 unpushed, 0 behind, 0 stashes, clean tree (dagger.db untracked = pre-existing artifact, not ours) |
+| 2. CI | **PASS — STABLE 4th tick** | 5/5 recent runs SUCCESS. Push run 31145363833 (03:46Z) + 31139478547 (01:53Z) both green on #150's chore commit — push-trigger delivery STABLE (4th consecutive tick; #145-147 anomaly fully resolved) |
+| 3. Scheduler | PASS | cooldown_s=7200 live == fleet.toml pin (line 492; policy run 03:46Z wrote both). Fresh UpdatedAt = external write — NO PUT. Daemon restart 14:27 held |
+| 4. GitReins | PASS | 13/13 complete, 0 pending, 0 in_progress (CLI status counts directly verified) |
+| 5. Guard | **⚠️ FAIL run 1 → PASS run 2** | Run 1: FAIL (secrets ✓, lint ✓, tests ✗, dead_code ✗) — stage set lint+dead_code = config-IGNORING signature (config sets dead_code:false, lsp/static_analysis on; run 1's gitleaks call also lacked --config .gitleaks.toml that run 2 had). Run 2 (safety-trigger mode, config-honoring: tests/static_analysis/lsp): **Tier 1 PASS 4/4** incl. full suite. Independent ground truth below — no repo regression |
+| 6. Validator | PASS | speclang validate 448/448, 0 fail, 535 warnings, exit 0 |
+| 7. DuckBrain | GAP PERSISTS (20th tick) | /ticks/151 written (ID 0eb70856-d338-4532-a132-4b19e8b3a13f), exact-key recall verified (count=1). Chain continues 150 → 151. /ticks/129 + /ticks/130 still absent — 20th consecutive tick; finding key exists (/findings/speclang/ticks-129-130-duckbrain-gap-2026-08-04) |
+| 8. Board | PASS | Tracked-markdown board, append-only. All 8 PM-gap rows ✅. validate-board-format.py false-positive quirk unchanged (SL-GAP-002/004 NO_MODEL on ✅ completed rows — documented #147, not board state) |
+| 9. E2E-001 | SKIPPED | No prod code change — cosmetic for idle mode (established pattern) |
+| 10. Deps | PASS | npm audit 0 vulns (19th clean). npm outdated: 12 items, identical set vs #150 |
+| 11. Cooldown policy | PASS | fleet.toml pin 7200 (line 492, policy run 08-07); live 7200 matches — policy-correct, no PUT |
+| 12. Bookkeeping | PASS | tasks.md appended (this entry), commit + push |
+
+**Actions Taken:**
+1. Self-heal: HEAD == origin/main (c18ed891, fetch verified), 0 unpushed/behind, 0 stashes, no sibling speclang foreman (only a mafia-ai-benchmark worker running — ps verified). Scheduler log confirmed single SLOT acquisition for this tick — no duplicate fire.
+2. Guard (idle ticks run it every time, post-#131 practice): run 1 FAIL with config-ignore stage signature (lint+dead_code ran despite dead_code:false; gitleaks without --config). Retried with full log capture: PASS 4/4 (safety-trigger mode, config-honoring, full suite). Independent verification: `npx vitest run` = 93 files passed / 4 skipped, **1811 passed / 58 skipped / 0 failures** (29.85s, load 3.27); `tsc --noEmit` clean. Verdict: transient tooling behavior (documented 0.11.0 config-ignore failure mode), zero repo regression.
+3. Scheduler forensics: fleet.toml pin now cooldown_s=7200 at line 492 (was 900 per #150 — policy run 08-07 updated it, matching fresh API UpdatedAt 03:46:23Z). Live == pin → NO PUT (fleet policy: baseline 7200 for idle; only manual PUTs touch 900 tier).
+4. Validator gate: speclang validate 448/448 (0 fail, 535 warnings), exit 0 — SL-GAP-007 corpus fix holding.
+5. CI signal: 5/5 SUCCESS — push-trigger STABLE 4th consecutive tick. This tick's push will be 5th confirmation.
+6. Deps: npm audit 0 vulns (19th consecutive clean). npm outdated: 12-item set identical to #148/#149/#150. No new advisories.
+7. DuckBrain: /ticks/151 written (ID 0eb70856), exact-key recall verified (count=1). Gap /ticks/129+130 confirmed 20th consecutive tick — re-flagged for supervisor.
+8. Off-by-one: health ok (uptime 9m), live stats 559 problems / 672 answers. Nothing to submit — idle audit tick, no problem solved.
+9. E2E-001: Skipped — no prod code change; established idle pattern.
+10. Prettier (not in cheap ladder, ran for honesty): tests/cli.test.ts warns — pre-existing since 39d329c8 (TEST-ISOLATION-002, Aug 5; worker didn't format; CI doesn't check prettier so it stayed dormant). Cosmetic; no fix on idle tick (noted for next productive window).
+11. 0 new code-level gaps — idle #5 post-productive; board genuinely empty (0 open rows, 0 gitreins pending).
+12. Bookkeeping: tasks.md appended (this entry), commit + push.
+
+**Eval:** Tier1=PASS (guard retry 4/4 safety-trigger mode + independent vitest 1811 pass / 0 fail + tsc clean), Audit=cheap-subset (idle #5), Hilo=not-run (no code), DuckBrain=connected (speclang ns, /ticks/151 verified; 129/130 gap 20th tick), GitReins=clean (13 complete / 0 pending)
+
+**VERDICT: idle #5 post-productive — clean maintenance tick. Guard run 1 FAIL (config-ignore stage signature: tests + dead_code) → retry PASS 4/4 (safety-trigger full suite) + independent vitest clean (1811 pass / 0 fail) + tsc clean = tooling transient, no regression. validate 448/448 (535 warnings, corpus fix holding). npm audit 0 vulns (19th clean). CI push-trigger STABLE 4th tick (5/5 green). Cooldown 7200 == fleet.toml pin (policy run 08-07 raised 900→7200; NO PUT). DuckBrain chain 150 → 151 verified (129/130 gap 20th tick). Disk 65%. 0 pending tasks, 0 new gaps.**
+
+**Scheduler Health:** CooldownS=7200 (live GET == fleet.toml pin line 492 — fleet-cooldown-policy run 08-07 03:46Z raised baseline; #150's pin-900 claim superseded), Enabled=true, Weight=15, Priority=10, DecayRate=1. Daemon restarted 14:27 local — held without reversion. Stale CRON_PAUSE_REQUESTED still on disk (#72 era, superseded — no pause action). Disk 65% (622G free).
