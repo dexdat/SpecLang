@@ -1304,19 +1304,32 @@ This is a new speclang project.
         console.log('   ✓ Created initial spec');
       }
       
-      // Create package.json if not bare
-      if (!options.bare) {
+      // Create package.json (also for --bare, so every scaffold gets a
+      // working CLI). SL-GAP-014: the generated project previously had no
+      // CLI anywhere — `npm install` installed nothing, `speclang validate`
+      // was "command not found", and the test script recursively re-invoked
+      // `npm test`. Fix: a file: devDependency pointing at THIS repo (the
+      // `speclang` npm registry package is an unrelated project, SL-GAP-002).
+      // bin/speclang lives at <repo>/bin/speclang, so the repo root is
+      // __dirname/.. — npm install then links node_modules/.bin/speclang via
+      // the repo's bin entry with no PATH tricks and no registry lookup. The
+      // installed CLI runs under node_modules/speclang/package.json
+      // ("type": "commonjs") regardless of this scaffold's "type".
+      {
+        const speclangRepoRoot = path.resolve(__dirname, '..');
         const packageJson = {
           name: name,
           version: '0.1.0',
           type: 'module',
           scripts: {
             build: 'speclang generate',
-            test: 'speclang validate && npm test',
+            test: 'speclang validate',
             dev: 'speclang start'
           },
           dependencies: {},
-          devDependencies: {}
+          devDependencies: {
+            speclang: `file:${speclangRepoRoot}`
+          }
         };
         fs.writeFileSync(path.join(projectPath, 'package.json'), JSON.stringify(packageJson, null, 2));
         console.log('   ✓ Created package.json');

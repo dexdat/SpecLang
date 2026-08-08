@@ -326,6 +326,19 @@ This spec references a non-existent spec.
       expect(existsSync(join(projectDir, "specs", "main.spec.md"))).toBe(true);
       expect(existsSync(join(projectDir, "src"))).toBe(true);
       expect(existsSync(join(projectDir, "tests"))).toBe(true);
+
+      // SL-GAP-014: the scaffold must include a working CLI — a speclang
+      // file: devDependency (npm install links node_modules/.bin/speclang
+      // from this repo's bin entry) and a non-recursive test script.
+      const packageJson = JSON.parse(
+        readFileSync(join(projectDir, "package.json"), "utf-8"),
+      ) as {
+        scripts?: Record<string, string>;
+        devDependencies?: Record<string, string>;
+      };
+      expect(packageJson.devDependencies?.speclang).toMatch(/^file:/);
+      expect(packageJson.scripts?.test).toContain("speclang validate");
+      expect(packageJson.scripts?.test).not.toContain("npm test");
     });
 
     it("should generate code from default spec", () => {
