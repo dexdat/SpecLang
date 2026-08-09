@@ -372,9 +372,7 @@ describe("CLI Commands", () => {
     });
 
     it("should exit 0 when all specs validate", async () => {
-      const { stdout } = await execAsync(
-        `${CLI_BIN} validate -d ${validDir}`,
-      );
+      const { stdout } = await execAsync(`${CLI_BIN} validate -d ${validDir}`);
       expect(stdout).toContain("Passed: 1");
     });
   });
