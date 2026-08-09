@@ -218,7 +218,7 @@ python3 scripts/validate_refs.py
 python3 scripts/validate_autonomous.py --file <spec>
 
 # Gate 3: Code compilation
-npx tsc --noEmit --skipLibCheck <file.ts>
+npx tsc --noEmit
 
 # Gate 4: Test execution
 python3 -m pytest tests/ -v
@@ -257,7 +257,7 @@ python3 scripts/validate_autonomous.py --project
 # Output: 447 specs validated
 
 # 3. Try Hello World example
-npx tsc --noEmit --skipLibCheck src/examples/hello-world.ts
+npx tsc --noEmit
 # Output: (no errors = success)
 
 # 4. Generate spec index
