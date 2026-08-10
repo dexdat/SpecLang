@@ -267,29 +267,40 @@ python3 scripts/generate_index.py
 
 ### Run a Mini Cascade
 
+The cascade has two entry points — a plain CLI that works in any terminal, and OpenCode agent commands (chat syntax, not shell commands).
+
+**CLI (works in any terminal):**
+
 ```bash
-# 1. Start cascade with a spec
+# 1. Dry run — confirm the spec's TypeScript block is found
+./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run
+# Output: Would generate: src/generated/hello-world.spec-hello-function.ts
+
+# 2. Run the cascade (dry-run by default)
+./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md
+```
+
+**In OpenCode (agent syntax — these are chat commands, not shell commands):**
+
+```text
 @speclang-coordinator start-cascade specs/examples.spec.dir/hello-world.spec.md
+# Coordinator will:
+#   - Read the spec
+#   - Determine dependencies
+#   - Invoke @speclang-spec-writer (if needed)
+#   - Run verification gates
+#   - Ask if you want to continue
 
-# 2. Coordinator will:
-#    - Read the spec
-#    - Determine dependencies
-#    - Invoke @speclang-spec-writer (if needed)
-#    - Run verification gates
-#    - Ask if you want to continue
-
-# 3. Generate code
 @speclang-code-gen
-#    - Read specs/examples.spec.dir/hello-world.spec.md
-#    - Extract TypeScript block
-#    - Generate src/examples/hello-world.ts
-#    - Verify compilation
+#   - Read specs/examples.spec.dir/hello-world.spec.md
+#   - Extract TypeScript block
+#   - Generate src/examples/hello-world.ts
+#   - Verify compilation
 
-# 4. Verify
 @speclang-verifier
-#    - Check compilation
-#    - Create steering packet
-#    - Report actual status (not claimed)
+#   - Check compilation
+#   - Create steering packet
+#   - Report actual status (not claimed)
 ```
 
 ---
