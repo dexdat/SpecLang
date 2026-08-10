@@ -582,6 +582,10 @@ program
             }
           }
           
+          // Also extract @block::NAME @kind:KIND blocks (documented format)
+          // whose content is a language-tagged code fence
+          generatedFiles.push(...extractBlockFenceBlocks(content, specFile, outputDir, target));
+          
         } catch (err) {
           errors.push({ file: specFile, error: err.message });
         }
@@ -742,6 +746,10 @@ program
               generatedFiles.push({ specFile, outputPath, code, blockName });
             }
 
+            // Also extract @block::NAME @kind:KIND blocks (documented format)
+            // whose content is a language-tagged code fence
+            generatedFiles.push(...extractBlockFenceBlocks(content, specFile, outputDir, target));
+
             // Also extract from ## Implementation sections with language-tagged code fences
             const implRegex = /## Implementation\n\n([\s\S]*?)(?=\n## )/g;
             while ((match = implRegex.exec(content)) !== null) {
@@ -846,6 +854,10 @@ program
             const outputPath = path.join(outputDir, `block-${blockName}${ext}`);
             generatedFiles.push({ specFile, outputPath, code, blockName });
           }
+
+          // Also extract @block::NAME @kind:KIND blocks (documented format)
+          // whose content is a language-tagged code fence
+          generatedFiles.push(...extractBlockFenceBlocks(content, specFile, outputDir, target));
 
           // Also extract from ## Implementation sections with language-tagged code fences
           const implRegex = /## Implementation\n\n([\s\S]*?)(?=\n## )/g;
@@ -954,6 +966,39 @@ function getExtensionForTarget(target) {
     javascript: '.js'
   };
   return extensions[target] || '.txt';
+}
+
+// Extract ### @block::NAME @kind:KIND blocks whose content is a
+// language-tagged code fence — the documented block format (AGENTS.md, the
+// hello-world Mini Cascade). Supports any @kind including 'code' and maps
+// the fence language to the output extension.
+function extractBlockFenceBlocks(content, specFile, outputDir, target) {
+  const blocks = [];
+  const fenceLangExt = {
+    ts: '.ts', typescript: '.ts',
+    js: '.js', javascript: '.js',
+    py: '.py', python: '.py',
+    go: '.go',
+    rs: '.rs', rust: '.rs'
+  };
+  const blockFenceRegex = /###\s+@block::(\S+)\s+@kind:(\S+)\s*\n```(\w+)\s*\n([\s\S]*?)```/g;
+  let match;
+  while ((match = blockFenceRegex.exec(content)) !== null) {
+    const code = match[4].trim();
+    if (code.length === 0) {
+      continue;
+    }
+    const specName = path.basename(specFile, path.extname(specFile));
+    const ext = fenceLangExt[match[3]] || getExtensionForTarget(target);
+    const safeName = match[1].replace(/[/\\]/g, '-');
+    blocks.push({
+      specFile,
+      outputPath: path.join(outputDir, `${specName}-${safeName}${ext}`),
+      code,
+      blockName: match[1]
+    });
+  }
+  return blocks;
 }
 
 // Bootstrap command - Meta-circular self-build

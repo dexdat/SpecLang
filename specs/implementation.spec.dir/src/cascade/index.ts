@@ -210,16 +210,28 @@ function parseSpec(content: string): { id: string; version: string; blocks: Spec
 
     // Detect code blocks
     if (currentBlock && line.trim().startsWith('```')) {
+      const fenceLang = line.trim().slice(3).trim();
       if (inCodeBlock) {
         // End of code block
         currentBlock.code = codeLines.join('\n');
         inCodeBlock = false;
-      } else {
-        // Start of code block
+        codeLines = [];
+      } else if (fenceLang.length > 0) {
+        // Start of code block — only language-tagged fences open one.
+        // Plain ``` fences (e.g. "Expected Output" examples) are ignored so
+        // they cannot clobber an existing block's code/language.
         inCodeBlock = true;
-        currentBlock.language = line.trim().slice(3);
+        currentBlock.language = fenceLang;
       }
       continue;
+    }
+
+    // A heading while inside a code block closes it (defensive: section
+    // headers terminate block capture even if a closing fence was missed)
+    if (currentBlock && inCodeBlock && /^#{1,6}\s/.test(line)) {
+      currentBlock.code = codeLines.join('\n');
+      inCodeBlock = false;
+      codeLines = [];
     }
 
     // Collect code lines
