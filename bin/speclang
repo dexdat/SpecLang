@@ -1060,11 +1060,11 @@ program
     console.log('📋 Step 5: Verifying cascade capability...');
     try {
       // Check if cascade module exists
-      const cascadePath = path.join(projectDir, 'dist/cascade/index.js');
+      const cascadePath = path.join(projectDir, 'dist/src/cascade/index.js');
       if (fs.existsSync(cascadePath)) {
         console.log('   ✓ Cascade module available');
       } else {
-        console.log('   ⚠ Cascade module not found (dist/cascade/index.js)');
+        console.log('   ⚠ Cascade module not found (dist/src/cascade/index.js)');
       }
     } catch (err) {
       console.log('   ⚠ Could not verify cascade:', err.message);
