@@ -227,8 +227,10 @@ function parseSpec(content: string): { id: string; version: string; blocks: Spec
     }
 
     // A heading while inside a code block closes it (defensive: section
-    // headers terminate block capture even if a closing fence was missed)
-    if (currentBlock && inCodeBlock && /^#{1,6}\s/.test(line)) {
+    // headers terminate block capture even if a closing fence was missed).
+    // Level-2+ only: single-hash lines inside fences are code (Python
+    // comments, `# @kind:code` markers), not markdown headings.
+    if (currentBlock && inCodeBlock && /^##{1,6}\s/.test(line)) {
       currentBlock.code = codeLines.join('\n');
       inCodeBlock = false;
       codeLines = [];

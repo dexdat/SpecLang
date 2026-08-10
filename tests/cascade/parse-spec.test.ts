@@ -69,6 +69,49 @@ describe("parseSpec fence-state machine", () => {
     expect(spec.blocks[0].code).not.toContain("Next Section");
   });
 
+  test("single-hash lines inside a code block are code, not headings", () => {
+    // Python comment `# comment` at column 0 must NOT close the block.
+    const content = [
+      "### @block::script/main @kind:code",
+      "```python",
+      "# this is a comment",
+      "def main():",
+      '    print("hi")',
+      "```",
+      "## Expected Output",
+      "```",
+      "hi",
+      "```",
+    ].join("\n");
+
+    const spec = parseSpec(content);
+
+    expect(spec.blocks).toHaveLength(1);
+    expect(spec.blocks[0].language).toBe("python");
+    expect(spec.blocks[0].code).toContain("# this is a comment");
+    expect(spec.blocks[0].code).toContain("def main():");
+    expect(spec.blocks[0].code).not.toContain("Expected Output");
+    expect(spec.blocks[0].code).toContain('print("hi")');
+    expect(spec.blocks[0].code).not.toMatch(/\nhi\n/);
+  });
+
+  test("`# @kind:code` marker inside a ```speclang fence is not a heading", () => {
+    const content = [
+      "### @block::demo/fn @kind:code",
+      "```speclang",
+      "# @kind:code",
+      "export function demo(): void {}",
+      "```",
+    ].join("\n");
+
+    const spec = parseSpec(content);
+
+    expect(spec.blocks).toHaveLength(1);
+    expect(spec.blocks[0].language).toBe("speclang");
+    expect(spec.blocks[0].code).toContain("# @kind:code");
+    expect(spec.blocks[0].code).toContain("export function demo(): void {}");
+  });
+
   test("still captures multiple language-tagged blocks in one spec", () => {
     const content = [
       "### @block::first/fn @kind:code",
