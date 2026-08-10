@@ -1,5 +1,0 @@
-CRON_PAUSE_REQUESTED — SpecLang
-Created: 2026-07-28T23:26:00Z (tick #72)
-Idle ticks: 51 consecutive (since tick #22, 12+ days)
-Reason: All tasks complete. All gates green. Only CI-BILLING-001 remains (human action — GitHub billing). Scheduler namespace lost. Project is genuinely feature-complete with zero actionable gaps.
-Action requested: Bane to pause/disable the SpecLang scheduler entry.
