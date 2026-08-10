@@ -98,7 +98,7 @@ Hello, SpecLang!
 ## Verification Steps
 
 1. Generate: src/examples/hello-world.ts
-2. Compile: npx tsc --noEmit --skipLibCheck src/examples/hello-world.ts
+2. Compile: npx tsc --noEmit
 3. Run: node dist/examples/hello-world.js (after compilation)
 4. Verify: Output matches "Hello, SpecLang!"
 
@@ -295,7 +295,7 @@ echo "  ✓ Generated src/examples/hello-world.ts"
 # Step 2: Type check
 echo ""
 echo "Step 2: Type checking..."
-bun run tsc --noEmit --skipLibCheck src/examples/hello-world.ts
+bun run tsc --noEmit
 echo "  ✓ TypeScript compiles"
 
 # Step 3: Run
@@ -363,7 +363,7 @@ describe('Hello World Verification', () => {
   });
 
   it('type checks', async () => {
-    const result = await $`bun run tsc --noEmit --skipLibCheck src/examples/hello-world.ts`.quiet();
+    const result = await $`bun run tsc --noEmit`.quiet();
     expect(result.exitCode).toBe(0);
   });
 

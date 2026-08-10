@@ -427,7 +427,7 @@ async function runAutonomousValidation(filepath: string): Promise<VerificationRe
 
 async function runCompilation(filepath: string): Promise<VerificationResult['checks']['compilation']> {
   try {
-    await exec(`npx tsc --noEmit --skipLibCheck ${filepath}`);
+    await exec(`npx tsc --noEmit`);
     return { status: 'passed', files_checked: 1 };
   } catch (error) {
     return { 

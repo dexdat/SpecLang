@@ -59,7 +59,7 @@ Target: src/examples/hello-world.ts
 
 ### Step 5: Verification Gate 3 - Compilation
 
-Command: npx tsc --noEmit --skipLibCheck src/examples/hello-world.ts
+Command: npx tsc --noEmit
 
 **Result:** PASSED (no errors, exit code 0)
 
@@ -118,7 +118,7 @@ Coordinator presents results and asks: Continue with next example?
 
 1. Validate references: python3 scripts/validate_refs.py
 2. Check spec validation: python3 scripts/validate_autonomous.py --file specs/examples.spec.dir/hello-world.spec.md
-3. Verify compilation: npx tsc --noEmit --skipLibCheck src/examples/hello-world.ts
+3. Verify compilation: npx tsc --noEmit
 4. Check steering packets: cat .speclang/steering_packets.json | grep architecture-redesign
 
 ## Success Metrics
