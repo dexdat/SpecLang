@@ -52,8 +52,9 @@ speclang --help
 ### API Reference
 
 For programmatic access, see:
-- `specs/api.spec.md` - REST API specification
-- `specs/mcp.spec.md` - MCP server for AI agent integration
+- `docs/API_REFERENCE.md` - Public API reference (library exports, CLI, MCP server)
+- `specs/api.spec.md` - REST API specification (internal spec)
+- `specs/mcp.spec.md` - MCP server for AI agent integration (internal spec)
 
 ## Current Status: Reality-Based Alpha
 
@@ -325,7 +326,7 @@ specs/                    # Source of truth (447 .spec.md files, 449 incl .scl)
 ├── core.spec.md         # Layer 1 - Core concepts
 ├── cascade.spec.md      # Layer 1 - Cascade system
 ├── auth.spec.md         # Layer 2 - Auth feature
-└── examples/            # Examples
+└── examples.spec.dir/  # Examples
     └── hello-world.spec.md
 
 src/                     # Generated code
@@ -436,7 +437,7 @@ scripts/                 # Tools
 This is a meta-circular project. To contribute:
 
 1. **Fix extraction bugs** - `scripts/generate_*.py`
-2. **Add examples** - `specs/examples/`
+2. **Add examples** - `specs/examples.spec.dir/`
 3. **Improve validation** - `scripts/validate_*.py`
 4. **Test cascades** - Run examples, report issues
 
