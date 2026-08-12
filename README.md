@@ -284,6 +284,17 @@ The cascade has two entry points — a plain CLI that works in any terminal, and
 ./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md
 ```
 
+> **Output locations** — `cascade` and `generate` write to **different output trees, by design**:
+> - `./bin/speclang cascade <spec>` is spec-relative: output lands in a `generated/` sibling of
+>   the spec's directory. E.g. `cascade specs/examples.spec.dir/hello-world.spec.md` →
+>   `specs/generated/hello/function.ts`.
+> - `./bin/speclang generate <spec>` defaults to `src/generated/` (e.g.
+>   `src/generated/hello-world.spec-hello-function.ts`) and accepts `--output-dir <dir>` to override.
+> - **Which is canonical?** `specs/` is the source of truth; both `specs/generated/` and
+>   `src/generated/` are generated artifacts in the working tree (dual-view pattern). Use
+>   `cascade` output when iterating on a spec — it stays next to the spec it came from. Use
+>   `generate --output-dir` when you need code in a specific location such as `src/`.
+
 **In OpenCode (agent syntax — these are chat commands, not shell commands):**
 
 ```text
