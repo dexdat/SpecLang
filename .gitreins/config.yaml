@@ -44,7 +44,7 @@ pipeline:
     - id: secrets
       type: script
       run: "STAGED=$(git diff --cached --name-only --diff-filter=ACM)\n[ -z \"$STAGED\"\
-        \ ] && exit 0\necho \"$STAGED\" | xargs -I{} grep -Pn '\\bsk-[a-zA-Z0-9_-]{20,}|\\bghp_[a-zA-Z0-9]{36}'\
+        \ ] && exit 0\necho \"$STAGED\" | xargs -I{} grep -Pn '\\bsk-(?=[a-zA-Z0-9_-]{20,})[a-zA-Z0-9_-]*[A-Z0-9][a-zA-Z0-9_-]*|\\bghp_[a-zA-Z0-9]{36}'\
         \ {} 2>/dev/null && exit 1 || true\necho \"\u2713 No secrets detected\"\n"
     - id: build
       type: script

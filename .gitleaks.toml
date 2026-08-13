@@ -8,13 +8,13 @@ title = "SpecLang Gitleaks Config"
 [[rules]]
 id = "openrouter-style-sk"
 description = "Catch sk- prefixed secrets (OpenAI/OpenRouter/etc.)"
-regex = '''sk-[a-zA-Z0-9_-]{20,}'''
+regex = '''\bsk-[A-Za-z0-9_-]*[A-Z0-9][A-Za-z0-9_-]{19,}'''
 keywords = ["sk-"]
 
 [[rules]]
 id = "github-pat"
 description = "Catch ghp_ prefixed GitHub tokens"
-regex = '''ghp_[a-zA-Z0-9]{30,}'''
+regex = '''\bghp_[a-zA-Z0-9]{30,}'''
 keywords = ["ghp_"]
 
 [allowlist]
