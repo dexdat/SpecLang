@@ -119,6 +119,7 @@ console.log(report.passed);                 // true for a valid spec
 | `speclang bootstrap` | Bootstrap the meta-circular compiler |
 | `speclang mcp start/status/stop` | MCP server lifecycle |
 | `speclang new <name>` | Create a new spec |
+| `speclang init <name>` | Create spec scaffolding in the current project (name = spec name → `specs/<name>/<name>.spec.md`, `--tiers` for 4-tier meta/plan/ts/test) |
 | `speclang expand <block-id>` | Expand a block |
 
 **Minimal cascade example** (the working CLI path):

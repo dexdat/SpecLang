@@ -2258,7 +2258,7 @@ program
 
 program
   .command('init <name>')
-  .description('Create spec scaffolding for a feature')
+  .description('Create spec scaffolding for a feature (name is the spec name; writes specs/<name>/<name>.spec.md in the current directory)')
   .option('--tiers', 'Create multi-tier specs (meta, plan, ts, test)', false)
   .option('-f, --force', 'Overwrite existing directory')
   .action(async (name, options) => {
@@ -2277,7 +2277,12 @@ program
     const timestamp = new Date().toISOString().slice(0, 10);
 
     function writeSpec(fileName, targetLang, description, extraContent = '') {
-      const header = `---
+      // SL-GAP-036: the header must carry the '# speclang-header lines:N'
+      // declaration (mirroring `speclang new`'s templates, SL-GAP-001) or
+      // parseSpec throws 'No speclang-header declaration found' and the
+      // freshly scaffolded spec fails `speclang validate`. N counts the
+      // declaration line through the closing '---' (6 lines here).
+      const header = `# speclang-header lines:6
 id: "@${name}/${fileName.replace('.spec.','/').replace('.md','')}"
 version: 0.1.0
 layer: 5
