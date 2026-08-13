@@ -72,16 +72,20 @@ async function makeDaemon(
   autoRecascade: boolean,
   quietPeriodSec = 1,
 ): Promise<Daemon> {
-  // The watcher monitors specs/ at CWD (project root). We don't write
-  // fixtures there — we use the project-root path during the test
-  // and clean up after.
+  // Scope the daemon's watcher to this test's own fixture dir instead of
+  // the default watch paths (specs/, tests/, generated/). Sibling test
+  // files running in parallel workers (e.g. arch002) write .spec.md
+  // files into specs/ concurrently, and every sibling event resets the
+  // convergence quiet window — the root cause of the intermittent
+  // 5000ms convergence timeout when this file runs inside the full
+  // suite (it always passes 6/6 in isolation).
   await fs.ensureDir(`${TEST_DIR}/generated`);
 
   // Write a .speclangrc in CWD (project root) for this test
   const rcPath = `.speclangrc.arch004`;
   await fs.writeFile(
     rcPath,
-    `convergence:\n  quietPeriod: ${quietPeriodSec}\n  maxDepth: 100\n  testOnConverge: false\n  autoCommit: false\n  autoRecascade: ${autoRecascade}\n`,
+    `watch:\n  paths:\n    - ${TEST_DIR}\nconvergence:\n  quietPeriod: ${quietPeriodSec}\n  maxDepth: 100\n  testOnConverge: false\n  autoCommit: false\n  autoRecascade: ${autoRecascade}\n`,
   );
 
   const daemon = new Daemon(rcPath);
@@ -92,7 +96,8 @@ describe("ARCH-004: Autonomous cascade", () => {
   afterEach(async () => {
     await fs.remove(TEST_DIR).catch(() => {});
     await fs.remove(".speclangrc.arch004").catch(() => {});
-    // Clean up any stragglers from end-to-end test
+    // Safety net for stale `_arch004_*` files in specs/ left by pre-quarantine
+    // runs (this test now writes fixtures only under TEST_DIR)
     const specs = await fs.readdir("specs").catch(() => []);
     for (const f of specs) {
       if (f.startsWith("_arch004_")) {
@@ -120,7 +125,14 @@ describe("ARCH-004: Autonomous cascade", () => {
     expect(config.get().convergence.autoRecascade).toBe(true);
   });
 
-  it("autoRecascade=false keeps daemon in Converged state after convergence", async () => {
+  it(
+    "autoRecascade=false keeps daemon in Converged state after convergence",
+    // Internal waitFor budget is 8000ms (exceeds vitest's 5000ms default);
+    // under parallel-suite CPU load the daemon cycle legitimately takes
+    // longer, so give the test a timeout that matches its own polling
+    // budget instead of letting vitest kill it at 5000ms.
+    { timeout: 15000 },
+    async () => {
     const daemon = await makeDaemon(false);
     await daemon.start();
 
@@ -129,9 +141,10 @@ describe("ARCH-004: Autonomous cascade", () => {
     daemon.on("converged", () => events.push("converged"));
     daemon.on("armed", () => events.push("armed"));
 
-    // Save a file to trigger initial cascade (use project root specs/ which
-    // the watcher is configured to monitor — vitest's CWD is project root)
-    const specPath = `specs/_arch004_test_${Date.now()}.spec.md`;
+    // Save a file to trigger initial cascade (the watcher is scoped to
+    // TEST_DIR via the rc file, so only this test's own events reach it —
+    // vitest's CWD is project root)
+    const specPath = `${TEST_DIR}/_arch004_test_${Date.now()}.spec.md`;
     await fs.writeFile(specPath, "# initial\n");
 
     // Wait for the converged event (not just status — status can flip to
@@ -149,7 +162,11 @@ describe("ARCH-004: Autonomous cascade", () => {
     await fs.remove(specPath).catch(() => {});
   });
 
-  it("autoRecascade=true transitions back to Idle and emits armed after convergence", async () => {
+  it(
+    "autoRecascade=true transitions back to Idle and emits armed after convergence",
+    // Internal waitFor budget is 10000ms (exceeds vitest's 5000ms default).
+    { timeout: 20000 },
+    async () => {
     const daemon = await makeDaemon(true);
     await daemon.start();
 
@@ -158,7 +175,7 @@ describe("ARCH-004: Autonomous cascade", () => {
     daemon.on("armed", () => events.push("armed"));
 
     // Save a file to trigger initial cascade
-    const specPath = `specs/_arch004_test_${Date.now()}.spec.md`;
+    const specPath = `${TEST_DIR}/_arch004_test_${Date.now()}.spec.md`;
     await fs.writeFile(specPath, "# first\n");
 
     // Wait for convergence + auto-recascade arming
@@ -191,7 +208,7 @@ describe("ARCH-004: Autonomous cascade", () => {
       daemon.on("armed", () => events.push("armed"));
 
       // First spec → cascade → converge → arm
-      const spec1 = `specs/_arch004_e2e_${Date.now()}.spec.md`;
+      const spec1 = `${TEST_DIR}/_arch004_e2e_${Date.now()}.spec.md`;
       await fs.writeFile(spec1, "# one\n");
 
       await waitFor(
@@ -206,7 +223,7 @@ describe("ARCH-004: Autonomous cascade", () => {
 
       // Second spec — should trigger another cascade + convergence WITHOUT any user input
       await new Promise((r) => setTimeout(r, 200));
-      const spec2 = `specs/_arch004_e2e_${Date.now()}_b.spec.md`;
+      const spec2 = `${TEST_DIR}/_arch004_e2e_${Date.now()}_b.spec.md`;
       await fs.writeFile(spec2, "# two\n");
 
       await waitFor(
@@ -246,7 +263,12 @@ describe("ARCH-004: Autonomous cascade", () => {
     expect(spec).toMatch(/arm for next cascade/i);
   });
 
-  it("ConvergenceDetector.reset() allows immediate re-convergence on next event", async () => {
+  it(
+    "ConvergenceDetector.reset() allows immediate re-convergence on next event",
+    // Two 1500ms quiet-period sleeps (~3s+ of wall clock) — needs more
+    // than vitest's 5000ms default under parallel-suite load.
+    { timeout: 10000 },
+    async () => {
     // After autoRecascade fires, daemon calls convergence.reset() — verify
     // the detector returns to the "still cascading" state and re-converges
     // cleanly when new events arrive.
