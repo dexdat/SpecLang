@@ -11,11 +11,28 @@
 
 ## What is SpecLang?
 
-SpecLang is a **reactive multi-agent system** where:
+SpecLang is designed as a **reactive multi-agent system** where:
 - **Specs are source code** - Humans write and review specs
 - **Generated code is machine code** - Trust it, don't hand-edit it
-- **Filesystem is the event bus** - File changes trigger agent reactions
+- **Filesystem is the event bus** *(design goal)* - File changes trigger agent reactions
 - **Context never gets lost** - Universal headers track dependencies
+
+### Reality Check
+
+The reactive vision above is the **design goal**, not the current
+implementation. Per README's Current Status:
+
+- **No automatic file watching** - the Coordinator must be invoked
+  explicitly (e.g. `@speclang-coordinator start-cascade <spec>`); file
+  changes do not yet trigger agent reactions on their own.
+- **No background daemon** - everything runs in the foreground
+- **Sequential execution** - agents invoked one at a time
+- **User-controlled** - you decide when to continue a cascade
+
+Indexing and validation are manual steps too: run
+`python3 scripts/generate_index.py --generate` after editing specs, and use
+`python3 scripts/generate_index.py --validate` as the reference gate (it
+exits non-zero while missing references exceed `--max-missing`).
 
 ## Core Principle
 
