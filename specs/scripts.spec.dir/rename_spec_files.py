@@ -108,7 +108,7 @@ def update_readme(rename_map):
 def regenerate_index():
     """Regenerate _index.json with new file names."""
     print("\nRegenerating _index.json...")
-    os.system('python3 generate_index.py')
+    os.system('python3 generate_index.py --generate')
 
 def main():
     print("=== Renaming Spec Files to Follow Naming Conventions ===")

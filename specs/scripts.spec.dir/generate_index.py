@@ -182,6 +182,24 @@ def extract_blocks_from_content(filepath: str) -> List[str]:
 # FILE DISCOVERY
 # ============================================================================
 
+# Directories pruned from spec discovery: VCS metadata, dependency trees,
+# generated output, and test artifacts. Keeping these out of the walk is what
+# keeps _index.json a curated index of real specs (~466 entries) instead of a
+# dump of every junk spec file tests leave behind (.tmp/, node_modules/,
+# test-temp-*/, .vfs/, dist/, coverage/).
+EXCLUDED_DIRS = {'.git', '.opencode', '.backup_spec_files', '.tmp', '_tmp',
+                 'node_modules', '.vfs', 'dist', 'coverage'}
+
+
+def _is_excluded_dir(name: str) -> bool:
+    """True for directories that must never be walked for spec discovery.
+
+    Prefix-matches ``test-temp`` so test-temp-bootstrap, test-temp-meta and
+    any future test-temp-* variant are all covered.
+    """
+    return name in EXCLUDED_DIRS or name.startswith('test-temp')
+
+
 def get_spec_files(root_dir: str) -> List[Tuple[str, str]]:
     """Find all spec files."""
     spec_extensions = ['.scl', '.spec.md', '.spec.yaml', '.spec']
@@ -189,7 +207,7 @@ def get_spec_files(root_dir: str) -> List[Tuple[str, str]]:
     
     files = []
     for dirpath, dirnames, filenames in os.walk(root_dir):
-        dirnames[:] = [d for d in dirnames if d not in ['.git', '.opencode', '.backup_spec_files']]
+        dirnames[:] = [d for d in dirnames if not _is_excluded_dir(d)]
         
         if '.backup_spec_files' in dirpath:
             continue
@@ -220,8 +238,15 @@ def get_spec_files(root_dir: str) -> List[Tuple[str, str]]:
 # GRAPH ALGORITHMS
 # ============================================================================
 
-def build_dependency_graph(entries: List[dict]) -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
-    """Build dependency and dependent graphs."""
+def build_dependency_graph(entries: List[dict], include_content_refs: bool = True) -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
+    """Build dependency and dependent graphs.
+
+    ``include_content_refs`` controls whether prose ``@ref:`` mentions
+    (content_refs) contribute edges. They are informational — validation
+    treats them as best-effort — so cycle detection runs on the structural
+    graph (depends_on/children/imports) to avoid treating prose mentions as
+    phantom dependency cycles.
+    """
     from collections import defaultdict
     
     # Build reference maps
@@ -255,15 +280,16 @@ def build_dependency_graph(entries: List[dict]) -> Tuple[Dict[str, List[str]], D
             dependencies[spec_id].append(imp_id)
             dependents[imp_id].append(spec_id)
         
-        # From refs found in content
-        for ref in entry.get('content_refs', []):
-            # Only add if looks like a spec reference (not a block)
-            if '@' in ref or ref.startswith('specs/'):
-                clean_ref = ref.replace('@ref:', '').replace('@', '')
-                if clean_ref and not clean_ref.startswith('#'):
-                    ref_id = resolve_ref(clean_ref)
-                    dependencies[spec_id].append(ref_id)
-                    dependents[ref_id].append(spec_id)
+        # From refs found in content (informational mentions only)
+        if include_content_refs:
+            for ref in entry.get('content_refs', []):
+                # Only add if looks like a spec reference (not a block)
+                if '@' in ref or ref.startswith('specs/'):
+                    clean_ref = ref.replace('@ref:', '').replace('@', '')
+                    if clean_ref and not clean_ref.startswith('#'):
+                        ref_id = resolve_ref(clean_ref)
+                        dependencies[spec_id].append(ref_id)
+                        dependents[ref_id].append(spec_id)
     
     # Remove duplicates
     for k in dependencies:
@@ -472,6 +498,15 @@ def resolve_ref_to_id(ref: str, path_no_ext_to_id: Dict[str, str]) -> str:
 # VALIDATION
 # ============================================================================
 
+def _is_empty_ref(ref: str) -> bool:
+    """True for placeholder/blank ref values (e.g. unfilled children templates).
+
+    An empty string (or bare quotes) is not a reference target — reporting
+    it as missing is a false positive.
+    """
+    return not ref.strip().strip('"\'')
+
+
 def validate_refs(entries: List[dict], all_ids: Set[str]) -> Tuple[List[str], List[str]]:
     """Validate critical @ref: targets exist (depends_on, children, imports)."""
     missing = []
@@ -502,6 +537,8 @@ def validate_refs(entries: List[dict], all_ids: Set[str]) -> Tuple[List[str], Li
         
         # Check depends_on (CRITICAL)
         for dep in entry.get('depends_on', []):
+            if _is_empty_ref(dep):
+                continue
             dep_id = resolve_ref(dep)
             if dep_id not in normalized_ids:
                 missing.append(f"{spec_id} -> {dep} (depends_on)")
@@ -510,6 +547,8 @@ def validate_refs(entries: List[dict], all_ids: Set[str]) -> Tuple[List[str], Li
         
         # Check children (CRITICAL)
         for child in entry.get('children', []):
+            if _is_empty_ref(child):
+                continue
             child_id = resolve_ref(child)
             if child_id not in normalized_ids:
                 missing.append(f"{spec_id} -> {child} (children)")
@@ -518,6 +557,8 @@ def validate_refs(entries: List[dict], all_ids: Set[str]) -> Tuple[List[str], Li
         
         # Check imports (CRITICAL)
         for imp in entry.get('imports', []):
+            if _is_empty_ref(imp):
+                continue
             imp_id = resolve_ref(imp)
             if imp_id not in normalized_ids:
                 missing.append(f"{spec_id} -> {imp} (imports)")
@@ -544,8 +585,13 @@ def validate_refs(entries: List[dict], all_ids: Set[str]) -> Tuple[List[str], Li
 # MAIN INDEXER
 # ============================================================================
 
-def generate_index(root_dir: str = '.', output_file: str = '_index.json') -> dict:
-    """Generate the complete spec index."""
+def generate_index(root_dir: str = '.', output_file: str = '_index.json', write: bool = True) -> dict:
+    """Generate the complete spec index.
+
+    Computes the index in memory. The output file is only written when
+    ``write`` is True (explicit ``--generate`` mode); read-only modes
+    (--validate/--tree/--impact/--graph) must never touch the file.
+    """
     print(f"Generating spec index for {root_dir}...")
     
     # Get all spec files
@@ -607,8 +653,11 @@ def generate_index(root_dir: str = '.', output_file: str = '_index.json') -> dic
     # Build graphs
     dependencies, dependents = build_dependency_graph(entries)
     
-    # Detect cycles
-    cycles = detect_cycles(dependencies)
+    # Detect cycles on the STRUCTURAL graph only (depends_on/children/
+    # imports). Content-mention edges are informational — including them
+    # would report prose cross-references as phantom dependency cycles.
+    structural_deps, _ = build_dependency_graph(entries, include_content_refs=False)
+    cycles = detect_cycles(structural_deps)
     
     # Find orphans
     orphans = find_orphans(dependencies, dependents, all_ids)
@@ -639,12 +688,18 @@ def generate_index(root_dir: str = '.', output_file: str = '_index.json') -> dic
         }
     }
     
-    # Write output
-    with open(output_file, 'w') as f:
-        json.dump(index, f, indent=2)
-    
-    print(f"Created {output_file}")
-    print(f"  - Specs: {len(entries)}")
+    # Write output (explicit --generate mode only)
+    if write:
+        with open(output_file, 'w') as f:
+            json.dump(index, f, indent=2)
+
+        print(f"Created {output_file}")
+    else:
+        print(f"(read-only: index computed in memory, {output_file} not written)")
+
+    # Note: specs are keyed by id, so the stored count can be lower than the
+    # walked file count when files share an id (dual-view duplicates).
+    print(f"  - Specs: {len(specs_dict)}")
     print(f"  - References: {len(valid_refs)}")
     print(f"  - Missing refs: {len(missing_refs)}")
     print(f"  - Orphans: {len(orphans)}")
@@ -664,44 +719,58 @@ def generate_index(root_dir: str = '.', output_file: str = '_index.json') -> dic
 # CLI COMMANDS
 # ============================================================================
 
-def cmd_validate(index: dict):
-    """Validate the index."""
+def cmd_validate(index: dict, max_missing: int = 0) -> bool:
+    """Validate the index. Returns True when the gate passes.
+
+    Gate semantics: missing references beyond ``max_missing`` (default 0) and
+    any circular dependency FAIL the gate. Orphans are warnings by design and
+    never fail it. The caller must turn a False return into a non-zero exit
+    code — a validation gate that always exits 0 is no gate at all.
+    """
     validation = index.get('validation', {})
-    
+    missing_refs = validation.get('missing_refs', [])
+    cycles = index.get('cycles', [])
+    orphans = index.get('orphans', [])
+    ok = True
+
     print("=== Index Validation ===")
     print(f"Total specs: {validation.get('total_specs', 0)}")
     print(f"Total refs: {validation.get('total_refs', 0)}")
-    print(f"Missing refs: {validation.get('missing_ref_count', 0)}")
-    
-    if validation.get('missing_refs'):
-        print("\n❌ Missing references:")
-        for ref in validation['missing_refs'][:10]:
-            print(f"  - {ref}")
-        if len(validation['missing_refs']) > 10:
-            print(f"  ... and {len(validation['missing_refs']) - 10} more")
-        return False
+    print(f"Missing refs: {validation.get('missing_ref_count', 0)} (tolerance: {max_missing})")
+
+    if missing_refs:
+        if len(missing_refs) > max_missing:
+            print(f"\n❌ {len(missing_refs)} missing references exceed tolerance ({max_missing}):")
+            for ref in missing_refs[:10]:
+                print(f"  - {ref}")
+            if len(missing_refs) > 10:
+                print(f"  ... and {len(missing_refs) - 10} more")
+            ok = False
+        else:
+            print(f"\n⚠️  {len(missing_refs)} missing references (within tolerance {max_missing}):")
+            for ref in missing_refs[:10]:
+                print(f"  - {ref}")
+            if len(missing_refs) > 10:
+                print(f"  ... and {len(missing_refs) - 10} more")
     else:
         print("\n✅ All references valid")
-    
-    cycles = index.get('cycles', [])
+
     if cycles:
         print(f"\n❌ Circular dependencies detected ({len(cycles)}):")
         for cycle in cycles[:5]:
             print(f"  - {' -> '.join(cycle)}")
-        return False
+        ok = False
     else:
         print("\n✅ No circular dependencies")
-    
-    orphans = index.get('orphans', [])
+
     if orphans:
-        print(f"\n⚠️  Orphan specs ({len(orphans)}):")
+        print(f"\n⚠️  Orphan specs ({len(orphans)}) — warnings, not errors:")
         for orphan in orphans[:10]:
             print(f"  - {orphan}")
-        return True  # Orphans are warnings, not errors
     else:
         print("\n✅ No orphan specs")
-    
-    return True
+
+    return ok
 
 
 def cmd_tree(index: dict, spec_id: str):
@@ -767,35 +836,58 @@ def cmd_graph(index: dict):
         print(f"Most depended on: {most_dents[0]} ({len(most_dents[1])})")
 
 
-def main():
-    """CLI entry point."""
+def main() -> int:
+    """CLI entry point. Returns the process exit code."""
     import argparse
-    
+
     parser = argparse.ArgumentParser(description='SpecLang Indexer')
-    parser.add_argument('--validate', action='store_true', help='Validate index')
-    parser.add_argument('--tree', metavar='SPEC', help='Show dependency tree')
-    parser.add_argument('--impact', metavar='SPEC', help='Show impact analysis')
-    parser.add_argument('--graph', action='store_true', help='Show graph stats')
+    parser.add_argument('--generate', action='store_true',
+                        help='Generate and WRITE the index (the only mode that writes)')
+    parser.add_argument('--validate', action='store_true',
+                        help='Validate index (read-only); exit non-zero on missing refs > --max-missing or cycles')
+    parser.add_argument('--check', action='store_true',
+                        help='Alias for --validate (read-only)')
+    parser.add_argument('--max-missing', type=int, default=0,
+                        help='Max missing refs tolerated by --validate (default 0 = strict gate)')
+    parser.add_argument('--tree', metavar='SPEC', help='Show dependency tree (read-only)')
+    parser.add_argument('--impact', metavar='SPEC', help='Show impact analysis (read-only)')
+    parser.add_argument('--graph', action='store_true', help='Show graph stats (read-only)')
     parser.add_argument('--output', default='_index.json', help='Output file')
     parser.add_argument('--root', default='.', help='Root directory')
-    
+
     args = parser.parse_args()
-    
-    # Generate index
-    index = generate_index(args.root, args.output)
-    
+
+    # Mode guard: a bare invocation (no mode flag) must NOT write anything.
+    # The index is only ever (re)generated with an explicit --generate.
+    mode_flags = [args.generate, args.validate, args.check, args.tree,
+                  args.impact, args.graph]
+    if not any(mode_flags):
+        parser.print_usage(sys.stderr)
+        print("error: no mode flag given — bare invocation never writes files.", file=sys.stderr)
+        print("       use --generate to (re)write the index, or --validate/--check/", file=sys.stderr)
+        print("       --tree/--impact/--graph for read-only analysis.", file=sys.stderr)
+        return 2
+
+    if args.generate and any([args.validate, args.check, args.tree, args.impact, args.graph]):
+        parser.error('--generate cannot be combined with other mode flags')
+
+    # Compute the index in memory; only --generate writes to disk.
+    index = generate_index(args.root, args.output, write=args.generate)
+
     # Run commands
-    if args.validate:
-        cmd_validate(index)
+    if args.validate or args.check:
+        return 0 if cmd_validate(index, max_missing=args.max_missing) else 1
     elif args.tree:
         cmd_tree(index, args.tree)
+        return 0
     elif args.impact:
         cmd_impact(index, args.impact)
+        return 0
     elif args.graph:
         cmd_graph(index)
-    else:
-        print("\nUsage: generate_index.py [--validate|--tree SPEC|--impact SPEC|--graph]")
+        return 0
+    return 0  # unreachable: mode guard ensures at least one flag
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

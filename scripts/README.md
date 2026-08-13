@@ -9,7 +9,7 @@ Scripts that generate code, indexes, and other artifacts from specs.
 
 | Script | Purpose | Usage |
 |--------|---------|-------|
-| `generate_index.py` | Generate `_index.json` from specs | `python3 generate_index.py [--validate] [--tree SPEC]` |
+| `generate_index.py` | Generate `_index.json` from specs | `python3 generate_index.py --generate` (bare = usage only; `--validate` = gate) |
 | `generate_ralph_loop.py` | Generate Ralph loop implementation | `python3 generate_ralph_loop.py` |
 | `generate_sqlite_schema.py` | Generate SQLite schema from entity specs | `python3 generate_sqlite_schema.py` |
 | `generate_validation_system.py` | Generate validation system code | `python3 generate_validation_system.py` |

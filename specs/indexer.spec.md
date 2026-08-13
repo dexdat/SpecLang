@@ -96,8 +96,11 @@ The indexer outputs `_index.json` in the root directory with the following struc
 ### @block::usage @kind:entity
 
 CLI Usage:
-  - "python3 generate_index.py" - Generate index
-  - "python3 generate_index.py --validate" - Validate references
+  - "python3 generate_index.py" - Prints usage; writes nothing (mode guard)
+  - "python3 generate_index.py --generate" - Generate and write the index (the only mode that writes)
+  - "python3 generate_index.py --validate" - Validate references; exit non-zero when missing refs exceed --max-missing (default 0) or cycles exist
+  - "python3 generate_index.py --check" - Alias for --validate
+  - "python3 generate_index.py --validate --max-missing N" - Tolerate up to N missing refs (gate tunable)
   - "python3 generate_index.py --tree @specs/indexer" - Show dependency tree
   - "python3 generate_index.py --impact specs/indexer.spec.md" - Find impact
 

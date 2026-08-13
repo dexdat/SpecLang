@@ -18,11 +18,17 @@ Creates a searchable index of all specs for quick lookup and validation.
 ## Usage
 
 ```bash
-# Generate index
+# Bare invocation: prints usage, writes nothing (mode guard)
 python3 scripts/generate_index.py
 
-# Check mode (validate without writing)
+# Generate and write the index (explicit mode)
+python3 scripts/generate_index.py --generate
+
+# Check mode (validate without writing) — --check aliases --validate
 python3 scripts/generate_index.py --check
+
+# Validate as a gate: exit non-zero when missing refs > --max-missing (default 0) or cycles exist
+python3 scripts/generate_index.py --validate --max-missing 20
 ```
 
 ## Output Format

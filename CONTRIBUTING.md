@@ -149,8 +149,8 @@ npx vitest run tests/my-test.test.ts
 ## Validation
 
 ```bash
-# Validate spec references
-python3 generate_index.py --validate
+# Validate spec references (exits non-zero while missing refs exceed --max-missing)
+python3 scripts/generate_index.py --validate
 
 # Run autonomous validation
 python3 scripts/validate_autonomous.py --project

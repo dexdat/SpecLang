@@ -160,8 +160,8 @@ specs/000-bootstrap.md → specs/project.scl → specs/core.spec.md
 ## Development Workflow
 
 1. **Edit specs** in `specs/` directory
-2. **Run indexer**: `python3 scripts/generate_index.py`
-3. **Validate references**: `python3 scripts/generate_index.py --validate`
+2. **Generate index**: `python3 scripts/generate_index.py --generate` (bare invocation only prints usage — the index is never rewritten without the explicit flag)
+3. **Validate references**: `python3 scripts/generate_index.py --validate` (exits non-zero when missing references exceed `--max-missing`, default 0)
 4. **Generate code**: (When compiler is ready)
 5. **Test**: Run generated tests
 
