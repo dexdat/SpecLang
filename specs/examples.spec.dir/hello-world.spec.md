@@ -4,7 +4,7 @@ version: 1.0.0
 layer: 10
 tags: [example, hello-world, tutorial]
 status: draft
-project_level: POC
+project_level: Beta
 agent_support: agent_autonomous
 short: Hello World Example
 parent: "@ref:speclang/examples-spec"

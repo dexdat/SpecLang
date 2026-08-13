@@ -27,6 +27,7 @@ Contains:
 - Proper speclang-header
 - TypeScript code block
 - Step-by-step verification instructions
+- `project_level: Beta` (SL-GAP-037: `agent_autonomous` requires `project_level >= Beta` per the maturity validator, so the flagship example now passes both `speclang validate` and `speclang maturity`)
 
 ### Step 1: Invoke Spec Writer
 
