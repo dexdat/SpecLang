@@ -59,7 +59,7 @@ For programmatic access, see:
 ## Current Status: Reality-Based Alpha
 
 **✅ What Works:**
-- 448 .spec.md files (450 incl .scl) with proper headers and references
+- 447 .spec.md files (449 incl .scl) with proper headers and references
 - Reference validation (all specs resolve correctly)
 - Autonomous validation (scores specs for agent readiness)
 - Hello World example (compiles and runs)
@@ -255,7 +255,7 @@ python3 scripts/validate_refs.py
 
 # 2. Run autonomous validation
 python3 scripts/validate_autonomous.py --project
-# Output: 448 specs validated
+# Output: 449 specs validated
 
 # 3. Try Hello World example
 npx tsc --noEmit
@@ -339,7 +339,7 @@ The cascade has two entry points — a plain CLI that works in any terminal, and
 ### File Structure
 
 ```
-specs/                    # Source of truth (448 .spec.md files, 450 incl .scl)
+specs/                    # Source of truth (447 .spec.md files, 449 incl .scl)
 ├── project.scl          # Layer 0 - North Star
 ├── core.spec.md         # Layer 1 - Core concepts
 ├── cascade.spec.md      # Layer 1 - Cascade system
@@ -376,7 +376,7 @@ scripts/                 # Tools
 
 ### ✅ Working
 
-- **Spec validation**: All 448 specs have valid headers and references
+- **Spec validation**: All 449 specs have valid headers and references
 - **Reference resolution**: `validate_refs.py` confirms 100% accuracy
 - **Autonomous validation**: Scores specs for agent readiness (0.75-1.05 confidence)
 - **Hello World**: Compiles successfully (proof of concept)
@@ -470,4 +470,4 @@ ISC
 **Status**: Alpha - One working example, solid foundation, much more to build.
 
 **Last Updated**: 2026-08-11
-**Specs**: 448 .spec.md (450 incl .scl) | **Examples**: 1 working | **Tests**: 1822 passing | 58 skipped
+**Specs**: 447 .spec.md (449 incl .scl) | **Examples**: 1 working | **Tests**: 1822 passing | 58 skipped

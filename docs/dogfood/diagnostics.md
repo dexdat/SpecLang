@@ -7,17 +7,17 @@ The diagnostic trail: how SpecLang is built, why, the errors encountered (mine a
 - **TypeScript, compiled with `tsc` to `dist/`** (`npm run build`). `package.json` `main: dist/index.js`, CLI at `bin/speclang` (a plain JS wrapper that `require`s from `../dist/src/...`). If you run commands from a checkout where `dist/` is stale, the CLI errors with `MODULE_NOT_FOUND` — the error handler then prints **"❌ SpecLang not built. Run: npm run build"**, which is only sometimes the real fix (see §3.1).
 - **Dual-view pattern**: `specs/*.spec.dir/` are the source of truth; `src/`, `docs/`, `.opencode/skills/`, `scripts/` are largely symlinks into spec dirs. ~99.2% compliant (audit: `python3 scripts/check_compliance.py --report`). **Never create files directly in working locations — create the spec source first, then symlink.** This is why the dogfood skill artifact lives at `specs/skills.spec.dir/skills/speclang-usage.md` with a symlink at `.opencode/skills/speclang-usage.md`.
 - **Meta-circular goal**: specs → (LLM as compiler, for now) → src. The codegen in `src/codegen` is meant to eventually do what agents do today. Hence the emphasis on headers/refs staying valid — the corpus is both the product and the test.
-- **Validation layering**: `speclang validate` (CLI, 448 files, warnings tolerated) vs `speclang maturity` (stricter: autonomous specs need `project_level >= Beta`) vs `scripts/generate_index.py --validate` (ref gate) vs `scripts/validate_autonomous.py` (corpus-wide content checks). These gates **do not agree** with each other (SL-GAP-037) and some have had exit-code bugs (SL-GAP-032, fixed).
+- **Validation layering**: `speclang validate` (CLI, 449 files, warnings tolerated) vs `speclang maturity` (stricter: autonomous specs need `project_level >= Beta`) vs `scripts/generate_index.py --validate` (ref gate) vs `scripts/validate_autonomous.py` (corpus-wide content checks). The maturity-vs-validate disagreement on the hello-world example was fixed (SL-GAP-037) and some gates had exit-code bugs (SL-GAP-032, fixed).
 - **Board**: `.coding-hermes/board/tasks.jsonl` is the authoritative task store (JSONL-canonical since tick #152); `tasks.md` is a legacy log. Foreman ticks every 2h (CooldownS=7200). Counting drift is a recurring theme (SL-GAP-005/011/038).
 
 ## 2. Counting problem (three numbers, one truth)
 
-Verified 2026-08-13:
+RESOLVED 2026-08-13 (SL-GAP-038): all three counters now agree at **449**:
 - `find specs \( -name '*.spec.md' -o -name '*.scl' \) | wc -l` → **449** (447 .spec.md + 2 .scl)
-- `speclang status` → **450** ("448 .spec.md + 2 .scl")
-- `speclang validate` → **448 files**
+- `speclang status` → **449** ("447 .spec.md + 2 .scl")
+- `speclang validate` → **449 files**
 
-Each component counts differently (symlink double-counts, .spec.dir traversal, exclusion of the 2 .scl). SL-GAP-011 was marked complete on 2026-08-07 while still failing — a textbook premature completion; reopened as SL-GAP-038.
+Root cause: `find -L` in `status` followed the dir symlink `specs/project-layout.spec.dir/config -> ../config.spec.dir/src` and double-counted `index.spec.md`; `validate`'s glob did the same (fixed with realpath dedupe) and excluded the 2 `.scl` files (now included and engine-validated). SL-GAP-011 was marked complete on 2026-08-07 while still failing — a textbook premature completion; reopened as SL-GAP-038 and closed with the fix.
 
 ## 3. Errors encountered during the run and their root causes
 
@@ -53,7 +53,7 @@ Each component counts differently (symlink double-counts, .spec.dir traversal, e
 - `cascade` on the real example path → correct, provenance-stamped TS; README/CASCADE_DEMO now document the right path (SL-GAP-010 fixed).
 - `check`, `search`, `maturity`, `status`, `mcp status/stop`, `daemon` help, `pytest` (20/20; SL-GAP-012 fixed via `pytest.ini pythonpath = scripts`).
 - Library: `runCascade` (real file generation), `createDatabase` + `upsertSpec` + `getAllSpecs` (SQLite persistence, migration applied, file survives).
-- Repo gates: `validate` 448/448 (535 warnings), vitest suite green per foreman ticks, `npm audit` 0 vulns.
+- Repo gates: `validate` 449/449 (535 warnings), vitest suite green per foreman ticks, `npm audit` 0 vulns.
 
 ## 5. Advice to the maintainer (1 hour of your time, in order)
 

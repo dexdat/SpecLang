@@ -53,7 +53,26 @@ export async function validateCommand(options: ValidateOptions): Promise<Validat
     allFiles.push(...matched);
   }
 
-  const uniqueFiles = [...new Set(allFiles)];
+  // Dedupe by realpath: glob traverses directory symlinks (e.g.
+  // specs/project-layout.spec.dir/config -> ../config.spec.dir/src), so a
+  // file reachable through both the real and the symlinked path is matched
+  // twice. The shell's `find` (no -L) does not follow dir symlinks, so
+  // realpath-deduping keeps the validate count in lockstep with
+  // `speclang status` and `find specs ... | wc -l` (SL-GAP-038).
+  const seenRealPaths = new Set<string>();
+  const uniqueFiles: string[] = [];
+  for (const file of allFiles) {
+    let realPath: string;
+    try {
+      realPath = fs.realpathSync(file);
+    } catch {
+      realPath = file;
+    }
+    if (!seenRealPaths.has(realPath)) {
+      seenRealPaths.add(realPath);
+      uniqueFiles.push(file);
+    }
+  }
 
   if (uniqueFiles.length === 0) {
     console.warn(

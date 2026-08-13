@@ -192,16 +192,20 @@ program
     if (fs.existsSync(specsDir)) {
       const { execSync } = require('child_process');
       try {
+        // SL-GAP-038: no -L — `find -L` follows the dir symlink
+        // specs/project-layout.spec.dir/config -> ../config.spec.dir/src and
+        // double-counts index.spec.md (450 vs 449 on disk). Plain find (no -L)
+        // does not descend into symlinked dirs, matching `find ... | wc -l`.
         const count = parseInt(
-          execSync(`find -L "${specsDir}" \\( -name "*.spec.md" -o -name "*.scl" \\) -type f | wc -l`, 
+          execSync(`find "${specsDir}" \\( -name "*.spec.md" -o -name "*.scl" \\) -type f | wc -l`, 
             { encoding: 'utf-8' }).trim()
         );
         const mdCount = parseInt(
-          execSync(`find -L "${specsDir}" -name "*.spec.md" -type f | wc -l`, 
+          execSync(`find "${specsDir}" -name "*.spec.md" -type f | wc -l`, 
             { encoding: 'utf-8' }).trim()
         );
         const sclCount = parseInt(
-          execSync(`find -L "${specsDir}" -name "*.scl" -type f | wc -l`, 
+          execSync(`find "${specsDir}" -name "*.scl" -type f | wc -l`, 
             { encoding: 'utf-8' }).trim()
         );
         console.log(`   Specs: ${count} (${mdCount} .spec.md + ${sclCount} .scl)`);
@@ -416,7 +420,7 @@ program
     try {
       const { validateCommand } = require('../dist/src/validation/cli.js');
       const result = await validateCommand({
-        files: files.length > 0 ? files : ['specs/**/*.spec.md'],
+        files: files.length > 0 ? files : ['specs/**/*.spec.md', 'specs/**/*.scl'],
         projectDir,
         strict: options.strict || false,
         verbose: options.verbose || false,
@@ -483,7 +487,7 @@ program
     try {
       const { validateCommand } = require('../dist/src/validation/cli.js');
       const result = await validateCommand({
-        files: files.length > 0 ? files : ['specs/**/*.spec.md'],
+        files: files.length > 0 ? files : ['specs/**/*.spec.md', 'specs/**/*.scl'],
         projectDir,
         strict: options.strict || false,
         verbose: options.verbose || false,
