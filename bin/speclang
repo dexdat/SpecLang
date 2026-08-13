@@ -1159,16 +1159,18 @@ mcp
   .action(async (options) => {
     const projectDir = path.resolve(options.dir);
     
-    console.log('🚀 Starting SpecLang MCP server...');
-    console.log(`   Mode: ${options.remote ? 'HTTP' : 'stdio'}`);
-    console.log(`   Directory: ${projectDir}`);
+    // NOTE: all startup diagnostics go to stderr — in stdio mode stdout is the
+    // MCP JSON-RPC transport and any non-protocol line breaks real clients.
+    console.error('🚀 Starting SpecLang MCP server...');
+    console.error(`   Mode: ${options.remote ? 'HTTP' : 'stdio'}`);
+    console.error(`   Directory: ${projectDir}`);
     
     if (options.remote) {
-      console.log(`   Port: ${options.port}`);
+      console.error(`   Port: ${options.port}`);
     }
     
     try {
-      const { MCPServer } = require('../dist/src/mcp/index.js');
+      const { MCPServer } = require('../dist/specs/mcp.spec.dir/src/index.js');
       const config = {
         port: parseInt(options.port),
         database: path.join(projectDir, '.speclang', 'speclang.db'),

@@ -67,7 +67,8 @@ export class SpecLangDB {
    */
   initialize(): { applied: number; version: number } {
     const result = migrate(this.db);
-    console.log(`Database initialized at version ${result.currentVersion}`);
+    // stderr: this fires inside MCP stdio mode where stdout is the JSON-RPC transport
+    console.error(`Database initialized at version ${result.currentVersion}`);
     return {
       applied: result.applied,
       version: result.currentVersion

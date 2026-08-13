@@ -6,8 +6,11 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
+import { ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import express, { Request, Response, NextFunction } from 'express';
 import { randomUUID } from 'crypto';
+import * as fs from 'fs';
+import * as path from 'path';
 
 import { createDatabase, SpecLangDB } from '../../sqlite.spec.dir/src/index.js';
 import { MCPToolRegistry, getToolDefinitions } from './tools/index.js';
@@ -42,6 +45,10 @@ export class MCPServer {
    * Initialize database connection
    */
   private initDatabase(): void {
+    // better-sqlite3 cannot create parent directories — a fresh clone has no
+    // .speclang/ (gitignored), so ensure it exists before opening the DB.
+    const dbDir = path.dirname(this.config.database);
+    fs.mkdirSync(dbDir, { recursive: true });
     this.db = createDatabase({
       path: this.config.database,
       wal: true,
@@ -238,15 +245,15 @@ export class MCPServer {
       this.toolRegistry.registerTools(server);
     }
     
-    // Register tool definitions
-    const tools = getToolDefinitions();
-    for (const tool of tools) {
-      // @ts-expect-error - MCP SDK has different type definitions
-      server.registerTool(tool.name, {
+    // Register tool definitions. NOTE: @modelcontextprotocol/sdk 1.x has no
+    // `Server.registerTool` — serve tools/list via the request handler instead.
+    server.setRequestHandler(ListToolsRequestSchema, () => ({
+      tools: getToolDefinitions().map(tool => ({
+        name: tool.name,
         description: tool.description,
         inputSchema: tool.inputSchema
-      });
-    }
+      }))
+    }));
     
     return server;
   }

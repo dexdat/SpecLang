@@ -34,7 +34,7 @@
       "project-layout.spec.dir/src/*": ["./specs/project-layout.spec.dir/src/*"]
     }
   },
-  "include": ["index.ts", "src/**/*.ts", "src/**/*.tsx"],
+  "include": ["index.ts", "src/**/*.ts", "src/**/*.tsx", "specs/mcp.spec.dir/src/**/*.ts"],
   "exclude": [
     "node_modules",
     "dist",
