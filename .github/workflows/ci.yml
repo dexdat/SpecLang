@@ -190,8 +190,18 @@ jobs:
 
       - name: Install GitReins
         # GitReins is the project's git-native quality gate (secrets +
-        # lint + diff-mode tests). Install the latest PyPI release.
-        run: pipx install gitreins
+        # lint + diff-mode tests).
+        #
+        # PINNED to the gitreins main HEAD (7f80789, includes the
+        # anchored-secrets-pattern fix 231367b): PyPI 0.11.0 predates it and
+        # its UNANCHORED `sk-[A-Za-z0-9_-]{20,}` built-in pattern false-
+        # positives on the substring `sk-premise-verification` inside
+        # .coding-hermes/board/events.jsonl (t199 SL-GAP-029 judge string,
+        # preceded by a word char so `\bsk-` does not match). CI runs
+        # 31672835289/31685324569 failed on exactly that (CI-002).
+        # TODO: unpin to `pipx install gitreins` once a release >= 0.11.1
+        # carrying the anchor fix lands on PyPI.
+        run: pipx install "git+https://github.com/totalwindupflightsystems/gitreins.git@7f807891b93beba198b3cd379eedc35385306ea5"
 
       - name: Run GitReins Tier 1 guard
         # Block commits with secrets, lint failures, or test regressions.
