@@ -172,7 +172,13 @@ describe("CI-005: pre-commit hook hardening", () => {
     expect(gl).toMatch(/\[\[rules\]\]/);
     expect(gl).toMatch(/id\s*=\s*"openrouter-style-sk"/);
     expect(gl).toMatch(/id\s*=\s*"github-pat"/);
-    expect(gl).toMatch(/sk-\[a-zA-Z0-9_-\]\{20,\}/);
+    // AC5 regex is matched as literal text because the TOML value is a
+    // quoted string containing backslash escapes; the v3 pattern (t202 /
+    // 5111a0b3) requires >=1 uppercase/digit in the 20+ chars so that
+    // quote-delimited doc strings like 'sk-premise-verification' no longer
+    // false-positive (RE2 has no lookahead). The JS regex below matches the
+    // literal TOML text: \bsk-[A-Za-z0-9_-]*[A-Z0-9][A-Za-z0-9_-]{19,}
+    expect(gl).toMatch(/\\bsk-\[A-Za-z0-9_-\]\*\[A-Z0-9\]\[A-Za-z0-9_-\]\{19,\}/);
     expect(gl).toMatch(/ghp_\[a-zA-Z0-9\]\{30,\}/);
     // Allowlist still whitelists specs/, docs/, node_modules/.
     expect(gl).toContain("'''specs\\/'''");
