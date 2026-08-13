@@ -180,7 +180,20 @@ function parseSpec(content: string): { id: string; version: string; blocks: Spec
       
       const [key, ...valueParts] = line.split(':');
       if (key && valueParts.length > 0) {
-        metadata[key.trim()] = valueParts.join(':').trim();
+        let value = valueParts.join(':').trim();
+        // Strip YAML scalar quoting (single or double) so quoted ids like
+        // `id: "@speclang/examples/hello-world"` come back bare. The
+        // validation idRule requires a leading '@', so literal quotes made
+        // parseSpec → validate fail on the exact format `speclang new`
+        // generates (SL-GAP-034).
+        if (value.length >= 2) {
+          const first = value[0];
+          const last = value[value.length - 1];
+          if ((first === '"' && last === '"') || (first === "'" && last === "'")) {
+            value = value.slice(1, -1);
+          }
+        }
+        metadata[key.trim()] = value;
       }
       headerLines--;
       continue;

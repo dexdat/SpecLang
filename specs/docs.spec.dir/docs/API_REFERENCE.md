@@ -45,10 +45,30 @@ import { SpecLangDB, createDatabase } from 'speclang';
 
 `src/validation/` — validate spec documents against built-in rules.
 
-- `validate`, `validateAll`, `validateCommand` — run validation
+- `validate(spec: ParsedSpec, context?): Promise<ValidationReport>` — **async**; takes a `ParsedSpec` object, not a content string. Shape: `{ filepath, headerLines, metadata: { id, version, layer, ... }, content, headerRaw?, blocks?, references? }`. Read `report.passed` (not `.valid`).
+- `validateAll(specs: ParsedSpec[]): Promise<ValidationReport[]>` — validate multiple specs in one batch (shared dependency context).
+- `validateCommand(options)` — CLI-equivalent runner (glob patterns → reports).
 - `ValidationEngine`, `getEngine`, `resetEngine` — engine access
 - `ValidationRule`, `RuleRegistry`, `getRegistry`, `resetRegistry`, `BUILTIN_RULES` (includes `headerRule`, `idRule`, `refsRule`, `blocksRule`, `autonomousRule`)
 - Output: `ValidationReport`, `ValidationReportBatch`, `format`, `formatBatch`, `formatJSON`, `formatSummary`
+
+`parseSpec` (see §1.1) strips YAML scalar quoting, so a quoted header like
+`id: "@speclang/examples/hello-world"` yields a bare `@speclang/examples/hello-world`
+that passes `idRule`. Composing the two documented functions works end-to-end:
+
+```ts
+import { parseSpec, validate } from 'speclang';
+
+const content = readFileSync('specs/hello-world.spec.md', 'utf8');
+const parsed = parseSpec(content);          // { id, version, blocks }
+const report = await validate({
+  filepath: 'specs/hello-world.spec.md',
+  headerLines: 12,
+  metadata: { id: parsed.id, version: parsed.version, layer: 10 },
+  content,
+});
+console.log(report.passed);                 // true for a valid spec
+```
 
 ### 1.4 Database
 
