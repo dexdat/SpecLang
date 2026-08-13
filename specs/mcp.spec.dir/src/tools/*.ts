@@ -1,1 +1,0 @@
-specs/mcp.spec.dir/handlers.spec.md

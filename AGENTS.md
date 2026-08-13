@@ -204,9 +204,9 @@ config/                         # ⚙️ Configuration
 
 **Compliance Status:**
 - ✅ `src/` - 7 symlinks working (auto-managed by pre-commit hook)
-- ✅ `scripts/` - 31/33 symlinked (94% compliant — README.md, test.sh remain)
+- ✅ `scripts/` - dual-view pattern (live audit 2026-08-13: 597 compliant / 602 non-exempt, 99.2%; 5 legacy `scripts/archive/` scripts lack spec sources — see `scripts/check_compliance.py --report`)
 - ✅ `.opencode/skills/` - ~148/148 symlinked (100% compliant)
-- ✅ `docs/` - 12/13 symlinked (92% compliant — PRD.html is HTML artifact)
+- ✅ `docs/` - dual-view pattern (same live audit: 178 files exempt — see `scripts/check_compliance.py --report`)
 - ✅ `.opencode/agents/` - 7/7 symlinked (100% compliant)
 
 **Overall: >95% compliant — See DUAL_VIEW_AUDIT.md for details (re-audited 2026-07-20)**
