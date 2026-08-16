@@ -41,13 +41,34 @@ speclang --help
 ```bash
 ./bin/speclang --help           # Show all commands
 ./bin/speclang validate         # Validate all specs
-./bin/speclang check            # Validate specs without generating
-./bin/speclang generate         # Generate code from specs
-./bin/speclang build            # Build code from specs
 ./bin/speclang cascade          # Run cascade (dry-run by default)
-./bin/speclang status           # Show system status
-./bin/speclang bootstrap        # Bootstrap SpecLang: verify specs, run cascade
 ```
+
+Full command surface (from `./bin/speclang --help`):
+
+| Command | Description |
+|---|---|
+| `start` | Start the SpecLang daemon (file watcher + MCP server) |
+| `cascade <spec>` | Run a cascade on a spec file |
+| `agent [agent]` | Run a cascade agent for a trigger using a provider-aware thinking level |
+| `status` | Show current system status |
+| `stop` | Stop the SpecLang daemon |
+| `daemon` | Manage SpecLang daemon (start / stop / status) |
+| `validate [files...]` | Validate spec files |
+| `check [files...]` | Validate specs without generating |
+| `generate [files...]` | Generate code from specs |
+| `build` / `compile [files...]` | Build code from specs |
+| `bootstrap` | Bootstrap SpecLang: verify specs, run cascade, validate build |
+| `mcp` | MCP server management (start / status / stop) |
+| `new <name>` | Create a new speclang project |
+| `expand <block-id>` | Expand a block ID into detailed specs |
+| `search <query>` | Search across all specs |
+| `maturity [spec]` | Show maturity level info or validate a spec |
+| `upgrade <spec>` | Upgrade a spec to a higher maturity level |
+| `downgrade <spec>` | Downgrade a spec to a lower maturity level |
+| `init <name>` | Create spec scaffolding for a feature (writes `specs/<name>/<name>.spec.md`) |
+| `history` / `log [spec]` | Show spec change history with git integration |
+| `help [command]` | Display help for a command |
 
 ### API Reference
 
@@ -69,8 +90,8 @@ For programmatic access, see:
 - 1822 tests passing (58 skipped; verified 2026-08-13; arch004 cascade convergence flake quarantined — daemon watcher scoped to its own fixture dir in the test, per-test timeouts aligned with polling budgets)
 
 **⚠️ Current Limitations:**
-- **No automatic file watching** - Coordinator must be invoked explicitly
-- **No background daemon** - Everything runs in foreground
+- **Daemon is opt-in** - `speclang start` runs the file watcher + MCP server + dashboard (and `daemon`/`stop` manage it); without it, everything runs in the foreground as explicit commands
+- **Explicit invocation by default** - Cascade must be invoked explicitly; automatic reactions require the daemon to be running
 - **Sequential execution** - Agents invoked one at a time via Task tool
 - **User-controlled** - You decide when to continue the cascade
 
