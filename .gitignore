@@ -102,3 +102,9 @@ test.spec.md
 .coding-hermes/board/*.parquet
 .coding-hermes/board/*.duckdb
 
+# Botched-heredoc debris (SL-GAP-041)
+EOF
+entry.target,
+debug_parse.js
+_tmp/
+
