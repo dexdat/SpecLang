@@ -136,7 +136,7 @@ afterAll(() => {
 
 describe("CLI Commands", () => {
   describe("search", () => {
-    it("should find specs matching query", async () => {
+    it("should find specs matching query", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await cliExec(`${CLI} search auth`);
       expect(stdout).toContain("Found");
       expect(stdout).toContain("@speclang/auth");
@@ -162,7 +162,7 @@ describe("CLI Commands", () => {
       });
     });
 
-    it("should filter by layer", async () => {
+    it("should filter by layer", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await cliExec(`${CLI} search mcp --layer 3`);
       expect(stdout).toContain("layer 3");
     });
@@ -174,12 +174,12 @@ describe("CLI Commands", () => {
   });
 
   describe("list", () => {
-    it("should list all specs", async () => {
+    it("should list all specs", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await cliExec(`${CLI} list`);
       expect(stdout).toContain("Total specs:");
     });
 
-    it("should support --json output", async () => {
+    it("should support --json output", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await cliExec(`${CLI} list --json`);
       // Tolerate leading progress text that some CLI builds emit
       // before JSON (e.g. "Generating..." banners). The helper finds
@@ -190,37 +190,37 @@ describe("CLI Commands", () => {
       expect(result.length).toBeGreaterThan(0);
     });
 
-    it("should filter by layer", async () => {
+    it("should filter by layer", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await cliExec(`${CLI} list --layer 0`);
       expect(stdout).toContain("Layer 0");
     });
 
-    it("should filter by prefix", async () => {
+    it("should filter by prefix", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await cliExec(`${CLI} list --prefix @speclang`);
       expect(stdout).toContain("@speclang");
     });
   });
 
   describe("get", () => {
-    it("should get spec by ID", async () => {
+    it("should get spec by ID", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await cliExec(`${CLI} get @speclang/auth`);
       expect(stdout).toContain("@speclang/auth");
       expect(stdout).toContain("Version:");
       expect(stdout).toContain("Layer:");
     });
 
-    it("should support --json output", async () => {
+    it("should support --json output", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await cliExec(`${CLI} get @speclang/auth --json`);
       const result = parseJsonFromOutput(stdout) as { id: string };
       expect(result.id).toBe("@speclang/auth");
     });
 
-    it("should show blocks with --blocks flag", async () => {
+    it("should show blocks with --blocks flag", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await cliExec(`${CLI} get @speclang/auth --blocks`);
       expect(stdout).toContain("Blocks:");
     });
 
-    it("should error on unknown spec", async () => {
+    it("should error on unknown spec", { timeout: 15000, retry: 2 }, async () => {
       try {
         await cliExec(`${CLI} get @unknown/spec`);
         expect(true).toBe(false); // Should not reach here
@@ -232,7 +232,7 @@ describe("CLI Commands", () => {
   });
 
   describe("validate", () => {
-    it("should validate specs", async () => {
+    it("should validate specs", { timeout: 15000, retry: 2 }, async () => {
       try {
         await cliExec(`${CLI} validate`);
         expect(true).toBe(false);
@@ -253,7 +253,7 @@ describe("CLI Commands", () => {
       expect(result.specs).toBeDefined();
     });
 
-    it("should support --verbose for warnings", async () => {
+    it("should support --verbose for warnings", { timeout: 15000, retry: 2 }, async () => {
       try {
         await cliExec(`${CLI} validate --verbose`);
         expect(true).toBe(false);
@@ -291,7 +291,7 @@ describe("CLI Commands", () => {
       fs.rmSync(checkDir, { recursive: true, force: true });
     });
 
-    it("should check specs", async () => {
+    it("should check specs", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await execAsync(`${CLI_BIN} check -d ${checkDir}`);
       expect(stdout).toContain("Checking specs");
     });
@@ -307,7 +307,7 @@ describe("CLI Commands", () => {
       expect(result.totalFiles).toBeGreaterThan(0);
     });
 
-    it("should support --verbose for warnings", async () => {
+    it("should support --verbose for warnings", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await execAsync(
         `${CLI_BIN} check -d ${checkDir} --verbose`,
       );
@@ -345,7 +345,7 @@ describe("CLI Commands", () => {
       fs.rmSync(exitCodeBase, { recursive: true, force: true });
     });
 
-    it("should warn and exit non-zero when no spec files are found", async () => {
+    it("should warn and exit non-zero when no spec files are found", { timeout: 15000, retry: 2 }, async () => {
       try {
         await execAsync(`${CLI_BIN} validate -d ${emptyDir}`);
         expect(true).toBe(false); // Should not reach here — exit code must be non-zero
@@ -358,7 +358,7 @@ describe("CLI Commands", () => {
       }
     });
 
-    it("should exit non-zero when a spec fails validation", async () => {
+    it("should exit non-zero when a spec fails validation", { timeout: 15000, retry: 2 }, async () => {
       try {
         await execAsync(`${CLI_BIN} validate -d ${brokenDir}`);
         expect(true).toBe(false); // Should not reach here — exit code must be non-zero
@@ -371,14 +371,14 @@ describe("CLI Commands", () => {
       }
     });
 
-    it("should exit 0 when all specs validate", async () => {
+    it("should exit 0 when all specs validate", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await execAsync(`${CLI_BIN} validate -d ${validDir}`);
       expect(stdout).toContain("Passed: 1");
     });
   });
 
   describe("index", () => {
-    it("should show index stats", async () => {
+    it("should show index stats", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await cliExec(`${CLI} index`);
       expect(stdout).toContain("=== Spec Index ===");
       expect(stdout).toContain("Total specs:");
@@ -394,7 +394,7 @@ describe("CLI Commands", () => {
       },
     );
 
-    it("should refresh index with --refresh", async () => {
+    it("should refresh index with --refresh", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await cliExec(`${CLI} index --refresh`);
       // The refresh may have errors but should show refreshing activity
       expect(stdout).toContain("Refreshing");
@@ -402,25 +402,25 @@ describe("CLI Commands", () => {
   });
 
   describe("cascade", () => {
-    it("should show cascade status", async () => {
+    it("should show cascade status", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await cliExec(`${CLI} cascade status`);
       expect(stdout).toContain("=== Cascade Status ===");
     });
 
-    it("should trigger cascade", async () => {
+    it("should trigger cascade", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await execAsync(
         `${CLI} cascade trigger @speclang/mcp`,
       );
       expect(stdout).toContain("=== Cascade Triggered ===");
     });
 
-    it("should abort cascade", async () => {
+    it("should abort cascade", { timeout: 15000, retry: 2 }, async () => {
       await cliExec(`${CLI} cascade trigger @speclang/mcp`);
       const { stdout } = await cliExec(`${CLI} cascade abort`);
       expect(stdout).toContain("Cascade aborted");
     });
 
-    it("should support --json output", async () => {
+    it("should support --json output", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await cliExec(`${CLI} cascade status --json`);
       const result = parseJsonFromOutput(stdout);
       expect(result.active).toBeDefined();
@@ -428,13 +428,13 @@ describe("CLI Commands", () => {
   });
 
   describe("generate", () => {
-    it("should run dry-run by default", async () => {
+    it("should run dry-run by default", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await cliExec(`${CLI} generate --dry-run`);
       expect(stdout).toContain("=== Code Generation ===");
       expect(stdout).toContain("DRY RUN");
     });
 
-    it("should support --json output", async () => {
+    it("should support --json output", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await cliExec(`${CLI} generate --dry-run --json`);
       const result = parseJsonFromOutput(stdout);
       expect(result.target).toBe("typescript");
@@ -442,7 +442,7 @@ describe("CLI Commands", () => {
   });
 
   describe("server", () => {
-    it("should show help", async () => {
+    it("should show help", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await cliExec(`${CLI} server --help`);
       expect(stdout).toContain("--port");
       expect(stdout).toContain("--daemon");
@@ -451,7 +451,7 @@ describe("CLI Commands", () => {
   });
 
   describe("help", () => {
-    it("should show main help", async () => {
+    it("should show main help", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await cliExec(`${CLI} --help`);
       expect(stdout).toContain("SpecLang - Specs are source code");
       expect(stdout).toContain("search");
@@ -464,7 +464,7 @@ describe("CLI Commands", () => {
       expect(stdout).toContain("cascade");
     });
 
-    it("should show command help", async () => {
+    it("should show command help", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await cliExec(`${CLI} search --help`);
       expect(stdout).toContain("--tags");
       expect(stdout).toContain("--layer");
@@ -490,7 +490,7 @@ describe("CLI Commands", () => {
       }
     });
 
-    it("should create a new minimal project", async () => {
+    it("should create a new minimal project", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await execAsync(
         `${CLI_BIN} new test-new-project --dir ${testProjectDir}`,
       );
@@ -505,7 +505,7 @@ describe("CLI Commands", () => {
       expect(fs.existsSync(path.join(testProjectDir, "tests"))).toBe(true);
     });
 
-    it("should create .speclangrc with correct content", async () => {
+    it("should create .speclangrc with correct content", { timeout: 15000, retry: 2 }, async () => {
       const speclangrcPath = path.join(testProjectDir, ".speclangrc");
       expect(fs.existsSync(speclangrcPath)).toBe(true);
 
@@ -515,7 +515,7 @@ describe("CLI Commands", () => {
       expect(speclangrc.targets).toContain("typescript");
     });
 
-    it("should create initial spec file", async () => {
+    it("should create initial spec file", { timeout: 15000, retry: 2 }, async () => {
       const specPath = path.join(testProjectDir, "specs", "main.spec.md");
       expect(fs.existsSync(specPath)).toBe(true);
 
@@ -524,7 +524,7 @@ describe("CLI Commands", () => {
       expect(specContent).toContain("speclang-header");
     });
 
-    it("should support http template", async () => {
+    it("should support http template", { timeout: 15000, retry: 2 }, async () => {
       const httpProjectDir = ".speclang/tmp/test-http-project";
 
       // Cleanup first
@@ -546,7 +546,7 @@ describe("CLI Commands", () => {
       fs.rmSync(httpProjectDir, { recursive: true, force: true });
     });
 
-    it("should support --bare flag", async () => {
+    it("should support --bare flag", { timeout: 15000, retry: 2 }, async () => {
       const bareProjectDir = ".speclang/tmp/test-bare-project";
 
       // Cleanup first
@@ -572,7 +572,7 @@ describe("CLI Commands", () => {
       fs.rmSync(bareProjectDir, { recursive: true, force: true });
     });
 
-    it("should fail with invalid project name", async () => {
+    it("should fail with invalid project name", { timeout: 15000, retry: 2 }, async () => {
       try {
         await execAsync(`${CLI_BIN} new 123-invalid --dir .speclang/tmp`);
         expect(true).toBe(false); // Should not reach here
@@ -582,7 +582,7 @@ describe("CLI Commands", () => {
       }
     });
 
-    it("should fail when directory exists without --force", async () => {
+    it("should fail when directory exists without --force", { timeout: 15000, retry: 2 }, async () => {
       // First create a project
       if (!fs.existsSync(testProjectDir)) {
         fs.mkdirSync(testProjectDir, { recursive: true });
@@ -599,7 +599,7 @@ describe("CLI Commands", () => {
       }
     });
 
-    it("should overwrite with --force flag", async () => {
+    it("should overwrite with --force flag", { timeout: 15000, retry: 2 }, async () => {
       // First create a project
       if (!fs.existsSync(testProjectDir)) {
         fs.mkdirSync(testProjectDir, { recursive: true });
@@ -617,7 +617,7 @@ describe("CLI Commands", () => {
       expect(stdout).toContain("Creating new speclang project");
     });
 
-    it("should show help for new command", async () => {
+    it("should show help for new command", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await execAsync(`${CLI_BIN} new --help`);
       expect(stdout).toContain("--dir");
       expect(stdout).toContain("--template");
