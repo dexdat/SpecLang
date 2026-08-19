@@ -1,6 +1,9 @@
 # Generated code - review the spec, not this
 generated/
 
+# Test scratch dirs (tests/meta/*.test.ts create these at repo root)
+test-temp-*/
+
 # Dependencies
 node_modules/
 
