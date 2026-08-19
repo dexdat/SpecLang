@@ -214,7 +214,7 @@ The coordinator processes in layer order (0 → 1 → 2 → ... → 10):
 
 # Pass 5: Layer 10+ (Tests)
 → Invoke @speclang-test-writer
-→ Verify: python3 -m pytest tests/
+→ Verify: npm test
 ```
 
 ### 3. Multi-Tree Spanning
@@ -243,7 +243,7 @@ python3 scripts/validate_autonomous.py --file <spec>
 npx tsc --noEmit
 
 # Gate 4: Test execution
-python3 -m pytest tests/ -v
+npm test
 ```
 
 **If any gate fails → Cascade pauses, error reported**
