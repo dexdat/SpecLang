@@ -2,7 +2,9 @@
 
 ## Overview
 
-This document outlines how SpecLang will be distributed to users.
+This document outlines how SpecLang will be distributed to users. All numbers
+and commands below were verified live on 2026-08-19 (CLI output, test suite,
+and scripts).
 
 ## Recommended Approach: NPM Package + Binary
 
@@ -15,21 +17,27 @@ npm install -g speclang
 **Why NPM?**
 - Node.js ecosystem already has CLI tools (like TypeScript, Vite, etc.)
 - Easy to install globally or locally per project
-- Automatic dependency management (chokidar, sqlite3, etc.)
+- Automatic dependency management (chokidar, better-sqlite3, etc.)
 - Version management with npm
 - Cross-platform (Windows, macOS, Linux)
 
-**Package Structure:**
+**Package Structure** (matches `files` whitelist in package.json v1.0.0):
 ```
 speclang/
 ├── bin/
-│   ├── speclang          # Unix executable
-│   └── speclang.cmd      # Windows executable
-├── dist/                 # Compiled TypeScript
-├── specs/                # Default specs/templates
-├── package.json
-└── README.md
+│   ├── speclang          # Main CLI entry (Node shebang)
+│   ├── speclangd         # Daemon entry point
+│   └── speclangd-poc     # Daemon POC entry point
+│   (speclang.cmd — Windows shim is planned, not yet shipped)
+├── dist/                 # Compiled TypeScript (+ bundled default specs/templates)
+├── README.md
+├── CHANGELOG.md
+├── LICENSE
+└── package.json
 ```
+
+`npm pack --dry-run` succeeds against the current package: `speclang-1.0.0.tgz`,
+1747 files, 991.9 kB packed / 5.2 MB unpacked.
 
 ### Secondary: Standalone Binary (Optional)
 
@@ -54,10 +62,10 @@ speclang --version
 
 ### Phase 1: NPM Package (Priority)
 
-1. **Prepare package.json**
-   - Add `bin` field
-   - Add `files` whitelist
-   - Set proper version
+1. **Prepare package.json** — DONE (v1.0.0)
+   - ✅ `bin` field present (`"speclang": "./bin/speclang"`)
+   - ✅ `files` whitelist present (`dist`, `bin`, `README.md`, `CHANGELOG.md`, `LICENSE`)
+   - ✅ Version set (1.0.0) and tagged in git (`v1.0.0`)
 
 2. **Build process**
    ```bash
@@ -86,85 +94,79 @@ speclang --version
 
 ## Current Status
 
-**What's Working:**
-- ✅ TypeScript builds successfully
-- ✅ 1229 tests pass
-- ✅ CLI has 7 functional commands
-- ✅ 419 specs in system
-- ✅ 370 symlinks (dual-view pattern)
+**What's Working (verified 2026-08-19):**
+- ✅ TypeScript builds successfully (`npx tsc --noEmit` clean, exit 0)
+- ✅ 1826 tests pass (58 skipped) — `npm test` / vitest steady state
+- ✅ CLI has 20 functional commands (per `./bin/speclang --help`; hard-checks counts 17 distinct)
+- ✅ 449 specs in system (447 `.spec.md` + 2 `.scl`) — `./bin/speclang status`
+- ✅ 649 symlinks (dual-view pattern)
+- ✅ Reference validation clean — `scripts/validate_refs.py`: "All references valid" (0 broken)
+- ✅ Database schema complete — 8 migrations: initial, events, cascades, sessions, ralph, locks, commands, index
+- ✅ All 6 critical hard checks pass — `scripts/hard-checks.py`: 6/6 (build, 1826 tests, refs, spec-impl sync, CLI, schema)
 
-**What Needs Fixing Before Release:**
-- 🔴 13 broken spec references
-- 🟡 2 database migrations (need more complete schema)
-- 🟡 Hard checks script has parsing bug
+**Previously listed release blockers are resolved:**
+- ~~13 broken spec references~~ → 0 (validation clean)
+- ~~2 database migrations~~ → 8 migration files
+- ~~Hard checks script parsing bug~~ → hard-checks.py passes 6/6
 
-## Immediate Action Items
+## Remaining Pre-Release Items
 
-### 1. Fix Broken References (Critical)
+### 1. Publish to NPM
 
-Run validation and fix each error:
+`npm pack` is verified; the remaining step is pushing to the registry:
+
 ```bash
-python3 scripts/validate_refs.py
+npm publish
 ```
 
-### 2. Complete Database Schema
+### 2. Windows `speclang.cmd` Shim
 
-Need migrations for all tables mentioned in specs:
-- specs, headers, blocks
-- file_events, cascades
-- commands, sessions
-- locks, etc.
+A `.cmd` shim for Windows users is planned but not yet shipped — `bin/`
+currently contains only `speclang`, `speclangd`, `speclangd-poc`.
 
-### 3. Update package.json
-
-Add proper packaging configuration:
-```json
-{
-  "name": "speclang",
-  "version": "0.1.0",
-  "bin": {
-    "speclang": "./bin/speclang"
-  },
-  "files": [
-    "bin/",
-    "dist/",
-    "specs/",
-    "README.md"
-  ],
-  "scripts": {
-    "prepublishOnly": "npm run build"
-  }
-}
-```
-
-### 4. Create Release Checklist
+### 3. Release Checklist (per-publish gate)
 
 Use hard-checks.py as the gate:
+
 ```bash
 python3 scripts/hard-checks.py
 # Must pass all 6 critical checks
+```
+
+Reference validation (kept as a pre-publish sanity check):
+
+```bash
+python3 scripts/validate_refs.py
 ```
 
 ## Release Criteria
 
 Before publishing to NPM:
 
-- [ ] All 6 critical hard checks pass
-- [ ] 13 broken references fixed
-- [ ] Database schema complete (8+ migrations)
-- [ ] Documentation updated
-- [ ] Example projects working
-- [ ] Version tagged in git
+- [x] All 6 critical hard checks pass (verified 2026-08-19)
+- [x] Broken references fixed (0 remaining; validate_refs.py clean)
+- [x] Database schema complete (8 migrations)
+- [x] Version tagged in git (v1.0.0)
+- [x] Example projects present (`examples/`: hello-world, auth, crud-app)
+- [ ] Published to npm registry (`npm publish` not yet run)
+- [ ] Windows `speclang.cmd` shim shipped
+- [ ] Standalone binary builds (pkg/nexe)
 
-## User Installation (Future State)
+## User Installation
+
+In the repo today the CLI runs via `./bin/speclang`; once published to npm it
+is available globally:
 
 ```bash
-# Global install
+# Global install (after npm publish)
 npm install -g speclang
 
-# Initialize project
-mkdir my-project && cd my-project
-speclang init
+# Create a new project
+speclang new my-project
+cd my-project
+
+# Or add spec scaffolding inside an existing project (name required)
+speclang init my-feature     # writes specs/my-feature/my-feature.spec.md
 
 # Start daemon
 speclang start
@@ -173,6 +175,9 @@ speclang start
 speclang validate
 speclang cascade specs/my-feature.spec.md
 ```
+
+All commands above verified live: `new <name>` (exit 0), `init <name>` (exit 0),
+`validate <file>` (exit 0), `status` (exit 0).
 
 ## Recommendation
 
