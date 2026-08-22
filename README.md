@@ -354,7 +354,7 @@ The cascade has two entry points — a plain CLI that works in any terminal, and
 | `@speclang-coordinator` | Orchestrates cascade | Tracks state, manages depth |
 | `@speclang-spec-writer` | Creates/updates specs | validate_refs.py |
 | `@speclang-code-gen` | Generates code | npx tsc --noEmit |
-| `@speclang-test-writer` | Creates tests | pytest |
+| `@speclang-test-writer` | Creates tests | npm test |
 | `@speclang-verifier` | Validates output | All checks + steering |
 
 ### File Structure
