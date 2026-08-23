@@ -203,13 +203,13 @@ config/                         # ⚙️ Configuration
 ```
 
 **Compliance Status:**
-- ✅ `src/` - 7 symlinks working (auto-managed by pre-commit hook)
-- ✅ `scripts/` - dual-view pattern (live audit 2026-08-13: 597 compliant / 602 non-exempt, 99.2%; 5 legacy `scripts/archive/` scripts lack spec sources — see `scripts/check_compliance.py --report`)
+- ✅ `src/` - 431 dual-view symlinks working, 0 broken (auto-managed by pre-commit hook)
+- ✅ `scripts/` - dual-view pattern (live audit 2026-08-22: 598 compliant / 603 non-exempt, 99.2%; 5 legacy `scripts/archive/` scripts + 2 `docs/dogfood/` field-test reports lack spec sources — both documented exemptions, see `scripts/check_compliance.py --report`)
 - ✅ `.opencode/skills/` - ~148/148 symlinked (100% compliant)
 - ✅ `docs/` - dual-view pattern (same live audit: 178 files exempt — see `scripts/check_compliance.py --report`)
 - ✅ `.opencode/agents/` - 7/7 symlinked (100% compliant)
 
-**Overall: >95% compliant — See DUAL_VIEW_AUDIT.md for details (re-audited 2026-07-20)**
+**Overall: >95% compliant — See DUAL_VIEW_AUDIT.md for details (re-audited 2026-08-22)**
 
 **Why This Matters:**
 We're bootstrapping a **NON-DETERMINISTIC COMPILER** (uses LLMs). Without dual-view:

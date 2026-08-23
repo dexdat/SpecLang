@@ -46,6 +46,7 @@ EXEMPTIONS = [
     r'\.ralph/state/',
     r'scripts/temp/',           # Temporary validation scripts - one-time use
     r'docs/archive/',           # Historical documentation - not implementing
+    r'docs/dogfood/',           # Dogfood field-test reports - historical documentation, not implementing
     r'docs/prompts/',          # Development prompts - planning artifacts, not implementation
     r'src/generated/',         # SPECLANG-GENERATED output of src/codegen/ — gitignored, contains SPECLANG-GENERATED marker
 ]
