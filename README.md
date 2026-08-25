@@ -41,7 +41,7 @@ speclang --help
 ```bash
 ./bin/speclang --help           # Show all commands
 ./bin/speclang validate         # Validate all specs
-./bin/speclang cascade          # Run cascade (dry-run by default)
+./bin/speclang cascade <spec>   # Run a cascade on a spec file
 ```
 
 Full command surface (from `./bin/speclang --help`):
