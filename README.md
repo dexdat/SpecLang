@@ -395,6 +395,8 @@ scripts/                 # Tools
 
 ## What Works vs What Doesn't
 
+*(Last reconciled 2026-08-27 against live state: `./bin/speclang --help` command surface + the 1826-test suite.)*
+
 ### ✅ Working
 
 - **Spec validation**: All 449 specs have valid headers and references
@@ -408,12 +410,12 @@ scripts/                 # Tools
 
 - **Code generation**: Scripts exist but have bugs (nested backticks, duplication)
 - **TypeScript compilation**: Works with `--skipLibCheck`, has type conflicts
-- **Test suite**: Created but import paths broken
+- **Test suite**: Green — 1826 tests passing, 58 skipped (verified 2026-08-27; the old import-path failure state was fixed — see "Fix test suite imports" in The Path Forward)
 - **Steering packets**: Now accurate (fixed in redesign)
 
 ### ❌ Not Working (Yet)
 
-- **Automatic cascade**: No file watching (by design)
+- **Automatic cascade**: File watching requires the opt-in daemon — `speclang start` runs the file watcher + MCP server (see Current Limitations above); without the daemon, cascades are triggered manually
 - **Self-hosting**: Scripts are handwritten, not generated
 - **Full tree traversal**: Coordinator doesn't automate multi-tree yet
 - **Integration tests**: None exist
@@ -425,7 +427,7 @@ scripts/                 # Tools
 
 | Feature | Original Vision | Current Reality |
 |---------|----------------|-----------------|
-| File watching | inotify daemon | Manual trigger |
+| File watching | inotify daemon | Daemon (opt-in) / manual trigger |
 | Agent triggering | Automatic | Explicit Task invocation |
 | Convergence | Auto-detected | User decision |
 | Multi-tree | Automatic spanning | Explicit layer-by-layer |
