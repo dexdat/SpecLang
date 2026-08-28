@@ -22,10 +22,13 @@ SpecLang is designed as a **reactive multi-agent system** where:
 The reactive vision above is the **design goal**, not the current
 implementation. Per README's Current Status:
 
-- **No automatic file watching** - the Coordinator must be invoked
-  explicitly (e.g. `@speclang-coordinator start-cascade <spec>`); file
-  changes do not yet trigger agent reactions on their own.
-- **No background daemon** - everything runs in the foreground
+- **Daemon is opt-in** - `speclang start` runs the file watcher + MCP
+  server + dashboard (and `daemon`/`stop` manage it); without it,
+  everything runs in the foreground as explicit commands
+- **Explicit invocation by default** - Cascade must be invoked
+  explicitly (e.g. `@speclang-coordinator start-cascade <spec>` or
+  `./bin/speclang cascade <spec>`); automatic reactions require the
+  daemon to be running
 - **Sequential execution** - agents invoked one at a time
 - **User-controlled** - you decide when to continue a cascade
 
@@ -33,6 +36,17 @@ Indexing and validation are manual steps too: run
 `python3 scripts/generate_index.py --generate` after editing specs, and use
 `python3 scripts/generate_index.py --validate` as the reference gate (it
 exits non-zero while missing references exceed `--max-missing`).
+
+### Try It
+
+```bash
+# 1. Dry run — confirm the spec's TypeScript block is found
+./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run
+
+# 2. Run the cascade (dry-run by default); output lands in a
+#    `generated/` sibling of the spec's directory
+./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md
+```
 
 ## Core Principle
 
