@@ -343,6 +343,37 @@ The cascade has two entry points — a plain CLI that works in any terminal, and
 #   - Report actual status (not claimed)
 ```
 
+### Run a Root Example
+
+The root `examples/` directory holds **runnable example outputs** — one `index.ts` entry point per example (`hello-world/`, `auth/`, `crud-app/`). Every file under it is a **symlink into `specs/examples.spec.dir/`** — the dual-view pattern applied to runnable code:
+
+```
+examples/
+├── README.md       # → specs/examples.spec.dir/README.md
+├── hello-world/
+│   └── index.ts    # → specs/examples.spec.dir/hello-world/src/hello-world.ts
+├── auth/
+│   └── index.ts    # → specs/examples.spec.dir/auth/src/auth.ts
+└── crud-app/
+    └── index.ts    # → specs/examples.spec.dir/crud-app/src/crud-app.ts
+```
+
+- **`specs/examples.spec.dir/`** — spec sources, canonical. Each example is authored as a spec (`hello-world.spec.md`, `auth.spec.md`, `crud-app.spec.md`) and assembled into `src/*.ts` under its directory.
+- **`examples/`** — runnable symlinked outputs. `examples/<name>/index.ts` is the same file as `specs/examples.spec.dir/<name>/src/<name>.ts`, visible from two locations. The files are SPECLANG-GENERATED — edit the spec, not the output.
+
+Run a root example directly:
+
+```bash
+npx ts-node examples/hello-world/index.ts
+# Output: Hello, World!
+```
+
+Because both paths resolve to the same file, the spec-tree copy runs identically:
+
+```bash
+npx ts-node specs/examples.spec.dir/hello-world/src/hello-world.ts
+```
+
 ---
 
 ## Architecture
@@ -365,8 +396,15 @@ specs/                    # Source of truth (447 .spec.md files, 449 incl .scl)
 ├── core.spec.md         # Layer 1 - Core concepts
 ├── cascade.spec.md      # Layer 1 - Cascade system
 ├── auth.spec.md         # Layer 2 - Auth feature
-└── examples.spec.dir/  # Examples
-    └── hello-world.spec.md
+└── examples.spec.dir/  # Examples (spec sources — canonical)
+    ├── hello-world/hello-world.spec.md
+    ├── auth/auth.spec.md
+    └── crud-app/crud-app.spec.md
+
+examples/                # Runnable example outputs (symlinks → specs/examples.spec.dir/)
+├── hello-world/index.ts # → specs/examples.spec.dir/hello-world/src/hello-world.ts
+├── auth/index.ts        # → specs/examples.spec.dir/auth/src/auth.ts
+└── crud-app/index.ts    # → specs/examples.spec.dir/crud-app/src/crud-app.ts
 
 src/                     # Generated code
 ├── examples/
