@@ -204,7 +204,7 @@ config/                         # ⚙️ Configuration
 
 **Compliance Status:**
 - ✅ `src/` - 431 dual-view symlinks working, 0 broken (auto-managed by pre-commit hook)
-- ✅ `scripts/` - dual-view pattern (live audit 2026-08-22: 598 compliant / 603 non-exempt, 99.2%; 5 legacy `scripts/archive/` scripts + 2 `docs/dogfood/` field-test reports lack spec sources — both documented exemptions, see `scripts/check_compliance.py --report`)
+- ✅ `scripts/` - dual-view pattern (live audit 2026-08-22: 598 compliant / 603 non-exempt, 99.2%; 5 non-compliant — all legacy `scripts/archive/` scripts lack spec sources; 178 exempt files include the 2 `docs/dogfood/` field-test reports, see `scripts/check_compliance.py --report`)
 - ✅ `.opencode/skills/` - ~148/148 symlinked (100% compliant)
 - ✅ `docs/` - dual-view pattern (same live audit: 178 files exempt — see `scripts/check_compliance.py --report`)
 - ✅ `.opencode/agents/` - 7/7 symlinked (100% compliant)
