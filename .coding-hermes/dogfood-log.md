@@ -18,3 +18,5 @@ Field-test records for SpecLang. Each entry: date, verdict, promise, top finding
 - **Verified fixed:** SL-GAP-001 (new → validate ✅, all 3 templates), SL-GAP-010 (README/CASCADE_DEMO path corrected), SL-GAP-012 (pytest 20/20 via pytest.ini pythonpath).
 - **Artifacts:** docs/dogfood/2026-08-13-integration.md (integration report), docs/dogfood/diagnostics.md (diagnostic trail), specs/skills.spec.dir/skills/speclang-usage.md + .opencode/skills/speclang-usage.md symlink (usage skill). Board: tasks.jsonl + tasks.md, IDs SL-GAP-033..038 (status open).
 - **Foreman:** not woken — cooldown 7200s (< 14400), Enabled=true, ticks every 2h and will pick up the open tasks.
+2026-09-01 | PROMISING-BUT-ROUGH | 2s t2fs | friction 6 | 5 findings
+
