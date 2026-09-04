@@ -3502,3 +3502,14 @@ Promise: {"entry_point":"CLI binary ./bin/speclang (Node/TypeScript; also npm li
 - [P1] init→cascade silently writes 0 files — speclang init generates specs with typescript, so the pipeline reports 'Converged: Yes' yet writes no files ('No TypeScript code blocks found') — a fal
 - [P2] Daemon status sticks at 'cascading' — After a watched-file event, /api/status never returns to 'converged' even after cascadeDepth/filesChanged reset to 0 and quietPeriod elapsed — watcher works but its status surface misleads the user.
 - [P2] Docs drift: port collisions, output path, MCP silence — Default port 3000 collides with other local services and the -p flag only appears in --help; GETTING-STARTED says output lands in a 'generated/ sibling of the spec's directory' but cascades wrote to s
+
+## Dogfood Findings (2026-09-04)
+Verdict: PROMISING-BUT-ROUGH
+Promise: {"entry_point":"CLI binary (./bin/speclang) with subcommands: start, cascade, agent, validate, generate, build, mcp, daemon; also exposes an MCP server interface for AI agent integration","promise":"SpecLang claims a user can write natural language specifications (specs with YAML headers) that casca
+
+- [P0] Init scaffolding produces specs incompatible with cascade/generate — `speclang init` creates specs with ```ts code blocks, but cascade/generate expect ```speclang blocks with @kind:code. Running cascade on init-generated specs says 'No TypeScript code blocks found'. Th
+- [P0] 42 of 1884 tests fail from minimatch API break — Tests in guard.test.ts, agent-ownership.test.ts, and agents.test.ts all fail with 'minimatch is not a function'. This is a breaking import change (wrong export used). A user running `npm test` sees fa
+- [P0] Daemon reports false success then fails its own typecheck — Daemon start --port 9191 prints 'Started successfully' when the port is already in use (silent no-op). On clean start, the startup pipeline runs tsc --noEmit which hits minimatch import errors in owne
+- [P1] MCP server SSE crashes on SQLite schema mismatch — Starting MCP with --remote succeeds but the SSE subsystem throws 'no such column: processed' on every poll cycle. The MCP interface for AI agent integration — a core part of the promise — runs but is 
+- [P2] 535 warnings from validate overwhelm new users — Running validate on the included 449 specs produces 535 warnings. Non-blocking but the noise makes it hard for a new user to distinguish real issues from warnings, reducing trust in the tool's output.
+

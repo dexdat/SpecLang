@@ -20,3 +20,4 @@ Field-test records for SpecLang. Each entry: date, verdict, promise, top finding
 - **Foreman:** not woken — cooldown 7200s (< 14400), Enabled=true, ticks every 2h and will pick up the open tasks.
 2026-09-01 | PROMISING-BUT-ROUGH | 2s t2fs | friction 6 | 5 findings
 
+2026-09-04 | PROMISING-BUT-ROUGH | 5s t2fs | friction 7 | 5 findings\n
