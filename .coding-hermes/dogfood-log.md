@@ -21,3 +21,4 @@ Field-test records for SpecLang. Each entry: date, verdict, promise, top finding
 2026-09-01 | PROMISING-BUT-ROUGH | 2s t2fs | friction 6 | 5 findings
 
 2026-09-04 | PROMISING-BUT-ROUGH | 5s t2fs | friction 7 | 5 findings\n
+2026-09-07 | PROMISING-BUT-ROUGH | 45s t2fs | friction 12 | 5 findings
