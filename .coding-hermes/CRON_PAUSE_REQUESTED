@@ -1,0 +1,4 @@
+CRON_PAUSE_REQUESTED — speclang
+Created: 2026-09-11T00:08:03Z (Bane request via Telegram)
+Reason: User requested pause of the speclang foreman loop. All board rows complete at pause time; no failure cause.
+Action: resume = set_project_enabled.py speclang true (cooldown pin 21600 preserved) + delete this marker.
