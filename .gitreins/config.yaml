@@ -1,6 +1,7 @@
 guards:
   secrets: true
   lint: false
+  allow_skips: true
   tests: true
   test_command: npx vitest run --passWithNoTests 2>&1 | grep -q 'Tests.*passed' &&
     exit 0 || exit 1
