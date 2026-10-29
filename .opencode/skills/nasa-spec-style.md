@@ -1,0 +1,1 @@
+../../specs/skills.spec.dir/skills/nasa-spec-style.md
