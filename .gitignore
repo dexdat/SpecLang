@@ -111,3 +111,18 @@ entry.target,
 debug_parse.js
 _tmp/
 
+
+# unblock-agent settle 2026-11-16: generated churn classes blocking foreman ownership gate
+# gitreins judge token-usage log + transient locks (churns every judge run; not a verdict artifact)
+.gitreins/usage.jsonl
+.gitreins/tasks.yaml.lock
+# vfs indexer caches/stamps (graph.db/.last_warm already ignored above)
+.vfs/graph/.last_reconcile
+.vfs/graph/.parse_cache.json
+.vfs/graph/.symbols_cache.json
+.vfs/graph/coverage.json
+.vfs/graph/state.json
+.vfs/graph/edges.jsonl.lock
+# transient board lock + wave dispatch manifests
+.coding-hermes/board/.lock
+.coding-hermes/waves/
