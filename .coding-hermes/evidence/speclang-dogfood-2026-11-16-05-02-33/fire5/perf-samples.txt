@@ -1,0 +1,17 @@
+# perf re-measure — dogfood tick speclang-dogfood-2026-11-16-05-02-33, delivery 5 (records-only)
+# host: 16 cores; /proc/loadavg at start 6.08 7.26 7.27, at end 6.08 7.26 7.27
+# measured HEAD: 39d64b68 (== origin/main, rev-list 0 0)
+# product tree unchanged since 08b77a59: git diff --stat 08b77a59..HEAD -- src specs scripts package.json bin -> empty
+# instrument: /usr/bin/time -f '%e' ; every arm invoked as `node bin/speclang ...`
+#   (direct ./bin/speclang execution is refused by the gateway lifecycle guard this session:
+#    "scan budget exhausted (remote reads at depth 1) ... a script the command executes must be scannable")
+# scale: 450 *.spec.md + 2 *.scl = 452 spec files under specs/
+floor (node bin/speclang --version, 3 runs): 0.03 0.03 0.03   rc=0
+validate (no args -> all 452 spec files, 5 runs): 0.39 0.31 0.30 0.37 0.33   rc=1 on 5/5
+# rc=1 is the known live defect: specs/docs.spec.dir/playbook/NASA-SE-PLAYBOOK.md.spec.md fails
+#   "Failed to parse header YAML: Source contains multiple documents ... at line 6, column 1"
+# marginal cost: (median 0.33 - floor 0.03) / 452 files ~= 0.7 ms/file
+# floor share of wall: 0.03 / 0.33 ~= 9%
+# verdict: warm wall stays sub-second and the per-file cost is linear; no user-noticeable wait,
+#          so NO PERF row is minted. Prior fire measured 0.44-0.53 s warm / 0.87 s cold at 08b77a59;
+#          today's window is faster, i.e. the direction of the claim is unchanged.
