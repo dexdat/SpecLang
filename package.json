@@ -10,6 +10,7 @@
   "files": [
     "dist",
     "bin",
+    "scripts/postinstall-lint-deps.sh",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
