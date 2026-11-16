@@ -1,0 +1,21 @@
+# GitReins Tier-2 verdict capture — DF-SPECLANG-1-R4
+captured_at: 2026-11-16T08:12:29-05:00
+repo: dexdat/SpecLang
+graded_commit: 3f4d1d8a48fac502c815454ae7a5da65e2480c0a
+command: gitreins task start DF-SPECLANG-1-R4; gitreins task complete DF-SPECLANG-1-R4
+note: .gitreins/config.yaml sets history.enabled=false and .gitignore ignores .gitreins/history/, so the verdict was NOT persisted by the tool; this file preserves the exact console verdict.
+
+Judge Result: DF-SPECLANG-1-R4
+Stage tier1: PASS
+    ✓ secrets: ok (no output)
+  ✓ build: npm notice run speclang@1.0.0 build
+  ✓ tests: Start at  08:01:35
+
+Stage tier2: FAIL
+  INCOMPLETE
+  — speclang init demo creates a cascade-compatible spec with a speclang fence; node bin/speclang cascade specs/demo/*.spec.md does not report No TypeScript code blocks found and generates a non-empty .ts file; npm run build and focused tests pass.: Not examined — evaluation ended before this criterion was reached (no judgement was made about it)
+  ✗ Coverage FAILED — not passing: speclang init demo creates a cascade-compatible spec with a speclang fence; node bin/speclang cascade specs/demo/*.spec.md does not report No TypeScript code blocks found and generates a non-empty .ts file; npm run build and focused tests pass.
+Cap exceeded: Iteration cap (100) reached (101.0 used). Increase max_iterations or split criteria. Partial verdict — 0 of 1 criteria graded, 1 ungraded. The run spent 561,170 in / 2,465 out over 101.0 iterations.
+
+Overall: FAIL ✗
+COMPLETE_EXIT=1
