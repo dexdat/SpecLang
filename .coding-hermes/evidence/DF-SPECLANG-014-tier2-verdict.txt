@@ -1,0 +1,23 @@
+Completed: DF-SPECLANG-014 → complete
+Control root: /home/kara/speclang
+Scan scope:   /home/kara/speclang
+
+Evaluating...
+gitreins.evaluator: WARNING: Context budget 1810132/2000000 input tokens (largest single prompt 55922) — compacting (compaction #1)
+Judge Result: DF-SPECLANG-014
+Stage tier1: PASS
+    ✓ secrets: ok (no output)
+  ✓ build: npm notice run speclang@1.0.0 build
+  ✓ tests: Start at  13:52:12
+
+Stage tier2: PASS
+  COMPLETE
+  ✓ npm run build returns exit 0: `npm run build` (tsc) in /home/kara/speclang -> EXIT:0, log contained only npm notices. read_lsp_diagnostics returned count 0. Note: tsconfig.json include list covers only index.ts, src/** and specs/mcp.spec.dir/src, so the changed daemon/pipeline spec sources are not type-checked by the build; the runtime behaviour was therefore verified live (see items 2 and 3).
+  ✓ reactive daemon run on a project with build.yaml executes pipeline stages and produces a non-empty generated file with no Cannot find module error: Live run in /tmp/proj2 (build.yaml stage `echo hello-from-pipeline > generated/out.txt`): log shows "[Daemon] Executing pipeline..." -> "[Pipeline] Loaded config from build.yaml" -> "[StageExecutor] Executing stage: gen" -> "[StageExecutor] Stage gen completed: SUCCESS (9ms)" -> "[Daemon] Pipeline succeeded!"; generated/out.txt = "hello-from-pipeline" (20 bytes); no "Cannot find module" in the log. Code: specs/daemon.spec.dir/src/daemon.ts:330-352 tries candidate specifiers and throws the last error if none load; candidate '../../specs/pipeline.spec.dir/src/executor.js' resolves from dist/src/daemon/daemon.js (dist/specs/pipeline.spec.dir/src/executor.js exists). specs/daemon.spec.dir/src/watcher.ts:66-70 now ensureDirSync's missing watch dirs so events actually fire. [resolution 0.13; build.yaml]
+  ✓ after 3 consecutive pipeline failures the daemon stops recascading and its state file shows status error: Live run in /tmp/proj3 (stage `run: "exit 1"`, recovery.max_attempts 1): log shows exactly "consecutive failure 1", "2", "3", then "[Daemon] PIPELINE FAILED 3 CONSECUTIVE TIMES — stopping auto-recascade." with no further "[Daemon] Executing pipeline..." or "[Convergence] State reset" lines; .speclang/daemon-state.json contains "status": "error". Code: specs/daemon.spec.dir/src/daemon.ts:96-108 sets DaemonStatusKind.Error and returns before convergence.reset(); counter reset on success at daemon.ts:363.
+All three criteria are met: build exits 0, a live daemon run executes build.yaml stages and writes a non-empty generated file with no module-resolution error, and three consecutive pipeline failures stop recascading with daemon-state.json status "error"; the only test-suite failure observed (tests/symlinks.test.ts:334 timeout) is a pre-existing flake that passes in isolation (16/16). [uncovered failure paths: failure mode 0 (No automated regression test covers the layout-safe executor import or the 3-strike recascade backoff, so a future refactor of the candidate paths or the failure counter would go unnoticed by CI): detected_by is empty — uncovered failure path; failure mode 1 (The 3-strike stop is permanent for the process lifetime: after the daemon goes Error it never resets pipelineFailures, so a later successful pipeline (e.g. after the user fixes build.yaml and a new file event arrives) still hits the >=3 branch and re-enters Error instead of resuming auto-recascade): detected_by is empty — uncovered failure path]
+
+Overall: PASS ✓
+gitreins.persist: WARNING: Refusing to persist verdict without authoritative working-tree fingerprint: nested-repository
+  ⚠ Failed to persist verdict (non-fatal)
+rc=0
