@@ -53,11 +53,24 @@ export async function startDaemon(options: {
   // Create and start daemon
   const daemon = new Daemon();
   
-  // Handle graceful shutdown
+  // Handle graceful shutdown (idempotent: SIGINT+SIGTERM or a repeated signal
+  // must not run stop()/unlink twice).
+  let shuttingDown = false;
   const shutdown = async () => {
+    if (shuttingDown) return;
+    shuttingDown = true;
     console.log('\n\n🛑 Shutting down...');
-    await daemon.stop();
-    fs.unlinkSync(pidFile);
+    try {
+      await daemon.stop();
+    } finally {
+      // DF-SPECLANG-6: `speclang stop` unlinks this same pid file right after
+      // sending SIGTERM, so whoever unlinks second must not throw ENOENT.
+      try {
+        fs.unlinkSync(pidFile);
+      } catch (err) {
+        if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
+      }
+    }
     process.exit(0);
   };
   
