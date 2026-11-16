@@ -170,6 +170,16 @@ const migrations: Migration[] = [
         END;
       `);
     }
+  },
+  {
+    version: 2,
+    name: 'add_events_processed',
+    up: (db: DatabaseType) => {
+      db.exec(`
+        ALTER TABLE events ADD COLUMN processed INTEGER NOT NULL DEFAULT 0;
+        CREATE INDEX IF NOT EXISTS idx_events_processed_timestamp ON events(processed, timestamp);
+      `);
+    }
   }
 ];
 

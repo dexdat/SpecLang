@@ -2,6 +2,22 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
+import { SpecLangDB } from "../src/db/index.js";
+import type { MCPSSEConfig } from "../src/mcp/types.js";
+
+const SSE_TEST_CONFIG: MCPSSEConfig = {
+  enabled: false,
+  heartbeatInterval: 0,
+};
+
+function pollSSEManager(manager: object): void {
+  const internalManager = manager as {
+    pollChanges: () => void;
+    lastPollTime: number;
+  };
+  internalManager.lastPollTime = 0;
+  internalManager.pollChanges();
+}
 
 // Test MCP server configuration and integration
 // The MCP server is implemented in src/mcp/server.ts
@@ -163,6 +179,50 @@ describe("MCP Server", () => {
     it("should have SSE module", async () => {
       const { createSSEManager } = await import("../src/mcp/sse.js");
       expect(createSSEManager).toBeDefined();
+    });
+
+    it("polls unprocessed events after a fresh database migration", async () => {
+      const { SSEManager } = await import("../src/mcp/sse.js");
+      const db = new SpecLangDB({ path: path.join(tempDir, "sse.db"), wal: false });
+      db.initialize();
+      const events = db.getDatabase().prepare("SELECT id, processed FROM events");
+      expect(() => events.all()).not.toThrow();
+      db.insertEvent({
+        timestamp: 1,
+        kind: "modify",
+        path: "src/changed.ts",
+        session: null,
+        cascade_id: null,
+        details: null,
+      });
+      db.insertEvent({
+        timestamp: 2,
+        kind: "create",
+        path: "src/created.ts",
+        session: null,
+        cascade_id: null,
+        details: null,
+      });
+      db.getDatabase().prepare("UPDATE events SET processed = 1 WHERE path = ?").run("src/created.ts");
+
+      const writes: string[] = [];
+      const response = {
+        writeHead: vi.fn(),
+        write: (data: string) => {
+          writes.push(data);
+        },
+        on: vi.fn(),
+      };
+      const manager = new SSEManager(db, SSE_TEST_CONFIG);
+      manager.addClient("test-client", response);
+
+      expect(() => pollSSEManager(manager)).not.toThrow();
+      expect(writes).toHaveLength(1);
+      expect(writes[0]).toContain("src/changed.ts");
+      expect(writes[0]).not.toContain("src/created.ts");
+
+      manager.stop();
+      db.close();
     });
   });
 
