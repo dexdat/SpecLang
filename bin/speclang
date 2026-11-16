@@ -414,8 +414,13 @@ program
   .option('-f, --format <format>', 'Output format (text, json)', 'text')
   .action(async (files, options) => {
     const projectDir = path.resolve(options.dir);
-    
-    console.log('📋 Validating specs...');
+    const format = options.format || 'text';
+    // Machine formats own STDOUT: a human banner printed before the payload
+    // makes `speclang validate --format json | jq .` fail to parse
+    // (DF-SPECLANG-9).
+    const banner = format === 'json' ? console.error : console.log;
+
+    banner('📋 Validating specs...');
     
     try {
       const { validateCommand } = require('../dist/src/validation/cli.js');
@@ -424,7 +429,7 @@ program
         projectDir,
         strict: options.strict || false,
         verbose: options.verbose || false,
-        format: options.format || 'text'
+        format
       });
       process.exitCode = result.success ? 0 : 1;
     } catch (err) {
@@ -450,8 +455,12 @@ program
   .option('-m, --maturity <level>', 'Check max layer for maturity level (POC, MVP, ALPHA, BETA, PRODUCTION)')
   .action(async (files, options) => {
     const projectDir = path.resolve(options.dir);
-    
-    console.log('🔍 Checking specs...');
+    const format = options.format || 'text';
+    // Same rule as `validate`: JSON owns STDOUT, humans get the banner on
+    // STDERR (DF-SPECLANG-9).
+    const banner = format === 'json' ? console.error : console.log;
+
+    banner('🔍 Checking specs...');
     
     // Import the layer validation module
     let layerOptions = {};
@@ -491,7 +500,7 @@ program
         projectDir,
         strict: options.strict || false,
         verbose: options.verbose || false,
-        format: options.format || 'text'
+        format
       });
       process.exitCode = result.success ? 0 : 1;
     } catch (err) {
