@@ -1,0 +1,37 @@
+{
+  "task_id": "UX-001",
+  "passed": true,
+  "workdir": "/home/kara/speclang",
+  "tier1_passed": true,
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "verdict": "COMPLETE",
+  "items": [
+    {
+      "criterion": "A packed tarball (npm pack) installed into an empty project via npm install <tgz> exits 0 with no postinstall failure; npm run lint stays green; a regression test asserts every repo-relative script referenced by package.json postinstall is present in the published tarball or postinstall is removed.",
+      "status": "PASS",
+      "detail": "npm pack --pack-destination /tmp/ux001 --offline produced speclang-1.0.0.tgz (1748 files); `tar tzf` lists package/scripts/postinstall-lint-deps.sh, so the script referenced by package.json postinstall ships in the tarball. Fresh empty project /tmp/ux001-fresh2: `npm install /tmp/ux001/speclang-1.0.0.tgz --offline --foreground-scripts` -> INSTALL_EXIT=0, log shows \"> speclang@1.0.0 postinstall / > bash scripts/postinstall-lint-deps.sh / TS 6 alias not found, skipping postinstall\" and \"added 151 packages ... found 0 vulnerabilities\"; plain `npm install <tgz>` also exit 0. `npm run lint` -> LINT_EXIT=0, \"3 problems (0 errors, 3 warnings)\". Regression test tests/cli/pack-contract.test.ts run via `npx vitest run tests/cli/pack-contract.test.ts` -> Test Files 1 passed (1), Tests 3 passed (3), exit 0; it parses scripts.postinstall, resolves each repo-relative script path, compares against the `npm pack --dry-run --json` file list and asserts the missing set is empty (early-returns if postinstall was removed). Installed CLI smoke check: `node node_modules/speclang/bin/speclang --version` -> 1.0.0, exit 0. [resolution 0.04; package.json]"
+    }
+  ],
+  "summary": "The published tarball now contains scripts/postinstall-lint-deps.sh, a fresh install of the packed tarball exits 0 with a clean postinstall, lint stays green, and a new pack-contract regression test guards the postinstall-script/tarball invariant.",
+  "model": "deepseek-v4-flash",
+  "base_url_source": "GITREINS_LLM_BASE_URL",
+  "api_key_source": "GITREINS_LLM_API_KEY",
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 123,
+        "detection": "task marked status=complete while ci_result is SKIP and the acceptance criteria require pasted before/after census output that is not present in the row",
+        "detail": "DOC-8 is flipped to \"status\":\"complete\" with \"ci_result\":\"SKIP\" and the foreman_note only asserts \"post-merge census re-run on main 0/4\" without the required before/after census output, so the completion is recorded without the evidence the acceptance criteria demand."
+      }
+    ],
+    "summary": "The diff only advances the board state for DOC-8 (event 315 plus the task row flip to complete); the sole concern is that completion is recorded with CI skipped and without the acceptance-criteria census evidence."
+  }
+}
