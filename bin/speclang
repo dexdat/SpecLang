@@ -57,9 +57,16 @@ program
   .option('-d, --dir <directory>', 'Project directory', '.')
   .option('--no-dashboard', 'Disable web dashboard')
   .action(async (options) => {
+    // DF-SPECLANG-3-R5: `--no-dashboard` means no HTTP server is bound, so the
+    // banner must not advertise a URL nobody can reach.
+    const dashboardEnabled = options.dashboard !== false;
     console.log('🚀 Starting SpecLang...');
     console.log(`   Directory: ${path.resolve(options.dir)}`);
-    console.log(`   Dashboard: http://localhost:${options.port}`);
+    if (dashboardEnabled) {
+      console.log(`   Dashboard: http://localhost:${options.port}`);
+    } else {
+      console.log('   Dashboard: disabled (--no-dashboard)');
+    }
     
     try {
       // Import and start the daemon
@@ -67,7 +74,7 @@ program
       await startDaemon({
         projectDir: path.resolve(options.dir),
         port: parseInt(options.port),
-        dashboard: options.dashboard
+        dashboard: dashboardEnabled
       });
     } catch (err) {
       // If dist doesn't exist, show helpful message
@@ -337,7 +344,11 @@ daemon
 
     try {
       await daemon.start();
-      console.log('   Dashboard: http://localhost:' + options.port);
+      // DF-SPECLANG-3-R5: this subcommand only runs the watcher/cascade engine —
+      // it never binds an HTTP server, so there is no dashboard URL to print.
+      if (options.dashboard) {
+        console.log('   Dashboard: not served by `daemon start` (use `speclang start`)');
+      }
 
       // Keep process alive
       process.on('SIGINT', () => { daemon.stop(); process.exit(0); });
