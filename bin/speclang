@@ -16,6 +16,32 @@ const fs = require('fs');
 // Version from package.json
 const packageJson = require('../package.json');
 
+// DF-SPECLANG-6: `.speclang/daemon.pid` is shared state between the serving
+// process and this CLI. The daemon's own SIGTERM handler removes the file and
+// `speclang stop` removes it too, so whichever side is second must treat
+// "already gone" as a benign no-op instead of crashing with an uncaught ENOENT.
+// An unreadable/empty/garbage file is stale state, never a process to signal.
+function readDaemonPid(pidFile) {
+  let raw;
+  try {
+    raw = fs.readFileSync(pidFile, 'utf-8');
+  } catch (err) {
+    if (err.code === 'ENOENT') return null; // raced with another stop/shutdown
+    throw err;
+  }
+  const pid = parseInt(raw.trim(), 10);
+  return Number.isInteger(pid) && pid > 0 ? pid : null;
+}
+
+function removeDaemonPidFile(pidFile) {
+  try {
+    fs.unlinkSync(pidFile);
+  } catch (err) {
+    // Idempotent shutdown: a second unlink of the same pid file is not an error.
+    if (err.code !== 'ENOENT') throw err;
+  }
+}
+
 const program = new Command();
 
 program
@@ -180,9 +206,9 @@ program
     
     // Check if daemon is running
     const pidFile = path.join(projectDir, '.speclang', 'daemon.pid');
-    if (fs.existsSync(pidFile)) {
-      const pid = fs.readFileSync(pidFile, 'utf-8').trim();
-      console.log(`   Daemon: Running (PID ${pid})`);
+    const daemonPid = readDaemonPid(pidFile);
+    if (daemonPid !== null) {
+      console.log(`   Daemon: Running (PID ${daemonPid})`);
     } else {
       console.log('   Daemon: Not running');
     }
@@ -230,22 +256,23 @@ program
   .action(async (options) => {
     const projectDir = path.resolve(options.dir);
     const pidFile = path.join(projectDir, '.speclang', 'daemon.pid');
-    
-    if (!fs.existsSync(pidFile)) {
+
+    const pid = readDaemonPid(pidFile);
+    if (pid === null) {
+      // Already stopped (or a stale empty/garbage pid file): nothing to signal.
+      removeDaemonPidFile(pidFile);
       console.log('Daemon not running');
       return;
     }
-    
-    const pid = parseInt(fs.readFileSync(pidFile, 'utf-8').trim());
-    
+
     try {
       process.kill(pid, 'SIGTERM');
-      fs.unlinkSync(pidFile);
+      removeDaemonPidFile(pidFile);
       console.log('✅ Daemon stopped');
     } catch (err) {
       if (err.code === 'ESRCH') {
         console.log('Daemon not running (stale PID file removed)');
-        fs.unlinkSync(pidFile);
+        removeDaemonPidFile(pidFile);
       } else {
         throw err;
       }
@@ -327,22 +354,23 @@ daemon
   .action(async () => {
     const projectDir = process.cwd();
     const pidFile = path.join(projectDir, '.speclang', 'daemon.pid');
-    
-    if (!fs.existsSync(pidFile)) {
+
+    const pid = readDaemonPid(pidFile);
+    if (pid === null) {
+      // Already stopped (or a stale empty/garbage pid file): nothing to signal.
+      removeDaemonPidFile(pidFile);
       console.log('Daemon not running');
       return;
     }
-    
-    const pid = parseInt(fs.readFileSync(pidFile, 'utf-8').trim());
-    
+
     try {
       process.kill(pid, 'SIGTERM');
-      fs.unlinkSync(pidFile);
+      removeDaemonPidFile(pidFile);
       console.log('✅ Daemon stopped');
     } catch (err) {
       if (err.code === 'ESRCH') {
         console.log('Daemon not running (stale PID file removed)');
-        fs.unlinkSync(pidFile);
+        removeDaemonPidFile(pidFile);
       } else {
         throw err;
       }
@@ -359,15 +387,16 @@ daemon
     const stateFile = path.join(projectDir, '.speclang', 'daemon-state.json');
     
     let isRunning = false;
-    let pid = null;
-    
-    if (fs.existsSync(pidFile)) {
-      pid = parseInt(fs.readFileSync(pidFile, 'utf-8').trim());
+    let pid = readDaemonPid(pidFile);
+
+    if (pid !== null) {
       try {
         process.kill(pid, 0);
         isRunning = true;
       } catch {
-        fs.unlinkSync(pidFile);
+        // Stale pid file for a process that is gone — remove it, tolerating a
+        // concurrent removal by the daemon's own shutdown handler.
+        removeDaemonPidFile(pidFile);
       }
     }
     
