@@ -141,8 +141,8 @@ This is the initial spec file for the ${name} feature.
 
 ## Entities
 
-### @block:${safeName}-entity
-\`\`\`typescript
+### @block::${safeName}-entity @kind:entity
+\`\`\`speclang
 interface ${pascalCase(name)} {
   id: string;
   createdAt: Date;
@@ -152,7 +152,7 @@ interface ${pascalCase(name)} {
 
 ## Operations
 
-### @block:${safeName}-create
+### @block::${safeName}-create @kind:operation
 Create a new ${name} entity.
 
 **Given**: Valid ${name} data

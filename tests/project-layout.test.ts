@@ -437,6 +437,18 @@ describe("Project Layout Module", () => {
 
         expect(content).toContain("my-feature");
       });
+
+      it("init-to-cascade: emits a block the cascade generator consumes", () => {
+        // DF-SPECLANG-1-R4: single-colon headers and bare ```typescript
+        // fences were invisible to cascade's parseSpec/generateCode, so an
+        // init-generated spec cascaded to zero files while reporting success.
+        const content = generateInitialSpec("my-feature");
+
+        expect(content).toMatch(/^### @block::my-feature-entity @kind:entity$/m);
+        expect((content.match(/^```speclang\s*$/gm) || []).length).toBe(1);
+        expect(content.match(/^```typescript\s*$/gm)).toBeNull();
+        expect(content).not.toMatch(/^### @block:[^:]/m);
+      });
     });
 
     describe("generateInitialTestSpec", () => {

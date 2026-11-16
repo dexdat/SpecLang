@@ -2328,15 +2328,15 @@ How will this feature be implemented?
       writeSpec(`${name}.spec.ts.md`, 'ts', `${name} — Implementation (What)`,
 `## Implementation
 
-### @block:main @kind:code
-\`\`\`ts
+### @block::main @kind:code
+\`\`\`speclang
 // Implementation for ${name}
 \`\`\``);
       writeSpec(`${name}.spec.test.md`, 'test', `${name} — Tests (Prove)`,
 `## Test Cases
 
-### @block:unit @kind:test
-\`\`\`ts
+### @block::unit @kind:test
+\`\`\`speclang
 // Tests for ${name}
 \`\`\``);
     } else {
@@ -2348,8 +2348,8 @@ This spec describes ${name}.
 
 ## Implementation
 
-### @block:main @kind:code
-\`\`\`ts
+### @block::main @kind:code
+\`\`\`speclang
 // Implementation for ${name}
 \`\`\``);
     }

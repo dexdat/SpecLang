@@ -95,7 +95,10 @@ export async function runCascade(
 
     // Warning if no files generated
     if (generatedFiles.length === 0) {
-      result.warning = 'No TypeScript code blocks found in spec. Add code blocks with ```typescript to generate code.';
+      result.warning =
+        'No TypeScript code blocks found in spec. Add a block header ' +
+        '"### @block::<name> @kind:code" followed by a ```speclang ' +
+        '(or ```typescript) fence containing the code to generate.';
     }
 
     // 5. Run tests if any test files were generated
@@ -350,7 +353,20 @@ function generateTypeScriptFromBlock(block: SpecBlock): string {
 
 /**
  * Generate code files from spec blocks
+ *
+ * A block carries TypeScript when it is fenced ```speclang (the canonical
+ * fence emitted by `speclang init`) or ```typescript / ```ts (legacy
+ * spellings). All three are treated identically: a `@block::<id> @kind:code`
+ * block fenced ```speclang is TypeScript code, not a skipped foreign block.
+ * Accepting only the legacy spellings is what made init-generated specs
+ * cascade to zero files while still reporting success.
  */
+const TYPESCRIPT_FENCES = new Set(['typescript', 'ts', 'speclang']);
+
+function isTypeScriptFence(language?: string): boolean {
+  return typeof language === 'string' && TYPESCRIPT_FENCES.has(language.toLowerCase());
+}
+
 async function generateCode(
   spec: { id: string; version: string; blocks: SpecBlock[] },
   outputDir: string,
@@ -368,7 +384,7 @@ async function generateCode(
     let fileName: string;
     
     // Check if block has existing TypeScript code
-    if (block.language === 'typescript' || block.language === 'ts') {
+    if (isTypeScriptFence(block.language)) {
       // Use existing code
       code = block.code;
       fileName = block.name.replace(/-/g, '_') + '.ts';
@@ -415,7 +431,7 @@ async function generateCode(
       continue;
     }
 
-    if (block.language !== 'typescript' && block.language !== 'ts') {
+    if (!isTypeScriptFence(block.language)) {
       continue;
     }
 
