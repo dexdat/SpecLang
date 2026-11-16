@@ -304,3 +304,5 @@
 {"id":304,"timestamp":"2026-11-16 13:20:28.447151","event_type":"task_completed","task_id":"DF-SPECLANG-3","actor":"foreman","tick_number":null,"detail":"{\"status\":\"complete\"}"}
 {"id":305,"timestamp":"2026-11-16 14:02:27.164902","event_type":"task_completed","task_id":"DF-SPECLANG-2-R4","actor":"foreman","tick_number":null,"detail":"{\"status\":\"complete\"}"}
 {"id":306,"timestamp":"2026-11-16 14:04:39.013387","event_type":"task_completed","task_id":"QA-SPECLANG-1-R9","actor":"foreman","tick_number":null,"detail":"{\"status\":\"complete\"}"}
+{"id":307,"timestamp":"2026-11-16 14:05:50.915635","event_type":"task_updated","task_id":"DF-SPECLANG-11","actor":"foreman","tick_number":null,"detail":"{\"status\":\"in_progress\"}"}
+{"id":308,"timestamp":"2026-11-16 14:05:51.356407","event_type":"task_dispatched","task_id":"DF-SPECLANG-11","actor":"foreman","tick_number":null,"detail":"tick speclang-foreman-2026-11-16-13-35-16 dispatched worker openai/gpt-6.1-terra@xkiro in worktree /home/kara/worktrees/speclang-DF-SPECLANG-11 (branch wt/DF-SPECLANG-11); premise re-verified: speclang new proj1 emits 0 @block:: markers and 0 fenced blocks on origin/main 0bf59e0d"}
