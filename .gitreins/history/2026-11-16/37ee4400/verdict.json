@@ -1,0 +1,595 @@
+{
+  "task_id": "DF-SPECLANG-11",
+  "task_title": "Scaffold canonical block dialect on speclang new",
+  "task_criteria": [
+    "AC1: `speclang new proj1` emits >=1 @block:: marker (proof: grep -c \"@block::\" specs/main.spec.md >= 1). failure_condition: count is 0. AC2: >=1 ```speclang fence and 0 ```ts fences. AC3: validate exits 0 and cascade prints Generated: >=1 files. AC4: npm run build and focused scaffolding tests pass."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/worktrees/speclang-DF-SPECLANG-11-LAND",
+  "branch": "wt/DF-SPECLANG-11-LAND",
+  "commit": "01bedf6da63338c1006873a71dec250a24de1e09",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "f608f0181fbdf2544a348a4e1d16a36df6d402dec0c16646066e92b8cc5c6631",
+  "working_tree_dirty_path_count": 5,
+  "items": [
+    {
+      "criterion": "AC1: `speclang new proj1` emits >=1 @block:: marker (proof: grep -c \"@block::\" specs/main.spec.md >= 1). failure_condition: count is 0. AC2: >=1 ```speclang fence and 0 ```ts fences. AC3: validate exits 0 and cascade prints Generated: >=1 files. AC4: npm run build and focused scaffolding tests pass.",
+      "status": "PASS",
+      "detail": "Ran the real CLI end-to-end in /tmp/e2e11: `node <repo>/bin/speclang new proj1 --no-git` => EXIT=0; scaffolded specs/main.spec.md contains `### @block::main @kind:code` and `grep -c \"@block::\" proj1/specs/main.spec.md` => 1 (>=1, failure_condition not met). AC2: `grep -c '^```speclang$'` => 1, `grep -c '^```ts$'` => 0. AC3: `speclang validate` in proj1 => \"\u2713 Passed / Validation Summary: 1 files / Errors: 0\", VALIDATE_EXIT=0; `speclang cascade specs/main.spec.md` => \"\u2705 Cascade complete / Generated: 1 files\", CASCADE_EXIT=0, generated/main.ts contains \"// Implementation for proj1\". AC4: `npm run build` => BUILD_EXIT=0 (tsc clean); `TMPDIR=$PWD/.tmp npx vitest run tests/cli/new-cascade-contract.test.ts` => EXIT=0, \"Test Files 1 passed (1) / Tests 3 passed (3)\". Source of the change: bin/speclang:1360-1395 (templates now emit `@block::` + ```speclang fence). The one failure in the wider tests/cli.test.ts (\"should refresh index with --refresh\", better-sqlite3 native binding missing) is pre-existing: reproduced with bin/speclang reverted to a01309c2 (EXIT=1, same failure), so it is not caused by this change. [resolution 0.05; specs/main.spec.md]"
+    },
+    {
+      "criterion": "Derived: the http/api template path also emits the canonical dialect (>=1 @block::, >=1 ```speclang, 0 ```ts) and still validates + cascades",
+      "status": "PASS",
+      "detail": "`new proj1 --no-git --template http` => NEW_EXIT=0; grep counts: @block:: = 3, ```speclang = 1, ```ts = 0; `speclang validate` => VALIDATE_EXIT=0; `speclang cascade specs/main.spec.md` => \"\u2705 Cascade complete / Generated: 1 files\", CASCADE_EXIT=0. Covered by tests/cli/new-cascade-contract.test.ts (loop over [undefined, \"http\"], 3 passed).",
+      "derived": true
+    },
+    {
+      "criterion": "Derived: the dialect the scaffold writes is the dialect the parser/validator/cascade actually consume (seam)",
+      "status": "PASS",
+      "detail": "src/parser/header.ts:19 BLOCK_PATTERN = /^#+\\s+@block::(\\S+)\\s+@kind:(\\S+)(.*)$/ and header.ts:173 id = '@block::'+name; src/validation/rules/blocks.ts:95 requires block.id.startsWith('@block::'); src/cascade/index.ts:206 block regex `###\\s+@block::(\\S+)\\s+@kind:(\\S+)` and index.ts:364 TYPESCRIPT_FENCES = {'typescript','ts','speclang'}. The scaffold emits exactly `### @block::main @kind:code` + ```speclang, and the live cascade produced generated/main.ts with the block body \u2014 the written value is the value the consumer reads.",
+      "derived": true
+    },
+    {
+      "criterion": "Derived: no stale single-colon `@block:` markers remain in the scaffolded spec",
+      "status": "PASS",
+      "detail": "`grep -c '^### @block:[^:]' specs/main.spec.md` => 0 for both the minimal (/tmp/e2e11/proj1) and http (/tmp/e2e11b/proj1) scaffolds; the new test asserts the same via `expect(content).not.toMatch(/^### @block:[^:]/m)` and passes.",
+      "derived": true
+    },
+    {
+      "criterion": "Derived: existing `speclang new` \u2192 cascade end-to-end behaviour is not regressed",
+      "status": "PASS",
+      "detail": "`TMPDIR=$PWD/.tmp npx vitest run tests/e2e/spec-to-code.test.ts` => EXIT=0, \"Test Files 1 passed (1) / Tests 9 passed (9)\", including \"should create new project with speclang new\" and \"should generate code from default spec\" (asserts \"Cascade complete\" and generated/ exists).",
+      "derived": true
+    },
+    {
+      "criterion": "Derived: the generated artifact is real code, not an empty file",
+      "status": "PASS",
+      "detail": "`cat generated/main.ts` in /tmp/e2e11/proj1 shows the SpecLang header plus the block body `// Implementation for proj1`; the new test asserts `readFileSync(result.filesGenerated[0]).toContain(\"Implementation for proj1\")` and passes (3/3).",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  09:26:02",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  09:26:02\n   Duration  48.88s (transform 17.53s, setup 1.88s, import 22.61s, tests 98.55s, environment 13ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 AC1: `speclang new proj1` emits >=1 @block:: marker (proof: grep -c \"@block::\" specs/main.spec.md >= 1). failure_condition: count is 0. AC2: >=1 ```speclang fence and 0 ```ts fences. AC3: validate exits 0 and cascade prints Generated: >=1 files. AC4: npm run build and focused scaffolding tests pass.: Ran the real CLI end-to-end in /tmp/e2e11: `node <repo>/bin/speclang new proj1 --no-git` => EXIT=0; scaffolded specs/main.spec.md contains `### @block::main @kind:code` and `grep -c \"@block::\" proj1/specs/main.spec.md` => 1 (>=1, failure_condition not met). AC2: `grep -c '^```speclang$'` => 1, `grep -c '^```ts$'` => 0. AC3: `speclang validate` in proj1 => \"\u2713 Passed / Validation Summary: 1 files / Errors: 0\", VALIDATE_EXIT=0; `speclang cascade specs/main.spec.md` => \"\u2705 Cascade complete / Generated: 1 files\", CASCADE_EXIT=0, generated/main.ts contains \"// Implementation for proj1\". AC4: `npm run build` => BUILD_EXIT=0 (tsc clean); `TMPDIR=$PWD/.tmp npx vitest run tests/cli/new-cascade-contract.test.ts` => EXIT=0, \"Test Files 1 passed (1) / Tests 3 passed (3)\". Source of the change: bin/speclang:1360-1395 (templates now emit `@block::` + ```speclang fence). The one failure in the wider tests/cli.test.ts (\"should refresh index with --refresh\", better-sqlite3 native binding missing) is pre-existing: reproduced with bin/speclang reverted to a01309c2 (EXIT=1, same failure), so it is not caused by this change. [resolution 0.05; specs/main.spec.md]\n  \u2713 Derived: the http/api template path also emits the canonical dialect (>=1 @block::, >=1 ```speclang, 0 ```ts) and still validates + cascades: `new proj1 --no-git --template http` => NEW_EXIT=0; grep counts: @block:: = 3, ```speclang = 1, ```ts = 0; `speclang validate` => VALIDATE_EXIT=0; `speclang cascade specs/main.spec.md` => \"\u2705 Cascade complete / Generated: 1 files\", CASCADE_EXIT=0. Covered by tests/cli/new-cascade-contract.test.ts (loop over [undefined, \"http\"], 3 passed).\n  \u2713 Derived: the dialect the scaffold writes is the dialect the parser/validator/cascade actually consume (seam): src/parser/header.ts:19 BLOCK_PATTERN = /^#+\\s+@block::(\\S+)\\s+@kind:(\\S+)(.*)$/ and header.ts:173 id = '@block::'+name; src/validation/rules/blocks.ts:95 requires block.id.startsWith('@block::'); src/cascade/index.ts:206 block regex `###\\s+@block::(\\S+)\\s+@kind:(\\S+)` and index.ts:364 TYPESCRIPT_FENCES = {'typescript','ts','speclang'}. The scaffold emits exactly `### @block::main @kind:code` + ```speclang, and the live cascade produced generated/main.ts with the block body \u2014 the written value is the value the consumer reads.\n  \u2713 Derived: no stale single-colon `@block:` markers remain in the scaffolded spec: `grep -c '^### @block:[^:]' specs/main.spec.md` => 0 for both the minimal (/tmp/e2e11/proj1) and http (/tmp/e2e11b/proj1) scaffolds; the new test asserts the same via `expect(content).not.toMatch(/^### @block:[^:]/m)` and passes.\n  \u2713 Derived: existing `speclang new` \u2192 cascade end-to-end behaviour is not regressed: `TMPDIR=$PWD/.tmp npx vitest run tests/e2e/spec-to-code.test.ts` => EXIT=0, \"Test Files 1 passed (1) / Tests 9 passed (9)\", including \"should create new project with speclang new\" and \"should generate code from default spec\" (asserts \"Cascade complete\" and generated/ exists).\n  \u2713 Derived: the generated artifact is real code, not an empty file: `cat generated/main.ts` in /tmp/e2e11/proj1 shows the SpecLang header plus the block body `// Implementation for proj1`; the new test asserts `readFileSync(result.filesGenerated[0]).toContain(\"Implementation for proj1\")` and passes (3/3).\nAll four acceptance criteria verified by running the real CLI end-to-end (1 @block:: marker, 1 ```speclang / 0 ```ts fences, validate exit 0, cascade \"Generated: 1 files\") plus `npm run build` exit 0 and the focused scaffolding test 3/3 passing; the only wider-suite failure is a pre-existing better-sqlite3 binding issue unrelated to this change. [uncovered failure paths: failure mode 1 (Docs still teach the non-canonical single-colon block header, so users hand-writing specs after `speclang new` produce blocks the validator rejects): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 AC1: `speclang new proj1` emits >=1 @block:: marker (proof: grep -c \"@block::\" specs/main.spec.md >= 1). failure_condition: count is 0. AC2: >=1 ```speclang fence and 0 ```ts fences. AC3: validate exits 0 and cascade prints Generated: >=1 files. AC4: npm run build and focused scaffolding tests pass.: Ran the real CLI end-to-end in /tmp/e2e11: `node <repo>/bin/speclang new proj1 --no-git` => EXIT=0; scaffolded specs/main.spec.md contains `### @block::main @kind:code` and `grep -c \"@block::\" proj1/specs/main.spec.md` => 1 (>=1, failure_condition not met). AC2: `grep -c '^```speclang$'` => 1, `grep -c '^```ts$'` => 0. AC3: `speclang validate` in proj1 => \"\u2713 Passed / Validation Summary: 1 files / Errors: 0\", VALIDATE_EXIT=0; `speclang cascade specs/main.spec.md` => \"\u2705 Cascade complete / Generated: 1 files\", CASCADE_EXIT=0, generated/main.ts contains \"// Implementation for proj1\". AC4: `npm run build` => BUILD_EXIT=0 (tsc clean); `TMPDIR=$PWD/.tmp npx vitest run tests/cli/new-cascade-contract.test.ts` => EXIT=0, \"Test Files 1 passed (1) / Tests 3 passed (3)\". Source of the change: bin/speclang:1360-1395 (templates now emit `@block::` + ```speclang fence). The one failure in the wider tests/cli.test.ts (\"should refresh index with --refresh\", better-sqlite3 native binding missing) is pre-existing: reproduced with bin/speclang reverted to a01309c2 (EXIT=1, same failure), so it is not caused by this change. [resolution 0.05; specs/main.spec.md]\n  \u2713 Derived: the http/api template path also emits the canonical dialect (>=1 @block::, >=1 ```speclang, 0 ```ts) and still validates + cascades: `new proj1 --no-git --template http` => NEW_EXIT=0; grep counts: @block:: = 3, ```speclang = 1, ```ts = 0; `speclang validate` => VALIDATE_EXIT=0; `speclang cascade specs/main.spec.md` => \"\u2705 Cascade complete / Generated: 1 files\", CASCADE_EXIT=0. Covered by tests/cli/new-cascade-contract.test.ts (loop over [undefined, \"http\"], 3 passed).\n\n\u2026 [960 chars omitted \u2014 2 line(s)] \u2026\n  \u2713 Derived: existing `speclang new` \u2192 cascade end-to-end behaviour is not regressed: `TMPDIR=$PWD/.tmp npx vitest run tests/e2e/spec-to-code.test.ts` => EXIT=0, \"Test Files 1 passed (1) / Tests 9 passed (9)\", including \"should create new project with speclang new\" and \"should generate code from default spec\" (asserts \"Cascade complete\" and generated/ exists).\n  \u2713 Derived: the generated artifact is real code, not an empty file: `cat generated/main.ts` in /tmp/e2e11/proj1 shows the SpecLang header plus the block body `// Implementation for proj1`; the new test asserts `readFileSync(result.filesGenerated[0]).toContain(\"Implementation for proj1\")` and passes (3/3).\nAll four acceptance criteria verified by running the real CLI end-to-end (1 @block:: marker, 1 ```speclang / 0 ```ts fences, validate exit 0, cascade \"Generated: 1 files\") plus `npm run build` exit 0 and the focused scaffolding test 3/3 passing; the only wider-suite failure is a pre-existing better-sqlite3 binding issue unrelated to this change. [uncovered failure paths: failure mode 1 (Docs still teach the non-canonical single-colon block header, so users hand-writing specs after `speclang new` produce blocks the validator rejects): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "AC1: `speclang new proj1` emits >=1 @block:: marker (proof: grep -c \"@block::\" specs/main.spec.md >= 1). failure_condition: count is 0. AC2: >=1 ```speclang fence and 0 ```ts fences. AC3: validate exits 0 and cascade prints Generated: >=1 files. AC4: npm run build and focused scaffolding tests pass.",
+                "status": "PASS",
+                "detail": "Ran the real CLI end-to-end in /tmp/e2e11: `node <repo>/bin/speclang new proj1 --no-git` => EXIT=0; scaffolded specs/main.spec.md contains `### @block::main @kind:code` and `grep -c \"@block::\" proj1/specs/main.spec.md` => 1 (>=1, failure_condition not met). AC2: `grep -c '^```speclang$'` => 1, `grep -c '^```ts$'` => 0. AC3: `speclang validate` in proj1 => \"\u2713 Passed / Validation Summary: 1 files / Errors: 0\", VALIDATE_EXIT=0; `speclang cascade specs/main.spec.md` => \"\u2705 Cascade complete / Generated: 1 files\", CASCADE_EXIT=0, generated/main.ts contains \"// Implementation for proj1\". AC4: `npm run build` => BUILD_EXIT=0 (tsc clean); `TMPDIR=$PWD/.tmp npx vitest run tests/cli/new-cascade-contract.test.ts` => EXIT=0, \"Test Files 1 passed (1) / Tests 3 passed (3)\". Source of the change: bin/speclang:1360-1395 (templates now emit `@block::` + ```speclang fence). The one failure in the wider tests/cli.test.ts (\"should refresh index with --refresh\", better-sqlite3 native binding missing) is pre-existing: reproduced with bin/speclang reverted to a01309c2 (EXIT=1, same failure), so it is not caused by this change. [resolution 0.05; specs/main.spec.md]",
+                "resolution_probability": 0.05,
+                "cited_path": "specs/main.spec.md"
+              },
+              {
+                "criterion": "Derived: the http/api template path also emits the canonical dialect (>=1 @block::, >=1 ```speclang, 0 ```ts) and still validates + cascades",
+                "status": "PASS",
+                "detail": "`new proj1 --no-git --template http` => NEW_EXIT=0; grep counts: @block:: = 3, ```speclang = 1, ```ts = 0; `speclang validate` => VALIDATE_EXIT=0; `speclang cascade specs/main.spec.md` => \"\u2705 Cascade complete / Generated: 1 files\", CASCADE_EXIT=0. Covered by tests/cli/new-cascade-contract.test.ts (loop over [undefined, \"http\"], 3 passed).",
+                "derived": true
+              },
+              {
+                "criterion": "Derived: the dialect the scaffold writes is the dialect the parser/validator/cascade actually consume (seam)",
+                "status": "PASS",
+                "detail": "src/parser/header.ts:19 BLOCK_PATTERN = /^#+\\s+@block::(\\S+)\\s+@kind:(\\S+)(.*)$/ and header.ts:173 id = '@block::'+name; src/validation/rules/blocks.ts:95 requires block.id.startsWith('@block::'); src/cascade/index.ts:206 block regex `###\\s+@block::(\\S+)\\s+@kind:(\\S+)` and index.ts:364 TYPESCRIPT_FENCES = {'typescript','ts','speclang'}. The scaffold emits exactly `### @block::main @kind:code` + ```speclang, and the live cascade produced generated/main.ts with the block body \u2014 the written value is the value the consumer reads.",
+                "derived": true
+              },
+              {
+                "criterion": "Derived: no stale single-colon `@block:` markers remain in the scaffolded spec",
+                "status": "PASS",
+                "detail": "`grep -c '^### @block:[^:]' specs/main.spec.md` => 0 for both the minimal (/tmp/e2e11/proj1) and http (/tmp/e2e11b/proj1) scaffolds; the new test asserts the same via `expect(content).not.toMatch(/^### @block:[^:]/m)` and passes.",
+                "derived": true
+              },
+              {
+                "criterion": "Derived: existing `speclang new` \u2192 cascade end-to-end behaviour is not regressed",
+                "status": "PASS",
+                "detail": "`TMPDIR=$PWD/.tmp npx vitest run tests/e2e/spec-to-code.test.ts` => EXIT=0, \"Test Files 1 passed (1) / Tests 9 passed (9)\", including \"should create new project with speclang new\" and \"should generate code from default spec\" (asserts \"Cascade complete\" and generated/ exists).",
+                "derived": true
+              },
+              {
+                "criterion": "Derived: the generated artifact is real code, not an empty file",
+                "status": "PASS",
+                "detail": "`cat generated/main.ts` in /tmp/e2e11/proj1 shows the SpecLang header plus the block body `// Implementation for proj1`; the new test asserts `readFileSync(result.filesGenerated[0]).toContain(\"Implementation for proj1\")` and passes (3/3).",
+                "derived": true
+              }
+            ],
+            "summary": "All four acceptance criteria verified by running the real CLI end-to-end (1 @block:: marker, 1 ```speclang / 0 ```ts fences, validate exit 0, cascade \"Generated: 1 files\") plus `npm run build` exit 0 and the focused scaffolding test 3/3 passing; the only wider-suite failure is a pre-existing better-sqlite3 binding issue unrelated to this change. [uncovered failure paths: failure mode 1 (Docs still teach the non-canonical single-colon block header, so users hand-writing specs after `speclang new` produce blocks the validator rejects): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-11\"}",
+          "exit_code": 0,
+          "output_sha": "f4571a2274a782282455310b8c6789b5ac5ca154f99fce371866c1c39224528c"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && cat package.json 2>/dev/null | head -60",
+          "exit_code": 0,
+          "output_sha": "30a2f7d16b483eac59f6dedda10cc13cfcd32ebdebcd52701f77514e03c4c346"
+        },
+        {
+          "tool": "read_diff",
+          "command": "read_diff {}",
+          "exit_code": 0,
+          "output_sha": "d312ae8dc4b745ff9b5df1c322a95cb9374891479ab036817925d4df8cfa08ed"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat .gitreins/config.yaml 2>/dev/null; ls .gitreins",
+          "exit_code": 0,
+          "output_sha": "c1b379684da189c91af7c39d332bce686f7e6f7a8d0a11d8d7fee5b4ecd3e0c9"
+        },
+        {
+          "tool": "run_command",
+          "command": "git log --oneline -3 && git show --stat HEAD && git show HEAD -- bin/speclang",
+          "exit_code": 0,
+          "output_sha": "6724a6e8b1d0d4a31a54babf668878bda9bd75b45bfa57845e7b044960a03cc7"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 1280,1450p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "2c43bf47152b479587676f1cc2125e2d60b4ea5a017d73fdc8c7197f2fcd287d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat tests/cli/new-cascade-contract.test.ts",
+          "exit_code": 0,
+          "output_sha": "1ed9a2cd7c8d68fb7669e14d5fc9e333c37878d81d7f8623f5c741facbb231f9"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 1330,1420p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "7c9a180ce3c088bf3f3817c3a0b9e7591a95aa052b00be0b5e6a44a482d6457d"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls src/cascade/ && sed -n 1,120p src/cascade/index.ts",
+          "exit_code": 0,
+          "output_sha": "0e45bc5227af09bfdbfe300157df62bca6cfd668f33c87168da1611af9ba1b8a"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 120,320p src/cascade/index.ts",
+          "exit_code": 0,
+          "output_sha": "a7638f3f3bd54d1432b9a6a7fe82933858643bd25f6235a7d338c9a26f1d3be5"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"Generated:\" bin/speclang src/ | head -20",
+          "exit_code": 0,
+          "output_sha": "f37ce3414a67db761082764350d786f94947c4bca977cd30dc640c1c5b734713"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 40,140p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "9bfb632a75332176b66e62e28b1df8598b72ff4d8ef22e98cf7b235d9c497ba9"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"command('validate'\\|command('cascade'\\|command('generate'\" bin/speclang",
+          "exit_code": 1,
+          "output_sha": "3e0bdbc317c47f078d0ec79cf1f8717a1497a77f336973a81e1955165618815d"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"\\.command(\" bin/speclang | head -40",
+          "exit_code": 0,
+          "output_sha": "217ec0126a36456822aeafc7bab0657eb2ef0c8646d41a3f61507e2c5ffbdaab"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 405,520p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "112d7a7b425c6512110f9596eb1598380716620e092b332598da744925da4935"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp && rm -rf e2e11 && mkdir e2e11 && cd e2e11 && node /home/kara/*/bin/speclang new proj1 --no-git 2>&1 | tail -20; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "0cee36166d28de3f44f3d68270027b54e4f6ecdc3d430f0c3449314d437ab159"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; ls bin/",
+          "exit_code": 0,
+          "output_sha": "cf15adae9a68bec07178d89adf61f68e4d00e491f16f1e9bf512c48fbc05d194"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp && rm -rf e2e11 && mkdir e2e11 && cd e2e11 && node /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND/bin/speclang new proj1 --no-git; echo \"EXIT=$?\"; echo ---; cat proj1/specs/main.spec.md; echo ---; grep -c \"@block::\" proj1/specs/main.spec.md",
+          "exit_code": 0,
+          "output_sha": "78b3e4a747fc4b5576d47a9e6c8d1712d224708ee6887729889db74e0d255b33"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"AC1 verified: `node bin/speclang new proj1 --no-git` in /tmp/e2e11 produced specs/main.spec.md containing `### @block::main @kind:code`; `grep -c \\\"@block::\\\" proj1/specs/main.spec.md` => 1 (>=1). Also http template has @block::health/status/main. Fence: 1 ```speclang, 0 ```ts. Still need AC3 (validate exit 0, cascade Generated: >=1) and AC4 (npm run build + focused tests).\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "335faf73821331df13f5cea851401b980b86a7cac81720fa26c9581b604eb399"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/e2e11/proj1 && grep -c '^```speclang$' specs/main.spec.md; grep -c '^```ts$' specs/main.spec.md; echo \"--- validate ---\"; node /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND/bin/speclang validate; echo \"VALIDATE_EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "a46e25ca72317cc4ae4a4dac32e7dbf55e1fc054ab78a79adfc205a4f13a07cb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/e2e11/proj1 && node /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND/bin/speclang cascade specs/main.spec.md; echo \"CASCADE_EXIT=$?\"; echo ---; ls -R generated 2>/dev/null; cat generated/*.ts 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "fdd9ad2e4c84c1c9c33dd966b7da5437ca9936d57be49a322263f53b66c753c6"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"AC2 verified: minimal template spec has exactly 1 ```speclang fence and 0 ```ts fences (grep -c '^```speclang$' => 1; '^```ts$' => 0). AC3 verified: `speclang validate` in scaffolded proj1 => \\\"\\u2713 Passed\\\", VALIDATE_EXIT=0; `speclang cascade specs/main.spec.md` => \\\"\\u2705 Cascade complete / Generated: 1 files\\\", CASCADE_EXIT=0, generated/main.ts contains \\\"// Implementation for proj1\\\".\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "e3894e08d681df4c1ccc968e06d4a3e90337f14e092b19c8128eb962b1c8b700"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && npm run build 2>&1 | tail -15; echo \"BUILD_EXIT=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "e0a9e6fa9d65837c9235dc83b1959f14cf54727aeec24c726a7f13f4cdcfb9ce"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && npm run build > /tmp/build11.log 2>&1; echo \"BUILD_EXIT=$?\"; tail -20 /tmp/build11.log",
+          "exit_code": 0,
+          "output_sha": "7a636425eb4fd7a0fc78a8ed264facc0c1ca00399c3fa5c5c31c94e955a16c8b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && TMPDIR=$PWD/.tmp npx vitest run tests/cli/new-cascade-contract.test.ts > /tmp/test11.log 2>&1; echo \"TEST_EXIT=$?\"; tail -30 /tmp/test11.log",
+          "exit_code": 0,
+          "output_sha": "b9bb2b916ff1dc7f9f05503254e66091ab61ec5e4b031e16cf9484815dbe305f"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"AC4 verified: `npm run build` => BUILD_EXIT=0 (tsc clean). Focused test `TMPDIR=$PWD/.tmp npx vitest run tests/cli/new-cascade-contract.test.ts` => TEST_EXIT=0, \\\"Test Files 1 passed (1) / Tests 3 passed (3)\\\".\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "51fbfc970d022af7fec7dafb4b67dec07763fe1d11e986ac24929411a51894d4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && grep -rn \"@block:\" --include=*.ts --include=*.js --include=*.md --include=speclang -l . 2>/dev/null | grep -v node_modules | grep -v \"^./dist\" | head -30",
+          "exit_code": 0,
+          "output_sha": "27f3b6ac606ff533c0287e501d8105b0c58e9bfbe50aae179271240cc9ce6d2b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && grep -rn \"@block:[a-zA-Z]\" --include=*.ts --include=*.js --include=*.md --include=*.scl . 2>/dev/null | grep -v node_modules | grep -v \"^./dist\" | grep -v \"specs/.*\\.spec\\.dir\" | head -30",
+          "exit_code": 0,
+          "output_sha": "e9e46c258c927634f861cd1f00200b4c508243c3948b954d982a3980a872c1e0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && grep -rn \"@block::\" --include=*.ts --include=*.js --include=*.md --include=*.scl . 2>/dev/null | grep -v node_modules | grep -v \"^./dist\" | grep -v \"specs/.*\\.spec\\.dir\" | head -20; echo \"=== count files ===\"; grep -rln \"@block::\" --include=*.ts --include=*.js --include=*.md . 2>/dev/null | grep -v node_modules | grep -v \"^./dist\" | wc -l",
+          "exit_code": 0,
+          "output_sha": "26d5b45c044f8d37e63e5e0173d460bef104739fbdf4f8f25855a15f8f9af541"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && grep -rn \"block::\" src/parser/*.ts src/parser/*.js 2>/dev/null | head -20; echo \"=== block-parser ===\"; sed -n 1,80p src/parser/block-parser.js",
+          "exit_code": 0,
+          "output_sha": "4d61243af252158279b90c02f2549c38b178a0a8e9bd5ee53815f1d4e35ecb09"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && sed -n 1,60p src/parser/header.ts; echo \"=== 150-200 ===\"; sed -n 150,200p src/parser/header.ts",
+          "exit_code": 0,
+          "output_sha": "e838bd4be8df3b8e6e10dc1d852c929116c3a5dcd735f7348c6c06020274c14d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && grep -rn \"block:\" src/validation/rules/*.ts | head -20; echo \"=== block rule file ===\"; ls src/validation/rules/",
+          "exit_code": 0,
+          "output_sha": "ac1795f9dacb7d4f1f303a59248902b56c252e578c4fd8d59856871c7cef4049"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && sed -n 60,160p src/validation/rules/blocks.ts",
+          "exit_code": 0,
+          "output_sha": "c27d56e58962d1d51f3dc942c0bef987cffd63cb23e8872146f95d6ddac18cbd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && sed -n 20,60p src/validation/rules/blocks.ts",
+          "exit_code": 0,
+          "output_sha": "8fad3673ec2a1b44c619c397ae1ff1f4aa6206cab1a0b68d7330be7eefb75d69"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && sed -n 1,22p src/validation/rules/blocks.ts",
+          "exit_code": 0,
+          "output_sha": "f574e193080eddcb9c1de642f1492a0e7591919978d601d6a3b0a28791db5807"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && grep -n \"function generateCode\" -A 60 src/cascade/index.ts | head -80",
+          "exit_code": 0,
+          "output_sha": "8f6870265783bfbe0c5536649a552d8de2c2fe9ef72f90a384bafa0ff22253ac"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && grep -n \"isTypeScriptFence\" -A 12 src/cascade/index.ts | head -30",
+          "exit_code": 0,
+          "output_sha": "7e0ce9fa8019e4db9b89b1ce1e96bec9ca4b14bffd61ba3e00f0b379455e8d42"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && grep -n \"TYPESCRIPT_FENCES\" -A 8 src/cascade/index.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "b3511a93f6a65df298bb67f5c03091e006801728794766bc191ba40ee7be6540"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && grep -n \"language\" src/cascade/index.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "ae3de74a11735ec24bae6e99ad319c7106cc6ad71e5a4e364bf9a4016d75c50e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && sed -n 200,280p src/cascade/index.ts",
+          "exit_code": 0,
+          "output_sha": "f70a0a37837082f742ca371c13018859a1a4121700f56a5bd790b918947be492"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && grep -n \"export function parseSpec\\|export {\" src/cascade/index.ts | head; echo \"=== test import ===\"; grep -rn \"parseSpec\" tests/ src/cascade/index.ts | head",
+          "exit_code": 0,
+          "output_sha": "46e327f02a54b34d029a3510a8a7bb5f5adb5fb337c20410c3b2a1a7162a963c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && sed -n 500,515p src/cascade/index.ts",
+          "exit_code": 0,
+          "output_sha": "c38ff3f8555bf4fc9e0ad23ed91719491adcdc43887523c0238dbaf2ef50dec5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && grep -n \"function parseSpec\" src/cascade/index.ts",
+          "exit_code": 0,
+          "output_sha": "fff97c333185339b18d4121d24f1d8147e9249f766d1fb990db6be347efb29cd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && grep -rn \"speclang new\\|'new'\" tests/ --include=*.ts | grep -v node_modules | head -20",
+          "exit_code": 0,
+          "output_sha": "f46a6d3811bce01f9b0ccc6e6e6e9bb492959a1dd1e47d48b97c6aa718fd5075"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && sed -n 300,360p tests/e2e/spec-to-code.test.ts",
+          "exit_code": 0,
+          "output_sha": "b95cab42f7ca0a9b6f14d3ad7e799db364e0ba11c088c96ec6573193359158d0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && sed -n 360,400p tests/e2e/spec-to-code.test.ts",
+          "exit_code": 0,
+          "output_sha": "39b1c29de08265488080ec69a8461102adeef93813a5ac018013e09f4c62c5f7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && TMPDIR=$PWD/.tmp npx vitest run tests/e2e/spec-to-code.test.ts > /tmp/e2e11test.log 2>&1; echo \"EXIT=$?\"; tail -25 /tmp/e2e11test.log",
+          "exit_code": 0,
+          "output_sha": "2c29cf7c2dcce366bd44c5db0a5d88c34295206ba982b415ca09a8afa3967ae0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && TMPDIR=$PWD/.tmp npx vitest run tests/cli.test.ts > /tmp/cli11.log 2>&1; echo \"EXIT=$?\"; tail -20 /tmp/cli11.log",
+          "exit_code": -15,
+          "output_sha": "2a69f43a692660830aadcb7528bd67f538f23168fd47799229e3d8cb6d92fd50"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && timeout 240 env TMPDIR=$PWD/.tmp npx vitest run tests/cli.test.ts > /tmp/cli11.log 2>&1; echo \"EXIT=$?\"; tail -25 /tmp/cli11.log",
+          "exit_code": -15,
+          "output_sha": "6764d71db6a87585857490c1787b7506653a34334c3fe1eaef6d59e791e8f01f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && (timeout 600 env TMPDIR=$PWD/.tmp npx vitest run tests/cli.test.ts > /tmp/cli11.log 2>&1; echo \"EXIT=$?\" >> /tmp/cli11.log) & sleep 25; echo started",
+          "exit_code": 0,
+          "output_sha": "d9f73056327de90cd16ba14d88eccfb1d47a2ed55345f2090c2b6ae01413b82c"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 20; tail -30 /tmp/cli11.log",
+          "exit_code": 0,
+          "output_sha": "a012dbe2691c345ce7834e0f977bef01a2a7bc364592029251f1bd0626bdf4e2"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"FAIL\\|\u2715\\|\u00d7\" /tmp/cli11.log | head -20",
+          "exit_code": 0,
+          "output_sha": "a8e34ccd2a76bc675ef4a78af65483959c6e82357212a6c02c9df70bc51f731b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && git stash list; git status --porcelain | head; echo \"=== check if failure pre-exists: does test touch new? ===\"; grep -n \"should refresh index with --refresh\" -A 20 tests/cli.test.ts | head -30",
+          "exit_code": 0,
+          "output_sha": "a3773a7b52a9bba96e8b75a1a75010dbffd9ce04f5b23d0c0ea9336becb6161c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && git stash push -- _index.json >/dev/null 2>&1; git checkout a01309c2 -- bin/speclang 2>/dev/null; git diff --stat HEAD -- bin/speclang; echo \"--- run index test on pre-change bin ---\"; (timeout 300 env TMPDIR=$PWD/.tmp npx vitest run tests/cli.test.ts -t \"should refresh index with --refresh\" > /tmp/cli_pre.log 2>&1; echo \"EXIT=$?\" >> /tmp/cli_pre.log) & sleep 28; echo bg",
+          "exit_code": 0,
+          "output_sha": "1a01f9391f98d9a95b197583f259bee4e81392aaecf03b134e0d924e56b6138c"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 25; tail -12 /tmp/cli_pre.log",
+          "exit_code": 0,
+          "output_sha": "2dacc8af2f655f15cd64ba6d3e8abdc569305dd4090b4541ee433b48d1e9545c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && git checkout HEAD -- bin/speclang && git stash pop >/dev/null 2>&1; git status --porcelain | head; git diff --stat HEAD -- bin/speclang; echo \"restored\"",
+          "exit_code": 0,
+          "output_sha": "525510f3175b6b8a3b694eaa6ab2266b1c11c1e978de4c1f7e9015bdbde9d4f9"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"AC4 verified: npm run build => BUILD_EXIT=0. Focused test tests/cli/new-cascade-contract.test.ts => EXIT=0, \\\"Test Files 1 passed (1) / Tests 3 passed (3)\\\". Also tests/e2e/spec-to-code.test.ts => EXIT=0, 9 passed. tests/cli.test.ts has 1 pre-existing unrelated failure (\\\"should refresh index with --refresh\\\", better-sqlite3 native binding missing) \\u2014 reproduced with bin/speclang reverted to a01309c2 (EXIT=1, same failure), so not caused by this change.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "a88bb4d8ea87cdff72453e85788a692bf130aad5829d08b64593458e6087b1aa"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && grep -rn \"speclang new\\|new proj1\\|@block::\" README.md GETTING-STARTED.md AGENTS.md 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "35f3055545dae325e37cf8470c4fd0491a2c8230afbcc7d4384a2b68c92997ba"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && grep -rn \"speclang new\" README.md GETTING-STARTED.md AGENTS.md CONTRIBUTING.md 2>/dev/null | head; echo \"=== block: in AGENTS ===\"; sed -n 138,150p AGENTS.md; sed -n 322,335p AGENTS.md",
+          "exit_code": 0,
+          "output_sha": "5f425eb675b795d74b6c17a0ba2d2fa1cd367a820275a961a4b66e7ba993ecdc"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND && grep -rn \"speclang new\" --include=*.md . 2>/dev/null | grep -v node_modules | grep -v \"specs/.*\\.spec\\.dir\" | head -10",
+          "exit_code": 0,
+          "output_sha": "578cd4e2b85e78f0a822d5fc2807a77b6bc4d2558df3324d032f90eef9a308b7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp && rm -rf e2e11b && mkdir e2e11b && cd e2e11b && node /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND/bin/speclang new proj1 --no-git --template http >/dev/null 2>&1; echo \"NEW_EXIT=$?\"; grep -c \"@block::\" proj1/specs/main.spec.md; grep -c '^```speclang$' proj1/specs/main.spec.md; grep -c '^```ts$' proj1/specs/main.spec.md; cd proj1 && node /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND/bin/speclang validate >/dev/null 2>&1; echo \"VALIDATE_EXIT=$?\"; node /home/kara/worktrees/speclang-DF-SPECLANG-11-LAND/bin/speclang cascade specs/main.spec.md 2>&1 | grep -E \"Generated:|Cascade complete\"; echo \"CASCADE_EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "f1e76f5375f0de09c8e0167fd3c26262a661ee0abe48bed9210376aaaaac93d0"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Derived checks:\\nD0 (http/api template parity): `new proj1 --template http` => NEW_EXIT=0, @block:: count 3, ```speclang 1, ```ts 0, validate EXIT=0, cascade \\\"Generated: 1 files\\\" EXIT=0. PASS.\\nD1 (seam: scaffold dialect == parser/validator dialect): src/parser/header.ts:19 BLOCK_PATTERN /^#+\\\\s+@block::(\\\\S+)\\\\s+@kind:(\\\\S+)/; src/validation/rules/blocks.ts:95 requires id.startsWith('@block::'); src/cascade/index.ts:206 block regex ###\\\\s+@block::, :364 TYPESCRIPT_FENCES includes 'speclang'. Scaffold emits exactly that shape. PASS.\\nD2 (no regression in existing new/cascade e2e): tests/e2e/spec-to-code.test.ts EXIT=0, 9 passed. PASS.\\nD3 (generated file non-empty/real code): generated/main.ts contains \\\"// Implementation for proj1\\\" (cascade output cat). PASS.\\nD4 (no stale @block: single-colon in scaffold): grep '^### @block:[^:]' on scaffolded spec => 0 matches (test asserts this too). PASS.\\n\", \"key\": \"derived\"}",
+          "exit_code": 0,
+          "output_sha": "7f29b0bc584157fe613601e29f6b6fbea56a24f865a5cb4591631c4bdb162c3e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/e2e11/proj1 && grep -c '^### @block:[^:]' specs/main.spec.md; echo \"---\"; cd /tmp/e2e11b/proj1 && grep -c '^### @block:[^:]' specs/main.spec.md",
+          "exit_code": 1,
+          "output_sha": "890ad49aea9be3a8361d6896a1393e9e850fccb4490d0cf505b8a50394e4ad87"
+        },
+        {
+          "tool": "read_lsp_diagnostics",
+          "command": "read_lsp_diagnostics {}",
+          "exit_code": 0,
+          "output_sha": "ef420cbeebd549fc8c5438d6ea41a3e521fa58e29563c4cae80f491b9bfe2143"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "medium",
+        "file": "_index.json",
+        "line": 1,
+        "detection": "generated index timestamps use a malformed ISO-8601 suffix `ZZ` (double Z)",
+        "detail": "The `generated` field is set to `2026-11-16T14:30:27.409ZZ` and every `lastModified` value carries the same `...ZZ` suffix, which is not a valid ISO-8601 timestamp and will fail strict date parsers."
+      },
+      {
+        "severity": "low",
+        "file": "_index.json",
+        "line": 0,
+        "detection": "index entry renamed from `@unknown/index.spec.md` to `@specs/agents/implementation` while its `file` field still points at `agents.spec.dir/index.spec.md`",
+        "detail": "The id changes from `@unknown/index.spec.md` to `@specs/agents/implementation` but the `file` value `agents.spec.dir/index.spec.md` is unchanged, so the id no longer derives from the file path the way every other entry's id does."
+      }
+    ],
+    "summary": "The regenerated index is internally consistent in its ref rewiring, but it emits invalid `...ZZ` timestamps and renames one entry's id without updating its file path."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  09:26:02\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 AC1: `speclang new proj1` emits >=1 @block:: marker (proof: grep -c \"@block::\" specs/main.spec.md >= 1). failure_condition: count is 0. AC2: >=1 ```speclang fence and 0 ```ts fences. AC3: validate exits 0 and cascade prints Generated: >=1 files. AC4: npm run build and focused scaffolding tests pass.: Ran the real CLI end-to-end in /tmp/e2e11: `node <repo>/bin/speclang new proj1 --no-git` => EXIT=0; scaffolded specs/main.spec.md contains `### @block::main @kind:code` and `grep -c \"@block::\" proj1/specs/main.spec.md` => 1 (>=1, failure_condition not met). AC2: `grep -c '^```speclang$'` => 1, `grep -c '^```ts$'` => 0. AC3: `speclang validate` in proj1 => \"\u2713 Passed / Validation Summary: 1 files / Errors: 0\", VALIDATE_EXIT=0; `speclang cascade specs/main.spec.md` => \"\u2705 Cascade complete / Generated: 1 files\", CASCADE_EXIT=0, generated/main.ts contains \"// Implementation for proj1\". AC4: `npm run build` => BUILD_EXIT=0 (tsc clean); `TMPDIR=$PWD/.tmp npx vitest run tests/cli/new-cascade-contract.test.ts` => EXIT=0, \"Test Files 1 passed (1) / Tests 3 passed (3)\". Source of the change: bin/speclang:1360-1395 (templates now emit `@block::` + ```speclang fence). The one failure in the wider tests/cli.test.ts (\"should refresh index with --refresh\", better-sqlite3 native binding missing) is pre-existing: reproduced with bin/speclang reverted to a01309c2 (EXIT=1, same failure), so it is not caused by this change. [resolution 0.05; specs/main.spec.md]\n  \u2713 Derived: the http/api template path also emits the canonical dialect (>=1 @block::, >=1 ```speclang, 0 ```ts) and still validates + cascades: `new proj1 --no-git --template http` => NEW_EXIT=0; grep counts: @block:: = 3, ```speclang = 1, ```ts = 0; `speclang validate` => VALIDATE_EXIT=0; `speclang cascade specs/main.spec.md` => \"\u2705 Cascade complete / Generated: 1 files\", CASCADE_EXIT=0. Covered by tests/cli/new-cascade-contract.test.ts (loop over [undefined, \"http\"], 3 passed).\n  \u2713 Derived: the dialect the scaffold writes is the dialect the parser/validator/cascade actually consume (seam): src/parser/header.ts:19 BLOCK_PATTERN = /^#+\\s+@block::(\\S+)\\s+@kind:(\\S+)(.*)$/ and header.ts:173 id = '@block::'+name; src/validation/rules/blocks.ts:95 requires block.id.startsWith('@block::'); src/cascade/index.ts:206 block regex `###\\s+@block::(\\S+)\\s+@kind:(\\S+)` and index.ts:364 TYPESCRIPT_FENCES = {'typescript','ts','speclang'}. The scaffold emits exactly `### @block::main @kind:code` + ```speclang, and the live cascade produced generated/main.ts with the block body \u2014 the written value is the value the consumer reads.\n  \u2713 Derived: no stale single-colon `@block:` markers remain in the scaffolded spec: `grep -c '^### @block:[^:]' specs/main.spec.md` => 0 for both the minimal (/tmp/e2e11/proj1) and http (/tmp/e2e11b/proj1) scaffolds; the new test asserts the same via `expect(content).not.toMatch(/^### @block:[^:]/m)` and passes.\n  \u2713 Derived: existing `speclang new` \u2192 cascade end-to-end behaviour is not regressed: `TMPDIR=$PWD/.tmp npx vitest run tests/e2e/spec-to-code.test.ts` => EXIT=0, \"Test Files 1 passed (1) / Tests 9 passed (9)\", including \"should create new project with speclang new\" and \"should generate code from default spec\" (asserts \"Cascade complete\" and generated/ exists).\n  \u2713 Derived: the generated artifact is real code, not an empty file: `cat generated/main.ts` in /tmp/e2e11/proj1 shows the SpecLang header plus the block body `// Implementation for proj1`; the new test asserts `readFileSync(result.filesGenerated[0]).toContain(\"Implementation for proj1\")` and passes (3/3).\nAll four acceptance criteria verified by running the real CLI end-to-end (1 @block:: marker, 1 ```speclang / 0 ```ts fences, validate exit 0, cascade \"Generated: 1 files\") plus `npm run build` exit 0 and the focused scaffolding test 3/3 passing; the only wider-suite failure is a pre-existing better-sqlite3 binding issue unrelated to this change. [uncovered failure paths: failure mode 1 (Docs still teach the non-canonical single-colon block header, so users hand-writing specs after `speclang new` produce blocks the validator rejects): detected_by is empty \u2014 uncovered failure path]\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-16T14:31:50.453267",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-16T14:31:50.487889+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 4350,
+        "truncated": false,
+        "source": "git show 01bedf6da633"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 205946,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DF-SPECLANG-11"
+  }
+}
