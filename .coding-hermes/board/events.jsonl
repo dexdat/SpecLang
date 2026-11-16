@@ -281,3 +281,5 @@
 {"id":281,"timestamp":"2026-11-16T06:52:45Z","event_type":"task_created","task_id":"DF-SPECLANG-9","actor":"foreman","tick_number":null,"detail":"{\"id\":\"DF-SPECLANG-9\",\"status\":\"pending\"}"}
 {"id":282,"timestamp":"2026-11-16T06:53:16Z","event_type":"task_created","task_id":"DF-SPECLANG-10","actor":"foreman","tick_number":null,"detail":"{\"id\":\"DF-SPECLANG-10\",\"status\":\"pending\"}"}
 {"id":283,"timestamp":"2026-11-16T07:00:33Z","event_type":"task_updated","task_id":"README-18","actor":"foreman","tick_number":null,"detail":"{\"status\":\"pending\"}"}
+{"id":284,"timestamp":"2026-11-16T07:02:44Z","event_type":"task_created","task_id":"QA-SPECLANG-007","actor":"foreman","tick_number":null,"detail":"{\"id\":\"QA-SPECLANG-007\",\"status\":\"pending\"}"}
+{"id":285,"timestamp":"2026-11-16T07:02:44Z","event_type":"task_created","task_id":"QA-SPECLANG-008","actor":"foreman","tick_number":null,"detail":"{\"id\":\"QA-SPECLANG-008\",\"status\":\"pending\"}"}
