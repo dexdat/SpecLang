@@ -5,7 +5,7 @@
  * Generated from: @speclang/pipeline
  */
 
-import { ConvergenceResult } from '../daemon/types';
+import { ConvergenceResult } from 'daemon.spec.dir/src/types.js';
 
 // ============ Pipeline Configuration ============
 

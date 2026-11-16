@@ -56,6 +56,13 @@ export class Watcher extends EventEmitter {
     if (this.running) return;
     this.running = true;
 
+    // DF-SPECLANG-014: create missing watch dirs instead of silently watching
+    // nothing — a missing specs/ dir previously produced zero events with no
+    // error, which read as a dead daemon.
+    for (const watchPath of this.watchPaths) {
+      fs.ensureDirSync(watchPath);
+    }
+
     // Load .gitignore from project root
     await this.loadGitignore();
 

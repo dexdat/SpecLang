@@ -37,6 +37,9 @@ export class Daemon extends EventEmitter {
   
   private running: boolean;
   private paused: boolean;
+  // DF-SPECLANG-014 / DF-SPECLANG-2-R5: consecutive pipeline failure counter.
+  // Reset on success; at >= 3 the daemon stops auto-recascading and goes Error.
+  private pipelineFailures: number;
 
   constructor(configPath?: string) {
     super();
@@ -49,6 +52,7 @@ export class Daemon extends EventEmitter {
     this.convergence = null!; // Initialized in start()
     this.running = false;
     this.paused = false;
+    this.pipelineFailures = 0;
   }
 
   /**
@@ -86,6 +90,20 @@ export class Daemon extends EventEmitter {
 
       // Execute pipeline on convergence
       await this.executePipeline(result);
+
+      // DF-SPECLANG-014 / DF-SPECLANG-2-R5: after 3 consecutive pipeline
+      // failures, stop the recascade loop — go to Error state with the failure
+      // recorded, and do NOT reset convergence (so the same work stays queued
+      // for a manual retry) until the pipeline succeeds again.
+      if (this.pipelineFailures >= 3) {
+        console.error('===================================================================');
+        console.error(`[Daemon] PIPELINE FAILED ${this.pipelineFailures} CONSECUTIVE TIMES — stopping auto-recascade.`);
+        console.error('[Daemon] Daemon state: error. Fix the pipeline failure, then restart or resume the daemon to retry.');
+        console.error('===================================================================');
+        this.state.setStatus(DaemonStatusKind.Error);
+        this.emit('pipeline_failed', `pipeline failed ${this.pipelineFailures} consecutive times; auto-recascade stopped`);
+        return;
+      }
 
       // ARCH-004: After pipeline completes, arm for the next cascade
       // without requiring user input (/finalize). When autoRecascade is on
@@ -308,8 +326,34 @@ export class Daemon extends EventEmitter {
    */
   private async executePipeline(convergenceResult: ConvergenceResult): Promise<void> {
     try {
-      // Dynamic import to avoid circular dependencies
-      const { PipelineExecutor } = await import('../pipeline/executor.js');
+      // Dynamic import to avoid circular dependencies.
+      // DF-SPECLANG-014: was '../pipeline/executor.js', which resolved to
+      // specs/daemon.spec.dir/pipeline/ (nonexistent). This file is reachable
+      // under multiple paths (src/daemon/ is a symlink to
+      // specs/daemon.spec.dir/src/, and tsc emits a dist copy), so relative
+      // specifiers diverge per layout — try each candidate in order.
+      let PipelineExecutor: any;
+      const executorCandidates = [
+        '../../pipeline.spec.dir/src/executor.js',
+        '../../specs/pipeline.spec.dir/src/executor.js',
+      ];
+      let lastExecutorError: unknown = null;
+      let executorLoaded = false;
+      for (const spec of executorCandidates) {
+        try {
+          const mod: any = await import(spec);
+          PipelineExecutor = mod.PipelineExecutor;
+          executorLoaded = true;
+          break;
+        } catch (e) {
+          lastExecutorError = e;
+        }
+      }
+      if (!executorLoaded) {
+        throw lastExecutorError instanceof Error
+          ? lastExecutorError
+          : new Error(`Cannot load pipeline executor from any known path: ${executorCandidates.join(', ')}`);
+      }
       
       console.log('[Daemon] Executing pipeline...');
       const executor = new PipelineExecutor({ verbose: true });
@@ -317,15 +361,20 @@ export class Daemon extends EventEmitter {
       const result = await executor.execute(convergenceResult);
       
       if (result.success) {
+        this.pipelineFailures = 0;
         console.log('[Daemon] Pipeline succeeded!');
         this.emit('pipeline_success', result);
       } else {
-        console.error('[Daemon] Pipeline failed:', result.error);
+        this.pipelineFailures++;
+        console.error(`[Daemon] Pipeline failed (consecutive failure ${this.pipelineFailures}):`, result.error);
+        console.error('[Daemon] Cascade NOT complete — pipeline did not succeed.');
         this.emit('pipeline_failed', result.error);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error('[Daemon] Pipeline execution error:', errorMessage);
+      this.pipelineFailures++;
+      console.error(`[Daemon] Pipeline execution error (consecutive failure ${this.pipelineFailures}):`, errorMessage);
+      console.error('[Daemon] Cascade NOT complete — pipeline did not succeed.');
       this.emit('pipeline_failed', errorMessage);
     }
   }

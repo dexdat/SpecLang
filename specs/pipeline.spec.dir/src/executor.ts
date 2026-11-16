@@ -13,7 +13,7 @@ import { PipelineConfig, PipelineResult, Stage, StageResult, ExecutorOptions, Pi
 import { PipelineConfigManager } from './config';
 import { StageExecutor, orderStages, areDependenciesMet } from './stages';
 import { RecoveryExecutor } from './recovery';
-import { ConvergenceResult } from '../daemon/types';
+import { ConvergenceResult } from 'daemon.spec.dir/src/types.js';
 
 export class PipelineExecutor extends EventEmitter {
   private configManager: PipelineConfigManager;
@@ -53,6 +53,20 @@ export class PipelineExecutor extends EventEmitter {
     }
 
     const stages = config.pipeline.on_converge;
+    // DF-SPECLANG-014: an empty pipeline used to "succeed" with 0 stages —
+    // a silent no-op that read as a completed cascade. Fail loud instead.
+    if (!stages || stages.length === 0) {
+      console.error('[PipelineExecutor] No pipeline stages configured (build.yaml missing or empty on_converge) — nothing to run.');
+      return {
+        success: false,
+        stages: [],
+        duration: Date.now() - startTime,
+        startTime,
+        endTime: Date.now(),
+        error: 'No pipeline stages configured: add a build.yaml with pipeline.on_converge stages to this project.',
+        recoveryAttempts: 0,
+      };
+    }
     const orderedStages = orderStages(stages);
     const stageResults: StageResult[] = [];
     const completedStages = new Set<string>();
