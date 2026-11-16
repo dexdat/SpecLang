@@ -122,7 +122,10 @@ const CLI_CWD = fs.mkdtempSync(path.join(REPO_ROOT, ".tmp", "cli-test-"));
 fs.mkdirSync(path.join(CLI_CWD, ".speclang"), { recursive: true });
 process.env.SPECLANG_DIR = path.join(REPO_ROOT, "specs");
 
-const CLI = `npx tsx --tsconfig ${tmpConfigPath} ${path.join(REPO_ROOT, "src", "cli", "index.ts")}`;
+// PERF-001: invoke the repo-local tsx binary directly instead of via `npx`,
+// which costs ~620ms of resolution fan-out (30 execve calls vs 4) per spawn.
+const TSX_BIN = path.join(REPO_ROOT, "node_modules", ".bin", "tsx");
+const CLI = `${TSX_BIN} --tsconfig ${tmpConfigPath} ${path.join(REPO_ROOT, "src", "cli", "index.ts")}`;
 const CLI_BIN = "./bin/speclang";
 const cliExec = (cmd: string) => execAsync(cmd, { cwd: CLI_CWD });
 
