@@ -1,0 +1,8 @@
+Error validating /home/kara/.hermes/cache/scratch/speclang-df-20261116-011229/repo/specs/docs.spec.dir/playbook/NASA-SE-PLAYBOOK.md.spec.md: Failed to parse header YAML: Source contains multiple documents; please use YAML.parseAllDocuments() at line 6, column 1:
+
+tags: [docs, playbook, requirements, traceability, verification, style]
+---
+^
+
+Command exited with non-zero status 1
+validate_wall=0.39s

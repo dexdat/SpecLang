@@ -1,0 +1,8 @@
+# speclang-header lines:9
+id: "@specs/docs/nasa-se-playbook"
+version: 1.0.0
+layer: 5
+target: docs/playbook/NASA-SE-PLAYBOOK.md
+tags: [docs, playbook, requirements, traceability, verification, style]
+---
+# NASA-SE spec playbook (document spec)

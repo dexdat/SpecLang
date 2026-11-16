@@ -22,3 +22,4 @@ Field-test records for SpecLang. Each entry: date, verdict, promise, top finding
 
 2026-09-04 | PROMISING-BUT-ROUGH | 5s t2fs | friction 7 | 5 findings\n
 2026-09-07 | PROMISING-BUT-ROUGH | 45s t2fs | friction 12 | 5 findings
+2026-11-16 | PROMISING-BUT-ROUGH | t2fs not timed (install not timed; build 0.59s, first command 0.87s cold) | friction 4 | 3 findings | tick speclang-dogfood-2026-11-16-05-02-33 | rev 08b77a59 | filed DF-SPECLANG-9 (validate --format json drops the failing spec from reports and prefixes a banner) and DF-SPECLANG-10 (install leg SKIPPED: 0 cells audited) | README-18 re-verified and raised P4 to P1 (validate exits 1: NASA playbook spec declares lines:9, header is 7 lines) | paired DF-SPECLANG-6/7/8 with task_created events 277-279 | perf 0.50s warm / 0.87s cold over 452 files, no PERF row (nothing user-feelable) | evidence .coding-hermes/evidence/speclang-dogfood-2026-11-16-05-02-33/
