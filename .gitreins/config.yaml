@@ -36,7 +36,7 @@ defaults:
   api_key_env: GITREINS_LLM_API_KEY
 
 history:
-  enabled: false
+  enabled: true
 pipeline:
   stages:
   - id: tier1
