@@ -114,3 +114,19 @@ cache (that needs root and was not attempted).
   touched; making the inherited board green is not this tick's job.
 - NOT done: no code edits, no spec edits (the `lines:7` fix is left to the foreman), no repo
   visibility/permission changes, no credentials minted, no PERF row, no profile.
+
+## Re-fire addendum (delivery 3, tick re-dispatched after the 01:02:57 failure mark)
+
+- **Correction to section 3:** the "No residue" claim was false. Ephemeral agent `f2dc254c`
+  (created `2026-11-16T06:36:01Z` for this tick's install leg) was still `running` at 5.6 GB
+  when delivery 3 started. It has now been destroyed (`bunker-mvp` agents 4 -> 3). Foreign
+  agent `850ebfa7` (`05:33:28Z`, named in no evidence file) was left untouched.
+- Headline re-proved at `1d25137`: `./bin/speclang validate specs/docs.spec.dir/playbook/NASA-SE-PLAYBOOK.md.spec.md`
+  exits 1 on 3/3 runs in 0.08-0.11 s with the same multiple-documents parse error. Row
+  `DF-SPECLANG-9` premise is still live; no new row filed.
+- Product tree between the measured SHA `08b77a59` and `1d25137` moved only by deleting three
+  one-line root files (`python`, `typescript`, `yaml`); no arm was re-walked.
+- Scheduler attribution: this tick id is recorded `failed` at `01:02:57` because of a gateway
+  HTTP 502 hop-wall-timeout on both hops (`xkiro/openai/gpt-6.1-sol` and `deepseek-flash`,
+  600 s each), not because the lane work failed - the work landed as `0c9ec4c3` anyway, which
+  is what caused the duplicate dispatch of this same tick id.
