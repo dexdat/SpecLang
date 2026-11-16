@@ -377,6 +377,85 @@ describe("CLI Commands", () => {
     });
   });
 
+  describe("validate --format json report integrity", () => {
+    // DF-SPECLANG-9: a spec that fails to PARSE used to be dropped from
+    // `reports` (a consumer counting reports saw a clean array while the
+    // process exited 1) and a human banner was printed to STDOUT ahead of the
+    // JSON payload (so `... --format json | jq .` could not parse). Both are
+    // asserted here WITHOUT the banner-tolerant parseJsonFromOutput helper:
+    // stdout on its own must be valid JSON.
+    const jsonBase = ".speclang/tmp/validate-json-reports";
+    const mixedDir = path.join(jsonBase, "mixed");
+
+    beforeAll(() => {
+      fs.rmSync(jsonBase, { recursive: true, force: true });
+      fs.mkdirSync(path.join(mixedDir, "specs"), { recursive: true });
+      // Parse failure: missing required `version` field → parseSpec throws.
+      fs.writeFileSync(
+        path.join(mixedDir, "specs", "broken.spec.md"),
+        '# speclang-header lines:6\nid: "@test/json-broken"\nlayer: 1\ntags: [x]\n---\n',
+      );
+      // Parses and validates clean — the next-door control.
+      fs.writeFileSync(
+        path.join(mixedDir, "specs", "valid.spec.md"),
+        '# speclang-header lines:6\nid: "@test/json-valid"\nversion: 1.0.0\nlayer: 1\ntags: [test]\n---\n',
+      );
+    });
+
+    afterAll(() => {
+      fs.rmSync(jsonBase, { recursive: true, force: true });
+    });
+
+    it("emits pure JSON on stdout with one report per spec file, failing spec included", { timeout: 20000, retry: 2 }, async () => {
+      let stdout = "";
+      let code = 0;
+      try {
+        ({ stdout } = await execAsync(
+          `${CLI_BIN} validate -d ${mixedDir} --format json`,
+        ));
+      } catch (result: unknown) {
+        const failed = result as { stdout: string; code?: number };
+        stdout = failed.stdout;
+        code = failed.code ?? 1;
+      }
+
+      // AC2: stdout alone is JSON — no banner line to strip first.
+      const parsed = JSON.parse(stdout) as {
+        totalFiles: number;
+        reports: Array<{
+          file: string;
+          passed: boolean;
+          errors: Array<{ rule: string; message: string }>;
+        }>;
+      };
+
+      // AC1 invariant: nothing silently dropped — 2 spec files → 2 reports.
+      expect(parsed.totalFiles).toBe(2);
+      expect(parsed.reports).toHaveLength(2);
+
+      const failing = parsed.reports.filter(
+        (r) => (r.errors?.length ?? 0) > 0,
+      );
+      expect(failing).toHaveLength(1);
+      expect(failing[0].file).toContain("broken.spec.md");
+      expect(failing[0].passed).toBe(false);
+      expect(failing[0].errors[0].message).toMatch(/version/i);
+
+      // The failure must be visible in the exit code too, not only in the array.
+      expect(code).toBe(1);
+    });
+
+    it("still reports the per-file error on stderr in text mode", { timeout: 15000, retry: 2 }, async () => {
+      try {
+        await execAsync(`${CLI_BIN} validate -d ${mixedDir}`);
+        expect(true).toBe(false); // exit code must be non-zero
+      } catch (result: unknown) {
+        const { stderr } = result as { stdout: string; stderr: string };
+        expect(stderr).toContain("broken.spec.md");
+      }
+    });
+  });
+
   describe("index", () => {
     it("should show index stats", { timeout: 15000, retry: 2 }, async () => {
       const { stdout } = await cliExec(`${CLI} index`);

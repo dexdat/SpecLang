@@ -9,6 +9,7 @@ import * as fs from 'fs';
 import { parseSpec } from '../parser/header';
 import { ValidationEngine } from './engine';
 import { ValidationReporter } from './reporter';
+import type { ValidationReport } from './types';
 
 export interface ValidateOptions {
   files: string[];
@@ -26,6 +27,33 @@ export interface ValidateResult {
   errors: number;
   warnings: number;
   reports?: any[];
+}
+
+/**
+ * Report for a spec file that failed BEFORE validation could run (parseSpec
+ * threw — malformed speclang-header, bad lines: declaration, playbook error).
+ *
+ * Such a file is a validated-and-failed spec, not a skipped one: omitting it
+ * from `reports` made a machine consumer counting reports see a clean array
+ * (and `reports.length` disagree with `totalFiles`) while the process exited 1
+ * (DF-SPECLANG-9).
+ */
+function parseFailureReport(file: string, error: unknown): ValidationReport {
+  const message = error instanceof Error ? error.message : String(error);
+  return {
+    file,
+    errors: [
+      {
+        rule: '@validation/parse',
+        level: 'error',
+        location: { file, line: 'header' },
+        message: `Failed to parse spec: ${message}`,
+      },
+    ],
+    warnings: [],
+    passed: false,
+    timestamp: new Date(),
+  };
 }
 
 export async function validateCommand(options: ValidateOptions): Promise<ValidateResult> {
@@ -107,7 +135,12 @@ export async function validateCommand(options: ValidateOptions): Promise<Validat
       }
     } catch (error) {
       console.error(`Error validating ${file}:`, (error as Error).message);
-      totalErrors++;
+      // Keep the failing spec in the report array so `--format json`
+      // consumers see it (and reports.length === totalFiles) instead of a
+      // silently short, all-clean array (DF-SPECLANG-9).
+      const report = parseFailureReport(file, error);
+      reports.push(report);
+      totalErrors += report.errors.length;
     }
   }
 
