@@ -1,4 +1,5 @@
 import { AgentInvocation } from './state.js';
+import * as path from 'path';
 import type { ThinkingLevel } from 'parser.spec.dir/src/types.js';
 
 export interface InvocationOptions {
@@ -47,7 +48,7 @@ export type AgentExecutorFn = (
   trigger: string,
   params?: Record<string, unknown>,
   thinking?: ThinkingLevel
-) => Promise<{ success: boolean; files: string[]; metrics?: InvocationMetrics }>;
+) => Promise<{ success: boolean; files: string[]; error?: string; output?: string; metrics?: InvocationMetrics }>;
 
 const defaultExecutor: AgentExecutorFn = async (agent, trigger, params, thinking) => {
   // Use dynamic import to keep child_process out of the module graph for
@@ -63,15 +64,53 @@ const defaultExecutor: AgentExecutorFn = async (agent, trigger, params, thinking
   // runtime can budget tokens per cascade phase.
   if (thinking) args.push('--thinking', thinking);
 
-  try {
-    const { stdout } = await execFileAsync('speclang', args, {
-      encoding: 'utf-8',
-      timeout: 30_000,
-    });
-    return { success: true, files: parseOutputFiles(stdout) };
-  } catch {
-    return { success: false, files: [] };
+  // DF-SPECLANG-015: the 'speclang' binary is not on PATH for daemon/embedded
+  // callers — resolve the repo-local CLI relative to THIS module instead
+  // (src/cascade/coordinator and specs/cascade.spec.dir/src/coordinator are
+  // both four levels under the repo root), with env override and PATH
+  // fallback for installed setups. __dirname works under tsx (shimmed) and
+  // the CJS build (native); import.meta would break the CJS output.
+  const repoRoot = path.resolve(__dirname, '..', '..', '..', '..');
+  const candidates = [
+    process.env.SPECLANG_BIN,
+    path.join(repoRoot, 'bin', 'speclang'),
+    'speclang',
+  ].filter(Boolean) as string[];
+
+  // DF-SPECLANG-015: LLM agent sessions routinely take minutes (documented:
+  // verbose trace-system prompts alone push sessions past 200s). A 30s
+  // timeout guaranteed every real invocation died. Default 15 min, env
+  // overridable via SPECLANG_AGENT_TIMEOUT_MS.
+  const timeoutMs = Number(process.env.SPECLANG_AGENT_TIMEOUT_MS ?? 900_000);
+
+  let lastError = 'unknown error';
+  for (const bin of candidates) {
+    const [cmd, ...prefix] = bin.endsWith('.js') || bin === 'speclang' ? (bin === 'speclang' ? ['speclang'] : [process.execPath, bin]) : [process.execPath, bin];
+    try {
+      const { stdout } = await execFileAsync(cmd, [...prefix, ...args], {
+        encoding: 'utf-8',
+        timeout: timeoutMs,
+        maxBuffer: 16 * 1024 * 1024,
+        env: process.env,
+      });
+      // DF-SPECLANG-015: the agent CLI writes generated content to STDOUT —
+      // the caller (e.g. watchDaemon) decides where it lands on disk.
+      return { success: true, files: parseOutputFiles(stdout), output: stdout };
+    } catch (err: any) {
+      // DF-SPECLANG-015: never swallow the reason — surface it so the
+      // coordinator log says WHY the invocation failed.
+      const code = err?.code ?? '';
+      const stderr = (err?.stderr ?? '').slice(-400);
+      lastError = `${cmd} ${code}: ${(err?.message ?? String(err)).slice(0, 300)}${stderr ? ' | stderr: ' + stderr : ''}`;
+      console.error(`[AgentExecutor] Invocation via ${cmd} failed: ${lastError}`);
+      // A resolved CLI whose session failed is a REAL failure — stop trying
+      // other candidates (only resolution errors should fall through).
+      if (code !== 'ENOENT') {
+        return { success: false, files: [], error: lastError };
+      }
+    }
   }
+  return { success: false, files: [], error: lastError };
 };
 
 function parseOutputFiles(output: string): string[] {

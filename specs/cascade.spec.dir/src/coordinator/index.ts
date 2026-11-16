@@ -116,6 +116,85 @@ export class CascadeCoordinator {
     return this.invoker;
   }
 
+  /**
+   * DF-SPECLANG-015: consume routed tasks from a live daemon.
+   *
+   * The daemon routes AgentTasks (see Daemon.emit('task')) but nothing in the
+   * shipped code consumed them — routed spec_writer tasks produced no agent
+   * session, so reactive expansion generated nothing. This subscribes to the
+   * daemon's 'task' events and invokes the matching agent through the same
+   * AgentInvoker used by cascadeFrom (i.e. the proven `speclang agent` path).
+   *
+   * Dedup: the daemon re-converges on unchanged files every poll cycle, so
+   * identical triggers are suppressed while in flight and for ttlMs
+   * (default 10 min) after a dispatch — without this, every 30s reconvergence
+   * would re-invoke the agent and burn tokens in a loop.
+   */
+  watchDaemon(
+    daemon: { on(event: string, cb: (payload: any) => void): unknown },
+    options?: { ttlMs?: number; verbose?: boolean }
+  ): void {
+    const ttlMs = options?.ttlMs ?? 10 * 60 * 1000;
+    const verbose = options?.verbose ?? this.options.verbose ?? false;
+    const inFlight = new Set<string>();
+    const lastDispatchedAt = new Map<string, number>();
+
+    daemon.on('task', (task: { kind?: string; trigger?: string; spec?: string; target?: string }) => {
+      const triggerPath = task.trigger || task.spec || '';
+      if (!triggerPath) {
+        if (verbose) console.log('[Coordinator] Routed task has no trigger — skipping');
+        return;
+      }
+      const key = `${task.kind ?? ''}|${triggerPath}`;
+      if (inFlight.has(key)) {
+        console.log(`[Coordinator] Task already in flight for ${triggerPath} — skipping duplicate`);
+        return;
+      }
+      const last = lastDispatchedAt.get(key);
+      if (last !== undefined && Date.now() - last < ttlMs) {
+        if (verbose) console.log(`[Coordinator] Task for ${triggerPath} dispatched within TTL — skipping`);
+        return;
+      }
+      inFlight.add(key);
+      lastDispatchedAt.set(key, Date.now());
+      const agent = getAgentForTrigger(triggerPath);
+      // DF-SPECLANG-015: if the trigger is an existing file, inline its
+      // CONTENT — a bare path passed as --trigger reads as topic text and the
+      // model invents its own project instead of expanding the seed.
+      let triggerPayload = triggerPath;
+      try {
+        triggerPayload = fs.readFileSync(triggerPath, 'utf-8');
+      } catch {
+        // not a file — pass as-is
+      }
+      console.log(`[Coordinator] Dispatching agent ${agent} for routed task (trigger: ${triggerPath})`);
+      this.invoker
+        .invoke({ agent, trigger: triggerPayload })
+        .then((invocation) => {
+          this.recordInvocation(invocation);
+          if (invocation.success) {
+            console.log(`[Coordinator] Agent ${agent} completed for ${triggerPath} (${invocation.files_modified.length} files modified)`);
+            // DF-SPECLANG-015: the agent CLI prints generated content on
+            // stdout — persist it at the routed task's target path.
+            const output = (invocation as any).output as string | undefined;
+            if (task.target && output && output.trim().length > 0) {
+              fs.mkdirSync(path.dirname(task.target), { recursive: true });
+              fs.writeFileSync(task.target, output);
+              console.log(`[Coordinator] Wrote agent output to ${task.target} (${output.length} bytes)`);
+            }
+          } else {
+            console.error(`[Coordinator] Agent ${agent} FAILED for ${triggerPath}: ${invocation.error ?? 'unknown error'}`);
+          }
+        })
+        .catch((error) => {
+          console.error(`[Coordinator] Agent invocation error for ${triggerPath}:`, error);
+        })
+        .finally(() => {
+          inFlight.delete(key);
+        });
+    });
+  }
+
   private setupGates(): void {
     this.gates = [
       {
