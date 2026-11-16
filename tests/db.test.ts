@@ -53,12 +53,12 @@ describe("Database", () => {
 
   describe("Initialization", () => {
     it("should create database with correct version", () => {
-      expect(db.getVersion()).toBe(1);
+      expect(db.getVersion()).toBe(2);
     });
 
     it("should apply migrations", () => {
       const result = db.initialize();
-      expect(result.version).toBe(1);
+      expect(result.version).toBe(2);
       expect(result.applied).toBe(0); // Already applied
     });
   });
@@ -538,8 +538,8 @@ describe("Migrations", () => {
 
   it("should run migrations", () => {
     const result = migrate(db);
-    expect(result.currentVersion).toBe(1);
-    expect(result.applied).toBe(1);
+    expect(result.currentVersion).toBe(2);
+    expect(result.applied).toBe(2);
   });
 
   it("should not re-run migrations", () => {
@@ -550,7 +550,7 @@ describe("Migrations", () => {
 
   it("should get current version", () => {
     migrate(db);
-    expect(getCurrentVersion(db)).toBe(1);
+    expect(getCurrentVersion(db)).toBe(2);
   });
 });
 
