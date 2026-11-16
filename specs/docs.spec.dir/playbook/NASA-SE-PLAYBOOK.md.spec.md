@@ -1,4 +1,4 @@
-# speclang-header lines:9
+# speclang-header lines:7
 id: "@specs/docs/nasa-se-playbook"
 version: 1.0.0
 layer: 5
