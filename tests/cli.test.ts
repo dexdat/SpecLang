@@ -122,7 +122,15 @@ const CLI_CWD = fs.mkdtempSync(path.join(REPO_ROOT, ".tmp", "cli-test-"));
 fs.mkdirSync(path.join(CLI_CWD, ".speclang"), { recursive: true });
 process.env.SPECLANG_DIR = path.join(REPO_ROOT, "specs");
 
-const CLI = `npx tsx --tsconfig ${tmpConfigPath} ${path.join(REPO_ROOT, "src", "cli", "index.ts")}`;
+// PERF: resolve the tsx binary directly instead of going through `npx`.
+// Each `npx tsx` spawn pays ~620ms of npx resolution (local miss → npx
+// cache lookup) on top of tsx's own ~440ms startup, and this file spawns
+// the CLI once per test. SPECLANG_TSX_BIN exists so the resolution can be
+// measured from a worktree with a shared node_modules.
+const TSX_BIN =
+  process.env.SPECLANG_TSX_BIN ??
+  path.join(REPO_ROOT, "node_modules", ".bin", "tsx");
+const CLI = `${TSX_BIN} --tsconfig ${tmpConfigPath} ${path.join(REPO_ROOT, "src", "cli", "index.ts")}`;
 const CLI_BIN = "./bin/speclang";
 const cliExec = (cmd: string) => execAsync(cmd, { cwd: CLI_CWD });
 
