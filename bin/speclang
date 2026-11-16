@@ -1357,11 +1357,18 @@ tags: [api, http]
 
 ## Endpoints
 
-### @block:health @kind:endpoint
+### @block::health @kind:endpoint
 GET /health - Health check endpoint
 
-### @block:status @kind:endpoint  
+### @block::status @kind:endpoint
 GET /status - Service status endpoint
+
+## Implementation
+
+### @block::main @kind:code
+\`\`\`speclang
+// Implementation for ${name}
+\`\`\`
 `;
         } else {
           // minimal template
@@ -1377,6 +1384,13 @@ tags: [project]
 ## Overview
 
 This is a new speclang project.
+
+## Implementation
+
+### @block::main @kind:code
+\`\`\`speclang
+// Implementation for ${name}
+\`\`\`
 
 ## Getting Started
 
