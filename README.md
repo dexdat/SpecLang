@@ -33,8 +33,61 @@ speclang --help
 ### Prerequisites
 
 - **Node.js** >= 18.0.0
-- **npm** >= 9.0.0
+- **npm** >= 9.0.0 (on npm >= 12 see [Troubleshooting: better-sqlite3 native binding](#troubleshooting-better-sqlite3-native-binding-npm--12))
 - **Python** >= 3.8 (for tooling scripts)
+
+### Troubleshooting: `better-sqlite3` native binding (npm >= 12)
+
+SpecLang's DB layer, MCP server and cascade daemon all run on
+[`better-sqlite3`](https://github.com/WiseLibs/better-sqlite3), which compiles or
+downloads its native binding from its **own install script**.
+
+**npm 12.0.0 and later** block dependency install scripts that are not listed in the
+root `package.json` `allowScripts` field (RFC npm/rfcs#868). When that happens
+`npm install` still exits 0 — you only get a warning:
+
+```
+npm warn install-scripts 1 package had install scripts blocked because they are not covered by allowScripts:
+npm warn install-scripts   better-sqlite3@12.11.1 (install: prebuild-install || node-gyp rebuild --release)
+```
+
+…and every SQLite-backed command then fails at runtime with
+`Could not locate the bindings file`.
+
+This repo declares the approval in `package.json`, so a fresh `npm install` builds the
+binding instead of skipping it:
+
+```json
+"allowScripts": { "better-sqlite3": true }
+```
+
+Check the binding at any time (one `require` + one in-memory query, no build):
+
+```bash
+npm run check:sqlite-binding     # OK: better-sqlite3 native binding loads (SELECT 1 -> {"x":1})
+```
+
+If it reports FAIL — e.g. `node_modules` was installed before that approval existed, or
+Node was upgraded and the compiled binding no longer matches the ABI — run the remedy it
+prints:
+
+```bash
+npm rebuild better-sqlite3       # re-runs only that dependency's install script
+npm run check:sqlite-binding     # re-check
+```
+
+If `npm rebuild` still skips the script, the approval entry is missing: add it, or let
+npm write it with `npm install-scripts approve --no-allow-scripts-pin better-sqlite3`
+(without `--no-allow-scripts-pin` npm pins the exact version it approved). Also make
+sure install scripts are not globally disabled — `npm config get ignore-scripts` must
+not be `true`. If there is no prebuilt binary for your platform/Node ABI, compile it:
+`npm rebuild better-sqlite3 --build-from-source` (needs python3 + a C++ toolchain).
+Last resort: `rm -rf node_modules && npm install`.
+
+**Affected npm versions:** npm >= 12.0.0 blocks unreviewed install scripts by default
+(with `strict-allow-scripts=true` the warning becomes a hard install error). npm < 12
+runs dependency install scripts normally, so there the failure only appears when
+`ignore-scripts` is enabled.
 
 ### CLI Commands
 

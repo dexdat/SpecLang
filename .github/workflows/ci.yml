@@ -49,6 +49,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify better-sqlite3 native binding
+        # npm >= 12 blocks dependency install scripts that are not covered by
+        # the project's package.json "allowScripts" field (RFC npm/rfcs#868).
+        # better-sqlite3 compiles or downloads its native binding from exactly
+        # that install script, so a blocked script leaves a package that
+        # installs cleanly and only fails later at runtime — for every
+        # SQLite-backed command (DB layer, MCP server, cascade daemon).
+        # Costs one `require` + one in-memory query (no build) and turns that
+        # silent binding loss into a red run. Remedy: README "Troubleshooting".
+        run: npm run check:sqlite-binding
+
       - name: Install pre-commit hook
         # CI-005's acceptance tests (`tests/ci/ci005-precommit-hook.test.ts`)
         # read the project's pre-commit hook from `.git/hooks/pre-commit`
