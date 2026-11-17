@@ -1,0 +1,74 @@
+{
+  "task_id": "DF-013-PROBE",
+  "task_title": "probe",
+  "task_criteria": [
+    "probe builds"
+  ],
+  "passed": false,
+  "worktree": "/home/kara/worktrees/speclang-DF-SPECLANG-013",
+  "branch": "wt/DF-SPECLANG-013",
+  "commit": "acdef3345bb6750eedc3a4853b9a9782b937a01f",
+  "pass_class": "tier1-only",
+  "tier2_skipped": true,
+  "working_tree_content_fingerprint": "84d284c9f83c867f241e4888d33480d8e6d5f96934129a5c85414c0118dd2a31",
+  "working_tree_dirty_path_count": 0,
+  "items": [],
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": false,
+      "any_failed": true,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 tests: ok (no output)\n  \u2717 build: npm notice run speclang@1.0.0 build",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "\n\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": false,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\nspecs/indexer.spec.dir/src/index.ts(9,21): error TS2591: Cannot find name 'fs'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.\nspecs/indexer.spec.dir/src/index.ts(10,23): error TS2591: Cannot find name 'path'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.\nspecs/indexer.spec.dir/src/index.ts(11,23): error TS2307: Cannot find module 'yaml' or its corresponding type declarations.\nspecs/indexer.spec.dir/src/index.ts(234,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\nspecs/indexer.spec.dir/src/index.ts(238,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\nspecs/indexer.spec.dir/src/index.ts(284,7): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\nspecs/indexer.spec.dir/src/index.ts(326,5): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\nspecs/indexer.spec.dir/src/index.ts(329,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\nspecs/indexer.spec.dir/src/index.ts(330,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\nspecs/indexer.spec.dir/src/index.ts(331,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\nspecs/indexer.spec.dir/src/index.ts(332,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\nspecs/indexer.spec.dir/src/index.ts(333,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\n\n\u2026 [214893 chars omitted \u2014 1230 line(s)] \u2026\nsrc/workflow/setup.ts(266,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\nsrc/workflow/setup.ts(267,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\nsrc/workflow/setup.ts(268,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\nsrc/workflow/setup.ts(269,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\nsrc/workflow/setup.ts(270,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\nsrc/workflow/setup.ts(271,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\nsrc/workflow/setup.ts(272,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\nsrc/workflow/setup.ts(273,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\nsrc/workflow/setup.ts(274,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\n",
+          "error": "",
+          "data": {
+            "exit_code": 2
+          }
+        }
+      ]
+    }
+  },
+  "summary": "Stage tier1: FAIL\n    \u2713 secrets: ok (no output)\n  \u2713 tests: ok (no output)\n  \u2717 build: npm notice run speclang@1.0.0 build\n\nOverall: FAIL \u2717",
+  "evaluated_at": "2026-11-17T18:22:40.036953",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T18:22:40.165235+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 76952,
+        "truncated": false,
+        "source": "git show acdef3345bb6"
+      }
+    ],
+    "task_id": "DF-013-PROBE"
+  }
+}
