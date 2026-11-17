@@ -196,19 +196,149 @@ function addColumnIfMissing(
   }
 }
 
+// ============================================================================
+// Loop lifecycle (GAP-004: the loop used to have no exit path at all)
+// ============================================================================
+
+/** How long one idle poll waits before asking the state DB for work again. */
+export const RALPH_LOOP_POLL_INTERVAL_MS = 5_000;
+
+/**
+ * Default idle bound: consecutive polls that find no pending task before the
+ * loop stops itself. 360 x the default 5s poll = 30 minutes.
+ *
+ * `maxIdlePolls: null` disables the bound, and has to be asked for explicitly:
+ * the behaviour this replaces was a loop that polled its state database every
+ * 5 seconds forever after its work — and its launcher — were long gone.
+ */
+export const RALPH_LOOP_DEFAULT_MAX_IDLE_POLLS = 360;
+
+/** Signals that stop the loop cleanly instead of killing the process. */
+export const RALPH_LOOP_STOP_SIGNALS = ['SIGTERM', 'SIGINT', 'SIGHUP'] as const;
+
+/** One of the signals the loop handles. */
+export type LoopStopSignal = (typeof RALPH_LOOP_STOP_SIGNALS)[number];
+
+/** Why a loop stopped. Logged verbatim, as `reason=<value>`, on one line. */
+export type LoopExitReason = 'stopped' | 'idle-timeout' | 'launcher-gone' | `signal:${LoopStopSignal}`;
+
+/** Operator-facing snapshot of a loop's lifecycle state. */
+export interface LoopStatus {
+  /** True between start() and the moment the loop stops. */
+  running: boolean;
+  /** Consecutive polls that returned no task (reset by every task processed). */
+  idlePolls: number;
+  /** True while the loop is inside its poll sleep. */
+  waitingForPoll: boolean;
+  /** Why the loop stopped, or null while it is running (or before it started). */
+  exitReason: LoopExitReason | null;
+}
+
+/** Knobs for LoopController. Every one of them has a documented default. */
+export interface LoopOptions {
+  /** Milliseconds between idle polls. Default RALPH_LOOP_POLL_INTERVAL_MS (5s). */
+  pollIntervalMs?: number;
+  /**
+   * Consecutive idle polls before the loop stops with `idle-timeout`.
+   * Default RALPH_LOOP_DEFAULT_MAX_IDLE_POLLS (360 = 30 minutes at the default
+   * poll interval). `null` disables the bound explicitly.
+   */
+  maxIdlePolls?: number | null;
+  /**
+   * Stop with `launcher-gone` when the process that started the loop is no
+   * longer alive. Default true. Set false for a daemon that is intentionally
+   * reparented (systemd unit, `nohup ... &`, a supervisor that exits).
+   */
+  exitOnLauncherLoss?: boolean;
+  /**
+   * The pid to watch as the launcher. Default: `process.ppid`, captured when
+   * start() runs. Tests pass an exited pid to prove the check fires.
+   */
+  launcherPid?: number;
+  /** Where the stop line goes. Default: stderr, via console.error. */
+  log?: (line: string) => void;
+}
+
+/**
+ * Does the process `pid` still exist?
+ *
+ * `kill(pid, 0)` sends no signal: it runs the kernel's existence/permission
+ * checks only, which is the cheapest liveness probe Node exposes. EPERM means
+ * the process exists but belongs to another user — alive, not dead.
+ */
+export function isProcessAlive(pid: number): boolean {
+  if (!Number.isInteger(pid) || pid <= 0) {
+    return false;
+  }
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (error) {
+    return (error as NodeJS.ErrnoException).code === 'EPERM';
+  }
+}
+
+/**
+ * Has the process that started the loop gone away?
+ *
+ * A launcher leaves in one of two shapes, and both mean nobody is waiting for
+ * this loop: the kernel reparents us (ppid changes — an orphaned `tsx
+ * src/ralph-loop.ts` ends up owned by `systemd --user`), or the parent is still
+ * our ppid but is no longer running. A launcher pid of 0/1 is not a usable
+ * signal (we are already owned by init or a subreaper), so it reports "not
+ * gone" rather than stopping every daemon immediately.
+ */
+export function isLauncherGone(
+  launcherPid: number,
+  currentPpid: number = process.ppid,
+  probe: (pid: number) => boolean = isProcessAlive
+): boolean {
+  if (!Number.isInteger(launcherPid) || launcherPid <= 1) {
+    return false;
+  }
+  if (currentPpid !== launcherPid) {
+    return true;
+  }
+  return !probe(launcherPid);
+}
+
 export class LoopController {
   private db!: Database.Database;
   private builder: BuilderAgent;
   private verifier: VerifierAgent;
   private isRunning: boolean = false;
+  /** Consecutive polls that returned no task; reset by every task processed. */
+  private idlePolls: number = 0;
+  /** Set by the first stop request (stop(), a signal, an exit path); cleared by start(). */
+  private exitReason: LoopExitReason | null = null;
+  /** The pending poll sleep, kept so a stop ends the wait instead of leaving a timer. */
+  private pollSleep: { timer: ReturnType<typeof setTimeout>; resolve: () => void } | null = null;
+  /** Live signal listeners, so a second start() cannot stack them. */
+  private readonly signalHandlers = new Map<LoopStopSignal, () => void>();
+  private readonly pollIntervalMs: number;
+  private readonly maxIdlePolls: number | null;
+  private readonly exitOnLauncherLoss: boolean;
+  private readonly launcherPidOverride: number | undefined;
+  private readonly log: (line: string) => void;
+  /** The pid of the process that started this run, captured by beginRun(). */
+  private launcherPid: number = 0;
 
-  constructor(db: Database.Database) {
+  constructor(db: Database.Database, options: LoopOptions = {}) {
     this.db = db;
     this.builder = new BuilderAgent(db);
     this.verifier = new VerifierAgent(db);
+    this.pollIntervalMs = options.pollIntervalMs ?? RALPH_LOOP_POLL_INTERVAL_MS;
+    this.maxIdlePolls =
+      options.maxIdlePolls === undefined ? RALPH_LOOP_DEFAULT_MAX_IDLE_POLLS : options.maxIdlePolls;
+    this.exitOnLauncherLoss = options.exitOnLauncherLoss ?? true;
+    this.launcherPidOverride = options.launcherPid;
+    this.log = options.log ?? ((line: string) => console.error(line));
   }
 
-  static async create(dbPath: string = '.speclang/speclang.db'): Promise<LoopController> {
+  static async create(
+    dbPath: string = '.speclang/speclang.db',
+    options: LoopOptions = {}
+  ): Promise<LoopController> {
     // QA-SPECLANG-5-R2: guarded open — the loop used to die on a raw
     // `SqliteError: file is not a database` the first time it prepared a
     // statement against a corrupt `.speclang/speclang.db`.
@@ -224,7 +354,7 @@ export class LoopController {
       ensureStateDirectory(dbPath);
       const db = openStateDatabase(dbPath);
       withStateDatabase(db, dbPath, () => bootstrapRalphLoopState(db, dbPath));
-      return new LoopController(db);
+      return new LoopController(db, options);
     } catch (error) {
       if ((error as { code?: string } | undefined)?.code === STATE_DB_CORRUPT_CODE) {
         // The shared corruption diagnostic already names the file and the remedy.
@@ -234,18 +364,203 @@ export class LoopController {
     }
   }
 
-  async start() {
-    this.isRunning = true;
+  /**
+   * Run the loop until it stops, and report why.
+   *
+   * There are four ways out, and each one is logged on a single line as
+   * `Ralph Loop stopped (reason=<value>) ...`:
+   *
+   *  - `signal:SIGTERM` / `signal:SIGINT` / `signal:SIGHUP` — the handler stops
+   *    the loop after the current iteration, so a task in flight is never
+   *    abandoned half-processed.
+   *  - `launcher-gone` — the process that started the loop is no longer alive
+   *    (default; `exitOnLauncherLoss: false` for an intentionally reparented
+   *    daemon). This is the arm that used to leave orphans polling forever.
+   *  - `idle-timeout` — `maxIdlePolls` consecutive polls found no pending task.
+   *  - `stopped` — `stop()` was called.
+   *
+   * The promise resolves only after the signal listeners are removed, a pending
+   * poll timer is cleared and the state DB is flushed, so a caller can exit
+   * immediately.
+   */
+  async start(): Promise<LoopExitReason> {
+    this.beginRun();
+    let reason: LoopExitReason;
+    try {
+      reason = await this.runUntilStopped();
+    } finally {
+      this.endRun();
+    }
+    this.exitReason = reason;
+    this.log(`Ralph Loop stopped (reason=${reason})${this.explainStop(reason)}`);
+    return reason;
+  }
+
+  /**
+   * Ask the loop to stop.
+   *
+   * Safe from outside the loop (signal handler, embedding supervisor, test):
+   * the first request wins and keeps its reason, a pending poll sleep is ended
+   * rather than left to fire, and the iteration in flight is allowed to finish.
+   */
+  stop(reason: LoopExitReason = 'stopped'): void {
+    if (this.exitReason === null) {
+      this.exitReason = reason;
+    }
+    this.isRunning = false;
+    this.wakePollSleep();
+  }
+
+  /** Operator-facing snapshot of the loop's lifecycle state. */
+  getStatus(): LoopStatus {
+    return {
+      running: this.isRunning,
+      idlePolls: this.idlePolls,
+      waitingForPoll: this.pollSleep !== null,
+      exitReason: this.exitReason,
+    };
+  }
+
+  private async runUntilStopped(): Promise<LoopExitReason> {
     while (this.isRunning) {
       const task = await this.getNextTask();
+
       if (!task) {
-        // No pending tasks, wait for new tasks
-        await this.sleep(5000);
+        this.idlePolls += 1;
+        const reason = this.exitDueOnIdlePoll();
+        if (reason) {
+          return reason;
+        }
+        await this.sleep(this.pollIntervalMs);
         continue;
       }
 
+      this.idlePolls = 0;
       await this.processTask(task);
+
+      // A task can take minutes; re-check the launcher here too so a loop that
+      // keeps finding work still cannot outlive the process that started it.
+      if (this.launcherLost()) {
+        return 'launcher-gone';
+      }
     }
+
+    // stop() or a signal stopped the loop between iterations.
+    return this.exitReason ?? 'stopped';
+  }
+
+  /** Which exit is due on an idle poll, if any. */
+  private exitDueOnIdlePoll(): LoopExitReason | null {
+    if (this.launcherLost()) {
+      return 'launcher-gone';
+    }
+    if (this.maxIdlePolls !== null && this.idlePolls >= this.maxIdlePolls) {
+      return 'idle-timeout';
+    }
+    return null;
+  }
+
+  /** True when this loop has outlived the process that started it. */
+  private launcherLost(): boolean {
+    if (!this.exitOnLauncherLoss) {
+      return false;
+    }
+    return isLauncherGone(this.launcherPid, process.ppid);
+  }
+
+  private beginRun(): void {
+    this.isRunning = true;
+    this.exitReason = null;
+    this.idlePolls = 0;
+    this.launcherPid = this.launcherPidOverride ?? process.ppid;
+    this.installSignalHandlers();
+  }
+
+  private endRun(): void {
+    this.removeSignalHandlers();
+    this.wakePollSleep();
+    this.isRunning = false;
+    this.persistState();
+  }
+
+  private installSignalHandlers(): void {
+    // Re-entrant start(): drop any previous set first, otherwise a second run
+    // stacks a second listener per signal (Node warns from 11 and it leaks).
+    this.removeSignalHandlers();
+    for (const signal of RALPH_LOOP_STOP_SIGNALS) {
+      const handler = (): void => this.stop(`signal:${signal}`);
+      this.signalHandlers.set(signal, handler);
+      process.on(signal, handler);
+    }
+  }
+
+  private removeSignalHandlers(): void {
+    for (const [signal, handler] of this.signalHandlers) {
+      process.off(signal, handler);
+    }
+    this.signalHandlers.clear();
+  }
+
+  /** One-line detail appended to the stop log, naming why that reason fired. */
+  private explainStop(reason: LoopExitReason): string {
+    switch (reason) {
+      case 'idle-timeout':
+        return ` after ${this.idlePolls} consecutive idle polls (maxIdlePolls=${this.maxIdlePolls}, pollIntervalMs=${this.pollIntervalMs})`;
+      case 'launcher-gone':
+        return ` after launcher pid ${this.launcherPid} exited`;
+      case 'stopped':
+        return ' by stop()';
+      default:
+        return ` after ${reason.slice('signal:'.length)} was received`;
+    }
+  }
+
+  /**
+   * Flush the state database before the loop reports its exit.
+   *
+   * better-sqlite3 runs every statement synchronously, so task rows are already
+   * durable in a rollback-journal database; WAL is the one journal mode that
+   * keeps committed pages in a side file, so checkpoint it there. Best effort on
+   * purpose: an exit path must not turn a clean stop into a crash.
+   */
+  private persistState(): void {
+    try {
+      const mode = String(this.db.pragma('journal_mode', { simple: true })).toLowerCase();
+      if (mode === 'wal') {
+        this.db.pragma('wal_checkpoint(TRUNCATE)');
+      }
+    } catch {
+      // Best effort — see above.
+    }
+  }
+
+  /**
+   * Wait between idle polls, keeping the timer so a stop can end the wait.
+   *
+   * Leaving the timer to fire would hold the event loop open for up to one poll
+   * interval after the loop has already stopped.
+   */
+  private sleep(ms: number): Promise<void> {
+    return new Promise<void>((resolve) => {
+      const timer = setTimeout(() => {
+        if (this.pollSleep?.timer === timer) {
+          this.pollSleep = null;
+        }
+        resolve();
+      }, ms);
+      this.pollSleep = { timer, resolve };
+    });
+  }
+
+  /** End a pending poll sleep now, so nothing is left scheduled. */
+  private wakePollSleep(): void {
+    const pending = this.pollSleep;
+    if (!pending) {
+      return;
+    }
+    this.pollSleep = null;
+    clearTimeout(pending.timer);
+    pending.resolve();
   }
 
   private async getNextTask(): Promise<Task | null> {
@@ -286,10 +601,6 @@ export class LoopController {
     // Reset task status for retry
     const stmt2 = this.db.prepare(`UPDATE tasks SET status = 'pending', assigned_to = NULL WHERE id = ?`);
     stmt2.run(task.id);
-  }
-
-  private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
   }
 }
 
@@ -455,7 +766,14 @@ async function main(): Promise<void> {
 
   try {
     const controller = await LoopController.create(dbPath);
+    // GAP-004: start() only resolves once the loop has decided to stop — on
+    // SIGTERM/SIGINT/SIGHUP, on launcher loss, on the idle bound, or through
+    // stop() — and it has already logged which. Every one of those is a clean
+    // stop, so the exit status is 0: the point of these exit paths is that an
+    // orphaned loop ends itself instead of being SIGKILLed with its state DB
+    // still open.
     await controller.start();
+    process.exitCode = 0;
   } catch (error) {
     const code = (error as { code?: string } | undefined)?.code;
     if (code === STATE_DB_CORRUPT_CODE || code === RALPH_LOOP_INIT_FAILED_CODE) {
