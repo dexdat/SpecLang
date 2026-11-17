@@ -145,7 +145,7 @@ For programmatic access, see:
 - Hello World example (compiles and runs)
 - Explicit cascade protocol with verification gates
 - Working agent definitions for OpenCode
-- Dual-view compliance: 99.2% — 598 of 603 non-exempt files follow the specs→working-location pattern (5 non-compliant legacy `scripts/archive/` scripts lack spec sources; 178 exempt; see `scripts/check_compliance.py --report`, 2026-08-31)
+- Dual-view compliance: 99.2% of non-exempt files follow the specs→working-location pattern (the only non-compliant files are legacy `scripts/archive/` scripts with no spec source; run `python3 scripts/check_compliance.py --report` for live counts and the exempt list, last measured 2026-11-17)
 - 1826 tests passing (58 skipped; verified 2026-08-30; arch004 cascade convergence flake quarantined — daemon watcher scoped to its own fixture dir in the test, per-test timeouts aligned with polling budgets)
 
 **⚠️ Current Limitations:**
