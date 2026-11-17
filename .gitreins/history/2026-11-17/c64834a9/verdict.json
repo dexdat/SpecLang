@@ -1,0 +1,359 @@
+{
+  "task_id": "DOC-6",
+  "task_title": "document the repository-local traceability contract",
+  "task_criteria": [
+    "test -e docs/traceability-doctrine.md exits 0; the file defines row, spec, wave, test, evidence, witness, verdict, commit and memory marker fields; and grep -R -n 'ch:trace row=' docs/ README.md finds a complete repository-local example"
+  ],
+  "passed": true,
+  "worktree": "/home/kara/worktrees/speclang-DOC-6",
+  "branch": "wt/DOC-6",
+  "commit": "c2c1b12a86ea4878e158c056764081787ca0a861",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "2f0154754d3b925dfd7a6ffb2713bee46e34ccd1a41c8e46b9fa36a2601a2ab8",
+  "working_tree_dirty_path_count": 1,
+  "items": [
+    {
+      "criterion": "test -e docs/traceability-doctrine.md exits 0; the file defines row, spec, wave, test, evidence, witness, verdict, commit and memory marker fields; and grep -R -n 'ch:trace row=' docs/ README.md finds a complete repository-local example",
+      "status": "PASS",
+      "detail": "All three clauses hold. (1) `test -e docs/traceability-doctrine.md` -> exit 0 (747 lines). (2) All nine fields defined in the \u00a73 table at docs/traceability-doctrine.md:89-97 (row, spec, wave, test, evidence, witness, verdict, commit, memory), each with question answered / concrete forms / `none:` reading, plus a dedicated subsection each: 3.1 row (:99), 3.2 spec (:116), 3.3 wave (:147), 3.4 test (:176), 3.5 evidence (:200), 3.6 witness (:232), 3.7 verdict (:270), 3.8 commit (:300), 3.9 memory (:333); grammar in \u00a72 (:50-62), `none:` convention in \u00a74, extension keys doc/prompt in \u00a73.10. (3) `grep -R -n 'ch:trace row=' docs/ README.md` -> exit 0, 12 hits, including three complete repository-local examples: docs/traceability-doctrine.md:441 (row=DOC-6, 11 fields), :469 (row=DOC-7), :491 (row=README-21). Each example is byte-identical to a real repository artifact \u2014 verified by extracting the marker from .coding-hermes/board/tasks.jsonl:104 and events.jsonl:272 and from the b9bb5042/40fdd74b commit trailers and comparing to the doc lines. Supporting checks: board rows resolve (grep -cE '\"id\": ?\"DOC-6\"' -> 1, DOC-7 -> 1, DOC-9 -> 1); cited line numbers correct (tasks.jsonl:104/119/126, events.jsonl:272); census exact (33 markers board+tests, 21 distinct row ids, 28 commit-body markers); spec= anchor resolves (<a id=\"marker-contract\"></a> at :43); test= example resolves (tests/project-layout.test.ts:441 `it(\"init-to-cascade: ...\")`); dead-anchor claims true (README.md has no layer-0 heading, grep exit 1; docs/API_REFERENCE.md:174 = '## 3. MCP Server'); commit ancestry true (ad80bae0 and 92dd0567 both ancestors of origin/main); \u00a79 'nothing enforces this' true (grep ch:trace in scripts/ src/ bin/ .github/ .githooks/ package.json config/ -> exit 1, no output; git ls-files | grep -iE 'trace|lineage' -> only this doc). Tests: diff is docs-only (README.md +6, docs/traceability-doctrine.md +747; no src/ or tests/ touched) and no test references the new doc; targeted run of the two test files carrying ch:trace provenance markers \u2014 `npx vitest run tests/cli/init-cascade-contract.test.ts tests/cli/start-dashboard-contract.test.ts` -> exit 0, 'Test Files 2 passed (2)', 'Tests 6 passed (6)'. Full-suite run crashed with an environmental EPIPE in the vitest forks pool (node:events:497 write EPIPE), unrelated to this docs-only diff. LSP diagnostics: 0 findings. [resolution 0.18; docs/traceability-doctrine.md, README.md]"
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  01:47:09",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/worktrees/speclang-DOC-6/.gitreins/logs/guard-20261117T064456.376069Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/worktrees/speclang-DOC-6/.gitreins/logs/guard-20261117T064456.376069Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  01:47:09\n   Duration  48.71s (transform 32.02s, setup 5.73s, import 42.13s, tests 183.76s, environment 17ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/worktrees/speclang-DOC-6/.gitreins/logs/guard-20261117T064456.376069Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 test -e docs/traceability-doctrine.md exits 0; the file defines row, spec, wave, test, evidence, witness, verdict, commit and memory marker fields; and grep -R -n 'ch:trace row=' docs/ README.md finds a complete repository-local example: All three clauses hold. (1) `test -e docs/traceability-doctrine.md` -> exit 0 (747 lines). (2) All nine fields defined in the \u00a73 table at docs/traceability-doctrine.md:89-97 (row, spec, wave, test, evidence, witness, verdict, commit, memory), each with question answered / concrete forms / `none:` reading, plus a dedicated subsection each: 3.1 row (:99), 3.2 spec (:116), 3.3 wave (:147), 3.4 test (:176), 3.5 evidence (:200), 3.6 witness (:232), 3.7 verdict (:270), 3.8 commit (:300), 3.9 memory (:333); grammar in \u00a72 (:50-62), `none:` convention in \u00a74, extension keys doc/prompt in \u00a73.10. (3) `grep -R -n 'ch:trace row=' docs/ README.md` -> exit 0, 12 hits, including three complete repository-local examples: docs/traceability-doctrine.md:441 (row=DOC-6, 11 fields), :469 (row=DOC-7), :491 (row=README-21). Each example is byte-identical to a real repository artifact \u2014 verified by extracting the marker from .coding-hermes/board/tasks.jsonl:104 and events.jsonl:272 and from the b9bb5042/40fdd74b commit trailers and comparing to the doc lines. Supporting checks: board rows resolve (grep -cE '\"id\": ?\"DOC-6\"' -> 1, DOC-7 -> 1, DOC-9 -> 1); cited line numbers correct (tasks.jsonl:104/119/126, events.jsonl:272); census exact (33 markers board+tests, 21 distinct row ids, 28 commit-body markers); spec= anchor resolves (<a id=\"marker-contract\"></a> at :43); test= example resolves (tests/project-layout.test.ts:441 `it(\"init-to-cascade: ...\")`); dead-anchor claims true (README.md has no layer-0 heading, grep exit 1; docs/API_REFERENCE.md:174 = '## 3. MCP Server'); commit ancestry true (ad80bae0 and 92dd0567 both ancestors of origin/main); \u00a79 'nothing enforces this' true (grep ch:trace in scripts/ src/ bin/ .github/ .githooks/ package.json config/ -> exit 1, no output; git ls-files | grep -iE 'trace|lineage' -> only this doc). Tests: diff is docs-only (README.md +6, docs/traceability-doctrine.md +747; no src/ or tests/ touched) and no test references the new doc; targeted run of the two test files carrying ch:trace provenance markers \u2014 `npx vitest run tests/cli/init-cascade-contract.test.ts tests/cli/start-dashboard-contract.test.ts` -> exit 0, 'Test Files 2 passed (2)', 'Tests 6 passed (6)'. Full-suite run crashed with an environmental EPIPE in the vitest forks pool (node:events:497 write EPIPE), unrelated to this docs-only diff. LSP diagnostics: 0 findings. [resolution 0.18; docs/traceability-doctrine.md, README.md]\nThe document exists, defines all nine required marker fields with per-field subsections and verification commands, and its three worked examples are byte-identical to real board rows, events and commit trailers in this repository \u2014 every factual claim I spot-checked (census counts, dead anchors, commit ancestry, enforcement status) matched the tree. [uncovered failure paths: failure mode 0 (Full vitest suite aborts with an unhandled EPIPE in the forks pool before printing a summary, so a repo-wide green/red signal cannot be obtained in this environment): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 test -e docs/traceability-doctrine.md exits 0; the file defines row, spec, wave, test, evidence, witness, verdict, commit and memory marker fields; and grep -R -n 'ch:trace row=' docs/ README.md finds a complete repository-local example: All three clauses hold. (1) `test -e docs/traceability-doctrine.md` -> exit 0 (747 lines). (2) All nine fields defined in the \u00a73 table at docs/traceability-doctrine.md:89-97 (row, spec, wave, test, evidence, witness, verdict, commit, memory), each with question answered / concrete forms / `none:` reading, plus a dedicated subsection each: 3.1 row (:99), 3.2 spec (:116), 3.3 wave (:147), 3.4 test (:176), 3.5 evidence (:200), 3.6 witness (:232), 3.7 verdict (:270), 3.8 commit (:300), 3.9 memory (:333); grammar in \u00a72 (:50-62), `none:` convention in \u00a74, extension keys doc/prompt in \u00a73.10. (3) `grep -R -n 'ch:trace row=' docs/ README.md` -> exit 0, 12 hits, including three complete repository-local examples: docs/traceability-doctrine.md:441 (row=DOC-6, 11 fields), :469 (row=DOC-7), :491 (row=README-21). Each example is byte-identical to a real repository artifact \u2014 verified by extracting the marker from .coding-hermes/board/tasks.jsonl:104 and events.jsonl:272 and from the b9bb5042/40fdd74b commit trailers and comparing to the doc lines. Supporting checks: board rows resolve (grep -cE '\"id\": ?\"DOC-6\"' -> 1, DOC-7 -> 1, DOC-9 -> 1); cited line numbers correct (tasks.jsonl:104/119/126, events.jsonl:272); census exact (33 markers board+tests, 21 distinct row ids, 28 commit-body markers); spec= anchor resolves (<a id=\"marker-contract\"></a> at :43); test= example resolves (tests/project-layout.test.ts:441 `it(\"init-to-cascade: ...\")`); dead-anchor claims true (README.md has no layer-0 heading, grep exit 1; docs/API_REFERENCE.md:174 = '## 3. MCP Server'); commit ancestry true (ad80bae0 and 92dd0567 both ancestors of origin/main); \u00a79 'nothing enforces this' true (grep ch:trace in scripts/ src/ bin/ .github/ .githooks/ package.json config/ -> exit 1, no output; git ls-files | grep -iE 'trace|lineage' -> only this doc). Tests: diff is docs-only (README.md +6, docs/traceability-doctrine.md +747; no src/ or tests/ touched) and no test references the new doc; targeted run of the two test files carrying ch:trace provenance markers \u2014 `npx vitest run tests/cli/init-cascade-contract.test.ts tests/cli/start-dashboard-contract.test.ts` -> exit 0, 'Test Files 2 passed (2)', 'Tests 6 passed (6)'. Full-suite run crashed with an environmental EPIPE in the vitest forks pool (node:events:497 write EPIPE), unrelated to this docs-only diff. LSP diagnostics: 0 findings. [resolution 0.18; docs/traceability-doctrine.md, README.md]\nThe document exists, defines all nine required marker fields with per-field subsections and verification commands, and its three worked examples are byte-identical to real board rows, events and commit trailers in this repository \u2014 every factual claim I spot-checked (census counts, dead anchors, commit ancestry, enforcement status) matched the tree. [uncovered failure paths: failure mode 0 (Full vitest suite aborts with an unhandled EPIPE in the forks pool before printing a summary, so a repo-wide green/red signal cannot be obtained in this environment): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "test -e docs/traceability-doctrine.md exits 0; the file defines row, spec, wave, test, evidence, witness, verdict, commit and memory marker fields; and grep -R -n 'ch:trace row=' docs/ README.md finds a complete repository-local example",
+                "status": "PASS",
+                "detail": "All three clauses hold. (1) `test -e docs/traceability-doctrine.md` -> exit 0 (747 lines). (2) All nine fields defined in the \u00a73 table at docs/traceability-doctrine.md:89-97 (row, spec, wave, test, evidence, witness, verdict, commit, memory), each with question answered / concrete forms / `none:` reading, plus a dedicated subsection each: 3.1 row (:99), 3.2 spec (:116), 3.3 wave (:147), 3.4 test (:176), 3.5 evidence (:200), 3.6 witness (:232), 3.7 verdict (:270), 3.8 commit (:300), 3.9 memory (:333); grammar in \u00a72 (:50-62), `none:` convention in \u00a74, extension keys doc/prompt in \u00a73.10. (3) `grep -R -n 'ch:trace row=' docs/ README.md` -> exit 0, 12 hits, including three complete repository-local examples: docs/traceability-doctrine.md:441 (row=DOC-6, 11 fields), :469 (row=DOC-7), :491 (row=README-21). Each example is byte-identical to a real repository artifact \u2014 verified by extracting the marker from .coding-hermes/board/tasks.jsonl:104 and events.jsonl:272 and from the b9bb5042/40fdd74b commit trailers and comparing to the doc lines. Supporting checks: board rows resolve (grep -cE '\"id\": ?\"DOC-6\"' -> 1, DOC-7 -> 1, DOC-9 -> 1); cited line numbers correct (tasks.jsonl:104/119/126, events.jsonl:272); census exact (33 markers board+tests, 21 distinct row ids, 28 commit-body markers); spec= anchor resolves (<a id=\"marker-contract\"></a> at :43); test= example resolves (tests/project-layout.test.ts:441 `it(\"init-to-cascade: ...\")`); dead-anchor claims true (README.md has no layer-0 heading, grep exit 1; docs/API_REFERENCE.md:174 = '## 3. MCP Server'); commit ancestry true (ad80bae0 and 92dd0567 both ancestors of origin/main); \u00a79 'nothing enforces this' true (grep ch:trace in scripts/ src/ bin/ .github/ .githooks/ package.json config/ -> exit 1, no output; git ls-files | grep -iE 'trace|lineage' -> only this doc). Tests: diff is docs-only (README.md +6, docs/traceability-doctrine.md +747; no src/ or tests/ touched) and no test references the new doc; targeted run of the two test files carrying ch:trace provenance markers \u2014 `npx vitest run tests/cli/init-cascade-contract.test.ts tests/cli/start-dashboard-contract.test.ts` -> exit 0, 'Test Files 2 passed (2)', 'Tests 6 passed (6)'. Full-suite run crashed with an environmental EPIPE in the vitest forks pool (node:events:497 write EPIPE), unrelated to this docs-only diff. LSP diagnostics: 0 findings. [resolution 0.18; docs/traceability-doctrine.md, README.md]",
+                "resolution_probability": 0.18,
+                "cited_path": "docs/traceability-doctrine.md, README.md"
+              }
+            ],
+            "summary": "The document exists, defines all nine required marker fields with per-field subsections and verification commands, and its three worked examples are byte-identical to real board rows, events and commit trailers in this repository \u2014 every factual claim I spot-checked (census counts, dead anchors, commit ancestry, enforcement status) matched the tree. [uncovered failure paths: failure mode 0 (Full vitest suite aborts with an unhandled EPIPE in the forks pool before printing a summary, so a repo-wide green/red signal cannot be obtained in this environment): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DOC-6\"}",
+          "exit_code": 0,
+          "output_sha": "86cba040f4c7368976e673b8c783b558b399b9e62e4334e14684b60333753ab5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /workspace 2>/dev/null || cd .; pwd; ls; echo \"---\"; test -e docs/traceability-doctrine.md; echo \"test -e exit: $?\"",
+          "exit_code": 0,
+          "output_sha": "dd699e9723c344cba68067d406fdb774206644e74f3c1e25a6b219fabca08fdd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; wc -l docs/traceability-doctrine.md; echo \"=== GREP ch:trace row= ===\"; grep -R -n 'ch:trace row=' docs/ README.md; echo \"grep exit: $?\"",
+          "exit_code": 0,
+          "output_sha": "fce4f7aff36c77e8afd9dc3bc6e400a1bce6fcec2495ef2d8eb24fe1ecdf7905"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"docs/traceability-doctrine.md\"}",
+          "exit_code": 0,
+          "output_sha": "803f3aac68fa0443c9b6e5a6f7a6ff2fef58019c68cc46f46d1803c84debbefd"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 200, \"offset\": 400, \"path\": \"docs/traceability-doctrine.md\"}",
+          "exit_code": 0,
+          "output_sha": "d01786cc89628d7807ea607d537d423da07690b72098418f9695485a57cd139c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; git show --stat HEAD; echo \"=== README diff ===\"; git show HEAD -- README.md",
+          "exit_code": 0,
+          "output_sha": "2258cd8b1470f4633202e4d3ac4ec3572ca48ca8301ed49d190d6e82807a4cc5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; echo \"=== board tasks.jsonl exists? ===\"; ls -la .coding-hermes/board/ 2>&1 | head; echo \"=== DOC-6 row ===\"; grep -nE '\"id\": ?\"DOC-6\"' .coding-hermes/board/tasks.jsonl 2>&1 | head -3; echo \"=== DOC-7 ===\"; grep -nE '\"id\": ?\"DOC-7\"' .coding-hermes/board/tasks.jsonl 2>&1 | head -3; echo \"=== DOC-9 ===\"; grep -nE '\"id\": ?\"DOC-9\"' .coding-hermes/board/tasks.jsonl 2>&1 | head -3",
+          "exit_code": 0,
+          "output_sha": "c664b69d8d68d7dc03c634c289792e9d69934c9bf2ead215b2e0b782b03899b6"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 150, \"offset\": 600, \"path\": \"docs/traceability-doctrine.md\"}",
+          "exit_code": 0,
+          "output_sha": "c7cf9ae415b27d8c7d531b1541d2f983a49d0aa947330a2333a9855a2eb732f7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; echo \"=== count DOC-6 ===\"; grep -cE '\"id\": ?\"DOC-6\"' .coding-hermes/board/tasks.jsonl; echo \"=== count DOC-7 ===\"; grep -cE '\"id\": ?\"DOC-7\"' .coding-hermes/board/tasks.jsonl; echo \"=== count DOC-9 ===\"; grep -cE '\"id\": ?\"DOC-9\"' .coding-hermes/board/tasks.jsonl; echo \"=== line numbers of ch:trace in tasks.jsonl ===\"; grep -n -o 'ch:trace row=[A-Za-z][A-Za-z0-9._-]*' .coding-hermes/board/tasks.jsonl | head -20",
+          "exit_code": 0,
+          "output_sha": "ccedf49b6a6453f90ea4cfbda36c6c51047ad763e65a04798d5ae934ea99409f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; echo \"=== events.jsonl ch:trace lines ===\"; grep -n -o 'ch:trace row=[A-Za-z][A-Za-z0-9._-]*' .coding-hermes/board/events.jsonl | head -20; echo \"=== tests/ markers ===\"; grep -R -n -o 'ch:trace row=[A-Za-z][A-Za-z0-9._-]*' tests/ | head -20",
+          "exit_code": 0,
+          "output_sha": "5811d68e7b7a602721ef8a15489574ce422a815c6466d3b6627f075376f1182d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; echo \"=== actual DOC-6 marker in board (line 104) ===\"; sed -n '104p' .coding-hermes/board/tasks.jsonl | grep -o 'ch:trace row=DOC-6[^\"\\\\]*'; echo; echo \"=== doc's version ===\"; sed -n '441p' docs/traceability-doctrine.md",
+          "exit_code": 0,
+          "output_sha": "5c80cee4682a01199b36a2b8521e1682517ac7e25073100a9b6fe59742b18d21"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; echo \"=== census: board+tests count ===\"; grep -R -o 'ch:trace row=[A-Za-z][A-Za-z0-9._-]*' .coding-hermes/board/tasks.jsonl .coding-hermes/board/events.jsonl tests/ | wc -l; echo \"=== commit body count ===\"; git log --all --format='%B' | grep -cE '^ch:trace row=[A-Za-z]'; echo \"=== distinct row ids on board+test surface ===\"; grep -R -o 'ch:trace row=[A-Za-z][A-Za-z0-9._-]*' .coding-hermes/board/tasks.jsonl .coding-hermes/board/events.jsonl tests/ | sed 's/.*row=//' | sort -u | wc -l",
+          "exit_code": 0,
+          "output_sha": "9af90f50e0588f3ce811507823593e0a32f8c306b9f729263cd7f9c2293eea3d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; echo \"=== anchor exists? ===\"; grep -n '^<a id=\"marker-contract\"></a>' docs/traceability-doctrine.md; echo \"=== \u00a79 claim: no code parses ch:trace ===\"; grep -R -n \"ch:trace\" scripts/ src/ bin/ .github/ .githooks/ package.json config/ 2>/dev/null; echo \"exit: $?\"; echo \"=== git ls-files trace|lineage ===\"; git ls-files | grep -iE 'trace|lineage'",
+          "exit_code": 0,
+          "output_sha": "c31b7f074b1a70d997c3d14e753283fe96327bd1b323b6cc54bb9e111b4fb1cd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; echo \"=== DOC-7 marker in events.jsonl:272 ===\"; sed -n '272p' .coding-hermes/board/events.jsonl | grep -o 'ch:trace row=DOC-7[^\"\\\\]*'; echo; echo \"=== doc 6.2 version ===\"; sed -n '469p' docs/traceability-doctrine.md; echo \"=== README-21 in commit b9bb5042 ===\"; git log --all --format='%H %B' | grep -o 'ch:trace row=README-21[^\"]*' | head -2",
+          "exit_code": 0,
+          "output_sha": "8e0b4df4acf470b12008a2a067d4c2801ebe5abbe67a0fbf6dea1936dd01a174"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; echo \"=== README layer-0 heading? ===\"; grep -nE '^#+ ' README.md | grep -i 'layer-0'; echo \"exit: $?\"; echo \"=== API_REFERENCE MCP heading ===\"; grep -nE '^#+ ' docs/API_REFERENCE.md 2>/dev/null | grep -i 'mcp'; echo \"=== commit ad80bae0 ancestor? ===\"; git cat-file -t ad80bae0 2>&1; git merge-base --is-ancestor ad80bae0 origin/main && echo landed || echo NOT-landed; echo \"=== 92dd0567 ===\"; git merge-base --is-ancestor 92dd0567 origin/main && echo landed || echo NOT-landed",
+          "exit_code": 0,
+          "output_sha": "959c3f8553b69b07ce4e12d01abed5e484c3c44930531ff26473e8f2171be584"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; cat .gitreins/config.yaml 2>/dev/null | head -40; echo \"=== package.json test script ===\"; grep -A2 '\"test\"' package.json | head -10",
+          "exit_code": 0,
+          "output_sha": "cd0891186da3fd2e53fd257aefb37a6a27c7e129c21251b91f0acfcd39766a47"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; timeout 900 npx vitest run --passWithNoTests 2>&1 | tail -25",
+          "exit_code": -15,
+          "output_sha": "82adc754ff46eddb9aab609e81f97c4d1b68a275aa5a5eb00e2477ec7361654b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; echo \"=== README Traceability section ===\"; sed -n '130,150p' README.md; echo \"=== link target exists? ===\"; test -e docs/traceability-doctrine.md && echo \"link target OK\"",
+          "exit_code": 0,
+          "output_sha": "01d697684845b3af8bf1c9e12cdd3c6470b968af09670ede6495bd32d34868ec"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; nohup npx vitest run --passWithNoTests > /tmp/vitest-doc6.log 2>&1 & echo \"started pid $!\"; sleep 25; echo \"--- tail so far ---\"; tail -5 /tmp/vitest-doc6.log",
+          "exit_code": 0,
+          "output_sha": "5e22c73a94c3d7ce29858e5bef4bc0f026bbe57149334976ee6e947e83bfbeac"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; for i in $(seq 1 20); do if ! pgrep -f \"vitest run\" >/dev/null 2>&1; then break; fi; sleep 5; done; echo \"=== FINAL SUMMARY ===\"; grep -E \"Test Files|Tests  |Duration\" /tmp/vitest-doc6.log | tail -10; echo \"=== failed test files ===\"; grep -E \"^ \u276f .*failed\" /tmp/vitest-doc6.log | head -20",
+          "exit_code": -15,
+          "output_sha": "bb44980346f5008896783e33caeb404f821d679a027f534182985cb683574a24"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; pgrep -f \"vitest run\" >/dev/null && echo \"STILL RUNNING\" || echo \"DONE\"; echo \"=== SUMMARY ===\"; grep -E \"Test Files|Tests  |Duration\" /tmp/vitest-doc6.log | tail -10",
+          "exit_code": 0,
+          "output_sha": "46334dd0a5650c44efaeca2cde7404c5657635a0787390a0261729b1e9879ac1"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 28; cd /home/kara/worktrees/speclang-DOC-6; pgrep -f \"vitest run\" >/dev/null && echo \"STILL RUNNING\" || echo \"DONE\"; grep -E \"Test Files|Tests  |Duration\" /tmp/vitest-doc6.log | tail -10",
+          "exit_code": 0,
+          "output_sha": "de3633702b586b28b1e7188a3bb828041a073717b188d2ee8cb3c4e721c91829"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; cd /home/kara/worktrees/speclang-DOC-6; pgrep -f \"vitest run\" >/dev/null && echo \"STILL RUNNING\" || echo \"DONE\"; grep -E \"Test Files|Tests  |Duration\" /tmp/vitest-doc6.log | tail -10; echo \"--- last lines ---\"; tail -3 /tmp/vitest-doc6.log",
+          "exit_code": 0,
+          "output_sha": "70cb93ef5dfdbf0e051090c95f53b4202747d5511c85f5b10ddc5a296a2fe039"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; echo \"=== log size ===\"; wc -l /tmp/vitest-doc6.log; echo \"=== last 60 lines ===\"; tail -60 /tmp/vitest-doc6.log",
+          "exit_code": 0,
+          "output_sha": "71e88daa504c73ce39366522b94c24192b5ad878ec38f039433e51a8ad181992"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; pkill -f \"vitest run\" 2>/dev/null; sleep 1; echo \"=== does any test reference traceability-doctrine? ===\"; grep -R -n \"traceability-doctrine\" tests/ src/ scripts/ 2>/dev/null | head; echo \"exit: $?\"; echo \"=== diff touches only docs? ===\"; git show --stat HEAD --format=\"\" ",
+          "exit_code": -15,
+          "output_sha": "c211b7ea03b198893134e04cf7e6c47b442668263e91238190a9188f1c3fe4d2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; grep -R -n \"traceability-doctrine\" tests/ src/ scripts/ 2>/dev/null | head; echo \"grep exit: $?\"; echo \"=== diff stat ===\"; git show --stat HEAD --format=\"\"",
+          "exit_code": 0,
+          "output_sha": "ea6ecc764657c0a4d01c7842c06f83b6fecca2cca6f84ccd47cb0987ec69349d"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS (pending final test-run note): \\n- `test -e docs/traceability-doctrine.md` -> exit 0 (747 lines).\\n- All nine core fields defined in \\u00a73 table (docs/traceability-doctrine.md:88-98): row, spec, wave, test, evidence, witness, verdict, commit, memory \\u2014 each with question answered, concrete forms, and `none:` reading. Per-field subsections \\u00a73.1-\\u00a73.9 (lines 100-330).\\n- grep -R -n 'ch:trace row=' docs/ README.md -> exit 0, 12 hits. Complete repository-local examples at:\\n  * docs/traceability-doctrine.md:441 (row=DOC-6) \\u2014 byte-identical to real board row .coding-hermes/board/tasks.jsonl:104 (verified via sed -n '104p' | grep -o).\\n  * docs/traceability-doctrine.md:469 (row=DOC-7) \\u2014 byte-identical to .coding-hermes/board/events.jsonl:272.\\n  * docs/traceability-doctrine.md:491 (row=README-21) \\u2014 byte-identical to commit b9bb5042/40fdd74b trailer.\\n- All three examples carry all nine core fields + extension keys (doc, prompt) = 11 fields.\\n- README.md:139-143 adds ### Traceability section linking docs/traceability-doctrine.md; link target exists.\\n- Census claims verified exactly: 33 markers board+tests, 21 distinct row ids, 28 commit-body markers.\\n- \\u00a79 enforcement claims verified: grep ch:trace in scripts/ src/ bin/ .github/ .githooks/ package.json config/ -> exit 1 (no output); git ls-files | grep -iE 'trace|lineage' -> only docs/traceability-doctrine.md.\\n- Dead-anchor claims verified: README.md has no layer-0 heading (grep exit 1); docs/API_REFERENCE.md:174 is '## 3. MCP Server'.\\n- Commit ancestry verified: ad80bae0 and 92dd0567 both 'landed' (ancestor of origin/main).\\n- Anchor <a id=\\\"marker-contract\\\"></a> exists at docs/traceability-doctrine.md:43, so the DOC-6 example's spec= anchor resolves.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "04364d9fb95438bbc330dcdb60306e6f3222e7eeac2a4a1362149b3fd6b27ea9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; timeout 120 npx vitest run tests/cli/init-cascade-contract.test.ts tests/cli/start-dashboard-contract.test.ts 2>&1 | tail -15",
+          "exit_code": 0,
+          "output_sha": "a235175a692ee875429d34064f8fd62d6fceb6750477e07d5c1f4759c69e65ef"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; echo \"=== test= example resolves? ===\"; test -f tests/project-layout.test.ts && echo \"file exists\"; grep -n 'init-to-cascade' tests/project-layout.test.ts | head -3; echo \"=== test provenance comments ===\"; sed -n '10,20p' tests/cli/init-cascade-contract.test.ts; echo \"---\"; sed -n '8,16p' tests/cli/start-dashboard-contract.test.ts",
+          "exit_code": 0,
+          "output_sha": "ee8083edc31816d5d12f98cd0036095a605dd9f49bcef2c498138ce69f2d4fea"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; echo \"=== verdict run 449273d5 ===\"; git show refs/gitreins/history:.gitreins/history/2026-11-17/449273d5/verdict.json 2>&1 | head -c 400; echo; echo \"=== ls-remote gitreins refs ===\"; git ls-remote origin 'refs/gitreins/*' 2>&1 | head -3; echo \"(empty above = claim holds)\"",
+          "exit_code": 0,
+          "output_sha": "2812df4a54ac37885d07c1637597c672dc0195caa42724bf2d524cb517c5e6b8"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DOC-6; echo \"=== nine core fields defined in \u00a73 table ===\"; sed -n '88,99p' docs/traceability-doctrine.md; echo; echo \"=== each field has a subsection ===\"; grep -nE '^### 3\\.[0-9]+ `' docs/traceability-doctrine.md",
+          "exit_code": 0,
+          "output_sha": "9ec6d5364711ece67e42475b871e82b4269dda014cca67021e6d4c44315554ff"
+        },
+        {
+          "tool": "read_lsp_diagnostics",
+          "command": "read_lsp_diagnostics {}",
+          "exit_code": 0,
+          "output_sha": "ef420cbeebd549fc8c5438d6ea41a3e521fa58e29563c4cae80f491b9bfe2143"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS \\u2014 all three clauses of the criterion hold.\\n\\n1) `test -e docs/traceability-doctrine.md` -> exit 0 (747 lines, 42355 bytes).\\n\\n2) All nine required fields defined:\\n   - \\u00a73 summary table docs/traceability-doctrine.md:89-97 defines row, spec, wave, test, evidence, witness, verdict, commit, memory \\u2014 each with \\\"Question it answers\\\", \\\"Concrete forms used here\\\", and \\\"Reader may conclude from none:\\\".\\n   - Dedicated subsections for each: 3.1 row (:99), 3.2 spec (:116), 3.3 wave (:147), 3.4 test (:176), 3.5 evidence (:200), 3.6 witness (:232), 3.7 verdict (:270), 3.8 commit (:300), 3.9 memory (:333).\\n   - Grammar in \\u00a72 (:50-62) defines marker/field/key/value/none-clause; \\u00a74 (:~350) defines the none: convention; \\u00a73.10 (:~340) documents extension keys doc/prompt as additions never replacements.\\n\\n3) `grep -R -n 'ch:trace row=' docs/ README.md` -> exit 0, 12 hits. Complete repository-local examples:\\n   - docs/traceability-doctrine.md:441 row=DOC-6 \\u2014 11 fields; byte-identical to the real board row at .coding-hermes/board/tasks.jsonl:104 (verified by extracting the marker from line 104 and diffing against doc line 441 \\u2014 identical).\\n   - docs/traceability-doctrine.md:469 row=DOC-7 \\u2014 byte-identical to .coding-hermes/board/events.jsonl:272.\\n   - docs/traceability-doctrine.md:491 row=README-21 \\u2014 byte-identical to the trailer in commits b9bb5042/40fdd74b.\\n   Each example carries all nine core fields plus doc= and prompt=.\\n\\nSupporting verification that the examples are genuinely repository-local (not invented):\\n   - Board rows resolve: grep -cE '\\\"id\\\": ?\\\"DOC-6\\\"' -> 1; DOC-7 -> 1; DOC-9 -> 1.\\n   - Cited line numbers correct: tasks.jsonl:104=DOC-6, :119=DOC-7, :126=DOC-9; events.jsonl:272=DOC-7.\\n   - Census claims exact: 33 markers board+tests, 21 distinct row ids, 28 commit-body markers.\\n   - spec= anchor resolves: <a id=\\\"marker-contract\\\"></a> at docs/traceability-doctrine.md:43.\\n   - test= example resolves: tests/project-layout.test.ts:441 has it(\\\"init-to-cascade: ...\\\").\\n   - Dead-anchor claims true: README.md has no layer-0 heading (grep exit 1); docs/API_REFERENCE.md:174 = \\\"## 3. MCP Server\\\".\\n   - Commit ancestry true: ad80bae0 and 92dd0567 both ancestors of origin/main.\\n   - \\u00a79 \\\"nothing enforces this\\\" true: grep ch:trace in scripts/ src/ bin/ .github/ .githooks/ package.json config/ -> exit 1, no output; git ls-files | grep -iE 'trace|lineage' -> only docs/traceability-doctrine.md.\\n   - Verdict run 449273d5 resolves: verdict.json shows task_id DF-SPECLANG-3-R4, passed true.\\n   - refs/gitreins/* not on origin: git ls-remote prints nothing, as claimed.\\n\\nTests: change is docs-only (git show --stat: README.md +6, docs/traceability-doctrine.md +747; no src/ or tests/ touched). No test references traceability-doctrine (grep in tests/ src/ scripts/ -> no hits). Targeted run of the two test files carrying ch:trace provenance markers: `npx vitest run tests/cli/init-cascade-contract.test.ts tests/cli/start-dashboard-contract.test.ts` -> exit 0, \\\"Test Files 2 passed (2)\\\", \\\"Tests 6 passed (6)\\\". Full-suite run crashed with an environmental EPIPE in the vitest forks pool (node:events:497 write EPIPE), not a code failure; unrelated to this docs-only diff.\\nLSP diagnostics: 0 findings.\", \"key\": \"verified_0_final\"}",
+          "exit_code": 0,
+          "output_sha": "3d8b7ef464d37ece96e713d5bb1c6b476e58731ec390f24575d5504c8eb6fdd1"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "medium",
+        "file": "_index.json",
+        "line": 0,
+        "detection": "generated index contains content_refs that do not resolve to any spec id in the same index",
+        "detail": "New entries reference `specs/scripts/nasa-style-check` and `specs/docs/nasa-se-playbook` (e.g. `@specs/docs/nasa-se-playbook` content_refs and `@specs/scripts/nasa-style-check` content_refs), but the specs map only defines `@specs/docs/nasa-se-playbook` and `@specs/scripts/nasa-style-check` \u2014 the bare `specs/...` ids used in content_refs are not keys in `specs`, so these refs are dangling in the same way the diff elsewhere cleans up (e.g. `specs/api` -> `speclang/api-spec`)."
+      },
+      {
+        "severity": "low",
+        "file": "_index.json",
+        "line": 0,
+        "detection": "index entry renamed/re-keyed while its `file` field still points at the old path",
+        "detail": "`@unknown/index.spec.md` was re-keyed to `@specs/agents/implementation` but retains `\"file\": \"agents.spec.dir/index.spec.md\"` and `content_refs: [\"specs/agent-protocol\"]`, while the reverse map now lists `specs/agent-protocol` as depending on `@specs/agents/implementation` \u2014 the id/file mismatch is inconsistent with every other entry where id derives from file path."
+      },
+      {
+        "severity": "low",
+        "file": "_index.json",
+        "line": 0,
+        "detection": "reverse dependency map retains stale keys for ids removed from the specs map",
+        "detail": "The `dependencies` reverse map still contains entries such as `specs/compiler`, `specs/parser`, `specs/indexer`, `specs/scripts`, `specs/autonomous`, `specs/safety`, `specs/safety-nets`, `specs/deployment`, `specs/compliance`, `specs/examples/hello-world`, `specs/examples/auth`, `specs/examples/crud-app`, `specs/pipeline`, `specs/executor`, `specs/lenses`, `specs/ui`, `specs/router`, `specs/testing-strategy`, `specs/opencode-plugin`, `specs/headers`, `specs/test-specs`, `specs/git-history`, `specs/skills`, `specs/daemon`, `specs/mcp`, `specs/cascade`, `specs/validation`, `specs/core`, `specs/agent-protocol`, `specs/bootstrap/phases`, `specs/bootstrap/execution`, `specs/cascade-protocol`, `project`, `specs/mcp/messages`, `specs/safety-nets/fallback`, `specs/config`, `specs/autonomous-validation`, `specs/opencode-plugin`, `specs/roadmap`, `specs/agents`, `specs/safety-detection`, `specs/safety-nets`, `specs/scripts`, `specs/other/spec`, `specs/speclang`, `specs/testing-strategy`, `specs/ui-dashboard/visual-design` etc. \u2014 many of these ids no longer exist as keys in `specs`, so the reverse map is not consistent with the forward map."
+      }
+    ],
+    "summary": "The regenerated index is largely a mechanical refresh, but it introduces dangling `specs/...` content_refs for the two new NASA entries and leaves the reverse dependency map inconsistent with the specs map after the large id renames."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  01:47:09\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 test -e docs/traceability-doctrine.md exits 0; the file defines row, spec, wave, test, evidence, witness, verdict, commit and memory marker fields; and grep -R -n 'ch:trace row=' docs/ README.md finds a complete repository-local example: All three clauses hold. (1) `test -e docs/traceability-doctrine.md` -> exit 0 (747 lines). (2) All nine fields defined in the \u00a73 table at docs/traceability-doctrine.md:89-97 (row, spec, wave, test, evidence, witness, verdict, commit, memory), each with question answered / concrete forms / `none:` reading, plus a dedicated subsection each: 3.1 row (:99), 3.2 spec (:116), 3.3 wave (:147), 3.4 test (:176), 3.5 evidence (:200), 3.6 witness (:232), 3.7 verdict (:270), 3.8 commit (:300), 3.9 memory (:333); grammar in \u00a72 (:50-62), `none:` convention in \u00a74, extension keys doc/prompt in \u00a73.10. (3) `grep -R -n 'ch:trace row=' docs/ README.md` -> exit 0, 12 hits, including three complete repository-local examples: docs/traceability-doctrine.md:441 (row=DOC-6, 11 fields), :469 (row=DOC-7), :491 (row=README-21). Each example is byte-identical to a real repository artifact \u2014 verified by extracting the marker from .coding-hermes/board/tasks.jsonl:104 and events.jsonl:272 and from the b9bb5042/40fdd74b commit trailers and comparing to the doc lines. Supporting checks: board rows resolve (grep -cE '\"id\": ?\"DOC-6\"' -> 1, DOC-7 -> 1, DOC-9 -> 1); cited line numbers correct (tasks.jsonl:104/119/126, events.jsonl:272); census exact (33 markers board+tests, 21 distinct row ids, 28 commit-body markers); spec= anchor resolves (<a id=\"marker-contract\"></a> at :43); test= example resolves (tests/project-layout.test.ts:441 `it(\"init-to-cascade: ...\")`); dead-anchor claims true (README.md has no layer-0 heading, grep exit 1; docs/API_REFERENCE.md:174 = '## 3. MCP Server'); commit ancestry true (ad80bae0 and 92dd0567 both ancestors of origin/main); \u00a79 'nothing enforces this' true (grep ch:trace in scripts/ src/ bin/ .github/ .githooks/ package.json config/ -> exit 1, no output; git ls-files | grep -iE 'trace|lineage' -> only this doc). Tests: diff is docs-only (README.md +6, docs/traceability-doctrine.md +747; no src/ or tests/ touched) and no test references the new doc; targeted run of the two test files carrying ch:trace provenance markers \u2014 `npx vitest run tests/cli/init-cascade-contract.test.ts tests/cli/start-dashboard-contract.test.ts` -> exit 0, 'Test Files 2 passed (2)', 'Tests 6 passed (6)'. Full-suite run crashed with an environmental EPIPE in the vitest forks pool (node:events:497 write EPIPE), unrelated to this docs-only diff. LSP diagnostics: 0 findings. [resolution 0.18; docs/traceability-doctrine.md, README.md]\nThe document exists, defines all nine required marker fields with per-field subsections and verification commands, and its three worked examples are byte-identical to real board rows, events and commit trailers in this repository \u2014 every factual claim I spot-checked (census counts, dead anchors, commit ancestry, enforcement status) matched the tree. [uncovered failure paths: failure mode 0 (Full vitest suite aborts with an unhandled EPIPE in the forks pool before printing a summary, so a repo-wide green/red signal cannot be obtained in this environment): detected_by is empty \u2014 uncovered failure path]\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T06:51:41.493304",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T06:51:41.528308+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 50432,
+        "truncated": false,
+        "source": "git show c2c1b12a86ea"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 206160,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DOC-6"
+  }
+}

@@ -1,0 +1,871 @@
+commit c2c1b12a86ea4878e158c056764081787ca0a861
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 01:44:12 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 01:44:56 2026 -0500
+
+    docs(traceability): define the repository-local ch:trace contract (DOC-6)
+    
+    Adds docs/traceability-doctrine.md: the contract every board row, commit
+    trailer and test-provenance comment in this repository is read against, plus a
+    one-section pointer in README.md (### Traceability).
+    
+    The contract states that a marker is one physical line,
+    `ch:trace row=<id> key=value ...`, whose every field is either a value a reader
+    can resolve or an explicit `none:<reason>`; silence is not an answer, and a
+    missing key is weaker than any `none:`. It defines the nine core fields -
+    row, spec, wave, test, evidence, witness, verdict, commit, memory - with the
+    concrete forms observed in this repo, the verification command for each, and
+    what a reader may conclude from a `none:`. Two extension keys (doc, prompt) are
+    documented as additions, never replacements.
+    
+    `witness` is defined honestly as the anti-tautology field: evidence is what the
+    author produced, a witness is a reading taken from a source the author does not
+    control ("could the author have written this value alone?"). The forms are
+    graded by distance from the author - path@origin: (the only concrete witness on
+    the board surface today, row=DOC-9), verdict:<run-id>, tag:<name>@<sha>,
+    ci:<workflow>@<sha>, external:<auditor>@<date>, memory key@record-id - and the
+    document says plainly that every marker but one is a recorded absence right now.
+    
+    Three complete examples, all real and all checked at HEAD 35d8700d:
+      row=DOC-6  (.coding-hermes/board/tasks.jsonl:104) - a filed finding; eleven
+                 well-formed fields, nothing delivered
+      row=DOC-7  (events.jsonl:272) - landed; commit=ad80bae0 (ancestor of
+                 origin/main), memory key speclang:/projects/speclang/docs-audit/
+                 2026-11-16-05-02-33
+      row=README-21 (b9bb5042, 40fdd74b) - commit=92dd0567 with
+                 witness=path@origin:specs/project.scl
+    
+    The inherited draft was audited claim by claim and corrected where the tree
+    disagrees; corrections, not editorial polish:
+    
+    - "no wave manifest files; find -name '*wave*' returns nothing" was false.
+      .coding-hermes/waves/SpecLang-foreman-2026-11-17-00-01-35.json is tracked.
+      Rewritten to say manifests exist, are keyed by tick_id, and are not the
+      namespace of wave=; also recorded that wave= resolves through four different
+      events keys (tick, tick_label, tick_id, tick_key) and that
+      speclang-readme-2026-10-27-15-09-36 and readme-sweep/1 resolve nowhere.
+    - "events.jsonl:272 - row=DOC-9" was wrong: line 272 carries row=DOC-7 and
+      row=DOC-8, and no DOC-9 marker exists in the events ledger at all. The
+      surface table now cites lines that do carry markers.
+    - The DOC-9 bare-filename evidence defect was described as still unrepaired on
+      a stale reading of the ledger. It has since been repaired by enrichment: the
+      row's detail.evidence[0].artifacts and foreman_note pin the absolute path
+      with its sha256, and the row closed as complete under commit 4455371a with
+      event 368 task_completed. Rewritten to describe the repair and why the
+      marker field still reads badly.
+    - Popularity counts ("25 of 51", "41 of 51") could not be reproduced by any
+      command. Replaced with a measured census that ships its own commands: 33
+      marker occurrences across 21 distinct row ids on the board+test surface, 27
+      marker lines in commit bodies.
+    - evidence=npm / evidence=git / evidence=board:tasks.jsonl were misquoted
+      truncations and one invented value. The real strings in commit 55e74569 are
+      "evidence=npm test + npx tsc --noEmit runs", "evidence=git ls-remote + ..."
+      and "evidence=board row reasoning (commands and outputs inline)"; they are
+      quoted exactly, and they also demonstrate the no-spaces rule that the draft
+      attributed to a section (8.9) it never wrote.
+    - spec=README.md#layer-0-example-tree was presented as a working heading
+      anchor. It resolves nothing: README.md has no layer-0 heading. Now documented
+      as a live dead anchor, together with docs/API_REFERENCE.md#MCP-Server
+      (the heading slug is 3-mcp-server), the absolute-path doc= values on
+      row=README-18..20, and their dead prompt path.
+    - witness=none:local-command-output and
+      none:test-count-varies-by-checkout-provisioning were cited as board values;
+      the board was normalised since, so they now cite the commits that contain
+      them (55e74569 and b9bb5042/40fdd74b).
+    - package.json's script list was missing check:sqlite-binding and
+      gen:migrations; the enforcement section now lists all fifteen.
+    
+    Added beyond the draft, each verified this tick: the .coding-hermes/evidence/
+    port (14 tracked artifacts, zero markers pointing at it) as the repo-local
+    alternative to absolute home paths; the memory=none:no-speclang-namespace false
+    absence claim and its correction in event 272, which is the reason the doctrine
+    now requires a probe before asserting absence; verdict run 449273d5 as a
+    resolvable PASS, with the caveat that it grades 1354cc85, a commit no branch
+    contains; and that refs/gitreins/history is local-only
+    (git ls-remote origin 'refs/gitreins/*' prints nothing).
+    
+    Enforcement status is recorded as measured, not intended: no code parses
+    ch:trace, .githooks/pre-commit runs gitreins guard (secrets, build, tests),
+    CI runs workflow CI with the ci-pr-review eight criteria - none of the eight
+    mention the marker - and nothing therefore fails on a missing, malformed or
+    dead-pointer marker.
+    
+    ch:trace row=DOC-6 spec=none:contract-is-the-deliverable wave=none:serial-worker test=none:docs-only doc=docs/traceability-doctrine.md evidence=docs/traceability-doctrine.md witness=none:no-external-witness verdict=none:pending-foreman-judge commit=none:worker-commit memory=none:not-written
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+---
+ README.md                     |   6 +
+ docs/traceability-doctrine.md | 747 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 753 insertions(+)
+
+diff --git a/README.md b/README.md
+index de1950de..b0062cb0 100644
+--- a/README.md
++++ b/README.md
+@@ -136,6 +136,12 @@ For programmatic access, see:
+ - `specs/api.spec.md` - REST API specification (internal spec)
+ - `specs/mcp.spec.md` - MCP server for AI agent integration (internal spec)
+ 
++### Traceability
++
++Every board row, commit trailer, and test-provenance comment carries a `ch:trace` marker;
++the contract (nine fields, the `none:` convention, complete worked examples) is
++[docs/traceability-doctrine.md](docs/traceability-doctrine.md).
++
+ ## Current Status: Reality-Based Alpha
+ 
+ **✅ What Works:**
+diff --git a/docs/traceability-doctrine.md b/docs/traceability-doctrine.md
+new file mode 100644
+index 00000000..79698842
+--- /dev/null
++++ b/docs/traceability-doctrine.md
+@@ -0,0 +1,747 @@
++# Traceability Doctrine — the `ch:trace` marker
++
++Every board row, commit, and test-provenance comment in this repository is expected to
++carry one machine-readable line saying **what the work is tied to, and what proves it**.
++That line is the `ch:trace` marker. It is not a summary and it is not decoration: it is a
++claim with named parts, and every part is either a value a reader can resolve or an
++explicit `none:<reason>`.
++
++Audience: **developers** writing the marker, **operators** reading a board row to decide
++whether work is really landed, and **integrators** auditing what shipped.
++
++Status: **documentary**. Nothing in this repository parses, validates, or gates the
++marker (§9). This document is the reference a reader is expected to apply by hand (§7).
++
++Measurement base: everything asserted below was checked in this checkout at
++**HEAD `35d8700d`**, 2026-11-17, against `origin` = `https://github.com/dexdat/SpecLang.git`.
++Where a board or source line number is cited it is the line number **at that HEAD**; board
++ledgers are append-only and lines shift on the next tick, so every citation also gives the
++row id or the command that re-finds it.
++
++## 1. Why a marker and not prose
++
++Prose decays silently. A paragraph written at commit time reads as authoritative forever,
++even after the file it names has moved, the test it cites has been deleted, and the commit
++it references was rewritten out of the branch. Prose also has no fixed vocabulary, so a
++reader cannot distinguish *"there was no test"* from *"the author did not mention a test"*.
++
++A marker fixes both:
++
++1. **Every field is a resolvable value or an explicit `none:` with a reason.** Silence is
++   not a permitted answer. Missing coverage becomes a positive statement a reader can
++   audit instead of a gap they must infer.
++2. **It is written at authorship time**, when the author still knows which run produced
++   the evidence and which judge did or did not run. A marker reconstructed the next day is
++   a rationalisation.
++3. **It is greppable.** `row=`, `verdict=none:`, `commit=none:open` are answerable queries
++   across the whole ledger without reading one prose paragraph.
++
++The rule of thumb: *a marker is not a record that work happened — it is a list of things
++a reader can go and check.* Length is not evidence. The complete example in §6.1 has
++eleven well-formed fields and still asserts that nothing has been delivered.
++
++<a id="marker-contract"></a>
++
++## 2. Marker contract — grammar and rules
++
++A marker is exactly one physical line beginning with the literal token `ch:trace`:
++
++```
++ch:trace row=<id> key=value key=value ...
++```
++
++Formal shape:
++
++```
++marker         := "ch:trace" SP field (SP field)*
++field          := key "=" value
++key            := [a-z][a-z0-9_]*
++value          := concrete-value | none-clause
++concrete-value := one-or-more characters from [A-Za-z0-9._:/#@+,-]
++none-clause    := "none:" reason
++reason         := [a-z0-9-]+
++```
++
++Rules every marker in this repository follows:
++
++| Rule | Why |
++|------|-----|
++| One line, no embedded newlines | The ledgers and `git log` are line-oriented; a wrapped marker cannot be parsed. Ledger JSON escapes newlines, so a marker inside a row is one line before and after serialisation. |
++| `row=` comes first | Lets a cheap `grep -o 'ch:trace row=[^ ]*'` index every marker without knowing the other keys. |
++| Fields separated by a single space; values contain no spaces | Space is the only separator. A value with a space splits into pseudo-fields that no reader expects — commit `55e74569` does exactly that (§8.9). Quote nothing; re-express the value instead. |
++| Keys are lowercase ASCII | Keeps the vocabulary from fragmenting into `Spec=` / `spec=`. |
++| Unknown keys are tolerated | Forward compatibility: `doc=` and `prompt=` (§3.10) were added after the nine core keys. Readers ignore keys they do not know; authors never drop a core key to make room. |
++| A missing key is not `none:` | Omitting a key means *the author did not answer*. `none:<reason>` means *the author answered: there is nothing here, and here is why.* A partial marker can only be read as the weaker of the two. |
++
++Structural check for one marker (used in §7):
++
++```bash
++grep -Eq '^ch:trace row=[^ ]+( [a-z][a-z0-9_]*=[^ ]+)+$' <<< "$marker"
++```
++
++## 3. Field reference — the nine core fields
++
++All nine keys must be present on a complete marker. `row` must be a concrete value; the
++other eight may be `none:<reason>`.
++
++| Field | Question it answers | Concrete forms used here | Reader may conclude from `none:` |
++|-------|--------------------|--------------------------|----------------------------------|
++| `row` | Which board row is this? | `DOC-6`, `DOC-7`, `DF-SPECLANG-1-R4` | not permitted — see §3.1 |
++| `spec` | What design authority does it implement? | `path#anchor`, `path` | the work is **unanchored**: no spec backed it at write time |
++| `wave` | Which dispatch unit produced it? | `<tick-id>#<phase>`, `<lane>/<n>` | a single agent produced it; nothing to reconcile against siblings |
++| `test` | What executable check covers it? | `path`, `path::case` | **uncovered**: the claim rests on evidence and witness alone |
++| `evidence` | What artifact proves a run happened? | `path` (absolute or repo-relative) | no producer-side artifact exists |
++| `witness` | What independent reading confirms the claim? | `path@origin:<path>` | **single-source**: the claim was never checked against anything the author does not control |
++| `verdict` | Did a judge grade it? | `PASS@<run-id>`, `FAIL@<run-id>` | no judge ran; any "verified" language is the author's own |
++| `commit` | Which sha carries it? | 8+ hex short sha | not landed, or not knowable at write time |
++| `memory` | Which DuckBrain key holds the narrative? | `<namespace>/<row>`, `<namespace>:/<key>` | no durable memory was written |
++
++### 3.1 `row`
++
++The board row identifier, and the anchor of the whole marker. Concrete only: a marker
++that cannot be tied to a row is a lead, not evidence.
++
++Observed: `row=DOC-6`, `row=DOC-7`, `row=README-21`, `row=DF-SPECLANG-1-R4`.
++
++Verification: the id must exist in `.coding-hermes/board/tasks.jsonl`. The ledger mixes two
++spacing styles (`"id": "DOC-6"` on older rows, `"id":"DOC-7"` on newer), so allow for both:
++
++```bash
++grep -cE '"id": ?"DOC-7"' .coding-hermes/board/tasks.jsonl   # → 1
++grep -E '"id": ?"DOC-7"' .coding-hermes/board/tasks.jsonl | jq -r .status   # → complete
++```
++
++A `row=` that resolves to nothing is the most common way a marker becomes worthless.
++
++### 3.2 `spec`
++
++The design authority the change implements: a repository-relative path, optionally with an
++anchor naming the section, symbol, or line.
++
++Concrete values observed, and whether they still resolve at this HEAD:
++
++| Value | Resolves today? |
++|-------|-----------------|
++| `specs/project-layout.spec.dir/src/templates.ts#generateInitialSpec` | yes — file exists; anchor is a symbol in it |
++| `docs/API_REFERENCE.md#MCP-Server` | **no** — the file's heading is `## 3. MCP Server` (line 174), whose slug is `3-mcp-server` |
++| `README.md#what-works-vs-what-doesnt` | yes — README.md's `## What Works vs What Doesn't` |
++| `README.md#run-a-mini-cascade` | yes — README.md's `### Run a Mini Cascade` |
++| `README.md#L83`, `README.md#L89`, `README.md#L440` | resolves only as a reading instruction; see the drift note below |
++| `README.md#layer-0-example-tree` | **no** — README.md has no heading containing `layer-0` |
++| `none:repository-contract-absent` | n/a — the dominant `none:` reason |
++
++Anchor choice is a trade-off. `#L89` is exact today and drifts silently the moment anyone
++edits above line 89; a heading slug survives edits and fails loudly when the section is
++renamed. The two dead anchors above (`#MCP-Server`, `#layer-0-example-tree`) are both
++silent failures of the kind a heading-slug discipline prevents: nothing errored, the
++marker just stopped pointing at anything. **Prefer a heading slug; treat a line anchor as
++valid only for the tick that wrote it.**
++
++`none:repository-contract-absent` is a strong statement, not a shrug: *this repository has
++no spec to point at for this work*, which is why the row is an audit finding rather than an
++implementation. A reader may conclude the change is unanchored and that any later claim it
++"follows the spec" is false until a spec appears.
++
++Verification: `grep -nE '^#+ ' <file>` and match the anchor by slug or heading text.
++
++### 3.3 `wave`
++
++The dispatch unit that produced the work — a tick id, a lane, or a wave label.
++
++Values observed: `speclang-docs-2026-10-27-00-12-05#audit`,
++`speclang-readme-2026-10-27-15-09-36#sweep`, `speclang-readme-2026-10-27-15-09-36#audit`,
++`readme-sweep/1`, and the `none:` forms `none:serial-audit`, `none:serial-readme-tick`,
++`none:serial-worker`.
++
++`none:serial-<role>` states a fact about concurrency — one agent, no parallel siblings —
++so there is no sibling branch to reconcile or double-count. It is not a defect.
++
++**Two things are true about `wave=` and a reader should know both.**
++
++1. Wave manifests exist, but they are not the namespace of `wave=`. `.coding-hermes/waves/`
++   holds one tracked manifest, `.coding-hermes/waves/SpecLang-foreman-2026-11-17-00-01-35.json`,
++   keyed by `tick_id` and listing `workers[]`, `base_sha`, and `merge_order`. A `wave=`
++   value equal to that `tick_id` resolves to it; nothing else does. Do not write a `wave=`
++   value that claims to be a manifest path.
++2. Tick identity in `.coding-hermes/board/events.jsonl` lives under four different keys —
++   `tick` (most common), `tick_label`, `tick_id`, `tick_key`. `row=DOC-6`'s
++   `wave=speclang-docs-2026-10-27-00-12-05#audit` resolves through `tick_label` at
++   events.jsonl:250 — without the `#audit` phase suffix, which no ledger records.
++   `speclang-readme-2026-10-27-15-09-36` and `readme-sweep/1` appear **nowhere** in the
++   events ledger: they are labels with no artifact behind them.
++
++So: a `wave=` that matches a wave manifest, an events `tick*` key, or a commit trailer is
++checkable; the rest is a label. Say which one you wrote.
++
++### 3.4 `test`
++
++The executable check that covers the change.
++
++Concrete forms in use:
++
++- `test=tests/db.test.ts` — whole file
++- `test=tests/project-layout.test.ts::init-to-cascade` — file plus case name; the case is
++  `it("init-to-cascade: emits a block the cascade generator consumes", …)` at
++  tests/project-layout.test.ts:441
++- `test=tests/e2e/spec-to-code.test.ts::E2E` — file plus the suite label
++
++`none:` reasons observed: `none:open-finding` (dominant — every filed audit finding uses
++it), `none:doc-tree-drift-uncovered-by-tests`, `none:docs-claim-no-test-file`.
++
++`none:open-finding` is the honest value for docs and audit work: the row *is* the gap, so
++no test could exist yet. What a reader may **not** do is read it as "tested elsewhere".
++
++Verification: file exists, and the case name appears in it:
++
++```bash
++test -f tests/project-layout.test.ts && grep -n 'init-to-cascade' tests/project-layout.test.ts
++```
++
++### 3.5 `evidence`
++
++The producer-side artifact proving a run actually happened: a transcript, a matrix log, a
++readback JSON.
++
++Observed values:
++
++- `/home/kara/.hermes/stand-in/docs/speclang/docs-audit-2026-11-16-05-02-33.md` — absolute
++  path; readable on the producing host, meaningless on any other
++- `/home/kara/.hermes/stand-in/readme/speclang/evidence/20-link-targets.txt` — same
++- `none:worker-local-until-foreman-verifies` — deferred, with the reason and the owner
++
++Two ports are available and the repository prefers neither by rule yet, so pick
++deliberately:
++
++| Port | Resolvable from | Survives |
++|------|-----------------|----------|
++| absolute path under a home directory (what most markers use) | the producing host only | until the scratch tree is pruned |
++| repo-relative path (`.coding-hermes/evidence/...`) | any clone | as long as the file is tracked |
++
++`.coding-hermes/evidence/` is tracked and currently holds 14 artifacts (for example
++`.coding-hermes/evidence/DF-SPECLANG-1-R4-tier2-cap-verdict.txt`), yet **no marker points
++at it**. When an artifact must outlive the tick, land it there and cite it repo-relative.
++
++**Weak forms, and why they fail.** Commit `55e74569` puts a tool or a board file in this
++field: `evidence=npm test + npx tsc --noEmit runs`,
++`evidence=git ls-remote + depth-1 anonymous clone rc=0`,
++`evidence=board row reasoning (commands + outputs inline)`. Each names the *producer* of
++evidence instead of the evidence: nobody can re-open "npm", and the board reasoning is a
++pointer to a claim, not proof a run happened. If the honest answer is "I ran it and saw it
++pass, and the only record is my word", write `none:not-written` (§4) — not a tool name.
++
++### 3.6 `witness`
++
++The anti-tautology field. `evidence` is what the author produced; a **witness is a reading
++taken from a source the author does not control**. The test is not "is there a second
++file" — it is *"could the author have written this value alone?"* A log the author wrote
++never passes that test, however long it is.
++
++Witness forms, in descending distance from the author:
++
++| Form | What makes it out-of-band | Resolves with | In use here? |
++|------|---------------------------|---------------|--------------|
++| `path@origin:<path>` | the remote's content, not the working tree | `git cat-file -e origin/main:<path>` | **yes** — the only concrete witness on the board/test surface (`row=DOC-9`, `.coding-hermes/board/tasks.jsonl:126`), and in commit trailers `b9bb5042` / `40fdd74b` (`specs/project.scl`) |
++| `verdict:<run-id>` | the judge tool names the run by a hash of `task_id:evaluated_at`; the author cannot mint it | `git show refs/gitreins/history:.gitreins/history/<date>/<run-id>/verdict.json` | form defined, no marker uses it yet |
++| `tag:<name>@<sha>` | an annotated tag object, created at release time | `git rev-parse <name>^{commit}` | tags exist (`v0.1.0`→`ff96a2e9`, `v1.0.0`→`f7b4ce7d`, both ancestors of `origin/main`); no marker uses it |
++| `ci:<workflow>@<sha>` | a hosted run of `.github/workflows/ci.yml` (workflow name `CI`) bound to that commit | the forge's run record for the sha — Actions UI, or `gh run list --commit <sha>` | no marker uses it yet |
++| `external:<auditor>@<date>` | a human or third-party audit outside this repo | nothing machine-readable here | no marker uses it |
++| `memory:<ns>:<key>@<record-id>` | the store assigns the record id (event 272 records `1d2e750e-fb0a-44d5-9e74-b1c4c99a37d0` for `speclang:/projects/speclang/docs-audit/2026-11-16-05-02-33`) | DuckBrain lookup | form documented in the ledger, not in a marker field |
++
++`none:` reasons observed on rows and in commits, each naming a *specific* absence:
++`none:auditor-probe-only`, `none:static-source-versus-doc-audit`,
++`none:source-versus-repository-docs`, `none:worker-worktree`,
++`none:local-command-output`, `none:no-independent-witness-auditor-probe-only`,
++`none:test-count-varies-by-checkout-provisioning`,
++`none:repository-internal-claim-versus-run`,
++`none:repository-internal-clone-versus-checkout`.
++
++Read them literally. `none:source-versus-repository-docs` says the comparison *was* the
++method, so no second artifact exists — it is a recorded way of being single-source, not a
++second source. `none:local-command-output` says the author's own terminal output is the
++only record, which is evidence, not a witness. `none:test-count-varies-by-checkout-provisioning`
++names a real blocker: the check cannot be re-run to the same number on a differently
++provisioned checkout.
++
++`witness=none:*` on a row that also claims a concrete `verdict` is a contradiction worth
++flagging (§8.3). Honest position at this HEAD: **one** marker on the board/test surface
++carries a concrete witness, and every other one is a recorded absence. That is the gap
++this field exists to expose, not a formality to fill with `none:` and forget.
++
++### 3.7 `verdict`
++
++The judge outcome, if a judge ran.
++
++Concrete form: `PASS@<run-id>` / `FAIL@<run-id>`, where `<run-id>` is the directory name
++under `.gitreins/history/<date>/`, i.e. `sha256(task_id:evaluated_at)[:8]`. Example that
++resolves today: run `449273d5` is `PASS` for `DF-SPECLANG-3-R4`, `pass_class: judged` —
++
++```bash
++git show refs/gitreins/history:.gitreins/history/2026-11-17/449273d5/verdict.json | jq '{task_id,passed,pass_class}'
++```
++
++**No marker in this repository carries a concrete verdict.** Every one is a `none:` form:
++`none:open-finding`, `none:foreman-must-run-judge`, `none:no-judge-ran`. Tier-2 results
++land in `.gitreins/history/` (and on the `refs/gitreins/history` ref) and are not copied
++back into markers. Until that copy-back exists, a `verdict=` field records *intent to
++judge*, not a grading.
++
++Two operational caveats, both measured in this checkout:
++
++- The history ref is **local**. `git ls-remote origin 'refs/gitreins/*'` prints nothing, so
++  a fresh clone has no verdicts until someone runs
++  `git push origin refs/gitreins/history:refs/gitreins/history`. A `verdict=` value is
++  therefore resolvable per-checkout, not repository-wide.
++- A verdict grades a commit that may no longer exist on any branch. Run `449273d5` grades
++  `1354cc85`; that object is in the database but `git branch -a --contains 1354cc85` is
++  empty at this HEAD. The run id is the durable handle; the graded sha is not.
++
++Storage details and the runbook live in `docs/gitreins-verdicts.md`.
++
++### 3.8 `commit`
++
++The sha that carries the work — for a landing row, the landing commit.
++
++Observed forms: 8-hex short shas (`commit=ad80bae0`, `commit=92dd0567`), `none:open` (not
++landed), `none:worker-commit` (structurally unknowable at write time: a trailer is written
++before its own commit exists).
++
++`commit=none:worker-commit` is legitimate and not a licence to leave the field unresolved
++forever — the foreman's merge is where it becomes `commit=<sha>`.
++
++Three distinct meanings get collapsed into this one field in current practice, and a
++reader must decide which is meant before trusting it:
++
++| Intent | Value that expresses it |
++|--------|------------------------|
++| the commit that landed the row | `commit=<landing sha>` |
++| the tree the finding was measured at | say so in prose; do not put it in `commit=` |
++| not landed | `commit=none:open` |
++
++`row=README-21` is the cautionary case: its trailer carries `commit=92dd0567`, but
++`92dd0567` is the *measurement base* ("dogfood: speclang delivery 5 of the same tick …"),
++and the row is still `pending`. `row=DOC-7` is the mirror image: its row text still reads
++`commit=none:open` while the row is `complete` with `commit_hash 9bcea767` (§8.1).
++
++Verification is two steps and both matter — the sha exists, **and** it is an ancestor of
++the branch that is supposed to contain it:
++
++```bash
++git cat-file -t <sha>                                   # exists in this object database
++git merge-base --is-ancestor <sha> origin/main && echo landed || echo NOT-landed
++```
++
++### 3.9 `memory`
++
++The DuckBrain key holding the durable narrative for this row.
++
++Observed forms: `<namespace>/<row>` (`memory=speclang/README-21`), `<namespace>:/<key>`
++(`memory=speclang:/projects/speclang/docs-audit/2026-11-16-05-02-33`), and the `none:`
++reasons `none:not-written`, `none:foreman-writes`, `none:exact-key-not-found`.
++
++The three `none:` reasons are meaningfully different and must not be collapsed:
++`not-written` (the write never happened), `foreman-writes` (deferred to another role by
++design), and `exact-key-not-found` (looked, and the key was absent under the expected name
++— itself a finding about key discipline).
++
++The strongest available `memory=` value pairs the key with the **record id the store
++assigned**, because that id is not something the author can invent:
++
++```
++memory=speclang:/projects/speclang/docs-audit/2026-11-16-05-02-33@1d2e750e-fb0a-44d5-9e74-b1c4c99a37d0
++```
++
++No marker uses that form yet; event 272 in `.coding-hermes/board/events.jsonl` records the
++key and record id in prose instead. A marker cannot be verified against DuckBrain from the
++repository alone — the repo is a pointer, the store is the artifact.
++
++**`none:` here is a claim, not a formality.** `row=DOC-7`/`row=DOC-8` once carried
++`memory=none:no-speclang-namespace`. That was false: `list_namespaces` returns a `speclang`
++namespace and the record exists. Event 272 corrects it, names the false statement, and
++replaces the marker. Asserting absence requires a probe; an empty local list is not
++evidence of absence.
++
++### 3.10 Extension keys (optional, observed)
++
++| Key | Meaning | Observed forms |
++|-----|---------|----------------|
++| `doc` | the repository document under change, when the work targets a doc rather than `src/` or a spec | `doc=README.md`, `doc=docs/API_REFERENCE.md`, `doc=docs/layers.md`, `doc=none:code-task` (absolute paths also appear — see §8.10) |
++| `prompt` | the skill/prompt that drove the tick | `/home/kara/.hermes/skills/coding-hermes/coding-hermes-docs/SKILL.md`, `none:not-a-prompt-change` |
++
++These are additions, never replacements. A marker carrying `doc=` still needs all nine core
++keys; dropping `spec=` because `doc=` is present is the partial-marker failure in §8.5.
++
++<a id="none-convention"></a>
++
++## 4. The `none:` convention
++
++`none:` is the most load-bearing token in the grammar and the easiest to abuse. The reason
++slug must name **why there is nothing**, in a form a reader can act on:
++
++| Reason | Reader's action |
++|--------|-----------------|
++| `open-finding` | Nothing to check yet — the row *is* the gap. Revisit when it closes. |
++| `not-written` | The artifact was never produced. Chase the author, not the store. |
++| `foreman-writes` | Deferred by design to a named role. Verify at that role's close-out. |
++| `worker-commit` | Structurally unknowable at write time. Verify at merge. |
++| `repository-contract-absent` | The premise is missing. Fix the premise before trusting the claim. |
++| `open` | Not landed. Do not go looking for a sha. |
++| `auditor-probe-only` / `worker-worktree` | Single-source by construction. Re-check before merge. |
++| `exact-key-not-found` | Looked and found nothing under the expected name. Fix the key discipline. |
++
++Forbidden reasons, because they are indistinguishable from neglect: `n/a`, `todo`, `later`,
++`none`, `unknown`, `see-above`. If the honest answer is "I did not do this", write
++`none:not-written` — a statement a reader can act on — not `none:n/a`, which reads as noise.
++
++A marker where every field is `none:` is legal and sometimes correct (a newly filed
++finding), but it must then be read as an intention, not a delivery (§6.1).
++
++## 5. Where markers live
++
++Four surfaces; all four are in use in this repository.
++
++| Surface | Location | Real example at this HEAD |
++|---------|----------|---------------------------|
++| Board row | `.coding-hermes/board/tasks.jsonl`, inside the row's `foreman_note` or `reasoning` text | line 104 `row=DOC-6`; 119 `row=DOC-7`; 126 `row=DOC-9`; 131 `row=README-21`; 135-139 `row=README-22..26` |
++| Board event | `.coding-hermes/board/events.jsonl`, in an event's `detail` | line 268 `row=DOC-7`; 271-272 `row=DOC-7`, `row=DOC-8`; 300 `row=README-22..26` |
++| Commit trailer | the marker line(s) in the commit body | `b9bb5042`/`40fdd74b` (`row=README-21`, `row=README-2`), `ad80bae0` (`row=DOC-7`, `row=DOC-8`), `55e74569` (`row=README-6`, `row=README-9`, `row=README-11`) |
++| Test provenance comment | block comment above a suite, naming where the expectations came from | tests/cli/init-cascade-contract.test.ts:16 (`row=DF-SPECLANG-1-R4`), tests/cli/start-dashboard-contract.test.ts:12 (`row=DF-SPECLANG-3-R5`) |
++
++Census at this HEAD: **33 marker occurrences across 21 distinct row ids** on the
++board-plus-test surface, plus **27 marker lines in commit bodies** at `35d8700d`. The
++commit-body count grows by one for every commit that carries a marker — including the
++commit that introduced this document — so treat the number as a reading, not a constant:
++
++```bash
++grep -R -o 'ch:trace row=[A-Za-z][A-Za-z0-9._-]*' \
++  .coding-hermes/board/tasks.jsonl .coding-hermes/board/events.jsonl tests/ | wc -l   # → 33
++git log --all --format='%B' | grep -cE '^ch:trace row=[A-Za-z]'                    # → 28 (27 at 35d8700d + this commit)
++```
++
++The board is the canonical home. A commit trailer matters because a commit can be rebased
++or cherry-picked away from its row and the trailer is what travels with the code. A
++test-file marker matters because it is the only surface a reader sees while inside the
++test.
++
++Repair belongs on a **new event or a later trailer** — never a silent in-place rewrite of
++the historical ledger line, which would destroy the record that the defect existed. Event
++272 is the model: it names the falsified field, states the correction, and carries the
++replacement marker.
++
++## 6. Complete worked examples
++
++All three are real, copied from this repository, and every resolvable value in them has
++been checked at HEAD `35d8700d`. Each is a single line.
++
++### 6.1 A filed finding — everything known, nothing delivered
++
++The marker on this repository's own row for this document
++(`.coding-hermes/board/tasks.jsonl:104`):
++
++```
++ch:trace row=DOC-6 spec=docs/traceability-doctrine.md#marker-contract wave=speclang-docs-2026-10-27-00-12-05#audit test=none:open-finding doc=docs/traceability-doctrine.md prompt=/home/kara/.hermes/skills/coding-hermes/coding-hermes-docs/SKILL.md evidence=/home/kara/.hermes/stand-in/docs/speclang/docs-audit-2026-10-27-00-12-05.md witness=none:source-versus-repository-docs verdict=none:open-finding commit=none:open memory=none:not-written
++```
++
++| Field | Asserts | Reader concludes |
++|-------|---------|------------------|
++| `row` | ties to board row DOC-6 | resolvable — `grep -cE '"id": ?"DOC-6"'` → 1 |
++| `spec` | implements the marker contract defined in this document | resolves to §2's `marker-contract` anchor. When the row was filed on 2026-10-27 that anchor did not exist; this document created it, which is the only reason the value is not a dead reference (§8.10) |
++| `wave` | produced by that audit tick | resolvable via `tick_label` at events.jsonl:250; the `#audit` suffix is not recorded anywhere |
++| `test` | no executable check covers it | uncovered by design; the row is the finding |
++| `doc` | the target is a document | doc work, not code work |
++| `prompt` | the docs skill drove the tick | path is readable on the producing host |
++| `evidence` | an audit transcript exists on the producing host | `test -r` it there; elsewhere unverifiable |
++| `witness` | the method was a source-versus-docs comparison | self-comparison, not origin-resolved |
++| `verdict` | no judge graded it | "verified" would be unsupported |
++| `commit` | not landed | do not search for a sha |
++| `memory` | no DuckBrain key | nothing durable to read |
++
++Eleven fields, all well-formed, and the marker still asserts *nothing has been delivered*.
++Marker length is not evidence of work: a short marker with `commit=<landing sha>`,
++`test=<file>::<case>`, and `witness=path@origin:<path>` is worth more than a long one where
++everything is `none:`.
++
++### 6.2 A landed audit finding — commit and memory present
++
++`row=DOC-7`'s replacement marker, written into the ledger by the correcting event
++(`.coding-hermes/board/events.jsonl:272`):
++
++```
++ch:trace row=DOC-7 spec=none:repository-contract-absent wave=none:serial-audit test=none:open-finding doc=docs/API_REFERENCE.md prompt=/home/kara/.hermes/skills/coding-hermes/coding-hermes-docs/SKILL.md evidence=/home/kara/.hermes/stand-in/docs/speclang/docs-audit-2026-11-16-05-02-33.md witness=none:static-source-versus-doc-audit verdict=none:open-finding commit=ad80bae0 memory=speclang:/projects/speclang/docs-audit/2026-11-16-05-02-33
++```
++
++What a reader can actually do with it:
++
++- `row` — `.coding-hermes/board/tasks.jsonl:119`; the row is `complete` with
++  `commit_hash 9bcea767`.
++- `doc` — `docs/API_REFERENCE.md` exists (a symlink into `specs/docs.spec.dir/`, which is
++  how every generated doc in `docs/` is mounted).
++- `commit=ad80bae0` — exists and is an ancestor of `origin/main`; it is the *filing* commit,
++  not the landing commit `9bcea767`. The two-step verification in §3.8 is what surfaces
++  that distinction.
++- `evidence` — absolute, readable on the producing host only.
++- `witness` — a recorded absence: static source-versus-doc comparison by one auditor.
++- `memory` — namespace `speclang`, key `/projects/speclang/docs-audit/2026-11-16-05-02-33`,
++  record id `1d2e750e-fb0a-44d5-9e74-b1c4c99a37d0` per the same event.
++
++### 6.3 A landed sweep with a real witness — and a dead anchor
++
++The `row=README-21` trailer as committed in `b9bb5042` and `40fdd74b`:
++
++```
++ch:trace row=README-21 spec=README.md#layer-0-example-tree wave=readme-sweep/1 test=none:doc-tree-drift-uncovered-by-tests doc=README.md prompt=none:not-a-prompt-change evidence=/home/kara/.hermes/stand-in/readme/speclang/evidence/20-link-targets.txt witness=path@origin:specs/project.scl verdict=none:no-judge-ran commit=92dd0567 memory=speclang/README-21
++```
++
++This is the strongest marker in the repository and it is still a cautionary tale:
++
++- `witness=path@origin:specs/project.scl` — the only genuinely out-of-band assertion here;
++  `git cat-file -e origin/main:specs/project.scl` succeeds, and it cannot be satisfied by
++  the author's working tree.
++- `commit=92dd0567` — resolves and is an ancestor of `origin/main`, but it is the commit the
++  finding was *measured at*, not a landing commit: the row is still `pending`. Read this
++  field as "tree under discussion", not "work delivered" (§3.8).
++- `spec=README.md#layer-0-example-tree` — **dead**. No heading in README.md contains
++  `layer-0`; the closest is README.md's `### File Structure`. A reader chasing this
++  anchor finds nothing and learns nothing about which tree is meant.
++- `memory=speclang/README-21` — exists only in the commit body; the row itself carries no
++  `memory=` field.
++
++## 7. How to verify a marker
++
++Run from the repository root. Each block answers one field, and each was executed in this
++checkout to confirm it works.
++
++```bash
++# Index every marker in the working tree (board rows, events, test comments).
++grep -R -n -o 'ch:trace row=[A-Za-z][A-Za-z0-9._-]*' \
++  --exclude-dir=node_modules --exclude-dir=.git .
++
++# Every marker that reached a commit body.
++git log --all --format='%H %s' --grep='ch:trace row='
++
++# row: does the row exist on the board (both spacing styles)?
++grep -cE '"id": ?"DOC-7"' .coding-hermes/board/tasks.jsonl
++grep -E '"id": ?"DOC-7"' .coding-hermes/board/tasks.jsonl | jq -r .status
++
++# spec: does the anchor exist in the target file?
++grep -nE '^#+ ' docs/API_REFERENCE.md | grep -i 'mcp'      # → ## 3. MCP Server
++grep -n '^<a id="marker-contract"></a>' docs/traceability-doctrine.md   # → the anchor §2 defines
++
++# wave: does the tick exist in the ledger or as a manifest?
++grep -n 'speclang-docs-2026-10-27-00-12-05' .coding-hermes/board/events.jsonl
++ls .coding-hermes/waves/
++
++# test: does the named case exist?
++grep -n 'init-to-cascade' tests/project-layout.test.ts
++
++# evidence: is the artifact readable on this host?
++test -r /home/kara/.hermes/stand-in/readme/speclang/evidence/20-link-targets.txt && echo READABLE
++
++# witness: does the path exist at origin (not merely in the working tree)?
++git cat-file -e origin/main:specs/project.scl && echo "origin has it"
++
++# verdict: does the run exist on the history ref?
++git show refs/gitreins/history:.gitreins/history/2026-11-17/449273d5/verdict.json | jq -r '.task_id, .passed'
++
++# commit: exists AND is an ancestor of the branch that should carry it?
++git cat-file -t ad80bae0
++git merge-base --is-ancestor ad80bae0 origin/main && echo "landed" || echo "NOT landed"
++
++# structural check: complete marker (row plus at least one more field)?
++grep -Eq '^ch:trace row=[^ ]+( [a-z][a-z0-9_]*=[^ ]+)+$' <<< "$marker"
++```
++
++Three habits worth stating, because each one has bitten someone in this repository:
++
++- **Check ancestry, not existence.** `git cat-file -t <sha>` succeeds for a commit that was
++  rewritten out of every branch — `1354cc85` is exactly that object today (§3.7).
++- **Check the tree, not the message.** A commit subject claiming a row was closed proves
++  nothing; read the committed tree (`git show <sha>:.coding-hermes/board/tasks.jsonl`) when
++  the claim is about board state.
++- **Check the anchor, not the shape.** A syntactically perfect marker with a dead anchor
++  (§8.10) passes every structural test and still points nowhere.
++
++## 8. Failure modes observed in this repository
++
++Each of these is a real instance, not a hypothetical.
++
++### 8.1 Stale commit
++
++`row=DOC-7`'s row text still says `commit=none:open` while the row is `complete` with
++`commit_hash 9bcea767`: the marker was never re-written after the merge. The mirror case is
++`row=README-21`, whose `commit=92dd0567` names the measurement base rather than a landing.
++And a graded commit can disappear entirely — verdict run `449273d5` grades `1354cc85`,
++which no branch contains at this HEAD.
++
++Detection: `git merge-base --is-ancestor <sha> origin/main`, plus a comparison against the
++row's own `commit_hash`. A `commit=` that fails is a marker about a different repository
++state; re-derive it rather than guessing.
++
++### 8.2 Producer-local evidence
++
++Absolute paths under a home directory (`/home/kara/.hermes/stand-in/...`) are valid on the
++producing host and expire when scratch is pruned. A reader elsewhere cannot resolve them,
++and the evidence must then be treated as `none:`. This is not a lie in the marker — it is a
++portability failure the format does not yet force you to avoid, which is why §3.5 names the
++tracked `.coding-hermes/evidence/` port.
++
++### 8.3 Verdict without a witness
++
++`verdict=PASS` combined with `witness=none:*`. A judge graded the author's *claim*; nobody
++independently checked that claim against origin, so the verdict is a statement about prose
++quality. Treat it as ungraded, and prefer `verdict=PASS@<run-id>` plus `witness=verdict:<run-id>`
++so both the grade and the run are citable.
++
++### 8.4 Bare filename as evidence
++
++`row=DOC-9`'s marker (`.coding-hermes/board/tasks.jsonl:126`) carries
++`evidence=audit-2026-11-16-05-02-33.refire-2.transcript.log` — a filename with no directory,
++unresolvable from any working directory.
++
++The row was repaired, and the repair is instructive: the marker field itself was never
++rewritten, but the row's `detail.evidence[0].artifacts` and its `foreman_note` pin the
++absolute path `/home/kara/.hermes/stand-in/docs/speclang/audit-2026-11-16-05-02-33.refire-2.transcript.log`
++with its sha256, and the row closed as `complete` under commit `4455371a` with event 368
++`task_completed`. A reader who finds this marker today resolves the artifact **through the
++row**, not through the marker. Repair by enrichment works; it is second-best, and the marker
++is what a reader sees first.
++
++### 8.5 Partial marker
++
++The same `row=DOC-9` marker carries four keys — `row`, `doc`, `evidence`, `witness` — three
++of the nine core fields, with no `spec=`, `wave=`, `test=`, `verdict=`, `commit=`, or
++`memory=` at all. Per §2, a missing key cannot be read as "nothing to declare". The only
++valid reading is *the author answered some questions and not others*, which is weaker than
++any `none:` equivalent.
++
++### 8.6 `none:` soup on a closed row
++
++A row marked `complete` whose marker is all `none:*` records an intention. Either the
++delivery did not happen, or the author never rewrote the marker after it landed. `row=DOC-7`
++is the near-miss: complete, merged, with `commit=none:open` still in the row text (§8.1).
++Neither reading is evidence of completion.
++
++### 8.7 Marker describing a different row than its container
++
++Copy-paste across rows: a commit whose subject names one row while its trailer carries
++another's `row=`. Detection: compare the marker's `row=` against the row whose `commit_hash`
++points at that commit. This is the failure that collapses per-row traceability while every
++individual marker still looks well-formed.
++
++### 8.8 `none:` reason that names a mood
++
++`none:todo`, `none:n/a`, `none:unknown` — see §4. An unactionable reason converts a declared
++gap into an undeclared one.
++
++### 8.9 A value that contains spaces
++
++Commit `55e74569` carries three such markers. The clearest:
++
++```
++ch:trace row=README-9 doc=README.md:412-414,450 evidence=npm test + npx tsc --noEmit runs witness=none:local-command-output
++```
++
++After `evidence=` the parser sees `npm`, `test`, `+`, `npx`, `tsc`, … — five pseudo-fields
++that no reader expects and that silently terminate the real value at "npm". The same commit
++writes `doc=README.md:272-294` (a `doc=` value that is a line range, not a path) and
++`witness=none:local-command-output`. If a value needs a space, the value is wrong: use a
++path, a single token, or `none:<reason>`.
++
++### 8.10 Pointers that do not resolve
++
++Four kinds, all live at this HEAD:
++
++- **Dead heading anchors** — `README.md#layer-0-example-tree` (§6.3) and
++  `docs/API_REFERENCE.md#MCP-Server` (§3.2) name headings that do not exist.
++- **Non-path `doc=` values** — `row=README-18`…`row=README-20` put an absolute path in
++  `doc=`: `/home/kara/.hermes/stand-in/readme/speclang/readme-audit-2026-11-03-15-46-12.md`.
++  `doc=` is the document under change and belongs in the repository; a transcript is
++  `evidence=`.
++- **Dead prompt paths** — `row=README-18`…`row=README-20` cite
++  `/home/kara/.hermes/skills/coding-hermes-readme/SKILL.md`, which does not exist on the
++  producing host; the live path is
++  `/home/kara/.hermes/skills/coding-hermes/coding-hermes-readme/SKILL.md`.
++- **Unresolvable wave labels** — `speclang-readme-2026-10-27-15-09-36` and `readme-sweep/1`
++  appear in no ledger, manifest, or commit subject (§3.3).
++
++### 8.11 A `none:` that asserts a false absence
++
++`row=DOC-7`/`row=DOC-8` carried `memory=none:no-speclang-namespace`. The namespace exists and
++the record was writable; the claim was false and was corrected in event 272 with the key and
++the assigned record id (§3.9). Asserting absence is a claim like any other and needs a probe.
++An empty local listing is not evidence that a store lacks a namespace.
++
++## 9. Where this is enforced today
++
++**Nowhere. The convention is documentary, not machine-checked.** This section was written
++from commands run in this checkout, not from intent.
++
++- **No code parses `ch:trace`.** The plausible enforcement surfaces contain no match:
++
++  ```bash
++  grep -R -n "ch:trace" scripts/ src/ bin/ .github/ .githooks/ package.json config/
++  # no output
++  ```
++
++  Outside the ledgers, this document, and the two test comments, the only other hit in the
++  tree is `.gitreins/tasks.yaml`, which stores a task's acceptance criteria as prose and is
++  gitignored — it neither parses nor enforces anything.
++
++- **No trace or lineage validator exists.** `git ls-files | grep -iE 'trace|lineage'` lists
++  exactly one file — this document. Nothing else in the repository is named for
++  traceability, and no script, hook, or workflow reads a marker.
++
++- **The pre-commit hook does not check markers.** `.githooks/pre-commit` resolves the repo
++  root, exits 0 when `.gitreins/config.yaml` is absent, and otherwise runs `gitreins guard`.
++  Per `.gitreins/config.yaml` the tier-1 steps are `secrets`, `build` (`npm run build`), and
++  `tests` (`npx vitest run` in diff mode), with `lsp`, `static_analysis`, and `assemble`
++  enabled alongside. There is no marker step.
++
++- **CI does not check markers.** `.github/workflows/ci.yml` defines workflow `CI` with two
++  jobs — `build` ("Build, test, and guard": build, tests, coverage upload, conditional lint,
++  GitReins tier-1 guard) and `review` ("Tier 2 LLM review"). The review job runs the
++  `ci-pr-review` task with its canonical eight criteria: type errors, tests for new exports,
++  changelog or doc-only diff, no added TODO/FIXME/XXX, no `console.log`, JSDoc on new public
++  exports, no dead code, and spec coverage matching source changes. None of the eight
++  reference `ch:trace`.
++
++- **`package.json` has no trace script.** The full list is `build`, `dev`, `start`, `test`,
++  `test:watch`, `test:coverage`, `cascade`, `lint`, `clean`, `prepublishOnly`,
++  `build:dashboard`, `dev:dashboard`, `postinstall`, `check:sqlite-binding`,
++  `gen:migrations`.
++
++Consequences:
++
++1. A missing marker fails no gate. A malformed marker fails no gate. A marker naming a dead
++   sha, a dead anchor, or a dead path fails no gate.
++2. Compliance comes from author discipline and from readers running §7 — not from the commit
++   hook. Never read "the commit landed" as "the marker was checked".
++3. Because nothing consumes the format, the format is free to drift. This document is the
++   reference; if practice changes, change it here instead of letting the vocabulary
++   fragment.
++
++What enforcement would look like — deliberately out of scope for this document, and not
++implemented: a guard step ahead of `gitreins guard` that parses the staged commit message,
++requires `row=` plus the eight other core keys, rejects any value containing a space, and
++fails when `commit=none:*` appears on a row whose status is already `complete`. Until such a
++step exists, treat every marker as a claim requiring verification, exactly as §7 describes.
++
++## 10. Author checklist
++
++Before writing a marker:
++
++- [ ] `row=` — copied from the board, not from memory, and confirmed with `grep -cE'"id": ?"<id>"'`.
++- [ ] `spec=` — a real path plus a heading anchor, or `none:` with the reason the authority is absent.
++- [ ] `wave=` — the tick/lane id that something records, or `none:serial-<role>` if you ran alone.
++- [ ] `test=` — `path` or `path::case`, or `none:open-finding` if the row *is* the gap.
++- [ ] `evidence=` — a path you confirmed exists **after** the run finished; repo-relative under
++      `.coding-hermes/evidence/` if it must outlive the tick.
++- [ ] `witness=` — prefer `path@origin:<path>` or `verdict:<run-id>`; if single-source, name the
++      absence with a specific reason.
++- [ ] `verdict=` — concrete only if a judge ran, and then with its run id.
++- [ ] `commit=` — the landing sha if landed; `none:open` or `none:worker-commit` if not; never a
++      measurement base.
++- [ ] `memory=` — the DuckBrain key (plus record id if you have it), or `not-written` /
++      `foreman-writes` / `exact-key-not-found`.
++
++After writing it: run §7 against your own marker. A marker you have not verified is a claim
++you have not earned.
