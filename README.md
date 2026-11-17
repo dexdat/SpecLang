@@ -443,17 +443,18 @@ examples/
 - **`specs/examples.spec.dir/`** — spec sources, canonical. Each example is authored as a spec (`hello-world.spec.md`, `auth.spec.md`, `crud-app.spec.md`) and assembled into `src/*.ts` under its directory.
 - **`examples/`** — runnable symlinked outputs. `examples/<name>/index.ts` is the same file as `specs/examples.spec.dir/<name>/src/<name>.ts`, visible from two locations. The files are SPECLANG-GENERATED — edit the spec, not the output.
 
-Run a root example directly:
+Run a root example directly. The examples are TypeScript, so they need a TypeScript runtime — the repo ships `tsx` as a devDependency (plain `node` cannot load the `.ts` entry points):
 
 ```bash
-npx ts-node examples/hello-world/index.ts
+npx tsx examples/hello-world/index.ts
 # Output: Hello, World!
 ```
 
 Because both paths resolve to the same file, the spec-tree copy runs identically:
 
 ```bash
-npx ts-node specs/examples.spec.dir/hello-world/src/hello-world.ts
+npx tsx specs/examples.spec.dir/hello-world/src/hello-world.ts
+# Output: Hello, World!
 ```
 
 ---
