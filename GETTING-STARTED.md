@@ -41,12 +41,76 @@ exits non-zero while missing references exceed `--max-missing`).
 
 ```bash
 # 1. Dry run — confirm the spec's TypeScript block is found
+#    (`generate` previews into its --output-dir, default `src/generated/`)
 ./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run
 
-# 2. Run the cascade (dry-run by default); output lands in a
-#    `generated/` sibling of the spec's directory
+# 2. Run the cascade — this writes real files. Output lands in
+#    `specs/generated/`: SpecLang takes the directory containing the spec
+#    file (`specs/examples.spec.dir`), goes one level up (`specs/`) and
+#    appends `generated/`. Block names may carry a path, so the block
+#    `@block::hello/function` lands at `specs/generated/hello/function.ts`.
 ./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md
 ```
+
+`-d, --dir <directory>` (default `.`) is the project root used to resolve
+`<spec>`. The output rule follows the spec file, so a spec sitting directly in
+`specs/` (e.g. `specs/foo.spec.md`) writes to `generated/` at the project root,
+one level above `specs/`. Both forms are gitignored.
+
+## MCP Server
+
+`speclang mcp` exposes the same operations over the Model Context Protocol, so
+an agent host (Claude Desktop, an IDE, another harness) can search specs and
+drive cascades without shelling out.
+
+```bash
+# stdio transport (the default) — what an MCP client spawns as a subprocess
+node bin/speclang mcp start
+
+# HTTP transport — what you point a remote client or curl at
+node bin/speclang mcp start --remote --port 3000
+```
+
+Flags, as they actually exist (`node bin/speclang mcp start --help`):
+
+- `--remote` — switch to HTTP server mode. It is a boolean, not a transport
+  argument; without it the server speaks JSON-RPC on stdin/stdout.
+- `-p, --port <port>` — HTTP port, only used with `--remote` (default `3000`)
+- `-d, --dir <directory>` — project directory (default `.`); specs are read
+  from `<dir>/specs` and the index DB is written to
+  `<dir>/.speclang/speclang.db`
+- `--auth <none|basic|token>` with `--user` / `--pass` / `--token` — guards the
+  `/mcp` routes (default `none`)
+
+In `--remote` mode the server listens on:
+
+| Route | Purpose |
+|---|---|
+| `GET /mcp` | SSE stream; the first event is `endpoint: /mcp/message?sessionId=<uuid>` |
+| `POST /mcp/message` | JSON-RPC 2.0 requests (`initialize`, `tools/list`, `tools/call`) |
+| `GET /health` | liveness probe: `{"status":"ok","mode":"http"}` |
+
+A session end to end:
+
+```bash
+node bin/speclang mcp start --remote --port 3000 &
+
+curl -s localhost:3000/health
+# {"status":"ok","mode":"http"}
+
+curl -s localhost:3000/mcp/message -H 'content-type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+# {"jsonrpc":"2.0","result":{"tools":[{"name":"speclang_search",...}]},"id":1}
+
+curl -s localhost:3000/mcp/message -H 'content-type: application/json' \
+  -d '{"jsonrpc":"2.0","id":2,"method":"tools/call",
+       "params":{"name":"speclang_cascade_status","arguments":{}}}'
+# {"jsonrpc":"2.0","result":{"status":"idle"},"id":2}
+```
+
+Startup diagnostics go to stderr on purpose — in stdio mode stdout carries the
+JSON-RPC stream. Note that `mcp status` / `mcp stop` read `.speclang/mcp.pid`,
+which `mcp start` does not write today; stop the server with SIGTERM or Ctrl-C.
 
 ## Core Principle
 
@@ -65,7 +129,7 @@ specs/
 │   ├── _index.md
 │   ├── bar.spec.md          # Intent spec (what we want)
 │   └── bar.go.spec          # Generated code spec (symlinked to bar.go)
-└── generated/
+└── generated/               # Cascade output — `specs/generated/`
     └── go/
         └── bar.go           # Actual generated code (symlink target)
 ```
@@ -123,6 +187,7 @@ SpecLang/
 │
 ├── src/                     ← Generated TypeScript implementation
 ├── docs/                    ← Documentation and prompts
+├── .speclang/              ← Local index DB (speclang.db), created on first run
 ├── .opencode/              ← OpenCode configuration
 └── scripts/                ← Tooling scripts
 ```
