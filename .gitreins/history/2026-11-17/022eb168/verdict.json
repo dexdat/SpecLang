@@ -1,0 +1,439 @@
+{
+  "task_id": "DF-SPECLANG-5",
+  "task_title": "GETTING-STARTED output path and MCP docs drift",
+  "task_criteria": [
+    "FAILIF: GETTING-STARTED.md still claims a generated/ sibling of the spec directory, or grep -cin mcp returns fewer than 3, or the documented mcp start protocol disagrees with the real flags. PROOF: the greps and the mcp start --help output plus a real health probe."
+  ],
+  "passed": false,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "e80d42516502a981b312c65e7b8ddf24f3bb91eb",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "86922f5b57787d3a63a010ca8d4ed480d5d486e14c3dc36c36952b7566fe3a19",
+  "working_tree_dirty_path_count": 5,
+  "items": [
+    {
+      "criterion": "FAILIF: GETTING-STARTED.md still claims a generated/ sibling of the spec directory, or grep -cin mcp returns fewer than 3, or the documented mcp start protocol disagrees with the real flags. PROOF: the greps and the mcp start --help output plus a real health probe.",
+      "status": "PASS",
+      "detail": "All three disjuncts checked and none fires. (a) Sibling claim: `grep -in sibling GETTING-STARTED.md` => exit 1, no match. GETTING-STARTED.md:56-61 states the rule `<directory containing the spec>/../generated/` with two measured cases; line 61 (`specs/foo.spec.md` -> `<project root>/generated/foo/function.ts`) is that same rule applied (specDir=`specs`, `..`=root), not a sibling-of-the-spec-directory claim. Code agrees: src/cascade/index.ts:85-86 `const specDir = path.dirname(specPath); const generatedDir = path.join(specDir, '..', 'generated');` and src/cascade/index.ts:396,411 `fileName = block.name.replace(/-/g,'_')+'.ts'` joined onto outputDir, so block `hello/function` -> `specs/generated/hello/function.ts`. Artifact on disk confirms: specs/generated/hello/function.ts header reads `Source: @speclang/examples/hello-world#hello/function`. (b) `grep -cin mcp GETTING-STARTED.md` => 15 (>=3). (c) Flags: `node bin/speclang mcp start --help` exit 0 prints `-p, --port <port> ... (default: \"3000\")`, `-d, --dir <directory> ... (default: \".\")`, `--remote`, `--auth <type> ... (default: \"none\")`, `--user`, `--pass`, `--token`, `--config` \u2014 GETTING-STARTED.md:79-88 documents exactly these (omitting `--config` is an omission, not a disagreement). Real probe: `node bin/speclang mcp start --remote --port 3917` then `curl -s localhost:3917/health` => `{\"status\":\"ok\",\"mode\":\"http\"}` (doc:96,104); `POST /mcp/message tools/list` => `{\"jsonrpc\":\"2.0\",\"result\":{\"tools\":[{\"name\":\"speclang_search\",...}]},\"id\":1}` (doc:108); `tools/call speclang_cascade_status` => `{\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"idle\"},\"id\":2}` (doc:113); `GET /mcp` => `event: endpoint` / `data: /mcp/message?sessionId=8420b3ee-...` (doc:94). Startup diagnostics observed on stderr only (/tmp/mcp_err.log), stdout empty, matching doc:116-117. The mcp.pid caveat at doc:117-118 is true: bin/speclang:1420 and :1459 read `.speclang/mcp.pid`, while `mcp start` (bin/speclang:1353-1412) never writes it. Tests: `npx vitest run tests/mcp tests/cli` => exit 0, `Test Files 17 passed (17)`, `Tests 200 passed | 2 skipped (202)`. [resolution 0.04; GETTING-STARTED.md]"
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": false,
+      "any_failed": true,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  ~ tests: Command timed out after 120s (step budget)",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T114101.053343Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T114101.053343Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": false,
+          "output": "",
+          "error": "Command timed out after 120s (step budget)",
+          "data": {
+            "timed_out": true,
+            "timeout_s": 120
+          }
+        }
+      ],
+      "degraded": true,
+      "skipped_steps": [
+        "tests"
+      ],
+      "degradation_reason": "skipped at runtime \u2014 tests: timed out after 120s (step budget)"
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 FAILIF: GETTING-STARTED.md still claims a generated/ sibling of the spec directory, or grep -cin mcp returns fewer than 3, or the documented mcp start protocol disagrees with the real flags. PROOF: the greps and the mcp start --help output plus a real health probe.: All three disjuncts checked and none fires. (a) Sibling claim: `grep -in sibling GETTING-STARTED.md` => exit 1, no match. GETTING-STARTED.md:56-61 states the rule `<directory containing the spec>/../generated/` with two measured cases; line 61 (`specs/foo.spec.md` -> `<project root>/generated/foo/function.ts`) is that same rule applied (specDir=`specs`, `..`=root), not a sibling-of-the-spec-directory claim. Code agrees: src/cascade/index.ts:85-86 `const specDir = path.dirname(specPath); const generatedDir = path.join(specDir, '..', 'generated');` and src/cascade/index.ts:396,411 `fileName = block.name.replace(/-/g,'_')+'.ts'` joined onto outputDir, so block `hello/function` -> `specs/generated/hello/function.ts`. Artifact on disk confirms: specs/generated/hello/function.ts header reads `Source: @speclang/examples/hello-world#hello/function`. (b) `grep -cin mcp GETTING-STARTED.md` => 15 (>=3). (c) Flags: `node bin/speclang mcp start --help` exit 0 prints `-p, --port <port> ... (default: \"3000\")`, `-d, --dir <directory> ... (default: \".\")`, `--remote`, `--auth <type> ... (default: \"none\")`, `--user`, `--pass`, `--token`, `--config` \u2014 GETTING-STARTED.md:79-88 documents exactly these (omitting `--config` is an omission, not a disagreement). Real probe: `node bin/speclang mcp start --remote --port 3917` then `curl -s localhost:3917/health` => `{\"status\":\"ok\",\"mode\":\"http\"}` (doc:96,104); `POST /mcp/message tools/list` => `{\"jsonrpc\":\"2.0\",\"result\":{\"tools\":[{\"name\":\"speclang_search\",...}]},\"id\":1}` (doc:108); `tools/call speclang_cascade_status` => `{\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"idle\"},\"id\":2}` (doc:113); `GET /mcp` => `event: endpoint` / `data: /mcp/message?sessionId=8420b3ee-...` (doc:94). Startup diagnostics observed on stderr only (/tmp/mcp_err.log), stdout empty, matching doc:116-117. The mcp.pid caveat at doc:117-118 is true: bin/speclang:1420 and :1459 read `.speclang/mcp.pid`, while `mcp start` (bin/speclang:1353-1412) never writes it. Tests: `npx vitest run tests/mcp tests/cli` => exit 0, `Test Files 17 passed (17)`, `Tests 200 passed | 2 skipped (202)`. [resolution 0.04; GETTING-STARTED.md]\nGETTING-STARTED.md no longer claims a generated/ sibling of the spec directory (grep -in sibling => no match; the stated `<spec dir>/../generated/` rule matches src/cascade/index.ts:86 and the on-disk specs/generated/hello/function.ts), grep -cin mcp returns 15, and every documented `mcp start` flag, route and response body was confirmed against `mcp start --help` plus a live /health, /mcp SSE and /mcp/message probe. [uncovered failure paths: failure mode 0 (No automated check pins GETTING-STARTED.md's documented cascade output paths or `mcp start` flags to the real CLI, so this exact drift can silently return): detected_by is empty \u2014 uncovered failure path; failure mode 1 (README.md:402-404 still describes cascade output as 'a `generated/` sibling of the spec's directory', the phrasing DF-SPECLANG-5 removed from GETTING-STARTED.md): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 FAILIF: GETTING-STARTED.md still claims a generated/ sibling of the spec directory, or grep -cin mcp returns fewer than 3, or the documented mcp start protocol disagrees with the real flags. PROOF: the greps and the mcp start --help output plus a real health probe.: All three disjuncts checked and none fires. (a) Sibling claim: `grep -in sibling GETTING-STARTED.md` => exit 1, no match. GETTING-STARTED.md:56-61 states the rule `<directory containing the spec>/../generated/` with two measured cases; line 61 (`specs/foo.spec.md` -> `<project root>/generated/foo/function.ts`) is that same rule applied (specDir=`specs`, `..`=root), not a sibling-of-the-spec-directory claim. Code agrees: src/cascade/index.ts:85-86 `const specDir = path.dirname(specPath); const generatedDir = path.join(specDir, '..', 'generated');` and src/cascade/index.ts:396,411 `fileName = block.name.replace(/-/g,'_')+'.ts'` joined onto outputDir, so block `hello/function` -> `specs/generated/hello/function.ts`. Artifact on disk confirms: specs/generated/hello/function.ts header reads `Source: @speclang/examples/hello-world#hello/function`. (b) `grep -cin mcp GETTING-STARTED.md` => 15 (>=3). (c) Flags: `node bin/speclang mcp start --help` exit 0 prints `-p, --port <port> ... (default: \"3000\")`, `-d, --dir <directory> ... (default: \".\")`, `--remote`, `--auth <type> ... (default: \"none\")`, `--user`, `--pass`, `--token`, `--config` \u2014 GETTING-STARTED.md:79-88 documents exactly these (omitting `--config` is an omission, not a disagreement). Real probe: `node bin/speclang mcp start --remote --port 3917` then `curl -s localhost:3917/health` => `{\"status\":\"ok\",\"mode\":\"http\"}` (doc:96,104); `POST /mcp/message tools/list` => `{\"jsonrpc\":\"2.0\",\"result\":{\"tools\":[{\"name\":\"speclang_search\",...}]},\"id\":1}` (doc:108); `tools/call speclang_cascade_status` => `{\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"idle\"},\"id\":2}` (doc:113); `GET /mcp` => `event: endpoint` / `data: /mcp/message?sessionId=8420b3ee-...` (doc:94). Startup diagnostics observed on stderr only (/tmp/mcp_err.log), stdout empty, matching doc:116-117. The mcp.pid caveat at doc:117-118 is true: bin/speclang:1420 and :1459 read `.speclang/mcp.pid`, while `mcp start` (bin/speclang:1353-1412) never writes it. Tests: `npx vitest run tests/mcp tests/cli` => exit 0, `Test Files 17 passed (17)`, `Tests 200 passed | 2 skipped (202)`. [resolution 0.04; GETTING-STARTED.md]\nGETTING-STARTED.md no longer claims a generated/ sibling of the spec directory (grep -in sibling => no match; the stated `<spec dir>/../generated/` rule matches src/cascade/index.ts:86 and the on-disk specs/generated/hello/function.ts), grep -cin mcp returns 15, and every documented `mcp start` flag, route and response body was confirmed against `mcp start --help` plus a live /health, /mcp SSE and /mcp/message probe. [uncovered failure paths: failure mode 0 (No automated check pins GETTING-STARTED.md's documented cascade output paths or `mcp start` flags to the real CLI, so this exact drift can silently return): detected_by is empty \u2014 uncovered failure path; failure mode 1 (README.md:402-404 still describes cascade output as 'a `generated/` sibling of the spec's directory', the phrasing DF-SPECLANG-5 removed from GETTING-STARTED.md): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "FAILIF: GETTING-STARTED.md still claims a generated/ sibling of the spec directory, or grep -cin mcp returns fewer than 3, or the documented mcp start protocol disagrees with the real flags. PROOF: the greps and the mcp start --help output plus a real health probe.",
+                "status": "PASS",
+                "detail": "All three disjuncts checked and none fires. (a) Sibling claim: `grep -in sibling GETTING-STARTED.md` => exit 1, no match. GETTING-STARTED.md:56-61 states the rule `<directory containing the spec>/../generated/` with two measured cases; line 61 (`specs/foo.spec.md` -> `<project root>/generated/foo/function.ts`) is that same rule applied (specDir=`specs`, `..`=root), not a sibling-of-the-spec-directory claim. Code agrees: src/cascade/index.ts:85-86 `const specDir = path.dirname(specPath); const generatedDir = path.join(specDir, '..', 'generated');` and src/cascade/index.ts:396,411 `fileName = block.name.replace(/-/g,'_')+'.ts'` joined onto outputDir, so block `hello/function` -> `specs/generated/hello/function.ts`. Artifact on disk confirms: specs/generated/hello/function.ts header reads `Source: @speclang/examples/hello-world#hello/function`. (b) `grep -cin mcp GETTING-STARTED.md` => 15 (>=3). (c) Flags: `node bin/speclang mcp start --help` exit 0 prints `-p, --port <port> ... (default: \"3000\")`, `-d, --dir <directory> ... (default: \".\")`, `--remote`, `--auth <type> ... (default: \"none\")`, `--user`, `--pass`, `--token`, `--config` \u2014 GETTING-STARTED.md:79-88 documents exactly these (omitting `--config` is an omission, not a disagreement). Real probe: `node bin/speclang mcp start --remote --port 3917` then `curl -s localhost:3917/health` => `{\"status\":\"ok\",\"mode\":\"http\"}` (doc:96,104); `POST /mcp/message tools/list` => `{\"jsonrpc\":\"2.0\",\"result\":{\"tools\":[{\"name\":\"speclang_search\",...}]},\"id\":1}` (doc:108); `tools/call speclang_cascade_status` => `{\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"idle\"},\"id\":2}` (doc:113); `GET /mcp` => `event: endpoint` / `data: /mcp/message?sessionId=8420b3ee-...` (doc:94). Startup diagnostics observed on stderr only (/tmp/mcp_err.log), stdout empty, matching doc:116-117. The mcp.pid caveat at doc:117-118 is true: bin/speclang:1420 and :1459 read `.speclang/mcp.pid`, while `mcp start` (bin/speclang:1353-1412) never writes it. Tests: `npx vitest run tests/mcp tests/cli` => exit 0, `Test Files 17 passed (17)`, `Tests 200 passed | 2 skipped (202)`. [resolution 0.04; GETTING-STARTED.md]",
+                "resolution_probability": 0.04,
+                "cited_path": "GETTING-STARTED.md"
+              }
+            ],
+            "summary": "GETTING-STARTED.md no longer claims a generated/ sibling of the spec directory (grep -in sibling => no match; the stated `<spec dir>/../generated/` rule matches src/cascade/index.ts:86 and the on-disk specs/generated/hello/function.ts), grep -cin mcp returns 15, and every documented `mcp start` flag, route and response body was confirmed against `mcp start --help` plus a live /health, /mcp SSE and /mcp/message probe. [uncovered failure paths: failure mode 0 (No automated check pins GETTING-STARTED.md's documented cascade output paths or `mcp start` flags to the real CLI, so this exact drift can silently return): detected_by is empty \u2014 uncovered failure path; failure mode 1 (README.md:402-404 still describes cascade output as 'a `generated/` sibling of the spec's directory', the phrasing DF-SPECLANG-5 removed from GETTING-STARTED.md): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-5\"}",
+          "exit_code": 0,
+          "output_sha": "c522884e05e692ae87c32090ec6b940e38e383c227d782478e7ce7200ac09819"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && cat .gitreins/config.yaml 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "f3691f555c2ca6803eabd7aeb0e71d96a940f044c47f094914b1c3a627257f3e"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"GETTING-STARTED.md\"}",
+          "exit_code": 0,
+          "output_sha": "471c2ea49e3ab37bd29f4ba4aa02ddfbaccaa1fc5c5292c1fde9eab63b49568e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; pwd; grep -cin mcp GETTING-STARTED.md; echo \"---\"; grep -in mcp GETTING-STARTED.md",
+          "exit_code": 2,
+          "output_sha": "849ab3ef0007a01ead65936bffe721936064ddfacf76680839d6f3b31e086290"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; ls; grep -cin mcp GETTING-STARTED.md; echo \"---\"; grep -in mcp GETTING-STARTED.md",
+          "exit_code": 0,
+          "output_sha": "891637c649d7f3e5079a4769b097bd11ca8e2a77bfa981e82241c52371f9a12e"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"grep -cin mcp GETTING-STARTED.md => 15 (>=3 OK). Lines 25,65,67,72,73,76,79,88,94,95,101,106,110,117,118\", \"key\": \"grep_mcp\"}",
+          "exit_code": 0,
+          "output_sha": "a1faf64358acf25c35ea8ab5710ed3bbdc0866d5e288f16f84e52870b003e160"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"generated\" GETTING-STARTED.md",
+          "exit_code": 0,
+          "output_sha": "0840415e6fa9abfbeaa2fa28d37db886901e9c117ad1c53d4b2cba1c90965940"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"generated\" src/directory/*.ts src/compiler/*.ts 2>/dev/null | head -50; echo \"=== search output dir logic ===\"; grep -rn \"'generated'\\|\\\"generated\\\"\\|generated/\" src --include=*.ts | grep -v \"src/generated/\" | head -40",
+          "exit_code": 0,
+          "output_sha": "ff46e752c494dfd2f89ab6ea648ee20a2bc52563a0996fecbc94a1f9600e3aa0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls src; echo \"=== bin ===\"; ls bin; echo \"=== cascade grep ===\"; grep -rln \"cascade\" src bin --include=* | head -30",
+          "exit_code": 0,
+          "output_sha": "19313bc27c8b799a50b75c810919a7f5c96d9e2e021580fe83a4648c286e68b0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat bin/speclang | head -80; echo \"=== package.json ===\"; cat package.json",
+          "exit_code": 0,
+          "output_sha": "a1615450b76390449d825c91f67c29b6f4dad80d415e28d972b675212a0fe3ad"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 80,400p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "3c0c4f25323a2026569284cbc9c2722ab159ab0c3aeec51be3f8a4a3f39c4784"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"mcp\\|cascade\\|generate\" bin/speclang | head -60",
+          "exit_code": 0,
+          "output_sha": "1e33395e779e02eaf9c53fe2f5942fe9ababd95d804b87289dc5570aa45e400e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 200,270p bin/speclang; echo \"=== mcp command? ===\"; grep -n \"command('mcp\" bin/speclang",
+          "exit_code": 0,
+          "output_sha": "5c56d346c0c8ae3cd5a4bc32661ae99ffa5e59e9ef7eccd119bc71bd285ac37f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 1340,1500p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "9e20ee15dfa040024de0b36d3a27099b18200f82f88f407e7a5b125373842dc2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && node bin/speclang mcp start --help 2>&1; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "09e75a8ff21b1da8f4603e7cb449c4690d0ad24507b1fc1231ae0f3b7023ad67"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"node bin/speclang mcp start --help => -p/--port (default 3000), -d/--dir (default .), --remote, --auth <type> (none,basic,token) default none, --user, --pass, --token, --config. Matches GETTING-STARTED.md lines 79-88 (doc omits --config but that's not a disagreement).\", \"key\": \"mcp_help\"}",
+          "exit_code": 0,
+          "output_sha": "07c8a5b70eba21509250f2f6994c54747c0adcc292fc8cf07473115aa7bebd36"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls dist/specs/mcp.spec.dir/src/ 2>&1 | head; echo \"=== health route ===\"; grep -rn \"health\" dist/specs/mcp.spec.dir/src/*.js 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "8255d50be492659d7b52daf0f273108fcc884c653ce7acf3489ccf657f064f32"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 180,300p dist/specs/mcp.spec.dir/src/server.js",
+          "exit_code": 0,
+          "output_sha": "91ef6130a6c1669f1192e69f2d8d4b33ba6cb6b25842fbe04757d80e77ef2b47"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 100,180p dist/specs/mcp.spec.dir/src/server.js",
+          "exit_code": 0,
+          "output_sha": "387f859b653e8e98f899d0d997cfe25519b002cfb8a50d800bfd52687fcf201f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && (node bin/speclang mcp start --remote --port 3917 > /tmp/mcp_out.log 2> /tmp/mcp_err.log &) ; sleep 6; echo \"=== health ===\"; curl -s -m 5 localhost:3917/health; echo; echo \"=== tools/list ===\"; curl -s -m 5 localhost:3917/mcp/message -H 'content-type: application/json' -d '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/list\"}' | head -c 400; echo; echo \"=== stderr ===\"; cat /tmp/mcp_err.log",
+          "exit_code": 0,
+          "output_sha": "e7ee12e5e5c30342443e8bdbfc8c8a0c9d64481c2c97939cb0c9f43e2b847984"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && echo \"=== tools/call cascade_status ===\"; curl -s -m 5 localhost:3917/mcp/message -H 'content-type: application/json' -d '{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/call\",\"params\":{\"name\":\"speclang_cascade_status\",\"arguments\":{}}}'; echo; echo \"=== GET /mcp first bytes ===\"; curl -s -m 3 -N localhost:3917/mcp | head -c 300; echo; echo \"=== cleanup ===\"; pkill -f \"mcp start --remote --port 3917\"; echo done",
+          "exit_code": -15,
+          "output_sha": "7ad43f93c4188ab3c85c7358b02dad1ebedfc2a941043351687579dad26c3b41"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && (node bin/speclang mcp start --remote --port 3918 > /tmp/mcp2_out.log 2> /tmp/mcp2_err.log &) ; sleep 6; echo \"=== tools/call cascade_status ===\"; curl -s -m 5 localhost:3918/mcp/message -H 'content-type: application/json' -d '{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/call\",\"params\":{\"name\":\"speclang_cascade_status\",\"arguments\":{}}}'; echo; echo \"=== GET /mcp ===\"; timeout 3 curl -s -N localhost:3918/mcp | head -c 300; echo; echo \"=== stderr tail ===\"; tail -5 /tmp/mcp2_err.log",
+          "exit_code": 0,
+          "output_sha": "9a683922390579ca1e6db58fb0466b5ce5f115997f8bc5065f1348701dc3c7cb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && pkill -f \"port 3918\" ; echo cleaned; echo \"=== cascade output path logic ===\"; grep -rn \"generated\" src/cascade/*.ts | head -40",
+          "exit_code": -15,
+          "output_sha": "e5bac95dee1cb1ee5dea4b3f6ebeb00b5e95b1f97d48e6bbaf3157e003b15e41"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"generated\" src/cascade/*.ts | head -40",
+          "exit_code": 0,
+          "output_sha": "81c0b23555b3bb0b01e3f867cd0dd431c692732f2faa069201e431fadbb20d2d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 60,110p src/cascade/index.ts; echo \"=== generateCode ===\"; sed -n 370,430p src/cascade/index.ts",
+          "exit_code": 0,
+          "output_sha": "1ce45aa35c8d20e3c762f012129291e5cf7136673fcbb6188f049e44df27d352"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls specs/examples.spec.dir/ 2>&1; echo \"=== hello-world spec ===\"; cat specs/examples.spec.dir/hello-world.spec.md 2>&1 | head -40",
+          "exit_code": 0,
+          "output_sha": "76e63c76d5d44ea45212ea723a154a8bcb4af95c9de0008b301109c697011dd6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -d specs/generated generated 2>&1; echo \"=== dry run ===\"; node bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run 2>&1 | head -20",
+          "exit_code": 0,
+          "output_sha": "75420ec6ac501b38b6e15210e292646362c7a2e737c278452f71fcea3decb355"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -la specs/generated generated 2>&1 | head -30; echo \"=== gitignore ===\"; grep -n \"generated\" .gitignore",
+          "exit_code": 0,
+          "output_sha": "a656957d3cfd0007aded244b7b5ffaad34d4144d7eb4d40d6bd6b1c2522c5eab"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -la specs/generated/hello generated/cascade; echo \"=== git check-ignore ===\"; git check-ignore -v specs/generated/hello/function.ts generated/foo/function.ts 2>&1",
+          "exit_code": 0,
+          "output_sha": "a86f4bac1d3e544bf22ae2e2414ffa5acb61c0aa7ff086da26945d29f2a9630f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat specs/generated/hello/function.ts",
+          "exit_code": 0,
+          "output_sha": "1be8789d23dd61e2afb545b3d0fd240df54f485afa978e22418da65cc0d564c4"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Cascade output rule verified: src/cascade/index.ts:85-86 `const specDir = path.dirname(specPath); const generatedDir = path.join(specDir, '..', 'generated');` and generateCode uses path.join(outputDir, fileName) where fileName = block.name.replace(/-/g,'_')+'.ts' (src/cascade/index.ts:396, 411). Block name 'hello/function' -> specs/generated/hello/function.ts. Artifact exists on disk (specs/generated/hello/function.ts, header Source: @speclang/examples/hello-world#hello/function). git check-ignore confirms both specs/generated/... and generated/... ignored via .gitignore:2 `generated/`. Doc lines 44-61 match. No 'generated/ sibling of spec dir' claim remains.\", \"key\": \"cascade_path\"}",
+          "exit_code": 0,
+          "output_sha": "7a62fa53c94e1d6a474d9ddeaa1eea80c4be035d068064fab958b5533a49cb6a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git log --oneline -3; echo \"=== diff of last commit ===\"; git show --stat HEAD; echo; git show HEAD -- GETTING-STARTED.md | head -60",
+          "exit_code": 0,
+          "output_sha": "826f0ad92e43b35d38393ddccdec23e054c770be7e34fcb0db5e852d7afe7f5b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show b6025cb9 -- GETTING-STARTED.md",
+          "exit_code": 0,
+          "output_sha": "f0679c9660c433273591c449a2c612ae1e9bd0eeb500e11188414c87da8fd5c7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git log --oneline -8 -- GETTING-STARTED.md; echo \"=== when was MCP section added ===\"; git log --oneline -5 -S \"mcp start --help\" -- GETTING-STARTED.md",
+          "exit_code": 0,
+          "output_sha": "7d509d54fc2c2c1bc4200d7b4a43fa29ea3c28205bffbe667cc218b5c4588fe9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show 83df067c --stat; echo \"=== diff ===\"; git show 83df067c -- GETTING-STARTED.md | head -140",
+          "exit_code": 0,
+          "output_sha": "bbad0cc7e168b795431c4622497323541b24faf4626ba90a0c1346c9299cb9da"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"mcp.pid\" bin/speclang; echo \"=== mcp status cmd ===\"; sed -n 1500,1560p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "d4525189173ff771dc325abee382f038c12faf62581579c7691c1d031e50617c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 1405,1470p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "39c161be5c6e0ec0203eb2450ae73b76428d160dfa3f8e7eafdb0e110d6683dc"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"mcp.pid\\|mcp.port\\|writeFileSync\" bin/speclang | sed -n 1,40p; echo \"=== does mcp start write pid? lines 1353-1412 ===\"; sed -n 1353,1412p bin/speclang | grep -n \"pid\\|port\"",
+          "exit_code": 0,
+          "output_sha": "6822118734db180f2e6e32831e53b2bb82d26a6444c1c1ebef97d6870327a462"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"MCP doc claims verified live:\\n- `node bin/speclang mcp start --help` exit 0: -p/--port (default \\\"3000\\\"), -d/--dir (default \\\".\\\"), --remote, --auth <type> (none,basic,token) default none, --user, --pass, --token, --config. Doc lines 79-88 match exactly (doc omits --config, no disagreement).\\n- Real probe: `node bin/speclang mcp start --remote --port 3917` -> curl /health => {\\\"status\\\":\\\"ok\\\",\\\"mode\\\":\\\"http\\\"} (matches doc line 96/104).\\n- POST /mcp/message tools/list => {\\\"jsonrpc\\\":\\\"2.0\\\",\\\"result\\\":{\\\"tools\\\":[{\\\"name\\\":\\\"speclang_search\\\",...}]},\\\"id\\\":1} (matches doc line 108).\\n- POST /mcp/message tools/call speclang_cascade_status => {\\\"jsonrpc\\\":\\\"2.0\\\",\\\"result\\\":{\\\"status\\\":\\\"idle\\\"},\\\"id\\\":2} (matches doc line 113).\\n- GET /mcp => `event: endpoint` / `data: /mcp/message?sessionId=<uuid>` (matches doc line 94).\\n- Startup diagnostics on stderr confirmed (/tmp/mcp_err.log), stdout empty.\\n- mcp.pid caveat true: bin/speclang:1420,1459 read .speclang/mcp.pid; mcp start (1353-1412) never writes it.\\n- stdio default: bin/speclang:1398-1401 startStdio when !options.remote.\", \"key\": \"mcp_probe\"}",
+          "exit_code": 0,
+          "output_sha": "be55420ac53f8a58e5461c0508c1aa4438a574b6dbb167cf4ec273bbeab5d882"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"GETTING-STARTED\" tests/ 2>/dev/null | head -20; echo \"=== docs tests ===\"; ls tests | head -40",
+          "exit_code": 0,
+          "output_sha": "97febe1fdb20707c7b0fa6980c0b9cb6dd012800332197fd47dc868255be6256"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls tests/mcp tests/cli 2>/dev/null; echo \"=== mcp start tests ===\"; grep -rln \"mcp start\\|mcp.*--remote\" tests/ | head -10",
+          "exit_code": 0,
+          "output_sha": "aaf25042df4cec698795a306dc5f0441bdbf4392c26423fd384f571063afd7d1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npx vitest run tests/mcp tests/cli 2>&1 | tail -25",
+          "exit_code": 0,
+          "output_sha": "7e29a922ddccafe9441ad8730c52b4a7aa75e5cf69770bfb990bef6213747774"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Tests: `npx vitest run tests/mcp tests/cli` => exit 0, \\\"Test Files 17 passed (17)\\\", \\\"Tests 200 passed | 2 skipped (202)\\\". No test asserts GETTING-STARTED.md content (grep -rn GETTING-STARTED tests/ => no matches), so doc drift is guarded only by the live probes I ran.\", \"key\": \"tests\"}",
+          "exit_code": 0,
+          "output_sha": "e2084dc07aaa73f3dcce101e9050aaa995d8f176780adecb8a74b529b7c37b56"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"generated\" README.md | head -20; echo \"=== other docs claiming sibling ===\"; grep -rn \"sibling of the spec\" --include=*.md . 2>/dev/null | grep -v node_modules | head",
+          "exit_code": 0,
+          "output_sha": "2312dcf19ff61952c7b7d1039b0157150ed50368a1ab51b352d5e29b3e852560"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 385,412p README.md",
+          "exit_code": 0,
+          "output_sha": "1edc8efc9059633e2bf19cfb6cad6c1b95ed9af72e1a27edd468d49260a83c73"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"generated\" GETTING-STARTED.md | sed -n 1,12p; echo \"=== check no 'sibling' in GETTING-STARTED ===\"; grep -in \"sibling\" GETTING-STARTED.md; echo \"exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "4581d9d67f1a455aa66f451a1e4e7b0f5f58f6a31626b1ee6bb7a9baad4c098d"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Criterion 1 (FAILIF) \\u2014 all three disjuncts checked:\\n(a) \\\"still claims a generated/ sibling of the spec directory\\\": GETTING-STARTED.md has NO occurrence of \\\"sibling\\\" (grep -in sibling => exit 1). Lines 44-61 state the rule `<dir containing spec>/../generated/` with two measured cases; line 61's `<project root>/generated/foo/function.ts` for `specs/foo.spec.md` is the same rule applied (specDir=specs, ..=root), not a sibling-of-spec-dir claim. Code: src/cascade/index.ts:85-86. Artifact on disk: specs/generated/hello/function.ts with header Source: @speclang/examples/hello-world#hello/function. => NOT claimed.\\n(b) grep -cin mcp GETTING-STARTED.md => 15 (>=3).\\n(c) documented mcp start protocol vs real flags: `node bin/speclang mcp start --help` exit 0 lists -p/--port (default \\\"3000\\\"), -d/--dir (default \\\".\\\"), --remote, --auth <type> (none,basic,token) default none, --user, --pass, --token, --config \\u2014 doc lines 79-88 match. Live probe on port 3917/3918: /health => {\\\"status\\\":\\\"ok\\\",\\\"mode\\\":\\\"http\\\"}; tools/list => speclang_search; tools/call speclang_cascade_status => {\\\"status\\\":\\\"idle\\\"}; GET /mcp => event: endpoint / data: /mcp/message?sessionId=<uuid>. All match doc lines 94-113. mcp.pid caveat (doc 117-118) true: bin/speclang:1420,1459 read it, mcp start (1353-1412) never writes it.\\nTests: npx vitest run tests/mcp tests/cli => 17 files passed, 200 passed | 2 skipped, exit 0.\\n=> PASS\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "16dbcb3d9c28379f145bb78e1c3fe6fcb14b3b7108af8a76d2412ac3b65370c2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && node bin/speclang mcp start --help 2>&1 | grep -c \"config\"; echo \"--- doc mentions --config? ---\"; grep -n \"config\" GETTING-STARTED.md | head",
+          "exit_code": 0,
+          "output_sha": "6d43e593c9908518799e9dd84b840839dfe7a280995662adcd9ca3c73c40ece9"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 53,
+        "detection": "defer_review_by added to a row without a corresponding updated_at bump, unlike sibling rows in the same diff",
+        "detail": "DF-SPECLANG-1 gains \"defer_review_by\":\"2026-11-24\" and \"updated_at\":\"2026-11-17T11:41:29Z\", but QA-SPECLANG-2 and QA-SPECLANG-009 gain only defer_review_by while their updated_at stays at 2026-11-17T10:33:08, so the board's own modification timestamp no longer reflects the edit."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 53,
+        "detection": "defer_review_by set on a row whose defer_reason says the premise is disproved/fixed, with no mechanism shown that re-examines it",
+        "detail": "DF-SPECLANG-1's defer_reason states the premise is disproved and 'Nothing to implement', yet the row is given a 2026-11-24 review date rather than being closed, leaving a satisfied-by-reality row pending in the dispatch pool."
+      }
+    ],
+    "summary": "Board-only bookkeeping change; the only issues are inconsistent updated_at stamping and re-deferring rows whose premises are already recorded as disproved/fixed."
+  },
+  "summary": "Stage tier1: FAIL (DEGRADED - skipped checks)\n  WARNING: coverage is unknown \u2014 tests did not run (skipped at runtime \u2014 tests: timed out after 120s (step budget)); run `gitreins guard` for the full gate\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  ~ tests: Command timed out after 120s (step budget)\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 FAILIF: GETTING-STARTED.md still claims a generated/ sibling of the spec directory, or grep -cin mcp returns fewer than 3, or the documented mcp start protocol disagrees with the real flags. PROOF: the greps and the mcp start --help output plus a real health probe.: All three disjuncts checked and none fires. (a) Sibling claim: `grep -in sibling GETTING-STARTED.md` => exit 1, no match. GETTING-STARTED.md:56-61 states the rule `<directory containing the spec>/../generated/` with two measured cases; line 61 (`specs/foo.spec.md` -> `<project root>/generated/foo/function.ts`) is that same rule applied (specDir=`specs`, `..`=root), not a sibling-of-the-spec-directory claim. Code agrees: src/cascade/index.ts:85-86 `const specDir = path.dirname(specPath); const generatedDir = path.join(specDir, '..', 'generated');` and src/cascade/index.ts:396,411 `fileName = block.name.replace(/-/g,'_')+'.ts'` joined onto outputDir, so block `hello/function` -> `specs/generated/hello/function.ts`. Artifact on disk confirms: specs/generated/hello/function.ts header reads `Source: @speclang/examples/hello-world#hello/function`. (b) `grep -cin mcp GETTING-STARTED.md` => 15 (>=3). (c) Flags: `node bin/speclang mcp start --help` exit 0 prints `-p, --port <port> ... (default: \"3000\")`, `-d, --dir <directory> ... (default: \".\")`, `--remote`, `--auth <type> ... (default: \"none\")`, `--user`, `--pass`, `--token`, `--config` \u2014 GETTING-STARTED.md:79-88 documents exactly these (omitting `--config` is an omission, not a disagreement). Real probe: `node bin/speclang mcp start --remote --port 3917` then `curl -s localhost:3917/health` => `{\"status\":\"ok\",\"mode\":\"http\"}` (doc:96,104); `POST /mcp/message tools/list` => `{\"jsonrpc\":\"2.0\",\"result\":{\"tools\":[{\"name\":\"speclang_search\",...}]},\"id\":1}` (doc:108); `tools/call speclang_cascade_status` => `{\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"idle\"},\"id\":2}` (doc:113); `GET /mcp` => `event: endpoint` / `data: /mcp/message?sessionId=8420b3ee-...` (doc:94). Startup diagnostics observed on stderr only (/tmp/mcp_err.log), stdout empty, matching doc:116-117. The mcp.pid caveat at doc:117-118 is true: bin/speclang:1420 and :1459 read `.speclang/mcp.pid`, while `mcp start` (bin/speclang:1353-1412) never writes it. Tests: `npx vitest run tests/mcp tests/cli` => exit 0, `Test Files 17 passed (17)`, `Tests 200 passed | 2 skipped (202)`. [resolution 0.04; GETTING-STARTED.md]\nGETTING-STARTED.md no longer claims a generated/ sibling of the spec directory (grep -in sibling => no match; the stated `<spec dir>/../generated/` rule matches src/cascade/index.ts:86 and the on-disk specs/generated/hello/function.ts), grep -cin mcp returns 15, and every documented `mcp start` flag, route and response body was confirmed against `mcp start --help` plus a live /health, /mcp SSE and /mcp/message probe. [uncovered failure paths: failure mode 0 (No automated check pins GETTING-STARTED.md's documented cascade output paths or `mcp start` flags to the real CLI, so this exact drift can silently return): detected_by is empty \u2014 uncovered failure path; failure mode 1 (README.md:402-404 still describes cascade output as 'a `generated/` sibling of the spec's directory', the phrasing DF-SPECLANG-5 removed from GETTING-STARTED.md): detected_by is empty \u2014 uncovered failure path]\n\nOverall: FAIL \u2717 [DEGRADED \u2014 skipped: tier1(tests)=skipped at runtime \u2014 tests: timed out after 120s (step budget)]",
+  "evaluated_at": "2026-11-17T11:45:42.543948",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T11:45:42.569707+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 82862,
+        "truncated": false,
+        "source": "git show e80d42516502"
+      }
+    ],
+    "task_id": "DF-SPECLANG-5"
+  }
+}
