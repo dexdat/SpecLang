@@ -25,6 +25,10 @@ export {
 } from './types';
 
 // Re-export classes
-export { LoopController } from './controller';
+// GAP-005: the second `LoopController` copy that lived beside this barrel is
+// gone. It had no exit path (same defect class GAP-004 fixed in
+// specs/implementation.spec.dir/src/ralph-loop.ts) and nothing imported this
+// module, so the only correct home for `LoopController` is the live
+// implementation — re-exporting a dead duplicate would reintroduce the defect.
 export { BuilderAgent } from './builder-agent';
 export { VerifierAgent } from './verifier-agent';
