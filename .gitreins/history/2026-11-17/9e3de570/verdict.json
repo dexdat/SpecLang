@@ -1,0 +1,424 @@
+{
+  "task_id": "DF-SPECLANG-4-R5",
+  "task_title": "First spec attempt fails cryptically: docs gap",
+  "task_criteria": [
+    "docs/troubleshooting.md contains the '# speclang-header lines:N must exactly equal header length' rule; README or docs document OPENAI_API_KEY / cascade LLM provider setup"
+  ],
+  "passed": false,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "920986c69170f9453ea1adf67dca7078b37f9be1",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "f2a26b819c21836e8e5474004e616893b138be15bfa465894c51cb84f39a1fd9",
+  "working_tree_dirty_path_count": 7,
+  "items": [
+    {
+      "criterion": "docs/troubleshooting.md contains the '# speclang-header lines:N must exactly equal header length' rule; README or docs document OPENAI_API_KEY / cascade LLM provider setup",
+      "status": "PASS",
+      "detail": "docs/troubleshooting.md is a symlink to specs/roadmap.spec.dir/poc.spec.dir/troubleshooting.spec.md (`diff` reports IDENTICAL), so the change to the spec twin lands in the doc. Rule present at docs/troubleshooting.md:375-376: \"**The rule:** `N` = 1 (the `# speclang-header` line) + the number of YAML lines + 1 (the closing `---` line)\", inside the new `## First-Spec Failures` section (docs/troubleshooting.md:337), with the trap table at :405-411. I verified the documented behaviour empirically against dist/src/parser/header.js on the doc's own 6-line header: N=6 -> OK, N=7 -> OK (trailing `---` stripped), N=8 and N=9 -> \"Failed to parse header YAML: Source contains multiple documents\", N=5 -> `tags` dropped, N=4 -> `layer`+`tags` dropped \u2014 exactly what the table claims; the omitted-count escape hatch parses and yields the warning at specs/validation.spec.dir/src/rules/header.ts:66-74. LLM provider setup is documented in both places: docs/troubleshooting.md:483-520 (key table :499-502, SPECLANG_PROVIDER/SPECLANG_MODEL/SPECLANG_BASE_URL :504, `export OPENAI_API_KEY` :511, missing-key error text matching specs/cascade.spec.dir/src/agent.ts:217) and README.md:405-426. Every documented env var, default model and the `gemini` alias match the code (specs/cascade.spec.dir/src/agent.ts:47-58,76-83,105-115; provider-adapter.ts:20-32). `./bin/speclang check specs/roadmap.spec.dir/poc.spec.dir/troubleshooting.spec.md` -> \"\u2713 Passed\", \"Errors: 0, Warnings: 0\". Full suite `npx vitest run --passWithNoTests`: \"Test Files 2 failed | 104 passed\", \"Tests 2 failed | 1902 passed | 58 skipped\" \u2014 the two failures are tests/cascade-depth.test.ts:212 (timer flake) and tests/db.test.ts:36 (\"SqliteError: disk I/O error\"), both unrelated to this docs-only change. [resolution 0.31; docs/troubleshooting.md]"
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": false,
+      "any_failed": true,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  ~ tests: Command timed out after 120s (step budget)",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T040908.008673Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T040908.008673Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": false,
+          "output": "",
+          "error": "Command timed out after 120s (step budget)",
+          "data": {
+            "timed_out": true,
+            "timeout_s": 120
+          }
+        }
+      ],
+      "degraded": true,
+      "skipped_steps": [
+        "tests"
+      ],
+      "degradation_reason": "skipped at runtime \u2014 tests: timed out after 120s (step budget)"
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 docs/troubleshooting.md contains the '# speclang-header lines:N must exactly equal header length' rule; README or docs document OPENAI_API_KEY / cascade LLM provider setup: docs/troubleshooting.md is a symlink to specs/roadmap.spec.dir/poc.spec.dir/troubleshooting.spec.md (`diff` reports IDENTICAL), so the change to the spec twin lands in the doc. Rule present at docs/troubleshooting.md:375-376: \"**The rule:** `N` = 1 (the `# speclang-header` line) + the number of YAML lines + 1 (the closing `---` line)\", inside the new `## First-Spec Failures` section (docs/troubleshooting.md:337), with the trap table at :405-411. I verified the documented behaviour empirically against dist/src/parser/header.js on the doc's own 6-line header: N=6 -> OK, N=7 -> OK (trailing `---` stripped), N=8 and N=9 -> \"Failed to parse header YAML: Source contains multiple documents\", N=5 -> `tags` dropped, N=4 -> `layer`+`tags` dropped \u2014 exactly what the table claims; the omitted-count escape hatch parses and yields the warning at specs/validation.spec.dir/src/rules/header.ts:66-74. LLM provider setup is documented in both places: docs/troubleshooting.md:483-520 (key table :499-502, SPECLANG_PROVIDER/SPECLANG_MODEL/SPECLANG_BASE_URL :504, `export OPENAI_API_KEY` :511, missing-key error text matching specs/cascade.spec.dir/src/agent.ts:217) and README.md:405-426. Every documented env var, default model and the `gemini` alias match the code (specs/cascade.spec.dir/src/agent.ts:47-58,76-83,105-115; provider-adapter.ts:20-32). `./bin/speclang check specs/roadmap.spec.dir/poc.spec.dir/troubleshooting.spec.md` -> \"\u2713 Passed\", \"Errors: 0, Warnings: 0\". Full suite `npx vitest run --passWithNoTests`: \"Test Files 2 failed | 104 passed\", \"Tests 2 failed | 1902 passed | 58 skipped\" \u2014 the two failures are tests/cascade-depth.test.ts:212 (timer flake) and tests/db.test.ts:36 (\"SqliteError: disk I/O error\"), both unrelated to this docs-only change. [resolution 0.31; docs/troubleshooting.md]\nThe docs-only change delivers both halves of the criterion \u2014 the header-count rule (empirically confirmed against the parser, including the off-by-one traps) and the OPENAI_API_KEY / cascade provider setup \u2014 in docs/troubleshooting.md and README.md, with the doc spec still validating cleanly.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 docs/troubleshooting.md contains the '# speclang-header lines:N must exactly equal header length' rule; README or docs document OPENAI_API_KEY / cascade LLM provider setup: docs/troubleshooting.md is a symlink to specs/roadmap.spec.dir/poc.spec.dir/troubleshooting.spec.md (`diff` reports IDENTICAL), so the change to the spec twin lands in the doc. Rule present at docs/troubleshooting.md:375-376: \"**The rule:** `N` = 1 (the `# speclang-header` line) + the number of YAML lines + 1 (the closing `---` line)\", inside the new `## First-Spec Failures` section (docs/troubleshooting.md:337), with the trap table at :405-411. I verified the documented behaviour empirically against dist/src/parser/header.js on the doc's own 6-line header: N=6 -> OK, N=7 -> OK (trailing `---` stripped), N=8 and N=9 -> \"Failed to parse header YAML: Source contains multiple documents\", N=5 -> `tags` dropped, N=4 -> `layer`+`tags` dropped \u2014 exactly what the table claims; the omitted-count escape hatch parses and yields the warning at specs/validation.spec.dir/src/rules/header.ts:66-74. LLM provider setup is documented in both places: docs/troubleshooting.md:483-520 (key table :499-502, SPECLANG_PROVIDER/SPECLANG_MODEL/SPECLANG_BASE_URL :504, `export OPENAI_API_KEY` :511, missing-key error text matching specs/cascade.spec.dir/src/agent.ts:217) and README.md:405-426. Every documented env var, default model and the `gemini` alias match the code (specs/cascade.spec.dir/src/agent.ts:47-58,76-83,105-115; provider-adapter.ts:20-32). `./bin/speclang check specs/roadmap.spec.dir/poc.spec.dir/troubleshooting.spec.md` -> \"\u2713 Passed\", \"Errors: 0, Warnings: 0\". Full suite `npx vitest run --passWithNoTests`: \"Test Files 2 failed | 104 passed\", \"Tests 2 failed | 1902 passed | 58 skipped\" \u2014 the two failures are tests/cascade-depth.test.ts:212 (timer flake) and tests/db.test.ts:36 (\"SqliteError: disk I/O error\"), both unrelated to this docs-only change. [resolution 0.31; docs/troubleshooting.md]\nThe docs-only change delivers both halves of the criterion \u2014 the header-count rule (empirically confirmed against the parser, including the off-by-one traps) and the OPENAI_API_KEY / cascade provider setup \u2014 in docs/troubleshooting.md and README.md, with the doc spec still validating cleanly.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "docs/troubleshooting.md contains the '# speclang-header lines:N must exactly equal header length' rule; README or docs document OPENAI_API_KEY / cascade LLM provider setup",
+                "status": "PASS",
+                "detail": "docs/troubleshooting.md is a symlink to specs/roadmap.spec.dir/poc.spec.dir/troubleshooting.spec.md (`diff` reports IDENTICAL), so the change to the spec twin lands in the doc. Rule present at docs/troubleshooting.md:375-376: \"**The rule:** `N` = 1 (the `# speclang-header` line) + the number of YAML lines + 1 (the closing `---` line)\", inside the new `## First-Spec Failures` section (docs/troubleshooting.md:337), with the trap table at :405-411. I verified the documented behaviour empirically against dist/src/parser/header.js on the doc's own 6-line header: N=6 -> OK, N=7 -> OK (trailing `---` stripped), N=8 and N=9 -> \"Failed to parse header YAML: Source contains multiple documents\", N=5 -> `tags` dropped, N=4 -> `layer`+`tags` dropped \u2014 exactly what the table claims; the omitted-count escape hatch parses and yields the warning at specs/validation.spec.dir/src/rules/header.ts:66-74. LLM provider setup is documented in both places: docs/troubleshooting.md:483-520 (key table :499-502, SPECLANG_PROVIDER/SPECLANG_MODEL/SPECLANG_BASE_URL :504, `export OPENAI_API_KEY` :511, missing-key error text matching specs/cascade.spec.dir/src/agent.ts:217) and README.md:405-426. Every documented env var, default model and the `gemini` alias match the code (specs/cascade.spec.dir/src/agent.ts:47-58,76-83,105-115; provider-adapter.ts:20-32). `./bin/speclang check specs/roadmap.spec.dir/poc.spec.dir/troubleshooting.spec.md` -> \"\u2713 Passed\", \"Errors: 0, Warnings: 0\". Full suite `npx vitest run --passWithNoTests`: \"Test Files 2 failed | 104 passed\", \"Tests 2 failed | 1902 passed | 58 skipped\" \u2014 the two failures are tests/cascade-depth.test.ts:212 (timer flake) and tests/db.test.ts:36 (\"SqliteError: disk I/O error\"), both unrelated to this docs-only change. [resolution 0.31; docs/troubleshooting.md]",
+                "resolution_probability": 0.31,
+                "cited_path": "docs/troubleshooting.md"
+              }
+            ],
+            "summary": "The docs-only change delivers both halves of the criterion \u2014 the header-count rule (empirically confirmed against the parser, including the off-by-one traps) and the OPENAI_API_KEY / cascade provider setup \u2014 in docs/troubleshooting.md and README.md, with the doc spec still validating cleanly.",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-4-R5\"}",
+          "exit_code": 0,
+          "output_sha": "a302c9e627fee85a815ca87e7118ec7851b9bf40bcdcfc0fbf89f8db5cc1f724"
+        },
+        {
+          "tool": "read_diff",
+          "command": "read_diff {}",
+          "exit_code": 0,
+          "output_sha": "e2a66cf89d44409929d79cc10f71001c1d4404dc3530adaafd78e046ff8c3702"
+        },
+        {
+          "tool": "run_command",
+          "command": "git log --oneline -5 && git show --stat HEAD",
+          "exit_code": 0,
+          "output_sha": "d18495e4f1a185768ce19e7817bf4f9b78c3e4fbc2cd7d34b60b977c528b8a36"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls docs/ 2>/dev/null; echo \"---\"; ls",
+          "exit_code": 0,
+          "output_sha": "21412cfcc5ca325bee96cadfdf2fce17635f439664a288cf43e52052c695bef7"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show HEAD --stat --name-only; echo \"=== full diff ===\"; git diff 7d583a29 920986c6 -- README.md",
+          "exit_code": 0,
+          "output_sha": "a28208c37d8404f52fc30f153ca6a7baf9ffa12f019c1abb650e45e722add799"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"speclang-header\" -r docs/ README.md | head -50",
+          "exit_code": 0,
+          "output_sha": "73c8e4ee62b33b7073a270457c9b25da688a037d4386ad972835bd7339aecf2e"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"speclang-header\" docs/troubleshooting.md | head -40; echo \"=== first-spec section ===\"; grep -n \"First-Spec Failures\\|first-spec\" docs/troubleshooting.md | head -20",
+          "exit_code": 0,
+          "output_sha": "fee277c6884bb63b618d4ac422266018a4888ef1277363068562a9f37c83a39e"
+        },
+        {
+          "tool": "run_command",
+          "command": "git diff 7d583a29 920986c6 -- docs/troubleshooting.md | head -300",
+          "exit_code": 0,
+          "output_sha": "62c532b1d03ec690345eac163353751d4d24b78032959de580030aa902ba0ef9"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show 99ea048d --stat; echo \"=== diff of troubleshooting ===\"; git diff 7d583a29 99ea048d -- docs/troubleshooting.md | head -320",
+          "exit_code": 0,
+          "output_sha": "4e658691f9c9bfc97ec476f72c736d214482994ee786b44553a60694c07ce91f"
+        },
+        {
+          "tool": "run_command",
+          "command": "git diff 7d583a29 99ea048d -- specs/roadmap.spec.dir/poc.spec.dir/troubleshooting.spec.md | head -320",
+          "exit_code": 0,
+          "output_sha": "3d1ece7e09abdd7ee68c6601ed74fe0b8e86ed91cf2e649a3c8e9038c0ee81c5"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 130, \"offset\": 330, \"path\": \"docs/troubleshooting.md\"}",
+          "exit_code": 0,
+          "output_sha": "4f1b4ce40a1ad369d99dca8c1d4ae74bbd0d06848d986775b4c84419fcefb667"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la docs/troubleshooting.md specs/roadmap.spec.dir/poc.spec.dir/troubleshooting.spec.md; echo \"=== diff ===\"; diff docs/troubleshooting.md specs/roadmap.spec.dir/poc.spec.dir/troubleshooting.spec.md && echo IDENTICAL",
+          "exit_code": 0,
+          "output_sha": "e84147e9da63f2d6366f971a445423382a172d670c9aa42100d52095cb522a14"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"OPENAI_API_KEY\\|OPENROUTER_API_KEY\\|ANTHROPIC_API_KEY\\|GEMINI_API_KEY\\|GOOGLE_API_KEY\\|SPECLANG_PROVIDER\\|SPECLANG_MODEL\\|SPECLANG_BASE_URL\" docs/troubleshooting.md README.md",
+          "exit_code": 0,
+          "output_sha": "7b72857709b2dfee830fb344f38d61aae9920c03aca0f2bce9c0199d1529d021"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"OPENAI_API_KEY\\|OPENROUTER_API_KEY\\|ANTHROPIC_API_KEY\\|GEMINI_API_KEY\\|GOOGLE_API_KEY\\|SPECLANG_PROVIDER\\|SPECLANG_MODEL\\|SPECLANG_BASE_URL\" src/ --include=*.ts | head -40",
+          "exit_code": 0,
+          "output_sha": "a5dcb9369d21d1bf4bee4d46df4b4690e32bbcf428501542532940fc62cd7091"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"OPENAI_API_KEY\\|OPENROUTER_API_KEY\\|ANTHROPIC_API_KEY\\|GEMINI_API_KEY\\|GOOGLE_API_KEY\\|SPECLANG_PROVIDER\\|SPECLANG_MODEL\\|SPECLANG_BASE_URL\" --include=*.ts --include=*.js --include=*.py . 2>/dev/null | grep -v node_modules | grep -v \"^./dist/\" | head -40",
+          "exit_code": 0,
+          "output_sha": "9190f17200f4b878a4d401f50ccc41e324aa1e6eab19c6bab81570d6bff46ae8"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 100, \"offset\": 40, \"path\": \"specs/cascade.spec.dir/src/agent.ts\"}",
+          "exit_code": 0,
+          "output_sha": "fa1ee2d6d5cef466d93029868b1993a932f5cc00e1637e6489c9f1166224970c"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 70, \"offset\": 470, \"path\": \"docs/troubleshooting.md\"}",
+          "exit_code": 0,
+          "output_sha": "12e14f4f88c1155dfc74b13c870b2d8468e28967bcc36d5c0e4a53d423f5efa7"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"Missing API key\" --include=*.ts . | grep -v node_modules | grep -v \"^./dist/\" | head; echo \"=== normalizeProvider ===\"; grep -n \"normalizeProvider\" -A 15 specs/cascade.spec.dir/src/agent.ts | head -40",
+          "exit_code": 0,
+          "output_sha": "e7f65753e8c5d2024874e76e6cebc80f10d82386f7aebb94fff4bb06844ec3ba"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"parseHeader\" -A 60 specs/parser.spec.dir/src/header.ts 2>/dev/null | head -90; echo \"=== find header.ts ===\"; find . -name \"header.ts\" -not -path \"./node_modules/*\" -not -path \"./dist/*\"",
+          "exit_code": 0,
+          "output_sha": "2ac01153dd58cfa0f12e711e07fd7c4c03c139fcc3fc4302cc7c9b71c459cc2c"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 1,50p specs/parser.spec.dir/src/header.ts; echo \"=== src/parser/header.ts symlink? ===\"; ls -la src/parser/header.ts src/cascade/agent.ts",
+          "exit_code": 0,
+          "output_sha": "4990cc349534a090ca4f1b57364da5cf9a6a55681f4b1a8eebeb9360a32714e9"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"normalizeProvider\" -A 20 specs/cascade.spec.dir/src/provider-adapter.ts | head -40",
+          "exit_code": 0,
+          "output_sha": "e13e54319e32616d666fd245215f67d100045e6db4939e11d182600bda1875a3"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"dotenv\" package.json specs/cascade.spec.dir/src/*.ts 2>/dev/null | head; echo \"=== agent cli ===\"; grep -rn \"agent\" bin/speclang | head -20",
+          "exit_code": 0,
+          "output_sha": "29c6a6c5286b8d2743ac2d84766c4489553641ebd9d67cbfb832155054c2a810"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"agent\" specs/cli.spec.dir/src/*.ts 2>/dev/null | head -30; echo \"=== find cli ===\"; ls specs/ | head -40",
+          "exit_code": 0,
+          "output_sha": "b8933e3cf304a2c771e6cd7ca0f0cf158ea6b7ec9037961db1204c090979cb2f"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 205,265p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "91f282dcf7c01242c323d4076030c831f1e6f9c74368a8a0e901c16d5c46281e"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 200,260p specs/cascade.spec.dir/src/agent.ts",
+          "exit_code": 0,
+          "output_sha": "5e78616e68e87e5f71ddd71627bb6e3aac80461fa908914c64635e0c4705fd3a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp && rm -rf hdrcheck && mkdir hdrcheck && cd hdrcheck && printf '# speclang-header lines:8\\nid: \"@demo/badcount\"\\nversion: 0.1.0\\nlayer: 1\\ntags: [project]\\n---\\n\\n# badcount\\n' > bad.spec.md && cat -n bad.spec.md && node -e \"\nconst {parseHeader}=require('/home/kara/'+''+'x');\n\" 2>/dev/null; echo \"---\"; ls",
+          "exit_code": 0,
+          "output_sha": "b5d36795471d32f8d9a691b161414a773f2779e81d6d52b6e1d47e3d3a363f4f"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls dist/src/parser/header.js dist/src/cascade/agent.js 2>&1; cat .gitreins/config.yaml 2>/dev/null | head -40",
+          "exit_code": 0,
+          "output_sha": "2570689ca4cc942c9d4ff96fdf7e89b90bd2bc171b9b5a445306f23cf2bf1cc7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/hdrcheck && node -e \"\nconst {parseHeader}=require('/home/kara/speclang/dist/src/parser/header.js');\n\" 2>&1 | head -3; pwd",
+          "exit_code": 0,
+          "output_sha": "fdbb7654790f678b35fb5c9eeb39244836d3bae94ba3fa85c1cfbb87001f9781"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/hdrcheck && node -e \"\nconst {parseHeader}=require('/home/kara/speclang/dist/src/parser/header.js');\nconst fs=require('fs');\nconst base='# speclang-header lines:N\\nid: \\\"@demo/badcount\\\"\\nversion: 0.1.0\\nlayer: 1\\ntags: [project]\\n---\\n\\n# badcount\\n';\nfor (const n of [4,5,6,7,8,9]) {\n  const c=base.replace('lines:N','lines:'+n);\n  try { const r=parseHeader(c); console.log('N='+n+' OK meta='+JSON.stringify(r.metadata)+' headerLines='+r.headerLines+' body0='+JSON.stringify(r.content.split('\\n')[0])); }\n  catch(e){ console.log('N='+n+' ERROR: '+e.message.split('\\n')[0]); }\n}\n\"",
+          "exit_code": 0,
+          "output_sha": "1e623ce000cc76892850598a7a8a4a3fb1823c2d1a10a4a5c05cca07bd4346f7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/hdrcheck && node -e \"\nconst {parseHeader}=require('/home/kara/speclang/dist/src/parser/header.js');\nconst c='# speclang-header\\nid: \\\"@demo/x\\\"\\nversion: 0.1.0\\n---\\n\\n# body\\n';\ntry{const r=parseHeader(c);console.log('omitted OK', JSON.stringify(r.metadata), r.headerLines);}catch(e){console.log('omitted ERROR', e.message);}\n\"; echo \"=== warning for omitted count ===\"; grep -rn \"speclang-header\" /home/kara/speclang/specs/validation.spec.dir/src/rules/header.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "e6030477424d7b2a88126fbdc6a560f4eaf06aed8298246256acecfef727b3f8"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 60,90p /home/kara/speclang/specs/validation.spec.dir/src/rules/header.ts",
+          "exit_code": 0,
+          "output_sha": "f38f4d7b96ef4a2525e544afa2b287a423b0159f6a5fbfc3f6effb94222db3c3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 900 npx vitest run --passWithNoTests 2>&1 | tail -25",
+          "exit_code": -15,
+          "output_sha": "3e61a575d8ca09f5593f26deb69355a191df4e22bf6474851090bba728a2ed7e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && (timeout 600 npx vitest run --passWithNoTests > /tmp/vitest.log 2>&1; echo \"EXIT:$?\" >> /tmp/vitest.log) & sleep 25; echo started",
+          "exit_code": 0,
+          "output_sha": "7c6e2258c02353d26d12389ddf7da57e86e722d2971f7bae3bd617329fe5f2bd"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 20; tail -30 /tmp/vitest.log",
+          "exit_code": 0,
+          "output_sha": "b9be62a1b1251932428486d729a710c59484cc19653a7a642fce82c72e493955"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 60; tail -40 /tmp/vitest.log",
+          "exit_code": -15,
+          "output_sha": "389910a3d11a72193c3c17c3920535f0cd7ffda16c8aed7fdfb3f7650ab3252e"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 25; tail -40 /tmp/vitest.log",
+          "exit_code": 0,
+          "output_sha": "7dabcb7b90d1c5741a9acde9df8450c52c635854d5ab5201974864db63890d9c"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"EXIT:\" /tmp/vitest.log; grep -c \"\" /tmp/vitest.log",
+          "exit_code": 0,
+          "output_sha": "eb2f27e03e2b4f72f7ec7e5f3b728031bedbf40a684c8e829274410087ae0254"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"troubleshooting\" tests/*.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "fa118062949facc4db969d18b04103db54d793a05ee84ac1f4befe26f5e42257"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rln \"troubleshooting\" tests/ | head -20; echo \"=== docs tests ===\"; ls tests | grep -i \"doc\\|spec-md\\|markdown\" | head",
+          "exit_code": 0,
+          "output_sha": "b8ae16513de4c37859ad29360ac1400fb20ded0ab2751b60e8504b317b1196f9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ./bin/speclang check -d specs/roadmap.spec.dir/poc.spec.dir 2>&1 | tail -20",
+          "exit_code": 0,
+          "output_sha": "bafc0977b4a279493b6e05b9c07b75ad4c9b75b6c25dd8505a6719b10decc879"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ./bin/speclang check specs/roadmap.spec.dir/poc.spec.dir/troubleshooting.spec.md 2>&1 | tail -20",
+          "exit_code": 0,
+          "output_sha": "d843ea4bb3cc1790d1b078ec20801296937caa549412101e6346334fbf556a5f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"First-Spec Failures\\|Configure an LLM Provider\" README.md docs/troubleshooting.md; echo \"=== anchor check ===\"; grep -n \"^## First-Spec Failures\" docs/troubleshooting.md",
+          "exit_code": 0,
+          "output_sha": "bd2c8d6bb8e0e5355e80bee6e3937e2a92882214b0559f06d4076112dbd3e859"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: docs/troubleshooting.md is a symlink -> specs/roadmap.spec.dir/poc.spec.dir/troubleshooting.spec.md (diff IDENTICAL). Section \\\"## First-Spec Failures\\\" at docs/troubleshooting.md:337; rule at :375-376 \\\"**The rule:** `N` = 1 (the `# speclang-header` line) + the number of YAML lines + 1 (the closing `---` line)\\\". Trap table :405-411 verified empirically against dist/src/parser/header.js: N=6 exact OK, N=7 OK (trailing --- stripped), N=8/9 -> \\\"Source contains multiple documents\\\", N=5 drops tags, N=4 drops layer+tags \\u2014 matches doc exactly. Omitted-count escape hatch verified (parses, warning at specs/validation.spec.dir/src/rules/header.ts:66-74). LLM provider setup: docs/troubleshooting.md:483-520 (key table :499-502, SPECLANG_PROVIDER/MODEL/BASE_URL :504, export OPENAI_API_KEY :511, missing-key error text matches specs/cascade.spec.dir/src/agent.ts:217) and README.md:405-426. Env var names/models verified against specs/cascade.spec.dir/src/agent.ts:47-58,76-83,105-115 and provider-adapter.ts:20-32 (gemini alias). `./bin/speclang check` on the doc spec: \\\"\\u2713 Passed\\\", 0 errors 0 warnings. Full suite: npx vitest run -> \\\"Test Files 2 failed | 104 passed\\\", \\\"Tests 2 failed | 1902 passed\\\" (failures are tests/cascade-depth.test.ts timer flake and tests/db.test.ts \\\"SqliteError: disk I/O error\\\" \\u2014 unrelated to docs).\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "9bd295db18e755fc339df947ae96b0cd554c8a75be2b95db5b697bce37c30638"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 125,
+        "detection": "status set to in_progress while worker_status remains \"pending\" and commit_hash/guard_result/ci_result stay null",
+        "detail": "QA-SPECLANG-006 row is flipped to status \"in_progress\" and given a worktree/branch, but its worker_status is still \"pending\" with commit_hash, guard_result and ci_result all null, so the row's own fields disagree about whether a worker has actually started."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 148,
+        "detection": "status set to in_progress while worker_status remains \"pending\"",
+        "detail": "DF-SPECLANG-017 is marked \"in_progress\" with a worktree and branch but keeps worker_status \"pending\" and null commit_hash/guard_result/ci_result, the same internal inconsistency as the other two dispatched rows."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 149,
+        "detection": "status set to in_progress while worker_status remains \"pending\"",
+        "detail": "DF-SPECLANG-018 is marked \"in_progress\" with a worktree and branch but keeps worker_status \"pending\" and null commit_hash/guard_result/ci_result."
+      }
+    ],
+    "summary": "The diff is a board-state bookkeeping change that flips three task rows to in_progress and appends matching events; the only defect is that the rows' worker_status fields were left at \"pending\", contradicting the new status."
+  },
+  "summary": "Stage tier1: FAIL (DEGRADED - skipped checks)\n  WARNING: coverage is unknown \u2014 tests did not run (skipped at runtime \u2014 tests: timed out after 120s (step budget)); run `gitreins guard` for the full gate\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  ~ tests: Command timed out after 120s (step budget)\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 docs/troubleshooting.md contains the '# speclang-header lines:N must exactly equal header length' rule; README or docs document OPENAI_API_KEY / cascade LLM provider setup: docs/troubleshooting.md is a symlink to specs/roadmap.spec.dir/poc.spec.dir/troubleshooting.spec.md (`diff` reports IDENTICAL), so the change to the spec twin lands in the doc. Rule present at docs/troubleshooting.md:375-376: \"**The rule:** `N` = 1 (the `# speclang-header` line) + the number of YAML lines + 1 (the closing `---` line)\", inside the new `## First-Spec Failures` section (docs/troubleshooting.md:337), with the trap table at :405-411. I verified the documented behaviour empirically against dist/src/parser/header.js on the doc's own 6-line header: N=6 -> OK, N=7 -> OK (trailing `---` stripped), N=8 and N=9 -> \"Failed to parse header YAML: Source contains multiple documents\", N=5 -> `tags` dropped, N=4 -> `layer`+`tags` dropped \u2014 exactly what the table claims; the omitted-count escape hatch parses and yields the warning at specs/validation.spec.dir/src/rules/header.ts:66-74. LLM provider setup is documented in both places: docs/troubleshooting.md:483-520 (key table :499-502, SPECLANG_PROVIDER/SPECLANG_MODEL/SPECLANG_BASE_URL :504, `export OPENAI_API_KEY` :511, missing-key error text matching specs/cascade.spec.dir/src/agent.ts:217) and README.md:405-426. Every documented env var, default model and the `gemini` alias match the code (specs/cascade.spec.dir/src/agent.ts:47-58,76-83,105-115; provider-adapter.ts:20-32). `./bin/speclang check specs/roadmap.spec.dir/poc.spec.dir/troubleshooting.spec.md` -> \"\u2713 Passed\", \"Errors: 0, Warnings: 0\". Full suite `npx vitest run --passWithNoTests`: \"Test Files 2 failed | 104 passed\", \"Tests 2 failed | 1902 passed | 58 skipped\" \u2014 the two failures are tests/cascade-depth.test.ts:212 (timer flake) and tests/db.test.ts:36 (\"SqliteError: disk I/O error\"), both unrelated to this docs-only change. [resolution 0.31; docs/troubleshooting.md]\nThe docs-only change delivers both halves of the criterion \u2014 the header-count rule (empirically confirmed against the parser, including the off-by-one traps) and the OPENAI_API_KEY / cascade provider setup \u2014 in docs/troubleshooting.md and README.md, with the doc spec still validating cleanly.\n\nOverall: FAIL \u2717 [DEGRADED \u2014 skipped: tier1(tests)=skipped at runtime \u2014 tests: timed out after 120s (step budget)]",
+  "evaluated_at": "2026-11-17T05:32:19.767260",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T05:32:19.853135+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 700,
+        "truncated": false,
+        "source": "git show 920986c69170"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 44885,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DF-SPECLANG-4-R5"
+  }
+}
