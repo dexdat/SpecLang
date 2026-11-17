@@ -177,14 +177,31 @@ describe("CI-005: pre-commit hook hardening", () => {
   }, 60_000);
 
   it("AC4: gitreins config has Tier 1 build step in the pipeline", () => {
-    // The pipeline stage runs `npm run build` (tsc) so a stale cascade
-    // or type error cannot slip through a commit.
+    // The build stage must actually compile the tree, and it must go through
+    // scripts/guard-build.sh: a bare `npm run build` graded a fresh worktree
+    // (no node_modules until someone runs `npm ci`) as FAIL for a missing
+    // dependency — a code-defect verdict on a precondition (DF-SPECLANG-013).
     const cfg = readFileSync(
       join(REPO_ROOT, ".gitreins", "config.yaml"),
       "utf8",
     );
-    expect(cfg).toMatch(/build_command:\s*npm run build/);
+    expect(cfg).toMatch(/build_command:\s*bash scripts\/guard-build\.sh/);
     expect(cfg).toMatch(/test_mode:\s*diff/);
+    // The step that actually runs is the one under pipeline.stages (gitreins
+    // 0.21.0 ignores guards.build/build_command), so it must name the wrapper
+    // too or the arm silently regresses to a bare build.
+    expect(cfg).toMatch(
+      /- id:\s*build[\s\S]{0,400}?run:\s*bash scripts\/guard-build\.sh/,
+    );
+    // ...and the wrapper must name the no-deps precondition in the
+    // GITREINS_SKIP idiom, and still propagate npm's real exit code.
+    const wrapper = readFileSync(
+      join(REPO_ROOT, "scripts", "guard-build.sh"),
+      "utf8",
+    );
+    expect(wrapper).toContain("GITREINS_SKIP");
+    expect(wrapper).toContain("npm run build");
+    expect(wrapper).toContain("exit \"$rc\"");
   });
 
   it("AC5: .gitleaks.toml has explicit sk-/ghp_ rules (closing the gitleaks v8 gap)", () => {
