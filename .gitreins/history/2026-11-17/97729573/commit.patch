@@ -1,0 +1,19 @@
+commit 1e5a9aa4b92f459ac9d7a7a991ab4f31f1ebf235
+Merge: 5d9a4e99 f0e3aff8
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Mon Nov 16 19:04:56 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Mon Nov 16 19:04:56 2026 -0500
+
+    merge wt/DF-SPECLANG-3-R5: fix(cli) dashboard banner respects --no-dashboard
+    
+    Worker commit f0e3aff8 recovered from an interrupted sibling wave
+    (SpecLang-dogfood-2026-11-16-22-47-48): the worker committed in its worktree
+    but the session died before the merge. Merged by the 23-53 foreman; gates re-run
+    below.
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+
+ bin/speclang                               |  17 ++-
+ tests/cli/start-dashboard-contract.test.ts | 172 +++++++++++++++++++++++++++++
+ 2 files changed, 186 insertions(+), 3 deletions(-)
