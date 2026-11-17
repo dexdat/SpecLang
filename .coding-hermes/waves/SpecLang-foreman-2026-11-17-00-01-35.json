@@ -1,0 +1,58 @@
+{
+  "tick_id": "SpecLang-foreman-2026-11-17-00-01-35",
+  "project": "SpecLang",
+  "created_at": "2026-11-17T00:20:00Z",
+  "resumes": "2026-11-16-22-31-05 (orphaned wave; sibling tick 23-53 recovered DF-SPECLANG-3-R5 and DF-SPECLANG-015 partial)",
+  "wave_budget": 5,
+  "composed": 4,
+  "base_ref": "origin/main",
+  "base_sha": "1bdddaa7",
+  "independence_check": "no depends_on edges on any selected row; file sets disjoint: examples/+package.json | docs tree | src history/git + docs/API_REFERENCE.md | src daemon wiring",
+  "repo_clone_note": "worktrees are registered in /home/kara/speclang (lowercase clone); merges and pushes for wt/* branches happen there; canonical board lives in /home/kara/SpecLang",
+  "workers": [
+    {
+      "id": "DF-SPECLANG-2",
+      "worktree": "/home/kara/worktrees/speclang-DF-SPECLANG-2",
+      "branch": "wt/DF-SPECLANG-2",
+      "brief": "/tmp/speclang-briefs-1117/DF-SPECLANG-2.md",
+      "log": "/tmp/speclang-briefs-1117/DF-SPECLANG-2.worker.log",
+      "files": ["examples/", "package.json", "tsconfig*"],
+      "priority": "P1"
+    },
+    {
+      "id": "DF-SPECLANG-4-R5",
+      "worktree": "/home/kara/worktrees/speclang-DF-SPECLANG-4-R5",
+      "branch": "wt/DF-SPECLANG-4-R5",
+      "brief": "/tmp/speclang-briefs-1117/DF-SPECLANG-4-R5.md",
+      "log": "/tmp/speclang-briefs-1117/DF-SPECLANG-4-R5.worker.log",
+      "files": ["docs/troubleshooting.md", "README.md", "docs/", "specs/roadmap.spec.dir/poc.spec.dir/troubleshooting.spec.md"],
+      "salvage": "/tmp/speclang-salvage-DF-SPECLANG-4-R5.diff",
+      "priority": "P1"
+    },
+    {
+      "id": "DF-SPECLANG-5-R5",
+      "worktree": "/home/kara/worktrees/speclang-DF-SPECLANG-5-R5",
+      "branch": "wt/DF-SPECLANG-5-R5",
+      "brief": "/tmp/speclang-briefs-1117/DF-SPECLANG-5-R5.md",
+      "log": "/tmp/speclang-briefs-1117/DF-SPECLANG-5-R5.worker.log",
+      "files": ["src/** (history/git error paths)", "docs/API_REFERENCE.md"],
+      "salvage": "/tmp/speclang-salvage-DF-SPECLANG-5-R5.diff",
+      "priority": "P1"
+    },
+    {
+      "id": "DF-SPECLANG-015",
+      "worktree": "/home/kara/worktrees/speclang-DF-SPECLANG-015",
+      "branch": "wt/DF-SPECLANG-015",
+      "brief": "/tmp/speclang-briefs-1117/DF-SPECLANG-015.md",
+      "log": "/tmp/speclang-briefs-1117/DF-SPECLANG-015.worker.log",
+      "files": ["src/daemon*", "src/agent*", "tests"],
+      "priority": "P2"
+    }
+  ],
+  "merge_order": ["DF-SPECLANG-4-R5", "DF-SPECLANG-5-R5", "DF-SPECLANG-2", "DF-SPECLANG-015"],
+  "closed_inline": [
+    {"id": "DF-SPECLANG-1", "how": "verified-landed (commit 58a248a32461ecc, all 3 ACs pass live; lint exit 0; no stored gitreins run exists)"},
+    {"id": "DF-SPECLANG-3-R5", "how": "complete via sibling tick 23-53 (commit 2597ca95/1e5a9aa4; re-verified this tick: build ok, no :3199 listener, 0 dashboard lines)"}
+  ],
+  "status": "dispatching"
+}
