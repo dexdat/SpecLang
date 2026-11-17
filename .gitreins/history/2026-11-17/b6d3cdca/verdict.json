@@ -1,0 +1,309 @@
+{
+  "task_id": "UX-004-R1",
+  "task_title": "SUPPORT.md advertises a Discussions channel that does not exist",
+  "task_criteria": [
+    "From the repo root: SUPPORT.md no longer lists a Discussions channel that does not exist (grep -ci discussions SUPPORT.md prints 0), OR the bullet is replaced by a channel that is actually enabled (gh api repos/dexdat/SpecLang has_discussions true). SUPPORT.md and .github/ISSUE_TEMPLATE/config.yml name the SAME channels; no file claims Discussions is disabled while another advertises it. The remaining support links resolve."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "1d4999f793a50d3f493fa4245b950d093220f743",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "b6348d29d1d68a511236368fee3330c9141b07493556f9e8e15be067d298bb13",
+  "working_tree_dirty_path_count": 6,
+  "items": [
+    {
+      "criterion": "From the repo root: SUPPORT.md no longer lists a Discussions channel that does not exist (grep -ci discussions SUPPORT.md prints 0), OR the bullet is replaced by a channel that is actually enabled (gh api repos/dexdat/SpecLang has_discussions true). SUPPORT.md and .github/ISSUE_TEMPLATE/config.yml name the SAME channels; no file claims Discussions is disabled while another advertises it. The remaining support links resolve.",
+      "status": "PASS",
+      "detail": "In /home/kara/speclang: `grep -ci discussions SUPPORT.md` prints `0` (grep exit 1); `cat -A` scan of SUPPORT.md also finds no 'discussion' occurrence. Commit 46dd7bff removed the bullet `- **Discussions:** [GitHub Discussions](https://github.com/dexdat/SpecLang/discussions)` and replaced it with SUPPORT.md:14-19 \u2014 Issues (https://github.com/dexdat/SpecLang/issues) plus a 'What to expect' bullet pointing at CONTRIBUTING.md. .github/ISSUE_TEMPLATE/config.yml:5-6,14 states `has_discussions=false` and its only contact_link is the issue tracker, so both files name the SAME single channel and no file advertises Discussions. All relative links in SUPPORT.md resolve: `for f in docs/NORTH_STAR.md README.md AGENTS.md CONTRIBUTING.md; do [ -e \"$f\" ]` -> OK x4. Repo-wide `grep -rni discussion` (excluding node_modules/dist/.tmp/.gitreins) returns only unrelated hits (specs/mcp.spec.dir/messages.spec.md:67,125 threaded discussions; skills docs) and config.yml's 'NOT enabled' statements. Tests: `npx vitest run --passWithNoTests` -> 'Test Files 115 passed | 4 skipped (119)', 'Tests 1958 passed | 58 skipped (2016)', zero FAIL lines. The working-tree diff shown (specs/docs.spec.dir/docs/CONFIGURATION.md, SPECLANG_BIN/SPECLANG_AGENT_TIMEOUT_MS) is unrelated DOC-2 residue and does not touch SUPPORT.md. [resolution 0.12; SUPPORT.md, .github/ISSUE_TEMPLATE/config.yml]"
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  11:12:43",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T121505.638291Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T121505.638291Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  11:12:43\n   Duration  28.42s (transform 13.64s, setup 2.92s, import 21.05s, tests 138.52s, environment 14ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T121505.638291Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 From the repo root: SUPPORT.md no longer lists a Discussions channel that does not exist (grep -ci discussions SUPPORT.md prints 0), OR the bullet is replaced by a channel that is actually enabled (gh api repos/dexdat/SpecLang has_discussions true). SUPPORT.md and .github/ISSUE_TEMPLATE/config.yml name the SAME channels; no file claims Discussions is disabled while another advertises it. The remaining support links resolve.: In /home/kara/speclang: `grep -ci discussions SUPPORT.md` prints `0` (grep exit 1); `cat -A` scan of SUPPORT.md also finds no 'discussion' occurrence. Commit 46dd7bff removed the bullet `- **Discussions:** [GitHub Discussions](https://github.com/dexdat/SpecLang/discussions)` and replaced it with SUPPORT.md:14-19 \u2014 Issues (https://github.com/dexdat/SpecLang/issues) plus a 'What to expect' bullet pointing at CONTRIBUTING.md. .github/ISSUE_TEMPLATE/config.yml:5-6,14 states `has_discussions=false` and its only contact_link is the issue tracker, so both files name the SAME single channel and no file advertises Discussions. All relative links in SUPPORT.md resolve: `for f in docs/NORTH_STAR.md README.md AGENTS.md CONTRIBUTING.md; do [ -e \"$f\" ]` -> OK x4. Repo-wide `grep -rni discussion` (excluding node_modules/dist/.tmp/.gitreins) returns only unrelated hits (specs/mcp.spec.dir/messages.spec.md:67,125 threaded discussions; skills docs) and config.yml's 'NOT enabled' statements. Tests: `npx vitest run --passWithNoTests` -> 'Test Files 115 passed | 4 skipped (119)', 'Tests 1958 passed | 58 skipped (2016)', zero FAIL lines. The working-tree diff shown (specs/docs.spec.dir/docs/CONFIGURATION.md, SPECLANG_BIN/SPECLANG_AGENT_TIMEOUT_MS) is unrelated DOC-2 residue and does not touch SUPPORT.md. [resolution 0.12; SUPPORT.md, .github/ISSUE_TEMPLATE/config.yml]\nSUPPORT.md no longer advertises Discussions (grep count 0), it and .github/ISSUE_TEMPLATE/config.yml both name only the issue tracker, all remaining links resolve, and the suite is green (1958 passed).",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 From the repo root: SUPPORT.md no longer lists a Discussions channel that does not exist (grep -ci discussions SUPPORT.md prints 0), OR the bullet is replaced by a channel that is actually enabled (gh api repos/dexdat/SpecLang has_discussions true). SUPPORT.md and .github/ISSUE_TEMPLATE/config.yml name the SAME channels; no file claims Discussions is disabled while another advertises it. The remaining support links resolve.: In /home/kara/speclang: `grep -ci discussions SUPPORT.md` prints `0` (grep exit 1); `cat -A` scan of SUPPORT.md also finds no 'discussion' occurrence. Commit 46dd7bff removed the bullet `- **Discussions:** [GitHub Discussions](https://github.com/dexdat/SpecLang/discussions)` and replaced it with SUPPORT.md:14-19 \u2014 Issues (https://github.com/dexdat/SpecLang/issues) plus a 'What to expect' bullet pointing at CONTRIBUTING.md. .github/ISSUE_TEMPLATE/config.yml:5-6,14 states `has_discussions=false` and its only contact_link is the issue tracker, so both files name the SAME single channel and no file advertises Discussions. All relative links in SUPPORT.md resolve: `for f in docs/NORTH_STAR.md README.md AGENTS.md CONTRIBUTING.md; do [ -e \"$f\" ]` -> OK x4. Repo-wide `grep -rni discussion` (excluding node_modules/dist/.tmp/.gitreins) returns only unrelated hits (specs/mcp.spec.dir/messages.spec.md:67,125 threaded discussions; skills docs) and config.yml's 'NOT enabled' statements. Tests: `npx vitest run --passWithNoTests` -> 'Test Files 115 passed | 4 skipped (119)', 'Tests 1958 passed | 58 skipped (2016)', zero FAIL lines. The working-tree diff shown (specs/docs.spec.dir/docs/CONFIGURATION.md, SPECLANG_BIN/SPECLANG_AGENT_TIMEOUT_MS) is unrelated DOC-2 residue and does not touch SUPPORT.md. [resolution 0.12; SUPPORT.md, .github/ISSUE_TEMPLATE/config.yml]\nSUPPORT.md no longer advertises Discussions (grep count 0), it and .github/ISSUE_TEMPLATE/config.yml both name only the issue tracker, all remaining links resolve, and the suite is green (1958 passed).",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "From the repo root: SUPPORT.md no longer lists a Discussions channel that does not exist (grep -ci discussions SUPPORT.md prints 0), OR the bullet is replaced by a channel that is actually enabled (gh api repos/dexdat/SpecLang has_discussions true). SUPPORT.md and .github/ISSUE_TEMPLATE/config.yml name the SAME channels; no file claims Discussions is disabled while another advertises it. The remaining support links resolve.",
+                "status": "PASS",
+                "detail": "In /home/kara/speclang: `grep -ci discussions SUPPORT.md` prints `0` (grep exit 1); `cat -A` scan of SUPPORT.md also finds no 'discussion' occurrence. Commit 46dd7bff removed the bullet `- **Discussions:** [GitHub Discussions](https://github.com/dexdat/SpecLang/discussions)` and replaced it with SUPPORT.md:14-19 \u2014 Issues (https://github.com/dexdat/SpecLang/issues) plus a 'What to expect' bullet pointing at CONTRIBUTING.md. .github/ISSUE_TEMPLATE/config.yml:5-6,14 states `has_discussions=false` and its only contact_link is the issue tracker, so both files name the SAME single channel and no file advertises Discussions. All relative links in SUPPORT.md resolve: `for f in docs/NORTH_STAR.md README.md AGENTS.md CONTRIBUTING.md; do [ -e \"$f\" ]` -> OK x4. Repo-wide `grep -rni discussion` (excluding node_modules/dist/.tmp/.gitreins) returns only unrelated hits (specs/mcp.spec.dir/messages.spec.md:67,125 threaded discussions; skills docs) and config.yml's 'NOT enabled' statements. Tests: `npx vitest run --passWithNoTests` -> 'Test Files 115 passed | 4 skipped (119)', 'Tests 1958 passed | 58 skipped (2016)', zero FAIL lines. The working-tree diff shown (specs/docs.spec.dir/docs/CONFIGURATION.md, SPECLANG_BIN/SPECLANG_AGENT_TIMEOUT_MS) is unrelated DOC-2 residue and does not touch SUPPORT.md. [resolution 0.12; SUPPORT.md, .github/ISSUE_TEMPLATE/config.yml]",
+                "resolution_probability": 0.12,
+                "cited_path": "SUPPORT.md, .github/ISSUE_TEMPLATE/config.yml"
+              }
+            ],
+            "summary": "SUPPORT.md no longer advertises Discussions (grep count 0), it and .github/ISSUE_TEMPLATE/config.yml both name only the issue tracker, all remaining links resolve, and the suite is green (1958 passed).",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"UX-004-R1\"}",
+          "exit_code": 0,
+          "output_sha": "e26a3e5234e0f98b4e9d8f90402b5a02470d6728b96abeabd2893ef3d9d49b64"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la; echo \"---\"; ls SUPPORT.md .github/ISSUE_TEMPLATE/ 2>&1",
+          "exit_code": 0,
+          "output_sha": "67c5bd9afe00bc9ca3d0058ac14ebb4ec34a47d12d9abdc12b733234a7477fe5"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"SUPPORT.md\"}",
+          "exit_code": 0,
+          "output_sha": "e3fc22576ff92275c3216e40e3c8ace4ea9ebd5bbb51a06b5633cac83a8e3e81"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \".github/ISSUE_TEMPLATE/config.yml\"}",
+          "exit_code": 0,
+          "output_sha": "d708603e78a4a6c6f5d68e6b52172bf411be54bd43f6e023e38b05bd7d757301"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; pwd; grep -ci discussions SUPPORT.md; echo \"exit=$?\"; echo \"---\"; grep -in discussions SUPPORT.md; echo \"---config\"; grep -in discussions .github/ISSUE_TEMPLATE/config.yml",
+          "exit_code": 2,
+          "output_sha": "7c348e7a569ffdedd54c8f1b45a1fabd7fd63a7582cc0d3680eda6009613a942"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; git status --porcelain | head -50; echo \"---log\"; git log --oneline -5",
+          "exit_code": 128,
+          "output_sha": "f1df9b444a03ba19db4baab96cd685cb14ac13acb2d215e3592a86eb981d4251"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; ls -d */ 2>/dev/null | head; find / -maxdepth 4 -name \"SUPPORT.md\" -path \"*SpecLang*\" 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "a4b4e452b1cdea65c43f6c4ece81dda44834a0000b12395568a88893386a68a3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -ci discussions SUPPORT.md; echo \"grep_exit=$?\"; echo \"---\"; grep -in discussions SUPPORT.md; echo \"---config\"; grep -in discussions .github/ISSUE_TEMPLATE/config.yml; echo \"---git\"; git log --oneline -5; git status --porcelain | head -30",
+          "exit_code": 0,
+          "output_sha": "b46f0e339c4c89c4834f7466c7e076af7351a4181809a7ba0a4d7f21bbf964f5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show 46dd7bff --stat; echo \"=== DIFF ===\"; git show 46dd7bff",
+          "exit_code": 0,
+          "output_sha": "5dea13ba863f3dbe39605eb583070988c1bf39c69353c9daf42343503d622fed"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && for f in docs/NORTH_STAR.md README.md AGENTS.md CONTRIBUTING.md; do if [ -e \"$f\" ]; then echo \"OK   $f\"; else echo \"MISS $f\"; fi; done; echo \"--- links in SUPPORT.md\"; grep -o '](\\([^)]*\\))' SUPPORT.md",
+          "exit_code": 0,
+          "output_sha": "cb29d2da8bb66b216c8157d832de47d01ae969330f2f7a3eb2efb338a969e438"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"discussions\" --include=\"*.md\" --include=\"*.yml\" --include=\"*.yaml\" . 2>/dev/null | grep -v node_modules | grep -v \"^./dist/\" | grep -v \"^./.tmp/\" | head -40",
+          "exit_code": 0,
+          "output_sha": "1ddaa29ca060c3d01a88ebe2a2eaf8de55fd0c669dceeb0fcd85e171fe9aece3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rni \"discussion\" --include=\"*.md\" --include=\"*.yml\" --include=\"*.yaml\" . 2>/dev/null | grep -v node_modules | grep -v \"^./dist/\" | grep -v \"^./.tmp/\" | grep -v \"^./.gitreins/\" | head -40",
+          "exit_code": 0,
+          "output_sha": "36f51dc4590f00ac0b2c5a7f6748a2a085b014a939962913210977d3b0c0b357"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat .gitreins/config.yaml 2>/dev/null | head -60",
+          "exit_code": 0,
+          "output_sha": "a0c893a6df131857bbf720c8693e5d0585e23250ed8034ffbd7992a832e3dfe7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 900 npx vitest run --passWithNoTests 2>&1 | tail -25; echo \"EXIT=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "0ef43861ca1c06d43b63546ede4f1722c84e1773c98c144efc74efc994615529"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 900 npx vitest run --passWithNoTests > /tmp/vt.log 2>&1; echo \"EXIT=$?\"; grep -E \"Test Files|Tests \" /tmp/vt.log",
+          "exit_code": -15,
+          "output_sha": "f46ca8355e9312d020643a192bb46d991ef3a9a548fda2e24b48c235f9fcf2a2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rln \"SUPPORT.md\" --include=\"*.ts\" --include=\"*.js\" --include=\"*.py\" --include=\"*.json\" . 2>/dev/null | grep -v node_modules | grep -v \"^./dist/\" | grep -v \"^./.tmp/\" | head -20",
+          "exit_code": 0,
+          "output_sha": "9613909574f27d8de3b4a4496ba8334e49e47db8b6589a1891e537d8587028d5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && (timeout 600 npx vitest run --passWithNoTests > /tmp/vt2.log 2>&1; echo \"EXIT=$?\" >> /tmp/vt2.log) & sleep 25; echo started",
+          "exit_code": 0,
+          "output_sha": "d4775a8bc18b23b5572cf1d9e0aa69227874c77c34867041da312a3e5ceb7192"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 20; tail -12 /tmp/vt2.log",
+          "exit_code": 0,
+          "output_sha": "d1c9513f198d80547d23f9968a123db700e1ceafc85d6c9c903b02cf521702a8"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 5; grep -E \"^EXIT=\" /tmp/vt2.log; grep -cE \"FAIL\" /tmp/vt2.log",
+          "exit_code": 1,
+          "output_sha": "ffc80d1b8903b4d41c8a92786af21b1c274b0988fcefa5b084426dd0f35a0b21"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"SUPPORT\" README.md CONTRIBUTING.md .github/ 2>/dev/null | head -20; echo \"--- issue template config referenced?\"; ls .github/",
+          "exit_code": 0,
+          "output_sha": "bc2a2c18c6ef6d28b495e85a0ffa13859ad15aca528de79cb2b3126c666ca827"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 15; tail -3 /tmp/vt2.log; grep -E \"^EXIT=\" /tmp/vt2.log || echo \"no exit line yet\"",
+          "exit_code": 0,
+          "output_sha": "b41275b0946283cd8df30701dc62dbc1684f9f6221f93f9cf2ce2e0c67aec9f8"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 25 npx vitest run --passWithNoTests 2>&1 | grep -E \"Test Files|Tests |FAIL\" ; echo \"pipeline_status=$?\"",
+          "exit_code": 0,
+          "output_sha": "a3972ef4830159db97c47e7ca14ac267e04270ac09dab65842a62d70ba764854"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 120 npx vitest run --passWithNoTests 2>&1 | grep -E \"Test Files|Tests |FAIL\"; echo \"grep_status=$?\"",
+          "exit_code": 0,
+          "output_sha": "cf4033016c920f502cee368bc5c7756c35906c20cf5ad4f5b093e1b339b23ca2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"ISSUE_TEMPLATE\\|contact_links\\|blank_issues\" --include=\"*.ts\" --include=\"*.js\" --include=\"*.py\" --include=\"*.mjs\" . 2>/dev/null | grep -v node_modules | grep -v \"^./dist/\" | grep -v \"^./.tmp/\" | head -20",
+          "exit_code": 0,
+          "output_sha": "fccafcebb4a5cc0794f31b9d7c14a821533af8978f0b770856d890c7f1dd799e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"SUPPORT.md\\|support\" --include=\"*.md\" README.md CONTRIBUTING.md GETTING-STARTED.md 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "38630b1623abacc4608221b0b4177f65a75260ee37724e412a021b648c94e2f1"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: (1) `grep -ci discussions SUPPORT.md` -> prints `0` (grep_exit=1) in /home/kara/speclang. (2) SUPPORT.md:14-19 now lists only GitHub Issues (https://github.com/dexdat/SpecLang/issues) + \\\"What to expect\\\" pointing at CONTRIBUTING.md; the Discussions bullet was removed in commit 46dd7bff (\\\"docs(support): drop the nonexistent Discussions channel from SUPPORT.md (UX-004-R1)\\\"). (3) .github/ISSUE_TEMPLATE/config.yml:5-6,14 states has_discussions=false and links only the issue tracker -> both files name the SAME single channel (issue tracker); no file advertises Discussions. (4) All relative links in SUPPORT.md resolve: docs/NORTH_STAR.md, README.md, AGENTS.md, CONTRIBUTING.md all exist (checked with `for f in ...; do [ -e \\\"$f\\\" ]` -> OK x4). (5) Repo-wide grep for \\\"discussion\\\" outside node_modules/dist/.tmp/.gitreins finds only unrelated hits (specs/mcp.spec.dir/messages.spec.md threaded discussions, skills docs) plus config.yml's \\\"NOT enabled\\\" statements. (6) Tests: `npx vitest run --passWithNoTests` -> \\\"Test Files 115 passed | 4 skipped (119)\\\", \\\"Tests 1958 passed | 58 skipped (2016)\\\", no FAIL lines. Note: the working-tree diff shown (specs/docs.spec.dir/docs/CONFIGURATION.md, SPECLANG_BIN/SPECLANG_AGENT_TIMEOUT_MS) is unrelated leftover from DOC-2 and does not touch SUPPORT.md.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "9d20db8ed7816d0ba1427230845fb03ca3cad12933a2e4b1003c4df0cf540fdc"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '1,30p' SUPPORT.md | cat -A | grep -n \"discussion\" ; echo \"no-discussion-in-support=$?\"; echo \"--- final grep\"; grep -ci discussions SUPPORT.md",
+          "exit_code": 1,
+          "output_sha": "f0e3f40d50f27012d328239820d8e39cb5d27c7fe9ba702fa7bffe4b2be663d3"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "medium",
+        "file": "specs/docs.spec.dir/docs/CONFIGURATION.md",
+        "line": 288,
+        "detection": "documented env var is set to an empty string in the example env file while the doc states a non-numeric value yields NaN and immediate timeouts",
+        "detail": "The example sets `SPECLANG_AGENT_TIMEOUT_MS=900000` (fine) but `SPECLANG_BIN=` is empty, which per the row's own description means the env value is set-but-empty and would be tried as the first candidate executable rather than falling through to the default \u2014 the example contradicts the 'unset \u2192 default' semantics it documents."
+      }
+    ],
+    "summary": "The new env-var documentation is internally consistent except that the sample env file sets `SPECLANG_BIN=` to an empty string, which the documented candidate-list logic would treat as a real (empty) executable rather than as unset."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  11:12:43\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 From the repo root: SUPPORT.md no longer lists a Discussions channel that does not exist (grep -ci discussions SUPPORT.md prints 0), OR the bullet is replaced by a channel that is actually enabled (gh api repos/dexdat/SpecLang has_discussions true). SUPPORT.md and .github/ISSUE_TEMPLATE/config.yml name the SAME channels; no file claims Discussions is disabled while another advertises it. The remaining support links resolve.: In /home/kara/speclang: `grep -ci discussions SUPPORT.md` prints `0` (grep exit 1); `cat -A` scan of SUPPORT.md also finds no 'discussion' occurrence. Commit 46dd7bff removed the bullet `- **Discussions:** [GitHub Discussions](https://github.com/dexdat/SpecLang/discussions)` and replaced it with SUPPORT.md:14-19 \u2014 Issues (https://github.com/dexdat/SpecLang/issues) plus a 'What to expect' bullet pointing at CONTRIBUTING.md. .github/ISSUE_TEMPLATE/config.yml:5-6,14 states `has_discussions=false` and its only contact_link is the issue tracker, so both files name the SAME single channel and no file advertises Discussions. All relative links in SUPPORT.md resolve: `for f in docs/NORTH_STAR.md README.md AGENTS.md CONTRIBUTING.md; do [ -e \"$f\" ]` -> OK x4. Repo-wide `grep -rni discussion` (excluding node_modules/dist/.tmp/.gitreins) returns only unrelated hits (specs/mcp.spec.dir/messages.spec.md:67,125 threaded discussions; skills docs) and config.yml's 'NOT enabled' statements. Tests: `npx vitest run --passWithNoTests` -> 'Test Files 115 passed | 4 skipped (119)', 'Tests 1958 passed | 58 skipped (2016)', zero FAIL lines. The working-tree diff shown (specs/docs.spec.dir/docs/CONFIGURATION.md, SPECLANG_BIN/SPECLANG_AGENT_TIMEOUT_MS) is unrelated DOC-2 residue and does not touch SUPPORT.md. [resolution 0.12; SUPPORT.md, .github/ISSUE_TEMPLATE/config.yml]\nSUPPORT.md no longer advertises Discussions (grep count 0), it and .github/ISSUE_TEMPLATE/config.yml both name only the issue tracker, all remaining links resolve, and the suite is green (1958 passed).\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T16:17:18.756519",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T16:17:18.779064+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 23204,
+        "truncated": false,
+        "source": "git show 1d4999f793a5"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 3486,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "UX-004-R1"
+  }
+}
