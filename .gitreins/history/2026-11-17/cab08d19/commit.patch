@@ -1,0 +1,67 @@
+commit 5d69bfc5e641a9fc35dc8cbba0163ff9709a4edd
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 16:24:33 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 16:24:33 2026 -0500
+
+    test(ci): pin the dependency-aware build wrapper, not the bare build command
+    
+    DF-SPECLANG-013 replaced the tier1 build arm's bare `npm run build` with
+    `bash scripts/guard-build.sh`, so ci005's AC4 assertion (which pinned the old
+    literal) went red on the merged tree.
+    
+    The assertion now pins what actually matters, in both places the config names
+    the arm — `guards.build_command` and the `pipeline.stages` step that gitreins
+    0.21.0 really executes — and additionally asserts the wrapper carries the
+    GITREINS_SKIP precondition idiom and still propagates npm's exit code. A
+    regression back to a bare `npm run build` fails here instead of silently
+    grading a missing toolchain as a code defect.
+    
+    Verified: full suite 1974 passed / 58 skipped, 117 files passed, rc=0.
+    
+    Row: DF-SPECLANG-013
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+---
+ tests/ci/ci005-precommit-hook.test.ts | 23 ++++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
+
+diff --git a/tests/ci/ci005-precommit-hook.test.ts b/tests/ci/ci005-precommit-hook.test.ts
+index f94e924b..d9d68ebb 100644
+--- a/tests/ci/ci005-precommit-hook.test.ts
++++ b/tests/ci/ci005-precommit-hook.test.ts
+@@ -177,14 +177,31 @@ describe("CI-005: pre-commit hook hardening", () => {
+   }, 60_000);
+ 
+   it("AC4: gitreins config has Tier 1 build step in the pipeline", () => {
+-    // The pipeline stage runs `npm run build` (tsc) so a stale cascade
+-    // or type error cannot slip through a commit.
++    // The build stage must actually compile the tree, and it must go through
++    // scripts/guard-build.sh: a bare `npm run build` graded a fresh worktree
++    // (no node_modules until someone runs `npm ci`) as FAIL for a missing
++    // dependency — a code-defect verdict on a precondition (DF-SPECLANG-013).
+     const cfg = readFileSync(
+       join(REPO_ROOT, ".gitreins", "config.yaml"),
+       "utf8",
+     );
+-    expect(cfg).toMatch(/build_command:\s*npm run build/);
++    expect(cfg).toMatch(/build_command:\s*bash scripts\/guard-build\.sh/);
+     expect(cfg).toMatch(/test_mode:\s*diff/);
++    // The step that actually runs is the one under pipeline.stages (gitreins
++    // 0.21.0 ignores guards.build/build_command), so it must name the wrapper
++    // too or the arm silently regresses to a bare build.
++    expect(cfg).toMatch(
++      /- id:\s*build[\s\S]{0,400}?run:\s*bash scripts\/guard-build\.sh/,
++    );
++    // ...and the wrapper must name the no-deps precondition in the
++    // GITREINS_SKIP idiom, and still propagate npm's real exit code.
++    const wrapper = readFileSync(
++      join(REPO_ROOT, "scripts", "guard-build.sh"),
++      "utf8",
++    );
++    expect(wrapper).toContain("GITREINS_SKIP");
++    expect(wrapper).toContain("npm run build");
++    expect(wrapper).toContain("exit \"$rc\"");
+   });
+ 
+   it("AC5: .gitleaks.toml has explicit sk-/ghp_ rules (closing the gitleaks v8 gap)", () => {
