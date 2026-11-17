@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import Database, { type Database as DatabaseType } from "better-sqlite3";
 import { SpecLangDB } from "../src/db/index.js";
-import { migrate, getCurrentVersion } from "../src/db/migrations.js";
+import { migrate, getCurrentVersion, migrations } from "../src/db/migrations.js";
 import { FullTextSearch, GraphQueries, JSONQueries } from "../src/db/search.js";
 import type {
   SpecInput,
@@ -16,6 +16,7 @@ import type {
 import * as fs from "fs";
 
 const TEST_DB_PATH = ".speclang/test.db";
+const LATEST_VERSION = Math.max(...migrations.map((m) => m.version));
 
 describe("Database", () => {
   let db: SpecLangDB;
@@ -53,12 +54,12 @@ describe("Database", () => {
 
   describe("Initialization", () => {
     it("should create database with correct version", () => {
-      expect(db.getVersion()).toBe(3);
+      expect(db.getVersion()).toBe(LATEST_VERSION);
     });
 
     it("should apply migrations", () => {
       const result = db.initialize();
-      expect(result.version).toBe(3);
+      expect(result.version).toBe(LATEST_VERSION);
       expect(result.applied).toBe(0); // Already applied
     });
   });
@@ -538,8 +539,8 @@ describe("Migrations", () => {
 
   it("should run migrations", () => {
     const result = migrate(db);
-    expect(result.currentVersion).toBe(3);
-    expect(result.applied).toBe(3);
+    expect(result.currentVersion).toBe(LATEST_VERSION);
+    expect(result.applied).toBe(migrations.length);
   });
 
   it("should not re-run migrations", () => {
@@ -550,7 +551,7 @@ describe("Migrations", () => {
 
   it("should get current version", () => {
     migrate(db);
-    expect(getCurrentVersion(db)).toBe(3);
+    expect(getCurrentVersion(db)).toBe(LATEST_VERSION);
   });
 });
 

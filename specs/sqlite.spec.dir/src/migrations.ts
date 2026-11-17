@@ -1,6 +1,35 @@
 /**
  * SPECLANG-GENERATED: Database migration system
  * Source: @speclang/sqlite @block:sqlite/schema
+ *
+ * NOTE ON GENERATION: this file is maintained by hand. The `sqlite/schema` block
+ * in specs/sqlite.spec.dir/schema.spec.md carries the schema *description* only
+ * (no TypeScript body), and specs/scripts.spec.dir/generate_sqlite_schema.py
+ * reads a different, non-existent path (specs/implementation/sqlite/schema.spec.md)
+ * and targets different outputs, so there is no runnable regeneration pipeline
+ * for this file today. Regenerating would not reproduce these migrations.
+ *
+ * SOURCE OF TRUTH for the schema pieces below are the shipped SQL files in
+ * ./migrations/, which used to be dead weight: nothing read them at runtime, so a
+ * fresh database never got cascades/sessions-indexes/ralph/commands upgrades.
+ * They are now inlined as compiled JS so they reach the published tarball
+ * (package.json "files" ships dist/ only - specs/**\/*.sql is NOT published).
+ *
+ * Coverage map (shipped file -> migration version):
+ *   001_initial.sql   -> version 1 (initial_schema)
+ *   002_events.sql    -> version 3 (cascade_support: cascade link indexes; the
+ *                        cascade_id columns already exist since version 1)
+ *   003_cascades.sql  -> version 3 (cascade_support)
+ *   004_sessions.sql  -> version 4 (session_indexes)
+ *   005_ralph.sql     -> version 5 (ralph_loop)
+ *   006_locks.sql     -> version 6 (lock_indexes)
+ *   007_commands.sql  -> version 7 (command_queue; the table itself predates it,
+ *                        so only the additive columns/indexes apply)
+ *   008_index.sql     -> version 8 (search_indexes)
+ *
+ * Note: version 2 (add_events_processed) predates the SQL files and is kept
+ * as-is. Databases that already recorded versions 1 and 2 never re-run them and
+ * receive 3..8 on the next initialize().
  */
 
 import Database, { type Database as DatabaseType } from 'better-sqlite3';
@@ -10,6 +39,48 @@ import type { Migration } from './types.js';
  * Migration version tracking
  */
 const MIGRATION_TABLE = 'schema_migrations';
+
+/**
+ * Column names of a table, or an empty list when the table does not exist.
+ */
+function tableColumns(db: DatabaseType, table: string): Set<string> {
+  const rows = db.prepare(`PRAGMA table_info(${table})`).all() as Array<{ name: string }>;
+  return new Set(rows.map((row) => row.name));
+}
+
+/**
+ * ALTER TABLE has no IF NOT EXISTS, so additive column changes are guarded here.
+ * Returns true when the column was added.
+ */
+function addColumnIfMissing(
+  db: DatabaseType,
+  table: string,
+  column: string,
+  definition: string
+): boolean {
+  if (tableColumns(db, table).has(column)) {
+    return false;
+  }
+  db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition};`);
+  return true;
+}
+
+/**
+ * Create an index only when both the table and every indexed column exist.
+ * Keeps upgrades from pre-existing databases from failing on a shape that a
+ * shipped SQL file assumed but this database never had.
+ */
+function createIndexIfColumns(
+  db: DatabaseType,
+  table: string,
+  columns: string[],
+  sql: string
+): void {
+  const present = tableColumns(db, table);
+  if (columns.every((column) => present.has(column))) {
+    db.exec(sql);
+  }
+}
 
 /**
  * All migrations for the database
@@ -182,38 +253,200 @@ const migrations: Migration[] = [
     }
   },
   {
+    // 002_events.sql + 003_cascades.sql. Every MCP cascade/dashboard/status tool
+    // reads this table, so without it a fresh database answers
+    // "SQLITE_ERROR: no such table: cascades" (HTTP 500).
     version: 3,
-    name: 'cascades',
+    name: 'cascade_support',
     up: (db: DatabaseType) => {
-      // Cascade tracking. Column set is the UNION of what the consumers actually
-      // read/write: root_trigger + created_at (mcp tools/cascade.ts), started_at +
-      // converged_at (sse.ts, mcp server polling) and root_trigger_file (spec DDL).
       db.exec(`
         CREATE TABLE IF NOT EXISTS cascades (
           cascade_id TEXT PRIMARY KEY,
           depth INTEGER DEFAULT 0,
           status TEXT DEFAULT 'active',
           started_at INTEGER,
-          created_at INTEGER,
           converged_at INTEGER,
+          root_trigger_file TEXT,
           root_trigger TEXT,
-          root_trigger_file TEXT
+          created_at INTEGER
         );
+      `);
 
+      // Databases created before this migration may already hold a cascades
+      // table without the columns the MCP tools write (specs/mcp.spec.dir/src/
+      // tools/cascade.ts inserts root_trigger/created_at).
+      addColumnIfMissing(db, 'cascades', 'root_trigger', 'TEXT');
+      addColumnIfMissing(db, 'cascades', 'created_at', 'INTEGER');
+
+      db.exec(`
         CREATE INDEX IF NOT EXISTS idx_cascades_status ON cascades(status);
         CREATE INDEX IF NOT EXISTS idx_cascades_started_at ON cascades(started_at);
-        CREATE INDEX IF NOT EXISTS idx_cascades_converged_at ON cascades(converged_at);
         CREATE INDEX IF NOT EXISTS idx_cascades_root_trigger_file ON cascades(root_trigger_file);
+
+        -- 002_events.sql: cascade link indexes (columns come from migration 1)
+        CREATE INDEX IF NOT EXISTS idx_events_cascade_id ON events(cascade_id);
+        CREATE INDEX IF NOT EXISTS idx_commands_cascade_id ON commands(cascade_id);
       `);
-    },
-    down: (db: DatabaseType) => {
+    }
+  },
+  {
+    // 004_sessions.sql: the sessions table itself comes from migration 1, this
+    // file adds the lookup indexes.
+    version: 4,
+    name: 'session_indexes',
+    up: (db: DatabaseType) => {
       db.exec(`
-        DROP INDEX IF EXISTS idx_cascades_status;
-        DROP INDEX IF EXISTS idx_cascades_started_at;
-        DROP INDEX IF EXISTS idx_cascades_converged_at;
-        DROP INDEX IF EXISTS idx_cascades_root_trigger_file;
-        DROP TABLE IF EXISTS cascades;
+        CREATE INDEX IF NOT EXISTS idx_sessions_agent ON sessions(agent);
+        CREATE INDEX IF NOT EXISTS idx_sessions_status ON sessions(status);
+        CREATE INDEX IF NOT EXISTS idx_sessions_last_active ON sessions(last_active);
       `);
+    }
+  },
+  {
+    // 005_ralph.sql: ralph loop tables.
+    version: 5,
+    name: 'ralph_loop',
+    up: (db: DatabaseType) => {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS ralph_tasks (
+          id TEXT PRIMARY KEY,
+          description TEXT NOT NULL,
+          depends_on TEXT,
+          estimated_complexity TEXT,
+          priority INTEGER DEFAULT 5,
+          assigned_to TEXT,
+          status TEXT DEFAULT 'pending',
+          created_at INTEGER,
+          started_at INTEGER,
+          completed_at INTEGER
+        );
+
+        CREATE TABLE IF NOT EXISTS steering_packets (
+          id TEXT PRIMARY KEY,
+          task_id TEXT,
+          type TEXT,
+          content TEXT,
+          created_at INTEGER,
+          processed_at INTEGER,
+          FOREIGN KEY (task_id) REFERENCES ralph_tasks(id)
+        );
+
+        CREATE TABLE IF NOT EXISTS validation_results (
+          id TEXT PRIMARY KEY,
+          task_id TEXT,
+          stage TEXT,
+          passed INTEGER,
+          details TEXT,
+          created_at INTEGER,
+          FOREIGN KEY (task_id) REFERENCES ralph_tasks(id)
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_ralph_tasks_status ON ralph_tasks(status);
+        CREATE INDEX IF NOT EXISTS idx_ralph_tasks_priority ON ralph_tasks(priority);
+        CREATE INDEX IF NOT EXISTS idx_steering_packets_task_id ON steering_packets(task_id);
+        CREATE INDEX IF NOT EXISTS idx_steering_packets_type ON steering_packets(type);
+        CREATE INDEX IF NOT EXISTS idx_validation_results_task_id ON validation_results(task_id);
+        CREATE INDEX IF NOT EXISTS idx_validation_results_stage ON validation_results(stage);
+      `);
+    }
+  },
+  {
+    // 006_locks.sql: the locks table comes from migration 1, this file adds the
+    // lookup indexes.
+    version: 6,
+    name: 'lock_indexes',
+    up: (db: DatabaseType) => {
+      db.exec(`
+        CREATE INDEX IF NOT EXISTS idx_locks_session_id ON locks(session_id);
+        CREATE INDEX IF NOT EXISTS idx_locks_expires_at ON locks(expires_at);
+      `);
+    }
+  },
+  {
+    // 007_commands.sql: the shipped file declares a second, richer commands
+    // shape. The table already exists since migration 1, so CREATE TABLE IF NOT
+    // EXISTS in that file is a no-op and its primary key / CHECK(status) can no
+    // longer be applied. What is applied here is the additive part: the extra
+    // columns and the command-queue indexes.
+    version: 7,
+    name: 'command_queue',
+    up: (db: DatabaseType) => {
+      addColumnIfMissing(db, 'commands', 'target_file', 'TEXT');
+      addColumnIfMissing(db, 'commands', 'priority', 'INTEGER DEFAULT 0');
+      addColumnIfMissing(db, 'commands', 'error', 'TEXT');
+      addColumnIfMissing(db, 'commands', 'updated_at', 'INTEGER');
+
+      createIndexIfColumns(
+        db,
+        'commands',
+        ['status'],
+        `CREATE INDEX IF NOT EXISTS idx_commands_status ON commands(status);`
+      );
+      createIndexIfColumns(
+        db,
+        'commands',
+        ['cascade_id'],
+        `CREATE INDEX IF NOT EXISTS idx_commands_cascade ON commands(cascade_id);`
+      );
+      createIndexIfColumns(
+        db,
+        'commands',
+        ['priority', 'created_at'],
+        `CREATE INDEX IF NOT EXISTS idx_commands_priority ON commands(priority DESC, created_at ASC);`
+      );
+      createIndexIfColumns(
+        db,
+        'commands',
+        ['session_id'],
+        `CREATE INDEX IF NOT EXISTS idx_commands_session ON commands(session_id);`
+      );
+      createIndexIfColumns(
+        db,
+        'commands',
+        ['updated_at'],
+        `CREATE INDEX IF NOT EXISTS idx_commands_updated ON commands(updated_at);`
+      );
+    }
+  },
+  {
+    // 008_index.sql + the indexes 001_initial.sql declared but migration 1 (the
+    // generated one) never created: notably `specs.refs`, which the rest of the
+    // code base queries and which the schema spec documents.
+    version: 8,
+    name: 'search_indexes',
+    up: (db: DatabaseType) => {
+      addColumnIfMissing(db, 'specs', 'refs', `TEXT DEFAULT '[]'`);
+
+      createIndexIfColumns(
+        db,
+        'specs',
+        ['tags'],
+        `CREATE INDEX IF NOT EXISTS idx_specs_tags ON specs(tags);`
+      );
+      createIndexIfColumns(
+        db,
+        'specs',
+        ['depends_on'],
+        `CREATE INDEX IF NOT EXISTS idx_specs_depends_on ON specs(depends_on);`
+      );
+      createIndexIfColumns(
+        db,
+        'specs',
+        ['refs'],
+        `CREATE INDEX IF NOT EXISTS idx_specs_refs ON specs(refs);`
+      );
+      createIndexIfColumns(
+        db,
+        'commands',
+        ['target'],
+        `CREATE INDEX IF NOT EXISTS idx_commands_target ON commands(target);`
+      );
+      createIndexIfColumns(
+        db,
+        'events',
+        ['path'],
+        `CREATE INDEX IF NOT EXISTS idx_events_path ON events(path);`
+      );
     }
   }
 ];
@@ -288,4 +521,3 @@ export function rollback(db: DatabaseType, targetVersion: number): boolean {
 }
 
 export { migrations };
-
