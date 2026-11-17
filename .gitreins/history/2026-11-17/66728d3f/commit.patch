@@ -1,0 +1,23 @@
+commit 500289bda3f2d16c9f5a7e174835c1b9727b3987
+Merge: 8afb675b 231dc5f7
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 02:02:23 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 02:04:43 2026 -0500
+
+    merge wt/DF-SPECLANG-019: npm12 remedy verified on a real npm 12.2.2 (DF-SPECLANG-019)
+    
+    The printed allowScripts remedy is correct as printed: approve --no-allow-scripts-pin records the
+    approval (builds nothing), npm rebuild compiles the binding, check:sqlite-binding passes — measured
+    end to end on npm 12.2.2 / better-sqlite3 12.11.1 in a scratch install. Adds the committed probe
+    transcript with counter-probes, documents the two measured traps (rebuild exits 0 while still
+    blocked; an explicit deny makes approve a green no-op), and a text-parity guard tying script,
+    README and probe doc together. Judge 4020ee95 PASS after an independent re-run of the probe.
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+
+ README.md                        |  29 +++--
+ docs/npm12-allowscripts-probe.md | 221 +++++++++++++++++++++++++++++++++++++++
+ scripts/postinstall-lint-deps.sh |  11 ++
+ tests/npm12-remedy-doc.test.ts   |  83 +++++++++++++++
+ 4 files changed, 338 insertions(+), 6 deletions(-)

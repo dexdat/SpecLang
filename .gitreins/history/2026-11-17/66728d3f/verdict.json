@@ -1,0 +1,521 @@
+{
+  "task_id": "INT-CI-2-verify",
+  "task_title": "verify the UX-003 CI red is closed by ad5f0ec9 on main",
+  "task_criteria": [
+    "npx vitest run tests/e2e/spec-to-code.test.ts exits 0 on main and the GitHub Actions run on main for the fix commit concludes success"
+  ],
+  "passed": true,
+  "worktree": "/home/kara/speclang",
+  "branch": "",
+  "commit": "500289bda3f2d16c9f5a7e174835c1b9727b3987",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "17b175abbfd5580c63b368206d0f7af60d9e0a63d0bd9076ac997050ca191bc3",
+  "working_tree_dirty_path_count": 7,
+  "items": [
+    {
+      "criterion": "npx vitest run tests/e2e/spec-to-code.test.ts exits 0 on main and the GitHub Actions run on main for the fix commit concludes success",
+      "status": "PASS",
+      "detail": "Both halves verified with fresh command output. (a) Local: `npx vitest run tests/e2e/spec-to-code.test.ts` => EXIT_CODE=0, output \"Test Files 1 passed (1) / Tests 9 passed (9)\" (vitest 4.1.11, node v22.22.3). The file is byte-identical between HEAD (500289bd) and main (`git diff main HEAD -- tests/e2e/spec-to-code.test.ts` empty), and ad5f0ec9 is an ancestor of main (5cc21c56) and origin/main (6790b83c). (b) GitHub Actions: `gh run view 44027889398 --json` => {\"conclusion\":\"success\",\"event\":\"push\",\"headBranch\":\"main\",\"headSha\":\"ad5f0ec93ae6fad9325ff6e818506dde949b40d9\",\"status\":\"completed\",\"workflowName\":\"CI\"}; job \"Build, test, and guard\" (133852535850) conclusion success with every step success including \"Run tests\" (step 8) and \"Run GitReins Tier 1 guard\" (step 14). The job log (gh api repos/dexdat/SpecLang/actions/jobs/133852535850/logs) shows checkout ref ad5f0ec93ae6fad9325ff6e818506dde949b40d9 and \"\u2713 tests/e2e/spec-to-code.test.ts (9 tests) 629ms\", \"Test Files 107 passed | 4 skipped (111)\", \"Tests 1912 passed | 58 skipped (1970)\", \"Tier 1 Guards: PASS ... \u2713 tests\". No ##[error] or failing step in the run. [resolution 0.00; tests/e2e/spec-to-code.test.ts]"
+    },
+    {
+      "criterion": "The re-scoped assertion matches the shipped scaffold contract (seam): bin/speclang's `speclang new` generator must actually emit devDependencies.speclang undefined, a scripts/speclang.cjs file, and scripts.test containing \"scripts/speclang.cjs validate\" \u2014 otherwise the test passes vacuously or asserts a contract the product does not ship.",
+      "status": "PASS",
+      "detail": "bin/speclang:1535-1545 \u2014 the generator writes scripts {test: 'node scripts/speclang.cjs validate', ...} and `devDependencies: {}`; bin/speclang:1662-1666 creates scripts/speclang.cjs. The re-scoped assertions at tests/e2e/spec-to-code.test.ts:346-349 (devDependencies?.speclang toBeUndefined, existsSync(scripts/speclang.cjs) true, scripts.test contains \"scripts/speclang.cjs validate\") assert exactly what the product ships, so the test is not vacuous. Corroborated by `npx vitest run tests/cli/new-project-runnable.test.ts` => EXIT=0, \"Tests 8 passed (8)\".",
+      "derived": true
+    },
+    {
+      "criterion": "The fix is on main and the CI run that concluded success is bound to the fix commit itself (headSha == ad5f0ec9, headBranch == main), not to a later/other commit.",
+      "status": "PASS",
+      "detail": "`gh run view 44027889398 --json` => headSha \"ad5f0ec93ae6fad9325ff6e818506dde949b40d9\", headBranch \"main\", event \"push\", conclusion \"success\". The job log confirms the checked-out ref is ad5f0ec93ae6fad9325ff6e818506dde949b40d9 (log lines 109 and 121). `git merge-base --is-ancestor ad5f0ec9 main` => YES (main = 5cc21c56); also an ancestor of origin/main (6790b83c).",
+      "derived": true
+    },
+    {
+      "criterion": "The red is genuinely closed \u2014 the pre-fix run on main (a4170279) failed and the post-fix run on the same branch succeeded, so the change is what flipped it.",
+      "status": "PASS",
+      "detail": "Pre-fix run 44026862425 (headSha a417027945766f008aabe12111441d9bb8283ce3, headBranch main) => {\"conclusion\":\"failure\",\"status\":\"completed\"}; post-fix run 44027889398 (headSha ad5f0ec9, headBranch main) => {\"conclusion\":\"success\"}. `git show ad5f0ec9` touches only tests/e2e/spec-to-code.test.ts (1 file changed, 8 insertions, 5 deletions), so the re-scoped assertion is what flipped the branch from red to green.",
+      "derived": true
+    },
+    {
+      "criterion": "The spec-to-code test is not skipped/disabled in CI (allow_skips is true in .gitreins/config.yaml, so a skipped file could still yield a green run).",
+      "status": "PASS",
+      "detail": "tests/e2e/spec-to-code.test.ts contains no describe.skip/it.skip/test.skip/it.todo/xit (grep returned no matches) and has 9 `it(` blocks, matching the 9 tests reported. In the CI log the file is reported as \"\u2713 tests/e2e/spec-to-code.test.ts (9 tests) 629ms\" \u2014 a pass, not a skip; the run's 58 skipped tests / 4 skipped files are unchanged between the pre-fix and post-fix suites and this file is not among them.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  02:12:10",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T070329.044808Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T070329.044808Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  02:12:10\n   Duration  47.60s (transform 32.07s, setup 7.22s, import 47.00s, tests 187.43s, environment 25ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T070329.044808Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 npx vitest run tests/e2e/spec-to-code.test.ts exits 0 on main and the GitHub Actions run on main for the fix commit concludes success: Both halves verified with fresh command output. (a) Local: `npx vitest run tests/e2e/spec-to-code.test.ts` => EXIT_CODE=0, output \"Test Files 1 passed (1) / Tests 9 passed (9)\" (vitest 4.1.11, node v22.22.3). The file is byte-identical between HEAD (500289bd) and main (`git diff main HEAD -- tests/e2e/spec-to-code.test.ts` empty), and ad5f0ec9 is an ancestor of main (5cc21c56) and origin/main (6790b83c). (b) GitHub Actions: `gh run view 44027889398 --json` => {\"conclusion\":\"success\",\"event\":\"push\",\"headBranch\":\"main\",\"headSha\":\"ad5f0ec93ae6fad9325ff6e818506dde949b40d9\",\"status\":\"completed\",\"workflowName\":\"CI\"}; job \"Build, test, and guard\" (133852535850) conclusion success with every step success including \"Run tests\" (step 8) and \"Run GitReins Tier 1 guard\" (step 14). The job log (gh api repos/dexdat/SpecLang/actions/jobs/133852535850/logs) shows checkout ref ad5f0ec93ae6fad9325ff6e818506dde949b40d9 and \"\u2713 tests/e2e/spec-to-code.test.ts (9 tests) 629ms\", \"Test Files 107 passed | 4 skipped (111)\", \"Tests 1912 passed | 58 skipped (1970)\", \"Tier 1 Guards: PASS ... \u2713 tests\". No ##[error] or failing step in the run. [resolution 0.00; tests/e2e/spec-to-code.test.ts]\n  \u2713 The re-scoped assertion matches the shipped scaffold contract (seam): bin/speclang's `speclang new` generator must actually emit devDependencies.speclang undefined, a scripts/speclang.cjs file, and scripts.test containing \"scripts/speclang.cjs validate\" \u2014 otherwise the test passes vacuously or asserts a contract the product does not ship.: bin/speclang:1535-1545 \u2014 the generator writes scripts {test: 'node scripts/speclang.cjs validate', ...} and `devDependencies: {}`; bin/speclang:1662-1666 creates scripts/speclang.cjs. The re-scoped assertions at tests/e2e/spec-to-code.test.ts:346-349 (devDependencies?.speclang toBeUndefined, existsSync(scripts/speclang.cjs) true, scripts.test contains \"scripts/speclang.cjs validate\") assert exactly what the product ships, so the test is not vacuous. Corroborated by `npx vitest run tests/cli/new-project-runnable.test.ts` => EXIT=0, \"Tests 8 passed (8)\".\n  \u2713 The fix is on main and the CI run that concluded success is bound to the fix commit itself (headSha == ad5f0ec9, headBranch == main), not to a later/other commit.: `gh run view 44027889398 --json` => headSha \"ad5f0ec93ae6fad9325ff6e818506dde949b40d9\", headBranch \"main\", event \"push\", conclusion \"success\". The job log confirms the checked-out ref is ad5f0ec93ae6fad9325ff6e818506dde949b40d9 (log lines 109 and 121). `git merge-base --is-ancestor ad5f0ec9 main` => YES (main = 5cc21c56); also an ancestor of origin/main (6790b83c).\n  \u2713 The red is genuinely closed \u2014 the pre-fix run on main (a4170279) failed and the post-fix run on the same branch succeeded, so the change is what flipped it.: Pre-fix run 44026862425 (headSha a417027945766f008aabe12111441d9bb8283ce3, headBranch main) => {\"conclusion\":\"failure\",\"status\":\"completed\"}; post-fix run 44027889398 (headSha ad5f0ec9, headBranch main) => {\"conclusion\":\"success\"}. `git show ad5f0ec9` touches only tests/e2e/spec-to-code.test.ts (1 file changed, 8 insertions, 5 deletions), so the re-scoped assertion is what flipped the branch from red to green.\n  \u2713 The spec-to-code test is not skipped/disabled in CI (allow_skips is true in .gitreins/config.yaml, so a skipped file could still yield a green run).: tests/e2e/spec-to-code.test.ts contains no describe.skip/it.skip/test.skip/it.todo/xit (grep returned no matches) and has 9 `it(` blocks, matching the 9 tests reported. In the CI log the file is reported as \"\u2713 tests/e2e/spec-to-code.test.ts (9 tests) 629ms\" \u2014 a pass, not a skip; the run's 58 skipped tests / 4 skipped files are unchanged between the pre-fix and post-fix suites and this file is not among them.\nThe UX-003 CI red is genuinely closed: `npx vitest run tests/e2e/spec-to-code.test.ts` exits 0 with 9/9 passing locally on a file byte-identical to main, and GitHub Actions run 44027889398 on main at headSha ad5f0ec9 concluded success with the spec-to-code file passing 9 tests in the job log, against the pre-fix run 44026862425 at a4170279 which failed.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 npx vitest run tests/e2e/spec-to-code.test.ts exits 0 on main and the GitHub Actions run on main for the fix commit concludes success: Both halves verified with fresh command output. (a) Local: `npx vitest run tests/e2e/spec-to-code.test.ts` => EXIT_CODE=0, output \"Test Files 1 passed (1) / Tests 9 passed (9)\" (vitest 4.1.11, node v22.22.3). The file is byte-identical between HEAD (500289bd) and main (`git diff main HEAD -- tests/e2e/spec-to-code.test.ts` empty), and ad5f0ec9 is an ancestor of main (5cc21c56) and origin/main (6790b83c). (b) GitHub Actions: `gh run view 44027889398 --json` => {\"conclusion\":\"success\",\"event\":\"push\",\"headBranch\":\"main\",\"headSha\":\"ad5f0ec93ae6fad9325ff6e818506dde949b40d9\",\"status\":\"completed\",\"workflowName\":\"CI\"}; job \"Build, test, and guard\" (133852535850) conclusion success with every step success including \"Run tests\" (step 8) and \"Run GitReins Tier 1 guard\" (step 14). The job log (gh api repos/dexdat/SpecLang/actions/jobs/133852535850/logs) shows checkout ref ad5f0ec93ae6fad9325ff6e818506dde949b40d9 and \"\u2713 tests/e2e/spec-to-code.test.ts (9 tests) 629ms\", \"Test Files 107 passed | 4 skipped (111)\", \"Tests 1912 passed | 58 skipped (1970)\", \"Tier 1 Guards: PASS ... \u2713 tests\". No ##[error] or failing step in the run. [resolution 0.00; tests/e2e/spec-to-code.test.ts]\n  \u2713 The re-scoped assertion matches the shipped scaffold contract (seam): bin/speclang's `speclang new` generator must actually emit devDependencies.speclang undefined, a scripts/speclang.cjs file, and scripts.test containing \"scripts/speclang.cjs validate\" \u2014 otherwise the test passes vacuously or asserts a contract the product does not ship.: bin/speclang:1535-1545 \u2014 the generator writes scripts {test: 'node scripts/speclang.cjs validate', ...} and `devDependencies: {}`; bin/speclang:1662-1666 creates scripts/speclang.cjs. The re-scoped assertions at tests/e2e/spec-to-code.test.ts:346-349 (devDependencies?.speclang toBeUndefined, existsSync(scripts/speclang.cjs) true, scripts.test contains \"scripts/speclang.cjs validate\") assert exactly what the product ships, so the test is not vacuous. Corroborated by `npx vitest run tests/cli/new-project-runnable.test.ts` => EXIT=0, \"Tests 8 passed (8)\".\n\n\u2026 [536 chars omitted \u2014 1 line(s)] \u2026\n  \u2713 The red is genuinely closed \u2014 the pre-fix run on main (a4170279) failed and the post-fix run on the same branch succeeded, so the change is what flipped it.: Pre-fix run 44026862425 (headSha a417027945766f008aabe12111441d9bb8283ce3, headBranch main) => {\"conclusion\":\"failure\",\"status\":\"completed\"}; post-fix run 44027889398 (headSha ad5f0ec9, headBranch main) => {\"conclusion\":\"success\"}. `git show ad5f0ec9` touches only tests/e2e/spec-to-code.test.ts (1 file changed, 8 insertions, 5 deletions), so the re-scoped assertion is what flipped the branch from red to green.\n  \u2713 The spec-to-code test is not skipped/disabled in CI (allow_skips is true in .gitreins/config.yaml, so a skipped file could still yield a green run).: tests/e2e/spec-to-code.test.ts contains no describe.skip/it.skip/test.skip/it.todo/xit (grep returned no matches) and has 9 `it(` blocks, matching the 9 tests reported. In the CI log the file is reported as \"\u2713 tests/e2e/spec-to-code.test.ts (9 tests) 629ms\" \u2014 a pass, not a skip; the run's 58 skipped tests / 4 skipped files are unchanged between the pre-fix and post-fix suites and this file is not among them.\nThe UX-003 CI red is genuinely closed: `npx vitest run tests/e2e/spec-to-code.test.ts` exits 0 with 9/9 passing locally on a file byte-identical to main, and GitHub Actions run 44027889398 on main at headSha ad5f0ec9 concluded success with the spec-to-code file passing 9 tests in the job log, against the pre-fix run 44026862425 at a4170279 which failed.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "npx vitest run tests/e2e/spec-to-code.test.ts exits 0 on main and the GitHub Actions run on main for the fix commit concludes success",
+                "status": "PASS",
+                "detail": "Both halves verified with fresh command output. (a) Local: `npx vitest run tests/e2e/spec-to-code.test.ts` => EXIT_CODE=0, output \"Test Files 1 passed (1) / Tests 9 passed (9)\" (vitest 4.1.11, node v22.22.3). The file is byte-identical between HEAD (500289bd) and main (`git diff main HEAD -- tests/e2e/spec-to-code.test.ts` empty), and ad5f0ec9 is an ancestor of main (5cc21c56) and origin/main (6790b83c). (b) GitHub Actions: `gh run view 44027889398 --json` => {\"conclusion\":\"success\",\"event\":\"push\",\"headBranch\":\"main\",\"headSha\":\"ad5f0ec93ae6fad9325ff6e818506dde949b40d9\",\"status\":\"completed\",\"workflowName\":\"CI\"}; job \"Build, test, and guard\" (133852535850) conclusion success with every step success including \"Run tests\" (step 8) and \"Run GitReins Tier 1 guard\" (step 14). The job log (gh api repos/dexdat/SpecLang/actions/jobs/133852535850/logs) shows checkout ref ad5f0ec93ae6fad9325ff6e818506dde949b40d9 and \"\u2713 tests/e2e/spec-to-code.test.ts (9 tests) 629ms\", \"Test Files 107 passed | 4 skipped (111)\", \"Tests 1912 passed | 58 skipped (1970)\", \"Tier 1 Guards: PASS ... \u2713 tests\". No ##[error] or failing step in the run. [resolution 0.00; tests/e2e/spec-to-code.test.ts]",
+                "resolution_probability": 0.0,
+                "cited_path": "tests/e2e/spec-to-code.test.ts"
+              },
+              {
+                "criterion": "The re-scoped assertion matches the shipped scaffold contract (seam): bin/speclang's `speclang new` generator must actually emit devDependencies.speclang undefined, a scripts/speclang.cjs file, and scripts.test containing \"scripts/speclang.cjs validate\" \u2014 otherwise the test passes vacuously or asserts a contract the product does not ship.",
+                "status": "PASS",
+                "detail": "bin/speclang:1535-1545 \u2014 the generator writes scripts {test: 'node scripts/speclang.cjs validate', ...} and `devDependencies: {}`; bin/speclang:1662-1666 creates scripts/speclang.cjs. The re-scoped assertions at tests/e2e/spec-to-code.test.ts:346-349 (devDependencies?.speclang toBeUndefined, existsSync(scripts/speclang.cjs) true, scripts.test contains \"scripts/speclang.cjs validate\") assert exactly what the product ships, so the test is not vacuous. Corroborated by `npx vitest run tests/cli/new-project-runnable.test.ts` => EXIT=0, \"Tests 8 passed (8)\".",
+                "derived": true
+              },
+              {
+                "criterion": "The fix is on main and the CI run that concluded success is bound to the fix commit itself (headSha == ad5f0ec9, headBranch == main), not to a later/other commit.",
+                "status": "PASS",
+                "detail": "`gh run view 44027889398 --json` => headSha \"ad5f0ec93ae6fad9325ff6e818506dde949b40d9\", headBranch \"main\", event \"push\", conclusion \"success\". The job log confirms the checked-out ref is ad5f0ec93ae6fad9325ff6e818506dde949b40d9 (log lines 109 and 121). `git merge-base --is-ancestor ad5f0ec9 main` => YES (main = 5cc21c56); also an ancestor of origin/main (6790b83c).",
+                "derived": true
+              },
+              {
+                "criterion": "The red is genuinely closed \u2014 the pre-fix run on main (a4170279) failed and the post-fix run on the same branch succeeded, so the change is what flipped it.",
+                "status": "PASS",
+                "detail": "Pre-fix run 44026862425 (headSha a417027945766f008aabe12111441d9bb8283ce3, headBranch main) => {\"conclusion\":\"failure\",\"status\":\"completed\"}; post-fix run 44027889398 (headSha ad5f0ec9, headBranch main) => {\"conclusion\":\"success\"}. `git show ad5f0ec9` touches only tests/e2e/spec-to-code.test.ts (1 file changed, 8 insertions, 5 deletions), so the re-scoped assertion is what flipped the branch from red to green.",
+                "derived": true
+              },
+              {
+                "criterion": "The spec-to-code test is not skipped/disabled in CI (allow_skips is true in .gitreins/config.yaml, so a skipped file could still yield a green run).",
+                "status": "PASS",
+                "detail": "tests/e2e/spec-to-code.test.ts contains no describe.skip/it.skip/test.skip/it.todo/xit (grep returned no matches) and has 9 `it(` blocks, matching the 9 tests reported. In the CI log the file is reported as \"\u2713 tests/e2e/spec-to-code.test.ts (9 tests) 629ms\" \u2014 a pass, not a skip; the run's 58 skipped tests / 4 skipped files are unchanged between the pre-fix and post-fix suites and this file is not among them.",
+                "derived": true
+              }
+            ],
+            "summary": "The UX-003 CI red is genuinely closed: `npx vitest run tests/e2e/spec-to-code.test.ts` exits 0 with 9/9 passing locally on a file byte-identical to main, and GitHub Actions run 44027889398 on main at headSha ad5f0ec9 concluded success with the spec-to-code file passing 9 tests in the job log, against the pre-fix run 44026862425 at a4170279 which failed.",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"INT-CI-2-verify\"}",
+          "exit_code": 0,
+          "output_sha": "476722ea0049b9d0519755849bc04f368b428a053ff17961551048cabdd33037"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd && git log --oneline -15 && git status --short | head -20",
+          "exit_code": 0,
+          "output_sha": "a56a1c1c3f2ecfcd206c31dc7f1d0d330143c67dd26756dc462350ad4bb9371e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git log --all --oneline | grep -i ad5f0ec9 ; echo \"---\"; git cat-file -t ad5f0ec9 2>&1; echo \"---\"; git log --oneline ad5f0ec9 -3 2>&1",
+          "exit_code": 0,
+          "output_sha": "68cea5490b96d81e297f6bd7f7dc24a7606fff57aaba26d2508795fecd283ad6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls tests/e2e/ 2>&1 | head -30; echo \"---\"; cat .gitreins/config.yaml 2>&1 | head -60",
+          "exit_code": 0,
+          "output_sha": "a5900388e2bda6a24a5c9cba995e1916cac38f9b60f9bf5ad264944416100927"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show --stat ad5f0ec9 && echo \"=== DIFF ===\" && git show ad5f0ec9",
+          "exit_code": 0,
+          "output_sha": "46621e5ea5c9c3f4faba6ed9a0c4b49acb20df21cb62aa1ff6c9b9bafb7f3ae6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git branch -a --contains ad5f0ec9 2>&1; echo \"--- main contains?\"; git merge-base --is-ancestor ad5f0ec9 main && echo \"YES ad5f0ec9 is ancestor of main\" || echo \"NO not ancestor of main\"; echo \"--- current branch\"; git rev-parse --abbrev-ref HEAD",
+          "exit_code": 0,
+          "output_sha": "1aefc518ee2f6a0ccc9a9e99d82a62132d5ab6532f487f5d026e1fce100749be"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git rev-parse HEAD main origin/main && echo \"--- diff HEAD vs main\"; git diff --stat HEAD main | tail -5",
+          "exit_code": 0,
+          "output_sha": "05cf5ba729b17543e90684d1011bddfe87ca988bf4e3eaf200f5605f7be2f108"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -la .github/workflows/ 2>&1; echo \"---\"; cat package.json | head -60",
+          "exit_code": 0,
+          "output_sha": "a7904bbebeea6dd7f49856485d8b8005414ac4650622f0267c6b4fdc21f620a9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"spec-to-code\\|vitest run\\|e2e\" .github/workflows/ci.yml | head -40",
+          "exit_code": 0,
+          "output_sha": "f657ce73c6e5307c71037b66b8da9e60b6dc7604adcec1c4325524672c069bfd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git log --oneline -5 main && echo \"--- is ad5f0ec9 in origin/main?\" && git merge-base --is-ancestor ad5f0ec9 origin/main && echo YES || echo NO",
+          "exit_code": 0,
+          "output_sha": "2c92be388e547c15e63606a4488abe4637180a7152ff777812d76f734388d2c3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && head -80 .github/workflows/ci.yml",
+          "exit_code": 0,
+          "output_sha": "6811cea6657131e04f0948f272dff8711a41ec1430040998abffd8598a230c90"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"run:\" .github/workflows/ci.yml | head -60",
+          "exit_code": 0,
+          "output_sha": "983ca6d892b015970c85c05995ea78aa939cd3391d7918f17d74b0c8e12292ca"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 100,135p .github/workflows/ci.yml",
+          "exit_code": 0,
+          "output_sha": "c4ce8c0dc5faa35e4c70ed7cf4a0b2c8b5f5c9931b87d226e8662b32d5eaedad"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls node_modules/.bin/vitest 2>&1; node -v; npx vitest --version 2>&1 | tail -3",
+          "exit_code": 0,
+          "output_sha": "ff1f7e6a7fe8370c421558f4111258d028dbdfda5d9bfc93be5f6759383b877a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npx vitest run tests/e2e/spec-to-code.test.ts 2>&1 | tail -40; echo \"EXIT_CODE=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "bf00009fd7e1777c3c911835bee11abcdb96b5b5755e40d8a4cdc061feb68eee"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npx vitest run tests/e2e/spec-to-code.test.ts > /tmp/vt.log 2>&1; echo \"EXIT_CODE=$?\"; tail -20 /tmp/vt.log",
+          "exit_code": 0,
+          "output_sha": "85eebc9b9761b6f1f24061ddac2acd869c83d85ef914c4ed86555cc0e2249852"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Local half of criterion 1: `npx vitest run tests/e2e/spec-to-code.test.ts` on HEAD (500289bd, detached from d2982ec2) => EXIT_CODE=0, \\\"Test Files 1 passed (1) / Tests 9 passed (9)\\\". ad5f0ec9 is an ancestor of main (5cc21c56) and origin/main (6790b83c). Remaining: GitHub Actions run on main for the fix commit concluding success \\u2014 needs network/gh access.\", \"key\": \"verified_0_partial\"}",
+          "exit_code": 0,
+          "output_sha": "2212de0303bab698d5f1194444cd367abc9f4536702193ef446180008ef7b2f9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && which gh 2>&1; gh --version 2>&1 | head -3; echo \"--- auth\"; gh auth status 2>&1 | head -10",
+          "exit_code": 0,
+          "output_sha": "8f37fcd6efea3fcf66c0c656f907ce20070cf95ad43c77e49e57904188e30c18"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git remote -v; echo \"--- try gh run list\"; timeout 60 gh run list --repo dexdat/SpecLang --commit ad5f0ec93ae6fad9325ff6e818506dde949b40d9 2>&1 | head -20",
+          "exit_code": 0,
+          "output_sha": "e2dd97d050acdfb6c2cedbbe44c91ceb488a8d5e24e23d38f8b6b485beda7c94"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 90 gh run view 44027889398 --repo dexdat/SpecLang 2>&1 | head -40",
+          "exit_code": 0,
+          "output_sha": "ca7d37a2077d1e8296c9a4fddc803cd0182fd68d2b8c43dbaa8e261b8447e8c3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 90 gh run view 44027889398 --repo dexdat/SpecLang --json conclusion,status,headBranch,headSha,event,workflowName,jobs 2>&1 | head -60",
+          "exit_code": 0,
+          "output_sha": "8f13354c1700f8cfdbae046eb5fb2b77f46ebb5ffb776ce9dbf38084b9bd29c5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 120 gh run view 44027889398 --repo dexdat/SpecLang --log --job=133852535850 2>&1 | grep -i \"spec-to-code\\|Test Files\\|Tests  \" | head -20",
+          "exit_code": 0,
+          "output_sha": "2a6f3e4f8533cc5dec22482bd33450bf2a2f87f274adbaf2594a764df3107656"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 300,360p tests/e2e/spec-to-code.test.ts",
+          "exit_code": 0,
+          "output_sha": "45f84d3512a7b4cd6f22890f0c1609926bdc3a1be3be9fc42ab7f64ec2a10655"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 120 gh run view 44027889398 --repo dexdat/SpecLang --log --job=133852535850 2>&1 | wc -l; echo \"--- sample\"; timeout 120 gh run view 44027889398 --repo dexdat/SpecLang --log --job=133852535850 2>&1 | grep -n \"Run tests\" | head -5",
+          "exit_code": 0,
+          "output_sha": "2845235e6e746d978da31f05c5fe72b58abc5426e38c95a2fcb9aa12aed02010"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 120 gh run view 44027889398 --repo dexdat/SpecLang --log --job=133852535850 2>&1 | head -5; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "5231f5a5dce0462b6fd7b2c10feb00a69c1a9592554cd6ac4fcf78fd9634b69a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 120 gh api repos/dexdat/SpecLang/actions/jobs/133852535850/logs 2>&1 | head -c 500; echo; echo \"---\"; timeout 60 gh api repos/dexdat/SpecLang/actions/runs/44027889398/jobs --jq '.jobs[] | {name, conclusion}' 2>&1 | head -20",
+          "exit_code": 0,
+          "output_sha": "8ab19a8772f12146773993bd15051c583f64b445e6fe7b89b8a5f9141eae6c42"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 180 gh api repos/dexdat/SpecLang/actions/jobs/133852535850/logs > /tmp/ci.log 2>&1; wc -l /tmp/ci.log; echo \"=== spec-to-code ===\"; grep -i \"spec-to-code\" /tmp/ci.log | head -10; echo \"=== Test Files / Tests ===\"; grep -E \"Test Files|Tests +[0-9]\" /tmp/ci.log | head -10",
+          "exit_code": 0,
+          "output_sha": "2677b484a00e3130353f7063d1635e0dab127c44c10711a664c6ebdbeea972ce"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -nE \"FAIL|failed|##\\[error\\]|Process completed with exit code\" /tmp/ci.log | head -20; echo \"=== Run tests step boundaries ===\"; grep -n \"Run tests\\|Generate coverage\" /tmp/ci.log | head -10",
+          "exit_code": 0,
+          "output_sha": "0c5c9801ff2ff60d6919559e1cd150de3541957fd664c0e972089cec943bc6e4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -nE \"Tests +[0-9]+ passed\" /tmp/ci.log | head -5; echo \"=== step 8 tail ===\"; sed -n '1,5p' /tmp/ci.log | head -2; awk 'NR>=1 && /Run tests/{print NR\": \"$0}' /tmp/ci.log | head",
+          "exit_code": 0,
+          "output_sha": "24100c542985641dcef0182d145e3dd833e5383089c2b01f64397f885d87e902"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -nE \"##\\[group\\]Run |##\\[endgroup\\]|Tests .*passed\" /tmp/ci.log | head -40",
+          "exit_code": 0,
+          "output_sha": "f8f861735fa5271ae4215fc63379b5fa18b48e5e8db6b73363bc2449ce42cc32"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '2975,2990p' /tmp/ci.log; echo \"=== git sha in checkout ===\"; grep -n \"ad5f0ec9\\|HEAD is now at\\|Checking out\" /tmp/ci.log | head -5",
+          "exit_code": 0,
+          "output_sha": "d8926418e76afefbe1100ee04c371e6bb529dccd48803653c8a84714bba9e30b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '5951,5981p' /tmp/ci.log",
+          "exit_code": 0,
+          "output_sha": "e9c770416c5ebe195d82db803d8f6519f635dba3f558ae6c05e4234610dec829"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: Criterion 1 fully verified.\\n(a) Local: `npx vitest run tests/e2e/spec-to-code.test.ts` => EXIT_CODE=0, \\\"Test Files 1 passed (1) / Tests 9 passed (9)\\\" (vitest 4.1.11, node v22.22.3). ad5f0ec9 is an ancestor of main (5cc21c56) and origin/main (6790b83c).\\n(b) GitHub Actions: run 44027889398, workflow \\\"CI\\\", event push, headBranch main, headSha ad5f0ec93ae6fad9325ff6e818506dde949b40d9, conclusion \\\"success\\\", status \\\"completed\\\". Job \\\"Build, test, and guard\\\" (133852535850) conclusion success; all steps success incl. \\\"Run tests\\\" (step 8) and \\\"Run GitReins Tier 1 guard\\\" (step 14).\\n(c) CI log (gh api repos/dexdat/SpecLang/actions/jobs/133852535850/logs): checkout ref = ad5f0ec93ae6fad9325ff6e818506dde949b40d9 (log line 109/121); \\\"\\u2713 tests/e2e/spec-to-code.test.ts (9 tests) 629ms\\\" (line ~06:00:35); \\\"Test Files 107 passed | 4 skipped (111)\\\"; \\\"Tests 1912 passed | 58 skipped (1970)\\\"; \\\"Tier 1 Guards: PASS ... \\u2713 tests\\\".\\nNo FAIL/##[error] in the run; the only \\\"failed\\\" strings are test names/stdout of passing tests and a spec_completeness advisory line.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "ac7f4a6888c78c81756cb2fbaa370716f39833d778a05e995faa48594b7a1f65"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -o '\"id\":\"INT-CI-2\"[^}]*' .coding-hermes/board/tasks.jsonl 2>/dev/null | head -3; echo \"---\"; grep -c \"INT-CI-2\" .coding-hermes/board/tasks.jsonl .coding-hermes/board/events.jsonl 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "1aeb5f44778f84d015ad5b13cc94a979c1162f67cd8aabab97823a163d52dfb7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 60 gh run view 44026862425 --repo dexdat/SpecLang --json conclusion,headBranch,headSha,status 2>&1 | head -5",
+          "exit_code": 0,
+          "output_sha": "2dd5e0a1e5ac037a71de3e8e7ae5ffe24d3fb1ae496567343043aa38c1a2b1ee"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"speclang.cjs\" src/ --include=*.ts | head -10",
+          "exit_code": 0,
+          "output_sha": "636670247ecb8e8f62171487b0bfeb5cb8f4cbc699455e81823da80f0d1d113e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"speclang.cjs\" --include=*.ts --include=*.js --include=*.cjs --include=*.json -l . 2>/dev/null | grep -v node_modules | head -10",
+          "exit_code": 0,
+          "output_sha": "f8880a28aea1bfbd95d3dd481d3b756dad3afb4dcf646e9076e8332d13439417"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"speclang.cjs\\|scripts/speclang\" src/ 2>/dev/null | head -10; echo \"=== search scaffold generator ===\"; grep -rln \"Creating new speclang project\" src/ | head -5",
+          "exit_code": 0,
+          "output_sha": "c070e71d9e487a871e3b83a729377a2b9efdd1804cf7dca9ed7360554784ada3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rln \"Creating new speclang project\" --include=*.ts --include=*.js . 2>/dev/null | grep -v node_modules | head -5; echo \"=== speclang.cjs anywhere ===\"; find . -name \"speclang.cjs\" -not -path \"./node_modules/*\" 2>/dev/null | head -5",
+          "exit_code": 0,
+          "output_sha": "3dbe9e4479e5f64a54e8b0d413133eec5b047852654fc0272aadff9bffbdbf23"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"speclang.cjs\" src/ dist/ 2>/dev/null | head -10; echo \"=== where is new project scaffolded ===\"; grep -rn \"new-project\\|newProject\\|scaffold\" src/cli* src/commands 2>/dev/null | head -10; ls src/ | head -30",
+          "exit_code": 0,
+          "output_sha": "46492d7813ec56c97199c7ca70bf246e6b0578eabfbe2d31b2eaf7dbf5aead13"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"speclang.cjs\" src/cli/ 2>/dev/null | head; echo \"=== find generator ===\"; grep -rln \"Creating new speclang project\" src/ dist/ 2>/dev/null | head -5",
+          "exit_code": 0,
+          "output_sha": "2d86f2b26a3544454dae00e5e97c8ef7aa01a39b208cf553a56312f2194b424d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"Creating new speclang project\" --include=*.ts . 2>/dev/null | grep -v node_modules | head -5; echo \"=== bin ===\"; cat bin/speclang 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "38ea17b5a9135d3649f3420f743ba1dac3b29d10d5d2a453d06a221b93347402"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"speclang.cjs\\|devDependencies\\|scripts\" bin/speclang | head -20",
+          "exit_code": 0,
+          "output_sha": "26a4946f49e89f2c78e85a8c11d824e33f012534624f2000e7ccedd2bff833f6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 1510,1550p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "8f0f6463e78b21adbc34018f17c086e443b223d1e1a44ef57992fee1556edb68"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npx vitest run tests/cli/new-project-runnable.test.ts > /tmp/np.log 2>&1; echo \"EXIT=$?\"; tail -8 /tmp/np.log",
+          "exit_code": 0,
+          "output_sha": "eeebc93eef1e46629157c0ccf2aa0bc3815dde92b4ad4227c36f61642e51789f"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Derived criteria proposed BEFORE grading (this is a verification task, so the derived set targets whether the \\\"closed\\\" claim is real rather than a re-scoped test that asserts nothing):\\n- derived_0: The re-scoped assertion matches the shipped scaffold contract (seam): bin/speclang's `speclang new` generator must actually emit devDependencies.speclang undefined, a scripts/speclang.cjs file, and scripts.test containing \\\"scripts/speclang.cjs validate\\\" \\u2014 otherwise the test passes vacuously or asserts a contract the product does not ship.\\n- derived_1: The fix is on main and the CI run that concluded success is bound to the fix commit itself (headSha == ad5f0ec9, headBranch == main), not to a later/other commit.\\n- derived_2: The red is genuinely closed \\u2014 the pre-fix run on main (a4170279) failed and the post-fix run on the same branch succeeded, so the change is what flipped it.\\n- derived_3: The spec-to-code test is not skipped/disabled in CI (allow_skips is true in .gitreins/config.yaml, so a skipped file could still yield a green run).\", \"key\": \"derived_criteria\"}",
+          "exit_code": 0,
+          "output_sha": "5cae263fc0715ea952dec79152ff1ecc2eb77fdb64d9094366a03e3a701ac194"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"describe.skip\\|it.skip\\|test.skip\\|it.todo\\|xit(\" tests/e2e/spec-to-code.test.ts | head -10; echo \"EXIT_GREP=$?\"; echo \"--- count its\"; grep -c \"  it(\\|    it(\" tests/e2e/spec-to-code.test.ts",
+          "exit_code": 0,
+          "output_sha": "1af5ecff5fd9da96113d4e9e2623d64466b4c4d2c467648eba20d8093aa5775b"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: bin/speclang:1535-1545 \\u2014 the `speclang new` generator writes scripts {test: 'node scripts/speclang.cjs validate', ...} and `devDependencies: {}`; bin/speclang:1662-1666 creates scripts/speclang.cjs. The re-scoped assertions at tests/e2e/spec-to-code.test.ts:346-349 (devDependencies?.speclang toBeUndefined, existsSync(scripts/speclang.cjs) true, scripts.test contains \\\"scripts/speclang.cjs validate\\\") assert exactly what the product ships \\u2014 not vacuous. Corroborated by tests/cli/new-project-runnable.test.ts: EXIT=0, \\\"Tests 8 passed (8)\\\".\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "ab83e488c2cd81e69896dcc70494712a658386f0d13369e0e264c8d2d9cc09c8"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: gh run view 44027889398 --json => {\\\"conclusion\\\":\\\"success\\\",\\\"event\\\":\\\"push\\\",\\\"headBranch\\\":\\\"main\\\",\\\"headSha\\\":\\\"ad5f0ec93ae6fad9325ff6e818506dde949b40d9\\\",\\\"status\\\":\\\"completed\\\",\\\"workflowName\\\":\\\"CI\\\"}. CI log line 109/121 shows the checkout ref is ad5f0ec93ae6fad9325ff6e818506dde949b40d9. `git merge-base --is-ancestor ad5f0ec9 main` => YES (main = 5cc21c56); also ancestor of origin/main (6790b83c).\", \"key\": \"verified_derived_1\"}",
+          "exit_code": 0,
+          "output_sha": "df84d4abeaae78f4fb2def1e2d572915f4b73fc6bdc2a3e9b62b9f39d51e33ca"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: pre-fix run 44026862425 (headSha a417027945766f008aabe12111441d9bb8283ce3, headBranch main) => {\\\"conclusion\\\":\\\"failure\\\",\\\"status\\\":\\\"completed\\\"}; post-fix run 44027889398 (headSha ad5f0ec9, headBranch main) => {\\\"conclusion\\\":\\\"success\\\"}. Same branch, same workflow, the only intervening change to the failing file is ad5f0ec9 (git show ad5f0ec9: 1 file changed, tests/e2e/spec-to-code.test.ts, 8 insertions/5 deletions). The red is genuinely closed.\", \"key\": \"verified_derived_2\"}",
+          "exit_code": 0,
+          "output_sha": "e30908fb64aac83062ae5b49139752bb7f8602105e5a704af4d1b86b3116ee53"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: tests/e2e/spec-to-code.test.ts contains no describe.skip/it.skip/test.skip/it.todo/xit (grep returned no matches) and has 9 `it(` blocks, matching the 9 tests reported. In the CI log the file is reported as \\\"\\u2713 tests/e2e/spec-to-code.test.ts (9 tests) 629ms\\\" \\u2014 a pass, not a skip; the run's skip count (58 tests / 4 files) is unchanged between the pre-fix and post-fix suites and the file is not among them.\", \"key\": \"verified_derived_3\"}",
+          "exit_code": 0,
+          "output_sha": "78a6e1ea1c11d520505ef496042140ae70216e6a797208fc5b85128de298b4e5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git stash list | head -2; git diff --stat HEAD -- tests/e2e/spec-to-code.test.ts; echo \"--- file identical to main?\"; git diff main HEAD -- tests/e2e/spec-to-code.test.ts | head -5; echo \"(empty above = identical)\"",
+          "exit_code": 0,
+          "output_sha": "aa1d1f324d05071d2425f4ae28f18edfc6608183f1f5c8234891db52a508c837"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 0,
+        "detection": "row marked status=complete while worker_status remains \"pending\"",
+        "detail": "DOC-6, DF-SPECLANG-8 and DF-SPECLANG-019 are all flipped to \"status\": \"complete\" but each still carries \"worker_status\": \"pending\", so the two status fields disagree on the same row."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 0,
+        "detection": "completed row retains stale in-progress/blocked fields",
+        "detail": "DF-SPECLANG-8 is closed complete yet still carries \"worktree\": \"/home/kara/worktrees/SpecLang-DF-SPECLANG-8\" and \"branch\": \"wt/DF-SPECLANG-8\" with no cleanup note, unlike sibling closed rows (e.g. DF-SPECLANG-6) which keep them only alongside a merge note."
+      },
+      {
+        "severity": "info",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 0,
+        "detection": "ci_result=SKIP recorded on a row whose acceptance requires a CI run",
+        "detail": "DF-SPECLANG-019's acceptance_criteria requires the remedy be proven end-to-end, and the row closes with \"ci_result\": \"SKIP\" plus a worker_summary that itself states \"CI not observed at close time - SKIP is not a claim of green.\""
+      }
+    ],
+    "summary": "The diff is board bookkeeping only (task rows flipped to complete plus matching events); the only defects are inconsistent status fields on the closed rows and a SKIP CI result on a row whose acceptance implies verification."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  02:12:10\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 npx vitest run tests/e2e/spec-to-code.test.ts exits 0 on main and the GitHub Actions run on main for the fix commit concludes success: Both halves verified with fresh command output. (a) Local: `npx vitest run tests/e2e/spec-to-code.test.ts` => EXIT_CODE=0, output \"Test Files 1 passed (1) / Tests 9 passed (9)\" (vitest 4.1.11, node v22.22.3). The file is byte-identical between HEAD (500289bd) and main (`git diff main HEAD -- tests/e2e/spec-to-code.test.ts` empty), and ad5f0ec9 is an ancestor of main (5cc21c56) and origin/main (6790b83c). (b) GitHub Actions: `gh run view 44027889398 --json` => {\"conclusion\":\"success\",\"event\":\"push\",\"headBranch\":\"main\",\"headSha\":\"ad5f0ec93ae6fad9325ff6e818506dde949b40d9\",\"status\":\"completed\",\"workflowName\":\"CI\"}; job \"Build, test, and guard\" (133852535850) conclusion success with every step success including \"Run tests\" (step 8) and \"Run GitReins Tier 1 guard\" (step 14). The job log (gh api repos/dexdat/SpecLang/actions/jobs/133852535850/logs) shows checkout ref ad5f0ec93ae6fad9325ff6e818506dde949b40d9 and \"\u2713 tests/e2e/spec-to-code.test.ts (9 tests) 629ms\", \"Test Files 107 passed | 4 skipped (111)\", \"Tests 1912 passed | 58 skipped (1970)\", \"Tier 1 Guards: PASS ... \u2713 tests\". No ##[error] or failing step in the run. [resolution 0.00; tests/e2e/spec-to-code.test.ts]\n  \u2713 The re-scoped assertion matches the shipped scaffold contract (seam): bin/speclang's `speclang new` generator must actually emit devDependencies.speclang undefined, a scripts/speclang.cjs file, and scripts.test containing \"scripts/speclang.cjs validate\" \u2014 otherwise the test passes vacuously or asserts a contract the product does not ship.: bin/speclang:1535-1545 \u2014 the generator writes scripts {test: 'node scripts/speclang.cjs validate', ...} and `devDependencies: {}`; bin/speclang:1662-1666 creates scripts/speclang.cjs. The re-scoped assertions at tests/e2e/spec-to-code.test.ts:346-349 (devDependencies?.speclang toBeUndefined, existsSync(scripts/speclang.cjs) true, scripts.test contains \"scripts/speclang.cjs validate\") assert exactly what the product ships, so the test is not vacuous. Corroborated by `npx vitest run tests/cli/new-project-runnable.test.ts` => EXIT=0, \"Tests 8 passed (8)\".\n  \u2713 The fix is on main and the CI run that concluded success is bound to the fix commit itself (headSha == ad5f0ec9, headBranch == main), not to a later/other commit.: `gh run view 44027889398 --json` => headSha \"ad5f0ec93ae6fad9325ff6e818506dde949b40d9\", headBranch \"main\", event \"push\", conclusion \"success\". The job log confirms the checked-out ref is ad5f0ec93ae6fad9325ff6e818506dde949b40d9 (log lines 109 and 121). `git merge-base --is-ancestor ad5f0ec9 main` => YES (main = 5cc21c56); also an ancestor of origin/main (6790b83c).\n  \u2713 The red is genuinely closed \u2014 the pre-fix run on main (a4170279) failed and the post-fix run on the same branch succeeded, so the change is what flipped it.: Pre-fix run 44026862425 (headSha a417027945766f008aabe12111441d9bb8283ce3, headBranch main) => {\"conclusion\":\"failure\",\"status\":\"completed\"}; post-fix run 44027889398 (headSha ad5f0ec9, headBranch main) => {\"conclusion\":\"success\"}. `git show ad5f0ec9` touches only tests/e2e/spec-to-code.test.ts (1 file changed, 8 insertions, 5 deletions), so the re-scoped assertion is what flipped the branch from red to green.\n  \u2713 The spec-to-code test is not skipped/disabled in CI (allow_skips is true in .gitreins/config.yaml, so a skipped file could still yield a green run).: tests/e2e/spec-to-code.test.ts contains no describe.skip/it.skip/test.skip/it.todo/xit (grep returned no matches) and has 9 `it(` blocks, matching the 9 tests reported. In the CI log the file is reported as \"\u2713 tests/e2e/spec-to-code.test.ts (9 tests) 629ms\" \u2014 a pass, not a skip; the run's 58 skipped tests / 4 skipped files are unchanged between the pre-fix and post-fix suites and this file is not among them.\nThe UX-003 CI red is genuinely closed: `npx vitest run tests/e2e/spec-to-code.test.ts` exits 0 with 9/9 passing locally on a file byte-identical to main, and GitHub Actions run 44027889398 on main at headSha ad5f0ec9 concluded success with the spec-to-code file passing 9 tests in the job log, against the pre-fix run 44026862425 at a4170279 which failed.\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T07:14:55.517566",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T07:14:55.561977+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 1345,
+        "truncated": false,
+        "source": "git show 500289bda3f2"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 73692,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "INT-CI-2-verify"
+  }
+}
