@@ -1,0 +1,35 @@
+# Verdict: DF-SPECLANG-017
+
+**Task:** Generate migrations.ts SQL from shipped .sql files
+**Evaluated:** 2026-11-17T05:57:38.961113
+**Result:** ✓ PASS
+
+## Criteria
+
+- ✓ **A generator script reads specs/sqlite.spec.dir/src/migrations/*.sql and emits the migration SQL module; npm run gen:migrations is deterministic; npm run gen:migrations -- --check exits 0 on a clean tree and non-zero after editing a .sql file; npm run build exits 0**
+  - scripts/gen-migrations.mjs:readdirSync(SQL_DIR) reads specs/sqlite.spec.dir/src/migrations/*.sql (sorted) and splices a GEN-MIGRATIONS block into specs/sqlite.spec.dir/src/migrations.ts (symlinked from src/db/migrations.ts, markers at migrations.ts:45 and :462); wired as package.json:33 "gen:migrations": "node scripts/gen-migrations.mjs". (1) Clean-tree check: `npm run gen:migrations -- --check` -> "gen-migrations: in sync — 8 SQL files, 54 statements (specs/sqlite.spec.dir/src/migrations.ts)." EXIT=0. (2) Determinism: md5 87a5850bb1f9d38dcd687802a7b65a87 before and after `npm run gen:migrations` ("already up to date (8 SQL files) — no change."); after appending a probe index to 008_index.sql, regenerating (md5 00d0bacf…), restoring the .sql and regenerating, md5 returned to 87a5850b… exactly and `git status --porcelain specs/` was empty — byte-identical round trip. (3) Drift: appending `CREATE INDEX IF NOT EXISTS idx_drift_probe ON events(id);` to 008_index.sql made `--check` print "DRIFT: specs/sqlite.spec.dir/src/migrations.ts does not match what the .sql files generate." / "stale or missing file block(s): 008_index.sql" / "7 line(s) differ" and EXIT=1. (4) `npm run build` (tsc) EXIT=0 with no diagnostics; dist/src/db/migrations.js contains GENERATED_SQL and `node -e "require('./dist/src/db/migrations.js')"` exports [migrations,getCurrentVersion,migrate,rollback]. (5) Consumer tests: `npx vitest run tests/db/migrations.test.ts tests/db/cascades-migration.test.ts` EXIT=0, "Test Files 2 passed (2) / Tests 10 passed (10)". Working tree left clean (git status specs/ scripts/ package.json empty).
+
+## Pipeline Stages
+
+- ✓ **tier1**
+  -   ✓ secrets: ok (no output)
+  ✓ build: npm notice run speclang@1.0.0 build
+  ✓ tests: Start at  00:52:55
+- ✓ **tier2**
+  - COMPLETE
+  ✓ A generator script reads specs/sqlite.spec.dir/src/migrations/*.sql and emits the migration SQL module; npm run gen:migrations is deterministic; npm run gen:migrations -- --check exits 0 on a clean tree and non-zero after editing a .sql file; npm run build exits 0: scripts/gen-migrations.mjs:readdirSync(SQL_DIR) reads specs/sqlite.spec.dir/src/migrations/*.sql (sorted) and splices a GEN-MIGRATIONS block into specs/sqlite.spec.dir/src/migrations.ts (symlinked from src/db/migrations.ts, markers at migrations.ts:45 and :462); wired as package.json:33 "gen:migrations": "node scripts/gen-migrations.mjs". (1) Clean-tree check: `npm run gen:migrations -- --check` -> "gen-migrations: in sync — 8 SQL files, 54 statements (specs/sqlite.spec.dir/src/migrations.ts)." EXIT=0. (2) Determinism: md5 87a5850bb1f9d38dcd687802a7b65a87 before and after `npm run gen:migrations` ("already up to date (8 SQL files) — no change."); after appending a probe index to 008_index.sql, regenerating (md5 00d0bacf…), restoring the .sql and regenerating, md5 returned to 87a5850b… exactly and `git status --porcelain specs/` was empty — byte-identical round trip. (3) Drift: appending `CREATE INDEX IF NOT EXISTS idx_drift_probe ON events(id);` to 008_index.sql made `--check` print "DRIFT: specs/sqlite.spec.dir/src/migrations.ts does not match what the .sql files generate." / "stale or missing file block(s): 008_index.sql" / "7 line(s) differ" and EXIT=1. (4) `npm run build` (tsc) EXIT=0 with no diagnostics; dist/src/db/migrations.js contains GENERATED_SQL and `node -e "require('./dist/src/db/migrations.js')"` exports [migrations,getCurrentVersion,migrate,rollback]. (5) Consumer tests: `npx vitest run tests/db/migrations.test.ts tests/db/cascades-migration.test.ts` EXIT=0, "Test Files 2 passed (2) / Tests 10 passed (10)". Working tree left clean (git status specs/ scripts/ package.json empty).
+The generator reads the shipped .sql files, emits the migration module deterministically, --check exits 0 in sync and 1 on drift, and npm run build plus the migration tests pass. [uncovered failure paths: failure mode 0 (A .sql file added to the migrations directory but never referenced by an applySqlFile(db, '<file>') call is generated into the block yet silently never applied at runtime): detected_by is empty — uncovered failure path]
+
+## Summary
+
+Stage tier1: PASS
+    ✓ secrets: ok (no output)
+  ✓ build: npm notice run speclang@1.0.0 build
+  ✓ tests: Start at  00:52:55
+
+Stage tier2: PASS
+  COMPLETE
+  ✓ A generator script reads specs/sqlite.spec.dir/src/migrations/*.sql and emits the migration SQL module; npm run gen:migrations is deterministic; npm run gen:migrations -- --check exits 0 on a clean tree and non-zero after editing a .sql file; npm run build exits 0: scripts/gen-migrations.mjs:readdirSync(SQL_DIR) reads specs/sqlite.spec.dir/src/migrations/*.sql (sorted) and splices a GEN-MIGRATIONS block into specs/sqlite.spec.dir/src/migrations.ts (symlinked from src/db/migrations.ts, markers at migrations.ts:45 and :462); wired as package.json:33 "gen:migrations": "node scripts/gen-migrations.mjs". (1) Clean-tree check: `npm run gen:migrations -- --check` -> "gen-migrations: in sync — 8 SQL files, 54 statements (specs/sqlite.spec.dir/src/migrations.ts)." EXIT=0. (2) Determinism: md5 87a5850bb1f9d38dcd687802a7b65a87 before and after `npm run gen:migrations` ("already up to date (8 SQL files) — no change."); after appending a probe index to 008_index.sql, regenerating (md5 00d0bacf…), restoring the .sql and regenerating, md5 returned to 87a5850b… exactly and `git status --porcelain specs/` was empty — byte-identical round trip. (3) Drift: appending `CREATE INDEX IF NOT EXISTS idx_drift_probe ON events(id);` to 008_index.sql made `--check` print "DRIFT: specs/sqlite.spec.dir/src/migrations.ts does not match what the .sql files generate." / "stale or missing file block(s): 008_index.sql" / "7 line(s) differ" and EXIT=1. (4) `npm run build` (tsc) EXIT=0 with no diagnostics; dist/src/db/migrations.js contains GENERATED_SQL and `node -e "require('./dist/src/db/migrations.js')"` exports [migrations,getCurrentVersion,migrate,rollback]. (5) Consumer tests: `npx vitest run tests/db/migrations.test.ts tests/db/cascades-migration.test.ts` EXIT=0, "Test Files 2 passed (2) / Tests 10 passed (10)". Working tree left clean (git status specs/ scripts/ package.json empty).
+The generator reads the shipped .sql files, emits the migration module deterministically, --check exits 0 in sync and 1 on drift, and npm run build plus the migration tests pass. [uncovered failure paths: failure mode 0 (A .sql file added to the migrations directory but never referenced by an applySqlFile(db, '<file>') call is generated into the block yet silently never applied at runtime): detected_by is empty — uncovered failure path]
+
+Overall: PASS ✓
