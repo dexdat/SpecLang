@@ -123,6 +123,7 @@ _tmp/
 .vfs/graph/coverage.json
 .vfs/graph/state.json
 .vfs/graph/edges.jsonl.lock
+.vfs/graph/edges.jsonl
 # transient board lock + wave dispatch manifests
 .coding-hermes/board/.lock
 .coding-hermes/waves/
