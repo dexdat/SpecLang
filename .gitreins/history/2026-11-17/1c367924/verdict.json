@@ -1,0 +1,505 @@
+{
+  "task_id": "DF-SPECLANG-019",
+  "task_title": "verify the printed npm>=12 remedy against a real npm 12",
+  "task_criteria": [
+    "The remedy printed by scripts/postinstall-lint-deps.sh and documented in README.md is executed end-to-end on npm 12.2.2 (not --dry-run) in a scratch install: npm install-scripts approve --no-allow-scripts-pin better-sqlite3 re-enables the build script and the native binding loads, or the printed command is corrected to the one that does; a committed probe transcript proves it"
+  ],
+  "passed": true,
+  "worktree": "/home/kara/worktrees/speclang-DF-SPECLANG-019",
+  "branch": "wt/DF-SPECLANG-019",
+  "commit": "9a4a04478c2f34c6e19193d37721214ab6bc405e",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "6705a447c3606608263a7e80210aab35775cb7c42c4db868b847393cb4fe2fd9",
+  "working_tree_dirty_path_count": 1,
+  "items": [
+    {
+      "criterion": "The remedy printed by scripts/postinstall-lint-deps.sh and documented in README.md is executed end-to-end on npm 12.2.2 (not --dry-run) in a scratch install: npm install-scripts approve --no-allow-scripts-pin better-sqlite3 re-enables the build script and the native binding loads, or the printed command is corrected to the one that does; a committed probe transcript proves it",
+      "status": "PASS",
+      "detail": "Independently reproduced the whole probe with the real npm 12.2.2 CLI (/home/kara/.local/share/vite-plus/package_manager/npm/12.2.2/npm/bin/npm-cli.js, `--version` -> 12.2.2, node v22.22.3) in a fresh scratch dir /tmp/npm12-probe-review containing only better-sqlite3 ^12.11.1: (1) `npm install` -> exit 0 with 'npm warn install-scripts 1 package had install scripts blocked because they are not covered by allowScripts: better-sqlite3@12.11.1 (install: prebuild-install || node-gyp rebuild --release)'; `node check-binding.js` -> 'Error: Could not locate the bindings file', exit 1, no build/ dir. (2) `npm install-scripts approve --no-allow-scripts-pin better-sqlite3` -> 'Approved better-sqlite3:\\n  added better-sqlite3', exit 0, package.json gains \"allowScripts\":{\"better-sqlite3\":true} (unpinned); binding still missing right after approve, exactly as docs/npm12-allowscripts-probe.md \u00a72 states. (3) `npm rebuild better-sqlite3` -> 'rebuilt dependencies successfully' exit 0; `node check-binding.js` -> 'sqlite_version() -> 3.53.2' exit 0; `npm install-scripts ls` -> 'No packages with unreviewed install scripts.' No --dry-run anywhere. The committed transcript docs/npm12-allowscripts-probe.md matches this run line-for-line, and its counter-probes also reproduce: 5a (rebuild without approval -> 'npm warn rebuild 1 package had install scripts blocked...' + 'rebuilt dependencies successfully', exit 0, binding still missing, node exit 1), 5b (`install-scripts deny` then `approve` -> 'better-sqlite3 is denied; remove the entry from allowScripts to approve better-sqlite3.' / 'Nothing to approve; allowScripts unchanged.', exit 0), 5c (approve without the flag -> 'added better-sqlite3@12.11.1', package.json \"allowScripts\":{\"better-sqlite3@12.11.1\":true}). Repo gate `npm run check:sqlite-binding` -> 'OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})' exit 0. Remedy text was correctly left unchanged; README.md:74-78 and scripts/postinstall-lint-deps.sh:78-96 carry the same three commands. Test run: `npx vitest run tests/npm12-remedy-doc.test.ts` -> 'Test Files 1 passed (1) / Tests 5 passed (5)'. [resolution 0.03; scripts/postinstall-lint-deps.sh, README.md]"
+    },
+    {
+      "criterion": "The committed probe transcript docs/npm12-allowscripts-probe.md is truthful \u2014 its claimed commands and outputs reproduce on the real npm 12.2.2 in this environment (not fabricated)",
+      "status": "PASS",
+      "detail": "Every claim in docs/npm12-allowscripts-probe.md was re-executed and matched: install warning text, 'Approved better-sqlite3:\\n  added better-sqlite3', the unpinned allowScripts diff, 'rebuilt dependencies successfully', 'sqlite_version() -> 3.53.2', 'No packages with unreviewed install scripts.', plus counter-probes 5a/5b/5c (see criterion 1 detail). The only deviation is the documented one: the transcript uses a one-line check-binding.js instead of inline `node -e`, which the doc explains at the top and which performs the same require + in-memory query.",
+      "derived": true
+    },
+    {
+      "criterion": "The remedy printed by scripts/postinstall-lint-deps.sh (npm>=12 branch) and the README remedy are the same command sequence as the verified one (approve --no-allow-scripts-pin -> rebuild -> check:sqlite-binding), with no drift between printed text and verified text",
+      "status": "PASS",
+      "detail": "scripts/postinstall-lint-deps.sh:78-96 prints step 1 `npm install-scripts approve --no-allow-scripts-pin better-sqlite3`, step 2 `npm rebuild better-sqlite3`, step 3 `npm run check:sqlite-binding`; README.md:74-78 prints the identical three commands in the identical order. That is exactly the sequence I executed successfully on npm 12.2.2. The commit diff confirms the remedy steps themselves were not altered (only a trailing Note block was added at scripts/postinstall-lint-deps.sh:88-92).",
+      "derived": true
+    },
+    {
+      "criterion": "The remedy text is reachable from the real entrypoint: the npm>=12 branch of check_sqlite_binding actually prints it when the binding fails, and `npm run check:sqlite-binding` (package.json:32) invokes that script",
+      "status": "PASS",
+      "detail": "Reachability proven by simulation: /tmp/redsim2 with a stub node_modules/better-sqlite3 that throws 'Could not locate the bindings file' and a stub npm reporting 12.2.2 \u2014 `bash scripts/postinstall-lint-deps.sh --sqlite-binding-only` printed 'FAIL: better-sqlite3 is installed but its native binding does not load.' then 'Remedy (npm 12.2.2): 1. ... npm install-scripts approve --no-allow-scripts-pin better-sqlite3 ... 2. npm rebuild better-sqlite3 ... 3. npm run check:sqlite-binding' plus the new Note lines, and exited 1. package.json:32 maps \"check:sqlite-binding\" to `bash scripts/postinstall-lint-deps.sh --sqlite-binding-only`, and running it in the repo prints 'OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})' exit 0.",
+      "derived": true
+    },
+    {
+      "criterion": "The new parity test tests/npm12-remedy-doc.test.ts passes and would fail if the script/README/probe command strings drifted apart",
+      "status": "PASS",
+      "detail": "`npx vitest run tests/npm12-remedy-doc.test.ts` -> 'Test Files 1 passed (1) / Tests 5 passed (5)'. Failure sensitivity checked by mutation: replacing the README command with the pinned form (`npm install-scripts approve better-sqlite3`) made the suite red \u2014 'Tests 1 failed | 4 passed (5)' \u2014 then README was restored and the suite went green again (git status shows only the pre-existing _index.json modification). The test also cross-checks the printed approval JSON against README.md and the real package.json allowScripts (package.json:35-37).",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  01:55:22",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/worktrees/speclang-DF-SPECLANG-019/.gitreins/logs/guard-20261117T064224.654061Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/worktrees/speclang-DF-SPECLANG-019/.gitreins/logs/guard-20261117T064224.654061Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  01:55:22\n   Duration  47.59s (transform 39.66s, setup 6.65s, import 55.33s, tests 204.72s, environment 16ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/worktrees/speclang-DF-SPECLANG-019/.gitreins/logs/guard-20261117T064224.654061Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 The remedy printed by scripts/postinstall-lint-deps.sh and documented in README.md is executed end-to-end on npm 12.2.2 (not --dry-run) in a scratch install: npm install-scripts approve --no-allow-scripts-pin better-sqlite3 re-enables the build script and the native binding loads, or the printed command is corrected to the one that does; a committed probe transcript proves it: Independently reproduced the whole probe with the real npm 12.2.2 CLI (/home/kara/.local/share/vite-plus/package_manager/npm/12.2.2/npm/bin/npm-cli.js, `--version` -> 12.2.2, node v22.22.3) in a fresh scratch dir /tmp/npm12-probe-review containing only better-sqlite3 ^12.11.1: (1) `npm install` -> exit 0 with 'npm warn install-scripts 1 package had install scripts blocked because they are not covered by allowScripts: better-sqlite3@12.11.1 (install: prebuild-install || node-gyp rebuild --release)'; `node check-binding.js` -> 'Error: Could not locate the bindings file', exit 1, no build/ dir. (2) `npm install-scripts approve --no-allow-scripts-pin better-sqlite3` -> 'Approved better-sqlite3:\\n  added better-sqlite3', exit 0, package.json gains \"allowScripts\":{\"better-sqlite3\":true} (unpinned); binding still missing right after approve, exactly as docs/npm12-allowscripts-probe.md \u00a72 states. (3) `npm rebuild better-sqlite3` -> 'rebuilt dependencies successfully' exit 0; `node check-binding.js` -> 'sqlite_version() -> 3.53.2' exit 0; `npm install-scripts ls` -> 'No packages with unreviewed install scripts.' No --dry-run anywhere. The committed transcript docs/npm12-allowscripts-probe.md matches this run line-for-line, and its counter-probes also reproduce: 5a (rebuild without approval -> 'npm warn rebuild 1 package had install scripts blocked...' + 'rebuilt dependencies successfully', exit 0, binding still missing, node exit 1), 5b (`install-scripts deny` then `approve` -> 'better-sqlite3 is denied; remove the entry from allowScripts to approve better-sqlite3.' / 'Nothing to approve; allowScripts unchanged.', exit 0), 5c (approve without the flag -> 'added better-sqlite3@12.11.1', package.json \"allowScripts\":{\"better-sqlite3@12.11.1\":true}). Repo gate `npm run check:sqlite-binding` -> 'OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})' exit 0. Remedy text was correctly left unchanged; README.md:74-78 and scripts/postinstall-lint-deps.sh:78-96 carry the same three commands. Test run: `npx vitest run tests/npm12-remedy-doc.test.ts` -> 'Test Files 1 passed (1) / Tests 5 passed (5)'. [resolution 0.03; scripts/postinstall-lint-deps.sh, README.md]\n  \u2713 The committed probe transcript docs/npm12-allowscripts-probe.md is truthful \u2014 its claimed commands and outputs reproduce on the real npm 12.2.2 in this environment (not fabricated): Every claim in docs/npm12-allowscripts-probe.md was re-executed and matched: install warning text, 'Approved better-sqlite3:\\n  added better-sqlite3', the unpinned allowScripts diff, 'rebuilt dependencies successfully', 'sqlite_version() -> 3.53.2', 'No packages with unreviewed install scripts.', plus counter-probes 5a/5b/5c (see criterion 1 detail). The only deviation is the documented one: the transcript uses a one-line check-binding.js instead of inline `node -e`, which the doc explains at the top and which performs the same require + in-memory query.\n  \u2713 The remedy printed by scripts/postinstall-lint-deps.sh (npm>=12 branch) and the README remedy are the same command sequence as the verified one (approve --no-allow-scripts-pin -> rebuild -> check:sqlite-binding), with no drift between printed text and verified text: scripts/postinstall-lint-deps.sh:78-96 prints step 1 `npm install-scripts approve --no-allow-scripts-pin better-sqlite3`, step 2 `npm rebuild better-sqlite3`, step 3 `npm run check:sqlite-binding`; README.md:74-78 prints the identical three commands in the identical order. That is exactly the sequence I executed successfully on npm 12.2.2. The commit diff confirms the remedy steps themselves were not altered (only a trailing Note block was added at scripts/postinstall-lint-deps.sh:88-92).\n  \u2713 The remedy text is reachable from the real entrypoint: the npm>=12 branch of check_sqlite_binding actually prints it when the binding fails, and `npm run check:sqlite-binding` (package.json:32) invokes that script: Reachability proven by simulation: /tmp/redsim2 with a stub node_modules/better-sqlite3 that throws 'Could not locate the bindings file' and a stub npm reporting 12.2.2 \u2014 `bash scripts/postinstall-lint-deps.sh --sqlite-binding-only` printed 'FAIL: better-sqlite3 is installed but its native binding does not load.' then 'Remedy (npm 12.2.2): 1. ... npm install-scripts approve --no-allow-scripts-pin better-sqlite3 ... 2. npm rebuild better-sqlite3 ... 3. npm run check:sqlite-binding' plus the new Note lines, and exited 1. package.json:32 maps \"check:sqlite-binding\" to `bash scripts/postinstall-lint-deps.sh --sqlite-binding-only`, and running it in the repo prints 'OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})' exit 0.\n  \u2713 The new parity test tests/npm12-remedy-doc.test.ts passes and would fail if the script/README/probe command strings drifted apart: `npx vitest run tests/npm12-remedy-doc.test.ts` -> 'Test Files 1 passed (1) / Tests 5 passed (5)'. Failure sensitivity checked by mutation: replacing the README command with the pinned form (`npm install-scripts approve better-sqlite3`) made the suite red \u2014 'Tests 1 failed | 4 passed (5)' \u2014 then README was restored and the suite went green again (git status shows only the pre-existing _index.json modification). The test also cross-checks the printed approval JSON against README.md and the real package.json allowScripts (package.json:35-37).\nThe printed npm>=12 remedy is correct as printed and the committed transcript is truthful: I independently re-ran approve --no-allow-scripts-pin -> rebuild -> binding load on a real npm 12.2.2 in a scratch install (sqlite_version() -> 3.53.2), reproduced all counter-probes, confirmed the npm>=12 branch actually prints that remedy, and the new parity test passes (5/5) and fails on drift. [uncovered failure paths: failure mode 0 (The parity test is a pure text guard: it never executes npm, so a future npm release that changes `install-scripts approve`/`rebuild` semantics would leave the printed remedy stale while the test stays green): detected_by is empty \u2014 uncovered failure path; failure mode 1 (The remedy is only printed when the local npm major is >= 12; on a machine where the failing install was done by npm 12 but the shell now resolves an older npm, the npm<12 branch prints the wrong cause/remedy): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n\n\u2026 [5726 chars omitted \u2014 5 line(s)] \u2026\nThe printed npm>=12 remedy is correct as printed and the committed transcript is truthful: I independently re-ran approve --no-allow-scripts-pin -> rebuild -> binding load on a real npm 12.2.2 in a scratch install (sqlite_version() -> 3.53.2), reproduced all counter-probes, confirmed the npm>=12 branch actually prints that remedy, and the new parity test passes (5/5) and fails on drift. [uncovered failure paths: failure mode 0 (The parity test is a pure text guard: it never executes npm, so a future npm release that changes `install-scripts approve`/`rebuild` semantics would leave the printed remedy stale while the test stays green): detected_by is empty \u2014 uncovered failure path; failure mode 1 (The remedy is only printed when the local npm major is >= 12; on a machine where the failing install was done by npm 12 but the shell now resolves an older npm, the npm<12 branch prints the wrong cause/remedy): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "The remedy printed by scripts/postinstall-lint-deps.sh and documented in README.md is executed end-to-end on npm 12.2.2 (not --dry-run) in a scratch install: npm install-scripts approve --no-allow-scripts-pin better-sqlite3 re-enables the build script and the native binding loads, or the printed command is corrected to the one that does; a committed probe transcript proves it",
+                "status": "PASS",
+                "detail": "Independently reproduced the whole probe with the real npm 12.2.2 CLI (/home/kara/.local/share/vite-plus/package_manager/npm/12.2.2/npm/bin/npm-cli.js, `--version` -> 12.2.2, node v22.22.3) in a fresh scratch dir /tmp/npm12-probe-review containing only better-sqlite3 ^12.11.1: (1) `npm install` -> exit 0 with 'npm warn install-scripts 1 package had install scripts blocked because they are not covered by allowScripts: better-sqlite3@12.11.1 (install: prebuild-install || node-gyp rebuild --release)'; `node check-binding.js` -> 'Error: Could not locate the bindings file', exit 1, no build/ dir. (2) `npm install-scripts approve --no-allow-scripts-pin better-sqlite3` -> 'Approved better-sqlite3:\\n  added better-sqlite3', exit 0, package.json gains \"allowScripts\":{\"better-sqlite3\":true} (unpinned); binding still missing right after approve, exactly as docs/npm12-allowscripts-probe.md \u00a72 states. (3) `npm rebuild better-sqlite3` -> 'rebuilt dependencies successfully' exit 0; `node check-binding.js` -> 'sqlite_version() -> 3.53.2' exit 0; `npm install-scripts ls` -> 'No packages with unreviewed install scripts.' No --dry-run anywhere. The committed transcript docs/npm12-allowscripts-probe.md matches this run line-for-line, and its counter-probes also reproduce: 5a (rebuild without approval -> 'npm warn rebuild 1 package had install scripts blocked...' + 'rebuilt dependencies successfully', exit 0, binding still missing, node exit 1), 5b (`install-scripts deny` then `approve` -> 'better-sqlite3 is denied; remove the entry from allowScripts to approve better-sqlite3.' / 'Nothing to approve; allowScripts unchanged.', exit 0), 5c (approve without the flag -> 'added better-sqlite3@12.11.1', package.json \"allowScripts\":{\"better-sqlite3@12.11.1\":true}). Repo gate `npm run check:sqlite-binding` -> 'OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})' exit 0. Remedy text was correctly left unchanged; README.md:74-78 and scripts/postinstall-lint-deps.sh:78-96 carry the same three commands. Test run: `npx vitest run tests/npm12-remedy-doc.test.ts` -> 'Test Files 1 passed (1) / Tests 5 passed (5)'. [resolution 0.03; scripts/postinstall-lint-deps.sh, README.md]",
+                "resolution_probability": 0.03,
+                "cited_path": "scripts/postinstall-lint-deps.sh, README.md"
+              },
+              {
+                "criterion": "The committed probe transcript docs/npm12-allowscripts-probe.md is truthful \u2014 its claimed commands and outputs reproduce on the real npm 12.2.2 in this environment (not fabricated)",
+                "status": "PASS",
+                "detail": "Every claim in docs/npm12-allowscripts-probe.md was re-executed and matched: install warning text, 'Approved better-sqlite3:\\n  added better-sqlite3', the unpinned allowScripts diff, 'rebuilt dependencies successfully', 'sqlite_version() -> 3.53.2', 'No packages with unreviewed install scripts.', plus counter-probes 5a/5b/5c (see criterion 1 detail). The only deviation is the documented one: the transcript uses a one-line check-binding.js instead of inline `node -e`, which the doc explains at the top and which performs the same require + in-memory query.",
+                "derived": true
+              },
+              {
+                "criterion": "The remedy printed by scripts/postinstall-lint-deps.sh (npm>=12 branch) and the README remedy are the same command sequence as the verified one (approve --no-allow-scripts-pin -> rebuild -> check:sqlite-binding), with no drift between printed text and verified text",
+                "status": "PASS",
+                "detail": "scripts/postinstall-lint-deps.sh:78-96 prints step 1 `npm install-scripts approve --no-allow-scripts-pin better-sqlite3`, step 2 `npm rebuild better-sqlite3`, step 3 `npm run check:sqlite-binding`; README.md:74-78 prints the identical three commands in the identical order. That is exactly the sequence I executed successfully on npm 12.2.2. The commit diff confirms the remedy steps themselves were not altered (only a trailing Note block was added at scripts/postinstall-lint-deps.sh:88-92).",
+                "derived": true
+              },
+              {
+                "criterion": "The remedy text is reachable from the real entrypoint: the npm>=12 branch of check_sqlite_binding actually prints it when the binding fails, and `npm run check:sqlite-binding` (package.json:32) invokes that script",
+                "status": "PASS",
+                "detail": "Reachability proven by simulation: /tmp/redsim2 with a stub node_modules/better-sqlite3 that throws 'Could not locate the bindings file' and a stub npm reporting 12.2.2 \u2014 `bash scripts/postinstall-lint-deps.sh --sqlite-binding-only` printed 'FAIL: better-sqlite3 is installed but its native binding does not load.' then 'Remedy (npm 12.2.2): 1. ... npm install-scripts approve --no-allow-scripts-pin better-sqlite3 ... 2. npm rebuild better-sqlite3 ... 3. npm run check:sqlite-binding' plus the new Note lines, and exited 1. package.json:32 maps \"check:sqlite-binding\" to `bash scripts/postinstall-lint-deps.sh --sqlite-binding-only`, and running it in the repo prints 'OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})' exit 0.",
+                "derived": true
+              },
+              {
+                "criterion": "The new parity test tests/npm12-remedy-doc.test.ts passes and would fail if the script/README/probe command strings drifted apart",
+                "status": "PASS",
+                "detail": "`npx vitest run tests/npm12-remedy-doc.test.ts` -> 'Test Files 1 passed (1) / Tests 5 passed (5)'. Failure sensitivity checked by mutation: replacing the README command with the pinned form (`npm install-scripts approve better-sqlite3`) made the suite red \u2014 'Tests 1 failed | 4 passed (5)' \u2014 then README was restored and the suite went green again (git status shows only the pre-existing _index.json modification). The test also cross-checks the printed approval JSON against README.md and the real package.json allowScripts (package.json:35-37).",
+                "derived": true
+              }
+            ],
+            "summary": "The printed npm>=12 remedy is correct as printed and the committed transcript is truthful: I independently re-ran approve --no-allow-scripts-pin -> rebuild -> binding load on a real npm 12.2.2 in a scratch install (sqlite_version() -> 3.53.2), reproduced all counter-probes, confirmed the npm>=12 branch actually prints that remedy, and the new parity test passes (5/5) and fails on drift. [uncovered failure paths: failure mode 0 (The parity test is a pure text guard: it never executes npm, so a future npm release that changes `install-scripts approve`/`rebuild` semantics would leave the printed remedy stale while the test stays green): detected_by is empty \u2014 uncovered failure path; failure mode 1 (The remedy is only printed when the local npm major is >= 12; on a machine where the failing install was done by npm 12 but the shell now resolves an older npm, the npm<12 branch prints the wrong cause/remedy): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-019\"}",
+          "exit_code": 0,
+          "output_sha": "2e783833b21b33365e5767b60ccc8bb8a7f715ff2d7592bb1aeb818dfd544ccd"
+        },
+        {
+          "tool": "read_diff",
+          "command": "read_diff {}",
+          "exit_code": 0,
+          "output_sha": "7f6d39ee449bc4a2612adbc7d48e2076865e006dfb03a50b11aa4719c0e24890"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/agent 2>/dev/null; pwd; ls",
+          "exit_code": 0,
+          "output_sha": "0efa2bb0f0674c11e5e2c5fb254334eaef661f3a8fe95c16ae373f4decb7d582"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"docs/npm12-allowscripts-probe.md\"}",
+          "exit_code": 0,
+          "output_sha": "e9e656cd4db71a27816eea147ac3ad0efd8e0b7951cc2129f61f58e1093c81f5"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"scripts/postinstall-lint-deps.sh\"}",
+          "exit_code": 0,
+          "output_sha": "e30abbb0fd2d9c593fc57e36d872d8b07bf542226eced0b7114f7f337affd446"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/npm12-remedy-doc.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "92388e7bc3b576900a60fa1a4aebe5e945f3a30167a4265ea13a5cd498640278"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-019 && grep -n \"allowScripts\\|install-scripts\\|npm12-allowscripts-probe\\|check:sqlite-binding\" README.md",
+          "exit_code": 0,
+          "output_sha": "6f9f39f5045de8e1c2a99c78cf407636b03f74babe76db1dd2f7a0cf4f8d0196"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-019 && cat .gitreins/config.yaml 2>/dev/null; echo \"---\"; grep -n \"check:sqlite-binding\\|allowScripts\" package.json",
+          "exit_code": 0,
+          "output_sha": "5742baed50707657b2ba11f216f38d953841e7f676233e862efe4a04bb308a9f"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 85, \"offset\": 30, \"path\": \"README.md\"}",
+          "exit_code": 0,
+          "output_sha": "a2151956d3f625a9eec2d84285c280d4a68351adcf26785466e2cb74116b8660"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-019 && npx vitest run tests/npm12-remedy-doc.test.ts 2>&1 | tail -25",
+          "exit_code": 0,
+          "output_sha": "1d1894e237909deae20d79cc777559bd5c68cfa13c2c41b5d8aeeefde4f1166f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-019 && npm --version; node --version; which npm; ls /home/kara/.local/share/vite-plus/package_manager/npm/ 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "c546f4e79aace4c3c7e2055d39a4aba9b1ec3f53b560df69226e68bfc8fc0bea"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-019 && git log --oneline -3 && git show --stat HEAD",
+          "exit_code": 0,
+          "output_sha": "63641bfd170af8234ce3ba6b02d5eeee5c6666c7e352ebff426011dd7a34b4ae"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Task DF-SPECLANG-019: verify printed npm>=12 remedy on real npm 12.2.2, committed probe transcript.\\nnpm in env = 12.2.2, node v22.22.3 (matches doc claims).\\nFiles: scripts/postinstall-lint-deps.sh (remedy print), README.md lines 40-105, docs/npm12-allowscripts-probe.md, tests/npm12-remedy-doc.test.ts (5 tests pass).\\nNext: independently reproduce the probe in a scratch dir with real npm 12.2.2 to confirm the transcript is truthful (approve -> rebuild -> binding loads).\", \"key\": \"plan\"}",
+          "exit_code": 0,
+          "output_sha": "25c4ef956ad44bf00710d6207df8d77f7992053a0e9c2bbd056c2709d03c2bdd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-019 && grep -n \"allowScripts\" -A4 package.json | head -20; echo \"=== npm config ===\"; npm config get ignore-scripts; npm config get strict-allow-scripts 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "ddf19998a1c1f8933bff5553e8f6aaf2ac744bf27f039a359ad943462327b081"
+        },
+        {
+          "tool": "run_command",
+          "command": "rm -rf /tmp/npm12-probe-review && mkdir -p /tmp/npm12-probe-review && cd /tmp/npm12-probe-review && printf '{\"name\":\"p\",\"version\":\"1.0.0\",\"private\":true,\"dependencies\":{\"better-sqlite3\":\"^12.11.1\"}}' > package.json && npm --version && npm install 2>&1 | tail -20; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "0e1377275d115b0386e7e5714fa445cb87a61042424df3f7df1778b77be5d123"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/npm12-probe-review && which -a npm; echo \"---\"; ls /home/kara/.local/share/vite-plus/package_manager/npm/12.2.2/npm/bin/ 2>/dev/null; echo \"---\"; node /home/kara/.local/share/vite-plus/package_manager/npm/12.2.2/npm/bin/npm-cli.js --version",
+          "exit_code": 0,
+          "output_sha": "99b2898fd59235d672029a11840ad4bcb83a2946a718e8455197dafcb9a97f38"
+        },
+        {
+          "tool": "run_command",
+          "command": "rm -rf /tmp/npm12-probe-review && mkdir -p /tmp/npm12-probe-review && cd /tmp/npm12-probe-review && printf '{\"name\":\"p\",\"version\":\"1.0.0\",\"private\":true,\"dependencies\":{\"better-sqlite3\":\"^12.11.1\"}}' > package.json && NPM=\"node /home/kara/.local/share/vite-plus/package_manager/npm/12.2.2/npm/bin/npm-cli.js\" && $NPM --version && $NPM install 2>&1 | tail -20; echo \"EXIT=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "13973b748649c6700acc07b5e583b7b885cef8d516fe524109ad36a05ad8d658"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/npm12-probe-review && cat > check-binding.js <<'EOF'\nconst Database = require('better-sqlite3');\nconst db = new Database(':memory:');\nconst row = db.prepare('select sqlite_version() as sqlite_version').get();\nconsole.log('sqlite_version() -> ' + row.sqlite_version);\nEOF\nnode check-binding.js; echo \"EXIT=$?\"; ls node_modules/better-sqlite3/build 2>&1",
+          "exit_code": 2,
+          "output_sha": "70cdb0cbf9a07f10db4a74027596d9fe690c8c0b32a19313f08c447b09b8efa9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/npm12-probe-review && NPM=\"node /home/kara/.local/share/vite-plus/package_manager/npm/12.2.2/npm/bin/npm-cli.js\" && $NPM install-scripts approve --no-allow-scripts-pin better-sqlite3 2>&1; echo \"EXIT=$?\"; echo \"=== package.json ===\"; cat package.json; echo \"=== binding after approve ===\"; node check-binding.js 2>&1 | head -3; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "a176b00e4dd2d15157ade952eda76d6bd1c8eb136102502bc01eb27e8ff0e760"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/npm12-probe-review && NPM=\"node /home/kara/.local/share/vite-plus/package_manager/npm/12.2.2/npm/bin/npm-cli.js\" && $NPM rebuild better-sqlite3 2>&1; echo \"EXIT=$?\"; echo \"=== binding ===\"; node check-binding.js; echo \"EXIT=$?\"; echo \"=== ls ===\"; $NPM install-scripts ls 2>&1",
+          "exit_code": 0,
+          "output_sha": "5807d087c287c8d123c5af0841a8bd752c6ba54636a8e947be2e556b9651c385"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS (independent reproduction, real npm 12.2.2 at /home/kara/.local/share/vite-plus/package_manager/npm/12.2.2/npm/bin/npm-cli.js, node v22.22.3):\\n1. scratch /tmp/npm12-probe-review, package.json only better-sqlite3 ^12.11.1 -> `npm install` exit 0 + \\\"npm warn install-scripts 1 package had install scripts blocked ... better-sqlite3@12.11.1 (install: prebuild-install || node-gyp rebuild --release)\\\"; node check-binding.js -> \\\"Error: Could not locate the bindings file\\\", exit 1, no build/ dir. Matches doc section 1 verbatim.\\n2. `npm install-scripts approve --no-allow-scripts-pin better-sqlite3` -> \\\"Approved better-sqlite3:\\\\n  added better-sqlite3\\\", exit 0, package.json gains \\\"allowScripts\\\":{\\\"better-sqlite3\\\":true} (unpinned). Binding still missing after approve (matches doc claim approve builds nothing).\\n3. `npm rebuild better-sqlite3` -> \\\"rebuilt dependencies successfully\\\" exit 0; node check-binding.js -> \\\"sqlite_version() -> 3.53.2\\\" exit 0; `npm install-scripts ls` -> \\\"No packages with unreviewed install scripts.\\\"\\n=> printed remedy works end-to-end on real npm 12.2.2, not --dry-run.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "49d9d0aee43998e14b0a3aa36e14844f6998489e9ea22a2c36768a6875fec709"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-019 && npm run check:sqlite-binding 2>&1 | tail -5; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "eaa1cd49cf8f2b382ec1efcf0e482e4a1c6bbaa1306cbb5fd1958a5c512f6339"
+        },
+        {
+          "tool": "run_command",
+          "command": "rm -rf /tmp/npm12-probe-5a && mkdir -p /tmp/npm12-probe-5a && cd /tmp/npm12-probe-5a && printf '{\"name\":\"p\",\"version\":\"1.0.0\",\"private\":true,\"dependencies\":{\"better-sqlite3\":\"^12.11.1\"}}' > package.json && NPM=\"node /home/kara/.local/share/vite-plus/package_manager/npm/12.2.2/npm/bin/npm-cli.js\" && $NPM install >/dev/null 2>&1; echo \"install done\"; $NPM rebuild better-sqlite3 2>&1; echo \"REBUILD_EXIT=$?\"; cp /tmp/npm12-probe-review/check-binding.js .; node check-binding.js 2>&1 | head -2; echo \"BINDING_EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "5c58d355622bff85b2f3a7b809858b811e2879213d21c1533b3a2f298cd2fb49"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/npm12-probe-5a && node check-binding.js >/dev/null 2>&1; echo \"BINDING_EXIT=$?\"; NPM=\"node /home/kara/.local/share/vite-plus/package_manager/npm/12.2.2/npm/bin/npm-cli.js\"; echo \"=== 5b deny ===\"; $NPM install-scripts deny better-sqlite3 2>&1; echo \"DENY_EXIT=$?\"; $NPM install-scripts approve better-sqlite3 2>&1; echo \"APPROVE_EXIT=$?\"; cat package.json",
+          "exit_code": 0,
+          "output_sha": "8035a5ff7c37dc21f9b11ba0f10699594964994efbdbdd1e9cf779ad29dd15d4"
+        },
+        {
+          "tool": "run_command",
+          "command": "rm -rf /tmp/npm12-probe-5c && mkdir -p /tmp/npm12-probe-5c && cd /tmp/npm12-probe-5c && printf '{\"name\":\"p\",\"version\":\"1.0.0\",\"private\":true,\"dependencies\":{\"better-sqlite3\":\"^12.11.1\"}}' > package.json && NPM=\"node /home/kara/.local/share/vite-plus/package_manager/npm/12.2.2/npm/bin/npm-cli.js\" && $NPM install >/dev/null 2>&1; $NPM install-scripts approve better-sqlite3 2>&1; echo \"EXIT=$?\"; cat package.json",
+          "exit_code": 0,
+          "output_sha": "73aa2740f5f73f78b8d62394de923bf77245e131eace4857123a6142a2b4d58e"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Counter-probes independently reproduced on real npm 12.2.2:\\n- 5a: install w/o approval then `npm rebuild better-sqlite3` -> \\\"npm warn rebuild 1 package had install scripts blocked...\\\" + \\\"rebuilt dependencies successfully\\\", exit 0, binding still missing (node check-binding.js exit 1). README/script claim confirmed.\\n- 5b: `npm install-scripts deny better-sqlite3` then `approve better-sqlite3` -> \\\"npm warn install-scripts better-sqlite3 is denied; remove the entry from allowScripts to approve better-sqlite3.\\\" / \\\"Nothing to approve; allowScripts unchanged.\\\" exit 0, allowScripts stays false. README claim confirmed.\\n- 5c: `approve better-sqlite3` (no flag) -> \\\"added better-sqlite3@12.11.1\\\", package.json \\\"allowScripts\\\":{\\\"better-sqlite3@12.11.1\\\":true} (pinned). README claim confirmed.\\n- Repo gate: `npm run check:sqlite-binding` -> \\\"OK: better-sqlite3 native binding loads (SELECT 1 -> {\\\\\\\"x\\\\\\\":1})\\\" exit 0.\\n- tests/npm12-remedy-doc.test.ts: `npx vitest run tests/npm12-remedy-doc.test.ts` -> Test Files 1 passed (1), Tests 5 passed (5).\\nTranscript is truthful; remedy correct as printed.\", \"key\": \"counter_probes\"}",
+          "exit_code": 0,
+          "output_sha": "35ff4da1c820029cd2a21dd1f27f92c731850eefb015f1d119c85923575685ac"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-019 && npx vitest run --passWithNoTests 2>&1 | tail -8",
+          "exit_code": -15,
+          "output_sha": "64898b0883fda6da9df9d2f4a3cf83a3cd66f05222509d3c9153fee667046a8b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-019 && timeout 600 npx vitest run tests/npm12-remedy-doc.test.ts tests/postinstall-lint-deps.test.ts 2>&1 | tail -12",
+          "exit_code": 0,
+          "output_sha": "b6a46eda99b3fdd14ce89a161baf99e63fcd852b846cc38c785313bd749b11e1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-019 && ls tests | grep -i \"postinstall\\|sqlite\\|npm12\"",
+          "exit_code": 0,
+          "output_sha": "876a8b0b1d345cac36a72a1f9cede70b159befdcc78b8fa456c9114472685fbd"
+        },
+        {
+          "tool": "read_lsp_diagnostics",
+          "command": "read_lsp_diagnostics {}",
+          "exit_code": 0,
+          "output_sha": "ef420cbeebd549fc8c5438d6ea41a3e521fa58e29563c4cae80f491b9bfe2143"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-019 && git show HEAD -- scripts/postinstall-lint-deps.sh README.md | head -120",
+          "exit_code": 0,
+          "output_sha": "d3e637528a19e8e70231e3785d5092f8dbb7f93fc1255a8e5e417f97c533b4b7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-019 && git show HEAD -- scripts/postinstall-lint-deps.sh | sed -n '30,80p'",
+          "exit_code": 0,
+          "output_sha": "6116aa4d4c9fad5df857cf584a45a6155f6a33d473761470065d999fc78cb368"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-019 && git show HEAD -- README.md | sed -n '1,90p'",
+          "exit_code": 0,
+          "output_sha": "1681037503f5a9084cb91bb80120774163f81edbb1a6df6cb142aca88303f333"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-019 && git show HEAD -- README.md | sed -n '40,75p'",
+          "exit_code": 0,
+          "output_sha": "0e28fb28ddb545a2b677b5fb8234b0b6113a56ddf67f3bb960fb26d1f154cf2d"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Derived criteria for DF-SPECLANG-019:\\nd0: The committed probe transcript docs/npm12-allowscripts-probe.md is truthful \\u2014 its claimed commands/outputs reproduce on the real npm 12.2.2 in this environment (not fabricated).\\nd1: The remedy printed by scripts/postinstall-lint-deps.sh (npm>=12 branch) and the README remedy are the same command sequence as the verified one (approve --no-allow-scripts-pin -> rebuild -> check:sqlite-binding), i.e. no drift between printed text and verified text.\\nd2: The remedy text is reachable from the real entrypoint: the npm>=12 branch of check_sqlite_binding actually prints it when the binding fails, and `npm run check:sqlite-binding` (package.json:32) invokes that script.\\nd3: The new parity test tests/npm12-remedy-doc.test.ts passes and would fail if the script/README/probe command strings drifted apart.\", \"key\": \"derived\"}",
+          "exit_code": 0,
+          "output_sha": "ffd9150429fc42ee8a3b16aca73e971897ad47146d09e8a60a7c07e60790dd15"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-019 && bash -c 'set -e; source /dev/stdin <<\"EOF\"\nEOF\n' ; echo \"--- simulate red path print ---\"; sed -n '60,110p' scripts/postinstall-lint-deps.sh",
+          "exit_code": 0,
+          "output_sha": "19f1666baa45f11a270017664f9580930e92c2604b0df10a33c54d8414a8e190"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-019 && ls node_modules/better-sqlite3/build/Release/ 2>&1 | head -3; echo \"=== simulate red: hide binding via NODE_PATH trick ===\"; mkdir -p /tmp/redsim && cp scripts/postinstall-lint-deps.sh /tmp/redsim/ && mkdir -p /tmp/redsim/node_modules/better-sqlite3 && echo '{\"name\":\"better-sqlite3\",\"version\":\"12.11.1\",\"main\":\"index.js\"}' > /tmp/redsim/node_modules/better-sqlite3/package.json && echo 'throw new Error(\"Could not locate the bindings file.\")' > /tmp/redsim/node_modules/better-sqlite3/index.js && bash /tmp/redsim/postinstall-lint-deps.sh --sqlite-binding-only 2>&1 | head -40; echo \"EXIT=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "379d8ad7023d00e909c6b861c2ce14f9f8b94015a7303c49e7f659d0dbacaf2b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/redsim && bash postinstall-lint-deps.sh --sqlite-binding-only 2>&1 | head -45; echo \"EXIT=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "871ff844f12c43e93e116697ea216e4260532dbae91b007c05978ef26a558dc3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/redsim && ls -la; ls node_modules; bash -x postinstall-lint-deps.sh --sqlite-binding-only 2>&1 | head -20",
+          "exit_code": 0,
+          "output_sha": "52658f6af3c5e4a81b9672276b0d97077abe3f39da8a3db61e1a25e5968922d6"
+        },
+        {
+          "tool": "run_command",
+          "command": "rm -rf /tmp/redsim2 && mkdir -p /tmp/redsim2/scripts /tmp/redsim2/node_modules/better-sqlite3 && cp /home/kara/worktrees/speclang-DF-SPECLANG-019/scripts/postinstall-lint-deps.sh /tmp/redsim2/scripts/ && echo '{\"name\":\"better-sqlite3\",\"version\":\"12.11.1\",\"main\":\"index.js\"}' > /tmp/redsim2/node_modules/better-sqlite3/package.json && echo 'throw new Error(\"Could not locate the bindings file.\")' > /tmp/redsim2/node_modules/better-sqlite3/index.js && cd /tmp/redsim2 && bash scripts/postinstall-lint-deps.sh --sqlite-binding-only 2>&1 | head -45; echo \"EXIT=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "1c0f1e103c77efb522ea394e0b77a69189ea7dd8da81f6197ffcbddfd430a86e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/redsim2 && PATH=\"/home/kara/.local/share/vite-plus/bin:$PATH\" bash scripts/postinstall-lint-deps.sh --sqlite-binding-only 2>&1 | sed -n '20,50p'; echo \"EXIT=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "82edb22af98ace93ac7e69c5188ad04d718fd10e5da61f7c1882c6dd7933191c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/redsim2 && PATH=\"/home/kara/.local/share/vite-plus/bin:$PATH\" bash -c 'npm --version; bash scripts/postinstall-lint-deps.sh --sqlite-binding-only 2>&1 | sed -n \"24,45p\"'",
+          "exit_code": 0,
+          "output_sha": "d28f68a65f2f6fe1213d25d7e5defcb1137988013a2675c9959aeecad4b6975a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/redsim2 && mkdir -p bin && printf '#!/bin/sh\\necho 12.2.2\\n' > bin/npm && chmod +x bin/npm && PATH=\"/tmp/redsim2/bin:$PATH\" bash scripts/postinstall-lint-deps.sh --sqlite-binding-only 2>&1 | sed -n '24,50p'; echo \"EXIT=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "3b76d7c0aa6453e3beeebddf08164d9fe761004e933c40c0de3863a892376ece"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"d0 PASS: transcript truthful \\u2014 independently reproduced every claim on real npm 12.2.2 (see verified_0 + counter_probes).\\nd1 PASS: script npm>=12 branch (scripts/postinstall-lint-deps.sh:78-96) prints exactly: `npm install-scripts approve --no-allow-scripts-pin better-sqlite3`, `npm rebuild better-sqlite3`, `npm run check:sqlite-binding`; README.md:74-78 prints the same three in the same order. Same sequence I executed successfully.\\nd2 PASS: reachability proven by simulating a broken binding (/tmp/redsim2 with stub better-sqlite3 + stub npm reporting 12.2.2): `bash scripts/postinstall-lint-deps.sh --sqlite-binding-only` printed \\\"Remedy (npm 12.2.2): ... npm install-scripts approve --no-allow-scripts-pin better-sqlite3 ... npm rebuild better-sqlite3 ... npm run check:sqlite-binding\\\" and exited 1. package.json:32 maps check:sqlite-binding -> this script; `npm run check:sqlite-binding` in repo prints \\\"OK: better-sqlite3 native binding loads (SELECT 1 -> {\\\\\\\"x\\\\\\\":1})\\\" exit 0.\\nd3 PASS: `npx vitest run tests/npm12-remedy-doc.test.ts` -> Test Files 1 passed (1), Tests 5 passed (5). Test asserts the 3 command strings in script+README+probe doc, the printed approval JSON vs README vs package.json allowScripts, and README->probe link.\", \"key\": \"verified_derived\"}",
+          "exit_code": 0,
+          "output_sha": "80bf067f1389ac34815da92e38dd8e66a2df12bc93d5285dc7292640b2e6f908"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-019 && cp README.md /tmp/README.bak && sed -i 's/npm install-scripts approve --no-allow-scripts-pin better-sqlite3/npm install-scripts approve better-sqlite3/' README.md && npx vitest run tests/npm12-remedy-doc.test.ts 2>&1 | tail -12; cp /tmp/README.bak README.md; git status --porcelain README.md",
+          "exit_code": 0,
+          "output_sha": "08a2789cd451ed91c8161d0c48405f3efd10fbbaa4c97540fdb43be3a95c16ab"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-DF-SPECLANG-019 && git status --porcelain | head -5; echo \"---\"; npx vitest run tests/npm12-remedy-doc.test.ts 2>&1 | tail -6",
+          "exit_code": 0,
+          "output_sha": "7ea09985a895df650386bcb8ba7b14e3cad7470e0ee8fae93cafdeed746bdc7d"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"d3 extra evidence: mutation check \\u2014 replacing the README command with the pinned form (`npm install-scripts approve better-sqlite3`) makes the parity test fail (Tests 1 failed | 4 passed (5)); README restored, tree clean except pre-existing _index.json. So the guard is failure-sensitive, not vacuous.\\n\\nFINAL: all criteria PASS. Remedy verified end-to-end on real npm 12.2.2 in scratch install (not --dry-run): approve --no-allow-scripts-pin -> rebuild -> binding loads (sqlite_version() -> 3.53.2); committed transcript docs/npm12-allowscripts-probe.md is truthful (independently reproduced incl. counter-probes 5a/5b/5c).\", \"key\": \"final\"}",
+          "exit_code": 0,
+          "output_sha": "c5cc1aa48d36170794d3959bfd70b318da0f6e69c4e3f01b9821b28519790cd9"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "high",
+        "file": "_index.json",
+        "line": 0,
+        "detection": "new spec id `@specs/agents/implementation` replaces the removed `@unknown/index.spec.md` key, but the `file` field still points at `agents.spec.dir/index.spec.md` while the id namespace changed from `@unknown` to `@specs/agents`",
+        "detail": "The entry at the `@specs/agents/implementation` block keeps `\"file\": \"agents.spec.dir/index.spec.md\"` and `\"target\": \"src/agents/\"` but was re-keyed from `@unknown/index.spec.md`, so the id no longer matches the file path it indexes."
+      },
+      {
+        "severity": "medium",
+        "file": "_index.json",
+        "line": 0,
+        "detection": "`@specs/docs/changelog` content_refs were emptied and its reverse-dependency entries (`specs/docs`, `specs/release`) removed, yet the spec still has `target: docs/CHANGELOG.md` and no replacement refs",
+        "detail": "The changelog entry's `content_refs` went from `[\"specs/docs\",\"specs/release\"]` to `[]` and the corresponding `specs/docs`/`specs/release` reverse maps were deleted, leaving the spec with no inbound or outbound references."
+      },
+      {
+        "severity": "medium",
+        "file": "_index.json",
+        "line": 0,
+        "detection": "`@demo/hello-dir` and `@examples/greeting-dir` content_refs were emptied but both ids remain listed in the top-level orphan/unreferenced list",
+        "detail": "`@demo/hello-dir` content_refs changed from `[\"specs/demo\",\"specs/hello\"]` to `[]` and `@examples/greeting-dir` from `[\"specs/examples\"]` to `[]`, while both still appear in the trailing id list (lines adding `@demo/hello-dir` and `@examples/greeting-dir`)."
+      },
+      {
+        "severity": "low",
+        "file": "_index.json",
+        "line": 0,
+        "detection": "`@specs/scripts/nasa-style-check` and `@specs/skills/nasa-spec-style` are new specs with empty `project_level`/`agent_support` while sibling new specs in the same diff set them",
+        "detail": "`@specs/scripts/nasa-style-check` has `\"project_level\": \"\"` and `\"agent_support\": \"\"` whereas other newly-populated entries in this diff (e.g. `@specs/agents/implementation`, `@specs/docs/nasa-se-playbook`) set these fields, showing inconsistent header population."
+      },
+      {
+        "severity": "low",
+        "file": "_index.json",
+        "line": 0,
+        "detection": "`@specs/docs/nasa-se-playbook` and `@specs/scripts/nasa-style-check` form a mutual content_refs cycle (playbook refs style-check, style-check refs playbook)",
+        "detail": "`@specs/docs/nasa-se-playbook` content_refs include `specs/scripts/nasa-style-check` and `@specs/scripts/nasa-style-check` content_refs include `specs/docs/nasa-se-playbook`, a two-node reference cycle."
+      }
+    ],
+    "summary": "The regenerated index is mostly timestamp/ref churn, but it re-keys a spec id without updating its file path, empties several content_refs leaving orphaned entries, and introduces a reference cycle plus inconsistent header fields on new specs."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  01:55:22\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 The remedy printed by scripts/postinstall-lint-deps.sh and documented in README.md is executed end-to-end on npm 12.2.2 (not --dry-run) in a scratch install: npm install-scripts approve --no-allow-scripts-pin better-sqlite3 re-enables the build script and the native binding loads, or the printed command is corrected to the one that does; a committed probe transcript proves it: Independently reproduced the whole probe with the real npm 12.2.2 CLI (/home/kara/.local/share/vite-plus/package_manager/npm/12.2.2/npm/bin/npm-cli.js, `--version` -> 12.2.2, node v22.22.3) in a fresh scratch dir /tmp/npm12-probe-review containing only better-sqlite3 ^12.11.1: (1) `npm install` -> exit 0 with 'npm warn install-scripts 1 package had install scripts blocked because they are not covered by allowScripts: better-sqlite3@12.11.1 (install: prebuild-install || node-gyp rebuild --release)'; `node check-binding.js` -> 'Error: Could not locate the bindings file', exit 1, no build/ dir. (2) `npm install-scripts approve --no-allow-scripts-pin better-sqlite3` -> 'Approved better-sqlite3:\\n  added better-sqlite3', exit 0, package.json gains \"allowScripts\":{\"better-sqlite3\":true} (unpinned); binding still missing right after approve, exactly as docs/npm12-allowscripts-probe.md \u00a72 states. (3) `npm rebuild better-sqlite3` -> 'rebuilt dependencies successfully' exit 0; `node check-binding.js` -> 'sqlite_version() -> 3.53.2' exit 0; `npm install-scripts ls` -> 'No packages with unreviewed install scripts.' No --dry-run anywhere. The committed transcript docs/npm12-allowscripts-probe.md matches this run line-for-line, and its counter-probes also reproduce: 5a (rebuild without approval -> 'npm warn rebuild 1 package had install scripts blocked...' + 'rebuilt dependencies successfully', exit 0, binding still missing, node exit 1), 5b (`install-scripts deny` then `approve` -> 'better-sqlite3 is denied; remove the entry from allowScripts to approve better-sqlite3.' / 'Nothing to approve; allowScripts unchanged.', exit 0), 5c (approve without the flag -> 'added better-sqlite3@12.11.1', package.json \"allowScripts\":{\"better-sqlite3@12.11.1\":true}). Repo gate `npm run check:sqlite-binding` -> 'OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})' exit 0. Remedy text was correctly left unchanged; README.md:74-78 and scripts/postinstall-lint-deps.sh:78-96 carry the same three commands. Test run: `npx vitest run tests/npm12-remedy-doc.test.ts` -> 'Test Files 1 passed (1) / Tests 5 passed (5)'. [resolution 0.03; scripts/postinstall-lint-deps.sh, README.md]\n  \u2713 The committed probe transcript docs/npm12-allowscripts-probe.md is truthful \u2014 its claimed commands and outputs reproduce on the real npm 12.2.2 in this environment (not fabricated): Every claim in docs/npm12-allowscripts-probe.md was re-executed and matched: install warning text, 'Approved better-sqlite3:\\n  added better-sqlite3', the unpinned allowScripts diff, 'rebuilt dependencies successfully', 'sqlite_version() -> 3.53.2', 'No packages with unreviewed install scripts.', plus counter-probes 5a/5b/5c (see criterion 1 detail). The only deviation is the documented one: the transcript uses a one-line check-binding.js instead of inline `node -e`, which the doc explains at the top and which performs the same require + in-memory query.\n  \u2713 The remedy printed by scripts/postinstall-lint-deps.sh (npm>=12 branch) and the README remedy are the same command sequence as the verified one (approve --no-allow-scripts-pin -> rebuild -> check:sqlite-binding), with no drift between printed text and verified text: scripts/postinstall-lint-deps.sh:78-96 prints step 1 `npm install-scripts approve --no-allow-scripts-pin better-sqlite3`, step 2 `npm rebuild better-sqlite3`, step 3 `npm run check:sqlite-binding`; README.md:74-78 prints the identical three commands in the identical order. That is exactly the sequence I executed successfully on npm 12.2.2. The commit diff confirms the remedy steps themselves were not altered (only a trailing Note block was added at scripts/postinstall-lint-deps.sh:88-92).\n  \u2713 The remedy text is reachable from the real entrypoint: the npm>=12 branch of check_sqlite_binding actually prints it when the binding fails, and `npm run check:sqlite-binding` (package.json:32) invokes that script: Reachability proven by simulation: /tmp/redsim2 with a stub node_modules/better-sqlite3 that throws 'Could not locate the bindings file' and a stub npm reporting 12.2.2 \u2014 `bash scripts/postinstall-lint-deps.sh --sqlite-binding-only` printed 'FAIL: better-sqlite3 is installed but its native binding does not load.' then 'Remedy (npm 12.2.2): 1. ... npm install-scripts approve --no-allow-scripts-pin better-sqlite3 ... 2. npm rebuild better-sqlite3 ... 3. npm run check:sqlite-binding' plus the new Note lines, and exited 1. package.json:32 maps \"check:sqlite-binding\" to `bash scripts/postinstall-lint-deps.sh --sqlite-binding-only`, and running it in the repo prints 'OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})' exit 0.\n  \u2713 The new parity test tests/npm12-remedy-doc.test.ts passes and would fail if the script/README/probe command strings drifted apart: `npx vitest run tests/npm12-remedy-doc.test.ts` -> 'Test Files 1 passed (1) / Tests 5 passed (5)'. Failure sensitivity checked by mutation: replacing the README command with the pinned form (`npm install-scripts approve better-sqlite3`) made the suite red \u2014 'Tests 1 failed | 4 passed (5)' \u2014 then README was restored and the suite went green again (git status shows only the pre-existing _index.json modification). The test also cross-checks the printed approval JSON against README.md and the real package.json allowScripts (package.json:35-37).\nThe printed npm>=12 remedy is correct as printed and the committed transcript is truthful: I independently re-ran approve --no-allow-scripts-pin -> rebuild -> binding load on a real npm 12.2.2 in a scratch install (sqlite_version() -> 3.53.2), reproduced all counter-probes, confirmed the npm>=12 branch actually prints that remedy, and the new parity test passes (5/5) and fails on drift. [uncovered failure paths: failure mode 0 (The parity test is a pure text guard: it never executes npm, so a future npm release that changes `install-scripts approve`/`rebuild` semantics would leave the printed remedy stale while the test stays green): detected_by is empty \u2014 uncovered failure path; failure mode 1 (The remedy is only printed when the local npm major is >= 12; on a machine where the failing install was done by npm 12 but the shell now resolves an older npm, the npm<12 branch prints the wrong cause/remedy): detected_by is empty \u2014 uncovered failure path]\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T06:58:38.087170",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T06:58:38.139515+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 19275,
+        "truncated": false,
+        "source": "git show 9a4a04478c2f"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 206160,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DF-SPECLANG-019"
+  }
+}

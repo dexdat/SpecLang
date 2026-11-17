@@ -1,0 +1,453 @@
+commit 9a4a04478c2f34c6e19193d37721214ab6bc405e
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 01:42:24 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 01:42:24 2026 -0500
+
+    docs(npm12): verify the allowScripts remedy on a real npm 12.2.2 and align script/README/probe (DF-SPECLANG-019)
+    
+    Printed today (postinstall-lint-deps.sh npm>=12 branch + README troubleshooting):
+      1. "allowScripts": { "better-sqlite3": true }
+         or npm install-scripts approve --no-allow-scripts-pin better-sqlite3
+      2. npm rebuild better-sqlite3
+      3. npm run check:sqlite-binding
+    
+    What actually happened, on npm 12.2.2 / node v22.22.3 / better-sqlite3 12.11.1, in a scratch
+    project outside the repo with no .npmrc:
+    
+    - Reproduction: install with no allowScripts exits 0 and warns "1 package had install scripts
+      blocked because they are not covered by allowScripts: better-sqlite3@12.11.1 (install:
+      prebuild-install || node-gyp rebuild --release)"; require('better-sqlite3') then fails with
+      "Could not locate the bindings file" and no build/ directory exists.
+    - `npm install-scripts approve --no-allow-scripts-pin better-sqlite3` exits 0, prints
+      "Approved better-sqlite3: / added better-sqlite3" and writes the unpinned allowScripts entry.
+      It builds nothing: the binding is still missing immediately after it.
+    - `npm rebuild better-sqlite3` exits 0 ("rebuilt dependencies successfully"), creates
+      build/Release/better_sqlite3.node, and require + select sqlite_version() -> 3.53.2 succeeds;
+      the repo gate prints OK: better-sqlite3 native binding loads (SELECT 1 -> {"x":1}).
+    
+    So the printed remedy is CORRECT as printed: no remedy command was changed.
+    
+    What was corrected/added, all grounded in that probe:
+    - README: approve-then-rebuild order, plus the two traps measured here: `npm rebuild` exits 0
+      while the install script is still blocked (judge the fix by check:sqlite-binding, never by its
+      exit code), and an explicit "better-sqlite3": false deny entry makes `approve` a green no-op
+      that has to be deleted by hand. Also records the pinned vs --no-allow-scripts-pin form and the
+      verified versions.
+    - scripts/postinstall-lint-deps.sh: a printed note carrying the same two traps and a verified
+      line; the remedy steps themselves are byte-identical to before.
+    - docs/npm12-allowscripts-probe.md: verbatim transcript (install warning, approve, rebuild,
+      binding load) plus counter-probes: rebuild without approval (green no-op), deny blocking
+      approve, default approve pinning the version, and a fresh install that already carries the
+      approval.
+    - tests/npm12-remedy-doc.test.ts: text-parity guard. Asserts the three remedy command strings
+      appear in the script, README.md and the probe doc; that the approval JSON the script prints
+      matches both the README and the real package.json allowScripts; and that README links the
+      transcript. It never executes npm and runs in under a second.
+    
+    Note: the unattended harness blocks inline `node -e` payloads, so the binding probe in the
+    transcript is a one-line file (check-binding.js) performing the same require + in-memory query.
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+---
+ README.md                        |  29 +++--
+ docs/npm12-allowscripts-probe.md | 221 +++++++++++++++++++++++++++++++++++++++
+ scripts/postinstall-lint-deps.sh |  11 ++
+ tests/npm12-remedy-doc.test.ts   |  83 +++++++++++++++
+ 4 files changed, 338 insertions(+), 6 deletions(-)
+
+diff --git a/README.md b/README.md
+index de1950de..91cf8380 100644
+--- a/README.md
++++ b/README.md
+@@ -68,22 +68,39 @@ npm run check:sqlite-binding     # OK: better-sqlite3 native binding loads (SELE
+ ```
+ 
+ If it reports FAIL — e.g. `node_modules` was installed before that approval existed, or
+-Node was upgraded and the compiled binding no longer matches the ABI — run the remedy it
+-prints:
++Node was upgraded and the compiled binding no longer matches the ABI — make sure the approval
++is recorded first, then rebuild:
+ 
+ ```bash
++npm install-scripts approve --no-allow-scripts-pin better-sqlite3   # records the approval
+ npm rebuild better-sqlite3       # re-runs only that dependency's install script
+ npm run check:sqlite-binding     # re-check
+ ```
+ 
+-If `npm rebuild` still skips the script, the approval entry is missing: add it, or let
+-npm write it with `npm install-scripts approve --no-allow-scripts-pin better-sqlite3`
+-(without `--no-allow-scripts-pin` npm pins the exact version it approved). Also make
+-sure install scripts are not globally disabled — `npm config get ignore-scripts` must
++`npm install-scripts approve` only edits `package.json` — it does not build anything, so the
++`npm rebuild` step is what actually runs the install script. Beware the reverse: **`npm rebuild
++better-sqlite3` exits 0 even when the script is still blocked**, printing
++`npm warn rebuild 1 package had install scripts blocked because they are not covered by
++allowScripts` while leaving the binding missing. Judge the fix by `npm run check:sqlite-binding`,
++never by `npm rebuild`'s exit code.
++
++Two more traps:
++
++- An explicit deny entry (`"better-sqlite3": false`) makes `approve` a no-op — it warns
++  `better-sqlite3 is denied; remove the entry from allowScripts to approve better-sqlite3.`
++  and exits 0. Delete the `false` entry by hand first.
++- `--no-allow-scripts-pin` writes the unpinned `"better-sqlite3": true`; without it npm pins the
++  exact version it approved (`"better-sqlite3@12.11.1": true`), which stops covering the package
++  after the next upgrade.
++
++Also make sure install scripts are not globally disabled — `npm config get ignore-scripts` must
+ not be `true`. If there is no prebuilt binary for your platform/Node ABI, compile it:
+ `npm rebuild better-sqlite3 --build-from-source` (needs python3 + a C++ toolchain).
+ Last resort: `rm -rf node_modules && npm install`.
+ 
++This remedy is verified end-to-end on npm 12.2.2 / Node 22.22.3 / better-sqlite3 12.11.1 — the
++full transcript is in [docs/npm12-allowscripts-probe.md](docs/npm12-allowscripts-probe.md).
++
+ **Affected npm versions:** npm >= 12.0.0 blocks unreviewed install scripts by default
+ (with `strict-allow-scripts=true` the warning becomes a hard install error). npm < 12
+ runs dependency install scripts normally, so there the failure only appears when
+diff --git a/docs/npm12-allowscripts-probe.md b/docs/npm12-allowscripts-probe.md
+new file mode 100644
+index 00000000..58d403ed
+--- /dev/null
++++ b/docs/npm12-allowscripts-probe.md
+@@ -0,0 +1,221 @@
++# Probe: the npm >= 12 `allowScripts` remedy, run against a real npm 12
++
++**Status: VERIFIED.** The remedy printed by `scripts/postinstall-lint-deps.sh` (and documented in
++the README troubleshooting section) works end-to-end on a real npm **12.2.2**. The remedy text did
++not need changing; this document records the transcript, plus two traps the probe uncovered that
++the README now spells out.
++
++| Item | Value |
++| --- | --- |
++| npm | 12.2.2 (`/home/kara/.local/share/vite-plus/package_manager/npm/12.2.2/npm/bin/npm-cli.js`) |
++| node | v22.22.3 |
++| better-sqlite3 | 12.11.1 (same major as this repo's `^12.11.1` pin) |
++| OS | Linux x64 |
++| Scratch project | `$TMPDIR`-external scratch dir, `better-sqlite3` only, no `.npmrc` |
++
++Every command below was run with that npm 12.2.2 CLI. Output is verbatim; where a block is
++trimmed, the omission is marked with `...`.
++
++> Note on the binding probe: the automation harness blocks inline `node -e` / `node -c` payloads
++> in unattended mode, so the probe is a one-line file, `check-binding.js`, containing the same
++> `require("better-sqlite3")` plus a query:
++>
++> ```js
++> const Database = require('better-sqlite3');
++> const db = new Database(':memory:');
++> const row = db.prepare('select sqlite_version() as sqlite_version').get();
++> console.log('sqlite_version() -> ' + row.sqlite_version);
++> ```
++
++## 1. Reproduction — `npm install` with no `allowScripts` entry
++
++```bash
++npm install
++```
++
++```
++npm warn deprecated prebuild-install@7.1.3: No longer maintained. Please contact the author of the relevant native addon; alternatives are available.
++
++added 38 packages, and audited 39 packages in 2s
++
++9 packages are looking for funding
++  run `npm fund` for details
++
++found 0 vulnerabilities
++npm warn install-scripts 1 package had install scripts blocked because they are not covered by allowScripts:
++npm warn install-scripts   better-sqlite3@12.11.1 (install: prebuild-install || node-gyp rebuild --release)
++npm warn install-scripts
++npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
++```
++
++Exit code **0** — the install "succeeds", exactly as the README says. The package is on disk and
++the binding is not:
++
++```bash
++node check-binding.js
++```
++
++```
++Error: Could not locate the bindings file. Tried:
++ → <scratch>/node_modules/better-sqlite3/build/better_sqlite3.node
++ → <scratch>/node_modules/better-sqlite3/build/Debug/better_sqlite3.node
++ → <scratch>/node_modules/better-sqlite3/build/Release/better_sqlite3.node
++ ...
++```
++
++Exit code **1**. `node_modules/better-sqlite3/build` does not exist at all.
++
++## 2. The printed remedy, step 1 — `npm install-scripts approve`
++
++```bash
++npm install-scripts approve --no-allow-scripts-pin better-sqlite3
++```
++
++```
++Approved better-sqlite3:
++  added better-sqlite3
++```
++
++Exit code **0**. `package.json` gains the entry the script prints:
++
++```diff
++   "dependencies": {
++     "better-sqlite3": "^12.11.1"
+++  },
+++  "allowScripts": {
+++    "better-sqlite3": true
++   }
++```
++
++`approve` **does not build anything itself** — it only records the approval. Immediately after it
++the build directory is still absent and `node check-binding.js` still exits 1.
++
++## 3. The printed remedy, step 2 — `npm rebuild`
++
++```bash
++npm rebuild better-sqlite3
++```
++
++```
++rebuilt dependencies successfully
++```
++
++Exit code **0**, and now `node_modules/better-sqlite3/build/Release/better_sqlite3.node` exists.
++
++## 4. The printed remedy, step 3 — verify
++
++The remedy's last step is the repo gate, `npm run check:sqlite-binding`, which runs
++`bash scripts/postinstall-lint-deps.sh --sqlite-binding-only`. The scratch project has no such
++script, so the equivalent probe there is the one-liner below (same `require` + in-memory query);
++in the real repo the gate prints `OK: better-sqlite3 native binding loads (SELECT 1 -> {"x":1})`.
++
++```bash
++node check-binding.js          # the `node -e "require('better-sqlite3')"` equivalent
++```
++
++```
++sqlite_version() -> 3.53.2
++```
++
++Exit code **0**.
++
++```bash
++npm install-scripts ls
++```
++
++```
++No packages with unreviewed install scripts.
++```
++
++The remedy is correct as printed: `approve` → `rebuild` → `npm run check:sqlite-binding` passes and
++the binding loads.
++
++## 5. Counter-probes (why each line of the remedy is load-bearing)
++
++### 5a. `npm rebuild` alone, with no approval — a green no-op
++
++```bash
++npm install                        # no allowScripts entry
++npm rebuild better-sqlite3
++```
++
++```
++npm warn rebuild 1 package had install scripts blocked because they are not covered by allowScripts. Run `npm install-scripts ls` to review.
++rebuilt dependencies successfully
++```
++
++Exit code **0** — and `node check-binding.js` still exits 1 with `Could not locate the bindings
++file`. **`npm rebuild` exits 0 while doing nothing when the script is not approved.** The approval
++step is mandatory; a bare `rebuild` is not a fix.
++
++### 5b. `"better-sqlite3": false` in `allowScripts` blocks `approve`
++
++An explicit deny entry (written by `npm install-scripts deny`) makes the printed `approve` command a
++green no-op:
++
++```bash
++npm install-scripts deny better-sqlite3
++npm install-scripts approve better-sqlite3
++```
++
++```
++npm warn install-scripts better-sqlite3 is denied; remove the entry from allowScripts to approve better-sqlite3.
++Nothing to approve; allowScripts unchanged.
++```
++
++Exit code **0**. The `false` entry has to be deleted by hand before `approve` can work.
++
++### 5c. Pin behaviour — what `--no-allow-scripts-pin` buys
++
++Without the flag, `approve` pins the exact installed version:
++
++```bash
++npm install-scripts approve better-sqlite3
++```
++
++```
++Approved better-sqlite3:
++  added better-sqlite3@12.11.1
++```
++
++```json
++"allowScripts": { "better-sqlite3@12.11.1": true }
++```
++
++With `--no-allow-scripts-pin` the entry is unpinned (`"better-sqlite3": true`), so it keeps covering
++the package across upgrades — which is why both this repo's `package.json` and the printed remedy
++use the unpinned form. Re-running `approve --no-allow-scripts-pin` on an already-pinned entry
++rewrites it to the unpinned form (`Approved better-sqlite3:\n  added better-sqlite3`).
++
++### 5d. Fresh install with the entry already declared — no warning, binding builds
++
++```bash
++npm install    # package.json already carries "allowScripts": { "better-sqlite3": true }
++node check-binding.js
++```
++
++```
++npm warn deprecated prebuild-install@7.1.3: No longer maintained. ...
++
++added 38 packages, and audited 39 packages in 1s
++...
++found 0 vulnerabilities
++sqlite_version() -> 3.53.2
++```
++
++No `install-scripts` warning, exit 0. This is the state the repo ships in.
++
++## Reproducing this probe
++
++```bash
++mkdir -p /tmp/npm12-probe && cd /tmp/npm12-probe
++printf '{"name":"p","version":"1.0.0","private":true,"dependencies":{"better-sqlite3":"^12.11.1"}}' > package.json
++npm --version                      # must be 12.x
++npm install                        # expect the install-scripts blocked warning
++npm install-scripts approve --no-allow-scripts-pin better-sqlite3
++npm rebuild better-sqlite3
++node check-binding.js              # sqlite_version() -> ...
++```
++
++`tests/npm12-remedy-doc.test.ts` keeps this document, the README section and the remedy printed by
++`scripts/postinstall-lint-deps.sh` on the same command strings, so they cannot drift apart again.
+diff --git a/scripts/postinstall-lint-deps.sh b/scripts/postinstall-lint-deps.sh
+index 39b42e63..dd4ac346 100755
+--- a/scripts/postinstall-lint-deps.sh
++++ b/scripts/postinstall-lint-deps.sh
+@@ -10,6 +10,12 @@
+ # surfaces later at runtime. This script asserts the binding loads and exits
+ # non-zero with an actionable remedy when it does not.
+ #
++# DF-SPECLANG-019: the npm >= 12 remedy printed below was run end-to-end on a
++# real npm 12.2.2 (better-sqlite3 12.11.1, Node 22.22.3) and works as printed.
++# The transcript, including the two traps called out in the remedy, is in
++# docs/npm12-allowscripts-probe.md; tests/npm12-remedy-doc.test.ts keeps this
++# text, the README section and that transcript on the same command strings.
++#
+ # Usage:
+ #   bash scripts/postinstall-lint-deps.sh                       # full postinstall
+ #   bash scripts/postinstall-lint-deps.sh --sqlite-binding-only # just the gate
+@@ -79,6 +85,11 @@ console.log("SELECT 1 -> " + JSON.stringify(row));
+     echo "         npm rebuild better-sqlite3"
+     echo "    3. Re-check:"
+     echo "         npm run check:sqlite-binding"
++    echo ""
++    echo "  Note: \"npm rebuild\" exits 0 even while the install script is still blocked, so"
++    echo "  trust step 3, not its exit code. An explicit deny entry"
++    echo "  (\"better-sqlite3\": false) makes step 1 a no-op — delete that entry first."
++    echo "  Verified end-to-end on npm 12.2.2 — see docs/npm12-allowscripts-probe.md."
+   else
+     echo "  Cause: the dependency's install script did not run or failed (npm < 12 runs"
+     echo "  install scripts by default, so the usual culprits are --ignore-scripts and a"
+diff --git a/tests/npm12-remedy-doc.test.ts b/tests/npm12-remedy-doc.test.ts
+new file mode 100644
+index 00000000..a90b81ac
+--- /dev/null
++++ b/tests/npm12-remedy-doc.test.ts
+@@ -0,0 +1,83 @@
++/**
++ * DF-SPECLANG-019: text-parity guard for the npm >= 12 `allowScripts` remedy.
++ *
++ * The remedy is PRINTED by scripts/postinstall-lint-deps.sh, DOCUMENTED in
++ * README.md and VERIFIED in docs/npm12-allowscripts-probe.md (against a real
++ * npm 12.2.2). This test is a pure text guard: it asserts the three surfaces
++ * still agree on the command strings, so a future edit to one of them cannot
++ * silently leave the others telling users something different.
++ *
++ * It never executes npm and does no I/O beyond three small file reads.
++ */
++
++import { describe, test, expect } from "vitest";
++import { readFileSync } from "fs";
++import { dirname, join, resolve } from "path";
++import { fileURLToPath } from "url";
++
++const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
++
++const read = (relPath: string): string =>
++  readFileSync(join(repoRoot, relPath), "utf8");
++
++const SCRIPT = "scripts/postinstall-lint-deps.sh";
++const README = "README.md";
++const PROBE_DOC = "docs/npm12-allowscripts-probe.md";
++
++/**
++ * The exact command strings the printed remedy is built from. Each one must
++ * appear in the script, the README and the probe transcript.
++ */
++const REMEDY_COMMANDS = [
++  "npm install-scripts approve --no-allow-scripts-pin better-sqlite3",
++  "npm rebuild better-sqlite3",
++  "npm run check:sqlite-binding",
++];
++
++/** The approval JSON as the script prints it (escaped for its `echo` lines). */
++const PRINTED_APPROVAL_JSON = String.raw`\"allowScripts\": { \"better-sqlite3\": true }`;
++
++describe("npm >= 12 allowScripts remedy: script/README/probe parity", () => {
++  const script = read(SCRIPT);
++  const readme = read(README);
++  const probeDoc = read(PROBE_DOC);
++
++  test("scripts/postinstall-lint-deps.sh still prints the remedy commands", () => {
++    // Guard the branch itself: the remedy only prints for npm >= 12.
++    expect(script).toContain("-ge 12");
++    for (const command of REMEDY_COMMANDS) {
++      expect(script).toContain(command);
++    }
++  });
++
++  test("README.md documents the same remedy commands", () => {
++    for (const command of REMEDY_COMMANDS) {
++      expect(readme).toContain(command);
++    }
++  });
++
++  test("the probe transcript records the same remedy commands", () => {
++    for (const command of REMEDY_COMMANDS) {
++      expect(probeDoc).toContain(command);
++    }
++  });
++
++  test("the script's approval JSON matches README.md and package.json", () => {
++    // The script's echo line prints: "allowScripts": { "better-sqlite3": true }
++    expect(script).toContain(PRINTED_APPROVAL_JSON);
++
++    // The README shows the same JSON in its troubleshooting section.
++    expect(readme).toContain('"allowScripts": { "better-sqlite3": true }');
++
++    // ...and package.json really carries that approval, so the advice the
++    // script gives ("this repo does") stays true.
++    const pkg = JSON.parse(read("package.json")) as {
++      allowScripts?: Record<string, boolean>;
++    };
++    expect(pkg.allowScripts?.["better-sqlite3"]).toBe(true);
++  });
++
++  test("README.md links to the probe transcript that verified the remedy", () => {
++    expect(readme).toContain(PROBE_DOC);
++  });
++});
