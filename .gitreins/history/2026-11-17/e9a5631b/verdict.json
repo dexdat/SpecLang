@@ -1,0 +1,363 @@
+{
+  "task_id": "QA-SPECLANG-006",
+  "task_title": "Restore npm run lint on TypeScript 7",
+  "task_criteria": [
+    "npm run lint exits 0 on a clean tree; introducing a deliberate lint violation (unused const) makes it exit non-zero; npm run build still exits 0"
+  ],
+  "passed": false,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "652dda73ba365fb04cbc4c06123a35124e159158",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "be5d4e29b47adec957f092f8c0be79799d6bf62a73d8de87dbc0aa00f494a344",
+  "working_tree_dirty_path_count": 7,
+  "items": [
+    {
+      "criterion": "npm run lint exits 0 on a clean tree; introducing a deliberate lint violation (unused const) makes it exit non-zero; npm run build still exits 0",
+      "status": "FAIL",
+      "detail": "Two of the three legs hold, the middle one does not. (a) Clean tree: `npm run lint` -> EXIT=0, \"3 problems (0 errors, 3 warnings)\" (only unused-eslint-disable warnings in src/ralph-loop/controller.ts:5,9 and src/ralph-loop/types.ts:11). (b) `npm run build` -> EXIT=0 (`tsc`, TS 7.0.2). (c) Deliberate unused const: created src/__lint_probe.ts with `export function probeFn(): number { const unusedProbeConst = 42; return 1; }` and ran `npm run lint` -> EXIT=0, the probe file is not even mentioned in the output. Root cause is the config, not the shim: eslint.config.mjs:34 sets \"@typescript-eslint/no-unused-vars\": \"off\" and eslint.config.mjs:35 sets core \"no-unused-vars\": \"off\". The commit message of 9d7b0ce6 concedes this: \"the probe literally quoted in the brief (`const __lintProbe = 1;` alone) does NOT trip this config: the config deliberately turns off @typescript-eslint/no-unused-vars\". Controls proving the gate itself is live and the shim works: same file with `var x` -> `npm run lint` EXIT=1, \"2:3 error Unexpected var, use let or const instead no-var\"; unused const plus a bare expression statement -> EXIT=1, \"3:3 error Expected an assignment or function call and instead saw an expression @typescript-eslint/no-unused-expressions\"; and the same unused-const file linted with a temporary config that enables @typescript-eslint/no-unused-vars -> EXIT=1, \"2:9 error 'unusedProbeConst' is assigned a value but never used @typescript-eslint/no-unused-vars\". So the TS6 resolution shim (scripts/lint/ts6-resolution.cjs, wired via NODE_OPTIONS in package.json:26) genuinely restores ESLint under TS 7 \u2014 without it `npx eslint` exits 2 with \"typescript-eslint does not support TS 7.0\" \u2014 but the acceptance test the task names (unused const must fail the gate) is not satisfied. Probe files were removed; `git status --short src/` is clean."
+    }
+  ],
+  "merge_recommendation": "changes_required",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  00:45:03",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T040908.008673Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T040908.008673Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  00:45:03\n   Duration  75.17s (transform 11.72s, setup 1.32s, import 14.97s, tests 301.94s, environment 10ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T040908.008673Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": false,
+      "any_failed": true,
+      "summary": "INCOMPLETE\n  \u2717 npm run lint exits 0 on a clean tree; introducing a deliberate lint violation (unused const) makes it exit non-zero; npm run build still exits 0: Two of the three legs hold, the middle one does not. (a) Clean tree: `npm run lint` -> EXIT=0, \"3 problems (0 errors, 3 warnings)\" (only unused-eslint-disable warnings in src/ralph-loop/controller.ts:5,9 and src/ralph-loop/types.ts:11). (b) `npm run build` -> EXIT=0 (`tsc`, TS 7.0.2). (c) Deliberate unused const: created src/__lint_probe.ts with `export function probeFn(): number { const unusedProbeConst = 42; return 1; }` and ran `npm run lint` -> EXIT=0, the probe file is not even mentioned in the output. Root cause is the config, not the shim: eslint.config.mjs:34 sets \"@typescript-eslint/no-unused-vars\": \"off\" and eslint.config.mjs:35 sets core \"no-unused-vars\": \"off\". The commit message of 9d7b0ce6 concedes this: \"the probe literally quoted in the brief (`const __lintProbe = 1;` alone) does NOT trip this config: the config deliberately turns off @typescript-eslint/no-unused-vars\". Controls proving the gate itself is live and the shim works: same file with `var x` -> `npm run lint` EXIT=1, \"2:3 error Unexpected var, use let or const instead no-var\"; unused const plus a bare expression statement -> EXIT=1, \"3:3 error Expected an assignment or function call and instead saw an expression @typescript-eslint/no-unused-expressions\"; and the same unused-const file linted with a temporary config that enables @typescript-eslint/no-unused-vars -> EXIT=1, \"2:9 error 'unusedProbeConst' is assigned a value but never used @typescript-eslint/no-unused-vars\". So the TS6 resolution shim (scripts/lint/ts6-resolution.cjs, wired via NODE_OPTIONS in package.json:26) genuinely restores ESLint under TS 7 \u2014 without it `npx eslint` exits 2 with \"typescript-eslint does not support TS 7.0\" \u2014 but the acceptance test the task names (unused const must fail the gate) is not satisfied. Probe files were removed; `git status --short src/` is clean.\n  \u2717 Coverage FAILED \u2014 not passing: npm run lint exits 0 on a clean tree; introducing a deliberate lint violation (unused const) makes it exit non-zero; npm run build still exits 0\nThe TS 7 lint breakage is genuinely fixed (shim works, lint exits 0, build exits 0), but the task's own acceptance test fails: an unused const does not make `npm run lint` exit non-zero because eslint.config.mjs turns both no-unused-vars rules off. [uncovered failure paths: failure mode 1 (The lint gate can be silently dead again on a machine where the typescript-eslint-ts alias is missing; the shim exits 1 with a message but nothing in CI asserts the gate actually lints files): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": false,
+          "output": "INCOMPLETE\n  \u2717 npm run lint exits 0 on a clean tree; introducing a deliberate lint violation (unused const) makes it exit non-zero; npm run build still exits 0: Two of the three legs hold, the middle one does not. (a) Clean tree: `npm run lint` -> EXIT=0, \"3 problems (0 errors, 3 warnings)\" (only unused-eslint-disable warnings in src/ralph-loop/controller.ts:5,9 and src/ralph-loop/types.ts:11). (b) `npm run build` -> EXIT=0 (`tsc`, TS 7.0.2). (c) Deliberate unused const: created src/__lint_probe.ts with `export function probeFn(): number { const unusedProbeConst = 42; return 1; }` and ran `npm run lint` -> EXIT=0, the probe file is not even mentioned in the output. Root cause is the config, not the shim: eslint.config.mjs:34 sets \"@typescript-eslint/no-unused-vars\": \"off\" and eslint.config.mjs:35 sets core \"no-unused-vars\": \"off\". The commit message of 9d7b0ce6 concedes this: \"the probe literally quoted in the brief (`const __lintProbe = 1;` alone) does NOT trip this config: the config deliberately turns off @typescript-eslint/no-unused-vars\". Controls proving the gate itself is live and the shim works: same file with `var x` -> `npm run lint` EXIT=1, \"2:3 error Unexpected var, use let or const instead no-var\"; unused const plus a bare expression statement -> EXIT=1, \"3:3 error Expected an assignment or function call and instead saw an expression @typescript-eslint/no-unused-expressions\"; and the same unused-const file linted with a temporary config that enables @typescript-eslint/no-unused-vars -> EXIT=1, \"2:9 error 'unusedProbeConst' is assigned a value but never used @typescript-eslint/no-unused-vars\". So the TS6 resolution shim (scripts/lint/ts6-resolution.cjs, wired via NODE_OPTIONS in package.json:26) genuinely restores ESLint under TS 7 \u2014 without it `npx eslint` exits 2 with \"typescript-eslint does not support TS 7.0\" \u2014 but the acceptance test the task names (unused const must fail the gate) is not satisfied. Probe files were removed; `git status --short src/` is clean.\n  \u2717 Coverage FAILED \u2014 not passing: npm run lint exits 0 on a clean tree; introducing a deliberate lint violation (unused const) makes it exit non-zero; npm run build still exits 0\nThe TS 7 lint breakage is genuinely fixed (shim works, lint exits 0, build exits 0), but the task's own acceptance test fails: an unused const does not make `npm run lint` exit non-zero because eslint.config.mjs turns both no-unused-vars rules off. [uncovered failure paths: failure mode 1 (The lint gate can be silently dead again on a machine where the typescript-eslint-ts alias is missing; the shim exits 1 with a message but nothing in CI asserts the gate actually lints files): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "INCOMPLETE",
+            "items": [
+              {
+                "criterion": "npm run lint exits 0 on a clean tree; introducing a deliberate lint violation (unused const) makes it exit non-zero; npm run build still exits 0",
+                "status": "FAIL",
+                "detail": "Two of the three legs hold, the middle one does not. (a) Clean tree: `npm run lint` -> EXIT=0, \"3 problems (0 errors, 3 warnings)\" (only unused-eslint-disable warnings in src/ralph-loop/controller.ts:5,9 and src/ralph-loop/types.ts:11). (b) `npm run build` -> EXIT=0 (`tsc`, TS 7.0.2). (c) Deliberate unused const: created src/__lint_probe.ts with `export function probeFn(): number { const unusedProbeConst = 42; return 1; }` and ran `npm run lint` -> EXIT=0, the probe file is not even mentioned in the output. Root cause is the config, not the shim: eslint.config.mjs:34 sets \"@typescript-eslint/no-unused-vars\": \"off\" and eslint.config.mjs:35 sets core \"no-unused-vars\": \"off\". The commit message of 9d7b0ce6 concedes this: \"the probe literally quoted in the brief (`const __lintProbe = 1;` alone) does NOT trip this config: the config deliberately turns off @typescript-eslint/no-unused-vars\". Controls proving the gate itself is live and the shim works: same file with `var x` -> `npm run lint` EXIT=1, \"2:3 error Unexpected var, use let or const instead no-var\"; unused const plus a bare expression statement -> EXIT=1, \"3:3 error Expected an assignment or function call and instead saw an expression @typescript-eslint/no-unused-expressions\"; and the same unused-const file linted with a temporary config that enables @typescript-eslint/no-unused-vars -> EXIT=1, \"2:9 error 'unusedProbeConst' is assigned a value but never used @typescript-eslint/no-unused-vars\". So the TS6 resolution shim (scripts/lint/ts6-resolution.cjs, wired via NODE_OPTIONS in package.json:26) genuinely restores ESLint under TS 7 \u2014 without it `npx eslint` exits 2 with \"typescript-eslint does not support TS 7.0\" \u2014 but the acceptance test the task names (unused const must fail the gate) is not satisfied. Probe files were removed; `git status --short src/` is clean.",
+                "resolution_probability": 0.04
+              }
+            ],
+            "summary": "The TS 7 lint breakage is genuinely fixed (shim works, lint exits 0, build exits 0), but the task's own acceptance test fails: an unused const does not make `npm run lint` exit non-zero because eslint.config.mjs turns both no-unused-vars rules off. [uncovered failure paths: failure mode 1 (The lint gate can be silently dead again on a machine where the typescript-eslint-ts alias is missing; the shim exits 1 with a message but nothing in CI asserts the gate actually lints files): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"QA-SPECLANG-006\"}",
+          "exit_code": 0,
+          "output_sha": "3bbefacd07d84eebbee477422a3b93fa9ad125acba7db033eca1437fc82a3193"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /repo 2>/dev/null || cd .; pwd; git log --oneline -5; git status --short",
+          "exit_code": 0,
+          "output_sha": "b87b121d06513519f4258ff84a98c9572092b01c0dbd25dcc59c9f8ff868752a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; git show --stat HEAD; echo ---; git show HEAD -- package.json",
+          "exit_code": 0,
+          "output_sha": "1bac7314c3219f7dc56eb54b21bba7305b7f94a67c2af8bac7869f5245a4cc3a"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"package.json\"}",
+          "exit_code": 0,
+          "output_sha": "7d3c13140ec6b6e8792037f461cd66ed83a19be7cf82e47049288ee49864b0c6"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"scripts/lint/ts6-resolution.cjs\"}",
+          "exit_code": 0,
+          "output_sha": "6c9da29dcaf009f411bf672305c8a02d51a66de66a00b0e687abc3ba446f791c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; ls node_modules/typescript/package.json node_modules/typescript-eslint-ts/package.json 2>&1; node -e \"console.log(require('./node_modules/typescript/package.json').version)\"; node -e \"console.log(require('./node_modules/typescript-eslint-ts/package.json').version)\" 2>&1; ls eslint.config.* 2>&1",
+          "exit_code": 0,
+          "output_sha": "299090330fb010319ba97675ae65ac1ca5b00d771f2ce18d234a5c380593b338"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"eslint.config.mjs\"}",
+          "exit_code": 0,
+          "output_sha": "90391d33e60515090f332ce8c7252ec69f1bedb4dc5e3093286211a520e0d6fc"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; timeout 900 npm run lint 2>&1 | tail -40; echo \"EXIT_PIPE=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "223e17301fad989d65a65430281bdbffa6427d5f45f1e4e017cb4ecf4f4001fa"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; timeout 900 npm run lint > /tmp/lint1.log 2>&1; echo \"EXIT=$?\"; tail -20 /tmp/lint1.log",
+          "exit_code": 0,
+          "output_sha": "4d53df1bc2d3db5fda1e3ac74ff27966768eabd0e983b50a05c04e722351d0b0"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"npm run lint on clean tree: EXIT=0, 3 warnings 0 errors (src/ralph-loop/controller.ts, types.ts unused eslint-disable directives). Shim loads fine.\", \"key\": \"lint_clean\"}",
+          "exit_code": 0,
+          "output_sha": "8748dadfdc8e5cfa371fd7d3ea4ed074fc2a23bba68e9d3110e0bd4ab3ec5af4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; ls src | head -30; echo ---; cat > src/__lint_probe.ts <<'EOF'\nconst unusedProbeConst = 42;\nexport const usedProbe = 1;\nEOF\ntimeout 900 npm run lint > /tmp/lint2.log 2>&1; echo \"EXIT=$?\"; tail -25 /tmp/lint2.log",
+          "exit_code": 0,
+          "output_sha": "ac46d51a2d1b37ae7ad9cca2f94fe5384c5973cf09e8bb152f55dc2a2d1a3d04"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; rm -f src/__lint_probe.ts; cat > src/__lint_probe.ts <<'EOF'\nexport function probeFn(): number {\n  const unusedProbeConst = 42;\n  return 1;\n}\nEOF\ntimeout 900 npm run lint > /tmp/lint3.log 2>&1; echo \"EXIT=$?\"; tail -25 /tmp/lint3.log",
+          "exit_code": 0,
+          "output_sha": "83628baf8d5399ded0ca4bcb4077745c6163e3de9740b01026375f0ee60bdcd7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; rm -f src/__lint_probe.ts; cat > src/__lint_probe.ts <<'EOF'\nexport function probeFn(): number {\n  debugger;\n  return 1;\n}\nEOF\ntimeout 900 npm run lint > /tmp/lint4.log 2>&1; echo \"EXIT=$?\"; tail -25 /tmp/lint4.log",
+          "exit_code": 0,
+          "output_sha": "25c3db2dba92eae00439fbd9fa4147cf564a5b2ca4c234c1726c82e82221d255"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; rm -f src/__lint_probe.ts; cat > src/__lint_probe.ts <<'EOF'\nexport function probeFn(): number {\n  debugger;\n  return 1;\n}\nEOF\nNODE_OPTIONS=\"--require ./scripts/lint/ts6-resolution.cjs\" npx eslint src/__lint_probe.ts > /tmp/lint5.log 2>&1; echo \"EXIT=$?\"; cat /tmp/lint5.log; echo \"=== without shim ===\"; npx eslint src/__lint_probe.ts > /tmp/lint6.log 2>&1; echo \"EXIT=$?\"; tail -20 /tmp/lint6.log",
+          "exit_code": 0,
+          "output_sha": "59803ba5dcb3f881c38799c7de8ed8570c6253884e48c6f864a8570ca27cc8cb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; NODE_OPTIONS=\"--require ./scripts/lint/ts6-resolution.cjs\" npx eslint --debug src/__lint_probe.ts 2>&1 | grep -iE \"eslint.config|config file|Lint |ignored|no config\" | head -30",
+          "exit_code": 0,
+          "output_sha": "73230a0544909f7c0e11a8a87ad2b1860fb358de6a1472aa6ec854f68c7e706f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; NODE_OPTIONS=\"--require ./scripts/lint/ts6-resolution.cjs\" npx eslint --debug src/__lint_probe.ts 2>&1 | grep -iE \"parser|typescript-eslint|Lint result|problems|error\" | head -40",
+          "exit_code": 0,
+          "output_sha": "da672fc687e3dfd2789930c172c84d6ffaffd51beb5aa422639e381b40b7494d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; NODE_OPTIONS=\"--require ./scripts/lint/ts6-resolution.cjs\" npx eslint --debug src/__lint_probe.ts 2>&1 | tail -40",
+          "exit_code": 0,
+          "output_sha": "6685c17c50acd15110039e81273d6254abcb05dc78ce26088ff1f1debeb9600e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; NODE_OPTIONS=\"--require ./scripts/lint/ts6-resolution.cjs\" npx eslint --debug src/__lint_probe.ts 2>&1 | grep -iE \"parser|languageOptions|typescript\" | head -30",
+          "exit_code": 0,
+          "output_sha": "4dcae2c41d7c09bc1eef037719c323da84467b1186ab5ec5efab45f5e54816e4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; node -e \"\nconst tseslint = require('typescript-eslint');\nconst cfg = tseslint.configs.recommended;\nconsole.log('configs.recommended length', cfg.length);\nfor (const c of cfg) console.log(JSON.stringify({name:c.name, files:c.files, languageOptions: c.languageOptions && Object.keys(c.languageOptions), parser: c.languageOptions && c.languageOptions.parser && (c.languageOptions.parser.meta && c.languageOptions.parser.meta.name), plugins: c.plugins && Object.keys(c.plugins), rules: c.rules && Object.keys(c.rules).length}));\n\" 2>&1 | head -30",
+          "exit_code": 0,
+          "output_sha": "88fa2c8d69d4c8a754517465875e51553daa65ac2d46741377e26b941ae84395"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; NODE_OPTIONS=\"--require ./scripts/lint/ts6-resolution.cjs\" node -e \"\nconst tseslint = require('typescript-eslint');\nconst cfg = tseslint.configs.recommended;\nconsole.log('configs.recommended length', cfg.length);\nfor (const c of cfg) console.log(JSON.stringify({name:c.name, files:c.files, lo: c.languageOptions && Object.keys(c.languageOptions), parser: c.languageOptions && c.languageOptions.parser && (c.languageOptions.parser.meta && c.languageOptions.parser.meta.name), plugins: c.plugins && Object.keys(c.plugins), rules: c.rules && Object.keys(c.rules).length}));\n\" 2>&1 | head -30",
+          "exit_code": 0,
+          "output_sha": "01bd74d8214475ef5a40b2e37387ef4f9238339668b7f94b0f653f9177fa2e62"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; NODE_OPTIONS=\"--require ./scripts/lint/ts6-resolution.cjs\" node -e \"\nconst tseslint = require('typescript-eslint');\nconst cfg = tseslint.configs.recommended;\nconsole.log(JSON.stringify(cfg[0].languageOptions.parser.meta, null, 1));\nconsole.log('parser keys', Object.keys(cfg[0].languageOptions.parser));\n\" 2>&1 | head -40",
+          "exit_code": 0,
+          "output_sha": "d25adfc45f7413a7ce127f43c53d224eb1c63888e0f61392c19d3e0db7a53b10"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; NODE_OPTIONS=\"--require ./scripts/lint/ts6-resolution.cjs\" node -e \"\nconst tseslint = require('typescript-eslint');\nconst cfg = tseslint.configs.recommended;\nconst parser = cfg[0].languageOptions.parser;\nconst code = 'export function probeFn(): number {\\n  debugger;\\n  return 1;\\n}\\n';\nconst r = parser.parseForESLint(code, {filePath: '/home/kara/speclang/src/__lint_probe.ts', range:true, loc:true, comment:true, tokens:true});\nconsole.log('ast type', r.ast.type, 'body len', r.ast.body.length);\nconsole.log('services', r.services && Object.keys(r.services));\nconsole.log('scopeManager', !!r.scopeManager, 'visitorKeys', !!r.visitorKeys);\n\" 2>&1 | head -20",
+          "exit_code": 0,
+          "output_sha": "1b1b18eaced8daa7d5af3e6f4950f972cef566dfdfde21208f0bcc5caaa3f320"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; NODE_OPTIONS=\"--require ./scripts/lint/ts6-resolution.cjs\" npx eslint --print-config src/__lint_probe.ts 2>&1 | head -40",
+          "exit_code": 0,
+          "output_sha": "e36d1e266829a7685e4e2b9b039bb2a98c6858480b84e0679c0a078e1539da59"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; NODE_OPTIONS=\"--require ./scripts/lint/ts6-resolution.cjs\" npx eslint --print-config src/__lint_probe.ts 2>&1 | grep -E '\"(no-debugger|no-unused-vars|@typescript-eslint/no-unused-vars|no-undef|no-console)\"' -A3 | head -40; echo ---; NODE_OPTIONS=\"--require ./scripts/lint/ts6-resolution.cjs\" npx eslint --print-config src/__lint_probe.ts 2>&1 | grep -c '\"' ",
+          "exit_code": 0,
+          "output_sha": "d4028e0d58640110697b290d42adfd334931ac63a46167e274c7b681e677dcfd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; NODE_OPTIONS=\"--require ./scripts/lint/ts6-resolution.cjs\" npx eslint --print-config src/__lint_probe.ts 2>&1 | grep -E '\"(no-debugger|no-console|no-var|no-unreachable|no-dupe-keys|no-constant-condition|no-async-promise-executor)\"' -A2 | head -40",
+          "exit_code": 0,
+          "output_sha": "709efb1de99824129b46e2f2e6b30d51930b03d859118978d7c4bf650d4cd20d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; rm -f src/__lint_probe.ts; cat > src/__lint_probe.ts <<'EOF'\nexport function probeFn(): number {\n  var x = 1;\n  return x;\n}\nEOF\ntimeout 900 npm run lint > /tmp/lint7.log 2>&1; echo \"EXIT=$?\"; tail -20 /tmp/lint7.log",
+          "exit_code": 0,
+          "output_sha": "d22861248fba5c7448ae9e0366cb1a86dea8c718a60c891787eee9a9536e822d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; rm -f src/__lint_probe.ts; cat > src/__lint_probe.ts <<'EOF'\nexport function probeFn(): number {\n  const unusedProbeConst = 42;\n  return 1;\n}\nEOF\nNODE_OPTIONS=\"--require ./scripts/lint/ts6-resolution.cjs\" npx eslint --no-eslintrc --no-config-lookup --parser @typescript-eslint/parser --rule '{\"@typescript-eslint/no-unused-vars\":\"error\"}' src/__lint_probe.ts 2>&1 | tail -10; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "3caa2ef2d5572544485a2a33c21f69fac2125edfd023f7033d5f69d0ca9a6b88"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; cat > /tmp/probe.config.mjs <<'EOF'\nimport tseslint from \"typescript-eslint\";\nexport default tseslint.config(\n  { ignores: [\"**/node_modules/**\"] },\n  ...tseslint.configs.recommended,\n  { files: [\"**/*.ts\"], rules: { \"@typescript-eslint/no-unused-vars\": \"error\" } },\n);\nEOF\ncp /tmp/probe.config.mjs ./probe.config.mjs\nNODE_OPTIONS=\"--require ./scripts/lint/ts6-resolution.cjs\" npx eslint -c probe.config.mjs src/__lint_probe.ts 2>&1 | tail -10; echo \"EXIT=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "7ddaf75eb7c3fc3dc1cc5f7b9ce1910ce769f20f485522c0b6a0c550aa2f82d4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; NODE_OPTIONS=\"--require ./scripts/lint/ts6-resolution.cjs\" npx eslint -c probe.config.mjs src/__lint_probe.ts > /tmp/lint8.log 2>&1; echo \"EXIT=$?\"; tail -8 /tmp/lint8.log; rm -f probe.config.mjs src/__lint_probe.ts; git status --short src/ probe.config.mjs",
+          "exit_code": 0,
+          "output_sha": "2c71818016b22623f338efcb1e32cf748aa7399556fdcfaf0a7a77e4b2e76c89"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Deliberate violation test:\\n- unused const in src/__lint_probe.ts -> npm run lint EXIT=0 (NOT detected). Root cause: eslint.config.mjs:34 sets \\\"@typescript-eslint/no-unused-vars\\\": \\\"off\\\" and eslint.config.mjs:35 sets core \\\"no-unused-vars\\\": \\\"off\\\".\\n- control: same file with `var x` -> npm run lint EXIT=1, \\\"2:3 error Unexpected var, use let or const instead no-var\\\" => pipeline works, rule is off.\\n- control: same unused-const file with a temp config enabling @typescript-eslint/no-unused-vars -> EXIT=1, \\\"2:9 error 'unusedProbeConst' is assigned a value but never used @typescript-eslint/no-unused-vars\\\" => parser/shim fine.\\n- shim works: without NODE_OPTIONS shim eslint exits 2 \\\"typescript-eslint does not support TS 7.0\\\"; with shim it runs.\\n\", \"key\": \"violation_test\"}",
+          "exit_code": 0,
+          "output_sha": "a2e30088032d893e9bebe1b2cf581aafeccde999d603aee8e3eff6ebf4a39a93"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; timeout 1800 npm run build > /tmp/build.log 2>&1; echo \"EXIT=$?\"; tail -20 /tmp/build.log",
+          "exit_code": 0,
+          "output_sha": "6637c7992f394d795f70a96700d8a15fcd5a35fc552894392da76471c168434f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; git status --short | head; echo ---; git log --oneline -3 -- eslint.config.mjs; echo ---; git show 9d7b0ce6 --stat",
+          "exit_code": 0,
+          "output_sha": "71b0259fdce25c7c9de129929df8c6c0bd8986d2e84c982994a005d460745ca4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; cat > src/__lint_probe.ts <<'EOF'\nexport function probeFn(): number {\n  const unusedProbeConst = 42;\n  unusedProbeConst;\n  return 1;\n}\nEOF\ntimeout 900 npm run lint > /tmp/lint9.log 2>&1; echo \"EXIT=$?\"; tail -12 /tmp/lint9.log; rm -f src/__lint_probe.ts; git status --short src/",
+          "exit_code": 0,
+          "output_sha": "4be451eb5b8575dbc2bb965739d4bd4af1d90b46060d38b37f23853a281ba8de"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Criterion 1 verdict: FAIL.\\n- clean tree: npm run lint EXIT=0 (3 warnings) PASS part\\n- npm run build EXIT=0 PASS part\\n- deliberate unused const: npm run lint EXIT=0 -> FAIL part. eslint.config.mjs:34 \\\"@typescript-eslint/no-unused-vars\\\":\\\"off\\\", :35 \\\"no-unused-vars\\\":\\\"off\\\". Commit message of 9d7b0ce6 admits: \\\"the probe literally quoted in the brief (`const __lintProbe = 1;` alone) does NOT trip this config\\\".\\n- control: `var x` -> EXIT=1 no-var; unused const + expression statement -> EXIT=1 @typescript-eslint/no-unused-expressions. So gate is live, just not for unused const.\\n- shim works: without shim eslint exits 2 \\\"typescript-eslint does not support TS 7.0\\\"; with shim runs.\\n\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "b3a851b830c7a0f00099be70256302a37c61c8a9d7de9267c6a743e48b53c3cf"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang; ls tests | head; grep -rl \"npm run lint\\|ts6-resolution\" tests/ scripts/ 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "423b617914e79613d660d8d4671c36842e4edc3c12ce821ebf69ec8650d2497c"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 0,
+        "detection": "status set to in_progress while worker_status remains \"pending\" and commit_hash/guard_result/ci_result stay null",
+        "detail": "Rows QA-SPECLANG-006, DF-SPECLANG-017 and DF-SPECLANG-018 are flipped to status \"in_progress\" but each still carries \"worker_status\":\"pending\" with null commit_hash/guard_result/ci_result, so the row's status and its worker fields disagree."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 0,
+        "detection": "dispatch recorded in foreman_note but no corresponding session id added to the row's sessions array",
+        "detail": "The new foreman_note says \"dispatched in wave speclang-foreman-2026-11-17-05-00-08\" yet the sessions array on all three rows is unchanged (still [\"foreman-2026-11-17-02-12-03\"]), unlike PERF-001 which lists its dispatch session."
+      }
+    ],
+    "summary": "Board-only bookkeeping change that flips three task rows to in_progress and appends matching events; the status flip is not reflected in the rows' worker_status/commit fields and the dispatch session is not recorded in sessions."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  00:45:03\n\nStage tier2: FAIL\n  INCOMPLETE\n  \u2717 npm run lint exits 0 on a clean tree; introducing a deliberate lint violation (unused const) makes it exit non-zero; npm run build still exits 0: Two of the three legs hold, the middle one does not. (a) Clean tree: `npm run lint` -> EXIT=0, \"3 problems (0 errors, 3 warnings)\" (only unused-eslint-disable warnings in src/ralph-loop/controller.ts:5,9 and src/ralph-loop/types.ts:11). (b) `npm run build` -> EXIT=0 (`tsc`, TS 7.0.2). (c) Deliberate unused const: created src/__lint_probe.ts with `export function probeFn(): number { const unusedProbeConst = 42; return 1; }` and ran `npm run lint` -> EXIT=0, the probe file is not even mentioned in the output. Root cause is the config, not the shim: eslint.config.mjs:34 sets \"@typescript-eslint/no-unused-vars\": \"off\" and eslint.config.mjs:35 sets core \"no-unused-vars\": \"off\". The commit message of 9d7b0ce6 concedes this: \"the probe literally quoted in the brief (`const __lintProbe = 1;` alone) does NOT trip this config: the config deliberately turns off @typescript-eslint/no-unused-vars\". Controls proving the gate itself is live and the shim works: same file with `var x` -> `npm run lint` EXIT=1, \"2:3 error Unexpected var, use let or const instead no-var\"; unused const plus a bare expression statement -> EXIT=1, \"3:3 error Expected an assignment or function call and instead saw an expression @typescript-eslint/no-unused-expressions\"; and the same unused-const file linted with a temporary config that enables @typescript-eslint/no-unused-vars -> EXIT=1, \"2:9 error 'unusedProbeConst' is assigned a value but never used @typescript-eslint/no-unused-vars\". So the TS6 resolution shim (scripts/lint/ts6-resolution.cjs, wired via NODE_OPTIONS in package.json:26) genuinely restores ESLint under TS 7 \u2014 without it `npx eslint` exits 2 with \"typescript-eslint does not support TS 7.0\" \u2014 but the acceptance test the task names (unused const must fail the gate) is not satisfied. Probe files were removed; `git status --short src/` is clean.\n  \u2717 Coverage FAILED \u2014 not passing: npm run lint exits 0 on a clean tree; introducing a deliberate lint violation (unused const) makes it exit non-zero; npm run build still exits 0\nThe TS 7 lint breakage is genuinely fixed (shim works, lint exits 0, build exits 0), but the task's own acceptance test fails: an unused const does not make `npm run lint` exit non-zero because eslint.config.mjs turns both no-unused-vars rules off. [uncovered failure paths: failure mode 1 (The lint gate can be silently dead again on a machine where the typescript-eslint-ts alias is missing; the shim exits 1 with a message but nothing in CI asserts the gate actually lints files): detected_by is empty \u2014 uncovered failure path]\n\nOverall: FAIL \u2717",
+  "evaluated_at": "2026-11-17T05:48:30.444117",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T05:48:30.470620+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 682,
+        "truncated": false,
+        "source": "git show 652dda73ba36"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 44885,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "QA-SPECLANG-006"
+  }
+}

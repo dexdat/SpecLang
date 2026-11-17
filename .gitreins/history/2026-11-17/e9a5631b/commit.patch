@@ -1,0 +1,14 @@
+commit 652dda73ba365fb04cbc4c06123a35124e159158
+Merge: 920986c6 9d7b0ce6
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 00:40:24 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 00:40:24 2026 -0500
+
+    merge: QA-SPECLANG-006 — restore npm run lint under TypeScript 7 (scoped TS6 resolution shim for typescript-eslint; build keeps tsc 7)
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+
+ package.json                    |  2 +-
+ scripts/lint/ts6-resolution.cjs | 74 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 75 insertions(+), 1 deletion(-)
