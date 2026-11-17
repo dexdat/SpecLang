@@ -26,9 +26,17 @@ guards:
     lint: true
     tests: true
 evaluator:
-  max_iterations: 100
+  # Raised 100/2M -> 200/3M (QA-SPECLANG-009, 2026-11-17): two unchanged tier2
+  # runs of one criterion died at "Iteration cap (100) reached (100.x used)"
+  # with 0 criteria graded while burning only 428k and 737k of the 2M input
+  # budget. The criterion is a live verification (it re-runs the suite and a
+  # red-proof), so the judge loops on tool calls; per the cap-sizing rule,
+  # repeated starvation at the same rung is a knob problem, not a merits one.
+  # 737k at 100 iterations is ~7.3k/iter, and burn is quadratic in iterations,
+  # so 200 iterations needs ~2.4M: the token ceiling moves with it.
+  max_iterations: 200
   max_time: 30m
-  max_input_tokens: 2M
+  max_input_tokens: 3M
   max_output_tokens: 0.5M
   tool_call_weight: 0.1
   fast_track: auto
@@ -73,7 +81,7 @@ pipeline:
     "on":
     - pre-eval
     condition: 'true'
-    max_iterations: 100
+    max_iterations: 200
     max_time: 30m
-    max_input_tokens: 2000000
+    max_input_tokens: 3000000
     max_output_tokens: 400000
