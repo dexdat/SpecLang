@@ -46,6 +46,6 @@ Each block is marked with `@kind:` to indicate its purpose (function, test, inte
 
 ## Learn More
 
-- [docs/NORTH_STAR.md](../docs/NORTH_STAR.md) - Vision and principles
-- [specs/core.spec.md](../specs/core.spec.md) - Core architecture
-- [specs/speclang.spec.md](../specs/speclang.spec.md) - Spec format
+- [docs/NORTH_STAR.md](../../../docs/NORTH_STAR.md) - Vision and principles
+- [specs/core.spec.md](../../../specs/core.spec.md) - Core architecture
+- [specs/speclang.spec.md](../../../specs/speclang.spec.md) - Spec format
