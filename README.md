@@ -68,21 +68,38 @@ npm run check:sqlite-binding     # OK: better-sqlite3 native binding loads (SELE
 ```
 
 If it reports FAIL — e.g. `node_modules` was installed before that approval existed, or
-Node was upgraded and the compiled binding no longer matches the ABI — run the remedy it
-prints:
+Node was upgraded and the compiled binding no longer matches the ABI — make sure the approval
+is recorded first, then rebuild:
 
 ```bash
+npm install-scripts approve --no-allow-scripts-pin better-sqlite3   # records the approval
 npm rebuild better-sqlite3       # re-runs only that dependency's install script
 npm run check:sqlite-binding     # re-check
 ```
 
-If `npm rebuild` still skips the script, the approval entry is missing: add it, or let
-npm write it with `npm install-scripts approve --no-allow-scripts-pin better-sqlite3`
-(without `--no-allow-scripts-pin` npm pins the exact version it approved). Also make
-sure install scripts are not globally disabled — `npm config get ignore-scripts` must
+`npm install-scripts approve` only edits `package.json` — it does not build anything, so the
+`npm rebuild` step is what actually runs the install script. Beware the reverse: **`npm rebuild
+better-sqlite3` exits 0 even when the script is still blocked**, printing
+`npm warn rebuild 1 package had install scripts blocked because they are not covered by
+allowScripts` while leaving the binding missing. Judge the fix by `npm run check:sqlite-binding`,
+never by `npm rebuild`'s exit code.
+
+Two more traps:
+
+- An explicit deny entry (`"better-sqlite3": false`) makes `approve` a no-op — it warns
+  `better-sqlite3 is denied; remove the entry from allowScripts to approve better-sqlite3.`
+  and exits 0. Delete the `false` entry by hand first.
+- `--no-allow-scripts-pin` writes the unpinned `"better-sqlite3": true`; without it npm pins the
+  exact version it approved (`"better-sqlite3@12.11.1": true`), which stops covering the package
+  after the next upgrade.
+
+Also make sure install scripts are not globally disabled — `npm config get ignore-scripts` must
 not be `true`. If there is no prebuilt binary for your platform/Node ABI, compile it:
 `npm rebuild better-sqlite3 --build-from-source` (needs python3 + a C++ toolchain).
 Last resort: `rm -rf node_modules && npm install`.
+
+This remedy is verified end-to-end on npm 12.2.2 / Node 22.22.3 / better-sqlite3 12.11.1 — the
+full transcript is in [docs/npm12-allowscripts-probe.md](docs/npm12-allowscripts-probe.md).
 
 **Affected npm versions:** npm >= 12.0.0 blocks unreviewed install scripts by default
 (with `strict-allow-scripts=true` the warning becomes a hard install error). npm < 12
