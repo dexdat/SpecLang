@@ -422,3 +422,4 @@
 {"id":421,"timestamp":"2026-11-17 10:45:50.410358","event_type":"task_completed","task_id":"UX-004","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":422,"timestamp":"2026-11-17 10:57:30.484896","event_type":"task_created","task_id":"QA-SPECLANG-010","actor":"foreman","detail":"{\"id\":\"QA-SPECLANG-010\",\"status\":\"pending\"}","tick_number":null}
 {"id":423,"timestamp":"2026-11-17 11:16:14.962312","event_type":"task_completed","task_id":"DF-SPECLANG-2","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":424,"timestamp":"2026-11-17 11:20:55.624108","event_type":"task_completed","task_id":"QA-SPECLANG-5-R6","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
