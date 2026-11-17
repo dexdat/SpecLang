@@ -36,6 +36,12 @@
       "project-layout.spec.dir/src/*": ["./specs/project-layout.spec.dir/src/*"]
     }
   },
+  "ts-node": {
+    "compiler": "typescript-eslint-ts",
+    "compilerOptions": {
+      "types": ["node"]
+    }
+  },
   "include": ["index.ts", "src/**/*.ts", "src/**/*.tsx", "specs/mcp.spec.dir/src/**/*.ts"],
   "exclude": [
     "node_modules",
