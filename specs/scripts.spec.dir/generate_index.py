@@ -415,8 +415,10 @@ def impact_analysis(spec_id: str, dependencies: Dict[str, List[str]],
     direct = list(dependents.get(spec_id, []))
     transitive = get_transitive_dependents(spec_id, dependents)
     
-    # Find actual file paths
-    spec_map = {e['id']: e['path'] for e in entries}
+    # Find actual file paths. Entries are built by generate_index() with the
+    # repo-relative path under the 'file' key (there is no 'path' key), so a
+    # lookup on 'path' raised KeyError and `--impact` crashed for every spec.
+    spec_map = {e['id']: e['file'] for e in entries}
     files = [spec_map.get(s, f"specs/{s}") for s in transitive if s in spec_map]
     
     return {

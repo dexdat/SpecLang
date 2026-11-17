@@ -214,5 +214,41 @@ def test_main_validate_gate(tmp_path, monkeypatch):
     # Read-only modes must never write _index.json
     assert not (tmp_path / '_index.json').exists()
 
+
+def test_impact_analysis_reports_real_file_paths(tmp_path, monkeypatch):
+    """`--impact <spec>` must exit 0 and name the dependent's spec file.
+
+    Regression: impact_analysis() built its id->path map from `e['path']`, a key
+    generate_index() never sets (the entry carries `e['file']`), so every
+    `--impact` invocation died with `KeyError: 'path'` instead of printing the
+    affected files.
+    """
+    spec_dir = tmp_path / 'specs'
+    spec_dir.mkdir()
+    _write_spec(spec_dir, 'test1.spec.md', '@test/spec1', imports=['@test/spec2'])
+    _write_spec(spec_dir, 'test2.spec.md', '@test/spec2')
+
+    monkeypatch.chdir(tmp_path)
+    import subprocess
+    generate_index_path = Path(__file__).parent.parent / 'scripts' / 'generate_index.py'
+
+    # Graph keys are reference-normalized ids (no leading '@'), so the queried
+    # spec is passed as `test/spec2`.
+    result = subprocess.run(
+        [sys.executable, str(generate_index_path), '--impact', 'test/spec2'],
+        capture_output=True, text=True, cwd=tmp_path
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert 'KeyError' not in result.stderr
+    assert 'Direct dependents (1):' in result.stdout
+    assert '@test/spec1' in result.stdout
+    # The affected-file list carries the dependent's real path — only possible
+    # when the map reads the entry's 'file' key.
+    assert 'Files affected (1):' in result.stdout
+    assert 'specs/test1.spec.md' in result.stdout
+    # Still a read-only mode.
+    assert not (tmp_path / '_index.json').exists()
+
+
 if __name__ == '__main__':
     pytest.main([__file__, '-v'])
