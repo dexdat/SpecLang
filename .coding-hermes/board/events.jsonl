@@ -459,3 +459,5 @@
 {"id":458,"timestamp":"2026-11-17T17:29:35Z","event_type":"task_updated","task_id":"README-2","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
 {"id":459,"timestamp":"2026-11-17T17:29:35Z","event_type":"task_updated","task_id":"GAP-005","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
 {"id":460,"timestamp":"2026-11-17T17:29:35Z","event_type":"task_updated","task_id":"DF-SPECLANG-5-R4","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
+{"id":461,"timestamp":"2026-11-17T18:06:19Z","event_type":"task_updated","task_id":"DF-SPECLANG-013","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
+{"id":462,"timestamp":"2026-11-17T18:06:19Z","event_type":"task_updated","task_id":"QA-SPECLANG-009","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
