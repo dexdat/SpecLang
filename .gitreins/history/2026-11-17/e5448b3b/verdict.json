@@ -1,0 +1,639 @@
+{
+  "task_id": "DOC-3",
+  "task_title": "operator runbook: daemon lifecycle, port, pid/log paths, orphan + corrupt-db recovery",
+  "task_criteria": [
+    "FAILIF: no non-archive doc under docs/ carries the full daemon operator path -- i.e. glob docs/*.md finds no file containing all of daemon.pid, daemon.log and 3000 together with the three subcommands speclang daemon start/stop/status -- or the documented port/pid/log values disagree with the source defaults (port 3000, .speclang/daemon.pid, .speclang/daemon.log). PROOF: the two python glob checks from the board acceptance print OK with a non-empty file list, and each documented command was executed or read from --help with its real output pasted."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "92ff4bd9674986782d52c3591d11affe8d522ff1",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "0ff1c1f6456f908464e9fcad31a639ea2994647aad26791c593c4c34e1881dd8",
+  "working_tree_dirty_path_count": 6,
+  "items": [
+    {
+      "criterion": "FAILIF: no non-archive doc under docs/ carries the full daemon operator path -- i.e. glob docs/*.md finds no file containing all of daemon.pid, daemon.log and 3000 together with the three subcommands speclang daemon start/stop/status -- or the documented port/pid/log values disagree with the source defaults (port 3000, .speclang/daemon.pid, .speclang/daemon.log). PROOF: the two python glob checks from the board acceptance print OK with a non-empty file list, and each documented command was executed or read from --help with its real output pasted.",
+      "status": "PASS",
+      "detail": "Both board acceptance globs run verbatim from /home/kara/speclang print OK with a non-empty file list: check1 -> OK ['docs/OPERATIONS.md'], check2 -> OK ['docs/OPERATIONS.md']. docs/OPERATIONS.md is a tracked symlink (mode 120000) -> ../specs/docs.spec.dir/docs/OPERATIONS.md (421 lines, tracked 100644), so the glob resolves and reads. Documented values agree with source defaults: port 3000 (bin/speclang:175 `.option('-p, --port <port>', 'Dashboard port', '3000')`; `node bin/speclang start --help` and `daemon start --help` both print `(default: \"3000\")`); pid .speclang/daemon.pid (src/daemon/index.ts:50 `const pidFile = path.join(speclangDir, 'daemon.pid')`); log .speclang/daemon.log (src/daemon/config.ts:35 `file: '.speclang/daemon.log'`, and the doc correctly notes nothing writes it). Commands executed live matched the doc: `node bin/speclang daemon start -p 18777 -d .` -> '\u274c SpecLang engine not found. Run from SpecLang installation directory.' REAL_EXIT=1 (doc \u00a71 quotes exactly this, EXIT=1); `daemon status` -> '\ud83d\udd34 Daemon: Stopped', `--json` -> {\"running\":false,\"pid\":null,\"status\":\"stopped\"}; `status -d .` -> 'Daemon: Not running / Specs: 452 (450 .spec.md + 2 .scl) / Generated files: 4'; `stop` and `daemon stop` -> 'Daemon not running'; `daemon status --help` shows only `--json` and `daemon stop --help` shows no options (doc \u00a74 asymmetry #2 confirmed); `daemon start --help` shows -p/--port, -d/--dir, --dashboard, --no-cascade (doc \u00a71 table matches); bin/speclang:480 prints 'Dashboard: not served by `daemon start` (use `speclang start`)' as quoted; src/daemon/index.ts:133 `app.listen(port, ...)` ignores the error arg (doc \u00a76.2 mechanism claim correct) and /health returns {status:'ok',pid:process.pid} at index.ts:89-91; bin/speclang:58-69 corruptStateDatabaseMessage matches doc \u00a76.5 verbatim with status exiting 1 on SQLITE_NOTADB (bin/speclang:332-339); .gitignore:38 is `.speclang/` as cited. Tests: `npx vitest run --passWithNoTests` -> 'Test Files 113 passed | 4 skipped (117) / Tests 1949 passed | 58 skipped (2007)'; targeted `npx vitest run tests/daemon/pid-file-enoent.test.ts tests/db/corrupt-state-db.test.ts` -> 'Tests 16 passed (16)'. One minor inaccuracy noted (not a criterion failure): doc \u00a72 says `.speclang/daemon-state.json` is 'written by the daemon on start', but Daemon.start() only calls state.load() (src/daemon/daemon.ts:128) and never save(); state is persisted only via State.setStatus->save() (src/daemon/state.ts:91-94) and Daemon.stop() (daemon.ts:151), so on a fresh project dir the file does not exist until shutdown and `speclang daemon status` prints 'Status: unknown'."
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  05:34:02",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T103354.832729Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T103354.832729Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  05:34:02\n   Duration  48.13s (transform 19.33s, setup 3.48s, import 27.53s, tests 207.50s, environment 16ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T103354.832729Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 FAILIF: no non-archive doc under docs/ carries the full daemon operator path -- i.e. glob docs/*.md finds no file containing all of daemon.pid, daemon.log and 3000 together with the three subcommands speclang daemon start/stop/status -- or the documented port/pid/log values disagree with the source defaults (port 3000, .speclang/daemon.pid, .speclang/daemon.log). PROOF: the two python glob checks from the board acceptance print OK with a non-empty file list, and each documented command was executed or read from --help with its real output pasted.: Both board acceptance globs run verbatim from /home/kara/speclang print OK with a non-empty file list: check1 -> OK ['docs/OPERATIONS.md'], check2 -> OK ['docs/OPERATIONS.md']. docs/OPERATIONS.md is a tracked symlink (mode 120000) -> ../specs/docs.spec.dir/docs/OPERATIONS.md (421 lines, tracked 100644), so the glob resolves and reads. Documented values agree with source defaults: port 3000 (bin/speclang:175 `.option('-p, --port <port>', 'Dashboard port', '3000')`; `node bin/speclang start --help` and `daemon start --help` both print `(default: \"3000\")`); pid .speclang/daemon.pid (src/daemon/index.ts:50 `const pidFile = path.join(speclangDir, 'daemon.pid')`); log .speclang/daemon.log (src/daemon/config.ts:35 `file: '.speclang/daemon.log'`, and the doc correctly notes nothing writes it). Commands executed live matched the doc: `node bin/speclang daemon start -p 18777 -d .` -> '\u274c SpecLang engine not found. Run from SpecLang installation directory.' REAL_EXIT=1 (doc \u00a71 quotes exactly this, EXIT=1); `daemon status` -> '\ud83d\udd34 Daemon: Stopped', `--json` -> {\"running\":false,\"pid\":null,\"status\":\"stopped\"}; `status -d .` -> 'Daemon: Not running / Specs: 452 (450 .spec.md + 2 .scl) / Generated files: 4'; `stop` and `daemon stop` -> 'Daemon not running'; `daemon status --help` shows only `--json` and `daemon stop --help` shows no options (doc \u00a74 asymmetry #2 confirmed); `daemon start --help` shows -p/--port, -d/--dir, --dashboard, --no-cascade (doc \u00a71 table matches); bin/speclang:480 prints 'Dashboard: not served by `daemon start` (use `speclang start`)' as quoted; src/daemon/index.ts:133 `app.listen(port, ...)` ignores the error arg (doc \u00a76.2 mechanism claim correct) and /health returns {status:'ok',pid:process.pid} at index.ts:89-91; bin/speclang:58-69 corruptStateDatabaseMessage matches doc \u00a76.5 verbatim with status exiting 1 on SQLITE_NOTADB (bin/speclang:332-339); .gitignore:38 is `.speclang/` as cited. Tests: `npx vitest run --passWithNoTests` -> 'Test Files 113 passed | 4 skipped (117) / Tests 1949 passed | 58 skipped (2007)'; targeted `npx vitest run tests/daemon/pid-file-enoent.test.ts tests/db/corrupt-state-db.test.ts` -> 'Tests 16 passed (16)'. One minor inaccuracy noted (not a criterion failure): doc \u00a72 says `.speclang/daemon-state.json` is 'written by the daemon on start', but Daemon.start() only calls state.load() (src/daemon/daemon.ts:128) and never save(); state is persisted only via State.setStatus->save() (src/daemon/state.ts:91-94) and Daemon.stop() (daemon.ts:151), so on a fresh project dir the file does not exist until shutdown and `speclang daemon status` prints 'Status: unknown'.\nThe daemon operator doc exists at docs/OPERATIONS.md (via tracked symlink), carries the full start/stop/status path with port 3000, .speclang/daemon.pid and .speclang/daemon.log matching source defaults, and every documented command was executed or read from --help with matching output; only a minor state-file wording inaccuracy remains. [uncovered failure paths: failure mode 0 (docs/OPERATIONS.md \u00a72 claims .speclang/daemon-state.json is written by the daemon on start, but Daemon.start() never persists state, so an operator following the doc on a fresh project dir finds no state file and `speclang daemon status` reports 'Status: unknown' until the daemon is stopped): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 FAILIF: no non-archive doc under docs/ carries the full daemon operator path -- i.e. glob docs/*.md finds no file containing all of daemon.pid, daemon.log and 3000 together with the three subcommands speclang daemon start/stop/status -- or the documented port/pid/log values disagree with the source defaults (port 3000, .speclang/daemon.pid, .speclang/daemon.log). PROOF: the two python glob checks from the board acceptance print OK with a non-empty file list, and each documented command was executed or read from --help with its real output pasted.: Both board acceptance globs run verbatim from /home/kara/speclang print OK with a non-empty file list: check1 -> OK ['docs/OPERATIONS.md'], check2 -> OK ['docs/OPERATIONS.md']. docs/OPERATIONS.md is a tracked symlink (mode 120000) -> ../specs/docs.spec.dir/docs/OPERATIONS.md (421 lines, tracked 100644), so the glob resolves and reads. Documented values agree with source defaults: port 3000 (bin/speclang:175 `.option('-p, --port <port>', 'Dashboard port', '3000')`; `node bin/speclang start --help` and `daemon start --help` both print `(default: \"3000\")`); pid .speclang/daemon.pid (src/daemon/index.ts:50 `const pidFile = path.join(speclangDir, 'daemon.pid')`); log .speclang/daemon.log (src/daemon/config.ts:35 `file: '.speclang/daemon.log'`, and the doc correctly notes nothing writes it). Commands executed live matched the doc: `node bin/speclang daemon start -p 18777 -d .` -> '\u274c SpecLang engine not found. Run from SpecLang installation directory.' REAL_EXIT=1 (doc \u00a71 quotes exactly this, EXIT=1); `daemon status` -> '\ud83d\udd34 Daemon: Stopped', `--json` -> {\"running\":false,\"pid\":null,\"status\":\"stopped\"}; `status -d .` -> 'Daemon: Not running / Specs: 452 (450 .spec.md + 2 .scl) / Generated files: 4'; `stop` and `daemon stop` -> 'Daemon not running'; `daemon status --help` shows only `--json` and `daemon stop --help` shows no options (doc \u00a74 asymmetry #2 confirmed); `daemon start --help` shows -p/--port, -d/--dir, --dashboard, --no-cascade (doc \u00a71 table matches); bin/speclang:480 prints 'Dashboard: not served by `daemon start` (use `speclang start`)' as quoted; src/daemon/index.ts:133 `app.listen(port, ...)` ignores the error arg (doc \u00a76.2 mechanism claim correct) and /health returns {status:'ok',pid:process.pid} at index.ts:89-91; bin/speclang:58-69 corruptStateDatabaseMessage matches doc \u00a76.5 verbatim with status exiting 1 on SQLITE_NOTADB (bin/speclang:332-339); .gitignore:38 is `.speclang/` as cited. Tests: `npx vitest run --passWithNoTests` -> 'Test Files 113 passed | 4 skipped (117) / Tests 1949 passed | 58 skipped (2007)'; targeted `npx vitest run tests/daemon/pid-file-enoent.test.ts tests/db/corrupt-state-db.test.ts` -> 'Tests 16 passed (16)'. One minor inaccuracy noted (not a criterion failure): doc \u00a72 says `.speclang/daemon-state.json` is 'written by the daemon on start', but Daemon.start() only calls state.load() (src/daemon/daemon.ts:128) and never save(); state is persisted only via State.setStatus->save() (src/daemon/state.ts:91-94) and Daemon.stop() (daemon.ts:151), so on a fresh project dir the file does not exist until shutdown and `speclang daemon status` prints 'Status: unknown'.\nThe daemon operator doc exists at docs/OPERATIONS.md (via tracked symlink), carries the full start/stop/status path with port 3000, .speclang/daemon.pid and .speclang/daemon.log matching source defaults, and every documented command was executed or read from --help with matching output; only a minor state-file wording inaccuracy remains. [uncovered failure paths: failure mode 0 (docs/OPERATIONS.md \u00a72 claims .speclang/daemon-state.json is written by the daemon on start, but Daemon.start() never persists state, so an operator following the doc on a fresh project dir finds no state file and `speclang daemon status` reports 'Status: unknown' until the daemon is stopped): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "FAILIF: no non-archive doc under docs/ carries the full daemon operator path -- i.e. glob docs/*.md finds no file containing all of daemon.pid, daemon.log and 3000 together with the three subcommands speclang daemon start/stop/status -- or the documented port/pid/log values disagree with the source defaults (port 3000, .speclang/daemon.pid, .speclang/daemon.log). PROOF: the two python glob checks from the board acceptance print OK with a non-empty file list, and each documented command was executed or read from --help with its real output pasted.",
+                "status": "PASS",
+                "detail": "Both board acceptance globs run verbatim from /home/kara/speclang print OK with a non-empty file list: check1 -> OK ['docs/OPERATIONS.md'], check2 -> OK ['docs/OPERATIONS.md']. docs/OPERATIONS.md is a tracked symlink (mode 120000) -> ../specs/docs.spec.dir/docs/OPERATIONS.md (421 lines, tracked 100644), so the glob resolves and reads. Documented values agree with source defaults: port 3000 (bin/speclang:175 `.option('-p, --port <port>', 'Dashboard port', '3000')`; `node bin/speclang start --help` and `daemon start --help` both print `(default: \"3000\")`); pid .speclang/daemon.pid (src/daemon/index.ts:50 `const pidFile = path.join(speclangDir, 'daemon.pid')`); log .speclang/daemon.log (src/daemon/config.ts:35 `file: '.speclang/daemon.log'`, and the doc correctly notes nothing writes it). Commands executed live matched the doc: `node bin/speclang daemon start -p 18777 -d .` -> '\u274c SpecLang engine not found. Run from SpecLang installation directory.' REAL_EXIT=1 (doc \u00a71 quotes exactly this, EXIT=1); `daemon status` -> '\ud83d\udd34 Daemon: Stopped', `--json` -> {\"running\":false,\"pid\":null,\"status\":\"stopped\"}; `status -d .` -> 'Daemon: Not running / Specs: 452 (450 .spec.md + 2 .scl) / Generated files: 4'; `stop` and `daemon stop` -> 'Daemon not running'; `daemon status --help` shows only `--json` and `daemon stop --help` shows no options (doc \u00a74 asymmetry #2 confirmed); `daemon start --help` shows -p/--port, -d/--dir, --dashboard, --no-cascade (doc \u00a71 table matches); bin/speclang:480 prints 'Dashboard: not served by `daemon start` (use `speclang start`)' as quoted; src/daemon/index.ts:133 `app.listen(port, ...)` ignores the error arg (doc \u00a76.2 mechanism claim correct) and /health returns {status:'ok',pid:process.pid} at index.ts:89-91; bin/speclang:58-69 corruptStateDatabaseMessage matches doc \u00a76.5 verbatim with status exiting 1 on SQLITE_NOTADB (bin/speclang:332-339); .gitignore:38 is `.speclang/` as cited. Tests: `npx vitest run --passWithNoTests` -> 'Test Files 113 passed | 4 skipped (117) / Tests 1949 passed | 58 skipped (2007)'; targeted `npx vitest run tests/daemon/pid-file-enoent.test.ts tests/db/corrupt-state-db.test.ts` -> 'Tests 16 passed (16)'. One minor inaccuracy noted (not a criterion failure): doc \u00a72 says `.speclang/daemon-state.json` is 'written by the daemon on start', but Daemon.start() only calls state.load() (src/daemon/daemon.ts:128) and never save(); state is persisted only via State.setStatus->save() (src/daemon/state.ts:91-94) and Daemon.stop() (daemon.ts:151), so on a fresh project dir the file does not exist until shutdown and `speclang daemon status` prints 'Status: unknown'.",
+                "resolution_probability": 0.23
+              }
+            ],
+            "summary": "The daemon operator doc exists at docs/OPERATIONS.md (via tracked symlink), carries the full start/stop/status path with port 3000, .speclang/daemon.pid and .speclang/daemon.log matching source defaults, and every documented command was executed or read from --help with matching output; only a minor state-file wording inaccuracy remains. [uncovered failure paths: failure mode 0 (docs/OPERATIONS.md \u00a72 claims .speclang/daemon-state.json is written by the daemon on start, but Daemon.start() never persists state, so an operator following the doc on a fresh project dir finds no state file and `speclang daemon status` reports 'Status: unknown' until the daemon is stopped): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DOC-3\"}",
+          "exit_code": 0,
+          "output_sha": "421deca61dfc4029e32d2acd2f554a811a938239b8ff40c96af8cb68561c6679"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la; echo \"---\"; ls docs/ 2>/dev/null | head -50",
+          "exit_code": 0,
+          "output_sha": "fe953fc6edb158fa54d42ca6f8b2a8409fe6944fe97143d64066fb8add865a1f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; pwd; ls docs/*.md",
+          "exit_code": 0,
+          "output_sha": "0fb6286426b61eea074c324f00ff9a45cd7f1000395469abd807ae3cd6805397"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -l \"daemon.pid\" docs/*.md; echo \"=== daemon.log ===\"; grep -l \"daemon.log\" docs/*.md; echo \"=== 3000 ===\"; grep -l \"3000\" docs/*.md",
+          "exit_code": 0,
+          "output_sha": "d3c86a2f73094a2a811d5eef2ef0098723dc4bdb4802c23432c3f7ed2b60eed7"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"daemon\" docs/OPERATIONS.md | head -80; echo \"=== wc ===\"; wc -l docs/OPERATIONS.md",
+          "exit_code": 0,
+          "output_sha": "86ee0af41d80c082d64c762cec46506e8cb38e3d22d7fe2fb91ec5e76d39808f"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"speclang daemon\" docs/OPERATIONS.md | head -40",
+          "exit_code": 0,
+          "output_sha": "4ad6a7c61abb93dca982d679901524c7899b908004e5a2180c8a01b4506146cf"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"speclang daemon stop\\|speclang daemon start\\|speclang daemon status\" docs/OPERATIONS.md | wc -l; echo \"---\"; grep -c \"daemon.pid\" docs/OPERATIONS.md; grep -c \"daemon.log\" docs/OPERATIONS.md; grep -c \"3000\" docs/OPERATIONS.md",
+          "exit_code": 0,
+          "output_sha": "7293a469d3d95f493c2e523941912b4fb4238b4bf93718419a3e3690afb1c261"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara && python3 -c \"\nimport glob\nfiles=[f for f in glob.glob('docs/*.md')]\nprint('files:',files)\nok=[]\nfor f in files:\n    t=open(f,encoding='utf-8',errors='replace').read()\n    if 'daemon.pid' in t and 'daemon.log' in t and '3000' in t and 'speclang daemon start' in t and 'speclang daemon stop' in t and 'speclang daemon status' in t:\n        ok.append(f)\nprint('OK' if ok else 'FAIL', ok)\n\"",
+          "exit_code": 0,
+          "output_sha": "7150e2c36a8dded2bef895d2de4209c83aac4cd5b71a8610c861e313c4f63b4c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara && ls -la docs/ | head -40; echo \"=== git ls-files docs ===\"; git ls-files docs | head -60",
+          "exit_code": 0,
+          "output_sha": "4c75243d70549c8ec82679f75ffffe4cef8c97f56c8128bd68865a37d6fce2c5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara && git status --short | head -20; echo \"=== log ===\"; git log --oneline -5",
+          "exit_code": 128,
+          "output_sha": "e454d0d36d2f8b1cc87514d482a5e5bce374b843b38f75174c3adc371f04ef74"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; ls -la | head -20; echo \"=== git ===\"; git status --short | head; git log --oneline -3",
+          "exit_code": 0,
+          "output_sha": "5f1fc799a8fe22e4d9ee08eb7ebb9d4ef6b913ea8e4ac5f5234977244f85cbc0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show --stat fab70a31 | head -20; echo \"=== files in docs tracked ===\"; git ls-files docs | head -40",
+          "exit_code": 0,
+          "output_sha": "421a384c7b393b393d303c753f4f2ad950cb6ed6a00d04a80a0d9d14fe949d49"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && python3 -c \"\nimport glob\nfiles=glob.glob('docs/*.md')\nprint('files:',files)\nok=[]\nfor f in files:\n    t=open(f,encoding='utf-8',errors='replace').read()\n    if all(s in t for s in ['daemon.pid','daemon.log','3000','speclang daemon start','speclang daemon stop','speclang daemon status']):\n        ok.append(f)\nprint('OK' if ok else 'FAIL', ok)\n\"",
+          "exit_code": 0,
+          "output_sha": "ae8c6cba28c84c88965c38377db594963f0fbcd3c6fce27d70cfc300008c9fa9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -la docs/OPERATIONS.md; echo \"=== content ===\"; cat docs/OPERATIONS.md",
+          "exit_code": 0,
+          "output_sha": "b2adc2c72e6ae132ca829506f087dce254780af2510a94833adf6820003d6da4"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 200, \"offset\": 40, \"path\": \"specs/docs.spec.dir/docs/OPERATIONS.md\"}",
+          "exit_code": 0,
+          "output_sha": "13bd8c4674d5a9ee07b70ffa541ed218cbe1516993a78951b533bd840f681719"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 185, \"offset\": 240, \"path\": \"specs/docs.spec.dir/docs/OPERATIONS.md\"}",
+          "exit_code": 0,
+          "output_sha": "e938dd67d9feee500987666d99d01362dde1652eb3a4c33b7518a7be8c67b86a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '30,60p' src/daemon/config.ts; echo \"=== daemon-cli 30-50 ===\"; sed -n '30,50p' src/daemon/daemon-cli.ts; echo \"=== index.ts 40-60 ===\"; sed -n '40,60p' src/daemon/index.ts",
+          "exit_code": 0,
+          "output_sha": "8554c183d4d4ab89c6a42f63a2d63248ee3a051facee638b1c70567fe9512f5b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"daemon.pid\\|daemon.log\\|daemon-state.json\" src/ bin/ --include=*.ts --include=speclang | head -30",
+          "exit_code": 0,
+          "output_sha": "332c43d681d4428f2dd0394aa1588543d74c82c7ad0c6f3cf069dfd61d943b97"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"3000\" bin/speclang | head -20; echo \"=== help ===\"; node bin/speclang start --help 2>&1 | head -30",
+          "exit_code": 0,
+          "output_sha": "9a5d47aef71e09a3416fd9c2d46abc26a5e423dbbbbd72a3eb35ef1e4845b4c4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && node bin/speclang daemon --help 2>&1 | head -40; echo \"=== daemon start help ===\"; node bin/speclang daemon start --help 2>&1 | head -30",
+          "exit_code": 0,
+          "output_sha": "e45cf2df86bd7b18606af5b9bdea6b156fbee9dd9854c6b742fcbce0e058ec89"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && node bin/speclang daemon status --help 2>&1 | head -20; echo \"=== daemon stop help ===\"; node bin/speclang daemon stop --help 2>&1 | head -20; echo \"=== status help ===\"; node bin/speclang status --help 2>&1 | head -20",
+          "exit_code": 0,
+          "output_sha": "e872809b66d1d0832a2ab8f525e64a2a3e6bd25bcde2ef8400881a7b22a32827"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '340,360p;390,410p;490,540p' bin/speclang",
+          "exit_code": 0,
+          "output_sha": "2f379a4c0dd434be4f6754592a656e3fa88bbeb919a7b06dff95e99294807696"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '1,40p' bin/speclang; echo \"=== readDaemonPid ===\"; grep -n \"function readDaemonPid\" -A 20 bin/speclang",
+          "exit_code": 0,
+          "output_sha": "c35524a9082a5a9b30d3d4b945e952f62c796cbad55016ef33a162193aed26b3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '170,200p' bin/speclang; echo \"=== 420-470 ===\"; sed -n '420,470p' bin/speclang",
+          "exit_code": 0,
+          "output_sha": "a537d7805234dd65283943a0b7993c7a9f58ee3fa8accf86aac2b668112ad716"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '470,495p' bin/speclang; echo \"=== grep dashboard not served ===\"; grep -n \"not served by\" bin/speclang",
+          "exit_code": 0,
+          "output_sha": "5aa3481e65e3f0ba37b8247056ec2b66ebce01098ec206bec7a7247b5680ccd6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '120,145p' src/daemon/index.ts; echo \"=== 1-40 ===\"; sed -n '1,40p' src/daemon/index.ts",
+          "exit_code": 0,
+          "output_sha": "77d4f0c5c562ac586f7e619ab98268da4cc8f2a917fcfdf97c461d726c0dc6a2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"app.get\\|/health\\|/api/status\" src/daemon/index.ts | head -20; echo \"=== 60-120 ===\"; sed -n '60,120p' src/daemon/index.ts",
+          "exit_code": 0,
+          "output_sha": "86664b3b00671715df7b2e2e9036860375fc6fdb158cf099b04d028c2aaa1c02"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"logging.file\\|logging\\.file\\|daemon.log\" src/ --include=*.ts | head -20; echo \"=== config.ts 1-40 ===\"; sed -n '1,40p' src/daemon/config.ts",
+          "exit_code": 0,
+          "output_sha": "5e56f0533a639d9704e670ea2f0d71ce6aa0ee4a958681b075e522fbec30899a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"daemon.log\" --include=*.ts --include=*.js --include=*.json src/ dist/ bin/ 2>/dev/null | grep -v node_modules | head -20; echo \"=== dist exists? ===\"; ls dist 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "93dadaeaf9e96940288d03fe85a751051aea301e6b11ef8eea5960829c7f946a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"corrupt or not a SQLite\" -B 10 -A 20 bin/speclang | head -60",
+          "exit_code": 0,
+          "output_sha": "a7e4bab1135db74e2ea019023451e525bbe8024734d0a0de16c292177daf3ed1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"Emergency Recovery\" -A 25 docs/troubleshooting.md | head -40",
+          "exit_code": 0,
+          "output_sha": "cf433c3f8b27aaac2cc5107e78f4c57c2ea9d673ec48a24b09f1b7805806da79"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"SPECLANG_DB\\|speclang.db\" bin/speclang | head -20",
+          "exit_code": 0,
+          "output_sha": "15ed2cced0e3163c9f67d2eeb48c2196a10f78bd278426a19f7b913312de0b02"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '325,340p' bin/speclang; echo \"=== 360-390 ===\"; sed -n '360,392p' bin/speclang",
+          "exit_code": 0,
+          "output_sha": "e920b6b976252d104984fe2bab64a4f965fd63cea527caa6973664e0e58e4eb1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat .gitignore | sed -n '30,45p'; echo \"=== daemon.spec present? ===\"; ls -la .speclang/ | head -20",
+          "exit_code": 0,
+          "output_sha": "9c7261580afb1bdd77a171e4e70aa4cf135f4bd6d60bf63c91690b2a57e2880e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"\\.speclang/\" .gitignore | head; echo \"=== line 38 ===\"; sed -n '38p' .gitignore",
+          "exit_code": 0,
+          "output_sha": "a56f3a2f7e01fcdcbf2e18cebc0c08c8e5cd23bcd857f6c8bf4ce33d6d2a4981"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && node bin/speclang daemon start -p 18777 -d . 2>&1 | head -20; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "971872784da3646315ef4b766bf78c24c32e2695075404e6f1b3149c904e3998"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && node bin/speclang daemon start -p 18777 -d . >/dev/null 2>&1; echo \"REAL_EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "390b5e0a71c40a65ae05bb883fc132d7b500567238383e34410d6e8165fdaec6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && node bin/speclang daemon status 2>&1 | head -10; echo \"EXIT=$?\"; echo \"=== json ===\"; node bin/speclang daemon status --json 2>&1 | head -5",
+          "exit_code": 0,
+          "output_sha": "7145fba292d65bf69aeffd9e4397c561bae1e88ac228b9b50e010dea13088121"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && node bin/speclang status -d . 2>&1 | head -10; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "66adf4fecebaac3d193f1aefd2ee81c0054bf6efdde023f36d3e291f69a56a4e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && node bin/speclang stop 2>&1 | head -5; echo \"EXIT=$?\"; echo \"=== daemon stop ===\"; node bin/speclang daemon stop 2>&1 | head -5",
+          "exit_code": 0,
+          "output_sha": "ca21517e7f8638802b8e52d40695c34c77fd7e7b40d48929a579bd785815ec4f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"daemon-state.json\" -A 15 bin/speclang | sed -n '1,40p'",
+          "exit_code": 0,
+          "output_sha": "d96d2e30c1758d1cb344a3f60eb2e52d564c92b8af517694583b7ed35d42ed48"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"daemon-state.json\" src/ --include=*.ts | head -10",
+          "exit_code": 0,
+          "output_sha": "ea91b275ae0db8a08b843f0fd097cbadda1a9d6d9c7461380b75f7fe4a734312"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '543,600p' bin/speclang",
+          "exit_code": 0,
+          "output_sha": "489e020494e423eb3a218a53a6cdbd34bf39a464b5aad39f1a9dcc7e4cd402d5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"daemon-state\" --include=*.ts --include=*.js src/ dist/src/ bin/ 2>/dev/null | grep -v node_modules | head -10",
+          "exit_code": 0,
+          "output_sha": "2eca65067a80578cdd1ec02f264f52379a70f295b8ef0491608cb0f148c9be4a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"daemon-state\\|STATE_FILE\" src/daemon/state.ts | head -10; echo \"=== who calls StateManager/save ===\"; grep -rn \"StateManager\\|state.save\\|saveState\" src/daemon/*.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "ea2d0af7d921177bb680feb07ead9bcc5954715d80e3c08a0a90101f9ff72738"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '130,170p' src/daemon/daemon.ts; echo \"=== state.ts 20-60 ===\"; sed -n '20,60p' src/daemon/state.ts",
+          "exit_code": 0,
+          "output_sha": "e4c0b2780b6bd446550709b90aee811eca554a26ccca3ebdbf45853095180e63"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"new State\\|state.load\\|this.state =\" src/daemon/daemon.ts | head -10; echo \"=== state.save ===\"; grep -n \"async save\" -A 15 src/daemon/state.ts",
+          "exit_code": 0,
+          "output_sha": "e708eb270211e98addbce068817c112992065e8473630478b65de40217e32555"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '40,60p' src/daemon/daemon.ts; echo \"=== 120-135 ===\"; sed -n '118,135p' src/daemon/daemon.ts",
+          "exit_code": 0,
+          "output_sha": "76460138f57bc6f862b9163db64633e04cf2de0cacd48ed1d90839b935dcfb68"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"setStatus\" -A 8 src/daemon/state.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "65d05299187a151ce70bef2365defef8a5d417e5bdcebc946b336643cb2c3f47"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"daemon-state.json\" -A 12 src/daemon/daemon-cli.ts | head -30; echo \"=== daemon-cli 40-80 ===\"; sed -n '40,80p' src/daemon/daemon-cli.ts",
+          "exit_code": 0,
+          "output_sha": "24c96c6694cb21c76c0bb8737f0fbdbc8c5e6b96c90d4690ad41e0771f892987"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"configureDaemonCommand\" bin/ src/ --include=*.ts --include=speclang | head -10",
+          "exit_code": 0,
+          "output_sha": "f4ef1af6331cbdc78c1e9585a3517d0bd2b8526c21de3ec5046b18c4db63bd0f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"daemonStartCommand\\|daemonStatusCommand\" bin/ src/ --include=*.ts --include=speclang | head -10",
+          "exit_code": 0,
+          "output_sha": "26ad3580376a148eac36db9312770dfd9e29ee07d7cb095e02c8fc15b1a77b61"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"daemon-cli\" --include=*.ts --include=*.js --include=speclang bin/ src/ dist/src/ 2>/dev/null | grep -v node_modules | head -10",
+          "exit_code": 0,
+          "output_sha": "6c2d459e6fd36104a9133af6bdefe3158780d4582dd2992e753a147398ff1d06"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"configureDaemonCommand\\|daemonStartCommand\" --include=*.ts --include=*.js . 2>/dev/null | grep -v node_modules | grep -v \"^./dist\" | head -10",
+          "exit_code": 0,
+          "output_sha": "5267988328755be30c45654884c55e1275fd595c715de28bef146a495daf8697"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '183,225p' specs/daemon.spec.dir/src/daemon-cli.ts",
+          "exit_code": 0,
+          "output_sha": "382d45aad115b3847a83b6be42202ea1930e3bcd48e7e4b43ba3966ce344ed6c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"daemon\" specs/cli.spec.dir/src/index.ts | head -20; echo \"=== is specs/cli.spec.dir/src/index.ts the bin? ===\"; grep -n \"bin\" package.json | head -10",
+          "exit_code": 0,
+          "output_sha": "a22c350fab6aa18c84e0704f03277e101107a06f4473c00071bdb71edbdcba85"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '495,515p' specs/cli.spec.dir/src/index.ts; echo \"=== is this file generated from specs? ===\"; ls -la specs/cli.spec.dir/src/index.ts",
+          "exit_code": 0,
+          "output_sha": "9c99e258e08b2942c93d9a7711d345f1e42221bb128787bc65f383ce97d779bd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"daemon\" src/cli/index.ts 2>/dev/null | head -20; echo \"=== src/cli files ===\"; ls src/cli 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "d82b1b46169cf90a25b5a0dcdfa366d23bebe847834c90295344e0ee9a991599"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"configureDaemonCommand\" dist/ 2>/dev/null | grep -v node_modules | head; echo \"=== dist cli index ===\"; ls dist/src/cli 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "b83e1b5eefbb4ab3d9aa06c0654d6451c89a7b59d93c166b6291be82831dae13"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"daemon\" src/cli/index.ts | head -20; echo \"=== 495-515 ===\"; sed -n '495,515p' src/cli/index.ts",
+          "exit_code": 0,
+          "output_sha": "8fac04d3447a61c8d420b1e4dc1b8e5c791100dc47d2c9ac1f3623108f139273"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -la src/cli/index.ts; echo \"=== is it a symlink? ===\"; readlink -f src/cli/index.ts",
+          "exit_code": 0,
+          "output_sha": "fcdb033dc1fbca35391c919db13bec5957caeaf1f44473ee7743ca3da95cacd5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"speclang\\b\" package.json | head -20; echo \"=== main ===\"; sed -n '1,20p' package.json",
+          "exit_code": 0,
+          "output_sha": "1fe07c644c43098faa023dae8252d94df8a62752a99fa67d413e54eca7a72860"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"dist/index\" bin/speclang | head -10; echo \"=== dist/index.js exists? ===\"; ls -la dist/index.js 2>/dev/null; echo \"=== does dist/index.js register daemon? ===\"; grep -n \"daemon\" dist/index.js 2>/dev/null | head -10",
+          "exit_code": 0,
+          "output_sha": "22d3574ad938c58a009a70720097be925797ba2242311c94cf218fbbf031e4db"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"src/cli/index\\|cli/index.js\" bin/ scripts/ package.json 2>/dev/null | head -10",
+          "exit_code": 0,
+          "output_sha": "ed39c3049d2a1bdcf0648ca2bf9eaf32b27cd1bf4ee878b02a4c925030129391"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"configureDaemonCommand\\|daemonStartCommand\" tests/ 2>/dev/null | head -10; echo \"=== tests referencing daemon-cli ===\"; grep -rln \"daemon-cli\" tests/ 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "5002e76a053c9d5544a9880e64ea420fab5b967f318a579b658d3dd184ffc41f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"test_command\" -A 3 .gitreins/config.yaml 2>/dev/null | head -10; echo \"=== pytest.ini ===\"; cat pytest.ini",
+          "exit_code": 0,
+          "output_sha": "6e416069f43f9ce85fbc2ad81bfd8f608d397da852bde0e04ab7bc5d05692950"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls tests/ | head -30; echo \"=== docs tests ===\"; ls tests/docs 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "cd3e3a6be5c754dd47164c5506311a4922404c6d9786794ef28c1e59aac87d6a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls tests/daemon/ | head -20; echo \"=== grep daemon.pid in tests ===\"; grep -rln \"daemon.pid\" tests/ | head -10",
+          "exit_code": 0,
+          "output_sha": "516d7b6fbd4e31463e47426277a4d61c12b072f14611ab69a359ce0685e900e3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 900 npx vitest run tests/daemon/pid-file-enoent.test.ts tests/db/corrupt-state-db.test.ts 2>&1 | tail -25",
+          "exit_code": 0,
+          "output_sha": "b2e68b1e98687b4b59683c9a06df913a274e242b23766c6c55b7ed4102cdf4cf"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 1800 npx vitest run --passWithNoTests 2>&1 | tail -20",
+          "exit_code": -15,
+          "output_sha": "56f0c3b0163a2f13d61f62f27da363257fb29ea0a36c80542df513e22020594c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && (timeout 600 npx vitest run --passWithNoTests > /tmp/vitest_full.log 2>&1; echo \"EXIT=$?\" >> /tmp/vitest_full.log) & sleep 25; echo started",
+          "exit_code": 0,
+          "output_sha": "dd6d84e45e3da838db46e1f42ba1555f3328a71da5cb9f563f2aac5adb555b3a"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 20; tail -5 /tmp/vitest_full.log 2>/dev/null; echo \"---\"; grep -c \"\" /tmp/vitest_full.log 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "2981634dd196199d0cbfd093a15dc4cf7e794bdc917ea4b87385b811b6f5f709"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat /tmp/vitest_full.log | tail -8",
+          "exit_code": 0,
+          "output_sha": "6fdd352c1a1c567da3914fd9784843ca3b39460c32b8d2f620dc43c1ddc55eeb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"EXIT=\" /tmp/vitest_full.log; echo \"=== docs/OPERATIONS.md in git? ===\"; git ls-files -s docs/OPERATIONS.md; echo \"=== symlink target tracked? ===\"; git ls-files -s specs/docs.spec.dir/docs/OPERATIONS.md",
+          "exit_code": 0,
+          "output_sha": "f7b9ad929626387d134760bdcbaa00b6e4cddedf4ba784b9979ab667eaa1d187"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show fab70a31 -- docs/OPERATIONS.md | head -20; echo \"=== was docs/OPERATIONS.md a symlink before? ===\"; git log --oneline -3 -- docs/OPERATIONS.md",
+          "exit_code": 0,
+          "output_sha": "cdedd3331a2c353f82a987863d6aa86aa16ff38c80cec91f85089f638303293f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"docs/OPERATIONS\" --include=*.ts --include=*.js --include=*.json --include=*.md . 2>/dev/null | grep -v node_modules | grep -v \"^./.tmp\" | head -20",
+          "exit_code": 0,
+          "output_sha": "db0003a5dce2454dafa9b4b70e69039630362ea94a41de7eb80e6f4702b7da53"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"OPERATIONS\" README.md GETTING-STARTED.md CONTRIBUTING.md docs/MASTER_GUIDE.md docs/troubleshooting.md 2>/dev/null | head -10; echo \"=== board acceptance for DOC-3 ===\"; grep -n \"DOC-3\" .coding-hermes/board/tasks.jsonl | head -3",
+          "exit_code": 0,
+          "output_sha": "aefef27ed1fc178c207ad9220798e52897808d386f1c6007ba9754d034631d19"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && python3 -c \"\nimport json\nfor line in open('.coding-hermes/board/tasks.jsonl'):\n    try: d=json.loads(line)\n    except: continue\n    if d.get('id')=='DOC-3':\n        for k in ('id','title','status','acceptance','criteria','notes'):\n            if k in d: print(k,'=>',json.dumps(d[k])[:3000])\n\"",
+          "exit_code": 0,
+          "output_sha": "dcbf6f2b290d31864ff1edb16d8028e06b1eb91ba988210d759ee5857fa5f1ae"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && python3 -c \"import glob;oks=[f for f in glob.glob('docs/*.md') if all(s in open(f).read() for s in ('daemon.pid','daemon.log','3000'))];print('OK' if oks else 'FAIL');print(oks)\"; echo \"=== check 2 ===\"; python3 -c \"import glob;need=['speclang daemon start','speclang daemon stop','speclang daemon status'];good=[f for f in glob.glob('docs/*.md') if all(s in open(f).read() for s in ('daemon.pid','daemon.log','3000')) and all(n in open(f).read() for n in need)];print('OK' if good else 'FAIL');print(good)\"",
+          "exit_code": 0,
+          "output_sha": "3188febf65becacd7b9c7016af15f320a9f588d9ce98d6997932271b81446e6e"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS (with one documented inaccuracy noted in failure_modes).\\n\\nBoard acceptance globs (run verbatim from /home/kara/speclang):\\n  check1 -> OK ['docs/OPERATIONS.md']\\n  check2 -> OK ['docs/OPERATIONS.md']\\ndocs/OPERATIONS.md is a tracked symlink (mode 120000) -> ../specs/docs.spec.dir/docs/OPERATIONS.md (421 lines, tracked 100644), so the glob resolves and reads.\\n\\nDocumented values vs source defaults \\u2014 all agree:\\n- port 3000: bin/speclang:175 `.option('-p, --port <port>', 'Dashboard port', '3000')`; `node bin/speclang start --help` -> `-p, --port <port>  Dashboard port (default: \\\"3000\\\")`; `node bin/speclang daemon start --help` -> same default \\\"3000\\\". Doc \\u00a72 table says default 3000.\\n- pid .speclang/daemon.pid: src/daemon/index.ts:50 `const pidFile = path.join(speclangDir, 'daemon.pid')`; bin/speclang:345/395/497/527. Doc \\u00a72 says `.speclang/daemon.pid`.\\n- log .speclang/daemon.log: src/daemon/config.ts:35 `file: '.speclang/daemon.log'`. Doc \\u00a72 says `.speclang/daemon.log` and correctly notes nothing writes it (grep of src/ + dist/ finds only that DEFAULT_CONFIG value).\\n\\nCommands executed live and matched the doc:\\n- `node bin/speclang daemon start -p 18777 -d .` -> \\\"\\ud83d\\ude80 Starting SpecLang Daemon... / Project: /home/kara/speclang / Specs: ... / \\u274c SpecLang engine not found. Run from SpecLang installation directory.\\\" REAL_EXIT=1 (doc \\u00a71 quotes exactly this, EXIT=1).\\n- `node bin/speclang daemon status` -> \\\"\\ud83d\\udd34 Daemon: Stopped\\\"; `--json` -> {\\\"running\\\":false,\\\"pid\\\":null,\\\"status\\\":\\\"stopped\\\"} (doc \\u00a74 table matches).\\n- `node bin/speclang status -d .` -> \\\"\\ud83d\\udcca SpecLang Status / Project: ... / Daemon: Not running / Specs: 452 (450 .spec.md + 2 .scl) / Generated files: 4\\\" (doc \\u00a74 matches).\\n- `node bin/speclang stop` and `node bin/speclang daemon stop` -> \\\"Daemon not running\\\" (doc \\u00a76.7 table matches).\\n- `node bin/speclang daemon status --help` -> only `--json`; `daemon stop --help` -> no options (doc \\u00a74 asymmetry #2 \\\"take no -d\\\" confirmed).\\n- `node bin/speclang daemon start --help` -> `-p/--port`, `-d/--dir`, `--dashboard`, `--no-cascade` (doc \\u00a71 table matches).\\n- bin/speclang:480 prints \\\"Dashboard: not served by `daemon start` (use `speclang start`)\\\" (doc \\u00a71 quotes it).\\n- src/daemon/index.ts:133 `app.listen(port, () => {...})` ignores the error arg (doc \\u00a76.2 mechanism claim correct); /health returns {status:'ok',pid:process.pid} at index.ts:89-91.\\n- bin/speclang:58-69 corruptStateDatabaseMessage matches doc \\u00a76.5 verbatim; status exits 1 on SQLITE_NOTADB (bin/speclang:332-339).\\n- .gitignore:38 is `.speclang/` (doc \\u00a71 cites .gitignore:38 correctly).\\n\\nTests: `npx vitest run --passWithNoTests` -> \\\"Test Files 113 passed | 4 skipped (117) / Tests 1949 passed | 58 skipped (2007)\\\"; targeted `npx vitest run tests/daemon/pid-file-enoent.test.ts tests/db/corrupt-state-db.test.ts` -> \\\"Tests 16 passed (16)\\\".\\n\\nMinor inaccuracy found (not a criterion failure): doc \\u00a72 says `.speclang/daemon-state.json` is \\\"written by the daemon on start\\\". In the shipped CLI path (bin/speclang start -> src/daemon/index.ts:startDaemon -> Daemon.start()), state is only persisted by State.setStatus -> save() (src/daemon/state.ts:91-94) and Daemon.stop() (src/daemon/daemon.ts:151); Daemon.start() calls state.load() (daemon.ts:128) but never save(). So on a fresh project dir the file does not exist until shutdown, and `speclang daemon status` then prints \\\"Status: unknown\\\".\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "9ea9f42c581cf38fe87011413ec7503ecbe21ce72f14afd47cba366a3ba16ee6"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "medium",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 80,
+        "detection": "row marked status=complete while its own acceptance criterion is a board-state measurement that the same diff's other edits could satisfy without any fix",
+        "detail": "QA-SPECLANG-4-R4 is flipped to \"status\":\"complete\" with a foreman_note explicitly stating \"NOT-A-FIX\" and \"satisfied-by-reference\", i.e. the row is closed on a measurement of the board rather than on any change to the id-minter that produced the duplicates."
+      },
+      {
+        "severity": "medium",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 83,
+        "detection": "row marked status=complete while its own foreman_note disclaims proof that the underlying defect is fixed",
+        "detail": "QA-SPECLANG-5-R5 is set to \"status\":\"complete\" with foreman_note \"NOT-A-FIX ... Not proof the minting convention is fixed; a recurrence is re-filed with a fresh measurement\", so the completion state asserts more than the evidence recorded on the row supports."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 83,
+        "detection": "completed row retains recovered:true / recovered_raw containing the pre-edit status:\"pending\" body, so the row's own payload contradicts its status field",
+        "detail": "QA-SPECLANG-5-R5 now has \"status\":\"complete\" but its recovered_raw still embeds \"\\\"status\\\":\\\"pending\\\"\" and the recovered_note still describes an unparseable body, leaving a stale pending status inside the same JSON object."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 80,
+        "detection": "completed_at timestamp format differs from the convention used by sibling completed rows in the same file",
+        "detail": "QA-SPECLANG-4-R4 and QA-SPECLANG-5-R5 write \"completed_at\":\"2026-11-17T10:36:19Z\" / \"updated_at\":\"2026-11-17 10:36:19.000000\" while the neighbouring completed row QA-SPECLANG-1-R10 uses \"completed_at\":\"2026-11-17T10:08:00Z\" with \"updated_at\":\"2026-11-17T10:08:00.000000+00:00\", mixing space-separated and ISO-8601 offset formats for the same field."
+      }
+    ],
+    "summary": "The diff is board bookkeeping only: two QA rows are closed as complete on self-declared \"NOT-A-FIX\" measurements, one of which still carries a stale pending status in its recovered_raw, plus timestamp-format drift."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  05:34:02\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 FAILIF: no non-archive doc under docs/ carries the full daemon operator path -- i.e. glob docs/*.md finds no file containing all of daemon.pid, daemon.log and 3000 together with the three subcommands speclang daemon start/stop/status -- or the documented port/pid/log values disagree with the source defaults (port 3000, .speclang/daemon.pid, .speclang/daemon.log). PROOF: the two python glob checks from the board acceptance print OK with a non-empty file list, and each documented command was executed or read from --help with its real output pasted.: Both board acceptance globs run verbatim from /home/kara/speclang print OK with a non-empty file list: check1 -> OK ['docs/OPERATIONS.md'], check2 -> OK ['docs/OPERATIONS.md']. docs/OPERATIONS.md is a tracked symlink (mode 120000) -> ../specs/docs.spec.dir/docs/OPERATIONS.md (421 lines, tracked 100644), so the glob resolves and reads. Documented values agree with source defaults: port 3000 (bin/speclang:175 `.option('-p, --port <port>', 'Dashboard port', '3000')`; `node bin/speclang start --help` and `daemon start --help` both print `(default: \"3000\")`); pid .speclang/daemon.pid (src/daemon/index.ts:50 `const pidFile = path.join(speclangDir, 'daemon.pid')`); log .speclang/daemon.log (src/daemon/config.ts:35 `file: '.speclang/daemon.log'`, and the doc correctly notes nothing writes it). Commands executed live matched the doc: `node bin/speclang daemon start -p 18777 -d .` -> '\u274c SpecLang engine not found. Run from SpecLang installation directory.' REAL_EXIT=1 (doc \u00a71 quotes exactly this, EXIT=1); `daemon status` -> '\ud83d\udd34 Daemon: Stopped', `--json` -> {\"running\":false,\"pid\":null,\"status\":\"stopped\"}; `status -d .` -> 'Daemon: Not running / Specs: 452 (450 .spec.md + 2 .scl) / Generated files: 4'; `stop` and `daemon stop` -> 'Daemon not running'; `daemon status --help` shows only `--json` and `daemon stop --help` shows no options (doc \u00a74 asymmetry #2 confirmed); `daemon start --help` shows -p/--port, -d/--dir, --dashboard, --no-cascade (doc \u00a71 table matches); bin/speclang:480 prints 'Dashboard: not served by `daemon start` (use `speclang start`)' as quoted; src/daemon/index.ts:133 `app.listen(port, ...)` ignores the error arg (doc \u00a76.2 mechanism claim correct) and /health returns {status:'ok',pid:process.pid} at index.ts:89-91; bin/speclang:58-69 corruptStateDatabaseMessage matches doc \u00a76.5 verbatim with status exiting 1 on SQLITE_NOTADB (bin/speclang:332-339); .gitignore:38 is `.speclang/` as cited. Tests: `npx vitest run --passWithNoTests` -> 'Test Files 113 passed | 4 skipped (117) / Tests 1949 passed | 58 skipped (2007)'; targeted `npx vitest run tests/daemon/pid-file-enoent.test.ts tests/db/corrupt-state-db.test.ts` -> 'Tests 16 passed (16)'. One minor inaccuracy noted (not a criterion failure): doc \u00a72 says `.speclang/daemon-state.json` is 'written by the daemon on start', but Daemon.start() only calls state.load() (src/daemon/daemon.ts:128) and never save(); state is persisted only via State.setStatus->save() (src/daemon/state.ts:91-94) and Daemon.stop() (daemon.ts:151), so on a fresh project dir the file does not exist until shutdown and `speclang daemon status` prints 'Status: unknown'.\nThe daemon operator doc exists at docs/OPERATIONS.md (via tracked symlink), carries the full start/stop/status path with port 3000, .speclang/daemon.pid and .speclang/daemon.log matching source defaults, and every documented command was executed or read from --help with matching output; only a minor state-file wording inaccuracy remains. [uncovered failure paths: failure mode 0 (docs/OPERATIONS.md \u00a72 claims .speclang/daemon-state.json is written by the daemon on start, but Daemon.start() never persists state, so an operator following the doc on a fresh project dir finds no state file and `speclang daemon status` reports 'Status: unknown' until the daemon is stopped): detected_by is empty \u2014 uncovered failure path]\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T10:38:40.946764",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T10:38:40.978218+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 62087,
+        "truncated": false,
+        "source": "git show 92ff4bd96749"
+      }
+    ],
+    "task_id": "DOC-3"
+  }
+}
