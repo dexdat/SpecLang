@@ -1,0 +1,46 @@
+commit b3658460cbf568935159b753344d56c01ba9263a
+Merge: 4d110c6c 1fab8354
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Mon Nov 16 21:41:27 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Mon Nov 16 21:41:27 2026 -0500
+
+    merge DF-SPECLANG-016: load the shipped cascades migration (v3) so MCP cascade tools stop 500ing
+    
+    003_cascades.sql shipped in two places but no migration runner read it: migrations.ts
+    only declared versions 1 (initial_schema) and 2, so the cascades table was never
+    created and cascade_status / dashboard / status / SSE tools died on
+    "no such table: cascades".
+    
+    The worker added an idempotent version-3 cascades migration whose column set is the
+    union of what the consumers actually touch (cascade_id/depth/status, root_trigger,
+    created_at, started_at, converged_at, root_trigger_file) with indexes on
+    status/started_at/converged_at/root_trigger_file, synced the spec DDL and
+    migrations.spec.md to the same column set, and re-emitted migrations.js because
+    index.ts resolves "./migrations.js" rather than the .ts (without it the version is
+    inert at runtime).
+    
+    Regression coverage: tests/db/cascades-migration.test.ts (194 lines) boots
+    SpecLangDB on a fresh temp DB file, asserts the table and every consumer column
+    exists after initialize(), and pins the .sql file to the same column set;
+    tests/db.test.ts pins the migration count/version.
+    
+    Gates: npm run build rc=0; full vitest suite green in the merged tree (1865 passed
+    | 58 skipped, 21.69s baseline re-measured after the merge). The worktree run showed
+    one environmental failure in tests/ci/ci005-precommit-hook.test.ts because a linked
+    worktree's .git is a file, so the hook lookup misses; it passes in a normal checkout.
+    npm run lint stays red repo-wide (ESLint vs TypeScript 7 = QA-SPECLANG-006), unrelated.
+    
+    Worker: openai/gpt-6.1-terra @ xkiro, worktree /home/kara/worktrees/speclang-DF-SPECLANG-016, commit 1424d92d.
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+
+ specs/sqlite.spec.dir/migrations.spec.md           |  56 +++--
+ specs/sqlite.spec.dir/src/migrations.d.ts.map      |   2 +-
+ specs/sqlite.spec.dir/src/migrations.js            |  35 ++++
+ specs/sqlite.spec.dir/src/migrations.js.map        |   2 +-
+ specs/sqlite.spec.dir/src/migrations.ts            |  36 ++++
+ .../src/migrations/003_cascades.sql                |  11 +-
+ tests/db.test.ts                                   |  10 +-
+ tests/db/cascades-migration.test.ts                | 226 +++++++++++++++++++++
+ 8 files changed, 357 insertions(+), 21 deletions(-)
