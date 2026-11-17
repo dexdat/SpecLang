@@ -77,6 +77,7 @@ async function main() {
     case 'start': {
       const daemonMode = args.includes('-d') || args.includes('--daemon');
       const configPath = args.find(a => a.startsWith('--config='))?.split('=')[1] || '.speclangrc';
+      const verbose = args.includes('--verbose') || args.includes('-v');
 
       // Reject if a background daemon is already running — UNLESS we
       // are the spawned background child (parent sets SPECLANGD_CHILD=1),
@@ -102,7 +103,7 @@ async function main() {
         // its own PID record.
         ensureSpeclangDir();
         const logFd = fs.openSync(LOG_FILE, 'a');
-        const child = spawn(process.execPath, [__filename, 'start', `--config=${configPath}`], {
+        const child = spawn(process.execPath, [__filename, 'start', `--config=${configPath}`, ...(verbose ? ['--verbose'] : [])], {
           detached: true,
           stdio: ['ignore', logFd, logFd],
           cwd: process.cwd(),
@@ -135,6 +136,20 @@ async function main() {
       d.on('task', (task) => {
         console.log('[CLI] Task generated:', task.kind, task.trigger);
       });
+
+      // DF-SPECLANG-015: actually CONSUME the routed AgentTasks. The 'task'
+      // listener above only logs them, so a routed spec_writer task produced
+      // no agent session and reactive expansion generated nothing.
+      // CascadeCoordinator.watchDaemon subscribes to the same events and
+      // invokes the matching agent through the proven `speclang agent` path
+      // (dedup'd so re-convergence doesn't burn tokens), then writes the
+      // agent's stdout to the task's target path. The background `-d` mode
+      // re-executes THIS branch as the detached child (SPECLANGD_CHILD=1),
+      // so both start paths get the watcher; one-shot subcommands below do not.
+      const { CascadeCoordinator } = require('../dist/src/cascade/coordinator/index.js');
+      const coordinator = new CascadeCoordinator(undefined, { verbose });
+      coordinator.watchDaemon(d, { verbose });
+      console.log('[CLI] Agent dispatch: daemon tasks → cascade coordinator ✅');
 
       await d.start();
 

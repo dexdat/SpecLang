@@ -25,6 +25,12 @@ export interface InvocationResult {
   thinking?: ThinkingLevel;
   /** THINK-004: token-level metrics for this invocation (if collected). */
   metrics?: InvocationMetrics;
+  /**
+   * DF-SPECLANG-015: raw stdout from the agent CLI. The agent writes the
+   * generated content to stdout, so callers (watchDaemon) need this to
+   * persist it. Dropping it here made the routed-task output unrecoverable.
+   */
+  output?: string;
 }
 
 /**
@@ -157,6 +163,11 @@ export class AgentInvoker {
         duration_ms: Date.now() - start,
         thinking: options.thinking,
         metrics: result.metrics,
+        // DF-SPECLANG-015: propagate the executor's stdout and failure
+        // reason — without these the daemon task consumer had nothing to
+        // write to task.target and no way to report WHY a run failed.
+        output: result.output,
+        error: result.error,
       };
     } catch (error) {
       return {

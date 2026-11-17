@@ -176,7 +176,7 @@ export class CascadeCoordinator {
             console.log(`[Coordinator] Agent ${agent} completed for ${triggerPath} (${invocation.files_modified.length} files modified)`);
             // DF-SPECLANG-015: the agent CLI prints generated content on
             // stdout — persist it at the routed task's target path.
-            const output = (invocation as any).output as string | undefined;
+            const output = invocation.output;
             if (task.target && output && output.trim().length > 0) {
               fs.mkdirSync(path.dirname(task.target), { recursive: true });
               fs.writeFileSync(task.target, output);
