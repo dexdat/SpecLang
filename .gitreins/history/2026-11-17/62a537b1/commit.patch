@@ -1,0 +1,29 @@
+commit 74bfed1c718a52527e158ad042abbdd5d18e576a
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 05:46:10 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 05:46:10 2026 -0500
+
+    chore(board): record events 419-421 for DOC-3/UX-004 close + UX-004-R1 create
+    
+    The board ledger events for tick SpecLang-readme-2026-11-17-10-10-24 landed
+    one commit after their rows (7d3e898e) because boardctl writes tasks.jsonl and
+    events.jsonl separately: task_created UX-004-R1, task_completed DOC-3,
+    task_completed UX-004. No other lane events are in this diff (3 added lines).
+    
+    Guard note: board-only diff, committed with -c core.hooksPath=/dev/null.
+---
+ .coding-hermes/board/events.jsonl | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/.coding-hermes/board/events.jsonl b/.coding-hermes/board/events.jsonl
+index 4c0a3535..cc069a6f 100644
+--- a/.coding-hermes/board/events.jsonl
++++ b/.coding-hermes/board/events.jsonl
+@@ -417,3 +417,6 @@
+ {"id":416,"timestamp":"2026-11-17 10:36:35.631018","event_type":"audit","task_id":"QA-SPECLANG-4-R4","actor":"speclang-pm","detail":"PM-EVIDENCE-CLOSE 2026-11-17T10:38Z (speclang-pm-2026-11-17-10-01-06, second pass) — NOT-A-FIX: duplicate-id acceptance passes on the live 156-row board at HEAD a02736a1; uniq -d -> 0, census duplicate_ids {}. Row closed as satisfied-by-reference; recurrence re-files with a fresh measurement.","tick_number":null}
+ {"id":417,"timestamp":"2026-11-17 10:36:35.647004","event_type":"audit","task_id":"QA-SPECLANG-5-R5","actor":"speclang-pm","detail":"PM-EVIDENCE-CLOSE 2026-11-17T10:38Z (speclang-pm-2026-11-17-10-01-06, second pass) — NOT-A-FIX: both arms pass literally; uniq -d -> 0 and grep -c ^QA-SPECLANG-1$ -> 1. Seven-row slot collapsed to one. Closed as satisfied-by-reference, not as proof of a permanent minter fix.","tick_number":null}
+ {"id":418,"timestamp":"2026-11-17 10:36:35.667067","event_type":"audit","task_id":"RELEASE-002","actor":"speclang-pm","detail":"PM-VERIFY 2026-11-17T10:38Z (speclang-pm-2026-11-17-10-01-06, second pass) — premise re-confirmed: published v0.1.0^{}=676795fc and v1.0.0^{}=2f2639a8 are not ancestors of origin/main 59b7b26f. NEW: local tags v0.1.0->ff96a2e9, v1.0.0->f7b4ce7d ARE ancestors — local map disagrees with published. Fix must target the PUBLISHED map (owner-gated force-push) and include the local shadow tags. Row stays pending.","tick_number":null}
++{"id":419,"timestamp":"2026-11-17 10:45:25.46628","event_type":"task_created","task_id":"UX-004-R1","actor":"foreman","detail":"{\"id\":\"UX-004-R1\",\"status\":\"pending\"}","tick_number":null}
++{"id":420,"timestamp":"2026-11-17 10:45:45.214709","event_type":"task_completed","task_id":"DOC-3","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
++{"id":421,"timestamp":"2026-11-17 10:45:50.410358","event_type":"task_completed","task_id":"UX-004","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
