@@ -284,15 +284,16 @@ describe("ARCH-002 — background daemon mode", () => {
     expect(exitCode).toBe(0);
     expect(stdout).toMatch(/started in background \(PID \d+\)/);
 
-    // PID file should exist within a fraction of a second of start.
-    expect(await fs.pathExists(PID_FILE)).toBe(true);
-    const pid = parseInt(await fs.readFile(PID_FILE, "utf-8"), 10);
-    expect(Number.isFinite(pid)).toBe(true);
-    expect(pid).toBeGreaterThan(0);
+    // The PID file is written by the detached CHILD (writePidFile in
+    // bin/speclangd), not by the parent that just exited, so its appearance is
+    // asynchronous — poll it instead of assuming the child won the race.
+    const pid = await waitForPidFile(TEST_PROJECT);
+    const reported = parseInt(/PID (\d+)/.exec(stdout)![1], 10);
+    expect(pid).toBe(reported);
 
     // The PID should correspond to a live node process.
     expect(isAlive(pid)).toBe(true);
-  }, 10000);
+  }, 30000);
 
   it("status reports the running daemon without instantiating a new one", async () => {
     await runCli(["start", "-d"], TEST_PROJECT);
