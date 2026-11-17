@@ -41,6 +41,32 @@ import { SpecLangDB, createDatabase } from 'speclang';
 - Targets: `TargetMapping`, `CompilerTarget`, `TypeScriptTarget`, `GoTarget`, `RustTarget`, `PythonTarget`, `targets`, `getTarget`, `getAllTargets`
 - Types: `SpecGraph`, `IR`, `IRBlock`, `IRField`, `IROperation`, `Artifact`, `DriftStatus`, `DriftReport`, `CompileCache`, `CompileOptions`, `CompilerPlugin`, `CompileError`, `ERROR_CODES`, `WARNING_CODES`
 
+#### Compiler targets (`getTarget` / `getAllTargets`)
+
+`getTarget(id)` is the lookup used by every phase: it is case-insensitive, returns the
+`CompilerTarget` object for a known id and `undefined` (never throws) for an unknown one.
+`getAllTargets()` returns the same objects as an array.
+
+| id | target `id` | `fileExt` |
+|---|---|---|
+| `'typescript'` | `compiler/ts-target` | `.ts` |
+| `'go'` | `compiler/go-target` | `.go` |
+| `'rust'` | `compiler/rust-target` | `.rs` |
+| `'python'` | `compiler/py-target` | `.py` |
+
+```ts
+import { codegen, getAllTargets, getTarget } from 'speclang';
+
+getTarget('typescript'); // { id: 'compiler/ts-target', fileExt: '.ts', mappings, features }
+getTarget('TYPESCRIPT'); // same object — the id lookup is case-insensitive
+getTarget('cobol');      // undefined
+getAllTargets().map((t) => t.id); // ['compiler/ts-target', 'compiler/go-target', ...]
+
+// codegen() takes the target ID (a string), not the object from getTarget():
+const artifacts = codegen(ir, 'typescript');
+codegen(ir, 'cobol'); // throws Error: Unknown target: cobol
+```
+
 ### 1.3 Validation
 
 `src/validation/` — validate spec documents against built-in rules.
@@ -121,6 +147,19 @@ console.log(report.passed);                 // true for a valid spec
 | `speclang new <name>` | Create a new spec |
 | `speclang init <name>` | Create spec scaffolding in the current project (name = spec name → `specs/<name>/<name>.spec.md`, `--tiers` for 4-tier meta/plan/ts/test) |
 | `speclang expand <block-id>` | Expand a block |
+| `speclang history [spec]` | Git-backed spec change history (`--format text\|json\|timeline`, `--stat`, `--blame`, `--compare v1..v2`) |
+
+`speclang history` is a read-only report, so "there is nothing to report" is a
+message, not a crash:
+
+| Situation | stdout | exit |
+|---|---|---|
+| repository has no commits yet (fresh `git init`, unborn HEAD) | `No commits yet — this repository has no history to show.` + the `git add`/`git commit` next step | `0` |
+| directory is not inside a git repository | `No history found — this directory is not inside a git repository.` + `git init` hint | `2` |
+| `git` binary not on `PATH` | "No history found — the `git` command is not available on PATH." | `2` |
+
+With `--format json` the empty state stays machine-readable (`[]`, or the zeroed
+`--stat` object) and a failure reason goes to stderr.
 
 **Minimal cascade example** (the working CLI path):
 

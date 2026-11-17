@@ -1,10 +1,13 @@
-import { describe, it, expect } from "vitest";
-import { exec } from "child_process";
+import { describe, it, expect, beforeEach, afterEach, afterAll } from "vitest";
+import { exec, execSync, execFileSync, spawnSync } from "child_process";
 import { promisify } from "util";
-import { execSync } from "child_process";
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "fs";
+import { homedir, tmpdir } from "os";
+import { dirname, join } from "path";
 
 const execAsync = promisify(exec);
 const CLI = "./bin/speclang";
+const CLI_ABS = join(process.cwd(), "bin/speclang");
 
 /**
  * git log uses regex matching for `--author <pattern>`, so `git log
@@ -122,5 +125,170 @@ describe("history", () => {
   it("should support --format timeline", async () => {
     const { stdout } = await execAsync(`${CLI} history --format timeline`);
     expect(stdout).toContain("2026");
+  });
+});
+
+interface CliRun {
+  status: number | null;
+  stdout: string;
+  stderr: string;
+}
+
+function runHistory(cwd: string, args: string[] = [], env?: NodeJS.ProcessEnv): CliRun {
+  const result = spawnSync(process.execPath, [CLI_ABS, "history", ...args], {
+    cwd,
+    encoding: "utf-8",
+    env: env ? { ...process.env, ...env } : process.env,
+  });
+  return {
+    status: result.status,
+    stdout: String(result.stdout ?? ""),
+    stderr: String(result.stderr ?? ""),
+  };
+}
+
+/**
+ * A directory that is outside every git repository, or null when no such
+ * scratch location exists in this environment. TMPDIR points at the
+ * project-local `.tmp/` (which is INSIDE this repository), so each candidate is
+ * probed with `git rev-parse --show-toplevel` before it is used.
+ */
+function makeDirOutsideGitRepo(prefix: string): string | null {
+  for (const root of [tmpdir(), homedir(), "/var/tmp"]) {
+    let dir: string;
+    try {
+      dir = mkdtempSync(join(root, prefix));
+    } catch (_) {
+      continue;
+    }
+    const probe = spawnSync("git", ["rev-parse", "--show-toplevel"], {
+      cwd: dir,
+      encoding: "utf-8",
+    });
+    if (probe.status !== 0) return dir;
+    rmSync(dir, { recursive: true, force: true });
+  }
+  return null;
+}
+
+const OUTSIDE_REPO_DIR = makeDirOutsideGitRepo("speclang-history-norepo-");
+
+/**
+ * DF-SPECLANG-5-R5: crash paths on a FRESH project. `speclang history` in a
+ * repository that has no commits yet (unborn HEAD) used to reject with
+ * simple-git's raw
+ *   GitError: fatal: your current branch 'master' does not have any commits yet
+ * plus a node stack trace and exit 1 — the first thing a new user sees after
+ * `git init`. History is a read-only report, so the answer is "no commits yet"
+ * with an actionable next step and a clean exit; every mode (log, --stat,
+ * --blame, --compare, --format json|timeline) must stay crash-free.
+ */
+describe("history on a repository with no commits (DF-SPECLANG-5-R5)", () => {
+  let emptyRepo: string;
+
+  beforeEach(() => {
+    emptyRepo = mkdtempSync(join(tmpdir(), "speclang-history-empty-"));
+    execFileSync("git", ["init", "-q", "."], { cwd: emptyRepo, encoding: "utf-8" });
+  });
+
+  afterEach(() => {
+    rmSync(emptyRepo, { recursive: true, force: true });
+  });
+
+  afterAll(() => {
+    if (OUTSIDE_REPO_DIR) rmSync(OUTSIDE_REPO_DIR, { recursive: true, force: true });
+  });
+
+  it("prints a graceful, actionable message instead of a GitError", () => {
+    const run = runHistory(emptyRepo);
+    const output = `${run.stdout}${run.stderr}`;
+
+    expect(run.status).toBe(0);
+    expect(run.stdout).toContain("No commits yet");
+    expect(run.stdout).toContain("git commit");
+    expect(output).not.toContain("GitError");
+    expect(output).not.toMatch(/^\s+at .*\(.*:\d+:\d+\)$/m);
+  });
+
+  it("keeps --format json machine-readable", () => {
+    const run = runHistory(emptyRepo, ["--format", "json"]);
+
+    expect(run.status).toBe(0);
+    expect(JSON.parse(run.stdout)).toEqual([]);
+    expect(`${run.stdout}${run.stderr}`).not.toContain("GitError");
+  });
+
+  it("keeps the --stat JSON shape stable with zero commits", () => {
+    const run = runHistory(emptyRepo, ["--stat", "--format", "json"]);
+
+    expect(run.status).toBe(0);
+    expect(JSON.parse(run.stdout)).toEqual({
+      totalCommits: 0,
+      uniqueAuthors: 0,
+      filesChanged: 0,
+      dateRange: null,
+    });
+  });
+
+  it("reports every mode (--stat, --blame, --compare, timeline) without a GitError", () => {
+    for (const args of [["--stat"], ["--blame"], ["--compare", "v1..v2"], ["--format", "timeline"]]) {
+      const label = args.join(" ");
+      const run = runHistory(emptyRepo, args);
+      const output = `${run.stdout}${run.stderr}`;
+
+      expect(run.status, label).toBe(0);
+      expect(output, label).not.toContain("GitError");
+      expect(run.stdout, label).toContain("No commits yet");
+    }
+  });
+
+  it("reports a missing git binary as such instead of crashing", () => {
+    const run = runHistory(emptyRepo, [], { PATH: "/nonexistent-bin-dir" });
+    const output = `${run.stdout}${run.stderr}`;
+
+    expect(run.status).toBe(2);
+    expect(run.stdout).toContain("not available on PATH");
+    expect(output).not.toContain("GitError");
+  });
+
+  it.skipIf(!OUTSIDE_REPO_DIR)(
+    "reports a non-repository directory with a defined exit code (no crash)",
+    () => {
+      const run = runHistory(OUTSIDE_REPO_DIR as string);
+      const output = `${run.stdout}${run.stderr}`;
+
+      expect(run.status).toBe(2);
+      expect(run.stdout).toContain("not inside a git repository");
+      expect(run.stdout).toContain("git init");
+      expect(output).not.toContain("GitError");
+    },
+  );
+
+  it("still reads history from a BARE repository (not mislabelled as no-repo)", () => {
+    // A bare repo answers `git rev-parse --is-inside-work-tree` with "false",
+    // so a `checkIsRepo()` based guard would claim "not a git repository" for
+    // a history that `git log` reads perfectly well.
+    const origin = mkdtempSync(join(tmpdir(), "speclang-history-bare-src-"));
+    const bare = join(mkdtempSync(join(tmpdir(), "speclang-history-bare-")), "repo.git");
+    const author = ["-c", "user.name=History Test", "-c", "user.email=history@example.invalid"];
+    try {
+      execFileSync("git", ["init", "-q", "."], { cwd: origin, encoding: "utf-8" });
+      mkdirSync(join(origin, "specs"), { recursive: true });
+      writeFileSync(join(origin, "specs", "core.spec.md"), "# core\n");
+      execFileSync("git", [...author, "add", "-A"], { cwd: origin, encoding: "utf-8" });
+      execFileSync("git", [...author, "commit", "-q", "-m", "spec: seed core"], {
+        cwd: origin,
+        encoding: "utf-8",
+      });
+      execFileSync("git", ["clone", "-q", "--bare", origin, bare], { encoding: "utf-8" });
+
+      const run = runHistory(bare);
+      expect(run.status).toBe(0);
+      expect(run.stdout).toContain("1 commits");
+      expect(`${run.stdout}${run.stderr}`).not.toContain("not inside a git repository");
+    } finally {
+      rmSync(origin, { recursive: true, force: true });
+      rmSync(dirname(bare), { recursive: true, force: true });
+    }
   });
 });
