@@ -1,0 +1,283 @@
+commit 5f1f1be4133c0370a096d02eacf4a5ebea2a96cb
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 01:39:13 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 01:39:13 2026 -0500
+
+    docs(examples): make the flagship example spec's verification steps actually run (DF-SPECLANG-8)
+    
+    The "## Verification Steps" list in specs/examples.spec.dir/hello-world.spec.md
+    is the first thing a user reads, and two of its four steps could not run:
+    
+    - Step 2 (`npx tsc --noEmit --skipLibCheck src/examples/hello-world.ts`) died
+      with `error TS5112: tsconfig.json is present but will not be loaded if files
+      are specified on commandline` — TypeScript 7 refuses a bare file argument in
+      a repo that has a tsconfig.json.
+    - Step 3 (`node dist/examples/hello-world.js`) died with
+      `Cannot find module .../dist/examples/hello-world.js`.
+    
+    Root cause of step 3 is the build layout, not a broken build: `npm run build`
+    runs plain `tsc` against tsconfig.json, whose `include` covers `src/**/*.ts`
+    (so src/examples IS compiled) and whose `rootDir` is `"."`. Output therefore
+    mirrors the repository tree — the example lands at
+    `dist/src/examples/hello-world.js`, and `dist/examples/` never exists. Changing
+    rootDir/outDir to produce `dist/examples/` would move `index.js` away from the
+    `main`/`bin` entry points package.json declares, so the build wiring was left
+    alone: shape (b), rewrite the steps against the path the build really produces.
+    
+    The spec now reads (every command was executed before being written down):
+    
+      1. Generate: src/examples/hello-world.ts
+      2. Compile: npx tsc --noEmit -p tsconfig.json
+      3. Run: npm run build && node dist/src/examples/hello-world.js
+      4. Verify: Output matches "Hello, SpecLang!"
+    
+    Step 2 goes through the project config because its `include` already covers
+    src/examples, which typechecks the generated file without the TS5112 collision.
+    (`--ignoreConfig` alone is not an option: without a tsconfig there is no
+    `types: ["node"]`, so the example's `require.main` guard fails with TS2591 —
+    probed, rejected.)
+    
+    tests/spec-example-verification.test.ts now parses the four numbered steps out
+    of that markdown on every run and executes them verbatim from the repo root:
+    step 1's path exists and exports helloWorld, step 2 exits 0, step 3 exits 0,
+    step 4's quoted string equals step 3's stdout. It is a real spawn, not a prose
+    comparison, so the spec cannot drift away from reality silently. The test's
+    header states what it does NOT prove (that the cascade generated the file in
+    step 1; that any other spec's steps are runnable).
+    
+    Red-proof: pointing step 3 back at `dist/examples/hello-world.js` turned the
+    suite into `Tests 2 failed | 3 passed`, with
+    `step 3 (Run) failed: npm run build && node dist/examples/hello-world.js` /
+    `Error: Cannot find module .../dist/examples/hello-world.js`; restoring the
+    step returned `Tests 5 passed (5)`.
+    
+    Gates: `npm run build` exit 0; new test 5/5 passed; `npx tsc --noEmit -p
+    tsconfig.json` exit 0; the three suites that already parse this spec
+    (tests/validation/parse-validate, tests/cli/generate-extraction,
+    tests/cascade/parse-spec) still 14/14.
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+---
+ specs/examples.spec.dir/hello-world.spec.md |  13 +-
+ tests/spec-example-verification.test.ts     | 185 ++++++++++++++++++++++++++++
+ 2 files changed, 196 insertions(+), 2 deletions(-)
+
+diff --git a/specs/examples.spec.dir/hello-world.spec.md b/specs/examples.spec.dir/hello-world.spec.md
+index 4894fce4..ef88a9c8 100644
+--- a/specs/examples.spec.dir/hello-world.spec.md
++++ b/specs/examples.spec.dir/hello-world.spec.md
+@@ -50,11 +50,20 @@ Hello, SpecLang!
+ 
+ ## Verification Steps
+ 
++Run each step from the repository root, in order.
++
+ 1. Generate: src/examples/hello-world.ts
+-2. Compile: npx tsc --noEmit --skipLibCheck src/examples/hello-world.ts
+-3. Run: node dist/examples/hello-world.js (after compilation)
++2. Compile: npx tsc --noEmit -p tsconfig.json
++3. Run: npm run build && node dist/src/examples/hello-world.js
+ 4. Verify: Output matches "Hello, SpecLang!"
+ 
++`tsconfig.json` sets `rootDir: "."`, so build output mirrors the repository
++layout: `src/examples/hello-world.ts` compiles to
++`dist/src/examples/hello-world.js` (there is no `dist/examples/`). Compiling is
++done through the project config because TypeScript 7 rejects a bare file
++argument while a `tsconfig.json` is present (`TS5112`); the project `include`
++already covers `src/**/*.ts`, so the example is typechecked there.
++
+ ## Success Criteria
+ 
+ - [ ] Code generates without errors
+diff --git a/tests/spec-example-verification.test.ts b/tests/spec-example-verification.test.ts
+new file mode 100644
+index 00000000..bc625e6a
+--- /dev/null
++++ b/tests/spec-example-verification.test.ts
+@@ -0,0 +1,185 @@
++/**
++ * SPECLANG: executes the flagship example spec's OWN Verification Steps.
++ * Source: @speclang/examples/hello-world (specs/examples.spec.dir/hello-world.spec.md)
++ *
++ * WHAT THIS PROVES — the four numbered steps under "## Verification Steps" in
++ * that spec are parsed out of the markdown on every run and then EXECUTED
++ * verbatim, in order, with the repository root as the working directory:
++ *   step 1 (Generate) the path the spec names exists and exports helloWorld,
++ *   step 2 (Compile)  the compile command exits 0,
++ *   step 3 (Run)      the run command exits 0,
++ *   step 4 (Verify)   step 3's stdout equals the string step 4 promises.
++ * Because the steps are read from the file (not hard-coded here), editing the
++ * spec without re-validating its commands turns this test red.
++ *
++ * WHAT THIS DOES NOT PROVE — that the SpecLang cascade actually produced
++ * src/examples/hello-world.ts in step 1 (that file is committed and symlinked
++ * from specs/examples.spec.dir/src; this test only proves the path the spec
++ * promises exists and runs), that any other spec's steps are runnable, or that
++ * `npm run build` outputs anything beyond this one example correctly.
++ */
++
++import { describe, it, expect, beforeAll } from "vitest";
++import { execSync } from "node:child_process";
++import * as fs from "node:fs";
++import * as path from "node:path";
++
++const REPO_ROOT = path.resolve(__dirname, "..");
++const SPEC_PATH = path.join(
++  REPO_ROOT,
++  "specs",
++  "examples.spec.dir",
++  "hello-world.spec.md"
++);
++
++interface VerificationStep {
++  n: number;
++  label: string;
++  /** Everything after the "Label:" prefix — a shell command or a file path. */
++  body: string;
++}
++
++/**
++ * Extract the ordered list under "## Verification Steps". Bounded: reading
++ * stops at the next "## " heading, and only lines shaped "N. Label: body"
++ * are accepted. Anything else in the section (prose) is ignored.
++ */
++function parseVerificationSteps(markdown: string): VerificationStep[] {
++  const lines = markdown.split(/\r?\n/);
++  const headingIndex = lines.findIndex((line) =>
++    /^##\s+Verification Steps\s*$/.test(line)
++  );
++  if (headingIndex === -1) {
++    throw new Error(
++      'spec has no "## Verification Steps" heading — cannot verify anything'
++    );
++  }
++
++  const steps: VerificationStep[] = [];
++  for (let i = headingIndex + 1; i < lines.length; i++) {
++    const line = lines[i];
++    if (/^##\s+/.test(line)) break;
++    const match = /^\s*(\d+)\.\s+(.*\S)\s*$/.exec(line);
++    if (!match) continue;
++    const text = match[2];
++    const colon = text.indexOf(":");
++    if (colon === -1) {
++      throw new Error(
++        `verification step ${match[1]} is not "Label: command" shaped: ${text}`
++      );
++    }
++    steps.push({
++      n: Number(match[1]),
++      label: text.slice(0, colon).trim(),
++      body: text.slice(colon + 1).trim(),
++    });
++  }
++  return steps;
++}
++
++interface RunResult {
++  status: number;
++  stdout: string;
++  stderr: string;
++}
++
++/** Run a spec command verbatim through the shell, from the repository root. */
++function runSpecCommand(command: string): RunResult {
++  try {
++    const stdout = execSync(command, {
++      cwd: REPO_ROOT,
++      encoding: "utf8",
++      stdio: ["ignore", "pipe", "pipe"],
++      env: { ...process.env, NO_COLOR: "1" },
++    });
++    return { status: 0, stdout, stderr: "" };
++  } catch (error) {
++    const err = error as {
++      status?: number;
++      stdout?: string | Buffer;
++      stderr?: string | Buffer;
++      message?: string;
++    };
++    return {
++      status: typeof err.status === "number" ? err.status : -1,
++      stdout: String(err.stdout ?? ""),
++      stderr: String(err.stderr ?? err.message ?? ""),
++    };
++  }
++}
++
++describe("flagship example spec: Verification Steps run verbatim", () => {
++  let steps: VerificationStep[] = [];
++
++  beforeAll(() => {
++    const markdown = fs.readFileSync(SPEC_PATH, "utf8");
++    steps = parseVerificationSteps(markdown);
++  });
++
++  it("parses exactly four ordered Verification Steps", () => {
++    expect(
++      steps.map((s) => s.n),
++      `expected 4 numbered steps under "## Verification Steps", got ${steps.length}`
++    ).toEqual([1, 2, 3, 4]);
++    expect(steps.map((s) => s.label)).toEqual([
++      "Generate",
++      "Compile",
++      "Run",
++      "Verify",
++    ]);
++    for (const step of steps) {
++      expect(
++        step.body.length,
++        `step ${step.n} (${step.label}) has an empty body`
++      ).toBeGreaterThan(0);
++    }
++  });
++
++  it("step 1 (Generate) produced the file the spec names", () => {
++    const step = steps[0];
++    const generatedPath = path.join(REPO_ROOT, step.body);
++    expect(
++      fs.existsSync(generatedPath),
++      `step 1 (${step.label}) names ${step.body}, which does not exist`
++    ).toBe(true);
++    const source = fs.readFileSync(generatedPath, "utf8");
++    expect(
++      source,
++      `step 1 (${step.label}) file ${step.body} does not export helloWorld`
++    ).toMatch(/export\s+function\s+helloWorld\s*\(/);
++  });
++
++  it("step 2 (Compile) exits 0", () => {
++    const step = steps[1];
++    const result = runSpecCommand(step.body);
++    expect(
++      result.status,
++      `step 2 (${step.label}) failed: ${step.body}\n${result.stderr}${result.stdout}`
++    ).toBe(0);
++  }, 120_000);
++
++  let runResult: RunResult = { status: -1, stdout: "", stderr: "" };
++
++  it("step 3 (Run) exits 0", () => {
++    const step = steps[2];
++    runResult = runSpecCommand(step.body);
++    expect(
++      runResult.status,
++      `step 3 (${step.label}) failed: ${step.body}\n${runResult.stderr}${runResult.stdout}`
++    ).toBe(0);
++  }, 180_000);
++
++  it("step 4 (Verify) output matches the string the spec promises", () => {
++    const step = steps[3];
++    const quoted = /"([^"]+)"/.exec(step.body);
++    expect(
++      quoted,
++      `step 4 (${step.label}) does not quote an expected output: ${step.body}`
++    ).not.toBeNull();
++    const expected = quoted![1];
++    expect(
++      runResult.stdout.trim(),
++      `step 4 (${step.label}) expected ${JSON.stringify(expected)}; step 3 printed ${JSON.stringify(runResult.stdout)}`
++    ).toBe(expected);
++  });
++});
