@@ -1,0 +1,874 @@
+{
+  "task_id": "DF-SPECLANG-015",
+  "task_title": "Daemon routes spec_writer tasks but no agent dispatch (DF-SPECLANG-015)",
+  "task_criteria": [
+    "watchDaemon consumes daemon 'task' events with dedup TTL; executor resolves repo-local CLI and surfaces real errors; npm run build exits 0; full suite 1848 passed rc=0"
+  ],
+  "passed": false,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "5d9a4e99209b8b82333ebc2d783916a015048249",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "99e59f5c6da79b5ca07b0b1ce6a3b574e64b63dac048336992733167ead9408d",
+  "working_tree_dirty_path_count": 20,
+  "items": [
+    {
+      "criterion": "watchDaemon consumes daemon 'task' events with dedup TTL; executor resolves repo-local CLI and surfaces real errors; npm run build exits 0; full suite 1848 passed rc=0",
+      "status": "PASS",
+      "detail": "PASS: watchDaemon at specs/cascade.spec.dir/src/coordinator/index.ts:133 subscribes daemon.on('task'), dedups via inFlight Set + lastDispatchedAt Map with ttlMs (default 10min, line 137), key = kind|triggerPath, skips empty trigger, dispatches via this.invoker.invoke, clears inFlight in .finally. Daemon emits 'task' at specs/daemon.spec.dir/src/daemon.ts:188 with AgentTask {kind,trigger,spec,target} (types.ts:26-32) \u2014 payload shape matches. invocation.ts:59-75 resolves repoRoot = path.resolve(__dirname,'..','..','..','..') = /home/kara/speclang (verified via node -e), candidates SPECLANG_BIN / <repo>/bin/speclang / 'speclang'; bin/speclang exists and is executable (ls -l). invocation.ts:104-113 surfaces real errors: lastError includes cmd+code+message+stderr, returns success:false with error for non-ENOENT. Build: `npm run build` BUILD_RC=0. Suite: `npx vitest run --passWithNoTests` VITEST_RC=0, \"Tests 1848 passed | 58 skipped (1906)\". \u00b7 graded at iteration 94.6 (744,911 in / 3,569 out, 94.6 iterations and 210s into the run)"
+    },
+    {
+      "criterion": "derived criterion 0",
+      "status": "FAIL",
+      "detail": "FAIL: watchDaemon has no caller anywhere in the repo. `grep -rn watchDaemon` matches only its definition (specs/cascade.spec.dir/src/coordinator/index.ts:133) and a comment (invocation.ts:97). The shipped daemon entrypoints bin/speclangd (foreground start at bin/speclangd:121-146, background spawn) and specs/daemon.spec.dir/src/speclangd.ts:40-56 only attach `d.on('task', task => console.log('[CLI] Task generated:', ...))` \u2014 they never construct a CascadeCoordinator nor call watchDaemon. `grep -rn \"watchDaemon|AgentInvoker|invoke(\" bin/speclangd bin/speclang specs/daemon.spec.dir/src/*.ts` returns nothing. So the DF-SPECLANG-015 defect (routed tasks produce no agent session) is unchanged in production; the new method is dead code reachable only by a caller that does not exist. \u00b7 graded at iteration 98.1 (0 in / 0 out, 0.1 iterations and 218s into the run)",
+      "derived": true
+    },
+    {
+      "criterion": "derived criterion 1",
+      "status": "FAIL",
+      "detail": "FAIL: AgentInvoker.invoke (specs/cascade.spec.dir/src/coordinator/invocation.ts:139-152) builds InvocationResult without copying `output` from the executor result, and InvocationResult (invocation.ts:17-30) has no `output` field. Proven by probe: injected executor returning {success:true, files:[], output:'GENERATED SPEC CONTENT'} -> invoke() returns HAS_OUTPUT=false, OUTPUT=undefined. Therefore watchDaemon's write branch (index.ts:177-186, `const output = (invocation as any).output; if (task.target && output && ...) fs.writeFileSync(task.target, output)`) can never fire \u2014 the routed spec_writer output is never persisted to the task target. \u00b7 graded at iteration 98.0 (102,670 in / 939 out, 3.4 iterations and 218s into the run)",
+      "derived": true
+    },
+    {
+      "criterion": "derived criterion 2",
+      "status": "PASS",
+      "detail": "PASS (with caveat): dedup TTL is time-bounded, not permanent \u2014 index.ts:137 ttlMs default 10*60*1000, index.ts:150-153 skips only while Date.now()-last < ttlMs, so a re-converged file is re-dispatched after the TTL; inFlight entry is removed in .finally (index.ts:190-192) so a failed/completed dispatch does not block forever. Caveat: the key is `${kind}|${triggerPath}` only (index.ts:143) \u2014 content changes within the TTL window are suppressed, which is the documented intent of the TTL. \u00b7 graded at iteration 99.2 (35,339 in / 196 out, 1.1 iterations and 219s into the run)",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "changes_required",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  18:59:58",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261116T235948.867978Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261116T235948.867978Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  18:59:58\n   Duration  24.52s (transform 11.62s, setup 1.69s, import 16.47s, tests 103.72s, environment 16ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261116T235948.867978Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": false,
+      "any_failed": true,
+      "summary": "INCOMPLETE\n  \u2713 watchDaemon consumes daemon 'task' events with dedup TTL; executor resolves repo-local CLI and surfaces real errors; npm run build exits 0; full suite 1848 passed rc=0: PASS: watchDaemon at specs/cascade.spec.dir/src/coordinator/index.ts:133 subscribes daemon.on('task'), dedups via inFlight Set + lastDispatchedAt Map with ttlMs (default 10min, line 137), key = kind|triggerPath, skips empty trigger, dispatches via this.invoker.invoke, clears inFlight in .finally. Daemon emits 'task' at specs/daemon.spec.dir/src/daemon.ts:188 with AgentTask {kind,trigger,spec,target} (types.ts:26-32) \u2014 payload shape matches. invocation.ts:59-75 resolves repoRoot = path.resolve(__dirname,'..','..','..','..') = /home/kara/speclang (verified via node -e), candidates SPECLANG_BIN / <repo>/bin/speclang / 'speclang'; bin/speclang exists and is executable (ls -l). invocation.ts:104-113 surfaces real errors: lastError includes cmd+code+message+stderr, returns success:false with error for non-ENOENT. Build: `npm run build` BUILD_RC=0. Suite: `npx vitest run --passWithNoTests` VITEST_RC=0, \"Tests 1848 passed | 58 skipped (1906)\". \u00b7 graded at iteration 94.6 (744,911 in / 3,569 out, 94.6 iterations and 210s into the run)\n  \u2717 derived criterion 0: FAIL: watchDaemon has no caller anywhere in the repo. `grep -rn watchDaemon` matches only its definition (specs/cascade.spec.dir/src/coordinator/index.ts:133) and a comment (invocation.ts:97). The shipped daemon entrypoints bin/speclangd (foreground start at bin/speclangd:121-146, background spawn) and specs/daemon.spec.dir/src/speclangd.ts:40-56 only attach `d.on('task', task => console.log('[CLI] Task generated:', ...))` \u2014 they never construct a CascadeCoordinator nor call watchDaemon. `grep -rn \"watchDaemon|AgentInvoker|invoke(\" bin/speclangd bin/speclang specs/daemon.spec.dir/src/*.ts` returns nothing. So the DF-SPECLANG-015 defect (routed tasks produce no agent session) is unchanged in production; the new method is dead code reachable only by a caller that does not exist. \u00b7 graded at iteration 98.1 (0 in / 0 out, 0.1 iterations and 218s into the run)\n  \u2717 derived criterion 1: FAIL: AgentInvoker.invoke (specs/cascade.spec.dir/src/coordinator/invocation.ts:139-152) builds InvocationResult without copying `output` from the executor result, and InvocationResult (invocation.ts:17-30) has no `output` field. Proven by probe: injected executor returning {success:true, files:[], output:'GENERATED SPEC CONTENT'} -> invoke() returns HAS_OUTPUT=false, OUTPUT=undefined. Therefore watchDaemon's write branch (index.ts:177-186, `const output = (invocation as any).output; if (task.target && output && ...) fs.writeFileSync(task.target, output)`) can never fire \u2014 the routed spec_writer output is never persisted to the task target. \u00b7 graded at iteration 98.0 (102,670 in / 939 out, 3.4 iterations and 218s into the run)\n  \u2713 derived criterion 2: PASS (with caveat): dedup TTL is time-bounded, not permanent \u2014 index.ts:137 ttlMs default 10*60*1000, index.ts:150-153 skips only while Date.now()-last < ttlMs, so a re-converged file is re-dispatched after the TTL; inFlight entry is removed in .finally (index.ts:190-192) so a failed/completed dispatch does not block forever. Caveat: the key is `${kind}|${triggerPath}` only (index.ts:143) \u2014 content changes within the TTL window are suppressed, which is the documented intent of the TTL. \u00b7 graded at iteration 99.2 (35,339 in / 196 out, 1.1 iterations and 219s into the run)\nCap exceeded: Iteration cap (100) reached (100.3 used). Increase max_iterations or split criteria. Partial verdict \u2014 4 of 4 criteria graded, 0 ungraded. The run spent 918,483 in / 6,325 out over 100.3 iterations.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": false,
+          "output": "INCOMPLETE\n  \u2713 watchDaemon consumes daemon 'task' events with dedup TTL; executor resolves repo-local CLI and surfaces real errors; npm run build exits 0; full suite 1848 passed rc=0: PASS: watchDaemon at specs/cascade.spec.dir/src/coordinator/index.ts:133 subscribes daemon.on('task'), dedups via inFlight Set + lastDispatchedAt Map with ttlMs (default 10min, line 137), key = kind|triggerPath, skips empty trigger, dispatches via this.invoker.invoke, clears inFlight in .finally. Daemon emits 'task' at specs/daemon.spec.dir/src/daemon.ts:188 with AgentTask {kind,trigger,spec,target} (types.ts:26-32) \u2014 payload shape matches. invocation.ts:59-75 resolves repoRoot = path.resolve(__dirname,'..','..','..','..') = /home/kara/speclang (verified via node -e), candidates SPECLANG_BIN / <repo>/bin/speclang / 'speclang'; bin/speclang exists and is executable (ls -l). invocation.ts:104-113 surfaces real errors: lastError includes cmd+code+message+stderr, returns success:false with error for non-ENOENT. Build: `npm run build` BUILD_RC=0. Suite: `npx vitest run --passWithNoTests` VITEST_RC=0, \"Tests 1848 passed | 58 skipped (1906)\". \u00b7 graded at iteration 94.6 (744,911 in / 3,569 out, 94.6 iterations and 210s into the run)\n  \u2717 derived criterion 0: FAIL: watchDaemon has no caller anywhere in the repo. `grep -rn watchDaemon` matches only its definition (specs/cascade.spec.dir/src/coordinator/index.ts:133) and a comment (invocation.ts:97). The shipped daemon entrypoints bin/speclangd (foreground start at bin/speclangd:121-146, background spawn) and specs/daemon.spec.dir/src/speclangd.ts:40-56 only attach `d.on('task', task => console.log('[CLI] Task generated:', ...))` \u2014 they never construct a CascadeCoordinator nor call watchDaemon. `grep -rn \"watchDaemon|AgentInvoker|invoke(\" bin/speclangd bin/speclang specs/daemon.spec.dir/src/*.ts` returns nothing. So the DF-SPECLANG-015 defect (routed tasks produce no agent session) is unchanged in production; the new method is dead code reachable only by a caller that does not exist. \u00b7 graded at iteration 98.1 (0 in / 0 out, 0.1 iterations and 218s into the run)\n  \u2717 derived criterion 1: FAIL: AgentInvoker.invoke (specs/cascade.spec.dir/src/coordinator/invocation.ts:139-152) builds InvocationResult without copying `output` from the executor result, and InvocationResult (invocation.ts:17-30) has no `output` field. Proven by probe: injected executor returning {success:true, files:[], output:'GENERATED SPEC CONTENT'} -> invoke() returns HAS_OUTPUT=false, OUTPUT=undefined. Therefore watchDaemon's write branch (index.ts:177-186, `const output = (invocation as any).output; if (task.target && output && ...) fs.writeFileSync(task.target, output)`) can never fire \u2014 the routed spec_writer output is never persisted to the task target. \u00b7 graded at iteration 98.0 (102,670 in / 939 out, 3.4 iterations and 218s into the run)\n  \u2713 derived criterion 2: PASS (with caveat): dedup TTL is time-bounded, not permanent \u2014 index.ts:137 ttlMs default 10*60*1000, index.ts:150-153 skips only while Date.now()-last < ttlMs, so a re-converged file is re-dispatched after the TTL; inFlight entry is removed in .finally (index.ts:190-192) so a failed/completed dispatch does not block forever. Caveat: the key is `${kind}|${triggerPath}` only (index.ts:143) \u2014 content changes within the TTL window are suppressed, which is the documented intent of the TTL. \u00b7 graded at iteration 99.2 (35,339 in / 196 out, 1.1 iterations and 219s into the run)\nCap exceeded: Iteration cap (100) reached (100.3 used). Increase max_iterations or split criteria. Partial verdict \u2014 4 of 4 criteria graded, 0 ungraded. The run spent 918,483 in / 6,325 out over 100.3 iterations.",
+          "error": "",
+          "data": {
+            "verdict": "INCOMPLETE",
+            "items": [
+              {
+                "criterion": "watchDaemon consumes daemon 'task' events with dedup TTL; executor resolves repo-local CLI and surfaces real errors; npm run build exits 0; full suite 1848 passed rc=0",
+                "status": "PASS",
+                "detail": "PASS: watchDaemon at specs/cascade.spec.dir/src/coordinator/index.ts:133 subscribes daemon.on('task'), dedups via inFlight Set + lastDispatchedAt Map with ttlMs (default 10min, line 137), key = kind|triggerPath, skips empty trigger, dispatches via this.invoker.invoke, clears inFlight in .finally. Daemon emits 'task' at specs/daemon.spec.dir/src/daemon.ts:188 with AgentTask {kind,trigger,spec,target} (types.ts:26-32) \u2014 payload shape matches. invocation.ts:59-75 resolves repoRoot = path.resolve(__dirname,'..','..','..','..') = /home/kara/speclang (verified via node -e), candidates SPECLANG_BIN / <repo>/bin/speclang / 'speclang'; bin/speclang exists and is executable (ls -l). invocation.ts:104-113 surfaces real errors: lastError includes cmd+code+message+stderr, returns success:false with error for non-ENOENT. Build: `npm run build` BUILD_RC=0. Suite: `npx vitest run --passWithNoTests` VITEST_RC=0, \"Tests 1848 passed | 58 skipped (1906)\". \u00b7 graded at iteration 94.6 (744,911 in / 3,569 out, 94.6 iterations and 210s into the run)",
+                "resolution_probability": 0.08
+              },
+              {
+                "criterion": "derived criterion 0",
+                "status": "FAIL",
+                "detail": "FAIL: watchDaemon has no caller anywhere in the repo. `grep -rn watchDaemon` matches only its definition (specs/cascade.spec.dir/src/coordinator/index.ts:133) and a comment (invocation.ts:97). The shipped daemon entrypoints bin/speclangd (foreground start at bin/speclangd:121-146, background spawn) and specs/daemon.spec.dir/src/speclangd.ts:40-56 only attach `d.on('task', task => console.log('[CLI] Task generated:', ...))` \u2014 they never construct a CascadeCoordinator nor call watchDaemon. `grep -rn \"watchDaemon|AgentInvoker|invoke(\" bin/speclangd bin/speclang specs/daemon.spec.dir/src/*.ts` returns nothing. So the DF-SPECLANG-015 defect (routed tasks produce no agent session) is unchanged in production; the new method is dead code reachable only by a caller that does not exist. \u00b7 graded at iteration 98.1 (0 in / 0 out, 0.1 iterations and 218s into the run)",
+                "derived": true
+              },
+              {
+                "criterion": "derived criterion 1",
+                "status": "FAIL",
+                "detail": "FAIL: AgentInvoker.invoke (specs/cascade.spec.dir/src/coordinator/invocation.ts:139-152) builds InvocationResult without copying `output` from the executor result, and InvocationResult (invocation.ts:17-30) has no `output` field. Proven by probe: injected executor returning {success:true, files:[], output:'GENERATED SPEC CONTENT'} -> invoke() returns HAS_OUTPUT=false, OUTPUT=undefined. Therefore watchDaemon's write branch (index.ts:177-186, `const output = (invocation as any).output; if (task.target && output && ...) fs.writeFileSync(task.target, output)`) can never fire \u2014 the routed spec_writer output is never persisted to the task target. \u00b7 graded at iteration 98.0 (102,670 in / 939 out, 3.4 iterations and 218s into the run)",
+                "derived": true
+              },
+              {
+                "criterion": "derived criterion 2",
+                "status": "PASS",
+                "detail": "PASS (with caveat): dedup TTL is time-bounded, not permanent \u2014 index.ts:137 ttlMs default 10*60*1000, index.ts:150-153 skips only while Date.now()-last < ttlMs, so a re-converged file is re-dispatched after the TTL; inFlight entry is removed in .finally (index.ts:190-192) so a failed/completed dispatch does not block forever. Caveat: the key is `${kind}|${triggerPath}` only (index.ts:143) \u2014 content changes within the TTL window are suppressed, which is the documented intent of the TTL. \u00b7 graded at iteration 99.2 (35,339 in / 196 out, 1.1 iterations and 219s into the run)",
+                "derived": true
+              }
+            ],
+            "summary": "Cap exceeded: Iteration cap (100) reached (100.3 used). Increase max_iterations or split criteria. Partial verdict \u2014 4 of 4 criteria graded, 0 ungraded. The run spent 918,483 in / 6,325 out over 100.3 iterations.",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-015\"}",
+          "exit_code": 0,
+          "output_sha": "ada882bb1f1ad422ff6f2a537d57a755328904ef4b54e00bab220a0527bce4ea"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd && ls -la && cat .gitreins/config.yaml 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "b3a43edbb1824079d1fce4fd456b1a43976ed3df39b2fee282bc0c7d28d30ec4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git log --oneline -3 && git show --stat HEAD",
+          "exit_code": 0,
+          "output_sha": "ee9ac2b4b684218a714cadcb52944e7b685824c54bacf90a006029934c6da5ba"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- specs/cascade.spec.dir/src/coordinator/index.ts | head -200",
+          "exit_code": 0,
+          "output_sha": "b66bca84a631e93a009c6e1da2eee097065dd8c1263a63a884158771aac25818"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- specs/cascade.spec.dir/src/coordinator/invocation.ts",
+          "exit_code": 0,
+          "output_sha": "9b2490c007bf6293dcdeaf6e2169cb8878d7580da42d7eb764342c8c8faf38d3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -la src/cascade/coordinator 2>/dev/null; ls -la src/cascade 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "f98d457a5f13efb69ea24f83e8a2369a151dd3c3734060595616b4d622982138"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"specs/cascade.spec.dir/src/coordinator/index.ts\"}",
+          "exit_code": 0,
+          "output_sha": "307324704ac5a42659f004358127716a06a0c4e0a1a5c65b4e39392dc481d20e"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"specs/cascade.spec.dir/src/coordinator/invocation.ts\"}",
+          "exit_code": 0,
+          "output_sha": "2089bc959c8a7ab50d6d6cbe271c3c67c9a7db558b7b1a8c00b0b0aeb78d8998"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"regex\": \"watchDaemon\"}",
+          "exit_code": 0,
+          "output_sha": "6949c9ffbbdfa10e9951996e87c80ff6cdf6453e47990f8cc097de711377e004"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"regex\": \"emit\\\\(['\\\"]task['\\\"]\"}",
+          "exit_code": 0,
+          "output_sha": "40f10903b8cd6c73cd8f0b3b5447532b24b34423d50a8a50f61fcd57c9ca36d1"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"regex\": \"on\\\\(['\\\"]task['\\\"]\"}",
+          "exit_code": 0,
+          "output_sha": "bb31c7c7d033174d74ecc635000da8fb2bda49c000c71b908f5b92b259d1bdf9"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 120, \"offset\": 120, \"path\": \"specs/daemon.spec.dir/src/daemon.ts\"}",
+          "exit_code": 0,
+          "output_sha": "27413144ddb5ffff95e7577c8ac2efef1fc06a007818cde94cc81605540bd158"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"specs/speclangd.ts.spec.dir/src/speclangd.ts\"}",
+          "exit_code": 0,
+          "output_sha": "2cc80a57315a6a6d13a5add398af6c7279ec6840131fa114580e63c8a79a3158"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"bin/speclangd\"}",
+          "exit_code": 0,
+          "output_sha": "8f197520b138e9cea293087346dce5501a8c2a2eaf56c8842f10e3735b898709"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"file_glob\": \"*.ts\", \"regex\": \"CascadeCoordinator|coordinator/index\"}",
+          "exit_code": 0,
+          "output_sha": "4634947bf0eeddf0cb2b16270ee62d850ca68b3cb1b30680c02a383b59257156"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -la specs/implementation.spec.dir/src/cascade/coordinator/ && head -30 specs/implementation.spec.dir/src/cascade/coordinator/index.ts && grep -n \"watchDaemon\" -r specs/implementation.spec.dir/ dist/ 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "a8213480ac2390fe573cc1ab4ce352367610cc544eba851c81307068eeccd3d0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"watchDaemon\\|DF-SPECLANG-015\" tests/ | head -20; echo \"---\"; grep -rn \"DF-SPECLANG-015\" --include=*.md . | head -20",
+          "exit_code": 0,
+          "output_sha": "9e16eafde670b2fb2d9fc621c85b808dff8195d1996a186d9691df21ad1a2f54"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"watchDaemon\" -A 60 dist/src/cascade/coordinator/index.js | head -80",
+          "exit_code": 0,
+          "output_sha": "b6a2e1c9540291790d2215e23a41fae727ba06d1156b65a3619a662a78aeaabc"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"DF-SPECLANG\" --include=*.md --include=*.json --include=*.txt . 2>/dev/null | grep -v node_modules | head -20",
+          "exit_code": 0,
+          "output_sha": "a7dda14ac2ebbea9669e44b6343a35b628bc0dbe976925840868a3c60f8e640f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"DF-SPECLANG-015\" .coding-hermes/ .gitreins/ 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "d2bb5a9639744fcf0b739df8770b8de7e3613ad82a8c7bbd9d811093ce128d83"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"spec_writer\\|spec-writer\" specs/daemon.spec.dir/src/*.ts | head -30",
+          "exit_code": 0,
+          "output_sha": "94afbc0e1fd5a1fd4d0209245e05fdd93c301d73a8926660dbb8f3705d503291"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '550,600p' .gitreins/tasks.yaml",
+          "exit_code": 0,
+          "output_sha": "8265f07fe9e3ae986e7f99b34815944ea1161c0196702baa2d6c0329cf92d16f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"AgentTask\" specs/daemon.spec.dir/src/types.ts | head; echo ---; sed -n '1,120p' specs/daemon.spec.dir/src/types.ts",
+          "exit_code": 0,
+          "output_sha": "aadb203a048c29059c197c10da3301cd2fd447a68a884ba163f213c990b3b8fd"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"DF-SPECLANG-015 acceptance (from .coding-hermes/board/tasks.jsonl:145): run daemon + coordinator via npx tsx against scratch project; daemon log must show routed spec_writer task consumed by a dispatched agent session, followed by non-empty file at task target path in generated/ within 120s.\\nCriterion: watchDaemon consumes daemon 'task' events with dedup TTL; executor resolves repo-local CLI and surfaces real errors; npm run build exits 0; full suite 1848 passed rc=0\\nFindings so far:\\n- watchDaemon added at specs/cascade.spec.dir/src/coordinator/index.ts:133 (symlinked from src/cascade/coordinator/index.ts). Dedup: inFlight Set + lastDispatchedAt Map with ttlMs default 10min. OK.\\n- invocation.ts defaultExecutor: candidates [SPECLANG_BIN, repoRoot/bin/speclang, 'speclang']; repoRoot = path.resolve(__dirname,'..','..','..','..'). For src/cascade/coordinator -> repo root OK; for specs/cascade.spec.dir/src/coordinator -> 4 up = specs/ (WRONG). Need to check dist path.\\n- invocation.ts: error surfaced via lastError + console.error; non-ENOENT returns failure. OK.\\n- AgentInvoker.invoke (invocation.ts ~line 150) DROPS result.error and result.output -> watchDaemon's invocation.error and invocation.output are always undefined. BUG.\\n- watchDaemon has NO caller anywhere (grep watchDaemon: only definition + comment). bin/speclangd:135 and specs/speclangd.ts.spec.dir/src/speclangd.ts:43 only log the task. NOT WIRED.\\n- No tests reference watchDaemon or DF-SPECLANG-015.\\n\", \"key\": \"task_def\"}",
+          "exit_code": 0,
+          "output_sha": "cbf69b85986ad98fc5baa0d00aa7eff10dd1b87d77641c822b7cce7f684e54d6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"repoRoot\\|candidates\\|__dirname\" dist/src/cascade/coordinator/invocation.js | head -20; echo \"=== dist invocation.js head\"; sed -n '55,110p' dist/src/cascade/coordinator/invocation.js",
+          "exit_code": 0,
+          "output_sha": "5395e2704909cf2f704b993681c011c84ddb96a1071b6514c512ef4c5f4838e8"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '110,160p' dist/src/cascade/coordinator/invocation.js",
+          "exit_code": 0,
+          "output_sha": "09c391206e30badca7e5da35b878e936cde9b353b2b55a09260dbcf4a0a69ca3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat package.json | head -60",
+          "exit_code": 0,
+          "output_sha": "fd028d5aaf42df6c650ecfa0c113bf90e5d9aa733e58d141a3428486252e4746"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npm run build 2>&1 | tail -20; echo \"BUILD_EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "03e4458ff8361c7369daff7f75a09919c764cf16188105ff74d39a3ebf080fd6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npm run build > /tmp/build.log 2>&1; echo \"BUILD_EXIT=$?\"; tail -5 /tmp/build.log",
+          "exit_code": 0,
+          "output_sha": "1f65eb5414bb086ac0a0e397e31b3db92a895619d6438f6af80d2074a500896b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && TMPDIR=$PWD/.tmp npx vitest run > /tmp/vitest.log 2>&1; echo \"VITEST_EXIT=$?\"; tail -25 /tmp/vitest.log",
+          "exit_code": 0,
+          "output_sha": "75e1da6d50d49af71a6c9fd9d4b669aa38b23e2c99cc2f11c1983192c6268dfc"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"npm run build -> BUILD_EXIT=0 (tsc, no errors).\\nTMPDIR=$PWD/.tmp npx vitest run -> VITEST_EXIT=0; \\\"Test Files 101 passed | 4 skipped (105)\\\"; \\\"Tests 1848 passed | 58 skipped (1906)\\\". Matches criterion's 1848 passed rc=0.\\n\", \"key\": \"build_tests\"}",
+          "exit_code": 0,
+          "output_sha": "155502c754f3b9a3c5f27804c4d711c8c3717813af620b74053b1eecbe6cc65e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"watchDaemon\\|coordinator\" bin/speclangd specs/speclangd.ts.spec.dir/src/speclangd.ts specs/daemon.spec.dir/src/speclangd.ts 2>/dev/null | head -20; echo \"=== daemon.ts imports\"; sed -n '1,40p' specs/daemon.spec.dir/src/daemon.ts",
+          "exit_code": 0,
+          "output_sha": "096d5072665a3b012756596a69cee0d6803ba24d828f997515a665bb0ec787c9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"watchDaemon\" --include=*.ts --include=*.js --include=*.mjs --include=*.cjs . 2>/dev/null | grep -v node_modules | grep -v \"^./dist/\" | head -20",
+          "exit_code": 0,
+          "output_sha": "7ca2794c95121fd12a55d4e5514f0ea890943b1744e3c25b07d9acdea71a172e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"CascadeCoordinator\\|cascade/coordinator\" bin/ specs/cli.spec.dir/src/ 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "9f3f208641fb92d11f6ad6e1704c84c010769752440cb7d893b0312f0957ae2b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"CascadeCoordinator\" --include=*.ts --include=*.js . 2>/dev/null | grep -v node_modules | grep -v \"^./dist/\" | grep -v \"^./tests/\" | grep -v \"\\.d\\.ts\" | head -20",
+          "exit_code": 0,
+          "output_sha": "2fd7a029fe465ba61765803e97b543183e82e77e36638fc2f3551c5c2fb27967"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '100,140p' specs/implementation.spec.dir/src/cascade/index.ts",
+          "exit_code": 0,
+          "output_sha": "2a46204c9c5713509249089176579b7bcc79c4c32fc43c8e9b808c97eb72bdfe"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"cascadeFrom\\|new CascadeCoordinator\" --include=*.ts bin/ specs/cli.spec.dir/ specs/implementation.spec.dir/src/ 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "29d33244504dad1d37fa2f3da6c0ea932205d7041760ca1d5c593ae875f4cae1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"cascade\" bin/speclang | head -30",
+          "exit_code": 0,
+          "output_sha": "d2c23cdc5ce74585ff8762bc7514cb691d31a3b6d8d4bfa472064d6e2af03910"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '280,360p' bin/speclang",
+          "exit_code": 0,
+          "output_sha": "a18989a3f7e3a4b8f43f495d3475558134154c2e0f9b793e5aa15dab98b79077"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -la .speclang/ && grep -rn \"emit('task'\\|emit(\\\"task\\\"\\|'task'\" .speclang/*.spec* 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "08089b88cbb29c5e277eb2119ba478126ccc60d565e9ff8e7df19b6d0ff3aaad"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\\|emit('task'\\|emit(\\\"task\\\"\" --include=*.ts --include=*.js . 2>/dev/null | grep -v node_modules | grep -v \"^./dist/\" | head -20",
+          "exit_code": 0,
+          "output_sha": "84ccf16b9697722a9d832ac65f336ded39b1721992aad6c33ddd1874c3280978"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\" . --include=*.ts --include=*.js --include=*.log 2>/dev/null | grep -v node_modules | head -10; echo \"=== daemon log\"; ls -la .speclang/*.log 2>/dev/null; tail -40 .speclang/speclangd.log 2>/dev/null",
+          "exit_code": 1,
+          "output_sha": "d2bcfc18326d7861a1a902b2afa97f092db0b4cac867034fee616d9e83940319"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\" .coding-hermes/ 2>/dev/null | head -5; echo \"=== evidence dir\"; ls .coding-hermes/evidence/ 2>/dev/null | head -40",
+          "exit_code": 0,
+          "output_sha": "291b24df4fd3bba5a52f1060a1ba363aecd05a17c3f1bf10e260e2cc2c4a9c26"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls .coding-hermes/evidence/speclang-dogfood-2026-11-16-05-02-33/ | head -20; grep -rln \"TASK ROUTED\" .coding-hermes/evidence/ 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "6a848ca9c95b2be5afa7bb16b88a01e11bcd75cb40a46906bf770efcd5763e0a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\" .coding-hermes/evidence/speclang-dogfood-2026-11-16-05-02-33/FINDINGS.md | head -5; echo \"===\"; grep -rn \"TASK ROUTED\" -r .coding-hermes/evidence/speclang-dogfood-2026-11-16-05-02-33/fire5 2>/dev/null | head -5",
+          "exit_code": 0,
+          "output_sha": "dd0e7f29bb83f2419338a6bcc56e050e46505d16e5d6b053a91eaefa9c972141"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\" . --include=* -l 2>/dev/null | grep -v node_modules | head -10",
+          "exit_code": 0,
+          "output_sha": "bd09da285bb9f2663a102d22ef6bbef4551cba2bec3576220a71a9bedeb4dcfb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"class SpeclangDaemon\" --include=*.ts --include=*.js . 2>/dev/null | grep -v node_modules | head -10",
+          "exit_code": 0,
+          "output_sha": "99909495432fa436f198cc8bc02c05530bb40ecd889ab7df05d3fb841890c60b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"SpeclangDaemon\" --include=*.ts --include=*.js . 2>/dev/null | grep -v node_modules | head -10; echo \"=== cascade-router\"; grep -rn \"CascadeRouter\" --include=*.ts --include=*.js . 2>/dev/null | grep -v node_modules | head -10",
+          "exit_code": 0,
+          "output_sha": "72177f1bb9fdde3fe3c65a0a017f73851f002868e8c9a81be07eb085db28727a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"SpeclangDaemon\\|CascadeRouter\" . --include=* -l 2>/dev/null | grep -v node_modules | head -10",
+          "exit_code": 0,
+          "output_sha": "7304a4d75bd7e18c06a3e23c47e4abeb74856b5d6da24fadd1bd847d4beeb8ae"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\\|task_routed\\|routed\" specs/daemon.spec.dir/src/*.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "2da7a55f407bf9372acd63858f308ec3f9bb109eded0e21e5bbd195ead1d5ef7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\" dist/ 2>/dev/null | head -5; echo \"=== dist daemon\"; grep -rn \"emit('task'\" dist/src/daemon/*.js 2>/dev/null | head -5",
+          "exit_code": 0,
+          "output_sha": "4336a07279286e16a13668bbae7da3ece3bb3b9a9ab2daa551e2e589364fdc58"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '140,165p' dist/src/daemon/daemon.js",
+          "exit_code": 0,
+          "output_sha": "b98c1271d7be6ff67a2ae50ace1d9ec85f25dbb1c741e67281561243ad5df70b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\" .tmp/ 2>/dev/null | head -5; echo \"=== search all files for TASK ROUTED (incl hidden)\"; grep -rn \"TASK ROUTED\" . 2>/dev/null | grep -v node_modules | grep -v \"\\.git/\" | head -5",
+          "exit_code": 0,
+          "output_sha": "d73487b9bad0dd8aa9c2d3211bb69f5d3961cef22f6478ab9e7201cb494082fa"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\" .coding-hermes/board/events.jsonl | head -3; echo \"=== events around 015\"; grep -n \"DF-SPECLANG-015\" .coding-hermes/board/events.jsonl | head -10",
+          "exit_code": 0,
+          "output_sha": "6141843cb2a9e440726270d51048ea06af15586dafa19dbf205684b57a9bfe0c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\" .coding-hermes/evidence/ .gitreins/ 2>/dev/null | head -5; echo \"=== grep in all files under .coding-hermes for 'ROUTED'\"; grep -rn \"ROUTED\" .coding-hermes/ 2>/dev/null | head -5",
+          "exit_code": 0,
+          "output_sha": "ba1ac11c6338db5c79933e26f1e13c8e98e29842882bcb4b67a13efa0feb6c64"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\" .tmp/ .vfs/ .memory-bank/ .agents/ .hermes/ .opencode/ .ralph/ 2>/dev/null | head -5; echo \"=== find logs\"; find . -name \"*.log\" -newermt \"2026-11-16\" 2>/dev/null | grep -v node_modules | head -20",
+          "exit_code": 0,
+          "output_sha": "3fd669dc168b0241a2e26c41446b8612a5e81dc05d05fdd5f8e1af0830d390ca"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat .gitreins/logs/guard-20261116T235948.867978Z.log | head -60",
+          "exit_code": 0,
+          "output_sha": "e6fff52fb923831d05154816fda9b6fb4fb2cd2847a1ac5e8cd24edcc2feb5d3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\" .gitreins/logs/ 2>/dev/null | head -5; echo \"=== grep 'Routed to agent' in logs\"; grep -rn \"Routed to agent\" .gitreins/logs/ 2>/dev/null | head -5",
+          "exit_code": 0,
+          "output_sha": "eca42e731eddc3c0b886ee0a717e81c8b91ff707a95035b27f9a83491c08da40"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\" .coding-hermes/evidence/speclang-releng-2026-11-16-11-07-39/ 2>/dev/null | head -5; ls .coding-hermes/evidence/speclang-releng-2026-11-16-11-07-39/ | head -20",
+          "exit_code": 0,
+          "output_sha": "54e61986f268d0d4c9ba6085f04cf3b5e93e13599cb0be26412ab03af6937c44"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\" .coding-hermes/evidence/DF-SPECLANG-014-tier2-verdict.txt 2>/dev/null | head -3; echo \"=== grep ROUTED in DF-014 verdict\"; grep -n \"ROUTED\\|routed\" .coding-hermes/evidence/DF-SPECLANG-014-tier2-verdict.txt | head -10",
+          "exit_code": 0,
+          "output_sha": "f7118bf59c3c55a685cf6287a9afcdff874a6f742c7631f004c61cfc3efbc12b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\" .coding-hermes/evidence/DF-SPECLANG-1-R5-judge-2026-11-16.log 2>/dev/null | head -3; echo \"=== grep ROUTED in judge log\"; grep -n \"ROUTED\" .coding-hermes/evidence/DF-SPECLANG-1-R5-judge-2026-11-16.log | head -5",
+          "exit_code": 0,
+          "output_sha": "af8aa442d14f7615e4261d2548c4f4ce6b77a1e671d948f5b0c64fc89a506a01"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\" .coding-hermes/evidence/speclang-dogfood-2026-11-16-05-02-33/FINDINGS.md 2>/dev/null | head -3; echo \"=== grep ROUTED in FINDINGS\"; grep -n \"ROUTED\\|routed\" .coding-hermes/evidence/speclang-dogfood-2026-11-16-05-02-33/FINDINGS.md | head -10",
+          "exit_code": 0,
+          "output_sha": "78ec19412ab3aad3c6b01da9bf491b53bc6762fcc179a3a9c56a4dad72d333d5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\" .coding-hermes/evidence/speclang-dogfood-2026-11-16-05-02-33/fire5 2>/dev/null | head -3; ls .coding-hermes/evidence/speclang-dogfood-2026-11-16-05-02-33/fire5 | head",
+          "exit_code": 0,
+          "output_sha": "368bd6be88d727546ca28e8409e66dbfd9c5337beb2223fab5035a7c6f116fe5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\" .coding-hermes/evidence/speclang-dogfood-2026-11-16-05-02-33/perf-samples.txt 2>/dev/null | head -3; echo \"=== grep ROUTED in perf-samples\"; grep -n \"ROUTED\" .coding-hermes/evidence/speclang-dogfood-2026-11-16-05-02-33/perf-samples.txt | head -5",
+          "exit_code": 0,
+          "output_sha": "5797a948cbde33191299372f2cc2466f8a0a99b7d29b08ad7236e556b5b48906"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\" .coding-hermes/evidence/speclang-dogfood-2026-11-16-05-02-33/nasa-spec-header.txt 2>/dev/null | head -3; echo \"=== grep ROUTED in nasa-spec-header\"; grep -n \"ROUTED\" .coding-hermes/evidence/speclang-dogfood-2026-11-16-05-02-33/nasa-spec-header.txt | head -5",
+          "exit_code": 0,
+          "output_sha": "98b9aab7d0385350abf4c46ee1573b0c6a59434922e4c8d5c4be880d25f8a148"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\" .coding-hermes/evidence/speclang-dogfood-2026-11-16-05-02-33/probe-parse.js 2>/dev/null | head -3; echo \"=== grep ROUTED in probe-parse\"; grep -n \"ROUTED\" .coding-hermes/evidence/speclang-dogfood-2026-11-16-05-02-33/probe-parse.js | head -5",
+          "exit_code": 0,
+          "output_sha": "9b552f7305da74d04d5b70df7399622b0ba8801127b39a4be0bb6670e47d4005"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"TASK ROUTED\" .coding-hermes/evidence/speclang-dogfood-2026-11-16-05-02-33/repair-provenance.py 2>/dev/null | head -3; echo \"=== grep ROUTED in repair-provenance\"; grep -n \"ROUTED\" .coding-hermes/evidence/speclang-dogfood-2026-11-16-05-02-33/repair-provenance.py | head -5",
+          "exit_code": 0,
+          "output_sha": "d635c3fef35890113314e92e4ac4f702cdbf3723543d0cc01c3539526b26514b"
+        },
+        {
+          "tool": "sandbox_read",
+          "command": "sandbox_read {\"key\": \"verified_0\"}",
+          "exit_code": 1,
+          "output_sha": "678be362049c858745e71e5dc8bf0bfe19e3b5a7cc3fce486ff5e05cf8a94b0f"
+        },
+        {
+          "tool": "read_diff",
+          "command": "read_diff {}",
+          "exit_code": 0,
+          "output_sha": "13fe20a971d04edf114ef71ddf6df2e78b13c428319ec926b04df5192ec5556e"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"specs/cascade.spec.dir/src/coordinator/index.ts\"}",
+          "exit_code": 0,
+          "output_sha": "307324704ac5a42659f004358127716a06a0c4e0a1a5c65b4e39392dc481d20e"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"specs/cascade.spec.dir/src/coordinator/invocation.ts\"}",
+          "exit_code": 0,
+          "output_sha": "2089bc959c8a7ab50d6d6cbe271c3c67c9a7db558b7b1a8c00b0b0aeb78d8998"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Read specs/cascade.spec.dir/src/coordinator/index.ts (watchDaemon at ~line 150-230) and invocation.ts (defaultExecutor with repo-local CLI resolution, timeout, error surfacing). Next: find callers of watchDaemon, tests, run build + suite.\", \"key\": \"files_read\"}",
+          "exit_code": 0,
+          "output_sha": "8c2d3a67dce837066804c30df3959d6fbfddf87264d695709da63b4213e911a1"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"regex\": \"watchDaemon\"}",
+          "exit_code": 0,
+          "output_sha": "6949c9ffbbdfa10e9951996e87c80ff6cdf6453e47990f8cc097de711377e004"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"file_glob\": \"*.ts\", \"regex\": \"watchDaemon|watch-daemon|watch_daemon\"}",
+          "exit_code": 0,
+          "output_sha": "6949c9ffbbdfa10e9951996e87c80ff6cdf6453e47990f8cc097de711377e004"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"regex\": \"DF-SPECLANG-015\"}",
+          "exit_code": 0,
+          "output_sha": "0cc5392607de52458d9072b1a3e0002ff5a0321ba476de911e8055fe835d073b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/agent 2>/dev/null; pwd; ls; cat .gitreins/config.yaml 2>/dev/null | head -50",
+          "exit_code": 0,
+          "output_sha": "21727c1f19cd35d81e314cc883a2cf4c28e30712438fd57304c7bfb259261086"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npm run build 2>&1 | tail -20; echo \"BUILD_RC=$?\"",
+          "exit_code": 0,
+          "output_sha": "17be7aa0f99a23307a9f7a3a711cb16ae8f46ab960bda8801162c3d6316f2a87"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npm run build > /tmp/build.log 2>&1; echo \"BUILD_RC=$?\"; tail -5 /tmp/build.log",
+          "exit_code": 0,
+          "output_sha": "b7495e424f9f5e759474eb1699aee420de3b623432e77ae5fb96c083ab34bfdb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npx vitest run --passWithNoTests > /tmp/vitest.log 2>&1; echo \"VITEST_RC=$?\"; tail -25 /tmp/vitest.log",
+          "exit_code": 0,
+          "output_sha": "fcf89f1398982860cbab579fdc62ee2dd63a30664e5af8566599949ee1614f58"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rln \"watchDaemon\\|DF-SPECLANG-015\\|SPECLANG_AGENT_TIMEOUT_MS\\|SPECLANG_BIN\" tests/ src/ specs/ --include=*.ts --include=*.js --include=*.md | head -30",
+          "exit_code": 0,
+          "output_sha": "98a3ba473c5af1cffb269f534f1c0eae292a7ef11dd41eac7af029a66e933d08"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"emit('task'\\|emit(\\\"task\\\"\\|'task'\" src/ --include=*.ts | head -20; echo ---; grep -rn \"class Daemon\" -r src/ | head",
+          "exit_code": 0,
+          "output_sha": "573bd2100996458608a3e8a89f2b589ab340dc0b4a8dc08af6b9ffbe7cd6eecb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"emit('task'\\|emit(\\\"task\\\"\" --include=*.ts --include=*.js . --exclude-dir=node_modules --exclude-dir=dist | head -20; echo ---; grep -rln \"Daemon\" --include=*.ts src/ specs/ | head -20",
+          "exit_code": 0,
+          "output_sha": "c56b14ff8de8a8e124238a634228669a24fc5ba6aff18d767274e5fab950d27e"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 110, \"offset\": 120, \"path\": \"specs/daemon.spec.dir/src/daemon.ts\"}",
+          "exit_code": 0,
+          "output_sha": "2d4845fa254d7b5d254c9227fca9098c1211caa12d92e2cae215dc6284b0398b"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"specs/daemon.spec.dir/src/types.ts\"}",
+          "exit_code": 0,
+          "output_sha": "d2e8d4859cce404579dd2c36047dfb1a1ad0651ea7afcdcf4a8a6645d93ade45"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"specs/daemon.spec.dir/src/router.ts\"}",
+          "exit_code": 0,
+          "output_sha": "4dee506186737aaa7b34bc4c92c1acf1908bef04f437af2669f394a63220fb07"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"speclang-spec-writer\\|speclang-code-gen\\|speclang-test-writer\\|speclang-coordinator\" --include=*.ts --include=*.js --include=*.json --include=*.yaml --include=*.md . --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=coverage | head -30",
+          "exit_code": 0,
+          "output_sha": "9b003924c3f3487a86f5ae28cbf894ff6c4153c22f2b248d070d144528589d33"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls bin/ && head -40 bin/speclang 2>/dev/null; echo ---; grep -rn \"agent\" bin/speclang | head -20",
+          "exit_code": 0,
+          "output_sha": "b8b2cb4c6e7df864b610e04d33ebd16e0d2e7adc593d25a0d78d58467b275fde"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 60, \"offset\": 140, \"path\": \"bin/speclang\"}",
+          "exit_code": 0,
+          "output_sha": "5b5d6b9eec6b9552969628455c05dc0d8fa0b54f875e353d6e99bc31c4dbf1c8"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"specs/cascade.spec.dir/src/agent.ts\"}",
+          "exit_code": 0,
+          "output_sha": "0edfb59531b871d00fed90d5ff5135e13994a78cb206770098a6d2ea4724b0f1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls dist/src/cascade/ 2>/dev/null | head; echo ---; ls dist/src/cascade/coordinator 2>/dev/null | head; echo ---; grep -rn \"coordinator\" dist/src/cascade/*.js 2>/dev/null | head -5",
+          "exit_code": 0,
+          "output_sha": "cdf25a9f50af933f6187c1ed30c3e817de0dd6492baf58bfa87f39b48bec58d1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"watchDaemon\" dist/src/cascade/coordinator/index.js | head; echo ---; grep -n \"repoRoot\\|SPECLANG_BIN\\|SPECLANG_AGENT_TIMEOUT_MS\" dist/src/cascade/coordinator/invocation.js | head",
+          "exit_code": 0,
+          "output_sha": "e860d8512cbc6f2b5cc05fadeb6a7ba81eb40a8863426652c30b46e2c61c8154"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && node -e \"const p=require('path');console.log(p.resolve('dist/src/cascade/coordinator','..','..','..','..'))\"; ls -l bin/speclang; echo ---; grep -rn \"CascadeCoordinator\" --include=*.ts --include=*.js src/ specs/ bin/ | grep -v \"specs/cascade.spec.dir/src/coordinator/index.ts\" | head -20",
+          "exit_code": 0,
+          "output_sha": "e691c1a1dcf3e01adc0b1c5e60fafaeb6145245749ffa4ee5623df82a55c73e7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"CascadeCoordinator\\|cascade/coordinator\" --include=*.ts --include=*.js src/ bin/ | head -20; echo \"=== src/cascade dir ===\"; ls src/cascade 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "5d268ce72573f895f9d3e26ddc1e2a56edfa189e29cf7e08fbeddbe73e5e2453"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -la src/cascade/coordinator/ | head; echo ---; head -5 src/cascade/coordinator/index.ts 2>/dev/null; echo ---; grep -rn \"watchDaemon\" src/cascade/coordinator/index.ts 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "8ed6765cc651fbb9a894fd27f26381ba8d7730f1a064f8fd70d66533b9276805"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"CascadeCoordinator\" --include=*.ts --include=*.js src/ bin/ specs/daemon.spec.dir/src/ | head -20",
+          "exit_code": 0,
+          "output_sha": "a2552f4b3a39f545ca0f0c09aa3a66ceae54e0265eb44bcbf2cc4e9f3f01674f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"CascadeCoordinator\" --include=*.ts --include=*.js . --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=coverage | grep -v \"specs/cascade.spec.dir\\|specs/implementation.spec.dir\" | head -20",
+          "exit_code": 0,
+          "output_sha": "6c658ccbf00fb08228c37098b87ff49acc69041d2f68489bb5caf797e92b0dc3"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 80, \"path\": \"index.ts\"}",
+          "exit_code": 0,
+          "output_sha": "792bf4583a2935a51f7e2c018de3bd8bedced7bb3793f221e068a2143b187e08"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"new Daemon\\|from './daemon\\|daemon.js'\" --include=*.ts --include=*.js bin/ src/ specs/daemon.spec.dir/src/ | head -20",
+          "exit_code": 0,
+          "output_sha": "74db08194d648df2fb105ecf0017fc779b4664eef957bc4ce04a8fa42a11149f"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 80, \"path\": \"specs/daemon.spec.dir/src/speclangd.ts\"}",
+          "exit_code": 0,
+          "output_sha": "430c827e1d6b42837a1cc417f5285ec2b6daf0969e1b3e7f0ec2d3393e722e8d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"speclangd\" bin/speclang | head -20; echo \"=== bin/speclangd ===\"; head -30 bin/speclangd",
+          "exit_code": 0,
+          "output_sha": "d600317047ce1a9cf3c0425fc364c5f87dc3b272ee32483569ab8ac35841c710"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"require\\|import\" bin/speclangd | head -20",
+          "exit_code": 0,
+          "output_sha": "bdbfdcf28a8cd62f187c1f06887bd95fc6cc7100ce06a4df3a11c27fe8f12c06"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 60, \"offset\": 110, \"path\": \"bin/speclangd\"}",
+          "exit_code": 0,
+          "output_sha": "1bcc08a7a19a0759118e64c6e36abf94f1cf044ea4e270863f47c46946f3e612"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"watchDaemon\\|AgentInvoker\\|invoke(\" bin/speclangd bin/speclang specs/daemon.spec.dir/src/*.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "73c5bf25c22f0e76faa0e59d2ab939e0eb60cc8b5d83958b294b5558f6dc43f0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"DF-SPECLANG-015\" .gitreins/ docs/ CHANGELOG.md TODO.md 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "f875ae267c154761137339c81fc5d46fdd9e308de976c06262e31642bebb82bc"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 60, \"offset\": 550, \"path\": \".gitreins/tasks.yaml\"}",
+          "exit_code": 0,
+          "output_sha": "9237e89c545df70c04ee6cef7d02984e387f8bcbae505fd8fc07e89c1ebfd75d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"watchDaemon\\|SPECLANG_BIN\\|SPECLANG_AGENT_TIMEOUT_MS\" dist/index.js dist/index.d.ts dist/src/cascade/index.js dist/src/cascade/index.d.ts 2>/dev/null | head; echo \"=== exported? ===\"; grep -n \"watchDaemon\" dist/src/cascade/coordinator/index.d.ts",
+          "exit_code": 0,
+          "output_sha": "2f4e12ccfc53b7260db583c39ece4b7e057d715427c27a9c2844e9b76a018b27"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: watchDaemon at specs/cascade.spec.dir/src/coordinator/index.ts:133 subscribes daemon.on('task'), dedups via inFlight Set + lastDispatchedAt Map with ttlMs (default 10min, line 137), key = kind|triggerPath, skips empty trigger, dispatches via this.invoker.invoke, clears inFlight in .finally. Daemon emits 'task' at specs/daemon.spec.dir/src/daemon.ts:188 with AgentTask {kind,trigger,spec,target} (types.ts:26-32) \\u2014 payload shape matches. invocation.ts:59-75 resolves repoRoot = path.resolve(__dirname,'..','..','..','..') = /home/kara/speclang (verified via node -e), candidates SPECLANG_BIN / <repo>/bin/speclang / 'speclang'; bin/speclang exists and is executable (ls -l). invocation.ts:104-113 surfaces real errors: lastError includes cmd+code+message+stderr, returns success:false with error for non-ENOENT. Build: `npm run build` BUILD_RC=0. Suite: `npx vitest run --passWithNoTests` VITEST_RC=0, \\\"Tests 1848 passed | 58 skipped (1906)\\\".\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "71ccd161d86c32464762d7afda5cb9ff017b6ab7f82570b6984d98ec8cf8cc2a"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Derived criteria:\\n0. watchDaemon is reachable from a shipped entrypoint (bin/speclangd foreground/background start or bin/speclang) so routed daemon tasks actually dispatch in production.\\n1. The executor's success path returns the agent CLI's generated content to the caller (InvocationResult carries output) so watchDaemon's write-to-target branch can fire.\\n2. The dedup TTL does not permanently suppress re-dispatch of a changed file (re-dispatch possible after ttlMs / on new content).\", \"key\": \"derived_criteria\"}",
+          "exit_code": 0,
+          "output_sha": "d48ed365aeed23271ed276cd8cfbb444c3991f3786b7810462bf149380612ac6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat > /tmp/probe.ts <<'EOF'\nimport { AgentInvoker } from './src/cascade/coordinator/invocation.js';\n(async () => {\n  const inv = new AgentInvoker(false);\n  const r = await inv.invoke({ agent: 'speclang-spec-writer', trigger: 'specs/foo.spec.md' });\n  console.log('RESULT_KEYS=' + JSON.stringify(Object.keys(r)));\n  console.log('SUCCESS=' + r.success);\n  console.log('HAS_OUTPUT=' + ('output' in r));\n  console.log('ERROR=' + String(r.error).slice(0, 200));\n})();\nEOF\ncp /tmp/probe.ts ./probe-tmp.ts && npx tsx ./probe-tmp.ts 2>&1 | tail -20; rm -f ./probe-tmp.ts",
+          "exit_code": 0,
+          "output_sha": "8ca43f71494189eb9b9f45cdd868258faeec56af14d867ba8b77ce2911c596dd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat > ./probe2-tmp.ts <<'EOF'\nimport { AgentInvoker } from './src/cascade/coordinator/invocation.js';\n(async () => {\n  const inv = new AgentInvoker(false, async () => ({ success: true, files: [], output: 'GENERATED SPEC CONTENT' }));\n  const r = await inv.invoke({ agent: 'speclang-spec-writer', trigger: 'x' });\n  console.log('SUCCESS=' + r.success);\n  console.log('HAS_OUTPUT=' + ('output' in r));\n  console.log('OUTPUT=' + JSON.stringify((r as any).output));\n})();\nEOF\nnpx tsx ./probe2-tmp.ts 2>&1 | tail -6; rm -f ./probe2-tmp.ts",
+          "exit_code": 0,
+          "output_sha": "68b05768c73d2b333d976c878756ba6b4101a437e66fbc52160dfc1d1da59a5e"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FAIL: AgentInvoker.invoke (specs/cascade.spec.dir/src/coordinator/invocation.ts:139-152) builds InvocationResult without copying `output` from the executor result, and InvocationResult (invocation.ts:17-30) has no `output` field. Proven by probe: injected executor returning {success:true, files:[], output:'GENERATED SPEC CONTENT'} -> invoke() returns HAS_OUTPUT=false, OUTPUT=undefined. Therefore watchDaemon's write branch (index.ts:177-186, `const output = (invocation as any).output; if (task.target && output && ...) fs.writeFileSync(task.target, output)`) can never fire \\u2014 the routed spec_writer output is never persisted to the task target.\", \"key\": \"verified_derived_1\"}",
+          "exit_code": 0,
+          "output_sha": "0562f7c02c0eff2298e97161f97c10399d369a8d33b82d3b0178068bf9cd096d"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FAIL: watchDaemon has no caller anywhere in the repo. `grep -rn watchDaemon` matches only its definition (specs/cascade.spec.dir/src/coordinator/index.ts:133) and a comment (invocation.ts:97). The shipped daemon entrypoints bin/speclangd (foreground start at bin/speclangd:121-146, background spawn) and specs/daemon.spec.dir/src/speclangd.ts:40-56 only attach `d.on('task', task => console.log('[CLI] Task generated:', ...))` \\u2014 they never construct a CascadeCoordinator nor call watchDaemon. `grep -rn \\\"watchDaemon|AgentInvoker|invoke(\\\" bin/speclangd bin/speclang specs/daemon.spec.dir/src/*.ts` returns nothing. So the DF-SPECLANG-015 defect (routed tasks produce no agent session) is unchanged in production; the new method is dead code reachable only by a caller that does not exist.\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "6ec9a2607d2e66067324c8037c1cdd18d3a561253f441b2159329fd2d4540077"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS (with caveat): dedup TTL is time-bounded, not permanent \\u2014 index.ts:137 ttlMs default 10*60*1000, index.ts:150-153 skips only while Date.now()-last < ttlMs, so a re-converged file is re-dispatched after the TTL; inFlight entry is removed in .finally (index.ts:190-192) so a failed/completed dispatch does not block forever. Caveat: the key is `${kind}|${triggerPath}` only (index.ts:143) \\u2014 content changes within the TTL window are suppressed, which is the documented intent of the TTL.\", \"key\": \"verified_derived_2\"}",
+          "exit_code": 0,
+          "output_sha": "10972d427a39f08d755fe0a4f1b0507cba016eb212483aa4531ffe4fa159ee8f"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "medium",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 0,
+        "detection": "row marked in_progress/dispatched but its worktree path points at a different task's worktree",
+        "detail": "DOC-4 (and DOC-5) are set to in_progress with \"worktree\": \"/home/kara/worktrees/speclang-README-1\", \"branch\": \"wt/README-1\" \u2014 the same worktree/branch as README-1/README-3/README-4/README-5/README-6, so two distinct tasks would be dispatched into one checkout."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 0,
+        "detection": "status transitioned to in_progress without the dispatched_at/worker_status fields the surrounding rows set",
+        "detail": "QA-SPECLANG-4 is flipped to \"worker_status\": \"dispatched\" with \"dispatched_at\": null, whereas the wave-dispatched rows elsewhere in this same diff (e.g. QA-SPECLANG-6-R5, DF-SPECLANG-3-R5) carry worker_status/worktree/branch without a null dispatched_at being introduced."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 0,
+        "detection": "new row DF-SPECLANG-016 has reasoning:null and no foreman_note/evidence while its sibling rows carry a reasoning string",
+        "detail": "DF-SPECLANG-016 is created with \"reasoning\":null and \"foreman_note\":null even though its title asserts a root cause (\"migration 003_cascades.sql is never loaded\") that no field in the row evidences."
+      }
+    ],
+    "summary": "The diff is board/VFS bookkeeping: task status flips plus a regenerated graph; the only concrete defects are DOC-4/DOC-5 being dispatched into README-1's worktree and minor field inconsistencies on the new/updated rows."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  18:59:58\n\nStage tier2: FAIL\n  INCOMPLETE\n  \u2713 watchDaemon consumes daemon 'task' events with dedup TTL; executor resolves repo-local CLI and surfaces real errors; npm run build exits 0; full suite 1848 passed rc=0: PASS: watchDaemon at specs/cascade.spec.dir/src/coordinator/index.ts:133 subscribes daemon.on('task'), dedups via inFlight Set + lastDispatchedAt Map with ttlMs (default 10min, line 137), key = kind|triggerPath, skips empty trigger, dispatches via this.invoker.invoke, clears inFlight in .finally. Daemon emits 'task' at specs/daemon.spec.dir/src/daemon.ts:188 with AgentTask {kind,trigger,spec,target} (types.ts:26-32) \u2014 payload shape matches. invocation.ts:59-75 resolves repoRoot = path.resolve(__dirname,'..','..','..','..') = /home/kara/speclang (verified via node -e), candidates SPECLANG_BIN / <repo>/bin/speclang / 'speclang'; bin/speclang exists and is executable (ls -l). invocation.ts:104-113 surfaces real errors: lastError includes cmd+code+message+stderr, returns success:false with error for non-ENOENT. Build: `npm run build` BUILD_RC=0. Suite: `npx vitest run --passWithNoTests` VITEST_RC=0, \"Tests 1848 passed | 58 skipped (1906)\". \u00b7 graded at iteration 94.6 (744,911 in / 3,569 out, 94.6 iterations and 210s into the run)\n  \u2717 derived criterion 0: FAIL: watchDaemon has no caller anywhere in the repo. `grep -rn watchDaemon` matches only its definition (specs/cascade.spec.dir/src/coordinator/index.ts:133) and a comment (invocation.ts:97). The shipped daemon entrypoints bin/speclangd (foreground start at bin/speclangd:121-146, background spawn) and specs/daemon.spec.dir/src/speclangd.ts:40-56 only attach `d.on('task', task => console.log('[CLI] Task generated:', ...))` \u2014 they never construct a CascadeCoordinator nor call watchDaemon. `grep -rn \"watchDaemon|AgentInvoker|invoke(\" bin/speclangd bin/speclang specs/daemon.spec.dir/src/*.ts` returns nothing. So the DF-SPECLANG-015 defect (routed tasks produce no agent session) is unchanged in production; the new method is dead code reachable only by a caller that does not exist. \u00b7 graded at iteration 98.1 (0 in / 0 out, 0.1 iterations and 218s into the run)\n  \u2717 derived criterion 1: FAIL: AgentInvoker.invoke (specs/cascade.spec.dir/src/coordinator/invocation.ts:139-152) builds InvocationResult without copying `output` from the executor result, and InvocationResult (invocation.ts:17-30) has no `output` field. Proven by probe: injected executor returning {success:true, files:[], output:'GENERATED SPEC CONTENT'} -> invoke() returns HAS_OUTPUT=false, OUTPUT=undefined. Therefore watchDaemon's write branch (index.ts:177-186, `const output = (invocation as any).output; if (task.target && output && ...) fs.writeFileSync(task.target, output)`) can never fire \u2014 the routed spec_writer output is never persisted to the task target. \u00b7 graded at iteration 98.0 (102,670 in / 939 out, 3.4 iterations and 218s into the run)\n  \u2713 derived criterion 2: PASS (with caveat): dedup TTL is time-bounded, not permanent \u2014 index.ts:137 ttlMs default 10*60*1000, index.ts:150-153 skips only while Date.now()-last < ttlMs, so a re-converged file is re-dispatched after the TTL; inFlight entry is removed in .finally (index.ts:190-192) so a failed/completed dispatch does not block forever. Caveat: the key is `${kind}|${triggerPath}` only (index.ts:143) \u2014 content changes within the TTL window are suppressed, which is the documented intent of the TTL. \u00b7 graded at iteration 99.2 (35,339 in / 196 out, 1.1 iterations and 219s into the run)\nCap exceeded: Iteration cap (100) reached (100.3 used). Increase max_iterations or split criteria. Partial verdict \u2014 4 of 4 criteria graded, 0 ungraded. The run spent 918,483 in / 6,325 out over 100.3 iterations.\n\nOverall: FAIL \u2717",
+  "evaluated_at": "2026-11-17T00:04:31.580056",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T00:04:31.610253+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 9691,
+        "truncated": false,
+        "source": "git show 5d9a4e99209b"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 262176,
+        "truncated": true,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DF-SPECLANG-015"
+  }
+}

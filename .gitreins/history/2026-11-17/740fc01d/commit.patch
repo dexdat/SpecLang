@@ -1,0 +1,198 @@
+commit 5d9a4e99209b8b82333ebc2d783916a015048249
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Mon Nov 16 18:59:48 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Mon Nov 16 18:59:48 2026 -0500
+
+    feat(dogfood): consume daemon-routed spec_writer tasks - fix DF-SPECLANG-015
+    
+    AgentCoordinator.watchDaemon subscribes to the daemon's 'task' events and
+    invokes the matching agent via the proven `speclang agent` path, with
+    in-flight + TTL dedup so 30s reconvergence loops cannot burn tokens.
+    The default executor now resolves the repo-local CLI relative to the module
+    (the bare 'speclang' binary is not on PATH for daemon/embedded callers),
+    bumps the 30s guaranteed-death timeout to 15min (env-overridable), captures
+    agent stdout for the caller, stops swallowing failure reasons, and stops
+    retrying non-resolution errors. src/cascade/coordinator is a symlink into
+    specs/, so this is the live build path (tsc + full suite: 1848 passed rc=0).
+    
+    Recovered-and-verified from an interrupted sibling wave session; code was
+    uncommitted in the main tree.
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+---
+ specs/cascade.spec.dir/src/coordinator/index.ts    | 79 ++++++++++++++++++++++
+ .../cascade.spec.dir/src/coordinator/invocation.ts | 57 +++++++++++++---
+ 2 files changed, 127 insertions(+), 9 deletions(-)
+
+diff --git a/specs/cascade.spec.dir/src/coordinator/index.ts b/specs/cascade.spec.dir/src/coordinator/index.ts
+index 1d06254e..4278caff 100644
+--- a/specs/cascade.spec.dir/src/coordinator/index.ts
++++ b/specs/cascade.spec.dir/src/coordinator/index.ts
+@@ -116,6 +116,85 @@ export class CascadeCoordinator {
+     return this.invoker;
+   }
+ 
++  /**
++   * DF-SPECLANG-015: consume routed tasks from a live daemon.
++   *
++   * The daemon routes AgentTasks (see Daemon.emit('task')) but nothing in the
++   * shipped code consumed them — routed spec_writer tasks produced no agent
++   * session, so reactive expansion generated nothing. This subscribes to the
++   * daemon's 'task' events and invokes the matching agent through the same
++   * AgentInvoker used by cascadeFrom (i.e. the proven `speclang agent` path).
++   *
++   * Dedup: the daemon re-converges on unchanged files every poll cycle, so
++   * identical triggers are suppressed while in flight and for ttlMs
++   * (default 10 min) after a dispatch — without this, every 30s reconvergence
++   * would re-invoke the agent and burn tokens in a loop.
++   */
++  watchDaemon(
++    daemon: { on(event: string, cb: (payload: any) => void): unknown },
++    options?: { ttlMs?: number; verbose?: boolean }
++  ): void {
++    const ttlMs = options?.ttlMs ?? 10 * 60 * 1000;
++    const verbose = options?.verbose ?? this.options.verbose ?? false;
++    const inFlight = new Set<string>();
++    const lastDispatchedAt = new Map<string, number>();
++
++    daemon.on('task', (task: { kind?: string; trigger?: string; spec?: string; target?: string }) => {
++      const triggerPath = task.trigger || task.spec || '';
++      if (!triggerPath) {
++        if (verbose) console.log('[Coordinator] Routed task has no trigger — skipping');
++        return;
++      }
++      const key = `${task.kind ?? ''}|${triggerPath}`;
++      if (inFlight.has(key)) {
++        console.log(`[Coordinator] Task already in flight for ${triggerPath} — skipping duplicate`);
++        return;
++      }
++      const last = lastDispatchedAt.get(key);
++      if (last !== undefined && Date.now() - last < ttlMs) {
++        if (verbose) console.log(`[Coordinator] Task for ${triggerPath} dispatched within TTL — skipping`);
++        return;
++      }
++      inFlight.add(key);
++      lastDispatchedAt.set(key, Date.now());
++      const agent = getAgentForTrigger(triggerPath);
++      // DF-SPECLANG-015: if the trigger is an existing file, inline its
++      // CONTENT — a bare path passed as --trigger reads as topic text and the
++      // model invents its own project instead of expanding the seed.
++      let triggerPayload = triggerPath;
++      try {
++        triggerPayload = fs.readFileSync(triggerPath, 'utf-8');
++      } catch {
++        // not a file — pass as-is
++      }
++      console.log(`[Coordinator] Dispatching agent ${agent} for routed task (trigger: ${triggerPath})`);
++      this.invoker
++        .invoke({ agent, trigger: triggerPayload })
++        .then((invocation) => {
++          this.recordInvocation(invocation);
++          if (invocation.success) {
++            console.log(`[Coordinator] Agent ${agent} completed for ${triggerPath} (${invocation.files_modified.length} files modified)`);
++            // DF-SPECLANG-015: the agent CLI prints generated content on
++            // stdout — persist it at the routed task's target path.
++            const output = (invocation as any).output as string | undefined;
++            if (task.target && output && output.trim().length > 0) {
++              fs.mkdirSync(path.dirname(task.target), { recursive: true });
++              fs.writeFileSync(task.target, output);
++              console.log(`[Coordinator] Wrote agent output to ${task.target} (${output.length} bytes)`);
++            }
++          } else {
++            console.error(`[Coordinator] Agent ${agent} FAILED for ${triggerPath}: ${invocation.error ?? 'unknown error'}`);
++          }
++        })
++        .catch((error) => {
++          console.error(`[Coordinator] Agent invocation error for ${triggerPath}:`, error);
++        })
++        .finally(() => {
++          inFlight.delete(key);
++        });
++    });
++  }
++
+   private setupGates(): void {
+     this.gates = [
+       {
+diff --git a/specs/cascade.spec.dir/src/coordinator/invocation.ts b/specs/cascade.spec.dir/src/coordinator/invocation.ts
+index aaedaad8..5f33d286 100644
+--- a/specs/cascade.spec.dir/src/coordinator/invocation.ts
++++ b/specs/cascade.spec.dir/src/coordinator/invocation.ts
+@@ -1,4 +1,5 @@
+ import { AgentInvocation } from './state.js';
++import * as path from 'path';
+ import type { ThinkingLevel } from 'parser.spec.dir/src/types.js';
+ 
+ export interface InvocationOptions {
+@@ -47,7 +48,7 @@ export type AgentExecutorFn = (
+   trigger: string,
+   params?: Record<string, unknown>,
+   thinking?: ThinkingLevel
+-) => Promise<{ success: boolean; files: string[]; metrics?: InvocationMetrics }>;
++) => Promise<{ success: boolean; files: string[]; error?: string; output?: string; metrics?: InvocationMetrics }>;
+ 
+ const defaultExecutor: AgentExecutorFn = async (agent, trigger, params, thinking) => {
+   // Use dynamic import to keep child_process out of the module graph for
+@@ -63,15 +64,53 @@ const defaultExecutor: AgentExecutorFn = async (agent, trigger, params, thinking
+   // runtime can budget tokens per cascade phase.
+   if (thinking) args.push('--thinking', thinking);
+ 
+-  try {
+-    const { stdout } = await execFileAsync('speclang', args, {
+-      encoding: 'utf-8',
+-      timeout: 30_000,
+-    });
+-    return { success: true, files: parseOutputFiles(stdout) };
+-  } catch {
+-    return { success: false, files: [] };
++  // DF-SPECLANG-015: the 'speclang' binary is not on PATH for daemon/embedded
++  // callers — resolve the repo-local CLI relative to THIS module instead
++  // (src/cascade/coordinator and specs/cascade.spec.dir/src/coordinator are
++  // both four levels under the repo root), with env override and PATH
++  // fallback for installed setups. __dirname works under tsx (shimmed) and
++  // the CJS build (native); import.meta would break the CJS output.
++  const repoRoot = path.resolve(__dirname, '..', '..', '..', '..');
++  const candidates = [
++    process.env.SPECLANG_BIN,
++    path.join(repoRoot, 'bin', 'speclang'),
++    'speclang',
++  ].filter(Boolean) as string[];
++
++  // DF-SPECLANG-015: LLM agent sessions routinely take minutes (documented:
++  // verbose trace-system prompts alone push sessions past 200s). A 30s
++  // timeout guaranteed every real invocation died. Default 15 min, env
++  // overridable via SPECLANG_AGENT_TIMEOUT_MS.
++  const timeoutMs = Number(process.env.SPECLANG_AGENT_TIMEOUT_MS ?? 900_000);
++
++  let lastError = 'unknown error';
++  for (const bin of candidates) {
++    const [cmd, ...prefix] = bin.endsWith('.js') || bin === 'speclang' ? (bin === 'speclang' ? ['speclang'] : [process.execPath, bin]) : [process.execPath, bin];
++    try {
++      const { stdout } = await execFileAsync(cmd, [...prefix, ...args], {
++        encoding: 'utf-8',
++        timeout: timeoutMs,
++        maxBuffer: 16 * 1024 * 1024,
++        env: process.env,
++      });
++      // DF-SPECLANG-015: the agent CLI writes generated content to STDOUT —
++      // the caller (e.g. watchDaemon) decides where it lands on disk.
++      return { success: true, files: parseOutputFiles(stdout), output: stdout };
++    } catch (err: any) {
++      // DF-SPECLANG-015: never swallow the reason — surface it so the
++      // coordinator log says WHY the invocation failed.
++      const code = err?.code ?? '';
++      const stderr = (err?.stderr ?? '').slice(-400);
++      lastError = `${cmd} ${code}: ${(err?.message ?? String(err)).slice(0, 300)}${stderr ? ' | stderr: ' + stderr : ''}`;
++      console.error(`[AgentExecutor] Invocation via ${cmd} failed: ${lastError}`);
++      // A resolved CLI whose session failed is a REAL failure — stop trying
++      // other candidates (only resolution errors should fall through).
++      if (code !== 'ENOENT') {
++        return { success: false, files: [], error: lastError };
++      }
++    }
+   }
++  return { success: false, files: [], error: lastError };
+ };
+ 
+ function parseOutputFiles(output: string): string[] {
