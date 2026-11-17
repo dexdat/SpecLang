@@ -112,9 +112,16 @@ export class Daemon extends EventEmitter {
       // a user explicitly commands it to continue (legacy behavior).
       const autoRecascade = this.config.get().convergence.autoRecascade ?? true;
       if (autoRecascade) {
-        console.log('[Daemon] Auto-recascade enabled — arming for next cascade');
-        this.convergence.reset();
-        this.state.setStatus(DaemonStatusKind.Idle);
+        // DF-SPECLANG-4: "armed" means SETTLED — the cascade drained, depth is
+        // back to 0 and the persisted/derived status stays `converged` until a
+        // new file event arrives. The old arm path called convergence.reset(),
+        // which un-converged the detector (status fell back to 'cascading'
+        // with nothing in flight) and let the quiet-period timer re-emit
+        // 'converged' with no new events, so the pipeline re-ran forever.
+        // Re-arming needs no reset: the detector's own onEvent() starts the
+        // next cascade and resets the depth/start time for it.
+        console.log('[Daemon] Auto-recascade enabled — armed for next cascade');
+        this.state.setStatus(DaemonStatusKind.Converged);
         this.emit('armed', result);
       } else {
         console.log('[Daemon] Auto-recascade disabled — awaiting user input');
@@ -176,10 +183,13 @@ export class Daemon extends EventEmitter {
     // Update state
     this.state.addChangedFile(event.path);
     this.state.setStatus(DaemonStatusKind.Cascading);
-    this.state.setCascadeDepth(this.convergence.getCascadeDepth());
     
     // Notify convergence
     this.convergence.onEvent(event);
+    
+    // DF-SPECLANG-4: read the depth AFTER onEvent() — it was read before the
+    // increment, so the persisted cascadeDepth lagged the live cascade by one.
+    this.state.setCascadeDepth(this.convergence.getCascadeDepth());
     
     // Route to agent
     const task = this.router.route(event);
@@ -248,6 +258,11 @@ export class Daemon extends EventEmitter {
 
   /**
    * Get current daemon status
+   *
+   * DF-SPECLANG-4: status comes from the cascade LIFECYCLE (pending work vs
+   * settled), not from `isConverged()` — a quiet-period predicate that is also
+   * true for a re-armed detector that never got an event. That predicate made
+   * `/api/status` report `cascading` forever after the cascade drained.
    */
   getStatus(): DaemonStatus {
     const status = this.state.getStatus();
@@ -256,11 +271,19 @@ export class Daemon extends EventEmitter {
       const convStatus = this.convergence.getStatus();
       status.cascadeDepth = convStatus.currentDepth;
       status.filesChanged = convStatus.filesChanged;
+      
+      if (this.paused) {
+        status.status = DaemonStatusKind.Paused;
+      } else if (convStatus.lifecycle === 'cascading') {
+        status.status = DaemonStatusKind.Cascading;
+      } else if (convStatus.lifecycle === 'converged') {
+        status.status = DaemonStatusKind.Converged;
+      } else {
+        status.status = DaemonStatusKind.Idle;
+      }
+    } else {
+      status.status = this.paused ? DaemonStatusKind.Paused : DaemonStatusKind.Cascading;
     }
-    
-    status.status = this.paused ? DaemonStatusKind.Paused : 
-                     this.convergence?.isConverged() ? DaemonStatusKind.Converged :
-                     DaemonStatusKind.Cascading;
     
     return status;
   }

@@ -13,6 +13,25 @@ import { FileEvent, ConvergenceResult, DaemonConfig, AgentStatus, AgentStatusKin
 
 const execAsync = promisify(exec);
 
+/**
+ * DF-SPECLANG-4: the cascade lifecycle is a state machine, not a timestamp
+ * predicate.
+ *
+ * - `cascading` — work is pending: at least one file event arrived and the
+ *   cascade has not settled yet (depth >= 1).
+ * - `converged` — the cascade queue drained (quiet period elapsed, depth back
+ *   to 0). This is TERMINAL until another event arrives; it is what
+ *   `/api/status` must report for a settled system.
+ * - `idle`      — nothing is queued and nothing converged (reset/abort
+ *   discarded the pending work).
+ *
+ * The distinction matters because `isConverged()` only answers "has the quiet
+ * period elapsed", which is ALSO true for a freshly re-armed detector that
+ * never received an event. Deriving status from that predicate is what made a
+ * settled daemon read as `cascading` forever.
+ */
+export type CascadeLifecycle = 'idle' | 'cascading' | 'converged';
+
 export class ConvergenceDetector extends EventEmitter {
   private lastEventTime: number;
   private quietPeriodMs: number;
@@ -21,6 +40,8 @@ export class ConvergenceDetector extends EventEmitter {
   private filesChangedCount: number;
   private currentDepth: number;
   private converged: boolean;
+  /** DF-SPECLANG-4: true from the first file event until the cascade settles. */
+  private cascadePending: boolean;
   private checkTimer?: NodeJS.Timeout;
   private agentStatuses: Map<string, AgentStatus>;
   private testOnConverge: boolean;
@@ -35,6 +56,7 @@ export class ConvergenceDetector extends EventEmitter {
     this.filesChangedCount = 0;
     this.currentDepth = 0;
     this.converged = true;
+    this.cascadePending = false;
     this.agentStatuses = new Map();
     this.testOnConverge = config.convergence.testOnConverge ?? true;
     this.autoCommit = config.convergence.autoCommit ?? false;
@@ -49,6 +71,7 @@ export class ConvergenceDetector extends EventEmitter {
     this.lastEventTime = Date.now();
     this.filesChangedCount++;
     this.converged = false;
+    this.cascadePending = true;
     
     // If this is the first event in a new cascade
     if (this.currentDepth === 0) {
@@ -87,6 +110,7 @@ export class ConvergenceDetector extends EventEmitter {
    */
   getStatus(): {
     converged: boolean;
+    lifecycle: CascadeLifecycle;
     filesChanged: number;
     currentDepth: number;
     timeRemaining: number | null;
@@ -94,11 +118,22 @@ export class ConvergenceDetector extends EventEmitter {
   } {
     return {
       converged: this.isConverged(),
+      lifecycle: this.getCascadeLifecycle(),
       filesChanged: this.filesChangedCount,
       currentDepth: this.currentDepth,
       timeRemaining: this.timeRemaining(),
       quietPeriod: this.quietPeriodMs,
     };
+  }
+
+  /**
+   * DF-SPECLANG-4: the cascade lifecycle — the only thing worth reporting as a
+   * daemon status. `isConverged()` is a quiet-period predicate and cannot tell
+   * "settled" apart from "re-armed and waiting", so status must come from here.
+   */
+  getCascadeLifecycle(): CascadeLifecycle {
+    if (this.cascadePending) return 'cascading';
+    return this.converged ? 'converged' : 'idle';
   }
 
   /**
@@ -117,6 +152,12 @@ export class ConvergenceDetector extends EventEmitter {
 
     if (result.converged) {
       this.converged = true;
+      // DF-SPECLANG-4: the queue is drained — the cascade is over, so the
+      // depth that counted its in-flight edit rounds goes back to 0. This is
+      // the transition that previously only happened inside reset(), i.e. on
+      // the path that also un-converged the detector (status -> 'cascading').
+      this.cascadePending = false;
+      this.currentDepth = 0;
       this.emit('converged', result);
       console.log(`[Convergence] Cascade complete! Files: ${result.filesChanged}, Duration: ${duration}ms`);
     }
@@ -137,6 +178,10 @@ export class ConvergenceDetector extends EventEmitter {
     this.filesChangedCount = 0;
     this.currentDepth = 0;
     this.converged = false;
+    // DF-SPECLANG-4: a reset DISCARDS pending work (abort path). Clearing the
+    // pending flag here is what stops the quiet-period timer from emitting a
+    // second, phantom 'converged' for events nobody re-sent.
+    this.cascadePending = false;
     this.lastEventTime = Date.now();
     this.cascadeStartTime = Date.now();
     console.log('[Convergence] State reset');
@@ -147,7 +192,11 @@ export class ConvergenceDetector extends EventEmitter {
    */
   private startConvergenceCheck(): void {
     this.checkTimer = setInterval(() => {
-      if (!this.converged && this.isConverged()) {
+      // DF-SPECLANG-4: only a cascade that is actually pending can converge.
+      // The old `!converged && isConverged()` gate re-emitted 'converged' on
+      // every quiet period after a re-arm — with no new file event — so the
+      // pipeline re-ran (and the status flipped back to 'cascading') forever.
+      if (this.cascadePending && this.isConverged()) {
         this.getConvergenceResult();
       }
     }, 1000); // Check every second

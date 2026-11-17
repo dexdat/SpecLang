@@ -163,7 +163,7 @@ describe("ARCH-004: Autonomous cascade", () => {
   });
 
   it(
-    "autoRecascade=true transitions back to Idle and emits armed after convergence",
+    "autoRecascade=true settles to converged and emits armed after convergence",
     // Internal waitFor budget is 10000ms (exceeds vitest's 5000ms default).
     { timeout: 20000 },
     async () => {
@@ -188,9 +188,17 @@ describe("ARCH-004: Autonomous cascade", () => {
     expect(events).toContain("converged");
     expect(events).toContain("armed");
 
-    // Daemon should be back in Idle / Cascading state (not stuck in Converged)
+    // DF-SPECLANG-4: "armed" now means SETTLED. The terminal status is
+    // `converged` and the depth is back to 0 — that is what `/api/status`
+    // reports for a drained cascade. This assertion used to demand the
+    // opposite (`not.toBe("converged")`), which encoded the reported bug: the
+    // arm path un-converged the detector, so a quiet daemon with nothing in
+    // flight reported `cascading` forever. Autonomous re-arming is still
+    // proven below and by the end-to-end case: the NEXT event must restart
+    // the cascade without any user input.
     const status = daemon.getStatus();
-    expect(status.status).not.toBe("converged");
+    expect(status.status).toBe("converged");
+    expect(status.cascadeDepth).toBe(0);
 
     await daemon.stop();
     await fs.remove(specPath).catch(() => {});
@@ -306,5 +314,107 @@ describe("ARCH-004: Autonomous cascade", () => {
     expect(detector.isConverged()).toBe(true);
 
     detector.stop();
+  });
+
+  /**
+   * DF-SPECLANG-4: the daemon used to report `cascading` forever.
+   *
+   * Two defects fed it: (a) the arm path called convergence.reset(), which
+   * un-converged the detector so `isConverged()` said "not converged" for a
+   * whole quiet period with nothing in flight; (b) the quiet-period timer was
+   * gated on `!converged && isConverged()`, so after a re-arm it re-emitted
+   * 'converged' with NO new file event — the pipeline re-ran every period and
+   * flipped the status back to `cascading` each time.
+   *
+   * The contract pinned here: a drained cascade settles to `converged` with
+   * depth 0, stays there (no phantom re-convergence), and the next watched
+   * event flips it back to `cascading`.
+   */
+  describe("DF-SPECLANG-4: cascade status settles to converged", () => {
+    it(
+      "detector settles to converged (depth 0) and never re-converges without a new event",
+      { timeout: 15000 },
+      async () => {
+        const config = new Config();
+        await config.load();
+        const testConfig = config.get();
+        testConfig.convergence.quietPeriod = 1;
+
+        const detector = new ConvergenceDetector(testConfig);
+        const convergedEvents: unknown[] = [];
+        detector.on("converged", (result) => convergedEvents.push(result));
+
+        // Nothing has happened yet: settled, not "cascading".
+        expect(detector.getCascadeLifecycle()).toBe("converged");
+        expect(detector.getCascadeDepth()).toBe(0);
+
+        detector.onEvent({
+          kind: FileEventKind.Create,
+          path: "specs/df4.spec.md",
+          timestamp: Date.now(),
+        });
+        expect(detector.getCascadeLifecycle()).toBe("cascading");
+        expect(detector.getCascadeDepth()).toBe(1);
+
+        await waitFor(
+          () => convergedEvents.length === 1,
+          8000,
+          "cascade settles",
+        );
+
+        // The queue drained: terminal status + depth back to 0 WITHOUT reset().
+        expect(detector.getCascadeLifecycle()).toBe("converged");
+        expect(detector.getCascadeDepth()).toBe(0);
+        expect(detector.isConverged()).toBe(true);
+
+        // Two more quiet periods, no new event: no second convergence.
+        await new Promise((r) => setTimeout(r, 2500));
+        expect(convergedEvents.length).toBe(1);
+        expect(detector.getCascadeLifecycle()).toBe("converged");
+
+        detector.stop();
+      },
+    );
+
+    it(
+      "daemon status reports converged with depth 0 after the cascade drains and flips to cascading on the next event",
+      { timeout: 30000 },
+      async () => {
+        const daemon = await makeDaemon(true);
+        await daemon.start();
+
+        const armedAt: number[] = [];
+        daemon.on("armed", () => armedAt.push(Date.now()));
+
+        const specPath = `${TEST_DIR}/_df4_status_${Date.now()}.spec.md`;
+        await fs.writeFile(specPath, "# cascade one\n");
+
+        await waitFor(() => armedAt.length >= 1, 15000, "first arm event");
+
+        const settled = daemon.getStatus();
+        expect(settled.status).toBe("converged");
+        expect(settled.cascadeDepth).toBe(0);
+
+        // Stays converged across quiet periods — no phantom re-convergence.
+        await new Promise((r) => setTimeout(r, 2500));
+        expect(daemon.getStatus().status).toBe("converged");
+        expect(armedAt.length).toBe(1);
+
+        // A new watched file event must restart the cascade from the settled state.
+        await fs.writeFile(specPath, "# cascade two\n");
+        await waitFor(
+          () => daemon.getStatus().status === "cascading",
+          8000,
+          "status flips back to cascading",
+        );
+        expect(daemon.getStatus().cascadeDepth).toBeGreaterThan(0);
+
+        await waitFor(() => armedAt.length >= 2, 15000, "second arm event");
+        expect(daemon.getStatus().status).toBe("converged");
+
+        await daemon.stop();
+        await fs.remove(specPath).catch(() => {});
+      },
+    );
   });
 });
