@@ -110,6 +110,63 @@ export class CascadeCoordinator {
   }
 
   /**
+   * DF-SPECLANG-015: persist an agent's stdout. The agent CLI emits its whole
+   * response on stdout; when a seed asks for several artifacts the model
+   * separates them with `# generated/<path>` section markers (observed
+   * behaviour: one marker line per requested file). Split on those markers so
+   * ONE seed produces EVERY artifact it asked for; fall back to the routed
+   * task's single target when no markers are present.
+   *
+   * Returns the list of paths written. Refuses paths outside the project cwd.
+   */
+  static persistAgentOutput(output: string, fallbackTarget: string | undefined, projectRoot: string): string[] {
+    // Models emit section markers in several shapes: "# generated/x.md",
+    // "## FILE: `generated/x.md`", "FILE: docs/y.md". Accept any heading or
+    // FILE-labelled line carrying a project-relative artifact path.
+    const MARKER = /^#{0,4}\s*(?:FILE|File|file)?\s*[:—–-]?\s*`?((?:generated|specs|docs|src|tests|out|content|books)\/[\w./-]+\.(?:md|txt|json|ya?ml|ts|js|py|scl))`?\s*$/;
+    const sections: Array<{ path: string; lines: string[] }> = [];
+    let current: { path: string; lines: string[] } | null = null;
+    for (const line of output.split('\n')) {
+      const m = line.match(MARKER);
+      if (m) {
+        if (current) sections.push(current);
+        current = { path: m[1], lines: [] };
+      } else if (current) {
+        current.lines.push(line);
+      }
+    }
+    if (current) sections.push(current);
+
+    const root = path.resolve(projectRoot);
+    const writeOne = (relPath: string, content: string): string | null => {
+      const abs = path.resolve(root, relPath);
+      if (abs !== root && !abs.startsWith(root + path.sep)) {
+        console.error(`[Coordinator] Refusing to write outside project: ${relPath}`);
+        return null;
+      }
+      fs.mkdirSync(path.dirname(abs), { recursive: true });
+      fs.writeFileSync(abs, content.trim() + '\n');
+      return relPath;
+    };
+
+    const written: string[] = [];
+    if (sections.length > 0) {
+      for (const s of sections) {
+        const body = s.lines.join('\n').trim();
+        if (body.length === 0) continue;
+        const rel = writeOne(s.path, body);
+        if (rel) written.push(rel);
+      }
+      if (written.length > 0) return written;
+    }
+    if (fallbackTarget && output.trim().length > 0) {
+      const rel = writeOne(fallbackTarget, output);
+      if (rel) written.push(rel);
+    }
+    return written;
+  }
+
+  /**
    * ARCH-003: Access the underlying invoker (for tests + advanced use).
    */
   getInvoker(): AgentInvoker {
@@ -175,12 +232,17 @@ export class CascadeCoordinator {
           if (invocation.success) {
             console.log(`[Coordinator] Agent ${agent} completed for ${triggerPath} (${invocation.files_modified.length} files modified)`);
             // DF-SPECLANG-015: the agent CLI prints generated content on
-            // stdout — persist it at the routed task's target path.
-            const output = invocation.output;
-            if (task.target && output && output.trim().length > 0) {
-              fs.mkdirSync(path.dirname(task.target), { recursive: true });
-              fs.writeFileSync(task.target, output);
-              console.log(`[Coordinator] Wrote agent output to ${task.target} (${output.length} bytes)`);
+            // stdout — persist every artifact it emitted (multi-file seeds
+            // mark sections with `# generated/<path>`), falling back to the
+            // routed task's single target.
+            const output = (invocation as any).output as string | undefined;
+            if (output && output.trim().length > 0) {
+              const written = CascadeCoordinator.persistAgentOutput(output, task.target, process.cwd());
+              if (written.length > 0) {
+                console.log(`[Coordinator] Wrote agent output: ${written.join(', ')} (${output.length} bytes)`);
+              } else {
+                console.error('[Coordinator] Agent produced output but no file could be written');
+              }
             }
           } else {
             console.error(`[Coordinator] Agent ${agent} FAILED for ${triggerPath}: ${invocation.error ?? 'unknown error'}`);
