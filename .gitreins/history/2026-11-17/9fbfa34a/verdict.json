@@ -1,0 +1,686 @@
+{
+  "task_id": "DF-SPECLANG-8-judge",
+  "task_title": "judge the LANDED (sibling) DF-SPECLANG-8 implementation at a147bcac on reconciled main",
+  "task_criteria": [
+    "The four Verification Steps in specs/examples.spec.dir/hello-world.spec.md execute verbatim from a fresh clone (step 2 without TS5112, step 3 against a path npm run build really emits, step 4 prints Hello, SpecLang!) and a collected test executes them so they cannot rot"
+  ],
+  "passed": true,
+  "worktree": "/home/kara/speclang",
+  "branch": "",
+  "commit": "500289bda3f2d16c9f5a7e174835c1b9727b3987",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "473bc6c7f75005e7f0bfaeea3335da47073e23512fd840ed004d782d78c40590",
+  "working_tree_dirty_path_count": 7,
+  "items": [
+    {
+      "criterion": "The four Verification Steps in specs/examples.spec.dir/hello-world.spec.md execute verbatim from a fresh clone (step 2 without TS5112, step 3 against a path npm run build really emits, step 4 prints Hello, SpecLang!) and a collected test executes them so they cannot rot",
+      "status": "PASS",
+      "detail": "Test run: `npx vitest run tests/examples/hello-world-verification.test.ts --reporter=verbose` -> exit 0, \"Tests 5 passed (5)\" (all five nodes green, incl. \"runs steps 1-3 verbatim, in order, each exiting 0\" and \"step 3 (Run) prints the output step 4 promises\"). The test parses the numbered list out of the markdown (tests/examples/hello-world-verification.test.ts:52-84) and execSync's each body verbatim with cwd=REPO_ROOT (lines 118-146, 190-205), so the commands are not duplicated. Manual confirmation of each step: step 1 `npx speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run` exit 0 with \"Code blocks found: 1\"; step 2 `npm run build` exit 0 and `grep -c TS5112` on the build log = 0 (no TS5112); step 3 `node dist/src/examples/hello-world.js` prints \"Hello, SpecLang!\" exit 0, and `ls dist/examples` -> \"No such file or directory\" while `ls dist/src/examples/` lists hello-world.js, so the spec's path is the one the build really emits (tsconfig.json rootDir \".\"); step 4's quoted string is asserted equal to step 3's stdout (test lines 218-236). The test is collected by the project config (vitest.config.ts include 'tests/**/*.test.ts'); full suite `npx vitest run --passWithNoTests` -> \"Test Files 109 passed | 4 skipped (113)\", \"Tests 1922 passed | 58 skipped (1980)\", exit 0. Anti-rot guard also asserts the spec's @block::hello/function equals src/examples/hello-world.ts (test lines 238-247). [resolution 0.06; specs/examples.spec.dir/hello-world.spec.md]"
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  02:05:23",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T070329.044808Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T070329.044808Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  02:05:23\n   Duration  34.86s (transform 26.18s, setup 5.48s, import 38.78s, tests 152.24s, environment 22ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T070329.044808Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 The four Verification Steps in specs/examples.spec.dir/hello-world.spec.md execute verbatim from a fresh clone (step 2 without TS5112, step 3 against a path npm run build really emits, step 4 prints Hello, SpecLang!) and a collected test executes them so they cannot rot: Test run: `npx vitest run tests/examples/hello-world-verification.test.ts --reporter=verbose` -> exit 0, \"Tests 5 passed (5)\" (all five nodes green, incl. \"runs steps 1-3 verbatim, in order, each exiting 0\" and \"step 3 (Run) prints the output step 4 promises\"). The test parses the numbered list out of the markdown (tests/examples/hello-world-verification.test.ts:52-84) and execSync's each body verbatim with cwd=REPO_ROOT (lines 118-146, 190-205), so the commands are not duplicated. Manual confirmation of each step: step 1 `npx speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run` exit 0 with \"Code blocks found: 1\"; step 2 `npm run build` exit 0 and `grep -c TS5112` on the build log = 0 (no TS5112); step 3 `node dist/src/examples/hello-world.js` prints \"Hello, SpecLang!\" exit 0, and `ls dist/examples` -> \"No such file or directory\" while `ls dist/src/examples/` lists hello-world.js, so the spec's path is the one the build really emits (tsconfig.json rootDir \".\"); step 4's quoted string is asserted equal to step 3's stdout (test lines 218-236). The test is collected by the project config (vitest.config.ts include 'tests/**/*.test.ts'); full suite `npx vitest run --passWithNoTests` -> \"Test Files 109 passed | 4 skipped (113)\", \"Tests 1922 passed | 58 skipped (1980)\", exit 0. Anti-rot guard also asserts the spec's @block::hello/function equals src/examples/hello-world.ts (test lines 238-247). [resolution 0.06; specs/examples.spec.dir/hello-world.spec.md]\nThe hello-world spec's four Verification Steps run verbatim and green (build without TS5112, dist/src/examples/hello-world.js printing \"Hello, SpecLang!\"), and a collected vitest test re-executes them from the markdown so they cannot silently rot.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 The four Verification Steps in specs/examples.spec.dir/hello-world.spec.md execute verbatim from a fresh clone (step 2 without TS5112, step 3 against a path npm run build really emits, step 4 prints Hello, SpecLang!) and a collected test executes them so they cannot rot: Test run: `npx vitest run tests/examples/hello-world-verification.test.ts --reporter=verbose` -> exit 0, \"Tests 5 passed (5)\" (all five nodes green, incl. \"runs steps 1-3 verbatim, in order, each exiting 0\" and \"step 3 (Run) prints the output step 4 promises\"). The test parses the numbered list out of the markdown (tests/examples/hello-world-verification.test.ts:52-84) and execSync's each body verbatim with cwd=REPO_ROOT (lines 118-146, 190-205), so the commands are not duplicated. Manual confirmation of each step: step 1 `npx speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run` exit 0 with \"Code blocks found: 1\"; step 2 `npm run build` exit 0 and `grep -c TS5112` on the build log = 0 (no TS5112); step 3 `node dist/src/examples/hello-world.js` prints \"Hello, SpecLang!\" exit 0, and `ls dist/examples` -> \"No such file or directory\" while `ls dist/src/examples/` lists hello-world.js, so the spec's path is the one the build really emits (tsconfig.json rootDir \".\"); step 4's quoted string is asserted equal to step 3's stdout (test lines 218-236). The test is collected by the project config (vitest.config.ts include 'tests/**/*.test.ts'); full suite `npx vitest run --passWithNoTests` -> \"Test Files 109 passed | 4 skipped (113)\", \"Tests 1922 passed | 58 skipped (1980)\", exit 0. Anti-rot guard also asserts the spec's @block::hello/function equals src/examples/hello-world.ts (test lines 238-247). [resolution 0.06; specs/examples.spec.dir/hello-world.spec.md]\nThe hello-world spec's four Verification Steps run verbatim and green (build without TS5112, dist/src/examples/hello-world.js printing \"Hello, SpecLang!\"), and a collected vitest test re-executes them from the markdown so they cannot silently rot.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "The four Verification Steps in specs/examples.spec.dir/hello-world.spec.md execute verbatim from a fresh clone (step 2 without TS5112, step 3 against a path npm run build really emits, step 4 prints Hello, SpecLang!) and a collected test executes them so they cannot rot",
+                "status": "PASS",
+                "detail": "Test run: `npx vitest run tests/examples/hello-world-verification.test.ts --reporter=verbose` -> exit 0, \"Tests 5 passed (5)\" (all five nodes green, incl. \"runs steps 1-3 verbatim, in order, each exiting 0\" and \"step 3 (Run) prints the output step 4 promises\"). The test parses the numbered list out of the markdown (tests/examples/hello-world-verification.test.ts:52-84) and execSync's each body verbatim with cwd=REPO_ROOT (lines 118-146, 190-205), so the commands are not duplicated. Manual confirmation of each step: step 1 `npx speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run` exit 0 with \"Code blocks found: 1\"; step 2 `npm run build` exit 0 and `grep -c TS5112` on the build log = 0 (no TS5112); step 3 `node dist/src/examples/hello-world.js` prints \"Hello, SpecLang!\" exit 0, and `ls dist/examples` -> \"No such file or directory\" while `ls dist/src/examples/` lists hello-world.js, so the spec's path is the one the build really emits (tsconfig.json rootDir \".\"); step 4's quoted string is asserted equal to step 3's stdout (test lines 218-236). The test is collected by the project config (vitest.config.ts include 'tests/**/*.test.ts'); full suite `npx vitest run --passWithNoTests` -> \"Test Files 109 passed | 4 skipped (113)\", \"Tests 1922 passed | 58 skipped (1980)\", exit 0. Anti-rot guard also asserts the spec's @block::hello/function equals src/examples/hello-world.ts (test lines 238-247). [resolution 0.06; specs/examples.spec.dir/hello-world.spec.md]",
+                "resolution_probability": 0.06,
+                "cited_path": "specs/examples.spec.dir/hello-world.spec.md"
+              }
+            ],
+            "summary": "The hello-world spec's four Verification Steps run verbatim and green (build without TS5112, dist/src/examples/hello-world.js printing \"Hello, SpecLang!\"), and a collected vitest test re-executes them from the markdown so they cannot silently rot.",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-8-judge\"}",
+          "exit_code": 0,
+          "output_sha": "a79f9dcdd48e867078b5f39c94ff974439130279038554acf8bbcb99ff54ba5e"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd && git log --oneline -5 && ls",
+          "exit_code": 0,
+          "output_sha": "8f46a9a31292092f1e33800f50fe1d125092cb6381410bf99efa7eaa379b8bb4"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"specs/examples.spec.dir/hello-world.spec.md\"}",
+          "exit_code": 0,
+          "output_sha": "1c28db63851bd689ed7c2d8530a85af51b73c49aa42cab16d2ab12cdb66966ad"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show --stat 6790b83c && git show --stat a147bcac 2>/dev/null | head -40",
+          "exit_code": 0,
+          "output_sha": "7e870a4c44520e7a54dd48ae616bec9ea2249d1dde0883ed8988f4c2ca849aa0"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/examples/hello-world-verification.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "54c9fb747bb480d20083da72286e1b53eb0fb93040ea93fbe64b26817fc553fd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat package.json && cat vitest.config.ts && cat tsconfig.json",
+          "exit_code": 0,
+          "output_sha": "193c6d6cb2856b5fb810f011f29f6469b90e03b93f9fb61b7c283388b6d07e72"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat vitest.config.ts && echo ---- && head -40 tsconfig.json && echo ---- && ls src/examples/ && cat src/examples/hello-world.ts && echo ---- && ls dist/src/examples/ 2>&1",
+          "exit_code": 0,
+          "output_sha": "f4e7578cc1ea8b50826cfc99e3a46936a4fd21528222c0059ab4092c2845b3fd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat .gitreins/config.yaml 2>/dev/null; ls -a | head -30",
+          "exit_code": 0,
+          "output_sha": "5d9838902085ef1235782b6fe5cd07beeb58e1a4ffc28fb383a13557ec2b9bea"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Criterion 1: four Verification Steps in specs/examples.spec.dir/hello-world.spec.md execute verbatim from fresh clone; step2 no TS5112; step3 path npm run build emits; step4 prints Hello, SpecLang!; collected test executes them.\\n\\nFiles: spec (read), tests/examples/hello-world-verification.test.ts (read).\\nNeed: run the test; run steps manually; check `npx speclang generate ... --dry-run` works from fresh clone (bin/speclang, dist present?); check test is collected by vitest include tests/**/*.test.ts (yes).\\nCheck .tmp dir creation: beforeAll mkdtempSync(path.join(REPO_ROOT, \\\".tmp\\\", ...)) \\u2014 does .tmp exist in fresh clone? mkdtempSync requires parent dir to exist. .tmp is gitignored -> fresh clone has no .tmp -> beforeAll throws! But vitest.config.ts mkdirSync(projectTmp) at config load, and tests/setup-tmpdir.ts. Check global-setup too.\\n\", \"key\": \"plan\"}",
+          "exit_code": 0,
+          "output_sha": "862e520c0a871308fa86ed84f6086f3f4c5c3e04ef7aacb5e478d849c46f5f20"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat tests/setup-tmpdir.ts && echo ---- && cat tests/global-setup.ts && echo ---- && cat .gitignore | head -40",
+          "exit_code": 0,
+          "output_sha": "7acc64e7e07afd32ee5b843f086ebba322a2c1204f9b876648945119f3ab89ec"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"tmp\" .gitignore",
+          "exit_code": 0,
+          "output_sha": "b86be320dbfc551b932e3b2c72c1b25b9acdae83a406c4158b654b3b079f0148"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat bin/speclang | head -40 && echo ---- && ls dist | head && echo ---- && ls dist/src | head -20",
+          "exit_code": 0,
+          "output_sha": "8c6c2bbdc0722597031d7e1653c1b75086d51b56916e51c4f90d212337be959a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"generate\" bin/speclang | head -40",
+          "exit_code": 0,
+          "output_sha": "3165c698a1c53be47ddd7e95bc9f0d4a55408bb22dfaecd121daf32e1c44361b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"dry-run\\|dryRun\" bin/speclang src/cli/*.ts 2>/dev/null | head -30",
+          "exit_code": 0,
+          "output_sha": "3a0635fca0e164ba8a7bd9e8303b4c4abac0d6679991654908342e39ca3c35ac"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 180, \"offset\": 610, \"path\": \"bin/speclang\"}",
+          "exit_code": 0,
+          "output_sha": "f7d02413c62ae7f0983671b7026ed2d1fb117a05dbde88ea0c3d87392872919f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"extractBlockFenceBlocks\" -A 60 bin/speclang | head -90",
+          "exit_code": 0,
+          "output_sha": "4954d762e1ed01ab521e48ec9e2bdaafaf5f3b5dc84797b96a93c1d0e9cc0553"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"function extractBlockFenceBlocks\" -A 60 bin/speclang",
+          "exit_code": 0,
+          "output_sha": "ae70ea064711e719c0da6f4b8d96ca1b1cfffbb25de81516e82356d78994554f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && TMPDIR=$PWD/.tmp npx vitest run tests/examples/hello-world-verification.test.ts 2>&1 | tail -40",
+          "exit_code": 0,
+          "output_sha": "e43f0c65b29a93c97b01fb6722db22837fe8eca40422d42db0d5c9c4abc81867"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && TMPDIR=$PWD/.tmp npx vitest run tests/examples/hello-world-verification.test.ts --reporter=verbose 2>&1 | tail -30",
+          "exit_code": 0,
+          "output_sha": "5dd16d4b77942f6fa0baadcff7d6d1a9e00115ef0c5810963d827f6e4fd99557"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npx speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "c6b6f47d448a3cbecfae036ab93aac20fc020222306fc212df71f8695d23c8c2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && node dist/src/examples/hello-world.js; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "8d75bfe9038b88d85ffdf3d010d4f0df973697082ccb6df9dd52de8fb6d5f983"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npm run build 2>&1 | tail -20; echo \"EXIT=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "4c67a903f84e3ea09e51942b044653a1819393b065bc9ccc4b1a220051cc762f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npm run build > /tmp/build.log 2>&1; echo \"EXIT=$?\"; tail -20 /tmp/build.log",
+          "exit_code": 0,
+          "output_sha": "c007d41d068afc2cce49e20945f295aff6e316dd07ca5ea79e075d24a00f979d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -la dist/src/examples/hello-world.js && node dist/src/examples/hello-world.js; echo \"EXIT=$?\"; ls dist/examples 2>&1",
+          "exit_code": 2,
+          "output_sha": "0436aaa2c44a70b98b267dc7bb00ab6b7f308892f927ba4f6f245205a2be3085"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: test tests/examples/hello-world-verification.test.ts runs 5/5 green (verbose output). Steps verified manually: step1 `npx speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run` exit 0, \\\"Code blocks found: 1\\\"; step2 `npm run build` exit 0 (no TS5112); step3 `node dist/src/examples/hello-world.js` prints \\\"Hello, SpecLang!\\\" exit 0; dist/examples does not exist (confirms path). Test parses steps from markdown and execSync's them verbatim (lines 190-205), asserts step4 quoted string equals step3 stdout (lines 218-236).\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "6adcacf6e1b11c29a4e666ff7c20645ead9f39fa18871dcc4a3bc3885c09e4c0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git status --porcelain | head -20 && echo \"---\" && git ls-files dist | head -5 && echo \"---\" && git ls-files src/examples",
+          "exit_code": 0,
+          "output_sha": "dc0e2ab3eb6d293afe210a618b4b2da8b9f39473a3440103c57a4a33a6149438"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"hello-world\" --include=*.ts --include=*.md --include=*.json --include=*.yaml -l . --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.git | head -20",
+          "exit_code": 0,
+          "output_sha": "7d5f75b484e68fc2249ee1c8f7c8898767a996602952cb0ee2a8cea312be64ed"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"hello-world\" README.md specs/examples.spec.dir/README.md specs/examples.spec.md | head -20",
+          "exit_code": 0,
+          "output_sha": "2cf514fc049f2c9b1f74b634e5f6c3014c27c03b6f6469dfe219516f05dbab25"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 60, \"offset\": 370, \"path\": \"README.md\"}",
+          "exit_code": 0,
+          "output_sha": "95668f441614e69eea592ca4b97737401bdc2fa52f01fd254775c6c74e71f55c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"hello-world-verification\\|examples/\" tests/*.ts 2>/dev/null | head; ls tests/examples/ 2>/dev/null; grep -rn \"hello-world-verification\" --include=*.ts --include=*.yaml --include=*.json --include=*.md . --exclude-dir=node_modules --exclude-dir=.git | head",
+          "exit_code": 0,
+          "output_sha": "e4a6f92bca647c58e5a6826c068ff3c50f87922a9301299160fd4f7d2bac75ae"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat tests/spec-example-verification.test.ts",
+          "exit_code": 1,
+          "output_sha": "bb9cc24485a802bcf5005383388ef57cf1a2eb974ca8219c4c6b93b48cdd2dd4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls tests/ | head -60 && echo --- && ls tests/examples",
+          "exit_code": 0,
+          "output_sha": "24923718af8ba9d5e9839eea3df996a283bf3b8cc68a27333c9c639b9c8034e5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"Verification Steps\" --include=*.ts tests/ | head -20",
+          "exit_code": 0,
+          "output_sha": "cb355c62f637a9d66d8ee34c2e4f022bb61276b236c5fcbff3a70a2855f19fc8"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"hello-world\" tests/ --include=*.ts | grep -v \"tests/examples/hello-world-verification\" | head -20",
+          "exit_code": 0,
+          "output_sha": "2d123e194c057bd499641a7203f5072ff247dadc1a459bf6667db59afedb8ac8"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 120,170p tests/cascade/parse-spec.test.ts",
+          "exit_code": 0,
+          "output_sha": "ddfef6188a2e38ff27ae4b6fbfa2ccf0d05b4b81077615189da4e331624f0bf5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"hello\" specs/examples.spec.dir/hello-world-cascade.spec.md | head -20 && echo --- && grep -n \"Verification\" -A 12 specs/examples.spec.dir/hello-world-cascade.spec.md",
+          "exit_code": 1,
+          "output_sha": "f4e7442c42a652b335aeadfa6d2820842c9cef9f5e0b6f00870cf2dabaef3812"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"hello\" specs/hello.spec.md | head -20 && echo --- && grep -n \"Verification\" -A 12 specs/hello.spec.md",
+          "exit_code": 1,
+          "output_sha": "9af90fd1d207f91163844d30b09b6cec7f263b776a4f047bd1d121ff2eedefbe"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rln \"Verification Steps\" specs/ | head -20",
+          "exit_code": 0,
+          "output_sha": "db5bab92e2dfdf1cf8ec931f5580ec8d87aafe499bdd58d29998bf42cb37fdb2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"Verification Steps\" -A 20 specs/skills.spec.dir/skills/sip-063-examples-hello-world-speclang-v0.md",
+          "exit_code": 0,
+          "output_sha": "813beaecd3f7bedb5355f0289fdf066f2183587fc5432a4bb5efed143184e838"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"sip-063\\|skills.spec.dir\" --include=*.ts tests/ src/ | head -20",
+          "exit_code": 0,
+          "output_sha": "61165a4d8189746bcdb344063ba1b0450afec63975adba72e2e6a60c2b1cd23d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"skills.spec.dir\\|sip-0\" --include=*.ts --include=*.py --include=*.mjs --include=*.sh . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=dist | head -20",
+          "exit_code": 0,
+          "output_sha": "4a0a548278e8d36152844ce70c50daf7c8709f15a9080ef49db46b32b629833a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 1,80p specs/scripts.spec.dir/check_compliance.py",
+          "exit_code": 0,
+          "output_sha": "5f12c90b75648cae7caec6dc19a035c117b0af80425d9b6a0af93690771461c6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -la .opencode/skills/ 2>/dev/null | head -20; ls -la .opencode/skills/sip-063* 2>/dev/null; ls -la .opencode/skills/ | grep -i hello",
+          "exit_code": 0,
+          "output_sha": "d1cbb4eced3b0c0cdff0dc9547266a19664ab59fb14706b950a82482c11a8f5d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"dist/examples\\|TS5112\\|skipLibCheck src/examples\" --include=*.md --include=*.ts --include=*.json --include=*.sh . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=dist --exclude-dir=.gitreins | head -20",
+          "exit_code": 0,
+          "output_sha": "c0f6d4862086646d5d6d384faf4b37162437829314f292290861119f9f5b9139"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 1,60p specs/skills.spec.dir/skills/sip-063-examples-hello-world-speclang-v0.md",
+          "exit_code": 0,
+          "output_sha": "173a6c2e4c50de45e7869f9a009eb2b138e93cc05d5623476309800d7449b534"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"sip-063\\|skills.spec.dir/skills\" --include=*.ts --include=*.py --include=*.mjs --include=*.js --include=*.sh --include=*.yaml --include=*.yml . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=dist --exclude-dir=.gitreins --exclude-dir=.coding-hermes | head -20",
+          "exit_code": 0,
+          "output_sha": "be1aa3dfc37a2bee0722d731e4ec23126149c88a713a104bf548f7e2277da3c0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"skills\" tests/skills.test.ts | head -20 && echo --- && grep -rn \"\\.opencode/skills\\|skills.spec.dir\" tests/*.ts tests/**/*.ts 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "69938a41f12f029a3d1a9ad8bf392152e78fa42d5f26d890721926722509c82a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 95,130p tests/skills.test.ts",
+          "exit_code": 0,
+          "output_sha": "1ffdd3952b2921bdfd02f24039bf3cf59e4eb68b0f4466889761b5a10334e3aa"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"hello-world\" .opencode/ 2>/dev/null | head -20; echo ---; grep -rn \"hello-world\" skills/ 2>/dev/null | head -20; echo ---; ls skills | head",
+          "exit_code": 0,
+          "output_sha": "ffda4525ea098ffe87ed20c82d5258ebae9a048df93248b4baf54b34736827c0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -la skills/code-gen && grep -rn \"hello\" skills/code-gen/* 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "5b8ec78f692dcfb003d8602e539fde83458bd4e423f878e2e29a97c439daead8"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"hello-world\" .agents/ .hermes/ .coding-hermes/ 2>/dev/null | grep -v \"\\.jsonl\" | head -20",
+          "exit_code": 0,
+          "output_sha": "27e59dd0fb39c404a57f08ab45841bafa76749f0d1b2bdd5ac581cd5700c47b2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"hello-world\" .coding-hermes/board/tasks.jsonl 2>/dev/null | head -3 | cut -c1-3000",
+          "exit_code": 0,
+          "output_sha": "c99c1c923e8f425c48f60d949f72082fc6354fb29d8d026c38c7f85e19670e12"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -o \"DF-SPECLANG-8[^}]*}\" .coding-hermes/board/tasks.jsonl | head -3 | cut -c1-4000",
+          "exit_code": 0,
+          "output_sha": "7cbf04d53f98e97c90333c9691c18ee582312920d456e8b3fe6865f13549d4b9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"hello-world\" .coding-hermes/evidence/DF-SPECLANG-8-closeout.log 2>/dev/null | head -20; ls .coding-hermes/evidence/ | grep -i \"8\" | head",
+          "exit_code": 0,
+          "output_sha": "e780853e1f5083e648673d6fb03737dd25811f7e3dbe136c830e53913fa5ea32"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"hello-world\" .coding-hermes/evidence/DF-SPECLANG-019-closeout.log | head -20",
+          "exit_code": 0,
+          "output_sha": "06ca5e56acd59369e6010a94bca47950000c2b7129ab7c724d3ddb7b7cb605f5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 25,60p .coding-hermes/evidence/DF-SPECLANG-019-closeout.log",
+          "exit_code": 0,
+          "output_sha": "fd4f4cd541c32323140cc8e481ebd2d3cf65ec4c72b2f56d923da956ccd67a69"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"hello-world\" .coding-hermes/board/events.jsonl 2>/dev/null | grep -i \"DF-SPECLANG-8\" | head -5 | cut -c1-2500",
+          "exit_code": 0,
+          "output_sha": "bd773c191bcf9a59132db9e7359e8503e2264243db80b98f84071eea4bb968ff"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"DF-SPECLANG-8\\b\" .coding-hermes/board/events.jsonl 2>/dev/null | head -5 | cut -c1-3000",
+          "exit_code": 0,
+          "output_sha": "a776484c6763ffd19feb9623842242810253e443006526d2c7aee5ff1e6079f1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"DF-SPECLANG-8\\b\" .coding-hermes/board/events.jsonl | tail -5 | cut -c1-4000",
+          "exit_code": 0,
+          "output_sha": "3d27751444c9c70f34ff7c019ace0896d5cd2988eb81b765847cb253e1dcc831"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"DF-SPECLANG-8\" .coding-hermes/board/events.jsonl | grep -v \"^271\\|^279\\|^380\" | tail -6 | cut -c1-5000",
+          "exit_code": 0,
+          "output_sha": "b51af3e13b4c681396cf566b65248ae2f1366588d833b9de501ba0826e6f749c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -c \"\" .coding-hermes/board/events.jsonl; grep -n \"DF-SPECLANG-8\" .coding-hermes/board/events.jsonl | cut -c1-200",
+          "exit_code": 0,
+          "output_sha": "64b58c1bbebf7fc00ce9c4df2a9c93bfdca725fe4af826b4b9ef79f71c3de016"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 381,384p .coding-hermes/board/events.jsonl | cut -c1-3000",
+          "exit_code": 0,
+          "output_sha": "5bdbc688f5f9e15b23a1c794344e917ff7f494ba1ff149367258df3d1436adf1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"DF-SPECLANG-8\\\"\" .coding-hermes/board/tasks.jsonl | cut -c1-200; grep -o '\"id\": \"DF-SPECLANG-8\"[^}]*' .coding-hermes/board/tasks.jsonl | head -2 | cut -c1-3000",
+          "exit_code": 0,
+          "output_sha": "0fd8bdc62ea203e1b6ee25e6610703d3ccd05a489e4a6fde5485031fef99efff"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 122p .coding-hermes/board/tasks.jsonl | cut -c1-6000",
+          "exit_code": 0,
+          "output_sha": "5d103da54ca310897aa2795ee6755dff91792c03a48d0d0b0aed9e6d9e931d8e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"hello-world\" .coding-hermes/board/tasks.jsonl | grep -o \"DF-SPECLANG-8[^,]*\" | head -5; echo ---; grep -o '\"id\":\"DF-SPECLANG-8\"[^}]*' .coding-hermes/board/tasks.jsonl | head -2 | cut -c1-3000",
+          "exit_code": 0,
+          "output_sha": "13b3f6d8fa65f5f0e0ebd7ee1444ea2cc85d402f4ec078b43f750fe4cfb87176"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"DF-SPECLANG-8\" .coding-hermes/board/tasks.jsonl | cut -c1-120",
+          "exit_code": 0,
+          "output_sha": "71077bcfb7b98fc408aabfd6f4904a3d9c1865c5c4f89d79905f697cea3900cc"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"DF-SPECLANG-8\" .coding-hermes/board/tasks.jsonl.pre-repair-1790096029 .coding-hermes/board/tasks.jsonl.quarantine-1790096029 2>/dev/null | cut -c1-120",
+          "exit_code": 0,
+          "output_sha": "2af871323a14f6ea2cc17befb8439651de12a745779edaa53d284cd6ea16032c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"DF-SPECLANG-8\" .coding-hermes/board/tasks.jsonl | wc -l; grep -o \"DF-SPECLANG-8[^\\\\\\\\]\\{0,80\\}\" .coding-hermes/board/tasks.jsonl | head -10",
+          "exit_code": 0,
+          "output_sha": "0ad3443e85fe3d953e43a27d733c7bc950858d38d64319eb265199bd81747613"
+        },
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-019\"}",
+          "exit_code": 1,
+          "output_sha": "41a46461dbad1da690bb98beffcca72c678872bf95724bdcab5be7841ae3ec25"
+        },
+        {
+          "tool": "sandbox_read",
+          "command": "sandbox_read {\"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "9898b27576749e53ce792a8270ba2f387eeb44ab4dea442e2c88cc26284b92cb"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls; echo ---; cat .gitreins/config.yaml 2>/dev/null; echo ---; cat package.json",
+          "exit_code": 0,
+          "output_sha": "b0ad071ee1abc09159388e1b0fcd514595cbc0fef42a3b5c0c118201b0fe04eb"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"specs/examples.spec.dir/hello-world.spec.md\"}",
+          "exit_code": 0,
+          "output_sha": "1c28db63851bd689ed7c2d8530a85af51b73c49aa42cab16d2ab12cdb66966ad"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/agent 2>/dev/null; pwd; git -C . log --oneline -3 2>/dev/null; echo ---; ls tests/examples/ 2>/dev/null; echo ---; cat tsconfig.json",
+          "exit_code": 0,
+          "output_sha": "ee3a2601d4fcb0a7d19d2fe42440ef1013a28aa6f8cbbc6e5a7a78505d1ee2ec"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/examples/hello-world-verification.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "54c9fb747bb480d20083da72286e1b53eb0fb93040ea93fbe64b26817fc553fd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npx vitest run tests/examples/hello-world-verification.test.ts --reporter=verbose 2>&1 | tail -40",
+          "exit_code": 0,
+          "output_sha": "14234625ef44ee367d3074cb5fce1ab3f8b269005574b37ea2f2674633bc8d14"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls dist/src/examples/ 2>&1; ls dist/examples 2>&1; echo \"--- step3 ---\"; node dist/src/examples/hello-world.js; echo \"exit=$?\"; echo \"--- step1 ---\"; npx speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run 2>&1 | tail -5; echo \"exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "550f75da848959ad9dab58c8aa4c8fbd3efd6886b74fe3520357a1864b7b1158"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npx speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run 2>&1 | head -20; echo \"=== build ===\"; npm run build 2>&1 | tail -15; echo \"build_exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "94c6d8d16d092248e6645c43f8286bf87f786f2f775ed5c397493020febf94f5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npm run build > /tmp/b.log 2>&1; echo \"build_exit=$?\"; grep -c TS5112 /tmp/b.log; tail -5 /tmp/b.log; echo \"=== full suite ===\"; npx vitest run --passWithNoTests 2>&1 | tail -15",
+          "exit_code": -15,
+          "output_sha": "bb3473c845d9ec157bb477c0192f66ae48fd5c29fa8adcf0246ae110499acb30"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 600 npx vitest run --passWithNoTests > /tmp/full.log 2>&1; echo \"exit=$?\"; tail -20 /tmp/full.log",
+          "exit_code": -15,
+          "output_sha": "e59df866b1e588590b381da574c0e28a148961a1999128d0970c97ccfd846335"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && (nohup npx vitest run --passWithNoTests > /tmp/full.log 2>&1 &) ; sleep 25; echo started",
+          "exit_code": 0,
+          "output_sha": "df0f2f45d1e7ac021a1e53aeda30f236f7574b2155ed345b67d2886242db8425"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 28; tail -25 /tmp/full.log",
+          "exit_code": 0,
+          "output_sha": "c9285201e0524e9302a689227c37d4848878824c73320ccaa807f443f9d16edd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat vitest.config.ts; echo \"=== git status ===\"; git status --porcelain | head -20",
+          "exit_code": 0,
+          "output_sha": "bd2a61c7e4b989bc8842040900d40ec0f56501ad982c98e90f94389eb440eb30"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat src/examples/hello-world.ts; echo \"=== git log for test ===\"; git log --oneline -3 -- tests/examples/hello-world-verification.test.ts specs/examples.spec.dir/hello-world.spec.md src/examples/hello-world.ts",
+          "exit_code": 0,
+          "output_sha": "eff17ec36d393390281e89746fc298cc2cc13277c8ad28b67e3a274287892226"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS (re-confirmed): `npx vitest run tests/examples/hello-world-verification.test.ts --reporter=verbose` -> 5 passed (5), exit 0. Steps executed verbatim from markdown (test lines 190-205 execSync, cwd=REPO_ROOT). Manual: step1 `npx speclang generate ... --dry-run` exit 0, \\\"Code blocks found: 1\\\"; step2 `npm run build` exit 0, grep -c TS5112 = 0; step3 `node dist/src/examples/hello-world.js` -> \\\"Hello, SpecLang!\\\" exit 0; `dist/examples` does not exist (ls: No such file or directory) while dist/src/examples/hello-world.js exists; step4 quoted string asserted equal to step3 stdout (test lines 218-236). Full suite: 109 files passed | 4 skipped, 1922 tests passed | 58 skipped, exit 0.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "327f7f596a225be8326410db286f4308f427ffb6603f5cce5b6444cfbce21393"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "medium",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 150,
+        "detection": "row marked status=complete while its own worker_status field remains \"pending\"",
+        "detail": "DOC-6 is flipped to \"status\": \"complete\" but the same object still carries \"worker_status\": \"pending\", so the row is internally inconsistent about whether the work finished."
+      },
+      {
+        "severity": "medium",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 150,
+        "detection": "row marked status=complete while its own worker_summary records an aborted/uncovered failure path and CI unobserved",
+        "detail": "DOC-6's worker_summary states the full-suite arm aborted on an EPIPE and \"CI not observed at close time - SKIP is not a claim of green\", yet the row is closed complete with ci_result \"SKIP\"."
+      },
+      {
+        "severity": "medium",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 150,
+        "detection": "row marked status=complete while its own worker_summary reports a duplicate concurrent dispatch still outstanding",
+        "detail": "DOC-6's worker_summary says \"DUPLICATE DISPATCH: a concurrent tick (board commit 33912948) also dispatched DOC-6 ... the sibling worker should be stood down\", but the diff closes the row without any board event or note recording that the sibling was stood down."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 150,
+        "detection": "row marked status=complete while its own worker_summary reports a duplicate concurrent dispatch still outstanding",
+        "detail": "DF-SPECLANG-019 is closed complete with \"worker_status\": \"pending\" left in place, the same status/worker_status mismatch as DOC-6."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 150,
+        "detection": "row marked status=complete while its own worker_summary records CI unobserved",
+        "detail": "DF-SPECLANG-019's worker_summary ends \"CI not observed at close time - SKIP is not a claim of green\" while the row is closed complete with ci_result \"SKIP\"."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/events.jsonl",
+        "line": 383,
+        "detection": "task_completed event emitted for a row whose worker_status was never advanced past pending",
+        "detail": "Event 383 records task_completed for DF-SPECLANG-019, but the corresponding tasks.jsonl row still has worker_status \"pending\" and no task_updated event transitioning it."
+      }
+    ],
+    "summary": "The diff closes two board rows (DOC-6, DF-SPECLANG-019) as complete while leaving worker_status at pending and while their own worker_summaries record an aborted test arm, unobserved CI, and an outstanding duplicate dispatch."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  02:05:23\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 The four Verification Steps in specs/examples.spec.dir/hello-world.spec.md execute verbatim from a fresh clone (step 2 without TS5112, step 3 against a path npm run build really emits, step 4 prints Hello, SpecLang!) and a collected test executes them so they cannot rot: Test run: `npx vitest run tests/examples/hello-world-verification.test.ts --reporter=verbose` -> exit 0, \"Tests 5 passed (5)\" (all five nodes green, incl. \"runs steps 1-3 verbatim, in order, each exiting 0\" and \"step 3 (Run) prints the output step 4 promises\"). The test parses the numbered list out of the markdown (tests/examples/hello-world-verification.test.ts:52-84) and execSync's each body verbatim with cwd=REPO_ROOT (lines 118-146, 190-205), so the commands are not duplicated. Manual confirmation of each step: step 1 `npx speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run` exit 0 with \"Code blocks found: 1\"; step 2 `npm run build` exit 0 and `grep -c TS5112` on the build log = 0 (no TS5112); step 3 `node dist/src/examples/hello-world.js` prints \"Hello, SpecLang!\" exit 0, and `ls dist/examples` -> \"No such file or directory\" while `ls dist/src/examples/` lists hello-world.js, so the spec's path is the one the build really emits (tsconfig.json rootDir \".\"); step 4's quoted string is asserted equal to step 3's stdout (test lines 218-236). The test is collected by the project config (vitest.config.ts include 'tests/**/*.test.ts'); full suite `npx vitest run --passWithNoTests` -> \"Test Files 109 passed | 4 skipped (113)\", \"Tests 1922 passed | 58 skipped (1980)\", exit 0. Anti-rot guard also asserts the spec's @block::hello/function equals src/examples/hello-world.ts (test lines 238-247). [resolution 0.06; specs/examples.spec.dir/hello-world.spec.md]\nThe hello-world spec's four Verification Steps run verbatim and green (build without TS5112, dist/src/examples/hello-world.js printing \"Hello, SpecLang!\"), and a collected vitest test re-executes them from the markdown so they cannot silently rot.\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T07:10:44.158936",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T07:10:44.385601+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 1345,
+        "truncated": false,
+        "source": "git show 500289bda3f2"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 43658,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DF-SPECLANG-8-judge"
+  }
+}
