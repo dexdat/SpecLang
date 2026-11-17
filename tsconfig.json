@@ -45,6 +45,7 @@
     "**/*.test.ts",
     "src/codegen.ts",
     "src/ralph-loop.ts", 
+    "src/ralph-loop/**",
     "src/speclang-mcp.ts",
     "src/validation-system.ts",
     "src/validation.ts",

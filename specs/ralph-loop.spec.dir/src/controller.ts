@@ -2,9 +2,11 @@
 // DO NOT EDIT MANUALLY
 // Source: @speclang/implementation.ralph-loop
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const DatabaseModule = require('better-sqlite3');
-const Database = DatabaseModule.default || DatabaseModule;
+// QA-SPECLANG-5-R2: guarded state-DB open (same diagnostic as every other
+// consumer) instead of a bare better-sqlite3 constructor here. Imported through
+// the src/db projection because the compiled index.js beside this spec dir is
+// stale and would shadow the TypeScript source.
+import { openStateDatabase } from '../../../src/db/index.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as path from 'path';
@@ -36,7 +38,8 @@ export class LoopController {
    * @returns Promise resolving to LoopController instance
    */
   static async create(dbPath: string = '.speclang/speclang.db'): Promise<LoopController> {
-    const db = new Database(dbPath);
+    // QA-SPECLANG-5-R2: guarded open — see src/db/index.ts.
+    const db = openStateDatabase(dbPath);
     return new LoopController(db);
   }
 

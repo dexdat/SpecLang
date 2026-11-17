@@ -1,11 +1,18 @@
-# speclang-header lines:3
-# target: src/ralph-loop.ts
+// speclang-header lines:3
+// target: src/ralph-loop.ts
 // Generated from Ralph Loop implementation spec
 // DO NOT EDIT MANUALLY
 
 
 // Block: implementation/ralph-loop/controller
 import Database from 'better-sqlite3';
+// QA-SPECLANG-5-R2: the loop's state DB is opened only through the guarded
+// helper, so a file that is not a SQLite database reports the actionable
+// diagnostic instead of a raw SqliteError from the first prepared statement.
+// (Specifier note: through the src/db projection — this spec dir's own compiled
+// index.js is stale and would shadow the guarded TypeScript source for .js
+// specifiers.)
+import { openStateDatabase, STATE_DB_CORRUPT_CODE } from '../../../src/db/index.js';
 import { readFile, writeFile } from 'fs/promises';
 import { glob } from 'glob';
 import { exec } from 'child_process';
@@ -37,7 +44,10 @@ export class LoopController {
   }
 
   static async create(dbPath: string = '.speclang/speclang.db'): Promise<LoopController> {
-    const db = new Database(dbPath);
+    // QA-SPECLANG-5-R2: guarded open — the loop used to die on a raw
+    // `SqliteError: file is not a database` the first time it prepared a
+    // statement against a corrupt `.speclang/speclang.db`.
+    const db = openStateDatabase(dbPath);
     return new LoopController(db);
   }
 
@@ -238,4 +248,35 @@ export class VerifierAgent {
     // Implementation omitted for brevity
     return errors;
   }
+}
+
+// ============================================================================
+// CLI Entry Point
+// ============================================================================
+
+/**
+ * Run the loop against the project state DB: `tsx src/ralph-loop.ts [dbPath]`.
+ *
+ * QA-SPECLANG-5-R2: a corrupt state DB must stop the loop before the first task
+ * is read, and say what is wrong (which file, and the documented recovery step)
+ * instead of surfacing a raw SqliteError from a prepared statement.
+ */
+async function main(): Promise<void> {
+  const dbPath = process.argv[2] ?? '.speclang/speclang.db';
+
+  try {
+    const controller = await LoopController.create(dbPath);
+    await controller.start();
+  } catch (error) {
+    if ((error as { code?: string } | undefined)?.code === STATE_DB_CORRUPT_CODE) {
+      console.error((error as Error).message);
+      process.exit(1);
+    }
+    console.error('Ralph Loop failed:', error);
+    process.exit(1);
+  }
+}
+
+if (typeof require !== 'undefined' && require.main === module) {
+  void main();
 }

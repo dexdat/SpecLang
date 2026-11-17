@@ -1,5 +1,5 @@
-# speclang-header lines:3
-# target: src/speclang-mcp.ts
+// speclang-header lines:3
+// target: src/speclang-mcp.ts
 // speclang-header lines:20
 // id: @generated/mcp-server
 // target: typescript
@@ -28,6 +28,17 @@ import { randomUUID } from "crypto";
 import fs from "fs";
 import path from "path";
 import Database from "better-sqlite3";
+// QA-SPECLANG-5-R2: the state DB is opened only through the guarded helper, so a
+// file that is not a SQLite database reports the actionable diagnostic instead
+// of a raw SqliteError from the schema bootstrap below.
+// Imported through the src/db projection on purpose: this spec dir also carries
+// a stale compiled index.js (2026-03-03) that a .js-preferring resolver would
+// load instead of the guarded TypeScript source.
+import {
+  openStateDatabase,
+  withStateDatabase,
+  STATE_DB_CORRUPT_CODE
+} from "../../../src/db/index.js";
 
 // ============================================================================
 // Configuration Types
@@ -62,8 +73,11 @@ class SpeclangDatabase {
   private db: Database.Database;
 
   constructor(dbPath: string = '.speclang/speclang.db') {
-    this.db = new Database(dbPath);
-    this.setupTables();
+    // QA-SPECLANG-5-R2: guarded open. A corrupt `.speclang/speclang.db` used to
+    // reach setupTables() and die there with `SqliteError: file is not a
+    // database` — no path, no remedy.
+    this.db = openStateDatabase(dbPath);
+    withStateDatabase(this.db, dbPath, () => this.setupTables());
   }
 
   private setupTables(): void {
@@ -657,11 +671,20 @@ class SpeclangMCPServer {
 
 async function main() {
   const args = process.argv.slice(2);
-  const server = new SpeclangMCPServer();
-  
+
   try {
+    // QA-SPECLANG-5-R2: the constructor opens the state DB, so it runs inside the
+    // guard — a corrupt DB must stop the server with the diagnostic, not with an
+    // uncaught SqliteError before the transport is even created.
+    const server = new SpeclangMCPServer();
     await server.start(args);
   } catch (error) {
+    // A corrupt state DB is an operator problem with a written remedy: print the
+    // diagnostic alone so it is not buried under a stack trace.
+    if ((error as { code?: string } | undefined)?.code === STATE_DB_CORRUPT_CODE) {
+      console.error((error as Error).message);
+      process.exit(1);
+    }
     console.error('Failed to start MCP server:', error);
     process.exit(1);
   }
@@ -671,4 +694,4 @@ if (require.main === module) {
   main();
 }
 
-export { SpeclangMCPServer };
+export { SpeclangMCPServer, SpeclangDatabase };

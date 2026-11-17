@@ -121,6 +121,32 @@ export function openStateDatabase(path: string): DatabaseType {
 }
 
 /**
+ * Run `setup` against an already-opened state database, translating a deeper
+ * not-a-database failure into the same CorruptStateDatabaseError diagnostic.
+ *
+ * The open probe reads the file header only; a consumer that bootstraps its own
+ * schema (or its own pragmas) reads further and can still meet a file that is
+ * not a database. One shared helper keeps that failure loud and identical for
+ * every consumer — SpecLangDB, the standalone MCP server, the Ralph Loop —
+ * instead of each one leaking a bare SqliteError.
+ */
+export function withStateDatabase<T>(db: DatabaseType, filePath: string, setup: () => T): T {
+  try {
+    return setup();
+  } catch (err) {
+    try {
+      db.close();
+    } catch {
+      // An unreadable file has no handle worth closing.
+    }
+    if (isNotADatabaseError(err)) {
+      throw new CorruptStateDatabaseError(filePath, err);
+    }
+    throw err;
+  }
+}
+
+/**
  * Main database class for SpecLang
  */
 export class SpecLangDB {
@@ -144,19 +170,7 @@ export class SpecLangDB {
     // Configure database. A file that survived the open probe can still be
     // damaged deeper in (these pragmas read the header/btree pages), so the same
     // diagnostic applies instead of leaking a bare SqliteError.
-    try {
-      this.configure();
-    } catch (err) {
-      try {
-        this.db.close();
-      } catch {
-        // Nothing to close if the handle is already unusable.
-      }
-      if (isNotADatabaseError(err)) {
-        throw new CorruptStateDatabaseError(config.path, err);
-      }
-      throw err;
-    }
+    withStateDatabase(this.db, config.path, () => this.configure());
     
     // Initialize search modules
     this.fts = new FullTextSearch(this.db);

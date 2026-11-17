@@ -1,11 +1,15 @@
-# speclang-header lines:3
-# target: src/validation-system.ts
+// speclang-header lines:3
+// target: src/validation-system.ts
 // Generated from validation system implementation spec
 // DO NOT EDIT MANUALLY
 
 
 // Block: implementation/validation/engine
 import Database from 'better-sqlite3';
+// QA-SPECLANG-5-R2: every state-DB open goes through the guarded helper.
+// (Through the src/db projection: the compiled index.js beside this spec dir is
+// stale and would shadow the TypeScript source.)
+import { openStateDatabase } from '../../../src/db/index.js';
 import { readFile, writeFile, unlink } from 'fs/promises';
 import { parse } from 'yaml';
 import * as path from 'path';
@@ -394,7 +398,9 @@ export class ValidationEngine {
 // Block: implementation/validation/cli
 
 export async function validateCommand(args: string[]) {
-  const db = new Database('.speclang/speclang.db');
+  // QA-SPECLANG-5-R2: guarded open — a corrupt state DB must report the
+  // actionable diagnostic here too, not a raw SqliteError from ValidationEngine.
+  const db = openStateDatabase('.speclang/speclang.db');
 
   const engine = new ValidationEngine(db);
 
