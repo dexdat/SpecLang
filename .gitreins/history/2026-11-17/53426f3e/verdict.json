@@ -1,0 +1,405 @@
+{
+  "task_id": "README-26",
+  "task_title": "README has no reproducible Testing section for strangers",
+  "task_criteria": [
+    "README carries a Testing section that names the runner, the real commands (npm test and a targeted file run), the prerequisites (install/build), and the test directories vitest actually collects; every command shown was executed by the author and exits as described, and every path named exists (test -e)."
+  ],
+  "passed": false,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "d11e296465b725d61f1701773659cc9a37490440",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "2403942e1c7c04480bda49cb0d963633c64692357a9b2b601e66fd81e12ebc54",
+  "working_tree_dirty_path_count": 5,
+  "items": [
+    {
+      "criterion": "README carries a Testing section that names the runner, the real commands (npm test and a targeted file run), the prerequisites (install/build), and the test directories vitest actually collects; every command shown was executed by the author and exits as described, and every path named exists (test -e).",
+      "status": "FAIL",
+      "detail": "The section exists and most of it is accurate, but several of the numbers it presents as measured are wrong at this HEAD, so the commands do not 'exit as described'. Verified accurate: README.md:492 '## Testing' names vitest and vitest.config.ts; README.md:497-499 prerequisites `npm install` / `npm run build`; README.md:511 `npm test` matches package.json:22-23 (`pretest: npm run build`, `test: TMPDIR=$PWD/.tmp vitest run`); README.md:545 include globs match vitest.config.ts:66-69 (`tests/**/*.test.ts`, `tests/**/*.test.tsx`, exclude `tests/e2e/**/*.spec.ts`); README.md:539-541 dist/ gitignored claim confirmed (`git ls-files dist | wc -l` -> 0, .gitignore:11); the 'not built' probe reproduces (moved dist aside, `./bin/speclang validate` -> '\u274c SpecLang not built. Run: npm run build', and `./bin/speclang history` still works); side-effects claims confirmed (.gitignore:5 `test-temp-*/`, .gitignore:98 `.tmp/`, `_index.json` tracked). Verified WRONG: (1) README.md:533 `npx vitest run tests/db # 7 files, 71 tests, ~29s` \u2014 actual run: `Test Files 8 passed (8) / Tests 81 passed (81) / Duration 19.75s`; the verbose reporter lists 8 files (7 under tests/db/ plus tests/db.test.ts), so README.md:539 '(hence 7 files, not the 6 under tests/db/)' and README.md:553 table row `tests/db/ ... | 6 |` are both off by one (actual 8 and 7). (2) README.md:545 '119 files are collected: 35 at the top of tests/' \u2014 actual collected count is 120 with 36 top-level test files (`find tests -name '*.test.ts*' | grep -v '^tests/e2e/' | wc -l` -> 120; `find tests -maxdepth 1 -name '*.test.ts' | wc -l` -> 36). (3) README.md:520 'Test Files 115 passed | 4 skipped (119)' \u2014 fresh `npm test` at this HEAD printed `Test Files 117 passed | 4 skipped (121)` / `Tests 1972 passed | 58 skipped (2030)`, EXIT=0. The README hedges that counts are checkout-dependent, but the directory table and the targeted-run line are presented as measured facts and are stale. Correct as written: `npx vitest run tests/parser.test.ts` -> `1 passed (1)`, `28 passed (28)`, 767ms; `npx vitest run tests/e2e` -> `1 passed (1)`, 9 tests; tests/dashboard table value 16 matches the 16 files on disk."
+    }
+  ],
+  "merge_recommendation": "changes_required",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  11:41:24",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T121505.638291Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T121505.638291Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  11:41:24\n   Duration  28.36s (transform 4.75s, setup 1.31s, import 7.96s, tests 141.93s, environment 12ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T121505.638291Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": false,
+      "any_failed": true,
+      "summary": "INCOMPLETE\n  \u2717 README carries a Testing section that names the runner, the real commands (npm test and a targeted file run), the prerequisites (install/build), and the test directories vitest actually collects; every command shown was executed by the author and exits as described, and every path named exists (test -e).: The section exists and most of it is accurate, but several of the numbers it presents as measured are wrong at this HEAD, so the commands do not 'exit as described'. Verified accurate: README.md:492 '## Testing' names vitest and vitest.config.ts; README.md:497-499 prerequisites `npm install` / `npm run build`; README.md:511 `npm test` matches package.json:22-23 (`pretest: npm run build`, `test: TMPDIR=$PWD/.tmp vitest run`); README.md:545 include globs match vitest.config.ts:66-69 (`tests/**/*.test.ts`, `tests/**/*.test.tsx`, exclude `tests/e2e/**/*.spec.ts`); README.md:539-541 dist/ gitignored claim confirmed (`git ls-files dist | wc -l` -> 0, .gitignore:11); the 'not built' probe reproduces (moved dist aside, `./bin/speclang validate` -> '\u274c SpecLang not built. Run: npm run build', and `./bin/speclang history` still works); side-effects claims confirmed (.gitignore:5 `test-temp-*/`, .gitignore:98 `.tmp/`, `_index.json` tracked). Verified WRONG: (1) README.md:533 `npx vitest run tests/db # 7 files, 71 tests, ~29s` \u2014 actual run: `Test Files 8 passed (8) / Tests 81 passed (81) / Duration 19.75s`; the verbose reporter lists 8 files (7 under tests/db/ plus tests/db.test.ts), so README.md:539 '(hence 7 files, not the 6 under tests/db/)' and README.md:553 table row `tests/db/ ... | 6 |` are both off by one (actual 8 and 7). (2) README.md:545 '119 files are collected: 35 at the top of tests/' \u2014 actual collected count is 120 with 36 top-level test files (`find tests -name '*.test.ts*' | grep -v '^tests/e2e/' | wc -l` -> 120; `find tests -maxdepth 1 -name '*.test.ts' | wc -l` -> 36). (3) README.md:520 'Test Files 115 passed | 4 skipped (119)' \u2014 fresh `npm test` at this HEAD printed `Test Files 117 passed | 4 skipped (121)` / `Tests 1972 passed | 58 skipped (2030)`, EXIT=0. The README hedges that counts are checkout-dependent, but the directory table and the targeted-run line are presented as measured facts and are stale. Correct as written: `npx vitest run tests/parser.test.ts` -> `1 passed (1)`, `28 passed (28)`, 767ms; `npx vitest run tests/e2e` -> `1 passed (1)`, 9 tests; tests/dashboard table value 16 matches the 16 files on disk.\n  \u2717 Coverage FAILED \u2014 not passing: README carries a Testing section that names the runner, the real commands (npm test and a targeted file run), the prerequisites (install/build), and the test directories vitest actually collects; every command shown was executed by the author and exits as described, and every path named exists (test -e).\nThe Testing section is well-structured and most commands/paths check out, but the measured counts it states (tests/db 7 files/71 tests, 119 collected files, 35 top-level, 115 passed) do not match the repository at this HEAD (8 files/81 tests, 120 collected, 36 top-level, 117 passed), so the criterion's 'exits as described' requirement fails.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": false,
+          "output": "INCOMPLETE\n  \u2717 README carries a Testing section that names the runner, the real commands (npm test and a targeted file run), the prerequisites (install/build), and the test directories vitest actually collects; every command shown was executed by the author and exits as described, and every path named exists (test -e).: The section exists and most of it is accurate, but several of the numbers it presents as measured are wrong at this HEAD, so the commands do not 'exit as described'. Verified accurate: README.md:492 '## Testing' names vitest and vitest.config.ts; README.md:497-499 prerequisites `npm install` / `npm run build`; README.md:511 `npm test` matches package.json:22-23 (`pretest: npm run build`, `test: TMPDIR=$PWD/.tmp vitest run`); README.md:545 include globs match vitest.config.ts:66-69 (`tests/**/*.test.ts`, `tests/**/*.test.tsx`, exclude `tests/e2e/**/*.spec.ts`); README.md:539-541 dist/ gitignored claim confirmed (`git ls-files dist | wc -l` -> 0, .gitignore:11); the 'not built' probe reproduces (moved dist aside, `./bin/speclang validate` -> '\u274c SpecLang not built. Run: npm run build', and `./bin/speclang history` still works); side-effects claims confirmed (.gitignore:5 `test-temp-*/`, .gitignore:98 `.tmp/`, `_index.json` tracked). Verified WRONG: (1) README.md:533 `npx vitest run tests/db # 7 files, 71 tests, ~29s` \u2014 actual run: `Test Files 8 passed (8) / Tests 81 passed (81) / Duration 19.75s`; the verbose reporter lists 8 files (7 under tests/db/ plus tests/db.test.ts), so README.md:539 '(hence 7 files, not the 6 under tests/db/)' and README.md:553 table row `tests/db/ ... | 6 |` are both off by one (actual 8 and 7). (2) README.md:545 '119 files are collected: 35 at the top of tests/' \u2014 actual collected count is 120 with 36 top-level test files (`find tests -name '*.test.ts*' | grep -v '^tests/e2e/' | wc -l` -> 120; `find tests -maxdepth 1 -name '*.test.ts' | wc -l` -> 36). (3) README.md:520 'Test Files 115 passed | 4 skipped (119)' \u2014 fresh `npm test` at this HEAD printed `Test Files 117 passed | 4 skipped (121)` / `Tests 1972 passed | 58 skipped (2030)`, EXIT=0. The README hedges that counts are checkout-dependent, but the directory table and the targeted-run line are presented as measured facts and are stale. Correct as written: `npx vitest run tests/parser.test.ts` -> `1 passed (1)`, `28 passed (28)`, 767ms; `npx vitest run tests/e2e` -> `1 passed (1)`, 9 tests; tests/dashboard table value 16 matches the 16 files on disk.\n  \u2717 Coverage FAILED \u2014 not passing: README carries a Testing section that names the runner, the real commands (npm test and a targeted file run), the prerequisites (install/build), and the test directories vitest actually collects; every command shown was executed by the author and exits as described, and every path named exists (test -e).\nThe Testing section is well-structured and most commands/paths check out, but the measured counts it states (tests/db 7 files/71 tests, 119 collected files, 35 top-level, 115 passed) do not match the repository at this HEAD (8 files/81 tests, 120 collected, 36 top-level, 117 passed), so the criterion's 'exits as described' requirement fails.",
+          "error": "",
+          "data": {
+            "verdict": "INCOMPLETE",
+            "items": [
+              {
+                "criterion": "README carries a Testing section that names the runner, the real commands (npm test and a targeted file run), the prerequisites (install/build), and the test directories vitest actually collects; every command shown was executed by the author and exits as described, and every path named exists (test -e).",
+                "status": "FAIL",
+                "detail": "The section exists and most of it is accurate, but several of the numbers it presents as measured are wrong at this HEAD, so the commands do not 'exit as described'. Verified accurate: README.md:492 '## Testing' names vitest and vitest.config.ts; README.md:497-499 prerequisites `npm install` / `npm run build`; README.md:511 `npm test` matches package.json:22-23 (`pretest: npm run build`, `test: TMPDIR=$PWD/.tmp vitest run`); README.md:545 include globs match vitest.config.ts:66-69 (`tests/**/*.test.ts`, `tests/**/*.test.tsx`, exclude `tests/e2e/**/*.spec.ts`); README.md:539-541 dist/ gitignored claim confirmed (`git ls-files dist | wc -l` -> 0, .gitignore:11); the 'not built' probe reproduces (moved dist aside, `./bin/speclang validate` -> '\u274c SpecLang not built. Run: npm run build', and `./bin/speclang history` still works); side-effects claims confirmed (.gitignore:5 `test-temp-*/`, .gitignore:98 `.tmp/`, `_index.json` tracked). Verified WRONG: (1) README.md:533 `npx vitest run tests/db # 7 files, 71 tests, ~29s` \u2014 actual run: `Test Files 8 passed (8) / Tests 81 passed (81) / Duration 19.75s`; the verbose reporter lists 8 files (7 under tests/db/ plus tests/db.test.ts), so README.md:539 '(hence 7 files, not the 6 under tests/db/)' and README.md:553 table row `tests/db/ ... | 6 |` are both off by one (actual 8 and 7). (2) README.md:545 '119 files are collected: 35 at the top of tests/' \u2014 actual collected count is 120 with 36 top-level test files (`find tests -name '*.test.ts*' | grep -v '^tests/e2e/' | wc -l` -> 120; `find tests -maxdepth 1 -name '*.test.ts' | wc -l` -> 36). (3) README.md:520 'Test Files 115 passed | 4 skipped (119)' \u2014 fresh `npm test` at this HEAD printed `Test Files 117 passed | 4 skipped (121)` / `Tests 1972 passed | 58 skipped (2030)`, EXIT=0. The README hedges that counts are checkout-dependent, but the directory table and the targeted-run line are presented as measured facts and are stale. Correct as written: `npx vitest run tests/parser.test.ts` -> `1 passed (1)`, `28 passed (28)`, 767ms; `npx vitest run tests/e2e` -> `1 passed (1)`, 9 tests; tests/dashboard table value 16 matches the 16 files on disk.",
+                "resolution_probability": 0.17
+              }
+            ],
+            "summary": "The Testing section is well-structured and most commands/paths check out, but the measured counts it states (tests/db 7 files/71 tests, 119 collected files, 35 top-level, 115 passed) do not match the repository at this HEAD (8 files/81 tests, 120 collected, 36 top-level, 117 passed), so the criterion's 'exits as described' requirement fails.",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"README-26\"}",
+          "exit_code": 0,
+          "output_sha": "70dc59566d5930102cd6b7e7f2a65d4c37e6d3cb9fcfcd3bf29d791501eb35c1"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la",
+          "exit_code": 0,
+          "output_sha": "d511bcd137886cb7b6e8d7d0f83a42557732ab0a6846dbfebff84ce24809c224"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n -i \"testing\" README.md | head -50",
+          "exit_code": 0,
+          "output_sha": "78a9d0ff8e3bfffb81bd38cf42404c4100bc8fefef50328a6f2ff526793261dc"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"vitest.config.ts\"}",
+          "exit_code": 0,
+          "output_sha": "6f732de1247a77932cec9df9d05fa6de2bcb2903f0492c2e688d9bdcbab6b6e8"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 180, \"offset\": 440, \"path\": \"README.md\"}",
+          "exit_code": 0,
+          "output_sha": "a288984d613fffd430ea20c9887b2d15e2fc8da89b1f49ccd6567658731b39cb"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"package.json\"}",
+          "exit_code": 0,
+          "output_sha": "054a6fcacecf232f8394dc6aff5a746788845e14338e745113e42425309bfee2"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"README.md:492 \\\"## Testing\\\" section exists. Claims:\\n- runner: vitest (vitest.config.ts)\\n- prereqs: npm install, npm run build\\n- npm test = TMPDIR=$PWD/.tmp vitest run, pretest runs npm run build (matches package.json:22-23)\\n- targeted: npx vitest run tests/parser.test.ts (1 file, 28 tests, ~1s); npx vitest run tests/db (7 files, 71 tests, ~29s)\\n- collects tests/**/*.test.ts and tests/**/*.test.tsx (matches vitest.config.ts include)\\n- 119 files collected: 35 top-level + dir table\\n- e2e: 4 playwright specs excluded; npx vitest run tests/e2e -> 1 passed (1), 9 tests\\n- side effects: dist/, .tmp/, test-temp-*/, _index.json\\n\", \"key\": \"readme_testing_section\"}",
+          "exit_code": 0,
+          "output_sha": "01a114cec88937e69d1b6c4d0e7b9d73ab4799485f4cc666b9bccc37b1d59c56"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; pwd; ls tests | head -60; echo \"---count top-level test files---\"; ls tests/*.test.ts tests/*.test.tsx 2>/dev/null | wc -l",
+          "exit_code": 0,
+          "output_sha": "e71bd372f0b4866ea723a28fa755010b3ec26e31a3b98974620d74e5265448ea"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; ls tests | head -60; echo \"---top-level test files---\"; ls tests/*.test.ts tests/*.test.tsx 2>/dev/null | wc -l; echo \"---dirs---\"; ls -d tests/*/ | wc -l",
+          "exit_code": 0,
+          "output_sha": "6093fe563eb58c79917106f8bce5a5d75cee21490cb0b7410d6a033b9ba5b349"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls tests/*.test.ts tests/*.test.tsx 2>/dev/null",
+          "exit_code": 2,
+          "output_sha": "3124217878123b5304ee229c1cbf44380b475666499bb5aae9202cbb92bca9fd"
+        },
+        {
+          "tool": "run_command",
+          "command": "for d in cli daemon dashboard db cascade cascade_new maturity mcp autonomous codegen validation performance ci meta stdlib agents examples transition workflow e2e mocks; do n=$(ls tests/$d/*.test.ts tests/$d/*.test.tsx 2>/dev/null | wc -l); echo \"$d: $n\"; done",
+          "exit_code": 0,
+          "output_sha": "067ddd5afeed6b7b9a34ba0366f089445ba867bb7d7b3c0dda2e6a9fea6e2271"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls tests/dashboard/; echo \"--- tsx ---\"; ls tests/dashboard/*.tsx 2>/dev/null; echo \"--- db dir ---\"; ls tests/db/",
+          "exit_code": 0,
+          "output_sha": "74fc5fee630c8a68396ab26e3740bcb9f197276c5a5ff4798085f02a5ba5b88f"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls tests/e2e/; echo \"--- playwright dep? ---\"; grep -n \"playwright\" package.json; ls node_modules/@playwright 2>/dev/null || echo \"no @playwright in node_modules\"",
+          "exit_code": 0,
+          "output_sha": "7ef15a1e79a129e7a2a5b9d3c0d0aedc5ddbc6b5f2b3125397c551dbe5ef4ea4"
+        },
+        {
+          "tool": "run_command",
+          "command": "find tests/dashboard -name \"*.test.ts\" -o -name \"*.test.tsx\" | sort; echo \"--- count ---\"; find tests/dashboard -name \"*.test.ts\" -o -name \"*.test.tsx\" | wc -l",
+          "exit_code": 0,
+          "output_sha": "0e732ef8c5a93ce70d1508ced56dd384ad0292500b0f4129b57ffd637a8262c2"
+        },
+        {
+          "tool": "run_command",
+          "command": "find tests -name \"*.test.ts\" -o -name \"*.test.tsx\" | grep -v \"^tests/e2e/.*\\.spec\\.ts$\" | wc -l; echo \"--- all test files incl spec ---\"; find tests -name \"*.test.ts\" -o -name \"*.test.tsx\" | wc -l",
+          "exit_code": 0,
+          "output_sha": "13bb25ed6e5b7436e660f40ac9f7b928664e1ce9a06af0c6d7072b4b267e0728"
+        },
+        {
+          "tool": "run_command",
+          "command": "find tests -name \"*.test.ts\" -o -name \"*.test.tsx\" | grep -v \"^tests/e2e/\" | wc -l; echo \"--- top-level ---\"; find tests -maxdepth 1 -name \"*.test.ts\" -o -maxdepth 1 -name \"*.test.tsx\" | wc -l",
+          "exit_code": 0,
+          "output_sha": "8bdd05fc573657b484e13e49129cf92fac6aed58b6e4ecdee29bcf7acc9104da"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 300 npx vitest run tests/parser.test.ts 2>&1 | tail -25",
+          "exit_code": 0,
+          "output_sha": "d946421866ee21b02be7a63a3acc3b546d03cbd22973d8a917ed4f5be07c30a6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 600 npx vitest run tests/db 2>&1 | tail -25",
+          "exit_code": 0,
+          "output_sha": "4f6f5e7a9a84f9d0724f062bdacc5013ee6efd29e7443a6028e8c4cea2de6356"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 300 npx vitest run tests/e2e 2>&1 | tail -25",
+          "exit_code": 0,
+          "output_sha": "8238225c3bb5d7d4322279f7daf3942562ce8da041a58c2d3ef78febd7bb52e0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 300 npx vitest run tests/db --reporter=verbose 2>&1 | grep -E \"^\\s*(\u2713|\u00d7|\u276f)\" | grep -oE \"tests/[^ ]+\\.test\\.tsx?\" | sort -u",
+          "exit_code": 0,
+          "output_sha": "bc7f0f79cff10457a35ba4b6e293d21ea7a4f8d52234fc69fe7b6d764b9bbff9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git log --oneline -5 -- README.md; echo \"--- diff of README in last commits ---\"; git log --oneline -3",
+          "exit_code": 0,
+          "output_sha": "f57c7c5cd1fabaaaddd09499114716e8c21a992985ee97e546b1b3ed0c81313d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show --stat 2afbc40d | head -20",
+          "exit_code": 0,
+          "output_sha": "765d2386f143e51ff9e89ba06230665f2fee0291831574c3d4b169a84002771f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show 2afbc40d -- README.md | head -200",
+          "exit_code": 0,
+          "output_sha": "3bb2a0592a2239559fbd39904e6785d1b7a637321038b5b22c650c548126609e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show 2afbc40d -- README.md | sed -n '95,140p'",
+          "exit_code": 0,
+          "output_sha": "5e6b9e85c98123cc4f4bc58e28ac0e0f17c502a0527bd2490bfa109164cc498b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git ls-files dist | wc -l; echo \"--- gitignore dist ---\"; grep -n \"^dist\" .gitignore; echo \"--- bin/speclang dist requires ---\"; grep -n \"dist/src\" bin/speclang | head -20",
+          "exit_code": 0,
+          "output_sha": "c0e324b13a19db85adeaa2cbc4891cba66cae8864879beef927f46da6bd38c89"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"SpecLang not built\" bin/speclang | head; echo \"--- history cmd ---\"; grep -n \"'history'\" bin/speclang | head",
+          "exit_code": 0,
+          "output_sha": "d2d2075b0aab749f0e5e861c99308d0a359ab69c078f724c98c7465f0af609c7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -d dist 2>/dev/null && echo \"dist exists\"; git status --porcelain | head -20",
+          "exit_code": 0,
+          "output_sha": "0a3f74c4d9f4e7506898a35ee40c700bd03b510b2c1d786ca22ecbf37cfd08e5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"history\" bin/speclang | head -20",
+          "exit_code": 0,
+          "output_sha": "6479c13a16a1614529ab71623175f127b9b4b182674c3cd78d3b243129cced70"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && mv dist /tmp/dist-aside-review 2>/dev/null || mv dist .dist-aside-review; ls -d dist 2>/dev/null || echo \"dist moved\"; timeout 120 ./bin/speclang validate 2>&1 | tail -5; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "decce9cc5d6885b8f079e26406d9e3df414ad7c6c533c98c45f943e88bc981ce"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 120 ./bin/speclang history 2>&1 | tail -8; echo \"EXIT=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "0296dd4b2a53679f3a45116c71e9ae0e33fc5f10a56ae8c3705d23e0eb42d058"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && mv /tmp/dist-aside-review dist && ls -d dist && echo restored",
+          "exit_code": 0,
+          "output_sha": "a96f6ed00e52c852aac2bb03047cc4eed0775a673a83cb9de197f53628e6e40e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"test-temp\" .gitignore; echo \"--- _index.json tracked? ---\"; git ls-files _index.json; echo \"--- .tmp gitignored? ---\"; grep -n \"^\\.tmp\" .gitignore",
+          "exit_code": 0,
+          "output_sha": "222260aecae62b9d325ab483244a5032384265f88e3df91bb601742d3d7d8125"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Verified so far:\\n- README.md:492 \\\"## Testing\\\" exists with runner (vitest), prereqs (npm install, npm run build), npm test, targeted runs, dir table, e2e note, side effects.\\n- package.json:22-23 pretest=build, test=TMPDIR=$PWD/.tmp vitest run -> matches README.\\n- vitest.config.ts include tests/**/*.test.ts(x), exclude tests/e2e/**/*.spec.ts -> matches README.\\n- npx vitest run tests/parser.test.ts -> 1 file, 28 tests, 767ms (README says 28 tests ~1s) OK\\n- npx vitest run tests/db -> 8 files, 81 tests, 19.75s (README says 7 files, 71 tests, ~29s) MISMATCH\\n- npx vitest run tests/e2e -> 1 passed (1), 9 tests OK\\n- tests/dashboard has 16 test files (README table says 16) OK\\n- top-level tests/*.test.ts = 36 (README says 35) MISMATCH\\n- total collected = 120 (README says 119) MISMATCH\\n- git ls-files dist = 0, .gitignore:11 dist/ OK\\n- bin/speclang dist requires at 192,229,230,285,596,639,667 OK\\n- moved dist aside: ./bin/speclang validate -> \\\"\\u274c SpecLang not built. Run: npm run build\\\" OK; history still works OK\\n- .gitignore:5 test-temp-*/, :98 .tmp/, _index.json tracked OK\\n\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "c48308c294175978c8d1def5c26705ba67ebcccb4c8c31a4692d4bfb90d387ea"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 900 npm test 2>&1 | tail -30",
+          "exit_code": -15,
+          "output_sha": "d02f67a4b0958b7a55b35a71530787a9fa844c79506b6ae7ded541f842e46a8d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && (timeout 1200 npm test > /tmp/npmtest.log 2>&1; echo \"EXIT=$?\" >> /tmp/npmtest.log) & sleep 25; echo started",
+          "exit_code": 0,
+          "output_sha": "c6fa7d40438cf44924c0e89420d28cd3322a9fc516307655c7be24806ec68292"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"tests/db\" README.md | head; echo \"---\"; grep -n \"35 at the top\" README.md",
+          "exit_code": 0,
+          "output_sha": "f0632fdc43d40a7fa93d9c445deb63c295c015bbfb4d181fe46ce8d1556da1ae"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 60; tail -5 /tmp/npmtest.log",
+          "exit_code": -15,
+          "output_sha": "8ba0a13bcbec508255d78b9a6214c5c915b5feb63739d6ee82567c58d4fb791a"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 25; tail -c 2000 /tmp/npmtest.log",
+          "exit_code": 0,
+          "output_sha": "5af3ee033ab34d4d76239a4c69a67cf9edaffd7076af85640f23c0d7c978214f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"115 passed\\|119 files\\|35 at the top\\|7 files, 71 tests\\|6 |\" README.md | head",
+          "exit_code": 0,
+          "output_sha": "0daa26f8f23c38a5665fa88c74eae9ef3eac0a97dbe07051d756f5314911bb88"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git status --porcelain | head -10; echo \"--- _index modified? ---\"; git status --porcelain _index.json",
+          "exit_code": 0,
+          "output_sha": "7a3459ec3869b1ca94de52ca47042d274fc1457049ed6efb5dd13e2c8dd27c12"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"npm test (fresh, full): EXIT=0\\n Test Files  117 passed | 4 skipped (121)\\n      Tests  1972 passed | 58 skipped (2030)\\nREADME.md:520 claims \\\"Test Files 115 passed | 4 skipped (119)\\\" -> stale (121 collected now).\\nREADME.md:545 \\\"119 files are collected: 35 at the top\\\" -> actual 120 collected (36 top-level).\\nREADME.md:533 \\\"npx vitest run tests/db # 7 files, 71 tests, ~29s\\\" -> actual 8 files, 81 tests, 19.75s.\\nREADME.md:553 tests/db/ table says 6 -> actual 7.\\nREADME.md:539 \\\"(hence 7 files, not the 6 under tests/db/)\\\" -> actual 8 vs 7.\\nREADME.md:533 \\\"npx vitest run tests/parser.test.ts # 1 file, 28 tests, ~1s\\\" -> actual 1 file, 28 tests, 767ms OK.\\nREADME.md e2e \\\"1 passed (1), 9 tests\\\" -> actual 1 passed (1), 9 tests OK.\\n\", \"key\": \"verified_0_final\"}",
+          "exit_code": 0,
+          "output_sha": "2a98d6abf889aa942070b1533096ca154eaa7940326dccdb9ef4ab9c6a8f0a36"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "medium",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 0,
+        "detection": "task marked status=complete with ci_result=SKIP and no green CI evidence, unlike sibling rows in the same wave",
+        "detail": "DOC-1, DOC-2 and UX-004-R1 are flipped to \"status\":\"complete\" with \"ci_result\":\"SKIP\", whereas the comparable GAP-004 row in the same file carries \"ci_result\":\"GREEN\" and DOC-3 carries \"ci_result\":\"GREEN\"."
+      },
+      {
+        "severity": "medium",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 0,
+        "detection": "row closed as complete on a foreman measurement while its own recorded tier-2 verdict is a cap failure with 0 criteria graded",
+        "detail": "DOC-2's foreman_note states \"TIER-2 VERDICT IS A CAP FAIL, NOT A CODE FAIL: run ab657b00 ended 'Cap exceeded: Iteration cap (100) reached ... with 0 of 1 criteria graded\" yet the row is set to \"status\":\"complete\" with evidence run_id ab657b00."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 0,
+        "detection": "new task row omits fields that every other row in the file carries",
+        "detail": "GAP-005 is written with \"type\":null and lacks the \"detail.metadata\" object (only a bare \"fingerprint\") that sibling rows such as QA-SPECLANG-010 and UX-004-R1 include."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/events.jsonl",
+        "line": 0,
+        "detection": "event log timestamps are not monotonic with respect to event id",
+        "detail": "New event id 453 has timestamp 2026-11-17T16:40:56Z while the pre-existing id 451 (audit) is 16:52:00Z and id 452 is 16:38:30Z, so ids 453-456 are appended out of chronological order."
+      }
+    ],
+    "summary": "The diff is board bookkeeping only; the substantive issues are rows closed as complete on SKIP CI and on a tier-2 verdict that graded zero criteria, plus minor row/event schema and ordering drift."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  11:41:24\n\nStage tier2: FAIL\n  INCOMPLETE\n  \u2717 README carries a Testing section that names the runner, the real commands (npm test and a targeted file run), the prerequisites (install/build), and the test directories vitest actually collects; every command shown was executed by the author and exits as described, and every path named exists (test -e).: The section exists and most of it is accurate, but several of the numbers it presents as measured are wrong at this HEAD, so the commands do not 'exit as described'. Verified accurate: README.md:492 '## Testing' names vitest and vitest.config.ts; README.md:497-499 prerequisites `npm install` / `npm run build`; README.md:511 `npm test` matches package.json:22-23 (`pretest: npm run build`, `test: TMPDIR=$PWD/.tmp vitest run`); README.md:545 include globs match vitest.config.ts:66-69 (`tests/**/*.test.ts`, `tests/**/*.test.tsx`, exclude `tests/e2e/**/*.spec.ts`); README.md:539-541 dist/ gitignored claim confirmed (`git ls-files dist | wc -l` -> 0, .gitignore:11); the 'not built' probe reproduces (moved dist aside, `./bin/speclang validate` -> '\u274c SpecLang not built. Run: npm run build', and `./bin/speclang history` still works); side-effects claims confirmed (.gitignore:5 `test-temp-*/`, .gitignore:98 `.tmp/`, `_index.json` tracked). Verified WRONG: (1) README.md:533 `npx vitest run tests/db # 7 files, 71 tests, ~29s` \u2014 actual run: `Test Files 8 passed (8) / Tests 81 passed (81) / Duration 19.75s`; the verbose reporter lists 8 files (7 under tests/db/ plus tests/db.test.ts), so README.md:539 '(hence 7 files, not the 6 under tests/db/)' and README.md:553 table row `tests/db/ ... | 6 |` are both off by one (actual 8 and 7). (2) README.md:545 '119 files are collected: 35 at the top of tests/' \u2014 actual collected count is 120 with 36 top-level test files (`find tests -name '*.test.ts*' | grep -v '^tests/e2e/' | wc -l` -> 120; `find tests -maxdepth 1 -name '*.test.ts' | wc -l` -> 36). (3) README.md:520 'Test Files 115 passed | 4 skipped (119)' \u2014 fresh `npm test` at this HEAD printed `Test Files 117 passed | 4 skipped (121)` / `Tests 1972 passed | 58 skipped (2030)`, EXIT=0. The README hedges that counts are checkout-dependent, but the directory table and the targeted-run line are presented as measured facts and are stale. Correct as written: `npx vitest run tests/parser.test.ts` -> `1 passed (1)`, `28 passed (28)`, 767ms; `npx vitest run tests/e2e` -> `1 passed (1)`, 9 tests; tests/dashboard table value 16 matches the 16 files on disk.\n  \u2717 Coverage FAILED \u2014 not passing: README carries a Testing section that names the runner, the real commands (npm test and a targeted file run), the prerequisites (install/build), and the test directories vitest actually collects; every command shown was executed by the author and exits as described, and every path named exists (test -e).\nThe Testing section is well-structured and most commands/paths check out, but the measured counts it states (tests/db 7 files/71 tests, 119 collected files, 35 top-level, 115 passed) do not match the repository at this HEAD (8 files/81 tests, 120 collected, 36 top-level, 117 passed), so the criterion's 'exits as described' requirement fails.\n\nOverall: FAIL \u2717",
+  "evaluated_at": "2026-11-17T16:45:36.262421",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T16:45:36.286334+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 75373,
+        "truncated": false,
+        "source": "git show d11e296465b7"
+      }
+    ],
+    "task_id": "README-26"
+  }
+}
