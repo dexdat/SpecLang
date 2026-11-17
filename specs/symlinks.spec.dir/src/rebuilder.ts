@@ -69,8 +69,18 @@ export async function rebuild(
   })));
   
   // Step 5: Verify symlinks
+  //
+  // Scope the scan to the target roots named by `specs`, never process.cwd():
+  // a whole-checkout scan of process.cwd() made rebuild()'s cost and its error list depend
+  // on ambient state — every directory of the working tree, including the
+  // .tmp/ scratch trees other processes are writing at the same moment — which
+  // is what turned quickRebuild into a load-dependent 5s timeout in-suite.
   if (verify) {
-    const symlinkEntries = await scanSymlinks('.');
+    const targetRoots = getTargetRoots(specs);
+    const scanned = await Promise.all(
+      targetRoots.map((root) => scanSymlinks(root))
+    );
+    const symlinkEntries = scanned.flat();
     const verification = await verifySymlinks(symlinkEntries);
     
     // Log broken symlinks as warnings
@@ -84,6 +94,22 @@ export async function rebuild(
   }
   
   return result;
+}
+
+/**
+ * Logical target directories named by the specs (deduped, ordered).
+ * rebuild() derives every path it touches from its inputs, so verification is
+ * scoped to these roots instead of the process working directory.
+ */
+function getTargetRoots(specs: SpecWithTarget[]): string[] {
+  const roots = new Set<string>();
+  for (const spec of specs) {
+    if (!spec.target) {
+      continue;
+    }
+    roots.add(path.dirname(path.resolve(spec.target)));
+  }
+  return [...roots].sort();
 }
 
 /**

@@ -93,14 +93,19 @@ export async function scanSymlinks(dirPath: string): Promise<SymlinkEntry[]> {
         const fullPath = path.join(dir, entry.name);
         
         if (entry.isSymbolicLink()) {
-          const target = await fs.readlink(fullPath);
-          const resolvedTarget = path.resolve(dir, target);
-          
-          symlinks.push({
-            logicalPath: fullPath,
-            physicalPath: resolvedTarget,
-            isValid: false, // Will be verified separately
-          });
+          // A concurrent unlink must not abort the rest of this directory.
+          try {
+            const target = await fs.readlink(fullPath);
+            const resolvedTarget = path.resolve(dir, target);
+
+            symlinks.push({
+              logicalPath: fullPath,
+              physicalPath: resolvedTarget,
+              isValid: false, // Will be verified separately
+            });
+          } catch {
+            // Entry vanished or is unreadable: skip it, keep scanning.
+          }
         } else if (entry.isDirectory()) {
           await scan(fullPath);
         }

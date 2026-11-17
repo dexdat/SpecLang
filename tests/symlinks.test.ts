@@ -351,5 +351,92 @@ describe("Symlinks Module", () => {
       expect(result.symlinked.length).toBe(1);
       expect(result.generated.length).toBe(0); // No regeneration
     });
+
+    it("derives its verification scope from the specs, not process.cwd()", async () => {
+      // Regression guard for the in-suite timeout: rebuild({verify:true}) used to
+      // call scanSymlinks("."), so the work it did (and the errors it reported)
+      // depended on the ambient checkout — every directory of it, including the
+      // .tmp/ scratch trees sibling test files are writing at the same moment.
+      // A stray broken symlink that the specs never name must not be scanned.
+      const scratchRoot = await fs.mkdtemp(
+        path.join(os.tmpdir(), "speclang-quickrebuild-cwd-"),
+      );
+      const originalCwd = process.cwd();
+
+      try {
+        // Decoy tree in the cwd, outside every target root the specs name.
+        const decoyDir = path.join(scratchRoot, "decoy", "nested");
+        await fs.mkdir(decoyDir, { recursive: true });
+        await fs.symlink(
+          path.join(scratchRoot, "missing-target.ts"),
+          path.join(decoyDir, "broken.ts"),
+        );
+
+        const specsDir = path.join(scratchRoot, "specs");
+        await fs.mkdir(specsDir, { recursive: true });
+        const physicalPath = path.join(specsDir, "test.ts");
+        await fs.writeFile(physicalPath, "export const x = 1;");
+
+        const specs: SpecWithTarget[] = [
+          {
+            filePath: physicalPath,
+            metadata: { id: "test", version: "1.0.0" } as any,
+            target: path.join(scratchRoot, "src", "test.ts"),
+          },
+        ];
+
+        process.chdir(scratchRoot);
+        const result = await quickRebuild(specs);
+
+        expect(result.symlinked).toEqual([
+          path.join(scratchRoot, "src", "test.ts"),
+        ]);
+        expect(result.errors).toEqual([]);
+      } finally {
+        process.chdir(originalCwd);
+        await fs.rm(scratchRoot, { recursive: true, force: true });
+      }
+    });
+
+    it("rebuilds two distinct target roots concurrently without sharing state", async () => {
+      const roots = await Promise.all([
+        fs.mkdtemp(path.join(os.tmpdir(), "speclang-quickrebuild-a-")),
+        fs.mkdtemp(path.join(os.tmpdir(), "speclang-quickrebuild-b-")),
+      ]);
+
+      try {
+        const specsFor = async (root: string, name: string) => {
+          const specsDir = path.join(root, "specs");
+          await fs.mkdir(specsDir, { recursive: true });
+          const physicalPath = path.join(specsDir, `${name}.ts`);
+          await fs.writeFile(physicalPath, `export const ${name} = 1;`);
+          return [
+            {
+              filePath: physicalPath,
+              metadata: { id: name, version: "1.0.0" } as any,
+              target: path.join(root, "src", `${name}.ts`),
+            },
+          ] as SpecWithTarget[];
+        };
+
+        const [specsA, specsB] = await Promise.all([
+          specsFor(roots[0], "a"),
+          specsFor(roots[1], "b"),
+        ]);
+
+        const [resultA, resultB] = await Promise.all([
+          quickRebuild(specsA),
+          quickRebuild(specsB),
+        ]);
+
+        expect(resultA.symlinked).toEqual([path.join(roots[0], "src", "a.ts")]);
+        expect(resultB.symlinked).toEqual([path.join(roots[1], "src", "b.ts")]);
+        expect([...resultA.errors, ...resultB.errors]).toEqual([]);
+      } finally {
+        await Promise.all(
+          roots.map((root) => fs.rm(root, { recursive: true, force: true })),
+        );
+      }
+    });
   });
 });
