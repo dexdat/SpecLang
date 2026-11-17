@@ -1,0 +1,470 @@
+{
+  "task_id": "DF-SPECLANG-7",
+  "task_title": "P2 fresh npm install on npm >=12 leaves better-sqlite3 without its native binding",
+  "task_criteria": [
+    "package.json declares allowScripts.better-sqlite3=true; scripts/postinstall-lint-deps.sh provides a binding verification path exposed as npm run check:sqlite-binding; npm run check:sqlite-binding exits 0 at HEAD; CI stages the gate; README/CHANGELOG document the npm >=12 behavior"
+  ],
+  "passed": false,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "d2982ec298696ade74b839e054142d014f57d784",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "02a262b5ccef7a6dcc78b7d74d075689684ad9a70b6994072d212d90847debaf",
+  "working_tree_dirty_path_count": 5,
+  "items": [
+    {
+      "criterion": "package.json declares allowScripts.better-sqlite3=true; scripts/postinstall-lint-deps.sh provides a binding verification path exposed as npm run check:sqlite-binding; npm run check:sqlite-binding exits 0 at HEAD; CI stages the gate; README/CHANGELOG document the npm >=12 behavior",
+      "status": "FAIL",
+      "detail": "Four of five sub-requirements hold, the CI sub-requirement does not. (a) package.json:34-36 declares `\"allowScripts\": { \"better-sqlite3\": true }`. (b) package.json:32 exposes `\"check:sqlite-binding\": \"bash scripts/postinstall-lint-deps.sh --sqlite-binding-only\"`, and scripts/postinstall-lint-deps.sh:24-103 implements `check_sqlite_binding` (real `require('better-sqlite3')` + in-memory `SELECT 1` probe, npm-version-aware remedy, `return 1` on failure); the red path was exercised in a scratch tree with an empty node_modules/better-sqlite3 and returned REAL_EXIT=1 with the FAIL/remedy text. (c) `npm run check:sqlite-binding` at HEAD printed `OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})` with EXIT=0. (d) README.md:36-89 documents the npm >=12 allowScripts blocking behaviour, the warning text, the check command and the remedy; CHANGELOG.md:11-27 documents the same under Unreleased. (e) FAIL \u2014 CI does NOT stage the gate: `grep -n \"sqlite\\|binding\\|allowScripts\" .github/workflows/ci.yml` returns nothing (only `run: npm ci` at ci.yml:50). The step existed in 6cb184b4 (ci.yml:52-61) but was deleted in e8343f1c (\"chore(ci): stage the sqlite-binding CI step instead of pushing it\") and now lives only as an unapplied patch at .coding-hermes/pending/ci-sqlite-binding-step.patch; CHANGELOG.md:14-17 itself states the step \"is staged in .coding-hermes/pending/ci-sqlite-binding-step.patch\". A staged patch is not a CI stage. Test evidence: `npx vitest run tests/cli/pack-contract.test.ts` -> `Test Files 1 passed (1) / Tests 3 passed (3)`, exit 0."
+    },
+    {
+      "criterion": "The binding gate is actually enforced by CI at HEAD, so a regression that drops the native binding turns a CI run red",
+      "status": "FAIL",
+      "detail": ".github/workflows/ci.yml has no step running `npm run check:sqlite-binding`; the only install-related step is `- name: Install dependencies / run: npm ci` at ci.yml:50. `git log --oneline -- .github/workflows/ci.yml` shows e8343f1c removed the 11-line step that 6cb184b4 had added, so nothing in CI would catch a fresh install that leaves better-sqlite3 without its binding \u2014 the exact defect this task exists to prevent. The gate is only reachable via the local `postinstall` hook (package.json:31) and the manual `npm run check:sqlite-binding`.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "changes_required",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  22:54:53",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T035359.520129Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T035359.520129Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  22:54:53\n   Duration  85.36s (transform 85.98s, setup 20.77s, import 114.74s, tests 293.77s, environment 23ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T035359.520129Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": false,
+      "any_failed": true,
+      "summary": "INCOMPLETE\n  \u2717 package.json declares allowScripts.better-sqlite3=true; scripts/postinstall-lint-deps.sh provides a binding verification path exposed as npm run check:sqlite-binding; npm run check:sqlite-binding exits 0 at HEAD; CI stages the gate; README/CHANGELOG document the npm >=12 behavior: Four of five sub-requirements hold, the CI sub-requirement does not. (a) package.json:34-36 declares `\"allowScripts\": { \"better-sqlite3\": true }`. (b) package.json:32 exposes `\"check:sqlite-binding\": \"bash scripts/postinstall-lint-deps.sh --sqlite-binding-only\"`, and scripts/postinstall-lint-deps.sh:24-103 implements `check_sqlite_binding` (real `require('better-sqlite3')` + in-memory `SELECT 1` probe, npm-version-aware remedy, `return 1` on failure); the red path was exercised in a scratch tree with an empty node_modules/better-sqlite3 and returned REAL_EXIT=1 with the FAIL/remedy text. (c) `npm run check:sqlite-binding` at HEAD printed `OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})` with EXIT=0. (d) README.md:36-89 documents the npm >=12 allowScripts blocking behaviour, the warning text, the check command and the remedy; CHANGELOG.md:11-27 documents the same under Unreleased. (e) FAIL \u2014 CI does NOT stage the gate: `grep -n \"sqlite\\|binding\\|allowScripts\" .github/workflows/ci.yml` returns nothing (only `run: npm ci` at ci.yml:50). The step existed in 6cb184b4 (ci.yml:52-61) but was deleted in e8343f1c (\"chore(ci): stage the sqlite-binding CI step instead of pushing it\") and now lives only as an unapplied patch at .coding-hermes/pending/ci-sqlite-binding-step.patch; CHANGELOG.md:14-17 itself states the step \"is staged in .coding-hermes/pending/ci-sqlite-binding-step.patch\". A staged patch is not a CI stage. Test evidence: `npx vitest run tests/cli/pack-contract.test.ts` -> `Test Files 1 passed (1) / Tests 3 passed (3)`, exit 0.\n  \u2717 The binding gate is actually enforced by CI at HEAD, so a regression that drops the native binding turns a CI run red: .github/workflows/ci.yml has no step running `npm run check:sqlite-binding`; the only install-related step is `- name: Install dependencies / run: npm ci` at ci.yml:50. `git log --oneline -- .github/workflows/ci.yml` shows e8343f1c removed the 11-line step that 6cb184b4 had added, so nothing in CI would catch a fresh install that leaves better-sqlite3 without its binding \u2014 the exact defect this task exists to prevent. The gate is only reachable via the local `postinstall` hook (package.json:31) and the manual `npm run check:sqlite-binding`.\n  \u2717 Coverage FAILED \u2014 not passing: package.json declares allowScripts.better-sqlite3=true; scripts/postinstall-lint-deps.sh provides a binding verification path exposed as npm run check:sqlite-binding; npm run check:sqlite-binding exits 0 at HEAD; CI stages the gate; README/CHANGELOG document the npm >=12 behavior\nThe allowScripts declaration, the check:sqlite-binding gate (exit 0 at HEAD, red path verified), and the README/CHANGELOG documentation all land, but the CI staging requirement is not met \u2014 the workflow step was deliberately removed in e8343f1c and survives only as an unapplied patch file. [uncovered failure paths: failure mode 0 (A fresh install that silently loses the better-sqlite3 native binding passes CI green, because no CI step runs the binding gate): detected_by is empty \u2014 uncovered failure path; failure mode 1 (The staged CI patch can rot and never be applied; nothing verifies it still applies to ci.yml): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": false,
+          "output": "INCOMPLETE\n  \u2717 package.json declares allowScripts.better-sqlite3=true; scripts/postinstall-lint-deps.sh provides a binding verification path exposed as npm run check:sqlite-binding; npm run check:sqlite-binding exits 0 at HEAD; CI stages the gate; README/CHANGELOG document the npm >=12 behavior: Four of five sub-requirements hold, the CI sub-requirement does not. (a) package.json:34-36 declares `\"allowScripts\": { \"better-sqlite3\": true }`. (b) package.json:32 exposes `\"check:sqlite-binding\": \"bash scripts/postinstall-lint-deps.sh --sqlite-binding-only\"`, and scripts/postinstall-lint-deps.sh:24-103 implements `check_sqlite_binding` (real `require('better-sqlite3')` + in-memory `SELECT 1` probe, npm-version-aware remedy, `return 1` on failure); the red path was exercised in a scratch tree with an empty node_modules/better-sqlite3 and returned REAL_EXIT=1 with the FAIL/remedy text. (c) `npm run check:sqlite-binding` at HEAD printed `OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})` with EXIT=0. (d) README.md:36-89 documents the npm >=12 allowScripts blocking behaviour, the warning text, the check command and the remedy; CHANGELOG.md:11-27 documents the same under Unreleased. (e) FAIL \u2014 CI does NOT stage the gate: `grep -n \"sqlite\\|binding\\|allowScripts\" .github/workflows/ci.yml` returns nothing (only `run: npm ci` at ci.yml:50). The step existed in 6cb184b4 (ci.yml:52-61) but was deleted in e8343f1c (\"chore(ci): stage the sqlite-binding CI step instead of pushing it\") and now lives only as an unapplied patch at .coding-hermes/pending/ci-sqlite-binding-step.patch; CHANGELOG.md:14-17 itself states the step \"is staged in .coding-hermes/pending/ci-sqlite-binding-step.patch\". A staged patch is not a CI stage. Test evidence: `npx vitest run tests/cli/pack-contract.test.ts` -> `Test Files 1 passed (1) / Tests 3 passed (3)`, exit 0.\n  \u2717 The binding gate is actually enforced by CI at HEAD, so a regression that drops the native binding turns a CI run red: .github/workflows/ci.yml has no step running `npm run check:sqlite-binding`; the only install-related step is `- name: Install dependencies / run: npm ci` at ci.yml:50. `git log --oneline -- .github/workflows/ci.yml` shows e8343f1c removed the 11-line step that 6cb184b4 had added, so nothing in CI would catch a fresh install that leaves better-sqlite3 without its binding \u2014 the exact defect this task exists to prevent. The gate is only reachable via the local `postinstall` hook (package.json:31) and the manual `npm run check:sqlite-binding`.\n  \u2717 Coverage FAILED \u2014 not passing: package.json declares allowScripts.better-sqlite3=true; scripts/postinstall-lint-deps.sh provides a binding verification path exposed as npm run check:sqlite-binding; npm run check:sqlite-binding exits 0 at HEAD; CI stages the gate; README/CHANGELOG document the npm >=12 behavior\nThe allowScripts declaration, the check:sqlite-binding gate (exit 0 at HEAD, red path verified), and the README/CHANGELOG documentation all land, but the CI staging requirement is not met \u2014 the workflow step was deliberately removed in e8343f1c and survives only as an unapplied patch file. [uncovered failure paths: failure mode 0 (A fresh install that silently loses the better-sqlite3 native binding passes CI green, because no CI step runs the binding gate): detected_by is empty \u2014 uncovered failure path; failure mode 1 (The staged CI patch can rot and never be applied; nothing verifies it still applies to ci.yml): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "INCOMPLETE",
+            "items": [
+              {
+                "criterion": "package.json declares allowScripts.better-sqlite3=true; scripts/postinstall-lint-deps.sh provides a binding verification path exposed as npm run check:sqlite-binding; npm run check:sqlite-binding exits 0 at HEAD; CI stages the gate; README/CHANGELOG document the npm >=12 behavior",
+                "status": "FAIL",
+                "detail": "Four of five sub-requirements hold, the CI sub-requirement does not. (a) package.json:34-36 declares `\"allowScripts\": { \"better-sqlite3\": true }`. (b) package.json:32 exposes `\"check:sqlite-binding\": \"bash scripts/postinstall-lint-deps.sh --sqlite-binding-only\"`, and scripts/postinstall-lint-deps.sh:24-103 implements `check_sqlite_binding` (real `require('better-sqlite3')` + in-memory `SELECT 1` probe, npm-version-aware remedy, `return 1` on failure); the red path was exercised in a scratch tree with an empty node_modules/better-sqlite3 and returned REAL_EXIT=1 with the FAIL/remedy text. (c) `npm run check:sqlite-binding` at HEAD printed `OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})` with EXIT=0. (d) README.md:36-89 documents the npm >=12 allowScripts blocking behaviour, the warning text, the check command and the remedy; CHANGELOG.md:11-27 documents the same under Unreleased. (e) FAIL \u2014 CI does NOT stage the gate: `grep -n \"sqlite\\|binding\\|allowScripts\" .github/workflows/ci.yml` returns nothing (only `run: npm ci` at ci.yml:50). The step existed in 6cb184b4 (ci.yml:52-61) but was deleted in e8343f1c (\"chore(ci): stage the sqlite-binding CI step instead of pushing it\") and now lives only as an unapplied patch at .coding-hermes/pending/ci-sqlite-binding-step.patch; CHANGELOG.md:14-17 itself states the step \"is staged in .coding-hermes/pending/ci-sqlite-binding-step.patch\". A staged patch is not a CI stage. Test evidence: `npx vitest run tests/cli/pack-contract.test.ts` -> `Test Files 1 passed (1) / Tests 3 passed (3)`, exit 0.",
+                "resolution_probability": 0.0,
+                "cited_path": "package.json, scripts/postinstall-lint-deps.sh"
+              },
+              {
+                "criterion": "The binding gate is actually enforced by CI at HEAD, so a regression that drops the native binding turns a CI run red",
+                "status": "FAIL",
+                "detail": ".github/workflows/ci.yml has no step running `npm run check:sqlite-binding`; the only install-related step is `- name: Install dependencies / run: npm ci` at ci.yml:50. `git log --oneline -- .github/workflows/ci.yml` shows e8343f1c removed the 11-line step that 6cb184b4 had added, so nothing in CI would catch a fresh install that leaves better-sqlite3 without its binding \u2014 the exact defect this task exists to prevent. The gate is only reachable via the local `postinstall` hook (package.json:31) and the manual `npm run check:sqlite-binding`.",
+                "derived": true
+              }
+            ],
+            "summary": "The allowScripts declaration, the check:sqlite-binding gate (exit 0 at HEAD, red path verified), and the README/CHANGELOG documentation all land, but the CI staging requirement is not met \u2014 the workflow step was deliberately removed in e8343f1c and survives only as an unapplied patch file. [uncovered failure paths: failure mode 0 (A fresh install that silently loses the better-sqlite3 native binding passes CI green, because no CI step runs the binding gate): detected_by is empty \u2014 uncovered failure path; failure mode 1 (The staged CI patch can rot and never be applied; nothing verifies it still applies to ci.yml): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-7\"}",
+          "exit_code": 0,
+          "output_sha": "9485d3c8fb473554e39d297370c79b8136b2d39dc0b630ffaf8c811815ad1d2a"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && cat package.json",
+          "exit_code": 0,
+          "output_sha": "91389b94de3e468843cefe737a12938e93299dc3af1437da0b5224c3a3875269"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; pwd; grep -n \"allowScripts\\|check:sqlite-binding\\|postinstall\" package.json; echo \"---scripts---\"; python3 -c \"\nimport json\nd=json.load(open('package.json'))\nprint(json.dumps(d.get('scripts',{}),indent=1))\nprint('allowScripts' in d, d.get('allowScripts'))\n\"",
+          "exit_code": 0,
+          "output_sha": "a8858a01b76c96db66581c8920c0e6d3abc63b1f7ddc953144aca9531dacd0ea"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la scripts/ | head -50; echo ---; cat scripts/postinstall-lint-deps.sh 2>/dev/null | head -200",
+          "exit_code": 0,
+          "output_sha": "816d5eac94050027e2fbada75cc83c118123e4db98f4475e8d38a53bcfd7b066"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; ls -la | head -5; git log --oneline -3; echo \"=== package.json scripts ===\"; python3 -c \"\nimport json\nd=json.load(open('package.json'))\nprint(json.dumps(d.get('scripts',{}),indent=1))\nprint('allowScripts:', d.get('allowScripts'))\n\"",
+          "exit_code": 0,
+          "output_sha": "fd90309bbc2242cc93db0e6efbd243fb6a20ca7800668fb1cd59e9e9d07cd809"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '1,120p' scripts/postinstall-lint-deps.sh",
+          "exit_code": 0,
+          "output_sha": "6ed36690781fd5706864b6f2d47ced25147ad8f626d694dc1f2451d1a89f96af"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"allowScripts\" -A4 -B4 package.json",
+          "exit_code": 0,
+          "output_sha": "44c0f77624f7295e309fb55763bf1bfc364e85c8a85b11bf543cb46028b6b63e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '60,100p' scripts/postinstall-lint-deps.sh",
+          "exit_code": 0,
+          "output_sha": "141b3de36a38b4e25d140c4ae18f8073b2734de590307f15a9b282d5783c04a3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npm run check:sqlite-binding; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "33129a6b5a1bf8ebb6eb591890827c0547c5860b0c6d46d569e6e71ebd01ace6"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"allowScripts.better-sqlite3=true at package.json:34-36. script check:sqlite-binding at package.json:32. `npm run check:sqlite-binding` -> \\\"OK: better-sqlite3 native binding loads (SELECT 1 -> {\\\"x\\\":1})\\\" EXIT=0. Still need: CI staging, README/CHANGELOG docs.\", \"key\": \"verified_0_partial\"}",
+          "exit_code": 0,
+          "output_sha": "d58ee2ddc241e71fb77154c366a972e144ea934cf49ff9411298d9a3a0d12a4b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls .github/workflows/ && grep -rn \"check:sqlite-binding\\|sqlite-binding\\|allowScripts\" .github/ | head -30",
+          "exit_code": 0,
+          "output_sha": "b9fc7a909af09d4356b5d54bdc1d28bc29504f0ac6b84d85294cb866d87a1a27"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat .github/workflows/ci.yml",
+          "exit_code": 0,
+          "output_sha": "f42eb704c61167ecba7b26837a379dcd8d760d6e0c9b4684de2872c6d8a4513b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"sqlite\\|binding\\|allowScripts\\|npm ci\\|npm install\\|npm rebuild\" .github/workflows/ci.yml",
+          "exit_code": 0,
+          "output_sha": "1ffd1086c494222134c77b711934656f7eef555e5c807679bc5b5dcdd9051f24"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"name:\" .github/workflows/ci.yml | head -60",
+          "exit_code": 0,
+          "output_sha": "b489fc6c6f9929e39bf80acb9c631cd0fc909f438a08c033c8967cb49481a715"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"check:sqlite-binding\\|allowScripts\\|npm >= 12\\|npm 12\\|npm@12\" --include=*.md --include=*.yml --include=*.yaml --include=*.json --include=*.sh --include=*.ts . 2>/dev/null | grep -v node_modules | grep -v \"^./.tmp\" | grep -v \"^./dist\" | head -40",
+          "exit_code": 0,
+          "output_sha": "f6bba45a631cfd79a524c6a667f13eb54b60b9c9fb5de0610899ac86fd1750f3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '30,95p' README.md",
+          "exit_code": 0,
+          "output_sha": "b6b6739013140f48a759c6154f6612e9aaa296fd88a1d2a2974ebbb56030422b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '1,40p' CHANGELOG.md",
+          "exit_code": 0,
+          "output_sha": "dcc15a6d5e132abecc5deccf00019d59d0a9480d184a15456d9f7c8387c1ed69"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -la .coding-hermes/pending/ 2>&1; echo \"=== patch ===\"; cat .coding-hermes/pending/ci-sqlite-binding-step.patch 2>&1 | head -60",
+          "exit_code": 0,
+          "output_sha": "c9a73bb63d26ae03f5bbb1cd211ade5365667684fbbd70a35d3774f8a15d20cf"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat .coding-hermes/evidence/DF-SPECLANG-7-closeout-2026-11-17.json",
+          "exit_code": 0,
+          "output_sha": "1eca3560f9216483cbeed3f562d9b7f8dcdcdb988ec17e855334d98ce72f9e98"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git log --oneline -8 -- .github/workflows/ci.yml; echo \"=== show 6cb184b4 ci.yml diff ===\"; git show 6cb184b4 --stat 2>&1 | head -20; echo \"=== ci.yml in 6cb184b4 ===\"; git show 6cb184b4:.github/workflows/ci.yml 2>/dev/null | grep -n \"sqlite\\|binding\" ",
+          "exit_code": 0,
+          "output_sha": "f2c663f2dc6b85716b987eaea1d1c87cddbc0ff9cfdea66c69db806c75bd0752"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show e8343f1c --stat; echo \"=== diff ===\"; git show e8343f1c | head -80",
+          "exit_code": 0,
+          "output_sha": "a69c79f0e89d4faf6206dc6008ac0ce49606b7777e099a89ffed6e531c7b542e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"ci-sqlite-binding-step\\|sqlite-binding\" .coding-hermes/board/ | head -20",
+          "exit_code": 0,
+          "output_sha": "8abb7fef3247abc4956f4d02283f3d241001489c6092876aa23557af6dffd5e9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"postinstall-lint-deps\\|check:sqlite-binding\" --include=*.ts --include=*.js tests/ src/ 2>/dev/null | head -20; echo \"=== test cmd ===\"; cat .gitreins/config.yaml 2>/dev/null | head -40",
+          "exit_code": 0,
+          "output_sha": "0b93f9447f05bf607674174dab925f79315ab7fd572db4faf00b2ee1d2e419a5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 900 npx vitest run --passWithNoTests 2>&1 | tail -25; echo \"EXIT=$?\"",
+          "exit_code": -15,
+          "output_sha": "b5cc57f1c2a46b66c86f08ebb0965ca79e5c6905cffd1b525b0e77dcbaa55f9c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && (timeout 600 npx vitest run tests/cli/pack-contract.test.ts 2>&1 | tail -20) ",
+          "exit_code": 0,
+          "output_sha": "ebc7c0f798099796cea3dd3cb52a49070a82a0693fefab053bdc8503f3661455"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"allowScripts OK (package.json:34-36). check:sqlite-binding OK exit 0. README:36-89 documents npm>=12. CHANGELOG:11-27 documents. CI: .github/workflows/ci.yml has NO sqlite-binding step (grep only found line 50 npm ci). Step was added in 6cb184b4 then REMOVED in e8343f1c and only staged as .coding-hermes/pending/ci-sqlite-binding-step.patch. => CI staging criterion FAIL. pack-contract test passes (3 tests).\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "a8e33503fe56c63cb79ba598be7d56c660791a75f4ce6516bc8c3528d44c4896"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"sqlite\" .gitreins/tasks.yaml | head -20; echo \"=== board task row ===\"; grep -n \"DF-SPECLANG-7\" .coding-hermes/board/tasks.jsonl | head -3",
+          "exit_code": 0,
+          "output_sha": "28545d8e91f5e3af6ce1f115a9c5222721107d8c8beac6b758d28dcdb4c1c54e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"allowScripts\\|check:sqlite-binding\\|sqlite-binding\" .coding-hermes/board/tasks.jsonl | head -5 | cut -c1-600",
+          "exit_code": 0,
+          "output_sha": "b47f2fabc3b4331f237fc9146aee1ec03f91b0bba712734c638df6fb642d3e7c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '120p' .coding-hermes/board/tasks.jsonl | python3 -c \"\nimport json,sys\nd=json.load(sys.stdin)\nprint(d.get('id'), d.get('status'))\nprint(d.get('acceptance_criteria'))\n\"",
+          "exit_code": 0,
+          "output_sha": "621bc012766defa523b22d2bded67f5adcb2e0afd22ed4c2a47256e99d5534e2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"DF-SPECLANG-7\" .coding-hermes/board/tasks.jsonl | cut -c1-200; echo \"=== statuses ===\"; python3 -c \"\nimport json\nfor i,l in enumerate(open('.coding-hermes/board/tasks.jsonl'),1):\n    l=l.strip()\n    if not l: continue\n    try: d=json.loads(l)\n    except: continue\n    if d.get('id')=='DF-SPECLANG-7': print(i, d.get('status'), d.get('commit_hash'))\n\"",
+          "exit_code": 0,
+          "output_sha": "9c656de583c4d3d4527229509cab06820cfa93f6a7da43aee2f306a03eddbf04"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show d2982ec2 -- .coding-hermes/board/tasks.jsonl | head -20 | cut -c1-800",
+          "exit_code": 0,
+          "output_sha": "f7cefc57d40cf80b07650563396c0e6df839683566bbcb574264d2d05e2be3c8"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show d2982ec2 -- .coding-hermes/board/tasks.jsonl | grep -o '\"status\": *\"[a-z_]*\"' | head; echo \"---\"; git show d2982ec2 -- .coding-hermes/board/tasks.jsonl | grep -c \"complete\"",
+          "exit_code": 0,
+          "output_sha": "699243f5c5d089c58901308593807f67dbcde17f0edfda3456594b5ad0cc7cb2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show d2982ec2 -- .coding-hermes/board/tasks.jsonl | grep -o '.\\{200\\}\"status\": \"complete\".\\{100\\}' | head -4",
+          "exit_code": 0,
+          "output_sha": "975c4f582f5df94d13d0a2bed148cd020073ccafbc6a99ab0b7a76b094edba6b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show d2982ec2 -- .coding-hermes/board/tasks.jsonl | grep -n \"complete\" | cut -c1-400",
+          "exit_code": 0,
+          "output_sha": "1985e017c18dee5a15a3b4aaee3f61208058115a79df31685fce35182576a640"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show d2982ec2 -- .coding-hermes/board/tasks.jsonl | grep -n \"DF-SPECLANG-7\" | cut -c1-300",
+          "exit_code": 0,
+          "output_sha": "bab7aec0f2442b57c758b0f62adff9e7e5e370c346f27c5489820139bd775282"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show d2982ec2 -- .coding-hermes/board/tasks.jsonl | grep -o 'DF-SPECLANG-7.\\{0,80\\}' | head; echo \"=== current row status ===\"; python3 -c \"\nimport json\nfor l in open('.coding-hermes/board/tasks.jsonl'):\n    l=l.strip()\n    if not l: continue\n    try: d=json.loads(l)\n    except: continue\n    if d.get('id')=='DF-SPECLANG-7': print('status=',d.get('status'),'commit=',d.get('commit_hash'))\n\"",
+          "exit_code": 0,
+          "output_sha": "da3098e85785f393e69e82fb0d497ca1fd7aa80cb6b6ea31ce68804410d2e3d9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && python3 -c \"\nimport json\nfor l in open('.coding-hermes/board/tasks.jsonl'):\n    l=l.strip()\n    if not l: continue\n    try: d=json.loads(l)\n    except: continue\n    if d.get('id')=='DF-SPECLANG-7':\n        print('status=',d.get('status'))\n        print('review_notes=',str(d.get('review_notes'))[:1500])\n        print('detail keys=', list(d.get('detail',{}).keys()) if isinstance(d.get('detail'),dict) else type(d.get('detail')))\n\"",
+          "exit_code": 0,
+          "output_sha": "653767c7fa473416ff47fd53ae4bfc69ae6579e83b06a98891dea4fa83e8bb32"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -o 'DF-SPECLANG-7.\\{0,400\\}' .coding-hermes/board/tasks.jsonl | grep -i \"review_notes\\|blocked_reason\" | head -3",
+          "exit_code": 0,
+          "output_sha": "71b399fe9ddb2cd3d446e7d3f51eb50f926bd4fd8ec9fa5caa4a4319d0405dcb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -o '.\\{0,300\\}\"id\": \"DF-SPECLANG-7\".\\{0,300\\}' .coding-hermes/board/tasks.jsonl | head -3",
+          "exit_code": 0,
+          "output_sha": "a5a84d7826d3333614f504fe2db92ef50ee0d3f366ca584db5e16fca5e147ecb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && python3 - <<'EOF'\nimport json\nfor l in open('.coding-hermes/board/tasks.jsonl'):\n    l=l.strip()\n    if not l: continue\n    try: d=json.loads(l)\n    except: continue\n    if d.get('id')=='DF-SPECLANG-7':\n        for k,v in d.items():\n            s=str(v)\n            if 'review_notes' in s or 'blocked_reason' in s:\n                print('FIELD',k,'->',s[:1200])\nEOF",
+          "exit_code": 0,
+          "output_sha": "6e1c1de49921972d702393b2005d5a209df6748c0d86d010bc0f35cfa814d322"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"DF-SPECLANG-7\" .coding-hermes/board/tasks.jsonl | awk -F: '{print $1}' | while read n; do echo \"LINE $n\"; sed -n \"${n}p\" .coding-hermes/board/tasks.jsonl | python3 -c \"\nimport json,sys\nd=json.load(sys.stdin)\nprint(d.get('id'), d.get('status'))\nprint('review_notes:', str(d.get('review_notes'))[:800])\n\"; done",
+          "exit_code": 0,
+          "output_sha": "a2aeae74c227bd4f4014e4387c8150335f15a955e2278f8b393aeda58b194b2a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -o '.\\{0,200\\}DF-SPECLANG-7, not a new defect.\\{0,200\\}' .coding-hermes/board/tasks.jsonl | head -2",
+          "exit_code": 0,
+          "output_sha": "de8104a3bbc4d054f5664691b11297ff7f965e9fb2575b2de75e9ff1ba5890cf"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -o '.\\{0,400\\}\"id\": \"DF-SPECLANG-7\".\\{0,400\\}' .coding-hermes/board/tasks.jsonl | head -2; echo \"=== try no-space ===\"; grep -o '.\\{0,300\\}\"id\":\"DF-SPECLANG-7\".\\{0,300\\}' .coding-hermes/board/tasks.jsonl | head -2",
+          "exit_code": 0,
+          "output_sha": "a4f8b98ac70441b34218a20d101eac70f639da80553dc232d64625444bc7c777"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -o '\"id\":\"DF-SPECLANG-7\".\\{0,3000\\}' .coding-hermes/board/tasks.jsonl | grep -o '\"status\":\"[a-z_]*\"' | head -3; echo \"=== events ===\"; grep -o '.\\{0,200\\}DF-SPECLANG-7.\\{0,300\\}' .coding-hermes/board/events.jsonl | tail -3",
+          "exit_code": -15,
+          "output_sha": "3fb19b844c758d5f878e5795d1787fc25a3fc3b7e38bdabc4d01c5fcffbe7f42"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && python3 - <<'EOF'\nimport json\nfor l in open('.coding-hermes/board/tasks.jsonl'):\n    l=l.strip()\n    if not l: continue\n    try: d=json.loads(l)\n    except: continue\n    if d.get('id')=='DF-SPECLANG-7':\n        print('status=',d.get('status'))\n        print('commit_hash=',d.get('commit_hash'))\n        print('keys=',list(d.keys()))\nEOF",
+          "exit_code": 0,
+          "output_sha": "e755b3846a00ea9e24207f3bd3d3888efd09f82abe871085c4f68ecacccc7400"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && python3 - <<'EOF'\nimport json\nfor l in open('.coding-hermes/board/tasks.jsonl'):\n    l=l.strip()\n    if not l: continue\n    try: d=json.loads(l)\n    except: continue\n    if d.get('id')=='DF-SPECLANG-7':\n        print('foreman_note=',d.get('foreman_note'))\nEOF",
+          "exit_code": 0,
+          "output_sha": "bb71a7c2d9200066c21bcaa593dc83b54a4132ec3ce57f2803c775717abd3356"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"postinstall-lint-deps\\|check:sqlite-binding\\|allowScripts\" tests/cli/pack-contract.test.ts | head; echo \"=== files field ===\"; python3 -c \"\nimport json;d=json.load(open('package.json'));print(d.get('files'))\"",
+          "exit_code": 0,
+          "output_sha": "6121e6a7fba83e01d4cd453ff7614bdf8bf64938fae17f1eb4503bbeb9f43066"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"allowScripts OK package.json:34-36. check:sqlite-binding OK exit 0 (\\\"OK: better-sqlite3 native binding loads (SELECT 1 -> {\\\"x\\\":1})\\\"). README:36-89 + CHANGELOG:11-27 document npm>=12. CI: .github/workflows/ci.yml has NO sqlite-binding step (grep found only line 50 npm ci); step added in 6cb184b4, REMOVED in e8343f1c, only staged at .coding-hermes/pending/ci-sqlite-binding-step.patch. => CI staging FAIL. pack-contract test 3 passed. Board row DF-SPECLANG-7 still status=in_progress, commit_hash=None despite close commit.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "961276d772b9ccbdf9c47d75cb6fbb7bec8534dc3ca91d8e1146e28d79b4a1e9"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"The CI gate step is not in .github/workflows/ci.yml at HEAD; it exists only as an unapplied patch file. A regression that breaks the binding would not be caught by CI.\", \"key\": \"derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "fb612aeb628c78c06042bb190ddd604b7fa5b79040bbacc1b41d5433137ae4c3"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FAIL: .github/workflows/ci.yml contains no step invoking `npm run check:sqlite-binding` (grep for sqlite|binding|allowScripts in .github/ returns nothing; only `run: npm ci` at ci.yml:50). The step was added in 6cb184b4 (ci.yml:52-61) then deleted in e8343f1c (\\\"chore(ci): stage the sqlite-binding CI step instead of pushing it\\\") and survives only as .coding-hermes/pending/ci-sqlite-binding-step.patch. CHANGELOG.md:14-17 admits it is staged, not landed.\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "9fb904660a58874535e351e0dd266e47aa072318d2944054ea4c2cfa571ccc5e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && bash -n scripts/postinstall-lint-deps.sh && echo \"SYNTAX_OK\"; echo \"=== simulate missing binding (red path) ===\"; mkdir -p /tmp/fake && cp -r scripts /tmp/fake/ 2>/dev/null; cd /tmp/fake && mkdir -p node_modules/better-sqlite3 && bash scripts/postinstall-lint-deps.sh --sqlite-binding-only 2>&1 | head -12; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "575b23d3f5401bdedb57caa17580b870d59081e39c2a0842f4c90660fbceaa19"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/fake && bash scripts/postinstall-lint-deps.sh --sqlite-binding-only >/dev/null 2>&1; echo \"REAL_EXIT=$?\"; rm -rf /tmp/fake",
+          "exit_code": 0,
+          "output_sha": "4669eff1ce9e8e5e41c46190afec5ac031a59cb9a91cf85559c1743ad9165204"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 61,
+        "detection": "row marked status=complete while completed_at is null and attempts/exit_code remain unset",
+        "detail": "QA-SPECLANG-4 is flipped to \"status\": \"complete\" but keeps \"completed_at\": null, \"attempts\": 0 and \"exit_code\": null, so the row's own bookkeeping contradicts its terminal state."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 61,
+        "detection": "closeout evidence artifact referenced by the row is not present in the diff",
+        "detail": "The row's detail.evidence lists \".coding-hermes/evidence/QA-SPECLANG-4-closeout-2026-11-17.json\" and that file is added, but the same commit also adds DF-SPECLANG-7-closeout evidence while DF-SPECLANG-7's row is left untouched (no status/commit_hash update), so the evidence-to-row wiring is one-sided."
+      }
+    ],
+    "summary": "The change is board/evidence bookkeeping only; the QA-SPECLANG-4 closure is internally inconsistent (complete with null completed_at/attempts) and the sibling DF-SPECLANG-7 evidence file has no corresponding row update."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  22:54:53\n\nStage tier2: FAIL\n  INCOMPLETE\n  \u2717 package.json declares allowScripts.better-sqlite3=true; scripts/postinstall-lint-deps.sh provides a binding verification path exposed as npm run check:sqlite-binding; npm run check:sqlite-binding exits 0 at HEAD; CI stages the gate; README/CHANGELOG document the npm >=12 behavior: Four of five sub-requirements hold, the CI sub-requirement does not. (a) package.json:34-36 declares `\"allowScripts\": { \"better-sqlite3\": true }`. (b) package.json:32 exposes `\"check:sqlite-binding\": \"bash scripts/postinstall-lint-deps.sh --sqlite-binding-only\"`, and scripts/postinstall-lint-deps.sh:24-103 implements `check_sqlite_binding` (real `require('better-sqlite3')` + in-memory `SELECT 1` probe, npm-version-aware remedy, `return 1` on failure); the red path was exercised in a scratch tree with an empty node_modules/better-sqlite3 and returned REAL_EXIT=1 with the FAIL/remedy text. (c) `npm run check:sqlite-binding` at HEAD printed `OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})` with EXIT=0. (d) README.md:36-89 documents the npm >=12 allowScripts blocking behaviour, the warning text, the check command and the remedy; CHANGELOG.md:11-27 documents the same under Unreleased. (e) FAIL \u2014 CI does NOT stage the gate: `grep -n \"sqlite\\|binding\\|allowScripts\" .github/workflows/ci.yml` returns nothing (only `run: npm ci` at ci.yml:50). The step existed in 6cb184b4 (ci.yml:52-61) but was deleted in e8343f1c (\"chore(ci): stage the sqlite-binding CI step instead of pushing it\") and now lives only as an unapplied patch at .coding-hermes/pending/ci-sqlite-binding-step.patch; CHANGELOG.md:14-17 itself states the step \"is staged in .coding-hermes/pending/ci-sqlite-binding-step.patch\". A staged patch is not a CI stage. Test evidence: `npx vitest run tests/cli/pack-contract.test.ts` -> `Test Files 1 passed (1) / Tests 3 passed (3)`, exit 0.\n  \u2717 The binding gate is actually enforced by CI at HEAD, so a regression that drops the native binding turns a CI run red: .github/workflows/ci.yml has no step running `npm run check:sqlite-binding`; the only install-related step is `- name: Install dependencies / run: npm ci` at ci.yml:50. `git log --oneline -- .github/workflows/ci.yml` shows e8343f1c removed the 11-line step that 6cb184b4 had added, so nothing in CI would catch a fresh install that leaves better-sqlite3 without its binding \u2014 the exact defect this task exists to prevent. The gate is only reachable via the local `postinstall` hook (package.json:31) and the manual `npm run check:sqlite-binding`.\n  \u2717 Coverage FAILED \u2014 not passing: package.json declares allowScripts.better-sqlite3=true; scripts/postinstall-lint-deps.sh provides a binding verification path exposed as npm run check:sqlite-binding; npm run check:sqlite-binding exits 0 at HEAD; CI stages the gate; README/CHANGELOG document the npm >=12 behavior\nThe allowScripts declaration, the check:sqlite-binding gate (exit 0 at HEAD, red path verified), and the README/CHANGELOG documentation all land, but the CI staging requirement is not met \u2014 the workflow step was deliberately removed in e8343f1c and survives only as an unapplied patch file. [uncovered failure paths: failure mode 0 (A fresh install that silently loses the better-sqlite3 native binding passes CI green, because no CI step runs the binding gate): detected_by is empty \u2014 uncovered failure path; failure mode 1 (The staged CI patch can rot and never be applied; nothing verifies it still applies to ci.yml): detected_by is empty \u2014 uncovered failure path]\n\nOverall: FAIL \u2717",
+  "evaluated_at": "2026-11-17T03:59:55.766781",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T03:59:55.930828+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 29893,
+        "truncated": false,
+        "source": "git show d2982ec29869"
+      }
+    ],
+    "task_id": "DF-SPECLANG-7"
+  }
+}
