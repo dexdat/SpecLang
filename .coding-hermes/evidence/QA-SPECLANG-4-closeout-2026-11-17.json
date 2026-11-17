@@ -1,0 +1,54 @@
+{
+  "row": "QA-SPECLANG-4",
+  "title": "P1 — full test suite hangs indefinitely when the network is cut (dead proxy)",
+  "closing_tick": "speclang-foreman-2026-11-17-03-02-59",
+  "worker": {
+    "commit": "08f7d0bc",
+    "branch": "wt/QA-SPECLANG-4-t0317",
+    "worktree": "/home/kara/worktrees/speclang-QA-SPECLANG-4-t0317",
+    "model": "openai/gpt-6.1-terra@xkiro"
+  },
+  "merge_commit": "c3b644a7",
+  "fix": [
+    "tests/net-guard.ts (new): TCP-probes each configured proxy (HTTPS_PROXY/HTTP_PROXY/ALL_PROXY, both spellings) with a 2s hard budget, honours NO_PROXY, throws NETWORK-UNREACHABLE naming the endpoint; SPECLANG_SKIP_NET_GUARD=1 escape hatch.",
+    "tests/setup-tmpdir.ts: awaits the preflight in the setupFiles seam so the failure is COUNTED in the vitest summary (Test Files N failed) instead of an uncounted global-setup crash.",
+    "vitest.config.ts: testTimeout 30s / hookTimeout 30s / teardownTimeout 20s (per-test overrides still win).",
+    "tests/net-guard.test.ts (new, 27 hermetic cases) + doc pointer in tests/global-setup.ts."
+  ],
+  "foreman_verification": {
+    "ac1_dead_proxy": {
+      "cmd": "env HTTP_PROXY=http://127.0.0.1:9 HTTPS_PROXY=... ALL_PROXY=... timeout 120 npm test",
+      "result": "RC=1 WALL=4s; 'Test Files 110 failed (110)'; 'NETWORK-UNREACHABLE: a proxy is configured but nothing answered it' at tests/net-guard.ts:234 via tests/setup-tmpdir.ts:29",
+      "verdict": "PASS (no 120s kill, visible named failure)"
+    },
+    "ac2_no_proxy_guard": {
+      "cmd": "npx vitest run tests/guard.test.ts",
+      "result": "1 file passed, 36 tests passed, 576ms",
+      "verdict": "PASS"
+    },
+    "new_tests": {
+      "cmd": "npx vitest run tests/net-guard.test.ts",
+      "result": "27 tests passed, 476ms",
+      "verdict": "PASS"
+    },
+    "typecheck": { "cmd": "npx tsc --noEmit", "exit": 0, "verdict": "PASS" },
+    "full_suite_at_c3b644a7": {
+      "cmd": "timeout 420 npm test (main clone, .git is a directory)",
+      "result": "RC=0 WALL=47s; 'Test Files 106 passed | 4 skipped (110)'; 'Tests 1904 passed | 58 skipped (1962)'",
+      "verdict": "PASS"
+    },
+    "no_test_weakening": "git show HEAD -- tests/ | grep for .skip/.todo/.only additions -> none",
+    "gitreins": {
+      "history_run": "2026-11-17/ce24c47e",
+      "passed": true,
+      "pass_class": "judged",
+      "tier1": "PASS (secrets/build/tests)",
+      "tier2": "PASS — judge independently re-ran AC1 twice (EXIT=1 in 4.0s and 7.0s), guard.test.ts 36/36, net-guard 27/27, and confirmed NO_PROXY + SKIP_NET_GUARD + blackholed-proxy arms"
+    },
+    "ci": "gh run list dexdat/SpecLang: c3b644a7 -> success (2026-11-17T03:46:10Z)"
+  },
+  "residual_risk_named_by_judge_and_worker": [
+    "Untimed execSync/spawnSync sites (59 in tests/) can still block the event loop when the hang is NOT a configured-and-unreachable proxy (DNS blackhole with no proxy env, stuck git on a hung mount); the preflight only covers the proxy-configured case and vitest's testTimeout cannot fire while the event loop is blocked.",
+    "Any unreachable proxy now fails the whole 110-file run even for tests that never touch the network; a developer behind a temporarily-down corporate proxy gets a total red run. Mitigation: NO_PROXY / SPECLANG_SKIP_NET_GUARD=1, both proven."
+  ]
+}

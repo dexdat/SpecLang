@@ -1,0 +1,34 @@
+{
+  "row": "DF-SPECLANG-7",
+  "title": "P2 — fresh npm install on npm >=12 leaves better-sqlite3 without its native binding",
+  "closing_tick": "speclang-foreman-2026-11-17-03-02-59",
+  "landed_fix": {
+    "commit": "6cb184b4",
+    "subject": "fix(install): trust and verify the better-sqlite3 binding on npm >= 12",
+    "files": [
+      ".github/workflows/ci.yml",
+      "CHANGELOG.md",
+      "README.md",
+      "package.json",
+      "scripts/postinstall-lint-deps.sh"
+    ]
+  },
+  "foreman_verification_this_tick": {
+    "package_json_allowScripts": {
+      "cmd": "jq '{allowScripts}' package.json",
+      "result": "{\"allowScripts\": {\"better-sqlite3\": true}}",
+      "verdict": "PASS"
+    },
+    "binding_probe": {
+      "cmd": "timeout 120 npm run check:sqlite-binding",
+      "exit": 0,
+      "tail": "OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})",
+      "verdict": "PASS"
+    },
+    "head": "8ac77df4 (post-fix; contains 6cb184b4 in ancestry)"
+  },
+  "not_reverified_this_tick": [
+    "fresh empty-directory `npm install <tarball>` under real npm 12 (the worker's commit message documents this leg with npm 12.2.2 + better-sqlite3@12.11.1; this tick did not re-run it, so the fresh-install leg rests on that evidence plus the in-tree detection gate)."
+  ],
+  "note": "Row was in_progress with commit_hash null because the dispatching tick ended before bookkeeping; the code fix is present in origin/main."
+}
