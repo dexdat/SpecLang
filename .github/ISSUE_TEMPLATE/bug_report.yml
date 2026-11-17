@@ -1,0 +1,107 @@
+# SpecLang bug report form.
+# GitHub issue forms schema: name/description/title/labels + a body of typed
+# elements (markdown, textarea, input). GitHub renders the body as labelled
+# fields and enforces the `required` flags server-side.
+name: Bug report
+description: Report a defect you can reproduce with a specific command.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a report.
+
+        SpecLang is maintained on a best-effort basis: issues are triaged when a
+        maintainer is available and there is no guaranteed response time.
+
+        The fields below are the difference between a report that can be
+        reproduced and one that cannot be acted on. Please remove API keys,
+        tokens and other secrets from anything you paste.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: One or two sentences describing the behaviour you saw.
+      placeholder: "`speclang cascade` exited 0 but no source file was updated."
+    validations:
+      required: true
+
+  - type: textarea
+    id: command
+    attributes:
+      label: Exact command and working directory
+      description: |
+        The command you ran, copied verbatim from your shell, and the directory
+        you ran it in (for example the repository root or a scratch project).
+      render: shell
+      placeholder: |
+        $ pwd
+        /home/you/projects/my-specs
+        $ npx speclang cascade
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-actual
+    attributes:
+      label: Expected vs actual
+      description: What you expected to happen, and what happened instead.
+      placeholder: |
+        Expected: src/index.ts is regenerated from specs/index.spec.md.
+        Actual: the command reported success and src/index.ts is unchanged.
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: Output or error text
+      description: |
+        The full output, stack trace or error message, with secrets removed.
+        If the command produced no output at all, say so explicitly — silence is
+        itself a useful symptom.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: version-commit
+    attributes:
+      label: Version or commit
+      description: |
+        In your clone: `git rev-parse --short HEAD`. If you installed from npm
+        instead, the `version` field of `package.json`.
+      render: shell
+      placeholder: "2f1a68d5"
+    validations:
+      required: true
+
+  - type: input
+    id: operating-system
+    attributes:
+      label: Operating system
+      description: Distribution/version or macOS/Windows release, plus WSL if you use it.
+      placeholder: "Ubuntu 24.04"
+    validations:
+      required: true
+
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js version
+      description: The output of `node --version` (SpecLang requires Node.js 18 or newer).
+      placeholder: "v20.18.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra-context
+    attributes:
+      label: Anything else?
+      description: |
+        A spec excerpt, a minimal repository that reproduces it, or a workaround
+        you found. Optional.
+    validations:
+      required: false

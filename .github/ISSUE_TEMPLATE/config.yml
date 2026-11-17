@@ -1,0 +1,16 @@
+# Issue template chooser configuration.
+# Free-form issues are disabled so reports land on the bug form, which asks for
+# the command, output and environment a maintainer needs to reproduce a defect.
+#
+# GitHub Discussions are NOT enabled on this repository (verified against the
+# repository API: has_discussions=false), so the issue tracker is the only
+# support channel that actually exists and the only one linked here.
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and usage help
+    url: https://github.com/dexdat/SpecLang/issues
+    about: >-
+      Questions and general help go through the issue tracker, since GitHub
+      Discussions is not enabled for this repository. Search existing issues
+      first; if nothing matches, open the Bug report form and say it is a
+      question.

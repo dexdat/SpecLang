@@ -174,6 +174,38 @@ python3 scripts/validate_autonomous.py --project
 python3 scripts/hard-checks.py
 ```
 
+## Support and Bug Reports
+
+Support requests and bug reports both go through the issue tracker: open one
+with the [bug report form](.github/ISSUE_TEMPLATE/bug_report.yml) (GitHub shows
+it as **Bug report** when you click **New issue**). Free-form issues are
+disabled so that reports arrive with the details below already filled in — that
+is the difference between a report that can be reproduced and one that cannot be
+acted on.
+
+Please include:
+
+- **Version or commit** — `git rev-parse --short HEAD` in your clone, or the
+  `version` field of `package.json` if you installed from npm.
+- **The exact command and the directory you ran it from** — copy it from your
+  shell rather than retyping it.
+- **Expected vs actual** — what you expected to happen and what happened
+  instead.
+- **Output or error text** — the full output, stack trace or error with API keys
+  and other secrets removed. If the command produced no output at all, say so;
+  silence is itself a symptom.
+- **Environment** — operating system and `node --version` (SpecLang requires
+  Node.js 18 or newer).
+
+Do not report a security vulnerability in a public issue — follow
+[SECURITY.md](SECURITY.md) instead.
+
+What to expect: this is a small project maintained on a best-effort basis.
+Issues are triaged when a maintainer is available; there is no guaranteed
+response time and no support SLA. A self-contained, reproducible report is
+looked at first, and a correct minimal reproduction is the single most useful
+thing you can provide.
+
 ## Questions?
 
 - Open an issue: https://github.com/dexdat/SpecLang/issues
