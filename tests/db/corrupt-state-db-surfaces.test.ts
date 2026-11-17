@@ -1,7 +1,8 @@
 /**
  * QA-SPECLANG-5-R2: the corrupt-state-DB guard used to cover only the SpecLangDB
  * path. The standalone MCP server (src/speclang-mcp.ts) and the Ralph Loop
- * (src/ralph-loop.ts, src/ralph-loop/controller.ts) opened
+ * (src/ralph-loop.ts, plus an unreachable second `LoopController` copy under
+ * the src/ralph-loop/ directory that GAP-005 deleted) opened
  * `.speclang/speclang.db` with `new Database(...)` directly, so 4KB of random
  * bytes at that path surfaced a raw `SqliteError: file is not a database` —
  * no path, no remedy — from both.
