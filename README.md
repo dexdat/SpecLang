@@ -399,9 +399,9 @@ The cascade has two entry points — a plain CLI that works in any terminal, and
 ```
 
 > **Output locations** — `cascade` and `generate` write to **different output trees, by design**:
-> - `./bin/speclang cascade <spec>` is spec-relative: output lands in a `generated/` sibling of
->   the spec's directory. E.g. `cascade specs/examples.spec.dir/hello-world.spec.md` →
->   `specs/generated/hello/function.ts`.
+> - `./bin/speclang cascade <spec>` is spec-relative, by one rule: `<directory containing the spec>/../generated/`.
+>   E.g. `cascade specs/examples.spec.dir/hello-world.spec.md` → `specs/generated/hello/function.ts`;
+>   a spec sitting directly in `specs/` (e.g. `specs/foo.spec.md`) → `<project root>/generated/foo/function.ts`.
 > - `./bin/speclang generate <spec>` defaults to `src/generated/` (e.g.
 >   `src/generated/hello-world.spec-hello-function.ts`) and accepts `--output-dir <dir>` to override.
 > - **Which is canonical?** `specs/` is the source of truth; both `specs/generated/` and
