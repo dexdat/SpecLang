@@ -37,6 +37,12 @@ defaults:
 
 history:
   enabled: true
+  # Durable copy of every verdict is committed by GitReins to the
+  # refs/gitreins/history ref; the working-tree .gitreins/history/ copy is
+  # gitignored on purpose (see .gitignore and docs/gitreins-verdicts.md).
+  storage: git
+  # Retention / size guard: entries past this count are pruned, oldest first.
+  max_verdicts: 1000
 pipeline:
   stages:
   - id: tier1

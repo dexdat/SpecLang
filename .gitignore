@@ -77,6 +77,9 @@ validation_results.json
 .hermes/
 !.hermes/acceptance-criteria.md
 # GitReins
+# Working-tree verdict copies are deliberately not committed to main: the
+# durable record is the refs/gitreins/history ref written by
+# history.storage: git (see docs/gitreins-verdicts.md).
 .gitreins/history/
 
 # Dev artifacts
