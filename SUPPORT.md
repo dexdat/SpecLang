@@ -11,8 +11,11 @@ of truth, code is generated.
 
 ## Getting Help
 
-- **Issues:** [GitHub Issues](https://github.com/dexdat/SpecLang/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/dexdat/SpecLang/discussions)
+- **Issues:** [GitHub Issues](https://github.com/dexdat/SpecLang/issues) — bug
+  reports, questions and usage help all go through the issue tracker.
+- **What to expect:** triage is best-effort and there is no guaranteed response
+  time or support SLA. See [CONTRIBUTING.md](CONTRIBUTING.md) for what to
+  include in a report so it can be reproduced and acted on.
 
 ## Architecture
 
