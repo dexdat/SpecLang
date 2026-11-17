@@ -1,0 +1,558 @@
+{
+  "task_id": "DF-SPECLANG-013",
+  "task_title": "gitreins tier1 build arm reports FAIL in a fresh worktree that simply lacks node_modules",
+  "task_criteria": [
+    "In a fresh worktree with no node_modules, the tier1 build arm reports SKIP (or a named dependencies-not-installed precondition) instead of FAIL; with deps installed the same tree grades build ok and Overall PASS."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "5d69bfc5e641a9fc35dc8cbba0163ff9709a4edd",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "7ac0a74c1a60cbfc4942fc4f1195306f75995a188465708234da505b1025969c",
+  "working_tree_dirty_path_count": 5,
+  "items": [
+    {
+      "criterion": "In a fresh worktree with no node_modules, the tier1 build arm reports SKIP (or a named dependencies-not-installed precondition) instead of FAIL; with deps installed the same tree grades build ok and Overall PASS.",
+      "status": "PASS",
+      "detail": "Skip half verified in prior context: fresh tree extracted via `git archive HEAD | tar -x -C .tmp/df013-fresh` (no node_modules); `bash scripts/guard-build.sh` printed \"skipped: dependencies not installed (node_modules absent \u2014 run npm ci)\" plus `GITREINS_SKIP: build=...` with rc=0. Engine 0.21.0 real path: Pipeline._run_script_step on the config's build step returned passed=True exit=0 with the sentinel in output, and _record_runtime_skips recorded stage passed=True degraded=True skipped_steps=['build'] with reason \"skipped at runtime \u2014 build: dependencies not installed...\". Bounding check: _bound_step_evidence(4000 cap) + parse_skip_sentinels keeps the sentinel in all orderings tested. Last commit 5d69bfc pins the wrapper in tests/ci/ci005-precommit-hook.test.ts so the test asserts the dependency-aware wrapper rather than the bare build command."
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  16:44:40",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T212434.048079Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\nnpm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T212434.048079Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  16:44:40\n   Duration  27.34s (transform 3.37s, setup 1.25s, import 6.93s, tests 158.84s, environment 13ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T212434.048079Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 In a fresh worktree with no node_modules, the tier1 build arm reports SKIP (or a named dependencies-not-installed precondition) instead of FAIL; with deps installed the same tree grades build ok and Overall PASS.: Skip half verified in prior context: fresh tree extracted via `git archive HEAD | tar -x -C .tmp/df013-fresh` (no node_modules); `bash scripts/guard-build.sh` printed \"skipped: dependencies not installed (node_modules absent \u2014 run npm ci)\" plus `GITREINS_SKIP: build=...` with rc=0. Engine 0.21.0 real path: Pipeline._run_script_step on the config's build step returned passed=True exit=0 with the sentinel in output, and _record_runtime_skips recorded stage passed=True degraded=True skipped_steps=['build'] with reason \"skipped at runtime \u2014 build: dependencies not installed...\". Bounding check: _bound_step_evidence(4000 cap) + parse_skip_sentinels keeps the sentinel in all orderings tested. Last commit 5d69bfc pins the wrapper in tests/ci/ci005-precommit-hook.test.ts so the test asserts the dependency-aware wrapper rather than the bare build command.\nThe dependency-aware build wrapper turns a missing-node_modules build into a named SKIP that the guard engine records as a degraded-but-passing stage, and the CI test now pins the wrapper instead of the bare build command.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 In a fresh worktree with no node_modules, the tier1 build arm reports SKIP (or a named dependencies-not-installed precondition) instead of FAIL; with deps installed the same tree grades build ok and Overall PASS.: Skip half verified in prior context: fresh tree extracted via `git archive HEAD | tar -x -C .tmp/df013-fresh` (no node_modules); `bash scripts/guard-build.sh` printed \"skipped: dependencies not installed (node_modules absent \u2014 run npm ci)\" plus `GITREINS_SKIP: build=...` with rc=0. Engine 0.21.0 real path: Pipeline._run_script_step on the config's build step returned passed=True exit=0 with the sentinel in output, and _record_runtime_skips recorded stage passed=True degraded=True skipped_steps=['build'] with reason \"skipped at runtime \u2014 build: dependencies not installed...\". Bounding check: _bound_step_evidence(4000 cap) + parse_skip_sentinels keeps the sentinel in all orderings tested. Last commit 5d69bfc pins the wrapper in tests/ci/ci005-precommit-hook.test.ts so the test asserts the dependency-aware wrapper rather than the bare build command.\nThe dependency-aware build wrapper turns a missing-node_modules build into a named SKIP that the guard engine records as a degraded-but-passing stage, and the CI test now pins the wrapper instead of the bare build command.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "In a fresh worktree with no node_modules, the tier1 build arm reports SKIP (or a named dependencies-not-installed precondition) instead of FAIL; with deps installed the same tree grades build ok and Overall PASS.",
+                "status": "PASS",
+                "detail": "Skip half verified in prior context: fresh tree extracted via `git archive HEAD | tar -x -C .tmp/df013-fresh` (no node_modules); `bash scripts/guard-build.sh` printed \"skipped: dependencies not installed (node_modules absent \u2014 run npm ci)\" plus `GITREINS_SKIP: build=...` with rc=0. Engine 0.21.0 real path: Pipeline._run_script_step on the config's build step returned passed=True exit=0 with the sentinel in output, and _record_runtime_skips recorded stage passed=True degraded=True skipped_steps=['build'] with reason \"skipped at runtime \u2014 build: dependencies not installed...\". Bounding check: _bound_step_evidence(4000 cap) + parse_skip_sentinels keeps the sentinel in all orderings tested. Last commit 5d69bfc pins the wrapper in tests/ci/ci005-precommit-hook.test.ts so the test asserts the dependency-aware wrapper rather than the bare build command.",
+                "resolution_probability": 0.16
+              }
+            ],
+            "summary": "The dependency-aware build wrapper turns a missing-node_modules build into a named SKIP that the guard engine records as a degraded-but-passing stage, and the CI test now pins the wrapper instead of the bare build command.",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "degraded": true,
+      "skipped_steps": [
+        "build"
+      ],
+      "degradation_reason": "skipped at runtime \u2014 build: ...` with rc=0. Engine 0.21.0 real path: Pipeline._run_script_step on the config's build step returned passed=True exit=0 with the sentinel in output, and _record_runtime_skips recorded stage passed=True degraded=True skipped_steps=['build'] with reason \"skipped at runtime \u2014 build: dependencies not installed...\". Bounding check: _bound_step_evidence(4000 cap) + parse_skip_sentinels keeps the sentinel in all orderings tested. Last commit 5d69bfc pins the wrapper in tests/ci/ci005-precommit-hook.test.ts so the test asserts the dependency-aware wrapper rather than the bare build command.",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-013\"}",
+          "exit_code": 0,
+          "output_sha": "2b8d2c2204b1efc5ab07fe1a97e74ff180f62afe87635fb545d2ef4de24b38a8"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && cat .gitreins/config.yaml 2>/dev/null | head -50",
+          "exit_code": 0,
+          "output_sha": "c6b40a1794d2b42124c617d380d6b9c0f042c06ca1e775ddc0ec9af6b868358a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat .gitreins/config.yaml | sed -n '50,200p'",
+          "exit_code": 0,
+          "output_sha": "039b3a38d7e7ca94412470c50024904c4f7bb737a5db0f5ec8d8b03ffd4e2c1a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat scripts/guard-build.sh 2>/dev/null; echo \"---\"; ls scripts/ | head -50",
+          "exit_code": 0,
+          "output_sha": "1c84c36c25db1f27d24cc649c92b8b39162284e70d9aa7bc592b5086d3531b41"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; git -C . log --oneline -5 2>/dev/null; echo \"===\"; git log --oneline -8; echo \"===\"; git show --stat HEAD",
+          "exit_code": 128,
+          "output_sha": "a644ca2ec31dc54ea95eff7cefbce81a998085443e8dae58c7fbfcab8f320277"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat tests/ci/ci005-precommit-hook.test.ts",
+          "exit_code": 0,
+          "output_sha": "6a2bc345191a78137d584601883a67c77236a08841ba6d7f23916d9de487883e"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; git rev-parse --show-toplevel; git log --oneline -8; echo \"===\"; git show --stat HEAD",
+          "exit_code": 0,
+          "output_sha": "b62aeba84ff684bdf92366de06ab26b28fcee51dda3590da1184265d97dfb777"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"guard-build\\|GITREINS_SKIP\\|dependencies not installed\" -r --include=*.ts --include=*.js --include=*.sh --include=*.yaml --include=*.yml --include=*.md --include=*.json . 2>/dev/null | grep -v node_modules | grep -v \"^./dist/\" | head -60",
+          "exit_code": 0,
+          "output_sha": "3256f261b2881144406c1c6059a4135e10c4525501748f96513001627a2899cf"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 80, \"offset\": 150, \"path\": \"tests/ci/ci005-precommit-hook.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "834939598625ea294771c32e0aae162fdac682ed9b882b8da1e07ed821791e9a"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show fd390de3 --stat; echo \"===\"; git show fd390de3 -- .gitreins/config.yaml | head -80",
+          "exit_code": 0,
+          "output_sha": "7f55ea078ab5c4b9a0fb854be6a43ef0b690fa41325c52c82ac97b240d31ea39"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -d node_modules 2>/dev/null && echo \"node_modules EXISTS\" || echo \"node_modules ABSENT\"; echo \"===\"; bash scripts/guard-build.sh; echo \"rc=$?\"",
+          "exit_code": 0,
+          "output_sha": "8de17f7a0cd59808a550d4a3c007524d3d91f671006216c6cab4d96dc125e987"
+        },
+        {
+          "tool": "run_command",
+          "command": "which gitreins; gitreins --version 2>&1 | head -3; echo \"===\"; python3 -c \"import gitreins, os; print(os.path.dirname(gitreins.__file__))\" 2>&1 | head -3",
+          "exit_code": 0,
+          "output_sha": "17227bdce225b77e4a261dcf1f75ec89e5ea4c857e07060612bf5a6abf39b179"
+        },
+        {
+          "tool": "run_command",
+          "command": "head -5 /home/kara/.local/bin/gitreins; echo \"===\"; ls /home/kara/.local/lib/python*/site-packages/ 2>/dev/null | head -20; echo \"===\"; find / -name \"pipeline.py\" -path \"*gitreins*\" 2>/dev/null | head -5",
+          "exit_code": -15,
+          "output_sha": "a938a5c59d5d9da715c4613e92ddc84a5845e114c1268a13da8c28317ed96b36"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/gitreins/ 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "335207c0161bd3dbb2249a1ac6f1720d024f2bba92da2b678ce0d06527a3072b"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"GITREINS_SKIP\\|skipped_steps\\|DEGRADED\\|def _run_script\\|def _format_steps\" /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/gitreins/cli.py | head -40",
+          "exit_code": 0,
+          "output_sha": "cc26f74ea91edc69834df0c9c275fd9a23f3fbf56fa457ee4e6860bc2d38ddfe"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"SKIP\\|skip\" /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/gitreins/cli.py | sed -n '1,80p'",
+          "exit_code": 0,
+          "output_sha": "50df9f1ece3a108b789441a7620a616db50ddcef9fc9c61fb666bbf0906882b5"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/ | head -40; echo \"===\"; ls /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/ 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "270e9d576dec56696056669e824070c7f287d33576bb038aa0c91222638f3fd5"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"GITREINS_SKIP\\|skipped_steps\\|DEGRADED\\|def _run_script\\|def _format_steps\\|def _run_step\" /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/pipeline.py | head -40",
+          "exit_code": 0,
+          "output_sha": "7838765bc709e0d4927dc05b22154a14053886836f826be87ae71ac1f722be8e"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n '895,1010p' /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "44ae11b387a3586dc73ac1c14b0b8de4ef7a0a4426d5e50b9dee53c94f8221f3"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n '1010,1120p' /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "0e4a16a5a58b33534391df1126a32b5bce0904749e721a7cf0db92b6d0712b3f"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n '1040,1075p' /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "2bb5b0f6a53a7f650517c340a16ecb371232e088be079f78ecaff41c0244543d"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"SKIP_SENTINEL\" -A 30 /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/pipeline.py | sed -n '1,120p'",
+          "exit_code": 0,
+          "output_sha": "b9c1e7daa9fdb66666db73df1892cec852fa5b2d2c16b0c609e6254cb4e336d6"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n '400,470p' /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "719ffddd86b44d3915826b32a29bc362e47bf85034f4021b03fdd82bdd2bf5e4"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"_record_runtime_skips\" /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "a6bb4b062b2d80cf41a670b7573cecb2f28a78ab88c71049c1e4555e46b6751e"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n '690,760p' /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "f3db2c66a3272af45b10c2abbcd460b04cfe52c1b02e7e9dc3bbe8e1ea481bf1"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n '760,900p' /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "44c1ec88dd4ec520793afa414330c7cbe53b93b5cccdae44ea13ea5dce3ab030"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n '820,860p' /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "de9e24b310eca184be04939c9bf001aa62713972905907b09fcd268ca5ee7576"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n '930,975p' /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "f7c40fd5bba9c947560b2684ca9a23639ba00aebf205fc1ecab94442692405e6"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"def run_bounded\" -A 60 /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/command_hygiene.py | head -90",
+          "exit_code": 0,
+          "output_sha": "bd437dcfc57858b86a7d4ce6076e4c65c203ebd7458e1be6d94111d6cc08d5c2"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n '249,330p' /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/command_hygiene.py",
+          "exit_code": 0,
+          "output_sha": "9f231777fbaa238b8929853d0374251170ebdd7877427c30699eb27b76533037"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n '975,1000p' /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "41d40d1887e3a3384edb7c72a0faa0150f2644d6df5b50d3c362bb7f8772384d"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n '1075,1105p' /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "7df25520ef8eb23723b1c0a2a707b8d229d3374bf6c95f1b890285444a9c6ad8"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"def _bound_step_evidence\" -A 30 /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/command_hygiene.py",
+          "exit_code": 1,
+          "output_sha": "59525a6177b2aa040b6dc810ac67646172b36dc586a7f1d60d3d876c62cab139"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"_bound_step_evidence\\|MAX_EVIDENCE_CHARS\" /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/command_hygiene.py | head; echo \"===\"; grep -n \"_bound_step_evidence\" -A 25 /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/evidence_bounds.py | head -40",
+          "exit_code": 0,
+          "output_sha": "96b20ba3cbda26fa72b06d72bf0c3200f40a0e51a9257d5f771278c32e60cec6"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n '140,230p' /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/evidence_bounds.py",
+          "exit_code": 0,
+          "output_sha": "dc98df8b12270b5b6196a33ce8e53bf7f26e3438335b7de5f54380606975bbba"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n '230,300p' /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/evidence_bounds.py",
+          "exit_code": 0,
+          "output_sha": "2f42fbbbae860e1e16892bd091a70e15c8e870f5c829a63277fbe5a9f31406b6"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"def _marker_for\" -A 40 /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/evidence_bounds.py",
+          "exit_code": 0,
+          "output_sha": "81a664ca2510d0ae7a74c24f56fc2644559c6e5ed3790ae25f7a7e43e6677c33"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"def _omission_marker\" -A 30 /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/evidence_bounds.py",
+          "exit_code": 0,
+          "output_sha": "2321159ed131b9440125f3607e7a28e697969bcad5ee9ab8dbb8ec1435a4ac10"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && python3 - <<'EOF'\nimport sys\nsys.path.insert(0, \"/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages\")\nfrom engine.evidence_bounds import _bound_step_evidence\nfrom engine.pipeline import parse_skip_sentinels\nout = \"skipped: dependencies not installed (node_modules absent \u2014 run npm ci)\\nGITREINS_SKIP: build=dependencies not installed (node_modules absent \u2014 run npm ci)\\n\"\nb = _bound_step_evidence(out)\nprint(\"BOUNDED:\", repr(b))\nprint(\"SENTINELS:\", parse_skip_sentinels(b))\nEOF",
+          "exit_code": 0,
+          "output_sha": "c7c8008a1825dae8ab1a1b9f9c9bbd149d19d61628577bfdf3b21a19fe760965"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && python3 - <<'EOF'\nimport sys\nsys.path.insert(0, \"/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages\")\nfrom engine.evidence_bounds import _bound_step_evidence\nfrom engine.pipeline import parse_skip_sentinels\n# simulate a long npm/tsc transcript AFTER the sentinel line\nout = \"skipped: dependencies not installed (node_modules absent \u2014 run npm ci)\\nGITREINS_SKIP: build=dependencies not installed (node_modules absent \u2014 run npm ci)\\n\" + (\"x\"*200 + \"\\n\")*60\nb = _bound_step_evidence(out)\nprint(\"len\", len(b))\nprint(\"SENTINELS:\", parse_skip_sentinels(b))\nprint(\"HEAD:\", b[:200])\nEOF",
+          "exit_code": 0,
+          "output_sha": "255c5b9d3fab3643ee8eb7ddf5f0268edf27327f9cfc78d0105b6f0e6baab8fb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && python3 - <<'EOF'\nimport sys\nsys.path.insert(0, \"/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages\")\nfrom engine.evidence_bounds import _bound_step_evidence\nfrom engine.pipeline import parse_skip_sentinels\n# simulate a long npm/tsc transcript BEFORE the sentinel line (npm prints notices first)\nout = (\"x\"*200 + \"\\n\")*60 + \"skipped: dependencies not installed (node_modules absent \u2014 run npm ci)\\nGITREINS_SKIP: build=dependencies not installed (node_modules absent \u2014 run npm ci)\\n\"\nb = _bound_step_evidence(out)\nprint(\"len\", len(b))\nprint(\"SENTINELS:\", parse_skip_sentinels(b))\nprint(\"TAIL:\", b[-300:])\nEOF",
+          "exit_code": 0,
+          "output_sha": "c3e0dda070bd9e312778552995c4e91ee55926c3dbd6d1313e9d9d9e82146000"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && python3 - <<'EOF'\nimport sys\nsys.path.insert(0, \"/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages\")\nfrom engine.evidence_bounds import _bound_step_evidence\nfrom engine.pipeline import parse_skip_sentinels\n# worst case: one enormous single line (e.g. a minified JSON blob) before the sentinel\nout = \"y\"*9000 + \"\\nskipped: dependencies not installed (node_modules absent \u2014 run npm ci)\\nGITREINS_SKIP: build=dependencies not installed (node_modules absent \u2014 run npm ci)\\n\"\nb = _bound_step_evidence(out)\nprint(\"len\", len(b))\nprint(\"SENTINELS:\", parse_skip_sentinels(b))\nprint(\"TAIL:\", repr(b[-250:]))\nEOF",
+          "exit_code": 0,
+          "output_sha": "6ecd646bb7bfa65014d86731a541c5af9e7c865cb6e49b7d07cb0e716d5c3ff0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && python3 - <<'EOF'\nimport sys\nsys.path.insert(0, \"/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages\")\nfrom engine.evidence_bounds import _bound_step_evidence\nfrom engine.pipeline import parse_skip_sentinels\n# worst case: one enormous single line AFTER the sentinel (npm notice blob at end)\nout = \"skipped: dependencies not installed (node_modules absent \u2014 run npm ci)\\nGITREINS_SKIP: build=dependencies not installed (node_modules absent \u2014 run npm ci)\\n\" + \"y\"*9000 + \"\\n\"\nb = _bound_step_evidence(out)\nprint(\"len\", len(b))\nprint(\"SENTINELS:\", parse_skip_sentinels(b))\nprint(\"HEAD:\", repr(b[:250]))\nEOF",
+          "exit_code": 0,
+          "output_sha": "cdee5ba7fdc6d6d0849adaac2ad83fe4c793db9c18883d5d4d4b8aca975dd27d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && python3 - <<'EOF'\nimport sys\nsys.path.insert(0, \"/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages\")\nfrom engine.evidence_bounds import _bound_step_evidence\nfrom engine.pipeline import parse_skip_sentinels\n# worst case: one enormous single line AFTER the sentinel (npm notice blob at end)\nout = \"skipped: dependencies not installed (node_modules absent \u2014 run npm ci)\\nGITREINS_SKIP: build=dependencies not installed (node_modules absent \u2014 run npm ci)\\n\" + \"y\"*9000 + \"\\n\"\nb = _bound_step_evidence(out)\nprint(\"len\", len(b))\nprint(\"SENTINELS:\", parse_skip_sentinels(b))\nprint(\"HEAD:\", repr(b[:250]))\nEOF",
+          "exit_code": 0,
+          "output_sha": "0bdb7b87ba24462c94d73fefd129793407ebc5450be3b815fad04a72ea24bec4"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Repo /home/kara/speclang. HEAD 5d69bfc5 (test pin) on top of fd390de3 (fix: scripts/guard-build.sh + .gitreins/config.yaml pipeline build step).\\ngitreins 0.21.0 installed at /home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages (engine/pipeline.py, engine/command_hygiene.py, engine/evidence_bounds.py).\\nVerified engine contract: _run_script_step -> command_hygiene.run_bounded (shell=True, cwd=workdir, stderr->stdout, output bounded to 4000 chars head+tail) -> passed = exit_code==0; _record_runtime_skips (pipeline.py:407-463) parses GITREINS_SKIP sentinels from step.output and folds step id into stage.skipped_steps + stage.degraded=True.\\nEmpirically tested _bound_step_evidence + parse_skip_sentinels with the wrapper's exact skip output: sentinel survives bounding in all 4 orderings (short, long lines before, long lines after, 9000-char single line before/after).\\nWrapper run in this worktree (node_modules present): \\\"build ok \\u2014 npm run build exited 0\\\", rc=0.\\n\", \"key\": \"context\"}",
+          "exit_code": 0,
+          "output_sha": "8f3c3fdab43be74ae6f1b0b6f873f27888d7506a2e716cb0c4bf80dc1112a5b1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat package.json | head -40",
+          "exit_code": 0,
+          "output_sha": "3bdcf64119db02b7f030800f492a3466e8f57e1994e452709a75edb1291cdc48"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && rm -rf .tmp/df013-fresh && mkdir -p .tmp/df013-fresh && git archive HEAD | tar -x -C .tmp/df013-fresh && ls .tmp/df013-fresh | head; echo \"=== node_modules present?\"; ls -d .tmp/df013-fresh/node_modules 2>/dev/null || echo ABSENT",
+          "exit_code": 0,
+          "output_sha": "7ef310cb79b3193059646c7796e60066c8dc2f0b9948e1b2c502c4548e80457b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang/.tmp/df013-fresh && bash scripts/guard-build.sh; echo \"rc=$?\"",
+          "exit_code": 0,
+          "output_sha": "293ca3725b2397f828241680b290202b3037467b75137b3424c050201f0022ea"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && python3 - <<'EOF'\nimport sys, os\nsys.path.insert(0, \"/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages\")\nfrom engine.pipeline import Pipeline, load_pipeline_config\nwd = \"/home/kara/speclang/.tmp/df013-fresh\"\ncfg = load_pipeline_config(wd)\nprint(\"stages:\", [s.get(\"id\") for s in cfg.get(\"stages\", [])])\np = Pipeline(cfg, workdir=wd)\nres = p.run({\"id\": \"DF-SPECLANG-013\", \"title\": \"t\", \"criteria\": [\"c\"], \"status\": \"complete\"}, trigger=\"pre-eval\")\nt1 = res[\"stages\"][\"tier1\"]\nprint(\"tier1 passed:\", t1.get(\"passed\"), \"degraded:\", t1.get(\"degraded\"), \"skipped_steps:\", t1.get(\"skipped_steps\"))\nfor s in t1.get(\"steps\", []):\n    print(\" step\", s.get(\"id\"), \"passed=\", s.get(\"passed\"), \"exit=\", (s.get(\"data\") or {}).get(\"exit_code\"), \"out=\", repr((s.get(\"output\") or \"\")[:120]))\nprint(\"overall:\", res.get(\"overall\"), res.get(\"verdict\"))\nEOF",
+          "exit_code": -15,
+          "output_sha": "c6ef860a5414b87df755044411fb94821526588c77d1f47dadf22427dd109ae4"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"def load_pipeline_config\" -A 40 /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "38cd75cd07396d5c046da4297d41d74c13fea49122254f1f3afc1c32a54ceb5a"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n '2114,2200p' /home/kara/.local/share/pipx/venvs/gitreins/lib/python*/site-packages/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "15f4bf275cc92890b4b291b60aba359f282a2311ab1904f406d1ef1fedc637d1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 120 python3 - <<'EOF'\nimport sys\nsys.path.insert(0, \"/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages\")\nfrom engine.pipeline import Pipeline, load_pipeline_config\nwd = \"/home/kara/speclang/.tmp/df013-fresh\"\ncfg = load_pipeline_config(wd)\nstages = cfg[\"pipeline\"][\"stages\"]\nprint(\"stages:\", [s.get(\"id\") for s in stages])\n# only run tier1 to keep it fast\ncfg[\"pipeline\"][\"stages\"] = [s for s in stages if s.get(\"id\") == \"tier1\"]\np = Pipeline(cfg, workdir=wd)\nres = p.run({\"id\": \"DF-SPECLANG-013\", \"title\": \"t\", \"criteria\": [\"c\"], \"status\": \"complete\"}, trigger=\"pre-eval\")\nt1 = res[\"stages\"][\"tier1\"]\nprint(\"tier1 passed:\", t1.get(\"passed\"), \"degraded:\", t1.get(\"degraded\"), \"skipped_steps:\", t1.get(\"skipped_steps\"))\nfor s in t1.get(\"steps\", []):\n    print(\" step\", s.get(\"id\"), \"passed=\", s.get(\"passed\"), \"exit=\", (s.get(\"data\") or {}).get(\"exit_code\"), \"out=\", repr((s.get(\"output\") or \"\")[:150]))\nprint(\"overall:\", res.get(\"overall\"), res.get(\"verdict\"))\nEOF",
+          "exit_code": -1,
+          "output_sha": "cafe4e05b08034b480a5bac799f9302ac0a520bc8643cdd3c1a2ed007e591af8"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat > .tmp/df013-run.py <<'EOF'\nimport sys\nsys.path.insert(0, \"/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages\")\nfrom engine.pipeline import Pipeline, load_pipeline_config\nwd = \"/home/kara/speclang/.tmp/df013-fresh\"\ncfg = load_pipeline_config(wd)\nstages = cfg[\"pipeline\"][\"stages\"]\nprint(\"stages:\", [s.get(\"id\") for s in stages], flush=True)\ncfg[\"pipeline\"][\"stages\"] = [s for s in stages if s.get(\"id\") == \"tier1\"]\np = Pipeline(cfg, workdir=wd)\nres = p.run({\"id\": \"DF-SPECLANG-013\", \"title\": \"t\", \"criteria\": [\"c\"], \"status\": \"complete\"}, trigger=\"pre-eval\")\nt1 = res[\"stages\"][\"tier1\"]\nprint(\"tier1 passed:\", t1.get(\"passed\"), \"degraded:\", t1.get(\"degraded\"), \"skipped_steps:\", t1.get(\"skipped_steps\"), flush=True)\nfor s in t1.get(\"steps\", []):\n    print(\" step\", s.get(\"id\"), \"passed=\", s.get(\"passed\"), \"exit=\", (s.get(\"data\") or {}).get(\"exit_code\"), \"out=\", repr((s.get(\"output\") or \"\")[:150]), flush=True)\nprint(\"overall:\", res.get(\"overall\"), res.get(\"verdict\"), flush=True)\nEOF\nnohup python3 .tmp/df013-run.py > .tmp/df013-run.log 2>&1 &\necho started",
+          "exit_code": 0,
+          "output_sha": "ebaf67e4e8bdbff6adb52f7b6604c6b2f074a07d4bb51f36a7b419b9d62f95c4"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 25; cd /home/kara/speclang && cat .tmp/df013-run.log",
+          "exit_code": 0,
+          "output_sha": "edd26e27b2e812133f5417288dd7cef6f8ae1194cd9fde040683d0c29879a30d"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 28; cd /home/kara/speclang && cat .tmp/df013-run.log; echo \"---\"; ps aux | grep df013-run | grep -v grep | head -3",
+          "exit_code": 0,
+          "output_sha": "f880dd7c7b05a0cfd1490c806fe27811c9f4a732f3dd0fc10e985fe55cb32e23"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -la .tmp/df013-run.log; ps aux | grep -c python3; ps aux | grep df013 | head",
+          "exit_code": 0,
+          "output_sha": "b79bb671de1aa7551b73467859e326c4634df0c9f789e8faabf1e967cd31210e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 25 python3 -c \"\nimport sys\nsys.path.insert(0, '/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages')\nprint('importing', flush=True)\nfrom engine.pipeline import Pipeline, load_pipeline_config\nprint('imported', flush=True)\ncfg = load_pipeline_config('/home/kara/speclang/.tmp/df013-fresh')\nprint('stages', [s.get('id') for s in cfg['pipeline']['stages']], flush=True)\n\" 2>&1 | tail -20",
+          "exit_code": 0,
+          "output_sha": "fd0fb09800d855640310f3f10770bf0fc0955eac1d1ac3da397a77bcc8aaf350"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 28 python3 -c \"\nimport sys\nsys.path.insert(0, '/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages')\nfrom engine.pipeline import Pipeline, load_pipeline_config\nwd='/home/kara/speclang/.tmp/df013-fresh'\ncfg = load_pipeline_config(wd)\ncfg['pipeline']['stages'] = [s for s in cfg['pipeline']['stages'] if s.get('id')=='tier1']\np = Pipeline(cfg, workdir=wd)\nprint('pipeline built', flush=True)\nres = p.run({'id':'DF-SPECLANG-013','title':'t','criteria':['c'],'status':'complete'}, trigger='pre-eval')\nt1 = res['stages']['tier1']\nprint('tier1 passed:', t1.get('passed'), 'degraded:', t1.get('degraded'), 'skipped:', t1.get('skipped_steps'), flush=True)\nfor s in t1.get('steps', []):\n    print(' step', s.get('id'), 'passed=', s.get('passed'), 'exit=', (s.get('data') or {}).get('exit_code'), 'out=', repr((s.get('output') or '')[:140]), flush=True)\nprint('overall:', res.get('overall'), res.get('verdict'), flush=True)\n\" 2>&1 | tail -20",
+          "exit_code": 0,
+          "output_sha": "e8b9adeff8ab0d2df7bad81b14d18a63f854ba1489521e3d21d4ec0fe8ad8477"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 28 python3 -c \"\nimport sys\nsys.path.insert(0, '/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages')\nfrom engine.pipeline import Pipeline, load_pipeline_config\nwd='/home/kara/speclang/.tmp/df013-fresh'\ncfg = load_pipeline_config(wd)\ncfg['pipeline']['stages'] = [s for s in cfg['pipeline']['stages'] if s.get('id')=='tier1']\np = Pipeline(cfg, workdir=wd)\nstep = cfg['pipeline']['stages'][0]['steps'][1]\nprint('step def:', step, flush=True)\nr = p._run_script_step(step, {'id':'x'}, 'tier1')\nprint('passed=', r.passed, 'exit=', (r.data or {}).get('exit_code'), flush=True)\nprint('output=', repr(r.output), flush=True)\n\" 2>&1 | tail -20",
+          "exit_code": 0,
+          "output_sha": "65da6c75931979079d7d3ed3ad705b8abc4eca8671828ac131e98f6c592468c1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 28 python3 -c \"\nimport sys\nsys.path.insert(0, '/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages')\nfrom engine.pipeline import Pipeline, load_pipeline_config, StageResult, _record_runtime_skips\nwd='/home/kara/speclang/.tmp/df013-fresh'\ncfg = load_pipeline_config(wd)\ncfg['pipeline']['stages'] = [s for s in cfg['pipeline']['stages'] if s.get('id')=='tier1']\np = Pipeline(cfg, workdir=wd)\nstep = cfg['pipeline']['stages'][0]['steps'][1]\nr = p._run_script_step(step, {'id':'x'}, 'tier1')\nst = StageResult(id='tier1'); st.steps=[r]; st.passed=True; st.any_failed=False\n_record_runtime_skips(st)\nprint('stage passed=', st.passed, 'degraded=', st.degraded, 'skipped_steps=', st.skipped_steps, flush=True)\nprint('reason=', st.degradation_reason, flush=True)\n\" 2>&1 | tail -10",
+          "exit_code": 0,
+          "output_sha": "5ba4402b4c95a48f4f619d2a5f818e7b9d67193278e892c1549212aae390f2cd"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS (skip half): fresh tree via `git archive HEAD | tar -x -C .tmp/df013-fresh` (no node_modules). `bash scripts/guard-build.sh` -> \\\"skipped: dependencies not installed (node_modules absent \\u2014 run npm ci)\\\" + \\\"GITREINS_SKIP: build=...\\\" rc=0.\\nEngine 0.21.0 real path: Pipeline._run_script_step on the config's build step -> passed=True exit=0, output carries sentinel; _record_runtime_skips -> stage passed=True degraded=True skipped_steps=['build'] reason \\\"skipped at runtime \\u2014 build: dependencies not installed...\\\".\\nBounding check: _bound_step_evidence(4000 cap) + parse_skip_sentinels keeps the sentinel in all orderings tested.\\n\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "8afc1dc98aa71343f9a554f189faecde4e0cf7f6bca4ce8bd3b8c04d4480de8d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 28 python3 -c \"\nimport sys\nsys.path.insert(0, '/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages')\nfrom engine.pipeline import Pipeline, load_pipeline_config\nwd='/home/kara/speclang'\ncfg = load_pipeline_config(wd)\ncfg['pipeline']['stages'] = [s for s in cfg['pipeline']['stages'] if s.get('id')=='tier1']\np = Pipeline(cfg, workdir=wd)\nstep = cfg['pipeline']['stages'][0]['steps'][1]\nr = p._run_script_step(step, {'id':'x'}, 'tier1')\nprint('passed=', r.passed, 'exit=', (r.data or {}).get('exit_code'), flush=True)\nprint('output=', repr(r.output[:300]), flush=True)\n\" 2>&1 | tail -10",
+          "exit_code": 0,
+          "output_sha": "53c2d731f3206197d984aa8c66885898bdcec9e55dfa68eebfb5f78b39598c8d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 28 python3 -c \"\nimport sys\nsys.path.insert(0, '/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages')\nfrom engine.pipeline import Pipeline, load_pipeline_config, StageResult, _record_runtime_skips\nwd='/home/kara/speclang'\ncfg = load_pipeline_config(wd)\ncfg['pipeline']['stages'] = [s for s in cfg['pipeline']['stages'] if s.get('id')=='tier1']\np = Pipeline(cfg, workdir=wd)\nstep = cfg['pipeline']['stages'][0]['steps'][1]\nr = p._run_script_step(step, {'id':'x'}, 'tier1')\nst = StageResult(id='tier1'); st.steps=[r]; st.passed=r.passed; st.any_failed=not r.passed\n_record_runtime_skips(st)\nprint('stage passed=', st.passed, 'degraded=', st.degraded, 'skipped_steps=', st.skipped_steps, flush=True)\n\" 2>&1 | tail -5",
+          "exit_code": 0,
+          "output_sha": "a724836c989ae20036723de422fcb59bd42c20eed09b2a2d49d7b6767157b877"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 28 python3 -c \"\nimport sys\nsys.path.insert(0, '/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages')\nfrom engine.pipeline import Pipeline, load_pipeline_config\nwd='/home/kara/speclang'\ncfg = load_pipeline_config(wd)\ncfg['pipeline']['stages'] = [s for s in cfg['pipeline']['stages'] if s.get('id')=='tier1']\np = Pipeline(cfg, workdir=wd)\nstep = dict(cfg['pipeline']['stages'][0]['steps'][1])\nstep['run'] = 'bash scripts/guard-build.sh; exit 7'\nr = p._run_script_step(step, {'id':'x'}, 'tier1')\nprint('forced-fail passed=', r.passed, 'exit=', (r.data or {}).get('exit_code'), flush=True)\n\" 2>&1 | tail -5",
+          "exit_code": 0,
+          "output_sha": "cb847fa5d98f296b945dd61a650522768af61bc51b830d2fecd64c377f722d42"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS (deps-installed half): in /home/kara/speclang (node_modules present) the config's build step through Pipeline._run_script_step -> passed=True exit=0, output \\\"build ok \\u2014 npm run build exited 0\\\"; _record_runtime_skips leaves degraded=False skipped_steps=[] (a real graded pass, not a skip). Forced-fail control (`guard-build.sh; exit 7`) -> passed=False exit=7, so the arm still fails a real build failure.\\n\", \"key\": \"verified_0b\"}",
+          "exit_code": 0,
+          "output_sha": "9dbf86efc9630e1dd46139fd5b57952c5ecd3df6bc077d1e81e9aee58ded1628"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 28 npx vitest run tests/ci/ci005-precommit-hook.test.ts 2>&1 | tail -25",
+          "exit_code": 0,
+          "output_sha": "250dc5c3207682faef4bcf69e108e48bb3be939b27991ddd6809319ea63e215f"
+        },
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"df013\"}",
+          "exit_code": 1,
+          "output_sha": "313ba1d292310352ae0946968545eb1197975126b3c4f474ecef3695fcb95e47"
+        },
+        {
+          "tool": "sandbox_read",
+          "command": "sandbox_read {\"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "010a488af48e38137e7488f3366165a6585219a22b72dcde5ee1e22053a39b1a"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "high",
+        "file": "tests/ci/ci005-precommit-hook.test.ts",
+        "line": 190,
+        "detection": "test asserts a file/script exists (scripts/guard-build.sh) that is not added by this diff",
+        "detail": "The test now reads `scripts/guard-build.sh` and asserts its contents, but the diff only modifies the test file \u2014 no `scripts/guard-build.sh` is created, so the test will fail with ENOENT unless it already exists in the repo (not visible here)."
+      },
+      {
+        "severity": "medium",
+        "file": "tests/ci/ci005-precommit-hook.test.ts",
+        "line": 196,
+        "detection": "assertion checks for a literal string that does not prove exit-code propagation",
+        "detail": "`expect(wrapper).toContain(\"exit \\\"$rc\\\"\")` only matches that exact literal; a wrapper that captures rc differently (e.g. `exit $rc` or `exit \"${rc}\"`) would fail, and the assertion does not actually verify rc is assigned from npm's exit status."
+      }
+    ],
+    "summary": "The test was tightened to require a guard-build.sh wrapper and a pipeline stage, but the diff adds no such script, so the new assertions depend on an artifact not present in the change."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  16:44:40\n\nStage tier2: PASS (DEGRADED - skipped checks)\n  WARNING: coverage is unknown \u2014 build did not run (skipped at runtime \u2014 build: ...` with rc=0. Engine 0.21.0 real path: Pipeline._run_script_step on the config's build step returned passed=True exit=0 with the sentinel in output, and _record_runtime_skips recorded stage passed=True degraded=True skipped_steps=['build'] with reason \"skipped at runtime \u2014 build: dependencies not installed...\". Bounding check: _bound_step_evidence(4000 cap) + parse_skip_sentinels keeps the sentinel in all orderings tested. Last commit 5d69bfc pins the wrapper in tests/ci/ci005-precommit-hook.test.ts so the test asserts the dependency-aware wrapper rather than the bare build command.); run `gitreins guard` for the full gate\n  COMPLETE\n  \u2713 In a fresh worktree with no node_modules, the tier1 build arm reports SKIP (or a named dependencies-not-installed precondition) instead of FAIL; with deps installed the same tree grades build ok and Overall PASS.: Skip half verified in prior context: fresh tree extracted via `git archive HEAD | tar -x -C .tmp/df013-fresh` (no node_modules); `bash scripts/guard-build.sh` printed \"skipped: dependencies not installed (node_modules absent \u2014 run npm ci)\" plus `GITREINS_SKIP: build=...` with rc=0. Engine 0.21.0 real path: Pipeline._run_script_step on the config's build step returned passed=True exit=0 with the sentinel in output, and _record_runtime_skips recorded stage passed=True degraded=True skipped_steps=['build'] with reason \"skipped at runtime \u2014 build: dependencies not installed...\". Bounding check: _bound_step_evidence(4000 cap) + parse_skip_sentinels keeps the sentinel in all orderings tested. Last commit 5d69bfc pins the wrapper in tests/ci/ci005-precommit-hook.test.ts so the test asserts the dependency-aware wrapper rather than the bare build command.\nThe dependency-aware build wrapper turns a missing-node_modules build into a named SKIP that the guard engine records as a degraded-but-passing stage, and the CI test now pins the wrapper instead of the bare build command.\n\nOverall: PASS \u2713 [DEGRADED \u2014 skipped: tier2(build)=skipped at runtime \u2014 build: ...` with rc=0. Engine 0.21.0 real path: Pipeline._run_script_step on the config's build step returned passed=True exit=0 with the sentinel in output, and _record_runtime_skips r\u2026]",
+  "evaluated_at": "2026-11-17T21:50:28.324429",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T21:50:28.354546+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 3256,
+        "truncated": false,
+        "source": "git show 5d69bfc5e641"
+      }
+    ],
+    "task_id": "DF-SPECLANG-013"
+  }
+}
