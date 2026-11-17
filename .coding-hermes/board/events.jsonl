@@ -365,3 +365,7 @@
 {"id": 364, "timestamp": "2026-11-17T05:23:37.150949+00:00", "event_type": "task_updated", "task_id": "QA-SPECLANG-006", "actor": "foreman", "tick_number": null, "detail": "{\"status\":\"in_progress\"}"}
 {"id": 365, "timestamp": "2026-11-17T05:23:37.274548+00:00", "event_type": "task_updated", "task_id": "DF-SPECLANG-017", "actor": "foreman", "tick_number": null, "detail": "{\"status\":\"in_progress\"}"}
 {"id": 366, "timestamp": "2026-11-17T05:23:37.475569+00:00", "event_type": "task_updated", "task_id": "DF-SPECLANG-018", "actor": "foreman", "tick_number": null, "detail": "{\"status\":\"in_progress\"}"}
+{"id": 367, "timestamp": "2026-11-17T06:00:09.470462+00:00", "event_type": "task_completed", "task_id": "DOC-9", "actor": "foreman", "tick_number": null, "detail": "{\"status\":\"complete\"}"}
+{"id": 368, "timestamp": "2026-11-17T06:07:38.400495+00:00", "event_type": "task_completed", "task_id": "DOC-7", "actor": "foreman", "tick_number": null, "detail": "{\"status\":\"complete\"}"}
+{"id": 369, "timestamp": "2026-11-17T06:07:38.429873+00:00", "event_type": "task_completed", "task_id": "README-20", "actor": "foreman", "tick_number": null, "detail": "{\"status\":\"complete\"}"}
+{"id": 370, "timestamp": "2026-11-17T06:07:38.459127+00:00", "event_type": "task_completed", "task_id": "UX-003", "actor": "foreman", "tick_number": null, "detail": "{\"status\":\"complete\"}"}
