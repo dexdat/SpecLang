@@ -4,6 +4,24 @@ Thank you for your interest in contributing to SpecLang!
 
 ## Development Setup
 
+### Prerequisites
+
+- Node.js 18 or newer (`engines.node` in `package.json`; CI runs Node 20).
+- Nothing else: no database, service or extra toolchain is needed to install
+  dependencies or run the test suite.
+
+`npm install` followed by `npm test` is all that a fresh clone needs:
+
+- The `pretest` hook runs `npm run build` before the suite, so the CLI that
+  integration tests spawn (`bin/speclang`, which loads `dist/`) is present and
+  current without a separate build step.
+- The `test` script sets `TMPDIR=$PWD/.tmp` itself (and `vitest.config.ts`
+  points Vite's cache at the same project-local directory), so you never need
+  to export `TMPDIR` by hand.
+- If you run `npx vitest ...` directly instead of `npm test`, or your `dist/`
+  is stale, run `npm run build` first — a stale `dist/` means you are testing
+  old code.
+
 ```bash
 # Clone the repository
 git clone https://github.com/dexdat/SpecLang.git
@@ -12,10 +30,7 @@ cd SpecLang
 # Install dependencies
 npm install
 
-# Build the project
-npm run build
-
-# Run tests
+# Run tests (the `pretest` hook builds first, so no separate build is needed)
 npm test
 ```
 
