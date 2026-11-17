@@ -3,15 +3,34 @@
  * Source: @speclang/examples/hello-world (specs/examples.spec.dir/hello-world.spec.md)
  *
  * The four numbered lines under "## Verification Steps" are parsed out of the
- * markdown on every run and EXECUTED verbatim, in order, from the repository
- * root. Nothing about the commands is duplicated here: if the spec's commands
- * stop working — a renamed source path, a stale dist layout, a TypeScript
- * option that now collides with tsconfig.json — this file goes red instead of
- * the spec silently rotting.
+ * markdown on every run and EXECUTED, in order, from the repository root.
+ * Nothing about the commands is duplicated here: if the spec's commands stop
+ * working — a renamed source path, a stale dist layout, a TypeScript option
+ * that now collides with tsconfig.json — this file goes red instead of the spec
+ * silently rotting.
+ *
+ * The ONE deliberate deviation is where the Compile step's OUTPUT goes: the
+ * spec's `npm run build` is executed with `--outDir <scratch>` appended (npm
+ * forwards everything after `--` to `tsc`), and the Run step reads the artifact
+ * out of that same scratch dir. QA-SPECLANG-009, and the reason is not
+ * cosmetic:
+ *
+ *   `npm run build` writes 406 files into the repo's shared dist/ by opening
+ *   each one `O_WRONLY|O_CREAT|O_TRUNC` and then writing it in place (straced
+ *   on TypeScript 7; no temp-file-and-rename). A reader that opens one of
+ *   those files inside the truncate/write window gets an empty or half-written
+ *   module. This file used to run that build MID-RUN, while vitest was running
+ *   the other test files in parallel — a dozen of them spawn `bin/speclang` or
+ *   `require` dist/ directly — so a full `npm test` could fail with EOF/torn
+ *   reads that no individual test had caused. Redirecting the output to a
+ *   scratch dir this file owns removes the shared write entirely; the compile
+ *   itself (same tsconfig, same rootDir, same type checking, same exit status)
+ *   is unchanged, and the last test below asserts the repo's dist/ is
+ *   byte-for-byte untouched by the run.
  *
  * WHAT THIS PROVES
  *   step 1 (Generate) exits 0 and the spec still yields exactly one code block,
- *   step 2 (Compile)  exits 0,
+ *   step 2 (Compile)  exits 0 and emits the example into this test's scratch dir,
  *   step 3 (Run)      exits 0,
  *   step 4 (Verify)   step 3's stdout equals the string step 4 promises,
  *   plus: the spec's own `@block::hello/function` code is the code shipped at
@@ -20,7 +39,8 @@
  *
  * WHAT THIS DOES NOT PROVE — that the SpecLang cascade wrote that artifact
  * (it is committed; step 1 only re-extracts the block with --dry-run), that
- * `npm run build` is correct beyond compiling this example, or that any other
+ * `npm run build` is correct beyond compiling this example (its dist/ output is
+ * covered by `pretest`, which runs before any test does), or that any other
  * spec's Verification Steps are runnable.
  */
 
@@ -33,6 +53,17 @@ const REPO_ROOT = path.resolve(__dirname, "..", "..");
 const SPEC_REL_PATH = "specs/examples.spec.dir/hello-world.spec.md";
 const SPEC_PATH = path.join(REPO_ROOT, SPEC_REL_PATH);
 const SHIPPED_ARTIFACT = "src/examples/hello-world.ts";
+
+/** The spec's Compile step, verbatim — the command whose output we redirect. */
+const COMPILE_COMMAND = "npm run build";
+/** The spec's Run step, verbatim — it reads the compiled artifact from dist/. */
+const RUN_COMMAND = "node dist/src/examples/hello-world.js";
+/** Where the compiled example lands inside the scratch outDir (rootDir "."). */
+const COMPILED_ARTIFACT_REL = "src/examples/hello-world.js";
+/** Sub-directory of the per-run scratch dir that receives tsc's output. */
+const SCRATCH_OUT_SUBDIR = "build";
+/** The repo's shared build tree — the one this test must never write to. */
+const SHARED_DIST = path.join(REPO_ROOT, "dist");
 
 interface VerificationStep {
   n: number;
@@ -110,6 +141,72 @@ interface RunResult {
   stderr: string;
 }
 
+/** POSIX single-quote a path so a scratch dir with spaces still works. */
+function shellQuote(value: string): string {
+  return `'${value.replace(/'/g, `'\\''`)}'`;
+}
+
+/**
+ * The scratch output directory, applied per spec command. Keyed by the spec's
+ * command VERBATIM, so a spec edit that changes either command stops being
+ * redirected here and is caught by "the Compile and Run steps are the commands
+ * this file redirects" below instead of quietly rebuilding the shared dist/.
+ */
+const SCRATCH_REDIRECTS: Record<string, (outDir: string) => string> = {
+  [COMPILE_COMMAND]: (outDir) =>
+    `${COMPILE_COMMAND} -- --outDir ${shellQuote(outDir)}`,
+  [RUN_COMMAND]: (outDir) =>
+    `node ${shellQuote(path.join(outDir, COMPILED_ARTIFACT_REL))}`,
+};
+
+interface PlannedStep {
+  step: VerificationStep;
+  /** What is actually executed — the spec's command, or its scratch redirect. */
+  command: string;
+}
+
+/**
+ * Turn one spec step into the command this test executes: the spec's line
+ * verbatim, except for the two commands that touch the build output, which are
+ * pointed at the scratch dir this file owns (see the file header).
+ */
+function planStep(step: VerificationStep, scratchOutDir: string): PlannedStep {
+  const redirect = SCRATCH_REDIRECTS[step.body];
+  return { step, command: redirect ? redirect(scratchOutDir) : step.body };
+}
+
+/**
+ * Fingerprint of the repo's shared dist/: every file's size, mtime and inode.
+ * `npm run build` truncates and rewrites files in place, so ANY file it
+ * rewrites shows up here (a new mtime, usually a new inode as well). An absent
+ * dist/ (plain `vitest run` with no `pretest` build) is its own one-line
+ * signature, so "was absent, still absent" is a pass and "was absent, now
+ * populated" is a fail.
+ */
+function distSignature(): string[] {
+  if (!fs.existsSync(SHARED_DIST)) return ["dist: absent"];
+  const signature: string[] = [];
+  const walk = (dir: string): void => {
+    const entries = fs
+      .readdirSync(dir, { withFileTypes: true })
+      .sort((a, b) => a.name.localeCompare(b.name));
+    for (const entry of entries) {
+      const entryPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walk(entryPath);
+      } else if (entry.isFile()) {
+        const stat = fs.statSync(entryPath);
+        signature.push(
+          `${path.relative(SHARED_DIST, entryPath)} size=${stat.size} ` +
+            `mtime=${stat.mtimeMs} inode=${stat.ino}`
+        );
+      }
+    }
+  };
+  walk(SHARED_DIST);
+  return signature;
+}
+
 /** Run one spec command verbatim through the shell, from the repository root. */
 function runSpecCommand(command: string, tmpDir: string): RunResult {
   try {
@@ -136,16 +233,23 @@ function runSpecCommand(command: string, tmpDir: string): RunResult {
   }
 }
 
-describe("flagship example spec: Verification Steps run verbatim", () => {
+describe("flagship example spec: Verification Steps run in order", () => {
   let markdown = "";
   let steps: VerificationStep[] = [];
   let tmpDir = "";
+  let scratchOutDir = "";
+  let distBefore: string[] = [];
+  const planned: PlannedStep[] = [];
   const outputs: RunResult[] = [];
 
   beforeAll(() => {
     markdown = fs.readFileSync(SPEC_PATH, "utf8");
     steps = parseVerificationSteps(markdown);
     tmpDir = fs.mkdtempSync(path.join(REPO_ROOT, ".tmp", "example-verify-"));
+    scratchOutDir = path.join(tmpDir, SCRATCH_OUT_SUBDIR);
+    // Captured BEFORE any spec step runs, so the last test below can prove the
+    // Compile step wrote nothing into the repo's shared dist/.
+    distBefore = distSignature();
   });
 
   afterAll(() => {
@@ -167,18 +271,58 @@ describe("flagship example spec: Verification Steps run verbatim", () => {
     ]);
   });
 
-  it("runs steps 1-3 verbatim, in order, each exiting 0", () => {
+  it("the Compile and Run steps are the commands this file redirects", () => {
+    // The redirect table is keyed by the spec's command text. If the spec
+    // renames or re-shapes either build-output command, this test is the
+    // place to say so — the alternative is silently executing an
+    // un-redirected `npm run build` and rebuilding the shared dist/ mid-run.
+    expect(
+      steps[1].body,
+      `Compile step is not the command this file knows how to redirect ` +
+        `(${COMPILE_COMMAND}); update SCRATCH_REDIRECTS and this expectation together`
+    ).toBe(COMPILE_COMMAND);
+    expect(
+      steps[2].body,
+      `Run step is not the command this file knows how to redirect ` +
+        `(${RUN_COMMAND}); update SCRATCH_REDIRECTS and this expectation together`
+    ).toBe(RUN_COMMAND);
+  });
+
+  it("runs steps 1-3 in order, each exiting 0", () => {
     // Step 4 is the assertion, not a command: running it is the next test.
     for (const step of steps.slice(0, 3)) {
-      const result = runSpecCommand(step.body, tmpDir);
+      const plan = planStep(step, scratchOutDir);
+      planned.push(plan);
+      const result = runSpecCommand(plan.command, tmpDir);
       outputs.push(result);
       expect(
         result.status,
-        `step ${step.n} (${step.label}) failed with exit ${result.status}: ${step.body}\n` +
+        `step ${step.n} (${step.label}) failed with exit ${result.status}: ${plan.command}\n` +
+          `(spec line: ${step.body})\n` +
           `--- stderr ---\n${result.stderr}\n--- stdout ---\n${result.stdout}`
       ).toBe(0);
     }
   }, 300_000);
+
+  it("compiled into this test's own outDir, not the repo's shared dist/", () => {
+    expect(
+      planned[1]?.command,
+      "the Compile step must send tsc's output to the scratch outDir, " +
+        "otherwise it rebuilds the dist/ that parallel test files read"
+    ).toContain(scratchOutDir);
+    expect(
+      fs.existsSync(path.join(scratchOutDir, COMPILED_ARTIFACT_REL)),
+      `the redirected Compile step did not emit ${COMPILED_ARTIFACT_REL} ` +
+        `into ${scratchOutDir} — the Run step would then be reading a stale ` +
+        `or missing artifact`
+    ).toBe(true);
+    expect(
+      distSignature(),
+      `the repo's shared dist/ changed during this test: the Compile step ` +
+        `rebuilt the tree that other test files read concurrently (torn reads / ` +
+        `EOF). It must write only to its own outDir (${scratchOutDir}).`
+    ).toEqual(distBefore);
+  });
 
   it("step 1 (Generate) still extracts the spec's single code block", () => {
     // The command is `speclang generate ... --dry-run`, whose contract is the
