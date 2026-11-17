@@ -256,18 +256,45 @@ Every spec has:
 - **References** (`@ref:`): Dependencies on other specs
 - **Headers**: Metadata for validation
 
-Example tree from `project.scl` (Layer 0):
+Example tree from `project.scl` (Layer 0) — every ref below is declared in `specs/project.scl`
+and resolves to a spec file that exists:
 ```
-project.scl (Layer 0)
-├── @ref:speclang/core (Layer 1)
-│   ├── @ref:speclang/auth (Layer 2)
-│   │   ├── specs/auth/implementation.spec.md (Layer 3)
-│   │   └── src/auth/handler.ts (Layer 8)
-│   └── @ref:speclang/database (Layer 2)
-│       └── src/db/client.ts (Layer 8)
-└── @ref:speclang/cascade (Layer 1)
-    └── specs/cascade-protocol.spec.md (Layer 1)
+specs/project.scl  (Layer 0, id: @northstar/speclang)
+│   23 refs — group headers are the layer each target spec declares in its own header
+├── Layer 0  (11 refs)
+│   ├── @ref:speclang/core                       → specs/core.spec.md
+│   ├── @ref:speclang/skills                     → specs/skills.spec.md
+│   ├── @ref:speclang/test-specs                 → specs/test-specs.spec.md
+│   ├── @ref:speclang/workflow                   → specs/workflow.spec.md
+│   ├── @ref:speclang/opencode                   → specs/opencode.spec.md
+│   ├── @ref:speclang/directory-structure        → specs/directory-structure.spec.md
+│   ├── @ref:speclang/dynamic-split              → specs/dynamic-split.spec.md
+│   ├── @ref:speclang/deployment                 → specs/deployment.spec.md
+│   ├── @ref:speclang/mcp-daemon                 → specs/mcp-daemon.spec.md
+│   ├── @ref:speclang/git-history                → specs/git-history.spec.md
+│   └── @ref:speclang/symlinks                   → specs/symlinks.spec.md
+├── Layer 1  (8 refs)
+│   ├── @ref:speclang/daemon                     → specs/daemon.spec.md
+│   ├── @ref:speclang/agent-protocol             → specs/agent-protocol.spec.md
+│   ├── @ref:speclang/pipeline                   → specs/pipeline.spec.md
+│   ├── @ref:speclang/file-naming                → specs/file-naming.spec.md
+│   ├── @ref:speclang/cascade                    → specs/cascade.spec.md
+│   ├── @ref:speclang/headers                    → specs/headers.spec.md
+│   ├── @ref:speclang/sqlite                     → specs/sqlite.spec.md
+│   └── @ref:speclang/mcp                        → specs/mcp.spec.md
+├── Layer 2  (1 ref)
+│   └── @ref:speclang/mcp-openapi-generation     → specs/mcp.spec.dir/openapi-generation.spec.md
+├── Layer 5  (2 refs)
+│   ├── @ref:speclang/recovery                   → specs/recovery.spec.md
+│   └── @ref:speclang/tools                      → specs/tools.spec.md
+└── Layer 10  (1 ref)
+    └── @ref:speclang/mcp-openapi-generation-cli → specs/mcp.spec.dir/openapi-generation-cli.ts.spec
 ```
+
+Refs are listed in declaration order within each layer group. A ref name is not always a
+filename: nested specs live in a `.spec.dir/` directory, so
+`@ref:speclang/mcp-openapi-generation` resolves to
+`specs/mcp.spec.dir/openapi-generation.spec.md`.
 
 ### 2. Cascade Traverses by Layer
 
@@ -295,14 +322,13 @@ The coordinator processes in layer order (0 → 1 → 2 → ... → 10):
 
 ### 3. Multi-Tree Spanning
 
-One spec change cascades across multiple output trees:
+One spec drives several output trees. For `specs/cascade.spec.md`, the trees present in this repo:
 
-| Input | Generates |
-|-------|-----------|
-| `specs/auth.spec.md` | `specs/auth/impl.spec.md` (spec tree) |
-| | `src/auth/handler.ts` (code tree) |
-| | `tests/auth.test.ts` (test tree) |
-| | `docs/api/auth.md` (docs tree) |
+| Input | Output trees |
+|-------|--------------|
+| `specs/cascade.spec.md` | `specs/cascade.spec.dir/` — child specs (`convergence.spec.md`, `triggers.spec.md`, …) plus the assembled `src/` (spec tree) |
+| | `src/cascade/` (code tree) |
+| | `tests/cascade/` (test tree) |
 
 ### 4. Verification Gates (Mandatory)
 
