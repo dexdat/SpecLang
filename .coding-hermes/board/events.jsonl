@@ -375,3 +375,4 @@
 {"id": 374, "timestamp": "2026-11-17T06:16:38.388465+00:00", "event_type": "task_completed", "task_id": "DF-SPECLANG-017", "actor": "foreman", "tick_number": null, "detail": "{\"status\":\"complete\"}"}
 {"id": 375, "timestamp": "2026-11-17T06:16:38.546486+00:00", "event_type": "task_completed", "task_id": "DF-SPECLANG-3-R4", "actor": "foreman", "tick_number": null, "detail": "{\"status\":\"complete\"}"}
 {"id": 376, "timestamp": "2026-11-17T06:16:38.777719+00:00", "event_type": "task_completed", "task_id": "DF-SPECLANG-018", "actor": "foreman", "tick_number": null, "detail": "{\"status\":\"complete\"}"}
+{"id": 377, "timestamp": "2026-11-17T06:17:01.091825+00:00", "event_type": "task_updated", "task_id": "INT-CI-2", "actor": "foreman", "tick_number": null, "detail": "{\"status\":\"pending\"}"}
