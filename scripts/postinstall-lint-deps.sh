@@ -10,6 +10,12 @@
 # surfaces later at runtime. This script asserts the binding loads and exits
 # non-zero with an actionable remedy when it does not.
 #
+# DF-SPECLANG-019: the npm >= 12 remedy printed below was run end-to-end on a
+# real npm 12.2.2 (better-sqlite3 12.11.1, Node 22.22.3) and works as printed.
+# The transcript, including the two traps called out in the remedy, is in
+# docs/npm12-allowscripts-probe.md; tests/npm12-remedy-doc.test.ts keeps this
+# text, the README section and that transcript on the same command strings.
+#
 # Usage:
 #   bash scripts/postinstall-lint-deps.sh                       # full postinstall
 #   bash scripts/postinstall-lint-deps.sh --sqlite-binding-only # just the gate
@@ -79,6 +85,11 @@ console.log("SELECT 1 -> " + JSON.stringify(row));
     echo "         npm rebuild better-sqlite3"
     echo "    3. Re-check:"
     echo "         npm run check:sqlite-binding"
+    echo ""
+    echo "  Note: \"npm rebuild\" exits 0 even while the install script is still blocked, so"
+    echo "  trust step 3, not its exit code. An explicit deny entry"
+    echo "  (\"better-sqlite3\": false) makes step 1 a no-op — delete that entry first."
+    echo "  Verified end-to-end on npm 12.2.2 — see docs/npm12-allowscripts-probe.md."
   else
     echo "  Cause: the dependency's install script did not run or failed (npm < 12 runs"
     echo "  install scripts by default, so the usual culprits are --ignore-scripts and a"
