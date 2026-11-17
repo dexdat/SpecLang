@@ -1,0 +1,242 @@
+{
+  "task_id": "DF-SPECLANG-018",
+  "task_title": "Widen mcp.test.ts 5s vitest timeout under fleet load",
+  "task_criteria": [
+    "tests/mcp.test.ts per-test 5000ms timeout raised to >=15000ms (and any sibling 5s test timeouts in that file); npx vitest run tests/mcp.test.ts exits 0"
+  ],
+  "passed": false,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "1354cc85d37ae86d079047292deefec6b6ce26bf",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "5ebd265dc4607587f4d94febd86f584b6e2980477657fbee420c5cc5d9824eb1",
+  "working_tree_dirty_path_count": 5,
+  "items": [
+    {
+      "criterion": "tests/mcp.test.ts per-test 5000ms timeout raised to >=15000ms (and any sibling 5s test timeouts in that file); npx vitest run tests/mcp.test.ts exits 0",
+      "status": "FAIL",
+      "detail": "No timeout change exists. `grep -nE \"5000|5_000|timeout|15000|15_000\" tests/mcp.test.ts` returns exactly one hit \u2014 tests/mcp.test.ts:66 `expect(DEFAULT_MCP_CONFIG.limits?.queryTimeoutMs).toBe(5000);` \u2014 which is a config-value assertion, not a test timeout. There are no per-test timeout arguments anywhere in the 407-line file (`grep -nE \"it\\(|test\\(\" tests/mcp.test.ts | grep -E \"[0-9]{4,}\"` \u2192 no matches), so there is no 5000ms per-test timeout to raise and no sibling 5s timeouts either. `git log --oneline -- tests/mcp.test.ts` shows the last change was 0ed92385 (DF-SPECLANG-4-R4); the HEAD commit 1354cc85 touches only .coding-hermes/board/{events,tasks}.jsonl. The board record for DF-SPECLANG-018 is still `\"status\":\"in_progress\"` with acceptance criteria demanding an explicit generous testTimeout at tests/mcp.test.ts:184 \u2014 nothing was implemented. The run half does hold: `npx vitest run tests/mcp.test.ts` \u2192 EXIT_CODE=0, \"Test Files 1 passed (1) / Tests 33 passed (33)\", but it passes only because of the pre-existing global vitest.config.ts:27 `testTimeout: 30_000` (added under QA-SPECLANG-4), not because of any work in this task."
+    }
+  ],
+  "merge_recommendation": "changes_required",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  01:02:07",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T060118.680575Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T060118.680575Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  01:02:07\n   Duration  22.86s (transform 7.24s, setup 2.10s, import 11.59s, tests 107.98s, environment 12ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T060208.624235Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": false,
+      "any_failed": true,
+      "summary": "INCOMPLETE\n  \u2717 tests/mcp.test.ts per-test 5000ms timeout raised to >=15000ms (and any sibling 5s test timeouts in that file); npx vitest run tests/mcp.test.ts exits 0: No timeout change exists. `grep -nE \"5000|5_000|timeout|15000|15_000\" tests/mcp.test.ts` returns exactly one hit \u2014 tests/mcp.test.ts:66 `expect(DEFAULT_MCP_CONFIG.limits?.queryTimeoutMs).toBe(5000);` \u2014 which is a config-value assertion, not a test timeout. There are no per-test timeout arguments anywhere in the 407-line file (`grep -nE \"it\\(|test\\(\" tests/mcp.test.ts | grep -E \"[0-9]{4,}\"` \u2192 no matches), so there is no 5000ms per-test timeout to raise and no sibling 5s timeouts either. `git log --oneline -- tests/mcp.test.ts` shows the last change was 0ed92385 (DF-SPECLANG-4-R4); the HEAD commit 1354cc85 touches only .coding-hermes/board/{events,tasks}.jsonl. The board record for DF-SPECLANG-018 is still `\"status\":\"in_progress\"` with acceptance criteria demanding an explicit generous testTimeout at tests/mcp.test.ts:184 \u2014 nothing was implemented. The run half does hold: `npx vitest run tests/mcp.test.ts` \u2192 EXIT_CODE=0, \"Test Files 1 passed (1) / Tests 33 passed (33)\", but it passes only because of the pre-existing global vitest.config.ts:27 `testTimeout: 30_000` (added under QA-SPECLANG-4), not because of any work in this task.\n  \u2717 Coverage FAILED \u2014 not passing: tests/mcp.test.ts per-test 5000ms timeout raised to >=15000ms (and any sibling 5s test timeouts in that file); npx vitest run tests/mcp.test.ts exits 0\nThe required timeout widening was never made \u2014 tests/mcp.test.ts contains no per-test timeout at all (the only \"5000\" is a config assertion at line 66) and no commit for DF-SPECLANG-018 touched the file; the file passes (exit 0, 33/33) solely on the pre-existing global 30s testTimeout in vitest.config.ts:27. [uncovered failure paths: failure mode 0 (Task is marked complete with zero code change; the load-sensitive flake at tests/mcp.test.ts:184 is only masked by the global 30s testTimeout, so any future tightening of vitest.config.ts testTimeout re-exposes it): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": false,
+          "output": "INCOMPLETE\n  \u2717 tests/mcp.test.ts per-test 5000ms timeout raised to >=15000ms (and any sibling 5s test timeouts in that file); npx vitest run tests/mcp.test.ts exits 0: No timeout change exists. `grep -nE \"5000|5_000|timeout|15000|15_000\" tests/mcp.test.ts` returns exactly one hit \u2014 tests/mcp.test.ts:66 `expect(DEFAULT_MCP_CONFIG.limits?.queryTimeoutMs).toBe(5000);` \u2014 which is a config-value assertion, not a test timeout. There are no per-test timeout arguments anywhere in the 407-line file (`grep -nE \"it\\(|test\\(\" tests/mcp.test.ts | grep -E \"[0-9]{4,}\"` \u2192 no matches), so there is no 5000ms per-test timeout to raise and no sibling 5s timeouts either. `git log --oneline -- tests/mcp.test.ts` shows the last change was 0ed92385 (DF-SPECLANG-4-R4); the HEAD commit 1354cc85 touches only .coding-hermes/board/{events,tasks}.jsonl. The board record for DF-SPECLANG-018 is still `\"status\":\"in_progress\"` with acceptance criteria demanding an explicit generous testTimeout at tests/mcp.test.ts:184 \u2014 nothing was implemented. The run half does hold: `npx vitest run tests/mcp.test.ts` \u2192 EXIT_CODE=0, \"Test Files 1 passed (1) / Tests 33 passed (33)\", but it passes only because of the pre-existing global vitest.config.ts:27 `testTimeout: 30_000` (added under QA-SPECLANG-4), not because of any work in this task.\n  \u2717 Coverage FAILED \u2014 not passing: tests/mcp.test.ts per-test 5000ms timeout raised to >=15000ms (and any sibling 5s test timeouts in that file); npx vitest run tests/mcp.test.ts exits 0\nThe required timeout widening was never made \u2014 tests/mcp.test.ts contains no per-test timeout at all (the only \"5000\" is a config assertion at line 66) and no commit for DF-SPECLANG-018 touched the file; the file passes (exit 0, 33/33) solely on the pre-existing global 30s testTimeout in vitest.config.ts:27. [uncovered failure paths: failure mode 0 (Task is marked complete with zero code change; the load-sensitive flake at tests/mcp.test.ts:184 is only masked by the global 30s testTimeout, so any future tightening of vitest.config.ts testTimeout re-exposes it): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "INCOMPLETE",
+            "items": [
+              {
+                "criterion": "tests/mcp.test.ts per-test 5000ms timeout raised to >=15000ms (and any sibling 5s test timeouts in that file); npx vitest run tests/mcp.test.ts exits 0",
+                "status": "FAIL",
+                "detail": "No timeout change exists. `grep -nE \"5000|5_000|timeout|15000|15_000\" tests/mcp.test.ts` returns exactly one hit \u2014 tests/mcp.test.ts:66 `expect(DEFAULT_MCP_CONFIG.limits?.queryTimeoutMs).toBe(5000);` \u2014 which is a config-value assertion, not a test timeout. There are no per-test timeout arguments anywhere in the 407-line file (`grep -nE \"it\\(|test\\(\" tests/mcp.test.ts | grep -E \"[0-9]{4,}\"` \u2192 no matches), so there is no 5000ms per-test timeout to raise and no sibling 5s timeouts either. `git log --oneline -- tests/mcp.test.ts` shows the last change was 0ed92385 (DF-SPECLANG-4-R4); the HEAD commit 1354cc85 touches only .coding-hermes/board/{events,tasks}.jsonl. The board record for DF-SPECLANG-018 is still `\"status\":\"in_progress\"` with acceptance criteria demanding an explicit generous testTimeout at tests/mcp.test.ts:184 \u2014 nothing was implemented. The run half does hold: `npx vitest run tests/mcp.test.ts` \u2192 EXIT_CODE=0, \"Test Files 1 passed (1) / Tests 33 passed (33)\", but it passes only because of the pre-existing global vitest.config.ts:27 `testTimeout: 30_000` (added under QA-SPECLANG-4), not because of any work in this task.",
+                "resolution_probability": 0.01,
+                "cited_path": "tests/mcp.test.ts"
+              }
+            ],
+            "summary": "The required timeout widening was never made \u2014 tests/mcp.test.ts contains no per-test timeout at all (the only \"5000\" is a config assertion at line 66) and no commit for DF-SPECLANG-018 touched the file; the file passes (exit 0, 33/33) solely on the pre-existing global 30s testTimeout in vitest.config.ts:27. [uncovered failure paths: failure mode 0 (Task is marked complete with zero code change; the load-sensitive flake at tests/mcp.test.ts:184 is only masked by the global 30s testTimeout, so any future tightening of vitest.config.ts testTimeout re-exposes it): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-018\"}",
+          "exit_code": 0,
+          "output_sha": "78368f1b15c89730e16a0a2584070bd8f345d943f65b5d9c47533e04e99764ff"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && cat .gitreins/config.yaml 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "8e02d471864fd968f67e68f35b8c5ddd2025333adaffcf9b68ad6e956675386c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; pwd; git log --oneline -5; git status --short | head -20",
+          "exit_code": 0,
+          "output_sha": "cb4a55d5ef62189434ba56a9055a9c461366448baeda604f4c6cea2c8d03981a"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"5000\\|15000\\|timeout\" tests/mcp.test.ts | head -50; echo \"---\"; wc -l tests/mcp.test.ts",
+          "exit_code": 0,
+          "output_sha": "7a2266f61b2441c1065b371e763fbd181497d1b3c68fff12e7888e78eebadb4e"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; git log --oneline -5; git status --short | head -20",
+          "exit_code": 0,
+          "output_sha": "8419c40c80fc7c95a6e5cbaa13c337b093f68b7f8cb4a03d754305df69e30151"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/mcp.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "d4a4ae987ff5faa37f0add9a8f32cd5f62ec3a21a80fc5196dda020f0d00815a"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 30, \"offset\": 380, \"path\": \"tests/mcp.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "093dccda84836f1b2948d3088b9d1064cb7cc9b0e2ce0a811b8ad974090c6168"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"testTimeout\\|hookTimeout\" vitest.config.* package.json 2>/dev/null; echo \"--- config files:\"; ls vitest.config.* 2>/dev/null; echo \"--- git log for mcp.test.ts:\"; git log --oneline -8 -- tests/mcp.test.ts",
+          "exit_code": 0,
+          "output_sha": "aefb4fa73807f83af4d788599b5deed9e3ac2bf9682c9d805b2e39bda533fe1a"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"vitest.config.ts\"}",
+          "exit_code": 0,
+          "output_sha": "dde9510599e0fa0656e4c3f55c320902aa6de516a59a7a258b8dc2de163f0107"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"5000\\|5_000\\|, 5000\\|timeout\" tests/mcp.test.ts; echo \"=== exit $?\"; echo \"--- any per-test timeout args in file:\"; grep -nE \"it\\(|test\\(\" tests/mcp.test.ts | grep -E \"[0-9]{4,}\" ; echo \"=== none means no numeric timeout args\"",
+          "exit_code": 0,
+          "output_sha": "914c6619bce27b83d40d3cf8bc1d7c96b5431b56b974e6009916a76feaa6ffaa"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"tests/mcp.test.ts (407 lines) contains NO per-test timeout declarations at all. Only \\\"5000\\\" occurrence is line 66: expect(DEFAULT_MCP_CONFIG.limits?.queryTimeoutMs).toBe(5000) \\u2014 a config assertion, not a test timeout. No `it(..., N)` numeric timeout args. vitest.config.ts:27-28 sets testTimeout/hookTimeout 30_000 globally. git log for tests/mcp.test.ts: last change 0ed92385 (DF-SPECLANG-4-R4), i.e. no commit for DF-SPECLANG-018 touched this file. Last commit 1354cc85 only touched .coding-hermes/board files.\", \"key\": \"exploration\"}",
+          "exit_code": 0,
+          "output_sha": "7f57b8c5db7ce53818f9d9cd1527eb3fc7b758d53e77f86103b77faea322e064"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npx vitest run tests/mcp.test.ts 2>&1 | tail -25; echo \"EXIT_CODE=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "bca37e7b23e2b78b460a9c02845ae7eae42074bb5323bbbd9c0e498ad75b7c73"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npx vitest run tests/mcp.test.ts > /tmp/mcp_out.txt 2>&1; echo \"EXIT_CODE=$?\"; tail -8 /tmp/mcp_out.txt",
+          "exit_code": 0,
+          "output_sha": "1d4c288706e8faf30b12dedd10a39aa81f0ff78106738b452573a61d42a06ddd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git log --oneline -3 --stat | head -30; echo \"=== board task record:\"; grep -o '{\"id\":\"DF-SPECLANG-018\"[^}]*}' .coding-hermes/board/tasks.jsonl | head -2",
+          "exit_code": 0,
+          "output_sha": "f92fd6937adb98cf49f67e91cd910411787d7884e171b4fdf4f71a79a55598ce"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"15000\\|15_000\" tests/mcp.test.ts; echo \"grep_exit=$?\"; echo \"--- diff of last 3 commits touching tests/:\"; git log --oneline -3 --name-only -- tests/ | head -20",
+          "exit_code": 0,
+          "output_sha": "0f1cc47142ca76d6d6a422ac2ff88e17e4616fb46c91eb091ad82f9de80f88a5"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FAIL: tests/mcp.test.ts has no per-test timeout at all \\u2014 grep for \\\"5000|5_000|timeout|15000|15_000\\\" returns only line 66 `expect(DEFAULT_MCP_CONFIG.limits?.queryTimeoutMs).toBe(5000)` (a config assertion, not a test timeout). No `it(name, fn, N)` numeric timeout args anywhere in the 407-line file. No commit for DF-SPECLANG-018 touched tests/mcp.test.ts (git log -- tests/mcp.test.ts: last = 0ed92385). Last commit 1354cc85 only touched .coding-hermes/board files. Board record for DF-SPECLANG-018 still status \\\"in_progress\\\" with acceptance criteria requiring an explicit generous testTimeout at tests/mcp.test.ts:184 \\u2014 nothing was changed. The only reason the file does not time out is the global vitest.config.ts:27 testTimeout: 30_000, which predates this task (QA-SPECLANG-4). Test run: `npx vitest run tests/mcp.test.ts` EXIT_CODE=0, \\\"Test Files 1 passed (1) / Tests 33 passed (33)\\\" \\u2014 the run half of the criterion holds, but the required timeout change was never made.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "e3b2d8def89225dbf67124c6b3a8f8659c3f31cd05f931426e57328d41b8de8e"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "medium",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 148,
+        "detection": "task marked status=complete while worker_status remains 'pending'",
+        "detail": "DF-SPECLANG-017 is flipped to \"status\":\"complete\" but the same row still carries \"worker_status\":\"pending\", an inconsistent state the surrounding completed rows (e.g. DF-SPECLANG-016) do not exhibit."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 148,
+        "detection": "completed task records ci_result=SKIP with no recorded reason",
+        "detail": "The row sets \"ci_result\":\"SKIP\" while the sibling completed row DF-SPECLANG-016 records \"ci_result\":\"GREEN\", so the completion is recorded without a green CI signal."
+      }
+    ],
+    "summary": "Board bookkeeping only: DF-SPECLANG-017 is marked complete while its worker_status is still pending and CI is skipped, an internally inconsistent completion record."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  01:02:07\n\nStage tier2: FAIL\n  INCOMPLETE\n  \u2717 tests/mcp.test.ts per-test 5000ms timeout raised to >=15000ms (and any sibling 5s test timeouts in that file); npx vitest run tests/mcp.test.ts exits 0: No timeout change exists. `grep -nE \"5000|5_000|timeout|15000|15_000\" tests/mcp.test.ts` returns exactly one hit \u2014 tests/mcp.test.ts:66 `expect(DEFAULT_MCP_CONFIG.limits?.queryTimeoutMs).toBe(5000);` \u2014 which is a config-value assertion, not a test timeout. There are no per-test timeout arguments anywhere in the 407-line file (`grep -nE \"it\\(|test\\(\" tests/mcp.test.ts | grep -E \"[0-9]{4,}\"` \u2192 no matches), so there is no 5000ms per-test timeout to raise and no sibling 5s timeouts either. `git log --oneline -- tests/mcp.test.ts` shows the last change was 0ed92385 (DF-SPECLANG-4-R4); the HEAD commit 1354cc85 touches only .coding-hermes/board/{events,tasks}.jsonl. The board record for DF-SPECLANG-018 is still `\"status\":\"in_progress\"` with acceptance criteria demanding an explicit generous testTimeout at tests/mcp.test.ts:184 \u2014 nothing was implemented. The run half does hold: `npx vitest run tests/mcp.test.ts` \u2192 EXIT_CODE=0, \"Test Files 1 passed (1) / Tests 33 passed (33)\", but it passes only because of the pre-existing global vitest.config.ts:27 `testTimeout: 30_000` (added under QA-SPECLANG-4), not because of any work in this task.\n  \u2717 Coverage FAILED \u2014 not passing: tests/mcp.test.ts per-test 5000ms timeout raised to >=15000ms (and any sibling 5s test timeouts in that file); npx vitest run tests/mcp.test.ts exits 0\nThe required timeout widening was never made \u2014 tests/mcp.test.ts contains no per-test timeout at all (the only \"5000\" is a config assertion at line 66) and no commit for DF-SPECLANG-018 touched the file; the file passes (exit 0, 33/33) solely on the pre-existing global 30s testTimeout in vitest.config.ts:27. [uncovered failure paths: failure mode 0 (Task is marked complete with zero code change; the load-sensitive flake at tests/mcp.test.ts:184 is only masked by the global 30s testTimeout, so any future tightening of vitest.config.ts testTimeout re-exposes it): detected_by is empty \u2014 uncovered failure path]\n\nOverall: FAIL \u2717",
+  "evaluated_at": "2026-11-17T06:03:05.056895",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T06:03:05.082992+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 18116,
+        "truncated": false,
+        "source": "git show 1354cc85d37a"
+      }
+    ],
+    "task_id": "DF-SPECLANG-018"
+  }
+}
