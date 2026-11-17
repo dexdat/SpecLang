@@ -42,6 +42,66 @@ function removeDaemonPidFile(pidFile) {
   }
 }
 
+// QA-SPECLANG-5: `speclang status` is a report about the project's REAL state, so
+// it has to open the state database. It used to never touch the DB at all, which
+// meant a corrupt `.speclang/speclang.db` produced a cheerful "Daemon: Not
+// running" and exit 0 — a silently wrong answer. The library's single guarded
+// open path lives in src/db/index.ts; this CLI is plain CommonJS that has to run
+// before `npm run build`, so it applies the same SQLite probe here and prints the
+// same diagnostic. tests/db/corrupt-state-db.test.ts pins both to one wording.
+function isNotADatabaseError(err) {
+  const code = err && err.code;
+  const message = String((err && err.message) || '');
+  return code === 'SQLITE_NOTADB' || /file is not a database/i.test(message);
+}
+
+function corruptStateDatabaseMessage(dbPath) {
+  return [
+    `The SpecLang state database is corrupt or not a SQLite database: ${dbPath}`,
+    "SpecLang cannot read this project's state from that file, so it refuses to continue",
+    'rather than report a status that unreadable state does not back.',
+    '',
+    'Recovery: back the file up if you need it as evidence, then delete it so SpecLang',
+    'rebuilds a fresh database on the next run. The full fresh-start procedure is in',
+    'docs/troubleshooting.md -> "Emergency Recovery":',
+    `  rm -f ${dbPath}`,
+  ].join('\n');
+}
+
+// Returns the diagnostic text when the state DB exists but cannot be read as
+// SQLite, and null when there is nothing wrong (a missing file is fresh state).
+function stateDatabaseProblem(dbPath) {
+  if (!fs.existsSync(dbPath)) return null;
+  let Database;
+  try {
+    Database = require('better-sqlite3');
+  } catch (err) {
+    // Dependencies are not installed yet: there is nothing to probe with, and
+    // status must keep working (it is how you diagnose that situation).
+    if (err.code === 'MODULE_NOT_FOUND') return null;
+    throw err;
+  }
+  let db;
+  try {
+    db = new Database(dbPath);
+    // better-sqlite3 opens lazily: this statement, not the constructor, reads the
+    // file header and raises SQLITE_NOTADB for a file that is not a database.
+    db.pragma('user_version');
+    return null;
+  } catch (err) {
+    if (isNotADatabaseError(err)) return corruptStateDatabaseMessage(dbPath);
+    throw err;
+  } finally {
+    if (db) {
+      try {
+        db.close();
+      } catch (_) {
+        // Nothing to release for a file that was never a database.
+      }
+    }
+  }
+}
+
 // DF-SPECLANG-5-R5: `speclang history` is a read-only report, so a repository
 // with no commits yet (a fresh `git init`, i.e. an *unborn* HEAD) and a
 // directory outside any repository are EMPTY ANSWERS, not crashes. Before this
@@ -266,7 +326,18 @@ program
   .option('-d, --dir <directory>', 'Project directory', '.')
   .action(async (options) => {
     const projectDir = path.resolve(options.dir);
-    
+
+    // QA-SPECLANG-5: probe the state DB before printing anything. A corrupt file
+    // must not be reported as "everything normal" — it exits non-zero instead.
+    const stateDbPath = process.env.SPECLANG_DB
+      ? path.resolve(process.env.SPECLANG_DB)
+      : path.join(projectDir, '.speclang', 'speclang.db');
+    const stateDbProblem = stateDatabaseProblem(stateDbPath);
+    if (stateDbProblem) {
+      console.error(`❌ ${stateDbProblem}`);
+      process.exit(1);
+    }
+
     console.log('📊 SpecLang Status');
     console.log(`   Project: ${projectDir}`);
     
