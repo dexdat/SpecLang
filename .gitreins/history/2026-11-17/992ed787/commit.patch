@@ -1,0 +1,60 @@
+commit c73c0d65fd847c522afc1bc465f08156c7401e4d
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 04:12:14 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 04:27:52 2026 -0500
+
+    fix(test): poll for the child-written PID file in the arch002 start test
+    
+    Foreman follow-up to 8cb2f5b0. The first ARCH-002 test still asserted
+    `fs.pathExists(PID_FILE)` immediately after `start -d` returned, but the PID file
+    is written by the DETACHED CHILD (`writePidFile` in bin/speclangd), not by the
+    parent that exits. That is the same runner-speed dependency the rest of the file
+    just dropped: on a cold 2-core runner the child can lose the race before it even
+    loads, so the test would flake in the opposite direction from the status test.
+    
+    Now it uses the file's own `waitForPidFile` helper (20s bounded poll) and, as a
+    strictly stronger assertion, checks the polled PID equals the PID the parent
+    reported on stdout. Budget 10s -> 30s to match the bounded deadline.
+    
+    Verified on the merged tree at loadavg ~114 (16 cores):
+      npx vitest run tests/daemon/arch002-background-daemon.test.ts  3 consecutive
+      runs -> Test Files 1 passed (1) / Tests 4 passed (4)
+      npm run build -> 0, npx tsc --noEmit -> 0
+      npm test -> exit 0, Test Files 111 passed | 4 skipped (115),
+                  Tests 1937 passed | 58 skipped (1995)
+    
+    Task: UX-002
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+---
+ tests/daemon/arch002-background-daemon.test.ts | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/tests/daemon/arch002-background-daemon.test.ts b/tests/daemon/arch002-background-daemon.test.ts
+index 761af000..aac11ad1 100644
+--- a/tests/daemon/arch002-background-daemon.test.ts
++++ b/tests/daemon/arch002-background-daemon.test.ts
+@@ -284,15 +284,16 @@ describe("ARCH-002 — background daemon mode", () => {
+     expect(exitCode).toBe(0);
+     expect(stdout).toMatch(/started in background \(PID \d+\)/);
+ 
+-    // PID file should exist within a fraction of a second of start.
+-    expect(await fs.pathExists(PID_FILE)).toBe(true);
+-    const pid = parseInt(await fs.readFile(PID_FILE, "utf-8"), 10);
+-    expect(Number.isFinite(pid)).toBe(true);
+-    expect(pid).toBeGreaterThan(0);
++    // The PID file is written by the detached CHILD (writePidFile in
++    // bin/speclangd), not by the parent that just exited, so its appearance is
++    // asynchronous — poll it instead of assuming the child won the race.
++    const pid = await waitForPidFile(TEST_PROJECT);
++    const reported = parseInt(/PID (\d+)/.exec(stdout)![1], 10);
++    expect(pid).toBe(reported);
+ 
+     // The PID should correspond to a live node process.
+     expect(isAlive(pid)).toBe(true);
+-  }, 10000);
++  }, 30000);
+ 
+   it("status reports the running daemon without instantiating a new one", async () => {
+     await runCli(["start", "-d"], TEST_PROJECT);
