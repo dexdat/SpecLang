@@ -44,26 +44,56 @@ interface Migration {
 
 ### Migrations
 
+The list below mirrors `src/db/migrations.ts` (the implementation is authoritative).
+Earlier drafts listed "Version 3: Vector Search" and "Version 4: Graph Traversal"; neither
+ever shipped as its own migration (`content_embedding` is created in version 1), so they are
+no longer listed as applied versions.
+
 **Version 1: Initial Schema**
 - Create specs table
 - Create sessions table
-- Create events table
-- Create commands table
+- Create events table (includes `cascade_id`)
+- Create commands table (includes `cascade_id`)
 - Create locks table
 - Create recovery table
 - Create specs_fts virtual table for FTS
 
-**Version 2: Cascade Support**
-- Add cascade_id to events table
-- Add cascade_id to commands table
+**Version 2: Add events.processed**
+- Add `processed INTEGER NOT NULL DEFAULT 0` to events
+- Create index `idx_events_processed_timestamp (processed, timestamp)`
 
-**Version 3: Vector Search**
-- Add content_embedding column to specs
-- Create specs_vec virtual table (if using sqlite-vss)
+**Version 3: Cascades**
+- Create the `cascades` table used by the MCP cascade / dashboard / status / SSE tools
+- Column set is the union of what the code actually reads and writes:
+  `root_trigger` + `created_at` (mcp `tools/cascade.ts`), `started_at` + `converged_at`
+  (SSE convergence polling, mcp server), `root_trigger_file` (original signed DDL)
+- Create indexes on `status`, `started_at`, `converged_at`, `root_trigger_file`
+- Generated to `src/migrations/003_cascades.sql`
 
-**Version 4: Graph Traversal**
-- Create specs_graph table for relationships
-- Add indexes for graph queries
+## @block:sqlite/migrations/cascades-ddl
+
+### Cascades Table DDL
+
+Source of `src/migrations/003_cascades.sql`. Keep the column set in sync with
+`migrations.ts` version 3 — a mismatch means the MCP tools 500 at runtime.
+
+```sql
+CREATE TABLE IF NOT EXISTS cascades (
+  cascade_id TEXT PRIMARY KEY,
+  depth INTEGER DEFAULT 0,
+  status TEXT DEFAULT 'active',
+  started_at INTEGER,
+  created_at INTEGER,
+  converged_at INTEGER,
+  root_trigger TEXT,
+  root_trigger_file TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_cascades_status ON cascades(status);
+CREATE INDEX IF NOT EXISTS idx_cascades_started_at ON cascades(started_at);
+CREATE INDEX IF NOT EXISTS idx_cascades_converged_at ON cascades(converged_at);
+CREATE INDEX IF NOT EXISTS idx_cascades_root_trigger_file ON cascades(root_trigger_file);
+```
 
 ## @block:sqlite/migrations/api
 

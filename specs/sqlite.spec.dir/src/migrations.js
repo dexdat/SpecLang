@@ -168,6 +168,41 @@ const migrations = [
         CREATE INDEX IF NOT EXISTS idx_events_processed_timestamp ON events(processed, timestamp);
       `);
         }
+    },
+    {
+        version: 3,
+        name: 'cascades',
+        up: (db) => {
+            // Cascade tracking. Column set is the UNION of what the consumers actually
+            // read/write: root_trigger + created_at (mcp tools/cascade.ts), started_at +
+            // converged_at (sse.ts, mcp server polling) and root_trigger_file (spec DDL).
+            db.exec(`
+        CREATE TABLE IF NOT EXISTS cascades (
+          cascade_id TEXT PRIMARY KEY,
+          depth INTEGER DEFAULT 0,
+          status TEXT DEFAULT 'active',
+          started_at INTEGER,
+          created_at INTEGER,
+          converged_at INTEGER,
+          root_trigger TEXT,
+          root_trigger_file TEXT
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_cascades_status ON cascades(status);
+        CREATE INDEX IF NOT EXISTS idx_cascades_started_at ON cascades(started_at);
+        CREATE INDEX IF NOT EXISTS idx_cascades_converged_at ON cascades(converged_at);
+        CREATE INDEX IF NOT EXISTS idx_cascades_root_trigger_file ON cascades(root_trigger_file);
+      `);
+        },
+        down: (db) => {
+            db.exec(`
+        DROP INDEX IF EXISTS idx_cascades_status;
+        DROP INDEX IF EXISTS idx_cascades_started_at;
+        DROP INDEX IF EXISTS idx_cascades_converged_at;
+        DROP INDEX IF EXISTS idx_cascades_root_trigger_file;
+        DROP TABLE IF EXISTS cascades;
+      `);
+        }
     }
 ];
 exports.migrations = migrations;
