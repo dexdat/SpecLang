@@ -175,6 +175,8 @@ empty string is a value, not a fallback.
 | `SPECLANG_PROVIDER` | agent | `openai` | `src/cascade/agent.ts:106` | Active provider. Matching is by prefix, case-insensitive: `openai`, `openrouter`, `anthropic`, `google` or `gemini`; anything else throws `Unsupported LLM provider` (`src/cascade/provider-adapter.ts:20-33`) before a request is built. Overridden by `--provider`. |
 | `SPECLANG_MODEL` | agent | per provider: `gpt-5-mini`, `openai/gpt-5-mini`, `claude-sonnet-4-5`, `gemini-2.5-pro` | `src/cascade/agent.ts:108` | Model id sent to the active provider; the defaults table is `DEFAULT_MODELS` (`src/cascade/agent.ts:46-51`). Overridden by `--model`. Because the read uses `??`, `SPECLANG_MODEL=` sends an empty model id. |
 | `SPECLANG_BASE_URL` | agent | per provider: `https://api.openai.com`, `https://openrouter.ai/api`, `https://api.anthropic.com`, `https://generativelanguage.googleapis.com` | `src/cascade/agent.ts:113` | API base URL; trailing slashes are stripped (`src/cascade/agent.ts:86-88`) before the provider path is appended. Defaults table: `DEFAULT_BASE_URLS` (`src/cascade/agent.ts:53-58`). Overridden by `--base-url`. |
+| `SPECLANG_BIN` | agent | unset → `<repo>/bin/speclang`, then `speclang` on `PATH` | `src/cascade/coordinator/invocation.ts:81` | Overrides the CLI executable the cascade coordinator shells out to. The candidate list is env value, then the repo-local `bin/speclang` resolved from the module's own path, then bare `speclang` on `PATH`, tried in that order until one runs (`src/cascade/coordinator/invocation.ts:78-88`). Set it when the coordinator runs embedded and no `speclang` is on `PATH`. |
+| `SPECLANG_AGENT_TIMEOUT_MS` | agent | `900000` (15 minutes) | `src/cascade/coordinator/invocation.ts:90` | Per-invocation timeout for one agent session, read through `Number(...)`. Real sessions routinely run for minutes, which is why the default is 15 min. Because the parse is plain `Number()`, a non-numeric value becomes `NaN` and every invocation times out immediately. |
 | `OPENAI_API_KEY` | agent | required for `provider=openai` — no default | `src/cascade/agent.ts:76` | Credential for OpenAI, sent as `Authorization: Bearer`. A real run with no key throws `Missing API key for openai…` (`src/cascade/agent.ts:214-219`) before any network call; `--dry-run` works without it. |
 | `OPENROUTER_API_KEY` | agent | required for `provider=openrouter` — no default | `src/cascade/agent.ts:78` | Credential for OpenRouter, sent as `Authorization: Bearer`. Same missing-key behaviour. |
 | `ANTHROPIC_API_KEY` | agent | required for `provider=anthropic` — no default | `src/cascade/agent.ts:80` | Credential for Anthropic, sent as `x-api-key` (`src/cascade/agent.ts:118-130`). Same missing-key behaviour. |
@@ -284,6 +286,10 @@ HOME=/home/<your-user>
 SPECLANG_PROVIDER=openai
 SPECLANG_MODEL=
 SPECLANG_BASE_URL=
+# Optional: CLI the cascade coordinator shells out to (default: the repo's bin/speclang).
+SPECLANG_BIN=
+# Optional: per-invocation agent timeout in ms (default 900000 = 15 min). Must be numeric.
+SPECLANG_AGENT_TIMEOUT_MS=900000
 OPENAI_API_KEY=<your-openai-key-here>
 OPENROUTER_API_KEY=<your-openrouter-key-here>
 ANTHROPIC_API_KEY=<your-anthropic-key-here>
