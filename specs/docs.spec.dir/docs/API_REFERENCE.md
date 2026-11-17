@@ -147,7 +147,11 @@ console.log(report.passed);                 // true for a valid spec
 | `speclang new <name>` | Create a new spec |
 | `speclang init <name>` | Create spec scaffolding in the current project (name = spec name → `specs/<name>/<name>.spec.md`, `--tiers` for 4-tier meta/plan/ts/test) |
 | `speclang expand <block-id>` | Expand a block |
-| `speclang history [spec]` | Git-backed spec change history (`--format text\|json\|timeline`, `--stat`, `--blame`, `--compare v1..v2`) |
+| `speclang search <query>` | Search across all specs (`--kind <type>` filter by block kind, `--tag <tag>` filter by tag, `--limit <n>` max results — default 20, `--verbose`; short flags `-k`, `-t`, `-l`, `-v`) |
+| `speclang maturity [spec]` | Show maturity level info, or validate `[spec]` against a level (`--level <level>` show one level, `--json` JSON output, `--verbose` show detailed criteria) |
+| `speclang upgrade <spec>` | Upgrade a spec to a higher maturity level (`--to <level>` target, e.g. Beta or Production; `--json` JSON output; `--plan` show the plan without executing) |
+| `speclang downgrade <spec>` | Downgrade a spec to a lower maturity level (`--to <level>` target; `--json` JSON output; `--plan` show the plan without executing) |
+| `speclang history\|log [spec]` | Git-backed spec change history (`--all` include non-spec changes, `--block <id>` filter by block ID, `--author <name>`, `--since <date>`, `--until <date>`, `--compare v1..v2`, `--format text\|json\|timeline` — default `text`, `--follow` follow renames, `--stat` diff statistics, `--blame` line-level attribution; short flags `-a`, `-b`, `-f`) |
 
 `speclang history` is a read-only report, so "there is nothing to report" is a
 message, not a crash:
