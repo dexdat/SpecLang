@@ -1,0 +1,439 @@
+{
+  "task_id": "PERF-001",
+  "task_title": "PERF-001: resolve tsx binary directly instead of npx in tests/cli.test.ts + pin tsx in devDependencies",
+  "task_criteria": [
+    "tests/cli.test.ts resolves the CLI runner through node_modules/.bin/tsx (no 'npx tsx' in the CLI constant)",
+    "package.json devDependencies pins tsx 4.23.15 and node_modules/.bin/tsx exists after install",
+    "TMPDIR=$PWD/.tmp npx vitest run tests/cli.test.ts --reporter=dot passes the whole file (43 passed | 2 skipped with the current test set; 41 passed | 2 skipped was the count at the row base commit, 2 tests were added later by e570bfcf) and is materially faster than the npx arm: back-to-back on the same host, npx 32.20s at loadavg 18.74 vs direct binary 22.46s at loadavg 17.85 (row baseline 38.90s with no local tsx installed)"
+  ],
+  "passed": true,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "4d110c6c7d2fef224156f2c1fbf09d2db0db373a",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "4323d715967855eb5502d32ef05e9c7e3471f2f3c61d4a12a7c57895a5429b0c",
+  "working_tree_dirty_path_count": 7,
+  "items": [
+    {
+      "criterion": "tests/cli.test.ts resolves the CLI runner through node_modules/.bin/tsx (no 'npx tsx' in the CLI constant)",
+      "status": "PASS",
+      "detail": "tests/cli.test.ts:127 `const TSX_BIN = path.join(REPO_ROOT, \"node_modules\", \".bin\", \"tsx\");` and :128 `const CLI = `${TSX_BIN} --tsconfig ${tmpConfigPath} ${path.join(REPO_ROOT, \"src\", \"cli\", \"index.ts\")}`;`. `grep -n \"npx\" tests/cli.test.ts` returns only line 125, a comment (\"invoke the repo-local tsx binary directly instead of via `npx`\"). Commit c1be3bf9's diff shows the removed line `-const CLI = `npx tsx --tsconfig ...`` replaced by the TSX_BIN form. All 40+ cliExec call sites (lines 143-537) interpolate `${CLI}`. [resolution 0.03; tests/cli.test.ts]"
+    },
+    {
+      "criterion": "package.json devDependencies pins tsx 4.23.15 and node_modules/.bin/tsx exists after install",
+      "status": "PASS",
+      "detail": "package.json:88 `\"tsx\": \"4.23.15\"` (exact pin, no caret) inside devDependencies; package-lock.json:47 root devDependencies tsx 4.23.15 and packages[\"node_modules/tsx\"].version = 4.23.15. Installed: `node -e require('./node_modules/tsx/package.json').version` -> 4.23.15; `ls -la node_modules/.bin/tsx` -> `node_modules/.bin/tsx -> ../tsx/dist/cli.mjs`; `node_modules/.bin/tsx --version` -> `tsx v4.23.15`; `npm ls tsx` -> `tsx@4.23.15 deduped`. [resolution 0.03; package.json]"
+    },
+    {
+      "criterion": "TMPDIR=$PWD/.tmp npx vitest run tests/cli.test.ts --reporter=dot passes the whole file (43 passed | 2 skipped with the current test set; 41 passed | 2 skipped was the count at the row base commit, 2 tests were added later by e570bfcf) and is materially faster than the npx arm: back-to-back on the same host, npx 32.20s at loadavg 18.74 vs direct binary 22.46s at loadavg 17.85 (row baseline 38.90s with no local tsx installed)",
+      "status": "PASS",
+      "detail": "Direct-binary arm: `env TMPDIR=$PWD/.tmp npx vitest run tests/cli.test.ts --reporter=dot` -> `Test Files  1 passed (1)` / `Tests  43 passed | 2 skipped (45)` / `Duration  22.25s` (wall 22.84s, loadavg 23.47). npx arm measured back-to-back on the same host by temporarily restoring `npx tsx` in the CLI constant (then reverted; `git status --porcelain tests/ package.json package-lock.json` empty): `Tests  43 passed | 2 skipped (45)` / `Duration  29.48s` (wall 30.03s, loadavg 20.01). Direct binary is ~7.2s (~24%) faster despite running at higher load, matching the task's claimed direction (32.20s vs 22.46s). [resolution 0.03; tests/cli.test.ts]"
+    },
+    {
+      "criterion": "The direct-binary CLI constant still actually runs the CLI (spawn succeeds and every CLI test passes, i.e. the change did not break the runner)",
+      "status": "PASS",
+      "detail": "Same run as criterion 3: `Tests  43 passed | 2 skipped (45)` with 0 failures and `Test Files  1 passed (1)`; the 2 skips are pre-existing `it.skip` for unimplemented `search --json`/`--quiet` (tests/cli.test.ts:148,156). No ENOENT/spawn errors in output.",
+      "derived": true
+    },
+    {
+      "criterion": "The pinned tsx is installed by the repo's CI install path so node_modules/.bin/tsx exists in CI, not only on this host",
+      "status": "PASS",
+      "detail": ".github/workflows/ci.yml:50 `run: npm ci`; package-lock.json:47 pins root devDependency tsx 4.23.15 and packages[\"node_modules/tsx\"] 4.23.15, so `npm ci` materialises node_modules/.bin/tsx (bin entry `tsx: dist/cli.mjs` at package-lock.json:7029). `npm ls tsx` -> `tsx@4.23.15 deduped`.",
+      "derived": true
+    },
+    {
+      "criterion": "No other path that the CLI test runner depends on still spawns `npx tsx` (the optimisation is not silently bypassed)",
+      "status": "PASS",
+      "detail": "Repo-wide `grep -rn \"npx tsx\"` (excluding node_modules/.tmp/.vfs/.gitreins/history) returns only scripts/e2e/seed-to-artifacts.sh:31 and the comment at scripts/e2e/seed-to-artifacts.driver.ts:4 \u2014 an unrelated e2e driver, not the CLI runner. bin/speclang (used via CLI_BIN) contains no `npx tsx` (only ts-node hints at bin/speclang:142,203).",
+      "derived": true
+    },
+    {
+      "criterion": "Verification left the working tree unmodified (no leftover mutation of the test file or manifests)",
+      "status": "PASS",
+      "detail": "After the temporary npx-arm experiment the file was restored from backup; `git status --porcelain tests/ package.json package-lock.json` returns empty output, and tests/cli.test.ts:127-128 again show the TSX_BIN form.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  21:34:50",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T021933.792425Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T021933.792425Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  21:34:50\n   Duration  32.21s (transform 28.45s, setup 4.20s, import 40.30s, tests 118.55s, environment 16ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T021933.792425Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 tests/cli.test.ts resolves the CLI runner through node_modules/.bin/tsx (no 'npx tsx' in the CLI constant): tests/cli.test.ts:127 `const TSX_BIN = path.join(REPO_ROOT, \"node_modules\", \".bin\", \"tsx\");` and :128 `const CLI = `${TSX_BIN} --tsconfig ${tmpConfigPath} ${path.join(REPO_ROOT, \"src\", \"cli\", \"index.ts\")}`;`. `grep -n \"npx\" tests/cli.test.ts` returns only line 125, a comment (\"invoke the repo-local tsx binary directly instead of via `npx`\"). Commit c1be3bf9's diff shows the removed line `-const CLI = `npx tsx --tsconfig ...`` replaced by the TSX_BIN form. All 40+ cliExec call sites (lines 143-537) interpolate `${CLI}`. [resolution 0.03; tests/cli.test.ts]\n  \u2713 package.json devDependencies pins tsx 4.23.15 and node_modules/.bin/tsx exists after install: package.json:88 `\"tsx\": \"4.23.15\"` (exact pin, no caret) inside devDependencies; package-lock.json:47 root devDependencies tsx 4.23.15 and packages[\"node_modules/tsx\"].version = 4.23.15. Installed: `node -e require('./node_modules/tsx/package.json').version` -> 4.23.15; `ls -la node_modules/.bin/tsx` -> `node_modules/.bin/tsx -> ../tsx/dist/cli.mjs`; `node_modules/.bin/tsx --version` -> `tsx v4.23.15`; `npm ls tsx` -> `tsx@4.23.15 deduped`. [resolution 0.03; package.json]\n  \u2713 TMPDIR=$PWD/.tmp npx vitest run tests/cli.test.ts --reporter=dot passes the whole file (43 passed | 2 skipped with the current test set; 41 passed | 2 skipped was the count at the row base commit, 2 tests were added later by e570bfcf) and is materially faster than the npx arm: back-to-back on the same host, npx 32.20s at loadavg 18.74 vs direct binary 22.46s at loadavg 17.85 (row baseline 38.90s with no local tsx installed): Direct-binary arm: `env TMPDIR=$PWD/.tmp npx vitest run tests/cli.test.ts --reporter=dot` -> `Test Files  1 passed (1)` / `Tests  43 passed | 2 skipped (45)` / `Duration  22.25s` (wall 22.84s, loadavg 23.47). npx arm measured back-to-back on the same host by temporarily restoring `npx tsx` in the CLI constant (then reverted; `git status --porcelain tests/ package.json package-lock.json` empty): `Tests  43 passed | 2 skipped (45)` / `Duration  29.48s` (wall 30.03s, loadavg 20.01). Direct binary is ~7.2s (~24%) faster despite running at higher load, matching the task's claimed direction (32.20s vs 22.46s). [resolution 0.03; tests/cli.test.ts]\n  \u2713 The direct-binary CLI constant still actually runs the CLI (spawn succeeds and every CLI test passes, i.e. the change did not break the runner): Same run as criterion 3: `Tests  43 passed | 2 skipped (45)` with 0 failures and `Test Files  1 passed (1)`; the 2 skips are pre-existing `it.skip` for unimplemented `search --json`/`--quiet` (tests/cli.test.ts:148,156). No ENOENT/spawn errors in output.\n  \u2713 The pinned tsx is installed by the repo's CI install path so node_modules/.bin/tsx exists in CI, not only on this host: .github/workflows/ci.yml:50 `run: npm ci`; package-lock.json:47 pins root devDependency tsx 4.23.15 and packages[\"node_modules/tsx\"] 4.23.15, so `npm ci` materialises node_modules/.bin/tsx (bin entry `tsx: dist/cli.mjs` at package-lock.json:7029). `npm ls tsx` -> `tsx@4.23.15 deduped`.\n  \u2713 No other path that the CLI test runner depends on still spawns `npx tsx` (the optimisation is not silently bypassed): Repo-wide `grep -rn \"npx tsx\"` (excluding node_modules/.tmp/.vfs/.gitreins/history) returns only scripts/e2e/seed-to-artifacts.sh:31 and the comment at scripts/e2e/seed-to-artifacts.driver.ts:4 \u2014 an unrelated e2e driver, not the CLI runner. bin/speclang (used via CLI_BIN) contains no `npx tsx` (only ts-node hints at bin/speclang:142,203).\n  \u2713 Verification left the working tree unmodified (no leftover mutation of the test file or manifests): After the temporary npx-arm experiment the file was restored from backup; `git status --porcelain tests/ package.json package-lock.json` returns empty output, and tests/cli.test.ts:127-128 again show the TSX_BIN form.\nPERF-001 is delivered: tests/cli.test.ts:127-128 spawns the repo-local node_modules/.bin/tsx, package.json:88 pins tsx 4.23.15 (installed, lockfile-consistent), and the file passes 43 passed | 2 skipped in 22.25s versus 29.48s for the npx arm measured back-to-back on the same host. [uncovered failure paths: failure mode 0 (node_modules/.bin/tsx missing (e.g. install run with --omit=dev or a stale node_modules) makes every CLI spawn fail with ENOENT instead of falling back to npx): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 tests/cli.test.ts resolves the CLI runner through node_modules/.bin/tsx (no 'npx tsx' in the CLI constant): tests/cli.test.ts:127 `const TSX_BIN = path.join(REPO_ROOT, \"node_modules\", \".bin\", \"tsx\");` and :128 `const CLI = `${TSX_BIN} --tsconfig ${tmpConfigPath} ${path.join(REPO_ROOT, \"src\", \"cli\", \"index.ts\")}`;`. `grep -n \"npx\" tests/cli.test.ts` returns only line 125, a comment (\"invoke the repo-local tsx binary directly instead of via `npx`\"). Commit c1be3bf9's diff shows the removed line `-const CLI = `npx tsx --tsconfig ...`` replaced by the TSX_BIN form. All 40+ cliExec call sites (lines 143-537) interpolate `${CLI}`. [resolution 0.03; tests/cli.test.ts]\n  \u2713 package.json devDependencies pins tsx 4.23.15 and node_modules/.bin/tsx exists after install: package.json:88 `\"tsx\": \"4.23.15\"` (exact pin, no caret) inside devDependencies; package-lock.json:47 root devDependencies tsx 4.23.15 and packages[\"node_modules/tsx\"].version = 4.23.15. Installed: `node -e require('./node_modules/tsx/package.json').version` -> 4.23.15; `ls -la node_modules/.bin/tsx` -> `node_modules/.bin/tsx -> ../tsx/dist/cli.mjs`; `node_modules/.bin/tsx --version` -> `tsx v4.23.15`; `npm ls tsx` -> `tsx@4.23.15 deduped`. [resolution 0.03; package.json]\n\n\u2026 [1897 chars omitted \u2014 3 line(s)] \u2026\n  \u2713 No other path that the CLI test runner depends on still spawns `npx tsx` (the optimisation is not silently bypassed): Repo-wide `grep -rn \"npx tsx\"` (excluding node_modules/.tmp/.vfs/.gitreins/history) returns only scripts/e2e/seed-to-artifacts.sh:31 and the comment at scripts/e2e/seed-to-artifacts.driver.ts:4 \u2014 an unrelated e2e driver, not the CLI runner. bin/speclang (used via CLI_BIN) contains no `npx tsx` (only ts-node hints at bin/speclang:142,203).\n  \u2713 Verification left the working tree unmodified (no leftover mutation of the test file or manifests): After the temporary npx-arm experiment the file was restored from backup; `git status --porcelain tests/ package.json package-lock.json` returns empty output, and tests/cli.test.ts:127-128 again show the TSX_BIN form.\nPERF-001 is delivered: tests/cli.test.ts:127-128 spawns the repo-local node_modules/.bin/tsx, package.json:88 pins tsx 4.23.15 (installed, lockfile-consistent), and the file passes 43 passed | 2 skipped in 22.25s versus 29.48s for the npx arm measured back-to-back on the same host. [uncovered failure paths: failure mode 0 (node_modules/.bin/tsx missing (e.g. install run with --omit=dev or a stale node_modules) makes every CLI spawn fail with ENOENT instead of falling back to npx): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "tests/cli.test.ts resolves the CLI runner through node_modules/.bin/tsx (no 'npx tsx' in the CLI constant)",
+                "status": "PASS",
+                "detail": "tests/cli.test.ts:127 `const TSX_BIN = path.join(REPO_ROOT, \"node_modules\", \".bin\", \"tsx\");` and :128 `const CLI = `${TSX_BIN} --tsconfig ${tmpConfigPath} ${path.join(REPO_ROOT, \"src\", \"cli\", \"index.ts\")}`;`. `grep -n \"npx\" tests/cli.test.ts` returns only line 125, a comment (\"invoke the repo-local tsx binary directly instead of via `npx`\"). Commit c1be3bf9's diff shows the removed line `-const CLI = `npx tsx --tsconfig ...`` replaced by the TSX_BIN form. All 40+ cliExec call sites (lines 143-537) interpolate `${CLI}`. [resolution 0.03; tests/cli.test.ts]",
+                "resolution_probability": 0.03,
+                "cited_path": "tests/cli.test.ts"
+              },
+              {
+                "criterion": "package.json devDependencies pins tsx 4.23.15 and node_modules/.bin/tsx exists after install",
+                "status": "PASS",
+                "detail": "package.json:88 `\"tsx\": \"4.23.15\"` (exact pin, no caret) inside devDependencies; package-lock.json:47 root devDependencies tsx 4.23.15 and packages[\"node_modules/tsx\"].version = 4.23.15. Installed: `node -e require('./node_modules/tsx/package.json').version` -> 4.23.15; `ls -la node_modules/.bin/tsx` -> `node_modules/.bin/tsx -> ../tsx/dist/cli.mjs`; `node_modules/.bin/tsx --version` -> `tsx v4.23.15`; `npm ls tsx` -> `tsx@4.23.15 deduped`. [resolution 0.03; package.json]",
+                "resolution_probability": 0.03,
+                "cited_path": "package.json"
+              },
+              {
+                "criterion": "TMPDIR=$PWD/.tmp npx vitest run tests/cli.test.ts --reporter=dot passes the whole file (43 passed | 2 skipped with the current test set; 41 passed | 2 skipped was the count at the row base commit, 2 tests were added later by e570bfcf) and is materially faster than the npx arm: back-to-back on the same host, npx 32.20s at loadavg 18.74 vs direct binary 22.46s at loadavg 17.85 (row baseline 38.90s with no local tsx installed)",
+                "status": "PASS",
+                "detail": "Direct-binary arm: `env TMPDIR=$PWD/.tmp npx vitest run tests/cli.test.ts --reporter=dot` -> `Test Files  1 passed (1)` / `Tests  43 passed | 2 skipped (45)` / `Duration  22.25s` (wall 22.84s, loadavg 23.47). npx arm measured back-to-back on the same host by temporarily restoring `npx tsx` in the CLI constant (then reverted; `git status --porcelain tests/ package.json package-lock.json` empty): `Tests  43 passed | 2 skipped (45)` / `Duration  29.48s` (wall 30.03s, loadavg 20.01). Direct binary is ~7.2s (~24%) faster despite running at higher load, matching the task's claimed direction (32.20s vs 22.46s). [resolution 0.03; tests/cli.test.ts]",
+                "resolution_probability": 0.03,
+                "cited_path": "tests/cli.test.ts"
+              },
+              {
+                "criterion": "The direct-binary CLI constant still actually runs the CLI (spawn succeeds and every CLI test passes, i.e. the change did not break the runner)",
+                "status": "PASS",
+                "detail": "Same run as criterion 3: `Tests  43 passed | 2 skipped (45)` with 0 failures and `Test Files  1 passed (1)`; the 2 skips are pre-existing `it.skip` for unimplemented `search --json`/`--quiet` (tests/cli.test.ts:148,156). No ENOENT/spawn errors in output.",
+                "derived": true
+              },
+              {
+                "criterion": "The pinned tsx is installed by the repo's CI install path so node_modules/.bin/tsx exists in CI, not only on this host",
+                "status": "PASS",
+                "detail": ".github/workflows/ci.yml:50 `run: npm ci`; package-lock.json:47 pins root devDependency tsx 4.23.15 and packages[\"node_modules/tsx\"] 4.23.15, so `npm ci` materialises node_modules/.bin/tsx (bin entry `tsx: dist/cli.mjs` at package-lock.json:7029). `npm ls tsx` -> `tsx@4.23.15 deduped`.",
+                "derived": true
+              },
+              {
+                "criterion": "No other path that the CLI test runner depends on still spawns `npx tsx` (the optimisation is not silently bypassed)",
+                "status": "PASS",
+                "detail": "Repo-wide `grep -rn \"npx tsx\"` (excluding node_modules/.tmp/.vfs/.gitreins/history) returns only scripts/e2e/seed-to-artifacts.sh:31 and the comment at scripts/e2e/seed-to-artifacts.driver.ts:4 \u2014 an unrelated e2e driver, not the CLI runner. bin/speclang (used via CLI_BIN) contains no `npx tsx` (only ts-node hints at bin/speclang:142,203).",
+                "derived": true
+              },
+              {
+                "criterion": "Verification left the working tree unmodified (no leftover mutation of the test file or manifests)",
+                "status": "PASS",
+                "detail": "After the temporary npx-arm experiment the file was restored from backup; `git status --porcelain tests/ package.json package-lock.json` returns empty output, and tests/cli.test.ts:127-128 again show the TSX_BIN form.",
+                "derived": true
+              }
+            ],
+            "summary": "PERF-001 is delivered: tests/cli.test.ts:127-128 spawns the repo-local node_modules/.bin/tsx, package.json:88 pins tsx 4.23.15 (installed, lockfile-consistent), and the file passes 43 passed | 2 skipped in 22.25s versus 29.48s for the npx arm measured back-to-back on the same host. [uncovered failure paths: failure mode 0 (node_modules/.bin/tsx missing (e.g. install run with --omit=dev or a stale node_modules) makes every CLI spawn fail with ENOENT instead of falling back to npx): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"PERF-001\"}",
+          "exit_code": 0,
+          "output_sha": "628c68d328e91486b9de39b87afa523137a79e308913023029dfea30cfa85354"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && cat package.json",
+          "exit_code": 0,
+          "output_sha": "f66de8288b2304af42951e99773b365d071a31b23fd0cd65439bf869128380d2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat tests/cli.test.ts | head -80; echo \"-----\"; grep -n \"npx\\|tsx\\|CLI\" tests/cli.test.ts | head -60",
+          "exit_code": 0,
+          "output_sha": "a00738f6a0226e498436043d21647e5b447b772037003611e8177fadefbd079e"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la node_modules/.bin/tsx 2>&1; echo \"---\"; cat node_modules/tsx/package.json 2>/dev/null | head -20; echo \"---\"; ls tests/ | head -50",
+          "exit_code": 0,
+          "output_sha": "0464623a08ab387c94046c52a478180ecc093020814e54da4383a0df4c023d5b"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 80,200p tests/cli.test.ts",
+          "exit_code": 0,
+          "output_sha": "351b90924872bc31ac737a6e21e723da65ff7fd88af08725e434be99932f30e2"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"npx tsx\\|\\.bin/tsx\" --include=*.ts --include=*.js --include=*.json --include=*.md . 2>/dev/null | grep -v node_modules | grep -v \"^./.tmp\" | head -40",
+          "exit_code": 0,
+          "output_sha": "71ff2b0dc978a66f4b20e9a269dda4897be2fe1e3005454bc4a89db93f47baa0"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 118,160p tests/cli.test.ts",
+          "exit_code": 0,
+          "output_sha": "fe1ae2398877a552ddcfbf54c026717ae0f539a6463ec4b2fb0f0a78efca9dbf"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"CLI_BIN\\|cliExec\\|TSX_BIN\\|const CLI\" tests/cli.test.ts | head -40",
+          "exit_code": 0,
+          "output_sha": "bb8cb0e6bc39743a81d339d622d696faa59cc46bd703f1fb282be774d989e613"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Criterion 1: tests/cli.test.ts:127-128 TSX_BIN = path.join(REPO_ROOT,'node_modules','.bin','tsx'); CLI = `${TSX_BIN} --tsconfig ... src/cli/index.ts`. No 'npx tsx' in CLI constant. Need to confirm no other npx usage in file.\", \"key\": \"c1\"}",
+          "exit_code": 0,
+          "output_sha": "044cbb1ae0017bb4167493c9e7d6b55f7606408668b47876bda4e7e69c778dcd"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"npx\" tests/cli.test.ts; echo \"exit=$?\"; echo \"--- git log for file\"; git log --oneline -5 -- tests/cli.test.ts; echo \"--- diff of PERF-001 commit\"; git log --oneline -20 | head -20",
+          "exit_code": 0,
+          "output_sha": "b29f82604915cd7f4db050475764702fc683c65ad7e236ec643aeff5a22537e8"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show c1be3bf9 --stat; echo \"=== DIFF ===\"; git show c1be3bf9 -- tests/cli.test.ts package.json package-lock.json | head -120",
+          "exit_code": 0,
+          "output_sha": "43abc60aa112cab89e8f79ba9fbd64e7185d6314d931b84bc1cdb19057410bab"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show c1be3bf9 -- tests/cli.test.ts package.json",
+          "exit_code": 0,
+          "output_sha": "616cca0238b19d628754f52830934192ddf57a85e59ea710ca16eabed08a2260"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat .gitreins/config.yaml 2>/dev/null | head -40; echo \"---\"; cat vitest.config.ts 2>/dev/null | head -60",
+          "exit_code": 0,
+          "output_sha": "d7f354c95c30dfddcbcc40e9b2644ed51a59eee0dcfc1eec614b5319e5316ee9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang 2>/dev/null || cd \"$PWD\"; pwd; uptime; time TMPDIR=$PWD/.tmp npx vitest run tests/cli.test.ts --reporter=dot 2>&1 | tail -40",
+          "exit_code": 0,
+          "output_sha": "4cd069785be8531d84e8d60fb2a7c7f8fbf79b40b3d99df31f6e8684821fc0a1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && time env TMPDIR=$PWD/.tmp npx vitest run tests/cli.test.ts --reporter=dot 2>&1 | tail -40",
+          "exit_code": 0,
+          "output_sha": "52a25a95403b01d3a4ff43fa12fb420c54c70ca7cd6a572300f39095f4863faa"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Criterion 3: `env TMPDIR=$PWD/.tmp npx vitest run tests/cli.test.ts --reporter=dot` -> Test Files 1 passed (1); Tests 43 passed | 2 skipped (45); Duration 22.25s; wall 22.84s at loadavg 23.47. Matches expected 43 passed | 2 skipped and ~22.46s direct-binary arm. Need npx-arm comparison for \\\"materially faster\\\".\", \"key\": \"c3\"}",
+          "exit_code": 0,
+          "output_sha": "b16f7dfbf4aaeb4c41ebd1f6972bdbf52cd9a50d965c0a0bf49b2d39cb906595"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cp tests/cli.test.ts /tmp/cli.test.ts.bak && sed -i 's|^const CLI = `${TSX_BIN} --tsconfig|const CLI = `npx tsx --tsconfig|' tests/cli.test.ts && sed -n 125,130p tests/cli.test.ts",
+          "exit_code": 0,
+          "output_sha": "3dd3751826d18e0af245a2964e2cec63c13dfdc8d0aa64c3eb841b639ff3e4fb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && uptime && time env TMPDIR=$PWD/.tmp npx vitest run tests/cli.test.ts --reporter=dot 2>&1 | tail -12",
+          "exit_code": 0,
+          "output_sha": "5108a7dc5eec71317864838b97d2822cee65eb7eba3083c23bec76dbb9c2e135"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cp /tmp/cli.test.ts.bak tests/cli.test.ts && git status --porcelain && sed -n 125,130p tests/cli.test.ts",
+          "exit_code": 0,
+          "output_sha": "569144763d4b049c0ef2da4af5248e14ee34a87891dccf7b54ae8e1b6350f36e"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Criterion 3 (cont): npx arm measured back-to-back on same host: 29.48s Duration / 30.03s wall at loadavg 20.01 vs direct-binary arm 22.25s Duration / 22.84s wall at loadavg 23.47 (higher load!). npx arm ~7.2s slower (~24%). Both arms: 43 passed | 2 skipped (45). Matches task's claimed 32.20s vs 22.46s direction. File restored to committed state (git status shows no tests/cli.test.ts modification).\", \"key\": \"c3b\"}",
+          "exit_code": 0,
+          "output_sha": "dcac265012dd023f2c429bef823b2c0c4e195d2dc485e9d1256af42bd8cdb9ae"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n '\"tsx\"' package.json package-lock.json | head -10; echo \"--- lock root devDeps\"; python3 -c \"\nimport json\nd=json.load(open('package-lock.json'))\nprint('root devDeps tsx:', d['packages']['']['devDependencies'].get('tsx'))\nprint('node_modules/tsx:', d['packages'].get('node_modules/tsx',{}).get('version'))\n\"; echo \"--- installed\"; node -e \"console.log(require('./node_modules/tsx/package.json').version)\"; ls -la node_modules/.bin/tsx; node_modules/.bin/tsx --version",
+          "exit_code": 0,
+          "output_sha": "f44a854759e9711d00759ae51b4797f403ba5b37874b8b5da8d98fe65674af46"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Criterion 2: package.json:88 \\\"tsx\\\": \\\"4.23.15\\\" (exact pin, no caret) in devDependencies; package-lock.json:47 root devDeps tsx 4.23.15; node_modules/tsx version 4.23.15; node_modules/.bin/tsx -> ../tsx/dist/cli.mjs exists; `node_modules/.bin/tsx --version` -> tsx v4.23.15. PASS.\", \"key\": \"c2\"}",
+          "exit_code": 0,
+          "output_sha": "6e7995a1258438051fe3c45d92c4e53e919545111c40133dee8e6c80221fc059"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"cli.test.ts\\|tests/cli.test\" --include=*.ts --include=*.json --include=*.yaml --include=*.yml --include=*.sh . 2>/dev/null | grep -v node_modules | grep -v \"^./.tmp\" | grep -v \"^./.gitreins/history\" | head -20",
+          "exit_code": 0,
+          "output_sha": "098afcc28de4bdbafd4a8c79d2efc065dbb2754358d7d8529da7261f674672d1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 455,500p .gitreins/tasks.yaml",
+          "exit_code": 0,
+          "output_sha": "45a54563057bb747c861bf184b9c1345299ad7ccbb9fc78416718a28fec982d9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"npx tsx\" --include=*.ts --include=*.js --include=*.mjs --include=*.sh --include=*.json . 2>/dev/null | grep -v node_modules | grep -v \"^./.tmp\" | grep -v \"^./.gitreins/history\" | grep -v \"^./.vfs\" | head -20",
+          "exit_code": 0,
+          "output_sha": "224b3ce8fb221203234b40d04173515cd915c0be1a810c47e619f90fa9d2de29"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"npx\\|tsx\" bin/speclang | head -20; echo \"--- head\"; head -20 bin/speclang",
+          "exit_code": 0,
+          "output_sha": "5ac8676f1dbdafad6e197f219c5e315bd3a27bdcdf733907131baf3db14d0bed"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"tsx\" .github/workflows/*.yml 2>/dev/null | head -20; echo \"---\"; ls .github/workflows/",
+          "exit_code": 0,
+          "output_sha": "e8df0eb5bd6dc05ad9ae6fe5ce26de9eb97e32e6a2b010efe6055c15672f25c3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"npm ci\\|npm install\\|vitest\\|test\" .github/workflows/ci.yml | head -30",
+          "exit_code": 0,
+          "output_sha": "f46fd2b210c1c42c53a31cbcf7be254bc622e8310dac4360c6bcee60598e532e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"node_modules/.bin\\|\\.bin/tsx\" --include=*.ts --include=*.js --include=*.mjs . 2>/dev/null | grep -v node_modules | grep -v \"^./.tmp\" | grep -v \"^./.vfs\" | head -20",
+          "exit_code": 0,
+          "output_sha": "67e4066e00ce5ec5e966fc12418ed839928a92ac9964ae6d349e5aac0d6e1dfd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n '\"test\"\\|\"test:' package.json | head -10; echo \"--- npm ci dry check\"; npm ls tsx 2>&1 | head -10",
+          "exit_code": 0,
+          "output_sha": "08df2b0bf41d6e04cfe968bd24f71c85caa01bc116ea276a595c044eece4a236"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Criterion 1: tests/cli.test.ts:127-128 TSX_BIN = path.join(REPO_ROOT,\\\"node_modules\\\",\\\".bin\\\",\\\"tsx\\\"); CLI = `${TSX_BIN} --tsconfig ... src/cli/index.ts`. grep -n \\\"npx\\\" tests/cli.test.ts -> only line 125 comment. Commit c1be3bf9 diff shows the change from `npx tsx --tsconfig ...`. PASS.\\nDerived checks: bin/speclang has no npx tsx (only ts-node hints at 142/203); CI uses npm ci (ci.yml:50) so node_modules/.bin/tsx exists in CI; npm ls tsx -> tsx@4.23.15 deduped.\", \"key\": \"c1b\"}",
+          "exit_code": 0,
+          "output_sha": "7137e2bcf90de658f617237c5ce742e8de1015a7a67f7d1f7f1e5237bb1d06a2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git status --porcelain tests/ package.json package-lock.json; echo \"clean-check-done\"",
+          "exit_code": 0,
+          "output_sha": "526405722ad3746fb0a35dd22314afbc850280bacf24ed4241c92b2d0acba1a4"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Derived criteria:\\nd0: The direct-binary CLI constant must still actually run the CLI (spawn succeeds, tests pass) \\u2014 verified: 43 passed | 2 skipped, 0 failed.\\nd1: The pinned tsx must be installed by the repo's CI install path (npm ci) so node_modules/.bin/tsx exists in CI \\u2014 ci.yml:50 `run: npm ci`; package-lock.json:47 root devDeps tsx 4.23.15; npm ls tsx -> tsx@4.23.15 deduped.\\nd2: No other test/CLI path in the repo still depends on `npx tsx` for the CLI runner (bin/speclang, other tests) \\u2014 grep: only scripts/e2e/seed-to-artifacts.sh:31 and its driver comment; bin/speclang has no npx tsx (only ts-node hints at 142/203). Out of scope of the task (task names tests/cli.test.ts only).\\nd3: Working tree left clean / no leftover mutation from verification \\u2014 git status --porcelain tests/ package.json package-lock.json -> empty.\\n\", \"key\": \"derived\"}",
+          "exit_code": 0,
+          "output_sha": "cb3a32be21858fe33d636dbef9881d01b51db8490dff6800c22f55593ad0decc"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"verified_0 PASS: tests/cli.test.ts:127-128 TSX_BIN=node_modules/.bin/tsx; CLI uses ${TSX_BIN}; grep \\\"npx\\\" only line 125 comment; commit c1be3bf9 diff removes `npx tsx`.\\nverified_1 PASS: package.json:88 \\\"tsx\\\": \\\"4.23.15\\\"; package-lock.json:47 root devDeps 4.23.15; node_modules/tsx 4.23.15; node_modules/.bin/tsx -> ../tsx/dist/cli.mjs; `node_modules/.bin/tsx --version` -> tsx v4.23.15.\\nverified_2 PASS: `env TMPDIR=$PWD/.tmp npx vitest run tests/cli.test.ts --reporter=dot` -> Test Files 1 passed (1); Tests 43 passed | 2 skipped (45); Duration 22.25s (wall 22.84s, loadavg 23.47). npx arm (temporarily reverted CLI constant, then restored): Tests 43 passed | 2 skipped (45); Duration 29.48s (wall 30.03s, loadavg 20.01). ~7.2s / ~24% faster at higher load.\\nverified_derived_0 PASS: same run, 0 failures.\\nverified_derived_1 PASS: ci.yml:50 npm ci; lockfile pins tsx 4.23.15; npm ls tsx -> tsx@4.23.15 deduped.\\nverified_derived_2 PASS: grep npx tsx repo-wide -> only scripts/e2e/seed-to-artifacts.sh:31 + driver comment (unrelated e2e script, not the CLI runner).\\nverified_derived_3 PASS: git status --porcelain tests/ package.json package-lock.json -> empty after restoring the file.\\n\", \"key\": \"verified_all\"}",
+          "exit_code": 0,
+          "output_sha": "0caadb3d7d68e2b5ad522b56d79d12471efa7d614a86af0078215dac50d1f87f"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "high",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 76,
+        "detection": "field type changed from string to object for an existing schema key",
+        "detail": "DF-SPECLANG-5-R5's `detail` field was a plain string in every other row but is now an object `{\"evidence\":[...],\"text\":\"...\"}`, so any consumer that reads `detail` as a string (grep, jq `.detail`, display) will break or render `[object Object]`."
+      },
+      {
+        "severity": "medium",
+        "file": ".coding-hermes/board/events.jsonl",
+        "line": 356,
+        "detection": "event timestamp precedes the timestamps of earlier-appended events",
+        "detail": "New event id 355 is timestamped 2026-11-17T02:34:48 but the preceding rows (ids 352-354) are 2026-11-17T00:17 and id 354 is 2026-11-16T19:44, so the log is no longer monotonic in time and any time-ordered replay will misorder the completion."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/events.jsonl",
+        "line": 356,
+        "detection": "event detail encodes status as a JSON string while sibling rows use the same shape inconsistently",
+        "detail": "id 355 writes `\"detail\": \"{\\\"status\\\":\\\"complete\\\"}\"` (JSON-encoded string) whereas id 354 writes `detail` as plain prose, so the detail column has no consistent encoding for consumers to parse."
+      }
+    ],
+    "summary": "The board update flips DF-SPECLANG-5-R5 to complete but changes its `detail` field from string to object and appends a completion event whose timestamp is out of order with the log."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  21:34:50\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 tests/cli.test.ts resolves the CLI runner through node_modules/.bin/tsx (no 'npx tsx' in the CLI constant): tests/cli.test.ts:127 `const TSX_BIN = path.join(REPO_ROOT, \"node_modules\", \".bin\", \"tsx\");` and :128 `const CLI = `${TSX_BIN} --tsconfig ${tmpConfigPath} ${path.join(REPO_ROOT, \"src\", \"cli\", \"index.ts\")}`;`. `grep -n \"npx\" tests/cli.test.ts` returns only line 125, a comment (\"invoke the repo-local tsx binary directly instead of via `npx`\"). Commit c1be3bf9's diff shows the removed line `-const CLI = `npx tsx --tsconfig ...`` replaced by the TSX_BIN form. All 40+ cliExec call sites (lines 143-537) interpolate `${CLI}`. [resolution 0.03; tests/cli.test.ts]\n  \u2713 package.json devDependencies pins tsx 4.23.15 and node_modules/.bin/tsx exists after install: package.json:88 `\"tsx\": \"4.23.15\"` (exact pin, no caret) inside devDependencies; package-lock.json:47 root devDependencies tsx 4.23.15 and packages[\"node_modules/tsx\"].version = 4.23.15. Installed: `node -e require('./node_modules/tsx/package.json').version` -> 4.23.15; `ls -la node_modules/.bin/tsx` -> `node_modules/.bin/tsx -> ../tsx/dist/cli.mjs`; `node_modules/.bin/tsx --version` -> `tsx v4.23.15`; `npm ls tsx` -> `tsx@4.23.15 deduped`. [resolution 0.03; package.json]\n  \u2713 TMPDIR=$PWD/.tmp npx vitest run tests/cli.test.ts --reporter=dot passes the whole file (43 passed | 2 skipped with the current test set; 41 passed | 2 skipped was the count at the row base commit, 2 tests were added later by e570bfcf) and is materially faster than the npx arm: back-to-back on the same host, npx 32.20s at loadavg 18.74 vs direct binary 22.46s at loadavg 17.85 (row baseline 38.90s with no local tsx installed): Direct-binary arm: `env TMPDIR=$PWD/.tmp npx vitest run tests/cli.test.ts --reporter=dot` -> `Test Files  1 passed (1)` / `Tests  43 passed | 2 skipped (45)` / `Duration  22.25s` (wall 22.84s, loadavg 23.47). npx arm measured back-to-back on the same host by temporarily restoring `npx tsx` in the CLI constant (then reverted; `git status --porcelain tests/ package.json package-lock.json` empty): `Tests  43 passed | 2 skipped (45)` / `Duration  29.48s` (wall 30.03s, loadavg 20.01). Direct binary is ~7.2s (~24%) faster despite running at higher load, matching the task's claimed direction (32.20s vs 22.46s). [resolution 0.03; tests/cli.test.ts]\n  \u2713 The direct-binary CLI constant still actually runs the CLI (spawn succeeds and every CLI test passes, i.e. the change did not break the runner): Same run as criterion 3: `Tests  43 passed | 2 skipped (45)` with 0 failures and `Test Files  1 passed (1)`; the 2 skips are pre-existing `it.skip` for unimplemented `search --json`/`--quiet` (tests/cli.test.ts:148,156). No ENOENT/spawn errors in output.\n  \u2713 The pinned tsx is installed by the repo's CI install path so node_modules/.bin/tsx exists in CI, not only on this host: .github/workflows/ci.yml:50 `run: npm ci`; package-lock.json:47 pins root devDependency tsx 4.23.15 and packages[\"node_modules/tsx\"] 4.23.15, so `npm ci` materialises node_modules/.bin/tsx (bin entry `tsx: dist/cli.mjs` at package-lock.json:7029). `npm ls tsx` -> `tsx@4.23.15 deduped`.\n  \u2713 No other path that the CLI test runner depends on still spawns `npx tsx` (the optimisation is not silently bypassed): Repo-wide `grep -rn \"npx tsx\"` (excluding node_modules/.tmp/.vfs/.gitreins/history) returns only scripts/e2e/seed-to-artifacts.sh:31 and the comment at scripts/e2e/seed-to-artifacts.driver.ts:4 \u2014 an unrelated e2e driver, not the CLI runner. bin/speclang (used via CLI_BIN) contains no `npx tsx` (only ts-node hints at bin/speclang:142,203).\n  \u2713 Verification left the working tree unmodified (no leftover mutation of the test file or manifests): After the temporary npx-arm experiment the file was restored from backup; `git status --porcelain tests/ package.json package-lock.json` returns empty output, and tests/cli.test.ts:127-128 again show the TSX_BIN form.\nPERF-001 is delivered: tests/cli.test.ts:127-128 spawns the repo-local node_modules/.bin/tsx, package.json:88 pins tsx 4.23.15 (installed, lockfile-consistent), and the file passes 43 passed | 2 skipped in 22.25s versus 29.48s for the npx arm measured back-to-back on the same host. [uncovered failure paths: failure mode 0 (node_modules/.bin/tsx missing (e.g. install run with --omit=dev or a stale node_modules) makes every CLI spawn fail with ENOENT instead of falling back to npx): detected_by is empty \u2014 uncovered failure path]\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T02:37:26.891493",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T02:37:26.914717+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 1049,
+        "truncated": false,
+        "source": "git show 4d110c6c7d2f"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 17509,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "PERF-001"
+  }
+}

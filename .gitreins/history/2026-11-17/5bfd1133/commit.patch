@@ -1,0 +1,21 @@
+commit 4d110c6c7d2fef224156f2c1fbf09d2db0db373a
+Merge: ae832ac2 27e49152
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Mon Nov 16 21:19:26 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Mon Nov 16 21:19:33 2026 -0500
+
+    merge DF-SPECLANG-5-R5: graceful "speclang history" on a repo with no commits
+    
+    - bin/speclang: detect the empty-history state before git plumbing; print
+      guidance instead of a raw GitError stack trace
+    - docs/API_REFERENCE.md (spec source): document that codegen's target argument
+      is a getTarget() object, not a string
+    - tests/cli/history.test.ts: +18 assertions covering the empty-repo path
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+
+ bin/speclang                              | 102 +++++++++++++++++-
+ specs/docs.spec.dir/docs/API_REFERENCE.md |  39 +++++++
+ tests/cli/history.test.ts                 | 174 +++++++++++++++++++++++++++++-
+ 3 files changed, 310 insertions(+), 5 deletions(-)
