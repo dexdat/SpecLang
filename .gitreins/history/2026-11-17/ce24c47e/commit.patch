@@ -1,0 +1,21 @@
+commit c3b644a7df5523894cff6bf03e049444d24e55f3
+Merge: 8ac77df4 08f7d0bc
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Mon Nov 16 22:45:04 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Mon Nov 16 22:45:04 2026 -0500
+
+    merge: QA-SPECLANG-4 — fail fast instead of hanging when the network is cut
+    
+    Worker 08f7d0bc: proxy reachability preflight in the setup seam (NETWORK-UNREACHABLE),
+    explicit testTimeout/hookTimeout/teardownTimeout budgets, 27 hermetic net-guard cases.
+    Dead-proxy run now exits rc=1 in 4s with a named failure instead of wedging.
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+
+ tests/global-setup.ts   |   5 +
+ tests/net-guard.test.ts | 328 ++++++++++++++++++++++++++++++++++++++++++++++++
+ tests/net-guard.ts      | 245 ++++++++++++++++++++++++++++++++++++
+ tests/setup-tmpdir.ts   |   6 +
+ vitest.config.ts        |   8 ++
+ 5 files changed, 592 insertions(+)
