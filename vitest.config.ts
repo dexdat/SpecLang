@@ -19,6 +19,14 @@ export default defineConfig({
   test: {
     environment: 'node',
     globals: true,
+    // QA-SPECLANG-4: explicit, bounded budgets. A single test, hook or teardown
+    // that never settles used to be able to wedge the whole run until an
+    // external `timeout` killed it, with no failure report to show for it.
+    // Per-test `{ timeout: ... }` declarations (e.g. CI-006's 120s coverage
+    // run) still win; these bounds apply to everything that declares nothing.
+    testTimeout: 30_000,
+    hookTimeout: 30_000,
+    teardownTimeout: 20_000,
     globalSetup: ['tests/global-setup.ts'],
     setupFiles: ['tests/setup-tmpdir.ts'],
     include: [
