@@ -1,0 +1,79 @@
+commit 36da53020a6475eb5786f671cc4006262e178620
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 11:46:43 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 11:46:43 2026 -0500
+
+    docs(readme): replace drifting test counts with the measurable shape (README-26 judge fix)
+    
+    The tier-2 judge (41f36675) FAILED the row because the section quoted counts from the worker's worktree (115 files / 1958 passed, tests/db 7 files / 71 tests, 119 collected / 35 top-level) that do not reproduce at this HEAD. Fixed by removing the brittle totals, keeping exit-code and command claims, and correcting the structural counts measured here: 121 test files, 120 collected, 36 top-level, tests/db 7 files (+tests/db.test.ts under the path filter = 8).
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+---
+ README.md | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
+
+diff --git a/README.md b/README.md
+index 38adea28..66c3ae56 100644
+--- a/README.md
++++ b/README.md
+@@ -513,44 +513,45 @@ npm test
+ ```
+ 
+ `npm test` is `TMPDIR=$PWD/.tmp vitest run`, and its `pretest` script runs `npm run build` first, so
+-the build prerequisite is handled for you on this path. Measured on a fresh clone
+-(node 22.22.3 / npm 12.2.2, 2026-11-17), exit code `0`:
++the build prerequisite is handled for you on this path. It exits `0` on a clean tree and prints a
++summary block that looks like this:
+ 
+ ```
+-Test Files  115 passed | 4 skipped (119)
+-      Tests  1958 passed | 58 skipped (2016)
+-   Start at  11:01:06
+-   Duration  35.31s (transform 15.58s, setup 3.02s, import 22.38s, tests 162.59s, environment 18ms)
++Test Files  <n> passed | <k> skipped (<total>)
++      Tests  <n> passed | <k> skipped (<total>)
+ ```
+ 
+-Those counts are checkout-dependent (they move as tests are added) — read the summary line your own
+-run prints rather than trusting these numbers.
++The counts move every time a test lands, and they differ between a worktree and a full checkout, so
++read the summary line your own run prints instead of quoting one from here. If a run fails, start
++with the timeout-shaped ones: several suites drive real subprocesses and their budgets assume the
++machine is not already saturated (`GAP-003` bounded the vitest worker pool for exactly this reason).
+ 
+ ### Run one file or one directory
+ 
+ ```bash
+-npx vitest run tests/parser.test.ts    # 1 file, 28 tests, ~1s
+-npx vitest run tests/db               # 7 files, 71 tests, ~29s
++npx vitest run tests/parser.test.ts    # 1 file
++npx vitest run tests/db                # path filter: 8 files
+ ```
+ 
+ `npx vitest run` does **not** run `pretest`, so build first (or use `npm test -- <path>`, which runs
+ the same filter with the build attached). The positional argument is a path *filter* — a substring
+ match on the file path, not a strict scope — so `tests/db` also picks up the root-level
+-`tests/db.test.ts` (hence 7 files, not the 6 under `tests/db/`).
++`tests/db.test.ts` (hence 8 files: the 7 under `tests/db/` plus `tests/db.test.ts`).
+ 
+ ### Where the tests live
+ 
+ `vitest.config.ts` collects `tests/**/*.test.ts` and `tests/**/*.test.tsx`, with
+ `tests/global-setup.ts` and `tests/setup-tmpdir.ts` redirecting `TMPDIR` to the gitignored `.tmp/`.
+-119 files are collected: 35 at the top of `tests/` (`tests/parser.test.ts`, `tests/config.test.ts`, …)
+-plus these directories:
++`tests/` holds 121 test files; vitest collects 120 of them (the Playwright `*.spec.ts` files under
++`tests/e2e/` have no runner — see below), 36 at the top of `tests/` (`tests/parser.test.ts`,
++`tests/config.test.ts`, …) plus these directories:
+ 
+ | directory | what it covers | files |
+ |---|---|---|
+ | `tests/cli/` | CLI command surface (`bin/speclang` end to end) | 10 |
+ | `tests/daemon/` | file-watcher daemon | 10 |
+ | `tests/dashboard/` | dashboard hooks and React components (React mocked, node env) | 16 |
+-| `tests/db/` | SQLite layer, migrations | 6 |
++| `tests/db/` | SQLite layer, migrations | 7 |
+ | `tests/cascade/`, `tests/cascade_new/` | cascade execution | 6 + 3 |
+ | `tests/maturity/` | maturity levels, criteria, MVP validator | 5 |
+ | `tests/mcp/` | MCP server, tools and bin-path resolution | 4 |
