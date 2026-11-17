@@ -23,7 +23,7 @@
     "test:watch": "TMPDIR=$PWD/.tmp vitest",
     "test:coverage": "mkdir -p coverage/.tmp && TMPDIR=$PWD/.tmp vitest run --coverage --maxWorkers 1",
     "cascade": "node bin/speclang cascade",
-    "lint": "eslint \"src/**/*.ts\"",
+    "lint": "NODE_OPTIONS=\"--require ./scripts/lint/ts6-resolution.cjs\" eslint \"src/**/*.ts\"",
     "clean": "rm -rf dist/",
     "prepublishOnly": "npm run build",
     "build:dashboard": "vite build",
