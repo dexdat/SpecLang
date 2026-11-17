@@ -53,9 +53,14 @@ exits non-zero while missing references exceed `--max-missing`).
 ```
 
 `-d, --dir <directory>` (default `.`) is the project root used to resolve
-`<spec>`. The output rule follows the spec file, so a spec sitting directly in
-`specs/` (e.g. `specs/foo.spec.md`) writes to `generated/` at the project root,
-one level above `specs/`. Both forms are gitignored.
+`<spec>`. Output always follows the spec file, by one rule:
+`<directory containing the spec>/../generated/`. Measured on 2026-11-17 with
+`./bin/speclang cascade`:
+
+- `specs/examples.spec.dir/hello-world.spec.md` → `specs/generated/hello/function.ts`
+- `specs/foo.spec.md` (a spec directly in `specs/`) → `<project root>/generated/foo/function.ts`
+
+Both locations are gitignored.
 
 ## MCP Server
 
