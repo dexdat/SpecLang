@@ -205,7 +205,8 @@ If you're an AI agent working with SpecLang:
 2. **Check** `specs/_index.md` for file listings
 3. **Follow** `@ref:` links in headers for dependencies
 4. **Use** SQLite database queries when available
-5. **Remember**: One file, one commit, perfect history
+5. **Drive the build** through the agent-driver loop — `docs/AGENT_DRIVER.md` (seed a baseline prompt; the cascade expands and builds it; the driver fails closed on hollow output)
+6. **Remember**: One file, one commit, perfect history
 
 ### Agent Rules for Creating Specs
 

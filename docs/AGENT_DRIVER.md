@@ -237,9 +237,16 @@ parser and generator actually behave (`src/cascade/index.ts`):
    is ignored; a block with no fence is skipped (a warning, not an error).
 3. **What the body says is what lands on disk** — the cascade does not summarise
    or repair it. Keep each block a complete, self-contained module.
-4. **`@kind` decides whether a file appears.** `code` and `test` (with a fence)
-   produce files; other kinds (`endpoint`, `operation`, `doc`, …) are descriptive
-   and are skipped. The driver lists every skipped block under `warnings[]`.
+4. **A fenced block produces a file; the `@kind` does not filter it.** Any block
+   whose header matches `### @block::<name> @kind:<kind>` and that is followed by
+   a language-tagged fence (`ts`, `typescript`, `speclang`) is written to disk —
+   including `endpoint`, `operation` and `doc` blocks. Measured: an
+   `@kind:endpoint` block with a tagged fence emits one ~200-byte `<name>.ts`
+   ("Generated: 1 files"), while the same block with an untagged fence emits
+   nothing ("Generated: 0 files", §7 probe 1). A block with no fence is skipped
+   with a warning, and unfenced blocks are what the driver lists under
+   `warnings[]`. Use `code`/`test` for anything a reader should see generated,
+   and leave descriptive kinds unfenced on purpose.
 5. **Test blocks go where vitest can see them** (§2). Otherwise the loop reports
    a vacuous convergence and the driver stops you.
 6. **`id` must start with `@`** (`id: "@agent-driver/baseline"`); the validator's
@@ -286,7 +293,7 @@ exit non-zero** — that is the point of the driver.
 
 | Probe | Observed result |
 |---|---|
-| Seed whose blocks are all `@kind:endpoint` / unfenced | `speclang cascade` exits **0** with `Generated: 0 files`, `Converged: Yes` and a warning; the driver exits **1**: `cascade reported no artifacts (exit 0 with zero files is a no-op, not a pass)` |
+| Seed whose blocks are all unfenced | `speclang cascade` exits **0** with `Generated: 0 files`, `Converged: Yes` and a warning; the driver exits **1**: `cascade reported no artifacts (exit 0 with zero files is a no-op, not a pass)` (an `@kind:endpoint` block is NOT skipped if it carries a tagged fence — it emits a file, §5 rule 4) |
 | Seed with a `@kind:code` block whose code fence is empty | the cascade writes a **181-byte banner-only** artifact; the driver exits **1**: `artifact carries only the generated banner, no body` |
 | Seed with a `@kind:test` block placed outside `tests/**` | cascade prints `[Cascade] Tests: 0/0 passed`, `Converged: Yes`; the driver exits **1**: `test block(s) were generated but 0 tests executed — "converged" is vacuous; place the seed so <seed-dir>/../generated lands inside vitest's include (tests/**)` |
 | Second cascade run produces different bytes | the driver exits **1**: `cascade is not reproducible: …` |
