@@ -132,7 +132,7 @@ console.log(report.passed);                 // true for a valid spec
 
 | Command | Purpose |
 |---|---|
-| `speclang start [-p <port>]` | Start the daemon (file watcher + MCP server) |
+| `speclang start [-p <port>]` | Start the daemon (file watcher + dashboard HTTP API) — **not** the MCP server |
 | `speclang cascade <spec>` | Run a single cascade on a spec file |
 | `speclang agent [agent]` | Run an agent |
 | `speclang status` | Show current system status |
@@ -173,19 +173,133 @@ With `--format json` the empty state stays machine-readable (`[]`, or the zeroed
 
 ## 3. MCP Server
 
-`src/speclang-mcp.ts` — Model Context Protocol server exposing SpecLang to AI agents. Supports both stdio (`StdioServerTransport`) and SSE (`SSEServerTransport`) transports. Start with `speclang mcp start` or `speclang start` (daemon mode).
+Model Context Protocol server exposing specs, locks, cascades, the command queue and dashboard statistics to AI agents.
+
+**Source:** `src/mcp/server.ts` (server, transports, HTTP routes), `src/mcp/tools/index.ts` (tool registry + `getToolDefinitions`), `src/mcp/tools/*.ts` (per-domain handlers), `src/mcp/config.ts` (config loader, the live one), `src/mcp/auth.ts`, `src/mcp/sse.ts`. The `src/mcp/` entries are symlinks into `specs/mcp.spec.dir/src/` (`git ls-files -s src/mcp` shows mode `120000`), so both paths name the same files — edit the spec side.
+
+### Starting the server
+
+| Mode | Command | Wire |
+|---|---|---|
+| stdio (default) | `speclang mcp start [-d <dir>]` | JSON-RPC on stdin/stdout; all startup diagnostics go to **stderr** |
+| HTTP + SSE | `speclang mcp start --remote [--port 3000] [-d <dir>]` | `GET /mcp` opens the SSE stream, `POST /mcp/message` carries JSON-RPC, `GET /events` is the event feed (enabled unless `MCP_SSE_ENABLED=false`), `GET /health` returns `{"status":"ok","mode":"http"}` |
+
+`-d/--dir` (default `.`) only sets the base directory: the database becomes `<dir>/.speclang/speclang.db` and the specs root `<dir>/specs`.
+
+The module also has its own entrypoint: `node dist/specs/mcp.spec.dir/src/server.js [start|search|get] [--http|--remote] [--port N]`.
+
+`speclang start` is **not** an MCP server — it launches the daemon (spec file watcher plus the dashboard HTTP API on `--port`). Use `speclang mcp start` for MCP.
+
+`speclang mcp status` / `speclang mcp stop` read `.speclang/mcp.pid`; the server never writes that file and runs in the foreground, so `status` reports "not running" unless a pid file is created by hand.
+
+### Transport and configuration
+
+**Transports actually implemented** (`src/mcp/server.ts`): exactly two.
+
+- **stdio** — `startStdio()` (`server.ts:62`), `StdioServerTransport` (`server.ts:68`). Default; nothing may be printed to stdout except protocol frames.
+- **HTTP + SSE** — `startHTTP(port)` (`server.ts:77`), express app with `GET /mcp` → `SSEServerTransport('/mcp/message', res)` (`server.ts:93-104`), `POST /mcp/message` → a hand-rolled JSON-RPC 2.0 dispatcher (`server.ts:107`, methods `initialize`, `tools/list`, `tools/call`, `resources/list`, `prompts/list`), `GET /events` → SSE event feed (`server.ts:204`), `GET /health` (`server.ts:215`). `app.listen(httpPort)` binds all interfaces (`server.ts:219`).
+
+`'socket'` appears in the config type (`types.ts`, `config.ts:83`) but **no socket transport exists** — do not plan around it. The transport is chosen by argv (`--http` / `--remote`), not by `MCP_SERVER_MODE`.
+
+**Auth switch.** The CLI exposes `--auth none|basic|token` (default `none`) plus `--user/--pass/--token`; `none` disables auth entirely (`auth.enabled = options.auth !== 'none'`, `bin/speclang`). When enabled, middleware is mounted on the `/mcp` path only (`server.ts:88-90`), i.e. both `GET /mcp` and `POST /mcp/message`; `/events` and `/health` stay open. Token auth expects `Authorization: Bearer <key>` and accepts any key from `MCP_API_KEYS` (comma-separated) or the singular `token` value (`auth.ts:67-89`). Basic auth compares the exact `Basic base64(user:pass)` header (`auth.ts:51-62`). The two remaining types — `config_file` (htpasswd-style JSON, SHA-256) and `tls_client_cert` (peer-cert CN) — have no CLI flag; they are reachable only by constructing the config object.
+
+**Configuration keys (live set).** `loadConfig` (`src/mcp/config.ts:38`) applies `DEFAULT_CONFIG` (lines 10-33), then the object the entrypoint passes, then **environment variables last** — so an env var wins over the matching CLI flag.
+
+| Variable | Default | Effect (source) |
+|---|---|---|
+| `MCP_PORT` | `3000` | HTTP listen port (`config.ts:42`) |
+| `MCP_HOST` | `0.0.0.0` | stored as `config.host`; read only by `speclang_subscribe_events` when it builds the endpoint URL — it does **not** change the listener bind address (`config.ts:45`, `server.ts:219`) |
+| `MCP_DATABASE` | `.speclang/speclang.db` | SQLite file path; the parent directory is created at startup (`config.ts:48`, `server.ts:50`) |
+| `MCP_SPECS_DIR` | `specs` | specs root handed to the spec and index handlers (`config.ts:51`) |
+| `MCP_AUTH_ENABLED` | unset (`false`) | only the literal string `true` enables auth (`config.ts:54`) |
+| `MCP_AUTH_TYPE` | `token` | auth type when enabled; only read on the `MCP_AUTH_ENABLED=true` branch (`config.ts:56`) |
+| `MCP_API_KEYS` | – | comma-separated bearer keys accepted by token auth (`config.ts:58`) |
+| `MCP_SSE_ENABLED` | `true` | only the literal string `false` disables the `/events` feed (`config.ts:61`, `server.ts:202`) |
+| `MCP_LOG_LEVEL` | `info` | parsed into `config.logging.level`; **not consumed** by the server (`config.ts:64`) |
+| `MCP_LOG_FILE` | – | parsed into `config.logging.file`; **not consumed** (`config.ts:67`) |
+| `MCP_MAX_CONNECTIONS` | `100` | parsed into `config.limits`; **not enforced** (`config.ts:70`) |
+| `MCP_QUERY_TIMEOUT_MS` | `5000` | parsed into `config.limits`; **not enforced** (`config.ts:73`) |
+| `MCP_MAX_RESULTS` | `1000` | parsed into `config.limits`; **not enforced** (`config.ts:76`) |
+| `MCP_WAL_MODE` | `true` | parsed into `databaseWalMode`; the server always opens the DB with `wal: true` (`config.ts:79`, `server.ts:52`) |
+| `MCP_SERVER_MODE` | `http` | parsed into `serverMode` (`stdio`/`http`/`socket`); the transport is selected by argv instead (`config.ts:82`) |
+
+> **Unwired module — do not configure against it:** `src/mcp/config/loader.ts` (`ConfigLoader`, reads `.speclang/mcp.json|yaml`) is imported by no entrypoint and reads a *conflicting* key set (`MCP_DB_PATH`, `MCP_SERVER_MODE`, `MCP_SERVER_PORT`, `MCP_SERVER_HOST`, `MCP_AUTH_TOKEN`) with a different config shape. The live contract is `src/mcp/config.ts` above; `loader.ts` is future/unused surface.
 
 ### Tools
 
-| Tool | Description |
-|---|---|
-| `speclang_search` | Search specs |
-| `speclang_query` | Query spec data |
-| `speclang_execute` | Execute a spec operation |
-| `speclang_get_status` | Get system status |
-| `speclang_insert_command` | Insert a command into the daemon queue |
-| `speclang_claim_event` | Claim a daemon event |
-| `speclang_acquire_lock` | Acquire a coordination lock |
-| `speclang_get_tree` | Get the spec tree |
+All 34 registered tools, exactly as declared by `getToolDefinitions` in `src/mcp/tools/index.ts`. No tool is registered anywhere else — `getToolDefinitions()` is the only source for `tools/list` (`server.ts:250`) and the registry switch (`server.ts:70`).
 
-All tools return JSON text content via the standard MCP `CallTool` protocol.
+#### Search and spec CRUD
+
+| Tool | Purpose | Required inputs |
+|---|---|---|
+| `speclang_search` | Full-text search across all specs (FTS5) | `query` (optional: `tags`, `layer`, `limit`) |
+| `speclang_semantic_search` | Vector similarity search (requires the sqlite-vss extension) | `query_embedding` (optional: `limit`) |
+| `speclang_get_spec` | Get a full spec by ID or file path | none (`id` or `file_path`; `include_content` defaults `false`) |
+| `speclang_create_spec` | Create a new spec | `id`, `content` (optional: `agent_id`, `file_path`) |
+| `speclang_update_spec` | Update an existing spec | `id`, `content` (optional: `message`, `agent_id`) |
+| `speclang_list_specs` | List specs with optional filters | none (optional: `tags`, `layer`, `prefix`, `limit`=100) |
+
+#### Locks
+
+| Tool | Purpose | Required inputs |
+|---|---|---|
+| `speclang_lock` | Acquire a file/resource lock | `resource`, `agent_id` (optional: `ttl`=60s) |
+| `speclang_unlock` | Release a lock | `agent_id` (optional: `lock_id`) |
+| `speclang_check_lock` | Check whether a resource is currently locked | `resource` |
+| `speclang_force_unlock` | Force-unlock a resource (admin escape hatch) | `resource` |
+
+#### Cascade
+
+| Tool | Purpose | Required inputs |
+|---|---|---|
+| `speclang_cascade_status` | Get the current cascade status | none |
+| `speclang_cascade_trigger` | Trigger a cascade from a spec change | `spec_id`, `change_type` (`create`/`modify`/`delete`) |
+| `speclang_cascade_abort` | Abort the active cascade | none |
+| `speclang_cascade_converge` | Mark a cascade as converged | `cascade_id` |
+
+#### Index
+
+| Tool | Purpose | Required inputs |
+|---|---|---|
+| `speclang_index_refresh` | Rebuild the spec index | none (optional: `specsDir`) |
+| `speclang_index_stats` | Get index statistics | none |
+| `speclang_index_validate` | Validate index integrity | none |
+
+#### Dependencies and impact
+
+| Tool | Purpose | Required inputs |
+|---|---|---|
+| `speclang_get_dependencies` | Get a spec's dependencies (recursive CTE, depth ≤ 10 when `transitive`) | `id` (optional: `transitive`=false) |
+| `speclang_get_dependents` | Get a spec's dependents (same traversal, reverse direction) | `id` (optional: `transitive`=false) |
+| `speclang_impact_analysis` | Direct + transitive impact of changing a spec, plus affected files | `id` |
+
+#### Agents, status and dashboard statistics
+
+| Tool | Purpose | Required inputs |
+|---|---|---|
+| `speclang_get_status` | Overall status: spec/session/command/cascade counts + a `converged` flag | none |
+| `speclang_query_events` | Query recent cascade events with filtering | none (optional: `limit`=20, `cascade_id`, `agent`, `file_pattern`, `since` ISO-8601) |
+| `speclang_get_agent_statuses` | Per-session status rows (queue depth, last active, uptime) | none (optional: `agent_type`, `status`) |
+| `speclang_get_project_stats` | Project stats: spec/generated/test counts, cascade depth, queue depth | none |
+| `speclang_get_queue_status` | Pending-command queue contents | none (optional: `limit`=50) |
+| `speclang_get_system_stats` | Host CPU, memory and disk usage | none |
+| `speclang_subscribe_events` | Returns the `/events` SSE endpoint URL and event-type list (it does not stream) | none (optional: `types`: `file.changed`, `cascade.progress`, `agent.spawned`, `agent.completed`, `cascade.converged`) |
+
+#### Command queue
+
+| Tool | Purpose | Required inputs |
+|---|---|---|
+| `speclang_query_commands` | Query commands from the queue | none (optional: `status`=`pending`, `limit`=10, `cascade_id`, `session_id`) |
+| `speclang_insert_command` | Insert a command into the queue | `cascade_id`, `action` (optional: `target_file`, `session_id`, `payload`, `priority`=0) |
+| `speclang_update_command` | Update a command's status | `command_id`, `status` (`pending`/`running`/`completed`/`failed`; optional `error`) |
+| `speclang_delete_command` | Delete a command from the queue | `command_id` |
+| `speclang_get_next_command` | Get the next pending command (highest priority) | none |
+| `speclang_clear_completed` | Clear completed/failed commands older than a cutoff | none (optional: `olderThan` Unix timestamp) |
+| `speclang_batch_insert` | Insert several commands in one call | `commands` (array of `{cascade_id, action, target_file?, priority?}`) |
+
+All tools return JSON text content via the standard MCP `CallTool` protocol: the payload is `JSON.stringify(result)` in `content[0].text`, and a thrown handler becomes `content[0].text = {"error": "<message>"}` with `isError: true` (`server.ts:195-204`).
+
+**stdio vs HTTP caveat:** in stdio mode every tool above is handled by `MCPToolRegistry.registerTools`. In HTTP mode `tools/call` is served by a legacy prefix dispatcher (`MCPServer.callTool`, `server.ts:276`): search/specs/locks/cascade/index and the dashboard statistics tools execute for real, while `speclang_get_dependencies`, `speclang_get_dependents`, `speclang_impact_analysis`, `speclang_get_status` and all seven command-queue tools return a placeholder payload (`{"message":"Tool <name> not fully implemented"}`) or an unknown-dashboard-tool error instead of running. Until those two dispatchers are unified, prefer stdio for agent integration.
+
+The internal specification for this subsystem is `specs/mcp.spec.md`.
