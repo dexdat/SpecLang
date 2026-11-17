@@ -163,7 +163,7 @@ For programmatic access, see:
 - Explicit cascade protocol with verification gates
 - Working agent definitions for OpenCode
 - Dual-view compliance: 99.2% of non-exempt files follow the specs→working-location pattern (the only non-compliant files are legacy `scripts/archive/` scripts with no spec source; run `python3 scripts/check_compliance.py --report` for live counts and the exempt list, last measured 2026-11-17)
-- 1944 tests passing (58 skipped; `npm test` on 2026-11-17, node 22.22.3 / npm 12.2.2 → Tests 1944 passed | 58 skipped (2002), Test Files 112 passed | 4 skipped (116); the count moves whenever tests are added, so run `npm test` for the authoritative number; arch004 cascade convergence flake quarantined — daemon watcher scoped to its own fixture dir in the test, per-test timeouts aligned with polling budgets)
+- 1949 tests passing (58 skipped; `npm test` on 2026-11-17, node 22.22.3 / npm 12.2.2 → Tests 1949 passed | 58 skipped (2007), Test Files 113 passed | 4 skipped (117); the count moves whenever tests are added, so run `npm test` for the authoritative number; arch004 cascade convergence flake quarantined — daemon watcher scoped to its own fixture dir in the test, per-test timeouts aligned with polling budgets)
 
 **⚠️ Current Limitations:**
 - **Daemon is opt-in** - `speclang start` runs the file watcher + MCP server + dashboard (and `daemon`/`stop` manage it); without it, everything runs in the foreground as explicit commands
@@ -546,7 +546,7 @@ scripts/                 # Tools
 
 ## What Works vs What Doesn't
 
-*(Last reconciled 2026-11-17 against live state: `./bin/speclang --help` command surface + the 1944-test suite.)*
+*(Last reconciled 2026-11-17 against live state: `./bin/speclang --help` command surface + the 1949-test suite.)*
 
 ### ✅ Working
 
@@ -562,7 +562,7 @@ scripts/                 # Tools
 
 - **Code generation**: Scripts exist but have bugs (nested backticks, duplication)
 - **TypeScript compilation**: Works with `--skipLibCheck`, has type conflicts
-- **Test suite**: Green — 1944 tests passing, 58 skipped (`npm test`, 2026-11-17: Tests 1944 passed | 58 skipped (2002), Test Files 112 passed | 4 skipped (116); the number is checkout-dependent — this is a fully provisioned checkout on node 22.22.3 / npm 12.2.2)
+- **Test suite**: Green — 1949 tests passing, 58 skipped (`npm test`, 2026-11-17: Tests 1949 passed | 58 skipped (2007), Test Files 113 passed | 4 skipped (117); the number is checkout-dependent — this is a fully provisioned checkout on node 22.22.3 / npm 12.2.2)
 - **Steering packets**: Now accurate (fixed in redesign)
 
 ### ❌ Not Working (Yet)
@@ -644,4 +644,4 @@ MIT
 **Status**: Alpha - One working example, solid foundation, much more to build.
 
 **Last Updated**: 2026-11-17
-**Specs**: 450 .spec.md (452 incl .scl) | **Examples**: 1 working | **Tests**: 1944 passing | 58 skipped
+**Specs**: 450 .spec.md (452 incl .scl) | **Examples**: 1 working | **Tests**: 1949 passing | 58 skipped
