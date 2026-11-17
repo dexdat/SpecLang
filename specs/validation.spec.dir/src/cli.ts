@@ -128,10 +128,17 @@ export async function validateCommand(options: ValidateOptions): Promise<Validat
       totalWarnings += report.warnings.length;
       
       if (format === 'text' || format === 'minimal') {
-        const output = format === 'minimal'
-          ? reporter.formatMinimal([report])
-          : reporter.format(report);
-        console.log(output);
+        // DF-SPECLANG-5-R4: the default text output is a SUMMARY. A block per
+        // file drowned the signal — 452 files produced ~1900 lines of
+        // "✓ Passed" before the reader reached the summary, and a new user has
+        // no reason to page through it. Files that FAILED are still printed in
+        // full (their errors are the actionable part); clean files contribute
+        // nothing, and warning detail moves to `--verbose`.
+        if (format === 'minimal') {
+          console.log(reporter.formatMinimal([report]));
+        } else if (verbose || report.errors.length > 0) {
+          console.log(reporter.format(report));
+        }
       }
     } catch (error) {
       console.error(`Error validating ${file}:`, (error as Error).message);
@@ -163,6 +170,14 @@ export async function validateCommand(options: ValidateOptions): Promise<Validat
     console.log(`  ❌ Failed: ${uniqueFiles.length - passedFiles}`);
     console.log(`  Errors: ${totalErrors}`);
     console.log(`  Warnings: ${totalWarnings}`);
+
+    // DF-SPECLANG-5-R4: a raw count of 535 tells the reader nothing about
+    // WHERE the warnings are or which ones to fix first. Print a compact
+    // grouped breakdown next to the count; `--verbose` lists every warning.
+    if (totalWarnings > 0) {
+      console.log('');
+      console.log(reporter.formatWarningSummary(reports));
+    }
   }
 
   return result;
