@@ -1,0 +1,595 @@
+{
+  "task_id": "GAP-003",
+  "task_title": "Bound test-suite host load: audit parallel-spawn tests, clamp the worst offender's concurrency 2-16, keep full suite green",
+  "task_criteria": [
+    "Evidence file .coding-hermes/evidence/GAP-003-load-audit.md names the fixed test/harness with before/after measurement; npx vitest run exits 0 with no new skips; named offender concurrency clamped 2-16"
+  ],
+  "passed": true,
+  "worktree": "/home/kara/worktrees/speclang-PERF-LAND",
+  "branch": "",
+  "commit": "bafa637fdb04cd2a99ca2a53f5263159ff141feb",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "3b9522ac6bd6a8a2d7c54cb6e99232761d64760b049244e2ceea786bbe45f4ad",
+  "working_tree_dirty_path_count": 1,
+  "items": [
+    {
+      "criterion": "Evidence file .coding-hermes/evidence/GAP-003-load-audit.md names the fixed test/harness with before/after measurement; npx vitest run exits 0 with no new skips; named offender concurrency clamped 2-16",
+      "status": "PASS",
+      "detail": "Ran `cd /home/kara/worktrees/speclang-GAP-003 && TMPDIR=$PWD/.tmp npx vitest run --reporter=dot` -> EXIT:0, \"Test Files  116 passed | 4 skipped (120)\", \"Tests  1962 passed | 58 skipped (2020)\", matching .coding-hermes/evidence/GAP-003-load-audit.md \u00a74 exactly. `git diff 94dd3ea8 HEAD -- tests | grep '^+.*(skip|todo)'` produced no output (no new skips). vitest.config.ts sets maxWorkers = min(16, max(2, floor(availableParallelism()/2))) = 8 on this 16-core host, i.e. clamped into 2-16; tests/load-hygiene.test.ts asserts the clamp bounds."
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  11:19:35",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  11:19:35\n   Duration  32.89s (transform 6.44s, setup 1.65s, import 11.32s, tests 192.73s, environment 17ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 Evidence file .coding-hermes/evidence/GAP-003-load-audit.md names the fixed test/harness with before/after measurement; npx vitest run exits 0 with no new skips; named offender concurrency clamped 2-16: Ran `cd /home/kara/worktrees/speclang-GAP-003 && TMPDIR=$PWD/.tmp npx vitest run --reporter=dot` -> EXIT:0, \"Test Files  116 passed | 4 skipped (120)\", \"Tests  1962 passed | 58 skipped (2020)\", matching .coding-hermes/evidence/GAP-003-load-audit.md \u00a74 exactly. `git diff 94dd3ea8 HEAD -- tests | grep '^+.*(skip|todo)'` produced no output (no new skips). vitest.config.ts sets maxWorkers = min(16, max(2, floor(availableParallelism()/2))) = 8 on this 16-core host, i.e. clamped into 2-16; tests/load-hygiene.test.ts asserts the clamp bounds.\nThe load-audit evidence file, the bounded vitest worker pool (clamped 2-16) and the load-hygiene test all land together, and a fresh full `npx vitest run` exits 0 with the same pass/skip counts the evidence file records and no newly added skips.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 Evidence file .coding-hermes/evidence/GAP-003-load-audit.md names the fixed test/harness with before/after measurement; npx vitest run exits 0 with no new skips; named offender concurrency clamped 2-16: Ran `cd /home/kara/worktrees/speclang-GAP-003 && TMPDIR=$PWD/.tmp npx vitest run --reporter=dot` -> EXIT:0, \"Test Files  116 passed | 4 skipped (120)\", \"Tests  1962 passed | 58 skipped (2020)\", matching .coding-hermes/evidence/GAP-003-load-audit.md \u00a74 exactly. `git diff 94dd3ea8 HEAD -- tests | grep '^+.*(skip|todo)'` produced no output (no new skips). vitest.config.ts sets maxWorkers = min(16, max(2, floor(availableParallelism()/2))) = 8 on this 16-core host, i.e. clamped into 2-16; tests/load-hygiene.test.ts asserts the clamp bounds.\nThe load-audit evidence file, the bounded vitest worker pool (clamped 2-16) and the load-hygiene test all land together, and a fresh full `npx vitest run` exits 0 with the same pass/skip counts the evidence file records and no newly added skips.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "Evidence file .coding-hermes/evidence/GAP-003-load-audit.md names the fixed test/harness with before/after measurement; npx vitest run exits 0 with no new skips; named offender concurrency clamped 2-16",
+                "status": "PASS",
+                "detail": "Ran `cd /home/kara/worktrees/speclang-GAP-003 && TMPDIR=$PWD/.tmp npx vitest run --reporter=dot` -> EXIT:0, \"Test Files  116 passed | 4 skipped (120)\", \"Tests  1962 passed | 58 skipped (2020)\", matching .coding-hermes/evidence/GAP-003-load-audit.md \u00a74 exactly. `git diff 94dd3ea8 HEAD -- tests | grep '^+.*(skip|todo)'` produced no output (no new skips). vitest.config.ts sets maxWorkers = min(16, max(2, floor(availableParallelism()/2))) = 8 on this 16-core host, i.e. clamped into 2-16; tests/load-hygiene.test.ts asserts the clamp bounds."
+              }
+            ],
+            "summary": "The load-audit evidence file, the bounded vitest worker pool (clamped 2-16) and the load-hygiene test all land together, and a fresh full `npx vitest run` exits 0 with the same pass/skip counts the evidence file records and no newly added skips.",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"GAP-003\"}",
+          "exit_code": 0,
+          "output_sha": "e54b0cd89fed294c026ebb590dcafc9e36c718245535b4d2042eed4cb856619e"
+        },
+        {
+          "tool": "read_diff",
+          "command": "read_diff {}",
+          "exit_code": 0,
+          "output_sha": "7f6d39ee449bc4a2612adbc7d48e2076865e006dfb03a50b11aa4719c0e24890"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \".coding-hermes/evidence/GAP-003-load-audit.md\"}",
+          "exit_code": 0,
+          "output_sha": "198cf93e5dabde49f6eb7ef5f05724aa6eddfd9e42908a5f3b3a4556ba8ceddf"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"vitest.config.ts\"}",
+          "exit_code": 0,
+          "output_sha": "6f732de1247a77932cec9df9d05fa6de2bcb2903f0492c2e688d9bdcbab6b6e8"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/load-hygiene.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "0c9a915e754fa8b7b736d54985c195713684d2fd2475da46d23cf1c654321be3"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"offset\": 200, \"path\": \".coding-hermes/evidence/GAP-003-load-audit.md\"}",
+          "exit_code": 0,
+          "output_sha": "6e0f9f6690f8cdc4b48863ac4b2cada57c49c34b681df11df9c2e9b7a4eb62ef"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Read: .coding-hermes/evidence/GAP-003-load-audit.md (260 lines), vitest.config.ts (80 lines), tests/load-hygiene.test.ts (70 lines).\\nConfig: TEST_WORKERS_MIN=2, TEST_WORKERS_MAX=16, maxTestWorkers = min(16, max(2, floor(availableParallelism()/2))), wired as test.maxWorkers.\\nEvidence names offender = vitest file-level worker pool (default availableParallelism()-1 = 15), before 36 peak descendants / 36.00s, after 20-21 / 27.29-33.08s, A/B/A control.\\nNext: run npx vitest run, check skips, check git history for skip additions.\", \"key\": \"explored\"}",
+          "exit_code": 0,
+          "output_sha": "c453d5380221875c6759b33c715dd51bf3a91d27e78d476dfae804c23e0a963f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 2>/dev/null || cd .; pwd; git log --oneline -3; node -e \"console.log(require('os').availableParallelism())\"",
+          "exit_code": 0,
+          "output_sha": "3037e0454e84124840a675e2dc6e45811d3eb69f56de225aab32e454dc25e30e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && git show --stat HEAD && git diff 94dd3ea8 HEAD --stat",
+          "exit_code": 0,
+          "output_sha": "117c9979b5bf03f912a383b51088057da56efa200397b1d1b50da9b71e4d92a2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -rn \"it.skip\\|describe.skip\\|xit(\\|xdescribe(\\|test.skip\\|\\.todo(\" tests --include='*.test.ts' --include='*.test.tsx' | wc -l; git diff 94dd3ea8 HEAD -- tests | grep -E \"^\\+.*(skip|todo)\" | head -20",
+          "exit_code": 0,
+          "output_sha": "65c1706442ab60f5a84d5c46bff4797f801a65fcc2f2aa62dec35ae8f959d908"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && TMPDIR=$PWD/.tmp timeout 900 npx vitest run --reporter=dot 2>&1 | tail -30; echo \"EXIT:${PIPESTATUS[0]}\"",
+          "exit_code": -15,
+          "output_sha": "878ad39e9b8c975a1f5dc1bc1527543a755950783d2ec661b51747c64eb1a863"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && (TMPDIR=$PWD/.tmp nohup npx vitest run --reporter=dot > /tmp/gap003-vitest.log 2>&1; echo \"EXIT:$?\" >> /tmp/gap003-vitest.log) & sleep 25; echo started; tail -3 /tmp/gap003-vitest.log",
+          "exit_code": 0,
+          "output_sha": "5ad3ddc592b940bb8ce961e4f5d5a689f3adfd7ab9bd3ddf61e169f369f492f8"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 25; tail -5 /tmp/gap003-vitest.log",
+          "exit_code": 0,
+          "output_sha": "659e9fe44a1cb9113f65bb5ebc9b73b5b0a0d0b3244e139855e7731f86c19c0e"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 28; tail -20 /tmp/gap003-vitest.log",
+          "exit_code": 0,
+          "output_sha": "ef9e95f610770954bf8278c720a4c234d0eefc4a5622316b3415429c3511b0d9"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; tail -c 2000 /tmp/gap003-vitest.log",
+          "exit_code": 0,
+          "output_sha": "c72f36796b5f32338bececb4e71b50cc2bc2411ba9bf3d4cbf1fc6f548ac7ee1"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -E \"Test Files|Tests |EXIT:|Duration\" /tmp/gap003-vitest.log | tail -10; echo ---; ps aux | grep -c \"[v]itest\"",
+          "exit_code": 0,
+          "output_sha": "26e62cb5f64442d2f7938d4da036648c69e907be99a1fa25e398ba472c0a4fd4"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -aE \"^ *(Test Files|Tests|Duration|EXIT:)\" /tmp/gap003-vitest.log | tail -10; echo \"---procs:\"; ps aux | grep -c \"[v]itest\"",
+          "exit_code": 0,
+          "output_sha": "2b30405cfc3e4b245748f0ff6f04f879761855be69a652b24bd8f158bebf5d94"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; tail -c 1200 /tmp/gap003-vitest.log; echo; echo \"---procs:\"; ps aux | grep \"[v]itest\" | head -5",
+          "exit_code": 0,
+          "output_sha": "3a13d0a921f67c22afe2941aa72234ab544e562757307d62e8a40f5f74e4617c"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -aE \"Test Files|Tests  |EXIT:\" /tmp/gap003-vitest.log | tail -6; echo \"---\"; pgrep -f \"vitest run\" >/dev/null && echo RUNNING || echo FINISHED",
+          "exit_code": 0,
+          "output_sha": "6023b270b8e6433bcce4fa7afa42ef9e1fc75a31e493366d2ca651b8e89e310c"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -aE \"Test Files|Tests  |EXIT:\" /tmp/gap003-vitest.log | tail -6; echo \"---\"; pgrep -f \"vitest run\" >/dev/null && echo RUNNING || echo FINISHED; wc -c /tmp/gap003-vitest.log",
+          "exit_code": 0,
+          "output_sha": "f2c0661435eb5a1df36bb45b840f73b37385c9e542019a72efbba63b885652ea"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -aE \"Test Files|Tests  |EXIT:\" /tmp/gap003-vitest.log | tail -6; echo \"---\"; pgrep -f \"vitest run\" >/dev/null && echo RUNNING || echo FINISHED; wc -c /tmp/gap003-vitest.log",
+          "exit_code": 0,
+          "output_sha": "41607919512756be34ed60bbacd63c3bbc6459c7f728b855af575436f514e02e"
+        },
+        {
+          "tool": "run_command",
+          "command": "ps -eo pid,ppid,etime,pcpu,args | grep -E \"[v]itest|[n]ode .*bin\" | head -20",
+          "exit_code": 0,
+          "output_sha": "74f6767b1faa550b20cdd01f7b415c9658f602694eb05d7ff28fc7a7e407477b"
+        },
+        {
+          "tool": "run_command",
+          "command": "ps -eo pid,ppid,etime,pcpu,args | grep -E \"gap003|speclang-GAP-003\" | grep -v grep | head -20",
+          "exit_code": 0,
+          "output_sha": "3be0ba43c6c21074b50dd84dc3b398363f1f25c811da57637d1e96f63a3e1db5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && (TMPDIR=$PWD/.tmp nohup npx vitest run --reporter=dot > /tmp/gap003-vitest2.log 2>&1; echo \"EXIT:$?\" >> /tmp/gap003-vitest2.log) & sleep 20; pgrep -f \"speclang-GAP-003.*vitest\" | head; echo \"---\"; ps -eo pid,etime,args | grep \"[v]itest run\" | grep -v \"ralph\\|mafia\" | head",
+          "exit_code": 0,
+          "output_sha": "917927053536a7763d87a74a6b786f12e4cfc3475a2407ef0b5d89f9f8f482d6"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 25; ps -eo pid,ppid,args | awk '$2==90581 || $1==90581' | head -20; echo \"--- count children:\"; ps -eo ppid | grep -c \"^ *90581$\"",
+          "exit_code": 1,
+          "output_sha": "a528e64576d1bc7ae61152ff9d0fa32e3b58a2cf8ed003feb542221b0b560c34"
+        },
+        {
+          "tool": "run_command",
+          "command": "ps -eo pid,ppid,etime,args | grep \"[v]itest\" | grep -v \"ralph\\|mafia\" | head -20; echo \"---\"; tail -c 300 /tmp/gap003-vitest2.log",
+          "exit_code": 0,
+          "output_sha": "ddf26794686646aee4bd1efa25a02e00b7c435ba3ded0c9bef6013b64aa31ab4"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Ran: cd /home/kara/worktrees/speclang-GAP-003 && TMPDIR=$PWD/.tmp npx vitest run --reporter=dot\\nOutput tail: \\\"Test Files  116 passed | 4 skipped (120)\\\" / \\\"Tests  1962 passed | 58 skipped (2020)\\\" / \\\"Duration 27.46s\\\" / \\\"EXIT:0\\\"\\nMatches evidence file \\u00a74 exactly (116 passed | 4 skipped (120); 1962 passed | 58 skipped (2020)).\\ngit diff 94dd3ea8 HEAD -- tests | grep '^+.*(skip|todo)' -> no output (no new skips added).\\nConfig: maxWorkers = min(16, max(2, floor(availableParallelism()/2))) = 8 on this 16-core host (availableParallelism()=16).\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "1fb3a6c42a2b00284dffce19743d719c62c32e779f7cab8ca9963a836701ad21"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && npx tsx -e \"import c from './vitest.config'; console.log(JSON.stringify({maxWorkers:(c as any).test.maxWorkers, include:(c as any).test.include, exclude:(c as any).test.exclude, fileParallelism:(c as any).test.fileParallelism}))\" 2>&1 | tail -3; echo \"---\"; grep -n \"maxWorkers\" package.json",
+          "exit_code": 0,
+          "output_sha": "c6b681a2153249aee5c570c9bac2fb3f5d688e73b453df3b66810c269ccb06e1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -rn \"resolveMaxWorkers\" node_modules/vitest/dist/chunks/*.js | head -5",
+          "exit_code": 0,
+          "output_sha": "18d11c0ce0573278aad1837ce939ed7df676643f219bb19cffe63dfa7b879ed5"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 30, \"offset\": 3825, \"path\": \"node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js\"}",
+          "exit_code": 1,
+          "output_sha": "684be8b00caf1c6cf3b9772c7a572da87bf8cbb179c11e0b10443c50ce7b38d6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && sed -n '3825,3860p' node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js",
+          "exit_code": 0,
+          "output_sha": "e7e03b5214c856d96c6c840aea963523b7bcc8bce4a32105719af0b1e35a9cf2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -rn \"maxWorkers\" node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js | head -20",
+          "exit_code": 0,
+          "output_sha": "7cb07fe0c55a3cf22adab0324b73282ac375c9dd2aa7259c129efe04ac73ac16"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && sed -n '2475,2495p' node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js",
+          "exit_code": 0,
+          "output_sha": "d433bcd1a1b13e183d01aa7a850f5cb64dcdfd02bfb6769dfd8929fdadfe52be"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -rn \"maxWorkers\" node_modules/vitest/dist/chunks/*.js | grep -v \"cli-api.B0Pz1_R7\" | head -20",
+          "exit_code": 0,
+          "output_sha": "9e6cdf42614fe929e4c7895c4412595cc4776d70897b470697b372d0d5bec119"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && sed -n '920,940p' node_modules/vitest/dist/chunks/cac.DzDtg8hz.js; echo \"=== resolveConfig maxWorkers ===\"; grep -rn \"maxWorkers\" node_modules/vitest/dist/chunks/resolveConfig*.js 2>/dev/null | head -20; ls node_modules/vitest/dist/chunks/ | head -40",
+          "exit_code": 0,
+          "output_sha": "c7df171fda69606196fa14290f1df515cf7ff4cd989e810a93f0dde613d49da6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -rn \"maxWorkers\" node_modules/vitest/dist/chunks/index.BCY_7LL2.js node_modules/vitest/dist/chunks/index.CMESou6r.js node_modules/vitest/dist/chunks/index.Chj8NDwU.js node_modules/vitest/dist/chunks/index.DC7d2Pf8.js node_modules/vitest/dist/chunks/index.DXx9Dtk7.js node_modules/vitest/dist/chunks/index.DdgEv5B1.js node_modules/vitest/dist/chunks/index.UpGiHP7g.js node_modules/vitest/dist/chunks/index.og1WyBLx.js 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "0994a71d007328f2508f2b37041442632ad36e9fa0b376e30294b175a710e423"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -rln \"maxWorkers\" node_modules/vitest/dist/ | head -20",
+          "exit_code": 0,
+          "output_sha": "57043e6c510d3fb56e1b09325ce1a15fa8c37a0add6d5c7eedbba3d0b993a708"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -rn \"maxWorkers\" node_modules/vitest/dist/chunks/config.d.A1h_Y6Jt.d.ts | head; echo \"=== resolveConfig in cli-api ===\"; grep -n \"resolveConfig\\|function resolveConfig\" node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js | head -10",
+          "exit_code": 0,
+          "output_sha": "832e74852edd6016601a1c739f8fdbad1b7edf0d71f80055b783fbb851b84fd2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -n \"maxWorkers\" node_modules/vitest/dist/chunks/coverage.DM_a_rWm.js | head -20; echo \"=== context ===\"; sed -n '370,395p' node_modules/vitest/dist/chunks/coverage.DM_a_rWm.js",
+          "exit_code": 0,
+          "output_sha": "3fc7dd1c19b115144b58c438e0294ebb0332ef42ab12ceaa1afb9e74a5ea3d5f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && sed -n '200,240p' node_modules/vitest/dist/chunks/coverage.DM_a_rWm.js",
+          "exit_code": 0,
+          "output_sha": "782b592e85fa63e6ac87baba4aadc690c195137a617f0d770534a9eb1e81f478"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -n \"resolved = {\" -A 40 node_modules/vitest/dist/chunks/coverage.DM_a_rWm.js | sed -n '1,60p'",
+          "exit_code": 0,
+          "output_sha": "d9ac2ac5d952305489d29c709d0fe67d8242a1bfd5855ed2eed28c041cf3033d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -n \"maxWorkers\" node_modules/vitest/dist/chunks/defaults.9aQKnqFk.js; echo \"=== resolveInlineWorkerOption ===\"; grep -n \"function resolveInlineWorkerOption\" -A 8 node_modules/vitest/dist/chunks/coverage.DM_a_rWm.js",
+          "exit_code": 0,
+          "output_sha": "c3a440a0a503757eaa2abdda25fde648408b7be24251a604100bd73e02800474"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -rn \"maxWorkers\" node_modules/vitest/dist/chunks/defaults*.js node_modules/vitest/dist/chunks/*.js 2>/dev/null | grep -i \"default\" | head; echo \"=== configDefaults def ===\"; grep -rn \"configDefaults = {\" -A 60 node_modules/vitest/dist/chunks/defaults.9aQKnqFk.js | grep -n \"maxWorkers\\|fileParallelism\\|isolate\" | head",
+          "exit_code": 0,
+          "output_sha": "d15b55f7f7fee7f71900167072f469470f3ad046196475072f71c54716363e97"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -rn \"configDefaults\" node_modules/vitest/dist/chunks/coverage.DM_a_rWm.js | head -3; grep -rn \"maxWorkers\" node_modules/vitest/dist/chunks/*.js | grep -c \"\"; echo \"=== search all dist for 'maxWorkers:' assignment ===\"; grep -rn \"maxWorkers:\" node_modules/vitest/dist/ | head -10",
+          "exit_code": 0,
+          "output_sha": "be4fe5c1881f2513d16b9fa8b1712e9ecef4dc8f372c880cdd1eeaa94fbe4080"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && sed -n '9215,9235p' node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js; echo \"=== 3690-3715 ===\"; sed -n '3690,3715p' node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js",
+          "exit_code": 0,
+          "output_sha": "ca51481d566333091e4a4cded32896e32764677748dc8f63974281186c3ad5ff"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && sed -n '3875,3900p' node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js",
+          "exit_code": 0,
+          "output_sha": "d97dd59bd13d3f5e659694bf6c7f6795bf8fd02f0f40e59d43f459e2bc301a9a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -n \"maxWorkers\" node_modules/vitest/dist/chunks/defaults.9aQKnqFk.js; echo \"rc=$?\"; grep -c \"\" node_modules/vitest/dist/chunks/defaults.9aQKnqFk.js; grep -n \"fileParallelism\\|isolate:\" node_modules/vitest/dist/chunks/defaults.9aQKnqFk.js | head",
+          "exit_code": 0,
+          "output_sha": "2446011e149894e3a53f79229c89161d29c30266957e936d96afd35e085a7b2f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && sed -n '40,83p' node_modules/vitest/dist/chunks/defaults.9aQKnqFk.js",
+          "exit_code": 0,
+          "output_sha": "139ca09db661bce9a60d4b1fb6c9d329c3ac2a9274148c4c102e67dcd8c6fe03"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -rn \"maxWorkers\" node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js | sed -n '1,40p'; echo \"=== 10980-11010 ===\"; sed -n '10985,11010p' node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js",
+          "exit_code": 0,
+          "output_sha": "d8e3126eb530d439c246a07dd4a9c3fb1f518de8915a9af2599ea519081f310f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && sed -n '13150,13180p' node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js",
+          "exit_code": 0,
+          "output_sha": "ba0abc96a3d649a671d10f31ec354f4afb05aa2c7cc2284c05fa046ba5df9df6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -n \"resolveConfig(this, options, server.config)\" -B 40 node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js | grep -n \"options\\b\\|_cliOptions\\|cliOptions\" | head -20",
+          "exit_code": 0,
+          "output_sha": "6254d5d8424bf292d1c1c7b85612fe73de40a1b404648e3aac8558a614cdde2a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -n \"_setServer(\" node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js | head; echo \"===\"; grep -n \"_setServer(\" -A 6 node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js | head -40",
+          "exit_code": 0,
+          "output_sha": "c9316e8a8bd9649c6e91364da1695a585fdc51b109653eba36fdb58b6abd3a47"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && sed -n '14200,14260p' node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js",
+          "exit_code": 0,
+          "output_sha": "d5c472ad864854c29fbf04b04956424df85b135421d309775cd3883d03b08d0e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -n \"function deepMerge\" -A 25 node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js | head -35",
+          "exit_code": 0,
+          "output_sha": "92a36454a93d361ced8488c02527ed88a341f11faaf5fae123eb882a84af113f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -rn \"deepMerge\" node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js | head -3; grep -rn \"function deepMerge\" -A 25 node_modules/vitest/dist/chunks/*.js | head -35",
+          "exit_code": 0,
+          "output_sha": "f137bb19a694fb9eba664233173aa5c4edbd412eff6b083880dc0d2f48dd3514"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -rn \"function deepMerge\" -A 30 node_modules/@vitest/utils/dist/helpers.js | head -40",
+          "exit_code": 0,
+          "output_sha": "eae258bf4e9b9e64e79d0dc988f641ff4d6b2e859bcee6501949a2c53aebeadc"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -n \"function isMergeableObject\" -A 8 node_modules/@vitest/utils/dist/helpers.js",
+          "exit_code": 0,
+          "output_sha": "ea6a232c8639e26bce304b9a2d3e0905e08ef9e900833886eb54d4cb7af28785"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -n \"function isPlainObject\" -A 10 node_modules/@vitest/utils/dist/helpers.js",
+          "exit_code": 0,
+          "output_sha": "3637deba072a6ba19dac190ca07a758cf49df48c0f23e3cc75ec3248ab416d2b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -n \"function toString\" -A 5 node_modules/@vitest/utils/dist/helpers.js",
+          "exit_code": 0,
+          "output_sha": "4db4da76dc058b75489dd4abf0989af290c8e1aceaf8bf514b1cbfca5f186630"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -n \"function getDefaultThreadsCount\" -A 6 node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js; echo \"=== 2350-2365 ===\"; sed -n '2350,2365p' node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js",
+          "exit_code": 0,
+          "output_sha": "dad31d8c1155754633ea69dbe916cbd27ba0b353704718e91c84a02a73d5266b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -rn \"getDefaultThreadsCount\\|threadsCount\" node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js | head -10",
+          "exit_code": 0,
+          "output_sha": "d5239f2ab6293ab8a91457a47e77c689b1c561401326a968000df4511fd1c51a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && sed -n '2395,2415p' node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js",
+          "exit_code": 0,
+          "output_sha": "9493ead40eda023dd9004aa8529dded95aabf142831eb13c32242a941162e0c8"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -rn \"maxWorkers\" node_modules/vitest/dist/chunks/native.DPzPHdi5.js node_modules/vitest/dist/chunks/inspector.CvyFGlXm.js | head",
+          "exit_code": 0,
+          "output_sha": "e116207b4e19c0ac53e0319d07f08b57061b298e51991bd6e0d40c9c760fadc8"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -rn \"maxWorkers\" node_modules/vitest/dist/*.js node_modules/vitest/dist/*.mjs 2>/dev/null | head; echo \"=== pool creation ===\"; grep -rn \"createPool\\|new ForksPool\\|new ThreadsPool\" node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js | head",
+          "exit_code": 0,
+          "output_sha": "c3581886989c877a042e319e8a8be41c6087ddc951cbc93bf68ebc6590a7503a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && sed -n '3675,3690p' node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js; echo \"=== 3455-3500 ===\"; sed -n '3455,3500p' node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js",
+          "exit_code": 0,
+          "output_sha": "fe4aa1a14a5ffbbc3ab42bdea41707462303eef7f70052e5136afc5f49d1ef7b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -n \"function resolveOptions\" -A 20 node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js | head -25",
+          "exit_code": 0,
+          "output_sha": "098562b77b6a08719dbd5e3355cdcc4e38242d64f0fd260ff7e1621c673cba71"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && sed -n '3755,3798p' node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js",
+          "exit_code": 0,
+          "output_sha": "a54fac5a617cee805dfe6440b169467ffa93a01bf39b1faa77a52d0dca12e7e5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && sed -n '3715,3758p' node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js",
+          "exit_code": 0,
+          "output_sha": "0c79ffec424477f970f74fa51b28ccde773352051181e8869c8901c3386f1cb7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -n \"function getMemoryLimit\" -A 12 node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js",
+          "exit_code": 0,
+          "output_sha": "ba45dc2838d255f2c30e9b7ecf0261acb99287d1934b851827613479316202d7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-GAP-003 && grep -n \"function getWorkerMemoryLimit\" -A 8 node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js",
+          "exit_code": 0,
+          "output_sha": "6ee647c7383cdc3a0e62210cb9c083fd16508060bdafff4f6039d9abae826a80"
+        },
+        {
+          "tool": "sandbox_read",
+          "command": "sandbox_read {\"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "8bc78ff3a053af72fb90aa6bfbb9305e2911fc264e0b69a6aff8318bd7e7839e"
+        },
+        {
+          "tool": "read_diff",
+          "command": "read_diff {}",
+          "exit_code": 0,
+          "output_sha": "7f6d39ee449bc4a2612adbc7d48e2076865e006dfb03a50b11aa4719c0e24890"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "medium",
+        "file": "_index.json",
+        "line": 0,
+        "detection": "generated index contains content_refs entries that are not keys in the specs map",
+        "detail": "New refs such as `speclang/examples/auth` (in @speclang/examples/api), `speclang/examples/api` (in @speclang/examples/auth), and `speclang/examples/hello-world#greet`/`#farewell` (in @speclang/examples-spec-dir/hello-world-cascade) point at IDs that do not exist as spec entries, unlike the surrounding refs which resolve to real spec IDs."
+      },
+      {
+        "severity": "medium",
+        "file": "_index.json",
+        "line": 0,
+        "detection": "reverse dependency map keys must correspond to forward content_refs; new reverse entries are added for refs that were removed from the forward lists",
+        "detail": "The reverse map gains `speclang/examples/api -> @speclang/examples/auth` and `speclang/examples/auth -> @speclang/examples/api` (mutual), plus `speclang/examples-spec-dir/hello-world-cascade -> @speclang/examples-spec`, while the corresponding forward content_refs for those specs were changed to different targets, so the two halves of the index disagree."
+      },
+      {
+        "severity": "low",
+        "file": "_index.json",
+        "line": 0,
+        "detection": "spec entry renamed from @unknown/index.spec.md to @specs/agents/implementation but the file field still points at agents.spec.dir/index.spec.md",
+        "detail": "The entry's `file` remains `agents.spec.dir/index.spec.md` while its id/short/tags now describe an agents implementation spec, and its content_refs changed from `specs/agent-protocol---` to `specs/agent-protocol`, indicating the id was rewritten without the underlying file identity being reconciled."
+      },
+      {
+        "severity": "low",
+        "file": "_index.json",
+        "line": 0,
+        "detection": "new spec entries added to specs map but not registered in the top-level spec list",
+        "detail": "`@specs/docs/nasa-se-playbook` and `@specs/skills/nasa-spec-style` are added to the `specs` map and reverse map, but the top-level ordering list (where `@bugs/integration-test-template`, `@demo/hello-dir`, `@specs/docs/changelog`, `@examples/greeting-dir` were inserted) does not include them, so the list and map are out of sync."
+      }
+    ],
+    "summary": "The regenerated _index.json introduces several dangling/renamed content_refs (notably the new speclang/examples/* targets) and forward/reverse dependency-map inconsistencies, plus new spec entries missing from the top-level list."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  11:19:35\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 Evidence file .coding-hermes/evidence/GAP-003-load-audit.md names the fixed test/harness with before/after measurement; npx vitest run exits 0 with no new skips; named offender concurrency clamped 2-16: Ran `cd /home/kara/worktrees/speclang-GAP-003 && TMPDIR=$PWD/.tmp npx vitest run --reporter=dot` -> EXIT:0, \"Test Files  116 passed | 4 skipped (120)\", \"Tests  1962 passed | 58 skipped (2020)\", matching .coding-hermes/evidence/GAP-003-load-audit.md \u00a74 exactly. `git diff 94dd3ea8 HEAD -- tests | grep '^+.*(skip|todo)'` produced no output (no new skips). vitest.config.ts sets maxWorkers = min(16, max(2, floor(availableParallelism()/2))) = 8 on this 16-core host, i.e. clamped into 2-16; tests/load-hygiene.test.ts asserts the clamp bounds.\nThe load-audit evidence file, the bounded vitest worker pool (clamped 2-16) and the load-hygiene test all land together, and a fresh full `npx vitest run` exits 0 with the same pass/skip counts the evidence file records and no newly added skips.\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T16:28:23.810301",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T16:28:23.857436+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 707,
+        "truncated": false,
+        "source": "git show bafa637fdb04"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 206160,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "GAP-003"
+  }
+}
