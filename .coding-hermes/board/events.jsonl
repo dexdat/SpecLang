@@ -456,3 +456,6 @@
 {"id":455,"timestamp":"2026-11-17T16:41:14Z","event_type":"task_completed","task_id":"DOC-2","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":456,"timestamp":"2026-11-17T16:41:14Z","event_type":"task_completed","task_id":"UX-004-R1","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":457,"timestamp":"2026-11-17T17:05:39Z","event_type":"task_completed","task_id":"README-26","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":458,"timestamp":"2026-11-17T17:29:35Z","event_type":"task_updated","task_id":"README-2","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
+{"id":459,"timestamp":"2026-11-17T17:29:35Z","event_type":"task_updated","task_id":"GAP-005","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
+{"id":460,"timestamp":"2026-11-17T17:29:35Z","event_type":"task_updated","task_id":"DF-SPECLANG-5-R4","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
