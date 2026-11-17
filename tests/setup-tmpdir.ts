@@ -10,6 +10,7 @@
  */
 import { join, resolve } from "path";
 import { mkdirSync } from "fs";
+import { assertProxiesReachable } from "./net-guard";
 
 const PROJECT_TMP = join(process.cwd(), ".tmp");
 
@@ -21,3 +22,8 @@ mkdirSync(PROJECT_TMP, { recursive: true });
 if (!process.env.SPECLANG_PRESERVE_TMPDIR) {
   process.env.TMPDIR = PROJECT_TMP;
 }
+
+// QA-SPECLANG-4: refuse to run against a cut network. Without this a child
+// spawned by a test can block forever on an unreachable proxy and wedge the
+// whole run with no failure report; here it fails the file in milliseconds.
+await assertProxiesReachable();
