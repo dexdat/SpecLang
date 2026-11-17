@@ -1,0 +1,301 @@
+# Configuration
+
+This page is the canonical list of every environment variable SpecLang reads from
+`src/**/*.ts`: 26 of them. Each row gives the subsystem, the value the code falls back to
+when the variable is unset, a `file:line` anchor for the read, and what actually changes at
+runtime when you set it. The list is derived from source, not from intent — if a variable is
+not on this page, nothing under `src/` reads it.
+
+Two things this page is careful about, because they are easy to document wrongly:
+
+- **Read is not the same as applied.** Several `MCP_*` variables are parsed into the config
+  object and then consumed by nothing on the live start path. Those rows say so; see
+  [Read but not applied](#read-but-not-applied).
+- **There is no `.env` loader.** The code never calls `dotenv` (it is not a dependency,
+  `package.json:56-67`) and never reads a `.env` file. Values must be exported in the parent
+  process — shell, systemd unit, container spec, or the MCP client's `env` block.
+
+**No `.env.example` is tracked in this repository.** The gitreins pre-commit guard blocks
+every file in the `.env*` path class regardless of content, so the template lives inside this
+page: copy the block at [Copy-paste template](#copy-paste-template) into your shell or into
+your own untracked `.env`, and replace every `<placeholder>`.
+
+---
+
+## How configuration is read
+
+There is no central env loader and nothing is resolved at import time. Each module reads
+`process.env` inside a function, at the moment it needs the value, and applies its own
+defaults. The three layers are:
+
+1. **Code defaults** — `DEFAULT_CONFIG` in the MCP server (`src/mcp/config.ts:10-33`),
+   `DEFAULT_MODELS` / `DEFAULT_BASE_URLS` in the cascade agent
+   (`src/cascade/agent.ts:45-58`), and string literals in the CLI utilities
+   (`src/cli/utils.ts:61`, `:81`).
+2. **CLI flags and constructor options** — `speclang mcp start` accepts `--port`, `--auth`,
+   `--user`, `--pass`, `--token` (`bin/speclang:1219-1226`) and builds a config object from
+   them (`bin/speclang:1242-1253`); `speclang agent` accepts `--provider`, `--model`,
+   `--base-url`, `--api-key`, `--dry-run` (`bin/speclang:151-155`).
+3. **Process environment** — read as described per subsystem below.
+
+Because the MCP config is loaded once, in the `MCPServer` constructor
+(`src/mcp/server.ts:39-42`), a running server keeps the values it read at startup. Restart
+the server after changing an environment variable.
+
+The one config file in the tree, `.speclangrc`, plays no part in any variable on this page: it
+is written and read as JSON by the CLI (`bin/speclang:1371-1380`,
+`src/workflow/conversation.ts:452-475`) for project settings, while the YAML
+`loadConfig()` in `src/config/loader.ts:25` reads no environment variables at all. No
+`MCP_*`, `SPECLANG_*` or provider variable is set from `.speclangrc`, and no entry in it is
+overridden by the environment.
+
+### Precedence, per subsystem
+
+Precedence is not uniform, and it differs in a second, subtler way: MCP variables test for a
+*non-empty* value, while the cascade variables use `??`, which treats an empty string as the
+supplied value.
+
+| Subsystem | Resolution order | Anchor |
+| --- | --- | --- |
+| MCP server config fields | constructor options → environment (env applied last, only when non-empty) → `DEFAULT_CONFIG` | `src/mcp/config.ts:39`, `:42-84` |
+| MCP HTTP listen port | `--port` argument → `config.port` (env → default) — the argument always wins | `src/mcp/server.ts:78` |
+| CLI database path | explicit `config.path` → `SPECLANG_DB` → `.speclang/speclang.db` | `src/cli/utils.ts:61` |
+| CLI specs root | `SPECLANG_DIR` → `specs` (no flag layer) | `src/cli/utils.ts:81` |
+| Cascade provider / model / base URL | explicit option (`--provider`, `--model`, `--base-url`) → `SPECLANG_*` → per-provider default | `src/cascade/agent.ts:106`, `:108`, `:113` |
+| Cascade API key | `--api-key` → provider-specific key variable → no key (call time error) | `src/cascade/agent.ts:115`, `:214-219` |
+| Skills directory | `HOME` → cwd | `src/workflow/commands.ts:531`, `:631` |
+
+The empty-string difference matters in practice:
+
+- `MCP_PORT=` (empty) is treated as **unset** — the `if (process.env.MCP_PORT)` guards skip it.
+- `SPECLANG_DB=` / `SPECLANG_DIR=` / `HOME=` are treated as **unset** — those reads use `||`.
+- `SPECLANG_MODEL=` / `SPECLANG_BASE_URL=` are treated as **set to an empty string** — those
+  reads use `??`, so you get an empty model id and a request URL of `/v1/messages`.
+- `SPECLANG_PROVIDER=` throws `Unsupported LLM provider ""` before any request is built
+  (`src/cascade/provider-adapter.ts:29-33`).
+
+---
+
+## ⚠️ Exposure and authentication defaults
+
+`DEFAULT_CONFIG.auth.enabled` is `false` and the default type is `none`
+(`src/mcp/config.ts:17-20`). When auth is disabled the middleware is a pass-through
+(`src/mcp/auth.ts:30-31`), so an HTTP MCP server started with no further configuration serves
+unauthenticated requests.
+
+You cannot narrow that exposure with `MCP_HOST`. The variable is parsed
+(`src/mcp/config.ts:45`) but nothing reads `config.host`; the listener is
+`app.listen(httpPort)` with no host argument (`src/mcp/server.ts:219`), which binds every
+interface. To keep the server off the network, bind-restrict at the host level (firewall,
+container network, reverse proxy) or run it in stdio mode.
+
+To require credentials:
+
+```bash
+MCP_AUTH_ENABLED=true MCP_AUTH_TYPE=token MCP_API_KEYS=first-key,second-key speclang mcp start --remote
+```
+
+Behaviours that follow from the source and are easy to get wrong:
+
+- `MCP_AUTH_ENABLED` is compared with the literal string `'true'`
+  (`src/mcp/config.ts:54`). Any other value — including `1`, `TRUE`, `yes` — leaves auth
+  disabled.
+- The variable can only switch auth **on**. It never disables auth that a flag enabled:
+  `--auth token` sets `auth.enabled` directly (`bin/speclang:1247`), and the env guard is
+  skipped when `MCP_AUTH_ENABLED` is unset or not `true`.
+- When `MCP_AUTH_ENABLED=true`, `MCP_AUTH_TYPE` replaces the flag's type, defaulting to
+  `token` when unset (`src/mcp/config.ts:56`). A misspelled type silently re-opens the
+  server: the middleware switches on the type string and its `default` branch returns a
+  pass-through (`src/mcp/auth.ts:34-45`), so `MCP_AUTH_ENABLED=true
+  MCP_AUTH_TYPE=Bearer` serves unauthenticated requests. Verify with a `curl` that omits the
+  header.
+- With `type: token` and an empty key set, every request gets `401 Invalid token`
+  (`src/mcp/auth.ts:82-84`) — locked out is the failure mode, not exposed.
+- Auth is mounted on the `/mcp` prefix only (`src/mcp/server.ts:89`). `/events`
+  (`src/mcp/server.ts:204`) and `/health` (`src/mcp/server.ts:215`) are registered outside
+  that prefix and stay unauthenticated even with auth on — another reason to keep the SSE
+  endpoint (`MCP_SSE_ENABLED`) off on an exposed host.
+
+---
+
+## MCP server
+
+Read in `loadConfig()` — `src/mcp/config.ts:38-87` — which runs on every `MCPServer`
+construction (`src/mcp/server.ts:40`). Every read is guarded by `if (process.env.NAME)`, so an
+empty value counts as unset. Reached from `speclang mcp start` (`bin/speclang:1216-1270`,
+which requires a built `dist/`) and from the MCP entry point in `src/mcp/server.ts:365-380`.
+
+| Variable | Subsystem | Default when unset | Read at | What changes when you set it |
+| --- | --- | --- | --- | --- |
+| `MCP_PORT` | mcp | `3000` | `src/mcp/config.ts:42` | `parseInt` into `config.port`. It does not move the HTTP listener: every shipped start path passes an explicit port to `startHTTP()` (`bin/speclang:1258`, `src/cli/commands/mcp.ts:111`, `src/cli/commands/server.ts:42`, `src/mcp/server.ts:376`) and `startHTTP` prefers its argument over the config (`src/mcp/server.ts:78`). Use `--port`. |
+| `MCP_HOST` | mcp | `0.0.0.0` | `src/mcp/config.ts:45` | Sets `config.host`, which no code reads; the listener binds every interface regardless (`src/mcp/server.ts:219`). No effect today. |
+| `MCP_DATABASE` | database | `.speclang/speclang.db` | `src/mcp/config.ts:48` | Path of the SQLite file the tools query; the parent directory is created first (`src/mcp/server.ts:50-56`). Applied after the constructor options, so it overrides the path the caller passed (`bin/speclang:1244`, `src/cli/commands/mcp.ts:102`). |
+| `MCP_SPECS_DIR` | paths | `specs` | `src/mcp/config.ts:51` | Spec root handed to the tool registry (`src/mcp/tools/index.ts:52`, `:55`), which resolves spec lookups and index generation against it. Overrides a caller-supplied `specsDir` (`bin/speclang:1245`). |
+| `MCP_AUTH_ENABLED` | mcp | `false` (auth disabled) | `src/mcp/config.ts:54` | Turns HTTP auth on for the `/mcp` prefix when the value is exactly `true`, and switches the auth type to `MCP_AUTH_TYPE` (or `token`). Never turns auth off. See the exposure section above. |
+| `MCP_AUTH_TYPE` | mcp | `token` (only read when auth is enabled) | `src/mcp/config.ts:56` | Selects the middleware: `basic`, `token`, `config_file` or `tls_client_cert` (`src/mcp/auth.ts:34-45`). Unrecognized values fall through to a no-auth pass-through (`src/mcp/auth.ts:43-44`). |
+| `MCP_API_KEYS` | mcp | required when auth is on — no default | `src/mcp/config.ts:58` | Comma-separated bearer tokens (`split(',')`, `src/mcp/config.ts:59`) accepted as `Authorization: Bearer <key>` (`src/mcp/auth.ts:76-84`). The split does not trim, so `k1, k2` accepts `k1` while the second entry is `" k2"` and never matches. |
+| `MCP_SSE_ENABLED` | mcp | `true` | `src/mcp/config.ts:61` | Only the literal `false` disables it: the `/events` SSE endpoint is registered only when enabled (`src/mcp/server.ts:202-212`). Other values are ignored, and the endpoint sits outside the auth prefix. |
+| `MCP_LOG_LEVEL` | logging | `info` | `src/mcp/config.ts:64` | Sets `config.logging.level` only. No logger on the live path is built from it, so log output does not change. |
+| `MCP_LOG_FILE` | logging | unset — stderr only, no file written | `src/mcp/config.ts:67` | Sets `config.logging.file` only; nothing opens the file. No effect today. |
+| `MCP_MAX_CONNECTIONS` | mcp | `100` | `src/mcp/config.ts:70` | `parseInt` into `config.limits.maxConnections`. No consumer on the live path — no connection cap is enforced. |
+| `MCP_QUERY_TIMEOUT_MS` | mcp | `5000` | `src/mcp/config.ts:73` | `parseInt` into `config.limits.queryTimeoutMs`. No consumer — no query timeout is enforced. |
+| `MCP_MAX_RESULTS` | mcp | `1000` | `src/mcp/config.ts:76` | `parseInt` into `config.limits.maxResults`. No consumer — tool handlers keep their own caps. |
+| `MCP_WAL_MODE` | database | `true` | `src/mcp/config.ts:79` | Sets `config.databaseWalMode` (`'true'` → true, any other non-empty value → false), but `initDatabase()` hardcodes `wal: true` (`src/mcp/server.ts:52-56`), so the value never reaches the database. |
+| `MCP_SERVER_MODE` | mcp | `http` | `src/mcp/config.ts:82` | Sets `config.serverMode`. Transport is chosen by flags (`--remote`, `--http`; `bin/speclang:1257`, `src/mcp/server.ts:374`), and the only reader of `serverMode` is `validateConfig()` (`src/mcp/config.ts:131`), which no caller invokes. No effect today. |
+
+Two structural notes on the same code path:
+
+- The numeric variables are `parseInt`-ed without range validation on the start path.
+  `validateConfig()` (`src/mcp/config.ts:106`) would reject out-of-range values, but nothing
+  calls it, so `MCP_MAX_RESULTS=lots` yields `NaN` silently. (For the variables that are
+  consumed, that means `MCP_PORT`, where it is consumed at all.)
+- The SSE heartbeat interval is fixed at 30000 ms in `DEFAULT_CONFIG`
+  (`src/mcp/config.ts:23`); no environment variable controls it.
+
+## CLI and storage
+
+Read by the command layer — `src/cli/utils.ts` and `src/workflow/commands.ts` — used by
+`index`, `search`, `get`, `cascade` and the skills subcommands.
+
+| Variable | Subsystem | Default when unset | Read at | What changes when you set it |
+| --- | --- | --- | --- | --- |
+| `SPECLANG_DB` | database | `.speclang/speclang.db` | `src/cli/utils.ts:61`, `src/cli/utils.ts:182` | SQLite path for commands that open the index database. `getDatabase()` prefers an explicitly passed `{ path }` over the variable (`src/cli/utils.ts:61`); `getDbPath()` has no other layer (`src/cli/utils.ts:182`). |
+| `SPECLANG_DIR` | paths | `specs` | `src/cli/utils.ts:81` | Root the CLI indexes and resolves spec files from; `loadIndex()` falls back to generating an index from it (`src/cli/utils.ts:87-94`). No flag or config-file layer. |
+| `HOME` | paths | `'.'` (relative to the working directory) | `src/workflow/commands.ts:531`, `src/workflow/commands.ts:631` | Base of the user-level skills directory: `$HOME/.speclang/skills`, used by `speclang skills download` and `speclang skills list`. When unset those commands read and write `./.speclang/skills` instead. `HOME` is a standard shell variable, not a SpecLang setting — listed only because the skills commands dereference it. |
+
+## Cascade / agent providers
+
+Read in `buildAgentRequest()` — `src/cascade/agent.ts:104-116` — used by `speclang agent`
+(`bin/speclang:145-179`) and the cascade runtime. Precedence here is
+`explicit option` → `process env` → `built-in default`, and the reads use `??`, so an exported
+empty string is a value, not a fallback.
+
+| Variable | Subsystem | Default when unset | Read at | What changes when you set it |
+| --- | --- | --- | --- | --- |
+| `SPECLANG_PROVIDER` | agent | `openai` | `src/cascade/agent.ts:106` | Active provider. Matching is by prefix, case-insensitive: `openai`, `openrouter`, `anthropic`, `google` or `gemini`; anything else throws `Unsupported LLM provider` (`src/cascade/provider-adapter.ts:20-33`) before a request is built. Overridden by `--provider`. |
+| `SPECLANG_MODEL` | agent | per provider: `gpt-5-mini`, `openai/gpt-5-mini`, `claude-sonnet-4-5`, `gemini-2.5-pro` | `src/cascade/agent.ts:108` | Model id sent to the active provider; the defaults table is `DEFAULT_MODELS` (`src/cascade/agent.ts:46-51`). Overridden by `--model`. Because the read uses `??`, `SPECLANG_MODEL=` sends an empty model id. |
+| `SPECLANG_BASE_URL` | agent | per provider: `https://api.openai.com`, `https://openrouter.ai/api`, `https://api.anthropic.com`, `https://generativelanguage.googleapis.com` | `src/cascade/agent.ts:113` | API base URL; trailing slashes are stripped (`src/cascade/agent.ts:86-88`) before the provider path is appended. Defaults table: `DEFAULT_BASE_URLS` (`src/cascade/agent.ts:53-58`). Overridden by `--base-url`. |
+| `OPENAI_API_KEY` | agent | required for `provider=openai` — no default | `src/cascade/agent.ts:76` | Credential for OpenAI, sent as `Authorization: Bearer`. A real run with no key throws `Missing API key for openai…` (`src/cascade/agent.ts:214-219`) before any network call; `--dry-run` works without it. |
+| `OPENROUTER_API_KEY` | agent | required for `provider=openrouter` — no default | `src/cascade/agent.ts:78` | Credential for OpenRouter, sent as `Authorization: Bearer`. Same missing-key behaviour. |
+| `ANTHROPIC_API_KEY` | agent | required for `provider=anthropic` — no default | `src/cascade/agent.ts:80` | Credential for Anthropic, sent as `x-api-key` (`src/cascade/agent.ts:118-130`). Same missing-key behaviour. |
+| `GEMINI_API_KEY` | agent | required for `provider=google` when `GOOGLE_API_KEY` is also unset — no default | `src/cascade/agent.ts:82` | Preferred Google credential; falls through to `GOOGLE_API_KEY` when unset (`??`). |
+| `GOOGLE_API_KEY` | agent | required for `provider=google` when `GEMINI_API_KEY` is also unset — no default | `src/cascade/agent.ts:82` | Secondary Google credential, used only when `GEMINI_API_KEY` is unset. |
+
+`buildAgentRequest()` itself tolerates a missing key by substituting `''`
+(`src/cascade/agent.ts:115`), so dry runs (`--dry-run`, which returns before the key check at
+`src/cascade/agent.ts:202-212`) work without credentials while real runs do not. `--api-key`
+(`bin/speclang:154`) overrides every key variable for a single invocation.
+
+---
+
+## Read but not applied
+
+These variables are read into the config object on the live path but consumed by nothing, so
+setting them today changes no behaviour. They are documented so that the page is complete and
+so that an operator does not spend an afternoon wondering why they took effect:
+
+- `MCP_HOST` (`src/mcp/config.ts:45`) — the listener binds every interface
+  (`src/mcp/server.ts:219`).
+- `MCP_LOG_LEVEL` (`:64`) and `MCP_LOG_FILE` (`:67`) — no logger is constructed from
+  `config.logging`.
+- `MCP_MAX_CONNECTIONS` (`:70`), `MCP_QUERY_TIMEOUT_MS` (`:73`), `MCP_MAX_RESULTS` (`:76`) —
+  no handler reads `config.limits`.
+- `MCP_WAL_MODE` (`:79`) — `initDatabase()` passes `wal: true` unconditionally
+  (`src/mcp/server.ts:54`).
+- `MCP_SERVER_MODE` (`:82`) — the transport comes from flags; `validateConfig()` is the only
+  reader and it has no callers.
+- `MCP_PORT` (`:42`) — consumed only when `startHTTP()` is called without a port, which no
+  shipped entry point does.
+
+If you need one of these to take effect, the fix belongs in the code path named in its row,
+not in your environment.
+
+## Names the code does NOT read
+
+`src/mcp/config/loader.ts:122-151` (`applyEnvOverrides`) reads four more names —
+`MCP_DB_PATH` (`:125`), `MCP_SERVER_PORT` (`:133`), `MCP_SERVER_HOST` (`:137`) and
+`MCP_AUTH_TOKEN` (`:146`) — and also re-reads `MCP_SERVER_MODE` (`:129`) and `MCP_LOG_LEVEL`
+(`:141`). That module is dead code: it is exported only through `src/mcp/config/index.ts`,
+whose only importer inside the directory is `src/mcp/config/hot-reload.ts`, and nothing in
+`bin/`, `src/mcp/server.ts` or any other barrel imports that directory. Setting these names
+has no effect. Use the live equivalents: `MCP_DATABASE`, `MCP_PORT`, `MCP_HOST` and
+`MCP_API_KEYS`.
+
+Related confusion to avoid: a few skill documents in the spec tree mention
+`SPECLANG_MCP_PORT` / `SPECLANG_MCP_HOST`. Nothing in `src/` reads those names either.
+
+## Not configuration
+
+- **Child-process inheritance.** The pipeline hook and stage executors forward the whole
+  parent environment to the commands they spawn (`src/pipeline/hooks.ts:86`,
+  `src/pipeline/stages.ts:150`). They read no variable by name: anything you export is simply
+  inherited by hook and stage commands, including provider keys.
+- **Internal daemon markers.** `bin/speclangd` sets `SPECLANGD_CHILD=1` on the child it spawns
+  so it does not reject its own PID record (`bin/speclangd:84`, `:109`), and
+  `bin/speclangd-poc` sets `DEBUG` / `SILENT` from its own `--verbose` / `--silent` flags
+  (`bin/speclangd-poc:40-45`). Both live outside `src/`, are written by the process itself,
+  and are not operator configuration.
+
+## Copy-paste template
+
+Every variable above, defaults and placeholders only. Save it as an untracked `.env` or paste
+the exports into your shell — nothing in this repository loads the file for you.
+
+```sh
+# ---- MCP server (src/mcp/config.ts). Empty values count as unset. ----
+# The HTTP listener port comes from --port; MCP_PORT is parsed but does not move it.
+MCP_PORT=3000
+# Parsed, not applied: the HTTP listener always binds every interface.
+MCP_HOST=0.0.0.0
+# Path of the SQLite file the MCP tools query; overrides the caller's path.
+MCP_DATABASE=.speclang/speclang.db
+# Spec root the MCP tool handlers resolve against.
+MCP_SPECS_DIR=specs
+
+# Auth is OFF unless this is exactly `true`. Read the exposure section first.
+MCP_AUTH_ENABLED=false
+# none-basic-token-config_file-tls_client_cert; only read when auth is enabled.
+# A misspelled value silently serves unauthenticated requests.
+MCP_AUTH_TYPE=token
+# Comma-separated bearer tokens, no spaces after the commas.
+MCP_API_KEYS=<your-api-key-here>,<another-api-key-here>
+
+# Only the literal `false` disables the (unauthenticated) /events endpoint.
+MCP_SSE_ENABLED=true
+
+# Logging and limits below are parsed but not applied on the live path.
+MCP_LOG_LEVEL=info
+MCP_LOG_FILE=
+MCP_MAX_CONNECTIONS=100
+MCP_QUERY_TIMEOUT_MS=5000
+MCP_MAX_RESULTS=1000
+MCP_WAL_MODE=true
+MCP_SERVER_MODE=http
+
+# ---- CLI and storage (src/cli/utils.ts, src/workflow/commands.ts) ----
+SPECLANG_DB=.speclang/speclang.db
+SPECLANG_DIR=specs
+# Standard shell variable: base of $HOME/.speclang/skills for the skills commands.
+# Do not override it here unless you are deliberately changing it for the whole process.
+HOME=/home/<your-user>
+
+# ---- Cascade / agent providers (src/cascade/agent.ts) ----
+# CLI flags win over these; an EMPTY value here is used verbatim, not treated as unset.
+SPECLANG_PROVIDER=openai
+SPECLANG_MODEL=
+SPECLANG_BASE_URL=
+OPENAI_API_KEY=<your-openai-key-here>
+OPENROUTER_API_KEY=<your-openrouter-key-here>
+ANTHROPIC_API_KEY=<your-anthropic-key-here>
+GEMINI_API_KEY=<your-gemini-key-here>
+GOOGLE_API_KEY=<your-google-api-key-here>
+```
+
+## See also
+
+- `docs/API_REFERENCE.md` — library exports, CLI and MCP tool surface.
+- `src/mcp/config.ts` — the `DEFAULT_CONFIG` object every MCP value falls back to.
+- `src/cascade/provider-adapter.ts` — provider normalization and the per-provider request
+  shaping that `SPECLANG_PROVIDER` selects.
+- `docs/prompts/phase-0.5-config.md` — the config-file design notes (`.speclangrc`, not
+  environment variables).

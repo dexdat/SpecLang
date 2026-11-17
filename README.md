@@ -712,6 +712,7 @@ scripts/                 # Tools
 
 ## Documentation
 
+- `docs/CONFIGURATION.md` - Every environment variable SpecLang reads, with defaults and source anchors
 - `docs/CASCADE_DEMO.md` - Working example walkthrough
 - `specs/cascade-protocol.spec.md` - Full protocol specification
 - `specs/examples.spec.dir/hello-world.spec.md` - Minimal working example
