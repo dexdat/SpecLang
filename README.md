@@ -70,6 +70,12 @@ Full command surface (from `./bin/speclang --help`):
 | `history` / `log [spec]` | Show spec change history with git integration |
 | `help [command]` | Display help for a command |
 
+> **Writing a spec by hand?** A spec opens with `# speclang-header lines:N`, where
+> `N` counts the marker line + the YAML lines + the closing `---`. A wrong count
+> is the most confusing first-run failure (`Source contains multiple documents`);
+> the rule, the off-by-one traps and the other first-run fixes are in
+> [First-Spec Failures](docs/troubleshooting.md#first-spec-failures).
+
 ### API Reference
 
 For programmatic access, see:
@@ -342,6 +348,29 @@ The cascade has two entry points — a plain CLI that works in any terminal, and
 #   - Create steering packet
 #   - Report actual status (not claimed)
 ```
+
+### Configure an LLM Provider (only `speclang agent` needs one)
+
+`cascade` and `generate` extract code from the spec's own blocks and never call a
+model. The LLM path is `speclang agent`, which reads its key from the environment
+of the shell that runs it — **no `.env` file is loaded**:
+
+| Provider | API key variable | Default model |
+|---|---|---|
+| `openai` (default) | `OPENAI_API_KEY` | `gpt-5-mini` |
+| `openrouter` | `OPENROUTER_API_KEY` | `openai/gpt-5-mini` |
+| `anthropic` | `ANTHROPIC_API_KEY` | `claude-sonnet-4-5` |
+| `google` | `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) | `gemini-2.5-pro` |
+
+```bash
+export OPENAI_API_KEY="sk-..."                                # this shell only
+./bin/speclang agent --trigger specs/main.spec.md --dry-run   # mapping check, no key needed
+./bin/speclang agent --trigger specs/main.spec.md             # real call
+```
+
+`SPECLANG_PROVIDER`, `SPECLANG_MODEL` and `SPECLANG_BASE_URL` set the provider,
+model and endpoint without passing flags. Failure modes and the full first-run
+walkthrough: [First-Spec Failures](docs/troubleshooting.md#first-spec-failures).
 
 ### Run a Root Example
 
