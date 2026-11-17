@@ -1,0 +1,30 @@
+# INT-CI-2 closeout evidence — main CI red from UX-003 (a4170279) is closed by ad5f0ec9
+tick: speclang-foreman-2026-11-17-06-20-29 (verification-only close, no code change)
+row: INT-CI-2
+
+## The red
+GitHub Actions run 44026862425, head a4170279 ("fix(cli): make `speclang new` emit a runnable project"),
+conclusion=failure: `TypeError: .toMatch() expects to receive a string, but got undefined` at
+tests/e2e/spec-to-code.test.ts:341 — the SL-GAP-014 scaffold assertion still expected
+`devDependencies.speclang` to be `file:...` while UX-003 changed the shipped scaffold contract.
+
+## The fix
+ad5f0ec9 "test(e2e): re-scope the SL-GAP-014 scaffold assertion to the UX-003 contract" — re-scopes the
+assertion to the shipped contract and records the reason in the commit.
+
+## Acceptance criterion — measured
+1. `npx vitest run tests/e2e/spec-to-code.test.ts` -> Test Files 1 passed (1) / Tests 9 passed (9), exit 0.
+2. GitHub Actions on main at the fix commit: run 44027889398 (headSha ad5f0ec9) conclusion=success.
+   Its job log reports "✓ tests/e2e/spec-to-code.test.ts (9 tests) 629ms" — a pass, not a skip: the file
+   has 9 `it(` blocks and no describe.skip / it.skip / test.skip / it.todo / xit.
+3. The later tick commit 35d8700d also ran green: run 44030078350, conclusion=success.
+4. Contrast: the pre-fix run 44026862425 at a4170279 concluded failure.
+
+## Judge
+gitreins run dir .gitreins/history/2026-11-17/66728d3f (task INT-CI-2-verify, passed true). It
+independently checked the file for skip markers, matched the 9 reported tests to the 9 `it(` blocks,
+read the CI job log and confirmed the failure -> success transition between the two runs.
+
+## Scope note (declared, not hidden)
+This closes the UX-003-induced red only. It makes no claim about the reconciliation commits landed by
+this tick (merge 4afd801d onward), whose CI runs had not completed at close time.

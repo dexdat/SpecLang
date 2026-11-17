@@ -1,0 +1,47 @@
+# DF-SPECLANG-019 closeout evidence — npm>=12 allowScripts remedy verified on a real npm 12.2.2
+tick: speclang-foreman-2026-11-17-06-20-29 (wave-recovery tick)
+row: DF-SPECLANG-019
+worker: openai/gpt-6.1-terra@xkiro, worktree /home/kara/worktrees/speclang-DF-SPECLANG-019, base origin/main@35d8700d
+worker commit: 9a4a0447 (docs(npm12): verify the allowScripts remedy on a real npm 12.2.2 ...)
+landed as: 0cd6c31c (content), merge 4afd801d, on top of sibling tip ed435c3a
+gitreins judge run dir: .gitreins/history/2026-11-17/1c367924 (task_id DF-SPECLANG-019, passed true)
+
+## Finding, measured (host npm --version = 12.2.2, node v22.22.3, better-sqlite3 12.11.1)
+1. Reproduction: a scratch install with no allowScripts exits 0 and warns
+   "1 package had install scripts blocked because they are not covered by allowScripts:
+    better-sqlite3@12.11.1 (install: prebuild-install || node-gyp rebuild --release)";
+   require('better-sqlite3') then fails with "Could not locate the bindings file".
+2. `npm install-scripts approve --no-allow-scripts-pin better-sqlite3` exits 0, prints
+   "Approved better-sqlite3: / added better-sqlite3" and writes the unpinned allowScripts entry.
+   It builds NOTHING — the binding is still missing immediately after it.
+3. `npm rebuild better-sqlite3` exits 0, creates build/Release/better_sqlite3.node, and
+   require + select sqlite_version() -> 3.53.2 succeeds; the repo gate prints
+   "OK: better-sqlite3 native binding loads (SELECT 1 -> {"x":1})".
+
+=> The printed remedy is CORRECT as printed; no remedy command was changed. Two measured traps were
+   added to the script text and the README: (a) `npm rebuild` exits 0 while the install script is still
+   blocked, so judge the fix by `npm run check:sqlite-binding`, never by rebuild's exit code;
+   (b) an explicit `"better-sqlite3": false` deny entry makes `approve` a green no-op that has to be
+   deleted by hand.
+
+## Deliverables (all on the landed tree)
+docs/npm12-allowscripts-probe.md   verbatim transcript + four counter-probes
+scripts/postinstall-lint-deps.sh   remedy byte-identical; printed note carries the two measured traps
+README.md                          approve-then-rebuild order, traps, verified versions, transcript link
+tests/npm12-remedy-doc.test.ts     text-parity guard (script <-> README <-> probe doc <-> package.json)
+
+## Gates — foreman re-ran them (worktree, merged tree, and final reconciled tree)
+$ npx vitest run tests/npm12-remedy-doc.test.ts   -> Tests 5 passed (5), 663ms on the final tree
+$ bash -n scripts/postinstall-lint-deps.sh        -> exit 0
+$ npm run check:sqlite-binding                    -> OK: better-sqlite3 native binding loads
+$ npm run build exit 0 ; npm run lint -> exit 0 (0 errors, 3 warnings)
+Independent corroboration of the command surface on this host: `npm install-scripts --help` prints
+  "npm install-scripts approve <pkg> ..." together with the --no-allow-scripts-pin option.
+
+## Judge
+gitreins tier1+tier2 PASS. The judge independently re-ran approve -> rebuild -> binding load on a real
+npm 12.2.2 (sqlite_version -> 3.53.2), reproduced the counter-probes and confirmed the parity test
+passes and fails on drift. Its verdict is bound to the pre-rebase worker sha 9a4a0447; the reachable
+equivalent on the published tip is 0cd6c31c. Recorded uncovered failure paths: (i) the parity test is a
+text guard that never executes npm, so a future npm semantic change could leave the remedy stale while
+the test stays green; (ii) the remedy is printed only when the local npm major is >= 12.
