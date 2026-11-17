@@ -14,7 +14,12 @@ guards:
   assemble: true
   assemble_command: npm run assemble 2>/dev/null || true
   build: true
-  build_command: npm run build
+  # DF-SPECLANG-013: gitreins 0.21.0 never reads `guards.build` /
+  # `guards.build_command` (`gitreins config-validate` reports both as ignored
+  # unknown keys); the arm that actually runs is the `build` step under
+  # `pipeline.stages` below. Both name the same wrapper so a future version
+  # that starts honoring this knob inherits the dependency-aware behaviour.
+  build_command: bash scripts/guard-build.sh
   test_mode: diff
   go:
     build: true
@@ -55,7 +60,11 @@ pipeline:
         \ {} 2>/dev/null && exit 1 || true\necho \"\u2713 No secrets detected\"\n"
     - id: build
       type: script
-      run: npm run build
+      # DF-SPECLANG-013: a fresh checkout has no node_modules, so a bare
+      # `npm run build` graded the tree FAIL on a missing dependency. The
+      # wrapper reports `GITREINS_SKIP: build=dependencies not installed` (and
+      # exits 0) in that case, and otherwise propagates npm's real exit code.
+      run: bash scripts/guard-build.sh
     - id: tests
       type: script
       run: npx vitest run --passWithNoTests 2>&1 | tail -3
