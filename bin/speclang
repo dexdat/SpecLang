@@ -1419,7 +1419,20 @@ mcp
     const projectDir = path.resolve(options.dir);
     const pidFile = path.join(projectDir, '.speclang', 'mcp.pid');
     const portFile = path.join(projectDir, '.speclang', 'mcp.port');
-    
+
+    // QA-SPECLANG-5-R6: `mcp status` used to read only the pid/port files, so a
+    // corrupt `.speclang/speclang.db` was answered with a confident "Not
+    // running" and exit 0 — the same silent lie the DB layer stopped telling one
+    // layer down. Probe the SAME file `mcp start` hands to the server
+    // (projectDir/.speclang/speclang.db; the MCP server takes no SPECLANG_DB
+    // override) before printing anything, and fail with the shared diagnostic.
+    const stateDbPath = path.join(projectDir, '.speclang', 'speclang.db');
+    const stateDbProblem = stateDatabaseProblem(stateDbPath);
+    if (stateDbProblem) {
+      console.error(`❌ ${stateDbProblem}`);
+      process.exit(1);
+    }
+
     console.log('📊 SpecLang MCP Status');
     console.log(`   Project: ${projectDir}`);
     
