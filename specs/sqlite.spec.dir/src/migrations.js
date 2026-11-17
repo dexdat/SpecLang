@@ -254,6 +254,7 @@ const migrations = [
             db.exec(`
         CREATE INDEX IF NOT EXISTS idx_cascades_status ON cascades(status);
         CREATE INDEX IF NOT EXISTS idx_cascades_started_at ON cascades(started_at);
+        CREATE INDEX IF NOT EXISTS idx_cascades_converged_at ON cascades(converged_at);
         CREATE INDEX IF NOT EXISTS idx_cascades_root_trigger_file ON cascades(root_trigger_file);
 
         -- 002_events.sql: cascade link indexes (columns come from migration 1)

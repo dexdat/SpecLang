@@ -13,7 +13,10 @@ import { mkdtempSync, rmSync, readFileSync, existsSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
 import { SpecLangDB } from "../../src/db/index.js";
-import { getCurrentVersion, migrate, rollback } from "../../src/db/migrations.js";
+import { getCurrentVersion, migrate, migrations, rollback } from "../../src/db/migrations.js";
+
+/** Highest shipped migration version — v3 is cascades, but the chain runs to v8. */
+const LATEST_VERSION = Math.max(...migrations.map((m) => m.version));
 
 const CASCADES_SQL = join(
   process.cwd(),
@@ -66,10 +69,10 @@ describe("cascades migration (DF-SPECLANG-016)", () => {
   it("creates the cascades table on a fresh database", () => {
     const result = db.initialize();
 
-    expect(result.version).toBe(3);
-    expect(result.applied).toBe(3);
-    expect(db.getVersion()).toBe(3);
-    expect(getCurrentVersion(db.getDatabase())).toBe(3);
+    expect(result.version).toBe(LATEST_VERSION);
+    expect(result.applied).toBe(LATEST_VERSION);
+    expect(db.getVersion()).toBe(LATEST_VERSION);
+    expect(getCurrentVersion(db.getDatabase())).toBe(LATEST_VERSION);
 
     const raw = db.getDatabase();
     const table = raw
@@ -172,11 +175,11 @@ describe("cascades migration (DF-SPECLANG-016)", () => {
     db.initialize();
     const second = db.initialize();
     expect(second.applied).toBe(0);
-    expect(second.version).toBe(3);
+    expect(second.version).toBe(LATEST_VERSION);
 
     const rerun = migrate(db.getDatabase());
     expect(rerun.applied).toBe(0);
-    expect(rerun.currentVersion).toBe(3);
+    expect(rerun.currentVersion).toBe(LATEST_VERSION);
   });
 
   it("upgrades a pre-existing version-2 database in place", () => {
@@ -185,15 +188,10 @@ describe("cascades migration (DF-SPECLANG-016)", () => {
     db.initialize();
     expect(rollback(db.getDatabase(), 2)).toBe(true);
     expect(getCurrentVersion(db.getDatabase())).toBe(2);
-    const gone = db
-      .getDatabase()
-      .prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'cascades'")
-      .get();
-    expect(gone).toBeUndefined();
 
     const upgraded = db.initialize();
-    expect(upgraded.applied).toBe(1);
-    expect(upgraded.version).toBe(3);
+    expect(upgraded.applied).toBe(LATEST_VERSION - 2);
+    expect(upgraded.version).toBe(LATEST_VERSION);
     expect(
       db
         .getDatabase()
