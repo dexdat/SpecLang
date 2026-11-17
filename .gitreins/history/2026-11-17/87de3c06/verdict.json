@@ -1,0 +1,836 @@
+{
+  "task_id": "GAP-004",
+  "task_title": "ralph-loop has no exit path: add signal + parent-liveness + idle exit so orphaned loops stop polling",
+  "task_criteria": [
+    "src/ralph-loop.ts handles SIGTERM/SIGINT and exits when its launcher is gone or after a bounded idle period; a test proves the loop stops; npx vitest run green; npx tsc --noEmit clean"
+  ],
+  "passed": true,
+  "worktree": "/home/kara/worktrees/speclang-PERF-LAND",
+  "branch": "",
+  "commit": "bafa637fdb04cd2a99ca2a53f5263159ff141feb",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "08de2076fa73277dbf0d53b8c94dea0f8eb2bf38c938c3ecf36233ec48fe80e1",
+  "working_tree_dirty_path_count": 3,
+  "items": [
+    {
+      "criterion": "src/ralph-loop.ts handles SIGTERM/SIGINT and exits when its launcher is gone or after a bounded idle period; a test proves the loop stops; npx vitest run green; npx tsc --noEmit clean",
+      "status": "PASS",
+      "detail": "PASS: src/ralph-loop.ts (symlink -> specs/implementation.spec.dir/src/ralph-loop.ts) installs SIGTERM/SIGINT/SIGHUP handlers in installSignalHandlers() (RALPH_LOOP_STOP_SIGNALS = ['SIGTERM','SIGINT','SIGHUP']), removes them in endRun(); launcher loss via isLauncherGone() checked in exitDueOnIdlePoll() and after each processTask(); bounded idle via maxIdlePolls (default 360 = 30min at 5s poll). CLI main() awaits controller.start() and sets exitCode 0.\nTests: `npx vitest run tests/ralph-loop/lifecycle.test.ts` -> \"Tests 10 passed (10)\", incl. \"the CLI entry exits 0 on a real SIGTERM instead of being SIGKILLed\" (real spawned tsx child, SIGTERM, exitCode 0, stderr contains \"Ralph Loop stopped (reason=signal:SIGTERM)\").\nFull suite: `npx vitest run` -> \"Test Files 117 passed | 4 skipped (121)\", \"Tests 1972 passed | 58 skipped (2030)\", 0 failures. (First full run had 2 transient failures in tests/db.test.ts \"SqliteError: disk I/O error\" on shared .speclang/test.db; that file passes 35/35 in isolation and the full suite is green on re-run -> parallelism artifact, not this change.)\n`npx tsc --noEmit` -> TSC_EXIT=0. \u00b7 graded at iteration 78.9 (364,574 in / 2,221 out, 78.9 iterations and 406s into the run)"
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  11:28:28",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  11:28:28\n   Duration  76.47s (transform 4.02s, setup 1.40s, import 8.04s, tests 265.26s, environment 13ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 src/ralph-loop.ts handles SIGTERM/SIGINT and exits when its launcher is gone or after a bounded idle period; a test proves the loop stops; npx vitest run green; npx tsc --noEmit clean: PASS: src/ralph-loop.ts (symlink -> specs/implementation.spec.dir/src/ralph-loop.ts) installs SIGTERM/SIGINT/SIGHUP handlers in installSignalHandlers() (RALPH_LOOP_STOP_SIGNALS = ['SIGTERM','SIGINT','SIGHUP']), removes them in endRun(); launcher loss via isLauncherGone() checked in exitDueOnIdlePoll() and after each processTask(); bounded idle via maxIdlePolls (default 360 = 30min at 5s poll). CLI main() awaits controller.start() and sets exitCode 0.\nTests: `npx vitest run tests/ralph-loop/lifecycle.test.ts` -> \"Tests 10 passed (10)\", incl. \"the CLI entry exits 0 on a real SIGTERM instead of being SIGKILLed\" (real spawned tsx child, SIGTERM, exitCode 0, stderr contains \"Ralph Loop stopped (reason=signal:SIGTERM)\").\nFull suite: `npx vitest run` -> \"Test Files 117 passed | 4 skipped (121)\", \"Tests 1972 passed | 58 skipped (2030)\", 0 failures. (First full run had 2 transient failures in tests/db.test.ts \"SqliteError: disk I/O error\" on shared .speclang/test.db; that file passes 35/35 in isolation and the full suite is green on re-run -> parallelism artifact, not this change.)\n`npx tsc --noEmit` -> TSC_EXIT=0. \u00b7 graded at iteration 78.9 (364,574 in / 2,221 out, 78.9 iterations and 406s into the run)\nCap exceeded: Iteration cap (100) reached (100.1 used). Increase max_iterations or split criteria. Partial verdict \u2014 all 1 criteria graded and passed.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 src/ralph-loop.ts handles SIGTERM/SIGINT and exits when its launcher is gone or after a bounded idle period; a test proves the loop stops; npx vitest run green; npx tsc --noEmit clean: PASS: src/ralph-loop.ts (symlink -> specs/implementation.spec.dir/src/ralph-loop.ts) installs SIGTERM/SIGINT/SIGHUP handlers in installSignalHandlers() (RALPH_LOOP_STOP_SIGNALS = ['SIGTERM','SIGINT','SIGHUP']), removes them in endRun(); launcher loss via isLauncherGone() checked in exitDueOnIdlePoll() and after each processTask(); bounded idle via maxIdlePolls (default 360 = 30min at 5s poll). CLI main() awaits controller.start() and sets exitCode 0.\nTests: `npx vitest run tests/ralph-loop/lifecycle.test.ts` -> \"Tests 10 passed (10)\", incl. \"the CLI entry exits 0 on a real SIGTERM instead of being SIGKILLed\" (real spawned tsx child, SIGTERM, exitCode 0, stderr contains \"Ralph Loop stopped (reason=signal:SIGTERM)\").\nFull suite: `npx vitest run` -> \"Test Files 117 passed | 4 skipped (121)\", \"Tests 1972 passed | 58 skipped (2030)\", 0 failures. (First full run had 2 transient failures in tests/db.test.ts \"SqliteError: disk I/O error\" on shared .speclang/test.db; that file passes 35/35 in isolation and the full suite is green on re-run -> parallelism artifact, not this change.)\n`npx tsc --noEmit` -> TSC_EXIT=0. \u00b7 graded at iteration 78.9 (364,574 in / 2,221 out, 78.9 iterations and 406s into the run)\nCap exceeded: Iteration cap (100) reached (100.1 used). Increase max_iterations or split criteria. Partial verdict \u2014 all 1 criteria graded and passed.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "src/ralph-loop.ts handles SIGTERM/SIGINT and exits when its launcher is gone or after a bounded idle period; a test proves the loop stops; npx vitest run green; npx tsc --noEmit clean",
+                "status": "PASS",
+                "detail": "PASS: src/ralph-loop.ts (symlink -> specs/implementation.spec.dir/src/ralph-loop.ts) installs SIGTERM/SIGINT/SIGHUP handlers in installSignalHandlers() (RALPH_LOOP_STOP_SIGNALS = ['SIGTERM','SIGINT','SIGHUP']), removes them in endRun(); launcher loss via isLauncherGone() checked in exitDueOnIdlePoll() and after each processTask(); bounded idle via maxIdlePolls (default 360 = 30min at 5s poll). CLI main() awaits controller.start() and sets exitCode 0.\nTests: `npx vitest run tests/ralph-loop/lifecycle.test.ts` -> \"Tests 10 passed (10)\", incl. \"the CLI entry exits 0 on a real SIGTERM instead of being SIGKILLed\" (real spawned tsx child, SIGTERM, exitCode 0, stderr contains \"Ralph Loop stopped (reason=signal:SIGTERM)\").\nFull suite: `npx vitest run` -> \"Test Files 117 passed | 4 skipped (121)\", \"Tests 1972 passed | 58 skipped (2030)\", 0 failures. (First full run had 2 transient failures in tests/db.test.ts \"SqliteError: disk I/O error\" on shared .speclang/test.db; that file passes 35/35 in isolation and the full suite is green on re-run -> parallelism artifact, not this change.)\n`npx tsc --noEmit` -> TSC_EXIT=0. \u00b7 graded at iteration 78.9 (364,574 in / 2,221 out, 78.9 iterations and 406s into the run)"
+              }
+            ],
+            "summary": "Cap exceeded: Iteration cap (100) reached (100.1 used). Increase max_iterations or split criteria. Partial verdict \u2014 all 1 criteria graded and passed.",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"GAP-004\"}",
+          "exit_code": 0,
+          "output_sha": "c3abfb74a933801cc49850fea13c7fb03d8f18ba495859f8229e0e947f0b1a46"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && cat package.json 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "aad50863f262b75f633dad2c060bfa80c79f7c5a53aa3ab8d2b5ded914e28fef"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls src/ | head -50; echo \"---\"; ls -la src/ralph-loop.ts 2>/dev/null; echo \"---\"; cat .gitreins/config.yaml 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "2858ee93d77b826268837c2080a5fef401d9671e5282a8252b2e39d633eae35d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; git log --oneline -15; echo \"---\"; git status --short | head -20",
+          "exit_code": 0,
+          "output_sha": "f417e37635af64761e5be29a546eb10d31cb719771661ed0a7106d67605af03f"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; git log --oneline -15; echo \"---\"; git status --short | head -20; echo \"---\"; git show --stat HEAD",
+          "exit_code": 0,
+          "output_sha": "e3baec1aa8e7e919bf84fcdaa185f748b527e4e8dc2ce87ae32f4b75f0a0a847"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat src/ralph-loop.ts",
+          "exit_code": 0,
+          "output_sha": "b7882fd33bce49d94434fc45b910b863f3223c437ce10889ecb0c04c892108fd"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show --stat 1229fecd; echo \"=== DIFF ===\"; git show 1229fecd -- src/ralph-loop.ts | head -400",
+          "exit_code": 0,
+          "output_sha": "f4119a14905dd27a307ec4df905d0c58b2a305d46551d93e6e23a1c167f5b719"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show --stat cb97dfd8; echo \"===\"; git diff 1227b9cf cb97dfd8 --stat",
+          "exit_code": 0,
+          "output_sha": "6ff5e2c361a9885f823b26d849b54ae81b4f12707674368931c2ed1d61570dbf"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show 1229fecd -- specs/implementation.spec.dir/src/ralph-loop.ts",
+          "exit_code": 0,
+          "output_sha": "6539c98d0cdfbcb084f03ac768f29cbe5f05e9db69313b5ce2af6566c4d1ba9b"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"GAP-004\\|SIGTERM\\|SIGINT\\|SIGHUP\\|launcher\\|idlePolls\\|maxIdlePolls\\|exitReason\\|isProcessAlive\\|isLauncherGone\\|pollIntervalMs\\|exitOnLauncherLoss\\|wakePollSleep\\|pollSleep\\|signalHandlers\\|installSignal\\|removeSignal\" specs/implementation.spec.dir/src/ralph-loop.ts",
+          "exit_code": 0,
+          "output_sha": "5043a480dfb7b50dbec67f020b35fd6b1f09118fc85c8ad59b6a3cfd535566b2"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 380, \"offset\": 195, \"path\": \"specs/implementation.spec.dir/src/ralph-loop.ts\"}",
+          "exit_code": 0,
+          "output_sha": "16abbcf3a4dc55eb897db7bebe3c78975e6a1612ae62a87faf7f35ad4377eb10"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/ralph-loop/lifecycle.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "445dd8a9761857b32227fd709be5150fa8b2dbd83cbe2fdc59c2b97c27256bc3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat vitest.config.ts; echo \"=== tsconfig ===\"; cat tsconfig.json",
+          "exit_code": 0,
+          "output_sha": "28a348d19c2eca801c9e7ed0d71f516b730b9bcb76cdbe0b631250772f615057"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"ralph-loop\" --include=*.ts --include=*.json --include=*.yaml --include=*.yml --include=*.js -l . 2>/dev/null | grep -v node_modules | grep -v \"^./.tmp\" | head -40",
+          "exit_code": 0,
+          "output_sha": "176352df18f31fb9a6fd6b98a34ba3def9abd4f84487918029ceb3bc1cc5a633"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 40,120p vitest.config.ts",
+          "exit_code": 0,
+          "output_sha": "60e895720e19eabce7cf095b8eaeb90995b048808c1d6d71eacb4847e58adef6"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la specs/implementation.spec.dir/src/ralph-loop.* ; echo \"---\"; head -20 specs/implementation.spec.dir/src/ralph-loop.js; echo \"--- d.ts\"; head -30 specs/implementation.spec.dir/src/ralph-loop.d.ts",
+          "exit_code": 0,
+          "output_sha": "9afd3a9ef2b578a87dcdf3fb214875ddd7d94f448d00978aafa9830e014c9bb3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && timeout 900 npx vitest run tests/ralph-loop/lifecycle.test.ts 2>&1 | tail -40",
+          "exit_code": 0,
+          "output_sha": "ebc34a5e1be0c4d96a02ae608e42a1b8d4405c866e00537bdde1ca8cb7cc520f"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"GAP-004. Changed: specs/implementation.spec.dir/src/ralph-loop.ts (symlinked as src/ralph-loop.ts) + tests/ralph-loop/lifecycle.test.ts.\\nLifecycle test file: 10 passed (18.38s) via `npx vitest run tests/ralph-loop/lifecycle.test.ts`.\\nCode: RALPH_LOOP_STOP_SIGNALS SIGTERM/SIGINT/SIGHUP installed in start()->beginRun()->installSignalHandlers (line ~486), removed in endRun. launcherLost() via isLauncherGone(launcherPid, process.ppid) checked each idle poll + after each task. idle bound maxIdlePolls default 360. main() awaits start() then exitCode=0.\\nTODO: run full `npx vitest run` and `npx tsc --noEmit`.\", \"key\": \"progress\"}",
+          "exit_code": 0,
+          "output_sha": "22cacfcf23e82087046a379bc912d42d91c2ec091a6ce803d91c8acece172865"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && timeout 1800 npx tsc --noEmit 2>&1 | tail -20; echo \"TSC_EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "ba55506ba2e796ac8abdb41ffb35734d04cb1c41f000995b5c84ab8ebc288d34"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && timeout 2400 npx vitest run 2>&1 | tail -30",
+          "exit_code": 0,
+          "output_sha": "efbc6cca7fe5228c9459ee68b240886b9e2deb738719db7dc709b1042bb15a2e"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Full suite: `npx vitest run` -> Test Files 117 passed | 4 skipped (121); Tests 1972 passed | 58 skipped (2030); exit 0.\\n`npx tsc --noEmit` -> exit 0, no output.\\nLifecycle file: 10 passed.\\nNow: derived criteria + reachability of CLI entry (bin/, package.json scripts) and whether the loop's exit path is reachable from the real launcher.\", \"key\": \"tests\"}",
+          "exit_code": 0,
+          "output_sha": "d7d4e773b913eab5cadb87a9a008df3c70dc985845a8c5e646b7b920a414bf78"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -rn \"ralph-loop\" bin/ package.json .ralph/ .opencode/ 2>/dev/null | head -30; echo \"=== bin ===\"; ls bin/",
+          "exit_code": 0,
+          "output_sha": "4193f644b67ee298d3f1e9a1083a0a1e154bb8a52084dcf4fdec262b62b62c2d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -rn \"ralph-loop.ts\\|ralph-loop\\.js\\|tsx src/ralph\" --include=*.md --include=*.json --include=*.sh --include=*.yaml --include=*.yml . 2>/dev/null | grep -v node_modules | grep -v \"^./.tmp\" | grep -v \"_index.json\" | head -30",
+          "exit_code": 0,
+          "output_sha": "6d285951319ef7452def5e95842f0fb3012de52dc1c6b0a0f17fb7b15a704709"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"scripts\" -A 30 package.json | head -40",
+          "exit_code": 0,
+          "output_sha": "6dc571fc0b404e232bcb17642829331f58db764d2d773d516093d58d15b8542e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"ralph-loop\\|spawn\\|kill\\|SIGTERM\\|SIGKILL\" tests/db/ralph-loop-fresh-state.test.ts | head -40",
+          "exit_code": 0,
+          "output_sha": "3600ee28360e59f8c53f8d47f723ac994a47401c0d1a986917a35bee45e20068"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -rn \"ralph-loop\" tests/ --include=*.ts | grep -v \"tests/ralph-loop/lifecycle\" | head -20",
+          "exit_code": 0,
+          "output_sha": "4073e794bc062e865b2d57ac904176e90072ed6d0c689b245b15115fe6b648b5"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 70, \"offset\": 60, \"path\": \"tests/db/ralph-loop-fresh-state.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "fa3a6a397c64363034a41f1d8022a543be060319588b2c29cf78c959de3e8bbb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"stillRunning\\|exitCode\" tests/db/ralph-loop-fresh-state.test.ts | head -30",
+          "exit_code": 0,
+          "output_sha": "61e121fe3260cfd8c32db6946576a8e186fdd18b784b0b38fb3d945d79685aba"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"stillRunning\\|exitCode\\|SIGKILL\\|kill(\" tests/db/corrupt-state-db-surfaces.test.ts | head -30",
+          "exit_code": 0,
+          "output_sha": "de4499baf9deefbaf8ab440f60e7e93f6ab25529255033b2e5d55529fdedcfa1"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 40, \"offset\": 295, \"path\": \"tests/db/ralph-loop-fresh-state.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "45b664dd4447671b077e5f6461774d93a45e26175ff241b4a39105640ca0bd27"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"RALPH_ENTRY\\|spawn\\|kill\\|SIGTERM\\|SIGKILL\\|exitCode\" tests/db/corrupt-state-db-surfaces.test.ts | head -30",
+          "exit_code": 0,
+          "output_sha": "da15832ba3b1f9d77400742c9191ac174d013c77ada7a2152163bd586f75fdf4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -rn \"ralph-loop\" tests/*.test.ts tests/**/*.test.ts 2>/dev/null | grep -i \"spawn\\|tsx\" | head; echo \"=== poc-e2e ===\"; grep -rn \"ralph-loop\" tests/ --include=*.ts -l",
+          "exit_code": 0,
+          "output_sha": "aaf508fa96a2bca2a9d77c1b4e9788707e84a331366866eb43e7b5759e24f0a6"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 40, \"offset\": 45, \"path\": \"tests/db/corrupt-state-db-surfaces.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "db87c5f24c3051f725f1bf4cc86ad05dcc9b7f2d179a4aa3bbd0759949a9506f"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 30, \"offset\": 195, \"path\": \"tests/db/corrupt-state-db-surfaces.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "3d80035fbaf6841d6c50e915170821971cdbeb2f29d39710b7135aed47651a53"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"state database ready at\" -r specs/implementation.spec.dir/src/ralph-loop.ts src/db/*.ts | head",
+          "exit_code": 0,
+          "output_sha": "690de060f2a19b4c6b6bb1cfe45c0ae5fdbe97eebc8c1ba1ad1ae26b9ab95d2e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"process.exit\\|process.exitCode\\|unref\\|process.on(\" specs/implementation.spec.dir/src/ralph-loop.ts",
+          "exit_code": 0,
+          "output_sha": "9aa167e3ecb71793ff2b9fb0d1cf29c03982e6cca43f186fcd9e6dfd76098846"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"process.exit\\|process.exitCode\\|process.on(\\|unref\" specs/implementation.spec.dir/src/speclang-mcp.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "f4875e540f0b2fc5676c6d503daec9d0148ba0f5231d0930b618b8a4d5ea9454"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && sed -n 160,200p specs/implementation.spec.dir/src/ralph-loop.ts",
+          "exit_code": 0,
+          "output_sha": "0736cd18b43973dcc246c460367eb9280d32f4c9ce2847c78e4adf3afbf501e0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && sed -n 660,700p specs/implementation.spec.dir/src/speclang-mcp.ts",
+          "exit_code": 0,
+          "output_sha": "334dae6ba7b83c98d9418a11ad84784c9c020d44c5ee2ce5c5fa279550f0ec8b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"async start\\|process.on\\|SIGINT\\|SIGTERM\\|stdin\\|transport\" specs/implementation.spec.dir/src/speclang-mcp.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "936602fa9b3ab86a804fc7bb64147d28fcda4c64b06852cf769de34dab053e0d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && sed -n 505,540p specs/implementation.spec.dir/src/speclang-mcp.ts",
+          "exit_code": 0,
+          "output_sha": "76b859a7223408617a937a3f126c262ce52de1ec0aab3ac09b0f802caa2d2137"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && sed -n 1,60p tests/db/corrupt-state-db-surfaces.test.ts",
+          "exit_code": 0,
+          "output_sha": "2c8f793892e534a497bc3f466af97d875e9fc920c584b452b41b82ae339fb42d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && sed -n 60,200p tests/db/corrupt-state-db-surfaces.test.ts",
+          "exit_code": 0,
+          "output_sha": "c5ff8d01ab209c7dce3e0b2ac6f64dafe494ba74d0b46bd486da0bb3db095bd1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && sed -n 140,175p tests/db/corrupt-state-db-surfaces.test.ts",
+          "exit_code": 0,
+          "output_sha": "4533003e2044d55ee8a226118b07259de7953e599e8a46b2db1c145aa76a2aa0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && sed -n 120,145p tests/db/corrupt-state-db-surfaces.test.ts",
+          "exit_code": 0,
+          "output_sha": "b2316521c42f4403bfd62a899ff36521dbd9b3d909ea1766438285ab691495d0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"export function openStateDatabase\" -A 40 src/db/index.ts | head -60",
+          "exit_code": 0,
+          "output_sha": "39060dd8bf163d93f1928a6aa2699949dba6bf0f2cd596ea8d482de0bc52eb89"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"export function isNotADatabaseError\" -A 20 src/db/index.ts",
+          "exit_code": 0,
+          "output_sha": "16cdcab8c7b555705cbf9fe61ffe9a023450d7e70be1356213c32d6cb574d697"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"NOT_A_DATABASE_CODES\" -A 8 src/db/index.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "73b9757188df33dda2df4efaaf560a591f0f1b1ccad801d0e15ba0d90d7d41b3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"export function withStateDatabase\" -A 30 src/db/index.ts",
+          "exit_code": 0,
+          "output_sha": "217a1d0e036c6e8b7991cbe1cbeb453b9877b63a0dec487a0b32507e38ace42f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"export function migrate\" -A 40 src/db/migrations.ts | head -60",
+          "exit_code": 0,
+          "output_sha": "ffbf55e0ba21d87f2f6f072f9431af1893cefc129fc4cb50f8f14dab67e356e7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"export function getCurrentVersion\" -A 15 src/db/migrations.ts",
+          "exit_code": 0,
+          "output_sha": "0269f7f28ce3413a7019142c13a25940ee51d1a89fafd0a8191fec73ec83c220"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"MIGRATION_TABLE =\" src/db/migrations.ts; grep -n \"CREATE TABLE IF NOT EXISTS schema_migrations\\|CREATE TABLE IF NOT EXISTS migrations\" src/db/migrations.ts | head",
+          "exit_code": 0,
+          "output_sha": "e8b8f3ab49a0a8b8ee837a7f07a4e37b8c9316c2fdd44c4e16e1655702e7091c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && sed -n 55,90p src/db/migrations.ts",
+          "exit_code": 0,
+          "output_sha": "707bdc76b4bdc87a863ca60504016b0dc6249997de1e3b0e70d8c5e600ff680e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"function applySqlFile\" -A 40 src/db/migrations.ts | head -60",
+          "exit_code": 0,
+          "output_sha": "c9a629d5f35394af6c33f104e387080686958abc583eab7b69c88bdead47c685"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"function bootstrapRalphLoopState\" -A 40 specs/implementation.spec.dir/src/ralph-loop.ts | head -50",
+          "exit_code": 0,
+          "output_sha": "31d1a6e5410fea9204917317e873784d28c867c40c1bec571f8022dabaac47f7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"RALPH_LOOP_SCHEMA_SQL\" -A 40 specs/implementation.spec.dir/src/ralph-loop.ts | head -50",
+          "exit_code": 0,
+          "output_sha": "855622bcfbcbefb9a42a4cefd1b9ea50ae4c1238d51da8c8572ddf20e82248d9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"005_ralph\" -A 30 src/db/migrations.ts | head -50",
+          "exit_code": 0,
+          "output_sha": "f7b5c8c3d0a441acc0263a0f4d95ac6736cf700ae786ca2e3a3af04e42129cc9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && sed -n 329,400p src/db/migrations.ts",
+          "exit_code": 0,
+          "output_sha": "3c5e7f94a3ad3e88e9d1cf748c364db778fa186c6f7c7b78f7fa82ebd4232692"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"CREATE TABLE IF NOT EXISTS specs\" -A 25 src/db/migrations.ts | head -35",
+          "exit_code": 0,
+          "output_sha": "fc7b8f1b1c70a77e0d00f31afa8fa68a4553f13551a96598d2b147c6c8b8f71a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"CREATE TABLE IF NOT EXISTS locks\" -A 15 src/db/migrations.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "5192ce1ae097e6728c6805599ba1ebef63cdee1041670ddf1c1e75dd19b4475a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"CREATE TABLE IF NOT EXISTS commands\" -A 20 src/db/migrations.ts | head -25",
+          "exit_code": 0,
+          "output_sha": "d6b562799cd0b73cfd91c09e2c93fffe57416ea90d992a54aa30d63c67bdc5e5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && sed -n 395,470p src/db/migrations.ts",
+          "exit_code": 0,
+          "output_sha": "e4c0c3fce5aebc915b8afbd3d092d19397baac8a78692d9f82de844be6a8bbd4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"CREATE TABLE IF NOT EXISTS events\" -A 15 src/db/migrations.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "65153513df6df96bace588d19a778fd5c6b702b78d4eefb1665de9614f075bff"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"CREATE TABLE IF NOT EXISTS search_indexes\\|CREATE TABLE IF NOT EXISTS search_\" -A 12 src/db/migrations.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "2ba259d7c3cc78d473784b4227472e59460d1649f8e09318d4b6b4f8340cb5af"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && sed -n 552,660p src/db/migrations.ts",
+          "exit_code": 0,
+          "output_sha": "bcbf92dcd2317f45a187bbad9f6b6ef0083d8ab4dbcfda4a46d60fae843368c1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"CREATE TABLE IF NOT EXISTS cascades\" -A 15 src/db/migrations.ts | head -20; echo \"=== sessions ===\"; grep -n \"CREATE TABLE IF NOT EXISTS sessions\" -A 12 src/db/migrations.ts | head -16",
+          "exit_code": 0,
+          "output_sha": "bb50ec245e2c474fd83aafc3dc2af49054679b490b15ce193c73c01e4cf95edc"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"CREATE TABLE IF NOT EXISTS recovery\" -A 10 src/db/migrations.ts | head -14; echo \"=== 002_events ===\"; grep -n \"'002_events.sql'\" -A 20 src/db/migrations.ts | head -25",
+          "exit_code": 0,
+          "output_sha": "660fa4a52fd1c7605fe8a5d5b9f5abdf0de033366fb4ba630dd4fbfe5f3d5861"
+        },
+        {
+          "tool": "sandbox_read",
+          "command": "sandbox_read {\"key\": \"verified_0\"}",
+          "exit_code": 1,
+          "output_sha": "678be362049c858745e71e5dc8bf0bfe19e3b5a7cc3fce486ff5e05cf8a94b0f"
+        },
+        {
+          "tool": "sandbox_read",
+          "command": "sandbox_read {\"key\": \"checked\"}",
+          "exit_code": 1,
+          "output_sha": "c3695c2c9d3a30089ead23fd6874f3e19a92098aba955ee74bb46a94c3c3997e"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls; echo ---; cat .gitreins/config.yaml 2>/dev/null; echo ---; ls src | head -50",
+          "exit_code": 0,
+          "output_sha": "ddd5f7b5f24225132c8a2c37e5e255170f95b55b6ac4851939ce275c322373e7"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"src/ralph-loop.ts\"}",
+          "exit_code": 0,
+          "output_sha": "5daf47042e7ee4a6885e3ca5cc18e21b0a931d5fd6c3ec316f45700cca28c77e"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 400, \"offset\": 400, \"path\": \"src/ralph-loop.ts\"}",
+          "exit_code": 0,
+          "output_sha": "c34d9a8eb5630f742fc8013e19a86d360f76fe1b5013f24e18f2c932e097a14a"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"file_glob\": \"tests/**/*.ts\", \"regex\": \"LoopController|isLauncherGone|RALPH_LOOP_STOP_SIGNALS|idle-timeout|launcher-gone\"}",
+          "exit_code": 0,
+          "output_sha": "494620b2b773abfa87f9711e02153719396c01f9b4e0fb95d173fc9b4fb36d6a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/runner 2>/dev/null; pwd; git log --oneline -5",
+          "exit_code": 0,
+          "output_sha": "eb422e6e252e8b9e502e94b7b4f667f83757b26367e0e2423ff0a697b0dfc8a2"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/ralph-loop/lifecycle.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "445dd8a9761857b32227fd709be5150fa8b2dbd83cbe2fdc59c2b97c27256bc3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && npx vitest run tests/ralph-loop/lifecycle.test.ts 2>&1 | tail -40",
+          "exit_code": -15,
+          "output_sha": "f774c561d3f9f6421c1f47f71eefbbc3f0b29ab96a6a778da4adc87da8f3ced2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && timeout 600 npx vitest run tests/ralph-loop/lifecycle.test.ts --reporter=verbose 2>&1 | tail -60",
+          "exit_code": 0,
+          "output_sha": "7312c74bc761868ac91b2a4d8f07127fc4cd87bf06c57c47b237c1bef13ba77d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && timeout 1800 npx vitest run 2>&1 | tail -30",
+          "exit_code": -15,
+          "output_sha": "39d30636b1a4c1ce78c323caa756e8ec47dc471bde099b7c43cab97e36a5ab65"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && (timeout 1700 npx vitest run > /tmp/vitest-full.log 2>&1; echo \"EXIT=$?\" >> /tmp/vitest-full.log) & sleep 25; echo started",
+          "exit_code": 0,
+          "output_sha": "33561ec703339c4531b75356f1803d8ccb660d8c8b06a56e8eef7efc465aac53"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && timeout 600 npx tsc --noEmit 2>&1 | tail -20; echo \"TSC_EXIT=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "0d5b319a7c772f1545aee2b9cc630139aa8ea5b29fae6d591f40ebfae3b9c6c5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && timeout 900 npx tsc --noEmit > /tmp/tsc.log 2>&1; echo \"TSC_EXIT=$?\"; tail -20 /tmp/tsc.log",
+          "exit_code": 0,
+          "output_sha": "bc15a632f5f17d0b6e50936cb2ee50cbe63ad9b9f28969630a19915e5588abea"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 120; tail -5 /tmp/vitest-full.log; echo ---; grep -cE \"^ *(\u2713|\u00d7)\" /tmp/vitest-full.log 2>/dev/null",
+          "exit_code": -15,
+          "output_sha": "0971682e5dd08ab9ea13e561db0cac991e32204a4163542709000ba957e2148f"
+        },
+        {
+          "tool": "run_command",
+          "command": "tail -c 2000 /tmp/vitest-full.log; echo; echo \"---SIZE---\"; wc -l /tmp/vitest-full.log",
+          "exit_code": 0,
+          "output_sha": "5c5eae583d20e744be5d5f86a05af5076337845f12171d3e3df452ec73f5d5dd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && sed -n 1,60p tests/db.test.ts",
+          "exit_code": 0,
+          "output_sha": "959f555c0426a8c266572040099d017d92d6b6d2ad8653da923943fc007f6d7f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && git log --oneline -3 -- tests/db.test.ts src/ralph-loop.ts; echo ---; git show --stat 1229fecd | head -30",
+          "exit_code": 0,
+          "output_sha": "d4d5556f1b190989c4a520d96d2fcb0a3d3b4c21936e689099037c57bf1e56f4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && git show --stat 1229fecd | tail -20",
+          "exit_code": 0,
+          "output_sha": "44d13f7e074ad7680263a1bdc6cbc295bd19792c7597c28d848bf07beb60b23e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && timeout 300 npx vitest run tests/db.test.ts 2>&1 | tail -25",
+          "exit_code": 0,
+          "output_sha": "45e22feeeef02619543f5c8c3d0d479926a7143e8db0d7d6ed8bb08fbddd171f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && (timeout 1700 npx vitest run > /tmp/vitest-full2.log 2>&1; echo \"EXIT=$?\" >> /tmp/vitest-full2.log) & sleep 28; echo started",
+          "exit_code": 0,
+          "output_sha": "130fcd7b0f4f08f5cf2c5c02dc8ba21726708e29b9c41762be6d67db5d34456e"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 20; tail -c 1200 /tmp/vitest-full2.log",
+          "exit_code": 0,
+          "output_sha": "2447651387b156d598a838af0721a877107f7a0eea5304be85d8d70a0ed0c054"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: src/ralph-loop.ts (symlink -> specs/implementation.spec.dir/src/ralph-loop.ts) installs SIGTERM/SIGINT/SIGHUP handlers in installSignalHandlers() (RALPH_LOOP_STOP_SIGNALS = ['SIGTERM','SIGINT','SIGHUP']), removes them in endRun(); launcher loss via isLauncherGone() checked in exitDueOnIdlePoll() and after each processTask(); bounded idle via maxIdlePolls (default 360 = 30min at 5s poll). CLI main() awaits controller.start() and sets exitCode 0.\\nTests: `npx vitest run tests/ralph-loop/lifecycle.test.ts` -> \\\"Tests 10 passed (10)\\\", incl. \\\"the CLI entry exits 0 on a real SIGTERM instead of being SIGKILLed\\\" (real spawned tsx child, SIGTERM, exitCode 0, stderr contains \\\"Ralph Loop stopped (reason=signal:SIGTERM)\\\").\\nFull suite: `npx vitest run` -> \\\"Test Files 117 passed | 4 skipped (121)\\\", \\\"Tests 1972 passed | 58 skipped (2030)\\\", 0 failures. (First full run had 2 transient failures in tests/db.test.ts \\\"SqliteError: disk I/O error\\\" on shared .speclang/test.db; that file passes 35/35 in isolation and the full suite is green on re-run -> parallelism artifact, not this change.)\\n`npx tsc --noEmit` -> TSC_EXIT=0.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "90f1e9c7a9d9c6c8692b12a503a90e4402d21565838ab12f3fded8f48c3dc12c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && ls -la src/ralph-loop.ts; echo ---; grep -rn \"ralph-loop\" package.json bin/* 2>/dev/null | head -20; echo ---; grep -rn \"ralph-loop\" src/cli/*.ts src/index.ts index.ts 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "084685ba5a460eef8f229ea0d57629c368aa5b3080cf7cb310fa615e27ccff30"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -rn \"ralph-loop\" --include=*.ts --include=*.json --include=*.yaml --include=*.md -l . 2>/dev/null | grep -v node_modules | grep -v \"^./dist\" | head -30",
+          "exit_code": 0,
+          "output_sha": "6b27f2d8a8e32397f141457392deb1585a59c56199914f15e3a5ad142794cea7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"ralph-loop\" tsconfig.json; echo ---; grep -rn \"ralph-loop\" package.json; echo ---; grep -rn \"ralph-loop\" .gitreins/tasks.yaml | head -20",
+          "exit_code": 0,
+          "output_sha": "958f316ac77b01f1c7350fa36045ac62bc1b1b6bd8e1a1fe891bfa3720440cea"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && sed -n 40,70p tsconfig.json; echo \"=== task ===\"; sed -n 775,800p .gitreins/tasks.yaml",
+          "exit_code": 0,
+          "output_sha": "e8df24aa77dfe0388cd83e36025c9041372a01b51b42caacd54877bb513361fd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -rn \"ralph-loop\" README.md GETTING-STARTED.md docs/*.md 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "e4b141eb4ef4ff86fa28b9dc3918cc2e0df449beadb6a1b5eac5ea76e0c72bdf"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -rn \"isRunning\" specs/ralph-loop.spec.dir/src/controller.ts | head; echo \"=== index barrel importers ===\"; grep -rn \"ralph-loop/index\\|ralph-loop/controller\" --include=*.ts . 2>/dev/null | grep -v node_modules | grep -v \"^./dist\" | head",
+          "exit_code": 0,
+          "output_sha": "2159c161000096e7a0b3566d3848cf8206c166a4b81184899cbf3702e468e63f"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 80, \"path\": \"specs/ralph-loop.spec.dir/src/controller.ts\"}",
+          "exit_code": 0,
+          "output_sha": "5de0a96f4573d1a040abfc4ffc13db5e3d5d5cc85f43fa322073600adc40f614"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -rn \"ralph-loop\" src/ralph-loop/index.ts 2>/dev/null | head; echo \"=== who imports src/ralph-loop (dir) ===\"; grep -rn \"from ['\\\"].*ralph-loop['\\\"]\" --include=*.ts . 2>/dev/null | grep -v node_modules | grep -v \"^./dist\" | head -20; echo \"=== dist ===\"; ls dist 2>/dev/null | head; grep -rn \"ralph-loop\" dist/*.js 2>/dev/null | head -5",
+          "exit_code": 0,
+          "output_sha": "cadd392f69c8fd7153ac7ca8ac5d73c4fd5db5964d7a421321a30c82a4230364"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -rn \"ralph\" dist/index.js | head -5; echo \"=== dist/src ===\"; ls dist/src 2>/dev/null | head -20; echo \"=== package main/bin ===\"; grep -n '\"main\"\\|\"bin\"\\|\"exports\"' -A5 package.json | head -30",
+          "exit_code": 0,
+          "output_sha": "64474f651c9b699836c6f642965cfb6406f38b832c975a683e09202ffe3c2a48"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && ls dist/src | grep -i ralph; echo \"=== bin/speclang ===\"; head -40 bin/speclang; echo \"=== grep ralph in bin ===\"; grep -rn \"ralph\" bin/ | head",
+          "exit_code": 0,
+          "output_sha": "80d412ac195c76724f1a6fe639a4ec91cdae27e71c49fe5292484c3c4d1460f3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && ls dist/src/ralph; echo \"=== dist/src/ralph-loop* ===\"; ls dist/src | grep -i \"ralph-loop\"; echo \"=== grep ralph-loop in dist ===\"; grep -rln \"ralph-loop\" dist --include=*.js 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "bf07672e62f772e58018e076a281215956f7920589c37da60d7c8548fb2c9ff3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"ralph\" dist/src/ralph/index.js | head -10; echo \"=== loop.js head ===\"; head -30 dist/src/ralph/loop.js",
+          "exit_code": 0,
+          "output_sha": "0866ea21dab707fefd1bd47cd1f76f21631cfaf912b5651ce65d3318cd8382f5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"while\\|isRunning\\|SIGTERM\\|ppid\" dist/src/ralph/loop.js | head -20",
+          "exit_code": 0,
+          "output_sha": "657697e25d38e40d22e5d6c3d448882439e8d0e7b52c2a97cff3dff90444474b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && sed -n 100,140p dist/src/ralph/loop.js",
+          "exit_code": 0,
+          "output_sha": "ad2cd99bc94bccb7160912c2c823c8d10dc183d5e2eab52ce59579b6ce44629b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -rn \"ralph\" src/daemon/*.ts src/cli/*.ts 2>/dev/null | head -10; echo \"=== daemon spawns ===\"; grep -rn \"spawn\\|fork\" src/daemon/*.ts 2>/dev/null | head -10",
+          "exit_code": 0,
+          "output_sha": "0ff06b18e009e54fff66adb55e0c504067177708f721a7e68d55305eb9f79340"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -rn \"ralph-loop.ts\\|ralph_loop\\|ralph-loop\" scripts/*.sh scripts/*.js scripts/*.ts 2>/dev/null | head -10; echo \"=== any spawn of ralph ===\"; grep -rn \"ralph\" --include=*.ts --include=*.js --include=*.sh --include=*.yaml . 2>/dev/null | grep -v node_modules | grep -v \"^./dist\" | grep -v \"^./specs\" | grep -v \"^./tests\" | grep -v \"^./.gitreins\" | head -20",
+          "exit_code": 0,
+          "output_sha": "bb8ab4b194ab6393657c21e03bc0b61689fb96efc8eeeb0580a8351b1315f421"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -rn \"ralph-loop.ts\" .ralph/*.sh .ralph/*.md 2>/dev/null | head -10; echo \"=== tsx ralph ===\"; grep -rn \"tsx.*ralph\\|ralph.*tsx\" --include=*.sh --include=*.md --include=*.json . 2>/dev/null | grep -v node_modules | grep -v \"^./dist\" | head -10",
+          "exit_code": 0,
+          "output_sha": "988310e12358dd64cacb734f09bfe6031d362a93ca62d144b9723a8896789370"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && sed -n 60,90p .coding-hermes/evidence/GAP-003-load-audit.md; echo \"=== 225-245 ===\"; sed -n 225,245p .coding-hermes/evidence/GAP-003-load-audit.md",
+          "exit_code": 0,
+          "output_sha": "fcc9a0565d45427f6361c6cba57f3930083838e2c42e7acd936cb6d1639ec930"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"spawn\\|SIGTERM\\|kill\\|ralph-loop\" tests/db/ralph-loop-fresh-state.test.ts | head -20; echo \"=== poc-e2e ===\"; grep -n \"spawn\\|SIGTERM\\|kill\\|ralph-loop\" tests/poc-e2e.test.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "d54ce9703149a576f56efacb9cba268ffaf6207b5608a1d25804834781330e1e"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 60, \"offset\": 70, \"path\": \"tests/db/ralph-loop-fresh-state.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "ea65270616e7219851215e2ce40df3ee6d669626bf1f2404d3749f1a7409661c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/speclang-PERF-LAND && grep -n \"stillRunning\" tests/db/ralph-loop-fresh-state.test.ts",
+          "exit_code": 0,
+          "output_sha": "d9c5af9e926419d2b8c466c57f883d341afdf3f6cde810414802db48b34c7b76"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "high",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 85,
+        "detection": "task marked status=complete with an empty evidence payload while its own acceptance criteria require a named evidence file and before/after measurement",
+        "detail": "GAP-003 flips to \"status\":\"complete\" with detail.evidence only `{\"run_id\":\"52992fc2\",\"ts\":...}` and no reference to `.coding-hermes/evidence/GAP-003-load-audit.md`, which the row's acceptance string requires to exist and contain a before/after measurement."
+      },
+      {
+        "severity": "medium",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 85,
+        "detection": "completion event records no measurement while the task's acceptance explicitly requires one recorded in the completion event",
+        "detail": "The matching events.jsonl row (id 450) carries `\"detail\":\"{\\\"status\\\":\\\"complete\\\"}\"` with no spawn-count/wall-clock/peak-children measurement, contradicting acceptance item (3) \"prove before/after with a concrete measurement ... recorded in the completion event\"."
+      },
+      {
+        "severity": "medium",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 85,
+        "detection": "field type changed from string to object for an existing schema field",
+        "detail": "GAP-003's `detail` was a JSON string in the removed line and is now an object `{\"evidence\":[...],\"text\":\"...\"}`, while every other row in tasks.jsonl keeps `detail` as a string \u2014 consumers that parse `detail` as text will break on this row."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 85,
+        "detection": "completion recorded with ci_result=SKIP while acceptance requires the full suite green after the change",
+        "detail": "The row sets `\"ci_result\":\"SKIP\"` and the foreman_note says \"CI pending this push\", so the acceptance arm `npx vitest run must exit 0 after the change` is not evidenced by CI at completion time."
+      },
+      {
+        "severity": "low",
+        "file": "_index.json",
+        "line": 4,
+        "detection": "generated timestamp uses a doubled Z suffix (`...ZZ`)",
+        "detail": "`\"generated\": \"2026-11-17T16:36:10.867ZZ\"` keeps the pre-existing malformed `ZZ` suffix rather than a valid ISO-8601 timestamp, so the regenerated index still emits an unparseable date."
+      }
+    ],
+    "summary": "The board rows close GAP-003 as complete without the evidence file or measurement its own acceptance demands, and the regenerated index carries a malformed timestamp."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  11:28:28\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 src/ralph-loop.ts handles SIGTERM/SIGINT and exits when its launcher is gone or after a bounded idle period; a test proves the loop stops; npx vitest run green; npx tsc --noEmit clean: PASS: src/ralph-loop.ts (symlink -> specs/implementation.spec.dir/src/ralph-loop.ts) installs SIGTERM/SIGINT/SIGHUP handlers in installSignalHandlers() (RALPH_LOOP_STOP_SIGNALS = ['SIGTERM','SIGINT','SIGHUP']), removes them in endRun(); launcher loss via isLauncherGone() checked in exitDueOnIdlePoll() and after each processTask(); bounded idle via maxIdlePolls (default 360 = 30min at 5s poll). CLI main() awaits controller.start() and sets exitCode 0.\nTests: `npx vitest run tests/ralph-loop/lifecycle.test.ts` -> \"Tests 10 passed (10)\", incl. \"the CLI entry exits 0 on a real SIGTERM instead of being SIGKILLed\" (real spawned tsx child, SIGTERM, exitCode 0, stderr contains \"Ralph Loop stopped (reason=signal:SIGTERM)\").\nFull suite: `npx vitest run` -> \"Test Files 117 passed | 4 skipped (121)\", \"Tests 1972 passed | 58 skipped (2030)\", 0 failures. (First full run had 2 transient failures in tests/db.test.ts \"SqliteError: disk I/O error\" on shared .speclang/test.db; that file passes 35/35 in isolation and the full suite is green on re-run -> parallelism artifact, not this change.)\n`npx tsc --noEmit` -> TSC_EXIT=0. \u00b7 graded at iteration 78.9 (364,574 in / 2,221 out, 78.9 iterations and 406s into the run)\nCap exceeded: Iteration cap (100) reached (100.1 used). Increase max_iterations or split criteria. Partial verdict \u2014 all 1 criteria graded and passed.\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T16:37:13.001750",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T16:37:13.036368+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 707,
+        "truncated": false,
+        "source": "git show bafa637fdb04"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 238307,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "GAP-004"
+  }
+}

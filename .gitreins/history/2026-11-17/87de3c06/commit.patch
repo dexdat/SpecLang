@@ -1,0 +1,17 @@
+commit bafa637fdb04cd2a99ca2a53f5263159ff141feb
+Merge: cb97dfd8 d3683902
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 11:18:27 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 11:18:27 2026 -0500
+
+    merge(wt/GAP-003): bound vitest worker pool, clamp 2-16
+    
+    GAP-003. Worker commit d3683902.
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+
+ .coding-hermes/evidence/GAP-003-load-audit.md | 260 ++++++++++++++++++++++++++
+ tests/load-hygiene.test.ts                    |  70 +++++++
+ vitest.config.ts                              |  33 ++++
+ 3 files changed, 363 insertions(+)
