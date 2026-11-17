@@ -1,0 +1,498 @@
+{
+  "task_id": "DF-SPECLANG-5-R5",
+  "task_title": "Crash paths on fresh projects and library API",
+  "task_criteria": [
+    "speclang history in a fresh git repo with no commits prints no GitError stack trace; docs/API_REFERENCE.md documents that codegen target comes from getTarget()"
+  ],
+  "passed": false,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "4d110c6c7d2fef224156f2c1fbf09d2db0db373a",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "9909f0c85c4fdbeca5c2b2cbf481cc169f3079ac54787ca6eccf3b221b6af0ae",
+  "working_tree_dirty_path_count": 5,
+  "items": [
+    {
+      "criterion": "speclang history in a fresh git repo with no commits prints no GitError stack trace; docs/API_REFERENCE.md documents that codegen target comes from getTarget()",
+      "status": "FAIL",
+      "detail": "Neither half is delivered in the repository. (a) Crash path: bin/speclang has no empty-state guard \u2014 `grep -n 'detectEmptyHistory\\|EMPTY_HISTORY' bin/speclang` returns 0 hits, and the history action (bin/speclang:2439-2624) calls `git.log(...)`/`git.diff(...)`/`git.raw(...)` directly. Reproduced: `mkdir /tmp/r5-fresh && cd /tmp/r5-fresh && git init -q . && node /home/kara/SpecLang/bin/speclang history` prints `GitError: fatal: your current branch 'master' does not have any commits yet` plus a full node stack trace (`at Object.action (.../simple-git/dist/cjs/index.js:1374:25)`), EXIT=1. Same for `history --stat` and `history --format json`. (b) Docs: docs/API_REFERENCE.md (symlink -> specs/docs.spec.dir/docs/API_REFERENCE.md, 148 lines) never states that the codegen target comes from getTarget(); the only occurrence is a bare export name in a list at line 41 (`- Targets: ... \\`getTarget\\`, \\`getAllTargets\\``), with no codegen()/targetId explanation. The claimed commit 4d110c6c7d2fef224156f2c1fbf09d2db0db373a does not exist in this repo (`git cat-file -t` -> 'could not get object info'), and `git diff HEAD -- bin/speclang tests/cli/history.test.ts specs/docs.spec.dir/docs/API_REFERENCE.md` is empty \u2014 the three files are unchanged (last touched by 2597ca95 / c2e39f2c / 48b4886b). Test run: `npx vitest run tests/cli/history.test.ts` -> 'Test Files 1 passed (1) / Tests 11 passed (11)', but that file is the pre-change version with no fresh-repo test."
+    },
+    {
+      "criterion": "The empty-state guard is reachable from the `speclang history` entrypoint (bin/speclang history action) for the default invocation, not only for --stat/--blame/--compare",
+      "status": "FAIL",
+      "detail": "No guard exists anywhere in bin/speclang (grep for detectEmptyHistory/EMPTY_HISTORY/EMPTY_HISTORY_UNBORN = 0 hits). The history action at bin/speclang:2439-2624 goes straight to `const git = require('simple-git')()` then `git.diff`/`git.log`/`git.raw`. Reproduced in /tmp/r5-fresh (git init, no commits): default `history`, `history --stat` and `history --format json` all emit the GitError stack trace.",
+      "derived": true
+    },
+    {
+      "criterion": "A regression test in tests/cli/history.test.ts exercises `speclang history` in a fresh `git init` repo with no commits and asserts no GitError/stack trace",
+      "status": "FAIL",
+      "detail": "tests/cli/history.test.ts is unchanged (4630 bytes; `git log -1 -- tests/cli/history.test.ts` -> 48b4886b 'style: prettier format'); `grep -n 'unborn\\|no commits\\|detectEmptyHistory\\|GitError' tests/cli/history.test.ts` returns 0 hits. `npx vitest run tests/cli/history.test.ts` -> 'Tests 11 passed (11)' \u2014 green while the crash path is unguarded, i.e. nothing pins the behaviour.",
+      "derived": true
+    },
+    {
+      "criterion": "The documented getTarget()/codegen-target statement matches the shipped code (codegen(ir, targetId) resolves via getTarget)",
+      "status": "FAIL",
+      "detail": "There is no such statement to match: specs/docs.spec.dir/docs/API_REFERENCE.md:41 lists `getTarget` only as an export name. The underlying code fact is real and undocumented \u2014 src/compiler/phases/codegen.ts:10-11 `export function codegen(ir: IR, targetId: string)` -> `const target = getTarget(targetId)` (throws `Unknown target: ${targetId}` when undefined), and src/compiler/targets/index.ts:121-123 `getTarget(lang)` lowercases the id before lookup.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "changes_required",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  21:21:06",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T021933.792425Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T021933.792425Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  21:21:06\n   Duration  25.76s (transform 13.58s, setup 2.29s, import 20.37s, tests 98.66s, environment 13ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T021933.792425Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": false,
+      "any_failed": true,
+      "summary": "INCOMPLETE\n  \u2717 speclang history in a fresh git repo with no commits prints no GitError stack trace; docs/API_REFERENCE.md documents that codegen target comes from getTarget(): Neither half is delivered in the repository. (a) Crash path: bin/speclang has no empty-state guard \u2014 `grep -n 'detectEmptyHistory\\|EMPTY_HISTORY' bin/speclang` returns 0 hits, and the history action (bin/speclang:2439-2624) calls `git.log(...)`/`git.diff(...)`/`git.raw(...)` directly. Reproduced: `mkdir /tmp/r5-fresh && cd /tmp/r5-fresh && git init -q . && node /home/kara/SpecLang/bin/speclang history` prints `GitError: fatal: your current branch 'master' does not have any commits yet` plus a full node stack trace (`at Object.action (.../simple-git/dist/cjs/index.js:1374:25)`), EXIT=1. Same for `history --stat` and `history --format json`. (b) Docs: docs/API_REFERENCE.md (symlink -> specs/docs.spec.dir/docs/API_REFERENCE.md, 148 lines) never states that the codegen target comes from getTarget(); the only occurrence is a bare export name in a list at line 41 (`- Targets: ... \\`getTarget\\`, \\`getAllTargets\\``), with no codegen()/targetId explanation. The claimed commit 4d110c6c7d2fef224156f2c1fbf09d2db0db373a does not exist in this repo (`git cat-file -t` -> 'could not get object info'), and `git diff HEAD -- bin/speclang tests/cli/history.test.ts specs/docs.spec.dir/docs/API_REFERENCE.md` is empty \u2014 the three files are unchanged (last touched by 2597ca95 / c2e39f2c / 48b4886b). Test run: `npx vitest run tests/cli/history.test.ts` -> 'Test Files 1 passed (1) / Tests 11 passed (11)', but that file is the pre-change version with no fresh-repo test.\n  \u2717 The empty-state guard is reachable from the `speclang history` entrypoint (bin/speclang history action) for the default invocation, not only for --stat/--blame/--compare: No guard exists anywhere in bin/speclang (grep for detectEmptyHistory/EMPTY_HISTORY/EMPTY_HISTORY_UNBORN = 0 hits). The history action at bin/speclang:2439-2624 goes straight to `const git = require('simple-git')()` then `git.diff`/`git.log`/`git.raw`. Reproduced in /tmp/r5-fresh (git init, no commits): default `history`, `history --stat` and `history --format json` all emit the GitError stack trace.\n  \u2717 A regression test in tests/cli/history.test.ts exercises `speclang history` in a fresh `git init` repo with no commits and asserts no GitError/stack trace: tests/cli/history.test.ts is unchanged (4630 bytes; `git log -1 -- tests/cli/history.test.ts` -> 48b4886b 'style: prettier format'); `grep -n 'unborn\\|no commits\\|detectEmptyHistory\\|GitError' tests/cli/history.test.ts` returns 0 hits. `npx vitest run tests/cli/history.test.ts` -> 'Tests 11 passed (11)' \u2014 green while the crash path is unguarded, i.e. nothing pins the behaviour.\n  \u2717 The documented getTarget()/codegen-target statement matches the shipped code (codegen(ir, targetId) resolves via getTarget): There is no such statement to match: specs/docs.spec.dir/docs/API_REFERENCE.md:41 lists `getTarget` only as an export name. The underlying code fact is real and undocumented \u2014 src/compiler/phases/codegen.ts:10-11 `export function codegen(ir: IR, targetId: string)` -> `const target = getTarget(targetId)` (throws `Unknown target: ${targetId}` when undefined), and src/compiler/targets/index.ts:121-123 `getTarget(lang)` lowercases the id before lookup.\n  \u2717 Coverage FAILED \u2014 not passing: speclang history in a fresh git repo with no commits prints no GitError stack trace; docs/API_REFERENCE.md documents that codegen target comes from getTarget()\nThe DF-SPECLANG-5-R5 change is not present in the repository at all \u2014 `speclang history` still crashes with a GitError stack trace in a fresh repo (reproduced, exit 1) and API_REFERENCE.md never documents that the codegen target comes from getTarget(). [uncovered failure paths: failure mode 0 (`speclang history` on a freshly `git init`-ed project dies with a raw simple-git GitError and a node stack trace, exit 1): detected_by is empty \u2014 uncovered failure path; failure mode 1 (`speclang history --stat` / `--format json` / `--blame` crash identically on an unborn HEAD, so even a log-only guard would leave the other modes broken): detected_by is empty \u2014 uncovered failure path; failure mode 2 (API_REFERENCE.md gives no guidance that the codegen target is resolved by getTarget(targetId) (case-insensitive id, undefined for unknown ids), so library users cannot know how to select a target): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": false,
+          "output": "INCOMPLETE\n  \u2717 speclang history in a fresh git repo with no commits prints no GitError stack trace; docs/API_REFERENCE.md documents that codegen target comes from getTarget(): Neither half is delivered in the repository. (a) Crash path: bin/speclang has no empty-state guard \u2014 `grep -n 'detectEmptyHistory\\|EMPTY_HISTORY' bin/speclang` returns 0 hits, and the history action (bin/speclang:2439-2624) calls `git.log(...)`/`git.diff(...)`/`git.raw(...)` directly. Reproduced: `mkdir /tmp/r5-fresh && cd /tmp/r5-fresh && git init -q . && node /home/kara/SpecLang/bin/speclang history` prints `GitError: fatal: your current branch 'master' does not have any commits yet` plus a full node stack trace (`at Object.action (.../simple-git/dist/cjs/index.js:1374:25)`), EXIT=1. Same for `history --stat` and `history --format json`. (b) Docs: docs/API_REFERENCE.md (symlink -> specs/docs.spec.dir/docs/API_REFERENCE.md, 148 lines) never states that the codegen target comes from getTarget(); the only occurrence is a bare export name in a list at line 41 (`- Targets: ... \\`getTarget\\`, \\`getAllTargets\\``), with no codegen()/targetId explanation. The claimed commit 4d110c6c7d2fef224156f2c1fbf09d2db0db373a does not exist in this repo (`git cat-file -t` -> 'could not get object info'), and `git diff HEAD -- bin/speclang tests/cli/history.test.ts specs/docs.spec.dir/docs/API_REFERENCE.md` is empty \u2014 the three files are unchanged (last touched by 2597ca95 / c2e39f2c / 48b4886b). Test run: `npx vitest run tests/cli/history.test.ts` -> 'Test Files 1 passed (1) / Tests 11 passed (11)', but that file is the pre-change version with no fresh-repo test.\n  \u2717 The empty-state guard is reachable from the `speclang history` entrypoint (bin/speclang history action) for the default invocation, not only for --stat/--blame/--compare: No guard exists anywhere in bin/speclang (grep for detectEmptyHistory/EMPTY_HISTORY/EMPTY_HISTORY_UNBORN = 0 hits). The history action at bin/speclang:2439-2624 goes straight to `const git = require('simple-git')()` then `git.diff`/`git.log`/`git.raw`. Reproduced in /tmp/r5-fresh (git init, no commits): default `history`, `history --stat` and `history --format json` all emit the GitError stack trace.\n\n\u2026 [1123 chars omitted \u2014 2 line(s)] \u2026\n  \u2717 Coverage FAILED \u2014 not passing: speclang history in a fresh git repo with no commits prints no GitError stack trace; docs/API_REFERENCE.md documents that codegen target comes from getTarget()\nThe DF-SPECLANG-5-R5 change is not present in the repository at all \u2014 `speclang history` still crashes with a GitError stack trace in a fresh repo (reproduced, exit 1) and API_REFERENCE.md never documents that the codegen target comes from getTarget(). [uncovered failure paths: failure mode 0 (`speclang history` on a freshly `git init`-ed project dies with a raw simple-git GitError and a node stack trace, exit 1): detected_by is empty \u2014 uncovered failure path; failure mode 1 (`speclang history --stat` / `--format json` / `--blame` crash identically on an unborn HEAD, so even a log-only guard would leave the other modes broken): detected_by is empty \u2014 uncovered failure path; failure mode 2 (API_REFERENCE.md gives no guidance that the codegen target is resolved by getTarget(targetId) (case-insensitive id, undefined for unknown ids), so library users cannot know how to select a target): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "INCOMPLETE",
+            "items": [
+              {
+                "criterion": "speclang history in a fresh git repo with no commits prints no GitError stack trace; docs/API_REFERENCE.md documents that codegen target comes from getTarget()",
+                "status": "FAIL",
+                "detail": "Neither half is delivered in the repository. (a) Crash path: bin/speclang has no empty-state guard \u2014 `grep -n 'detectEmptyHistory\\|EMPTY_HISTORY' bin/speclang` returns 0 hits, and the history action (bin/speclang:2439-2624) calls `git.log(...)`/`git.diff(...)`/`git.raw(...)` directly. Reproduced: `mkdir /tmp/r5-fresh && cd /tmp/r5-fresh && git init -q . && node /home/kara/SpecLang/bin/speclang history` prints `GitError: fatal: your current branch 'master' does not have any commits yet` plus a full node stack trace (`at Object.action (.../simple-git/dist/cjs/index.js:1374:25)`), EXIT=1. Same for `history --stat` and `history --format json`. (b) Docs: docs/API_REFERENCE.md (symlink -> specs/docs.spec.dir/docs/API_REFERENCE.md, 148 lines) never states that the codegen target comes from getTarget(); the only occurrence is a bare export name in a list at line 41 (`- Targets: ... \\`getTarget\\`, \\`getAllTargets\\``), with no codegen()/targetId explanation. The claimed commit 4d110c6c7d2fef224156f2c1fbf09d2db0db373a does not exist in this repo (`git cat-file -t` -> 'could not get object info'), and `git diff HEAD -- bin/speclang tests/cli/history.test.ts specs/docs.spec.dir/docs/API_REFERENCE.md` is empty \u2014 the three files are unchanged (last touched by 2597ca95 / c2e39f2c / 48b4886b). Test run: `npx vitest run tests/cli/history.test.ts` -> 'Test Files 1 passed (1) / Tests 11 passed (11)', but that file is the pre-change version with no fresh-repo test.",
+                "resolution_probability": 0.23,
+                "cited_path": "docs/API_REFERENCE.md"
+              },
+              {
+                "criterion": "The empty-state guard is reachable from the `speclang history` entrypoint (bin/speclang history action) for the default invocation, not only for --stat/--blame/--compare",
+                "status": "FAIL",
+                "detail": "No guard exists anywhere in bin/speclang (grep for detectEmptyHistory/EMPTY_HISTORY/EMPTY_HISTORY_UNBORN = 0 hits). The history action at bin/speclang:2439-2624 goes straight to `const git = require('simple-git')()` then `git.diff`/`git.log`/`git.raw`. Reproduced in /tmp/r5-fresh (git init, no commits): default `history`, `history --stat` and `history --format json` all emit the GitError stack trace.",
+                "derived": true
+              },
+              {
+                "criterion": "A regression test in tests/cli/history.test.ts exercises `speclang history` in a fresh `git init` repo with no commits and asserts no GitError/stack trace",
+                "status": "FAIL",
+                "detail": "tests/cli/history.test.ts is unchanged (4630 bytes; `git log -1 -- tests/cli/history.test.ts` -> 48b4886b 'style: prettier format'); `grep -n 'unborn\\|no commits\\|detectEmptyHistory\\|GitError' tests/cli/history.test.ts` returns 0 hits. `npx vitest run tests/cli/history.test.ts` -> 'Tests 11 passed (11)' \u2014 green while the crash path is unguarded, i.e. nothing pins the behaviour.",
+                "derived": true
+              },
+              {
+                "criterion": "The documented getTarget()/codegen-target statement matches the shipped code (codegen(ir, targetId) resolves via getTarget)",
+                "status": "FAIL",
+                "detail": "There is no such statement to match: specs/docs.spec.dir/docs/API_REFERENCE.md:41 lists `getTarget` only as an export name. The underlying code fact is real and undocumented \u2014 src/compiler/phases/codegen.ts:10-11 `export function codegen(ir: IR, targetId: string)` -> `const target = getTarget(targetId)` (throws `Unknown target: ${targetId}` when undefined), and src/compiler/targets/index.ts:121-123 `getTarget(lang)` lowercases the id before lookup.",
+                "derived": true
+              }
+            ],
+            "summary": "The DF-SPECLANG-5-R5 change is not present in the repository at all \u2014 `speclang history` still crashes with a GitError stack trace in a fresh repo (reproduced, exit 1) and API_REFERENCE.md never documents that the codegen target comes from getTarget(). [uncovered failure paths: failure mode 0 (`speclang history` on a freshly `git init`-ed project dies with a raw simple-git GitError and a node stack trace, exit 1): detected_by is empty \u2014 uncovered failure path; failure mode 1 (`speclang history --stat` / `--format json` / `--blame` crash identically on an unborn HEAD, so even a log-only guard would leave the other modes broken): detected_by is empty \u2014 uncovered failure path; failure mode 2 (API_REFERENCE.md gives no guidance that the codegen target is resolved by getTarget(targetId) (case-insensitive id, undefined for unknown ids), so library users cannot know how to select a target): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-5-R5\"}",
+          "exit_code": 0,
+          "output_sha": "7c7b41f6efe887b1158c97908ff0dccf4f97e7b3e7bc2b15d95a61e8bb02c740"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && cat .gitreins/config.yaml 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "6c73abf76563a505493f3fa66e194cc018eaa987f2cc991a97789dc94cbbe0d0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; git log --oneline -3; git show --stat HEAD",
+          "exit_code": 128,
+          "output_sha": "8cb14e50bb5d3a9f7b3ff38d898713cadc445c90f456b8eb6bfd3bfa523709f3"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"bin/speclang\"}",
+          "exit_code": 0,
+          "output_sha": "c16b4853da62fc60c517ddce0b707f79065bb3c61bf964d05a130d46653218b4"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"file_glob\": \"bin/speclang\", \"regex\": \"history|detectEmptyHistory|emptyHistoryMessage\"}",
+          "exit_code": 0,
+          "output_sha": "67412bf1df5ca62fa0b5b5e1031877d428026049c29ea4b5e9e260c8dead2881"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; pwd; ls -d .git 2>/dev/null; find / -maxdepth 3 -name \"bin\" -type d 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "ba708795a80ad611ab5af9c5fbfce33fae0a77c09af6eac03b2babbb923d4e41"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara && ls -d */ | head -50; find / -maxdepth 4 -name \"speclang\" -type f 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "a071c86e469e6b846870e51e39bb51bf932a062d9561eea44b0ec86d382c85ad"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git log --oneline -3 && git status --short | head && git show --stat HEAD",
+          "exit_code": 0,
+          "output_sha": "1abc212c783b556d849b4be1907f32e88494fbd23f6a32860e4d1f365d11b920"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git log --all --oneline | grep -i \"SPECLANG-5-R5\" | head; git branch -a | head -20",
+          "exit_code": 0,
+          "output_sha": "f6a768f21597cbc6239915a657e3bd5334e9245357686d0a7e90d2875207d996"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git log --all --oneline --grep=\"DF-SPECLANG-5-R5\" | head -20; echo ---; git log --all --oneline --grep=\"graceful\" | head -20",
+          "exit_code": 0,
+          "output_sha": "a18829cfb3e584707457d35f4a87c1204b17b08224afb882d578da0d5eb16275"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git log --all --oneline -- bin/speclang | head -20; echo ---; git log --all --oneline -- tests/cli/history.test.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "b781b9b3cbe94cffae8fb6318aa191f2bb6b606ef6be1e4c8aaff4bf667f390e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git log --all --oneline --grep=\"4d110c6\" | head; git cat-file -t 4d110c6c7d2fef224156f2c1fbf09d2db0db373a 2>&1; echo ---; git log --all --oneline --grep=\"no commits\" | head",
+          "exit_code": 0,
+          "output_sha": "8245215a455eb667ad20353aa507d48b32d51afdc9df225da0e812aab15cfc68"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git worktree list; echo ---; ls /tmp | grep -i spec | head -20",
+          "exit_code": 0,
+          "output_sha": "8170350c11676d1d28d919d45b5334df6ff82b6076f2cc0c6cba0bcf2cca157e"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -d /tmp/*speclang* /tmp/*SPECLANG* 2>/dev/null | head -40",
+          "exit_code": 0,
+          "output_sha": "b1619624a7628319e9952bb4f1dc31eee0fd449e10c8b8e686d9eb9562767c30"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la /tmp/speclang-fixed-DF-SPECLANG-5-R5 2>/dev/null | head; echo ---; ls -la /tmp/speclang-review /tmp/speclang-review-work 2>/dev/null | head -30; echo ---; cat /tmp/msg-df-speclang-5-r5.txt 2>/dev/null | head -40",
+          "exit_code": 0,
+          "output_sha": "6bc3899f91135f6f5282be3fc25c38ff54ad3f57d5b01b0e161bc4eff8efafdb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/speclang-review && git log --oneline -3; git status --short | head; echo ---; ls -la bin/speclang docs/API_REFERENCE.md tests/cli/history.test.ts 2>&1",
+          "exit_code": 0,
+          "output_sha": "bf89c6b5c8cb9bada5dcf14f7b43cd8d14c05200fb74aae97237408b93a0edfc"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls -la bin/speclang docs/API_REFERENCE.md tests/cli/history.test.ts; echo ---; grep -n \"DF-SPECLANG-5-R5\" -r bin/speclang docs/API_REFERENCE.md tests/cli/history.test.ts specs/docs.spec.dir/docs/API_REFERENCE.md 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "1fce75dc5c4a1db8d61c5fbdf4463026b9f801bd3f794e361401bd50f2963cd7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"detectEmptyHistory\\|EMPTY_HISTORY\" bin/speclang | head; echo \"--- diff vs /tmp/speclang-fixed\"; diff /tmp/speclang-fixed-DF-SPECLANG-5-R5 bin/speclang | head -40; echo \"exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "91c10eba7d9f6db9e708910bb8632c6c7958be9339d243997e2f9ea6c48fbd60"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && diff /tmp/speclang-fixed-DF-SPECLANG-5-R5 bin/speclang | wc -l; diff /tmp/speclang-fixed-DF-SPECLANG-5-R5 bin/speclang | grep -c \"^<\"; diff /tmp/speclang-fixed-DF-SPECLANG-5-R5 bin/speclang | grep -c \"^>\"; echo ---; diff /tmp/speclang-fixed-DF-SPECLANG-5-R5 bin/speclang | grep \"^[0-9]\" | head -20",
+          "exit_code": 0,
+          "output_sha": "adc38346549e2c6ee6c4b8b23f25bb0b269b731c107d241a9b10802b968b38ae"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && diff /tmp/speclang-fixed-DF-SPECLANG-5-R5 bin/speclang | grep \"^>\" ; echo \"=== context around 2559\"; diff -u /tmp/speclang-fixed-DF-SPECLANG-5-R5 bin/speclang | sed -n '/^@@/,$p' | head -160",
+          "exit_code": 0,
+          "output_sha": "b427296e75c67113bf6f6de647385f7f53f9b5241810f609b62ae87c5ad6d094"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"getTarget\" specs/docs.spec.dir/docs/API_REFERENCE.md | head; echo \"---\"; grep -rn \"getTarget\" docs/ 2>/dev/null | head; echo \"--- history section\"; grep -n \"speclang history\" specs/docs.spec.dir/docs/API_REFERENCE.md | head",
+          "exit_code": 0,
+          "output_sha": "9df05f9c0bdd99bce5988c8826a4578e99dbe2a7dc1558a8f666c9a7c7523a2e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n 1,80p specs/docs.spec.dir/docs/API_REFERENCE.md",
+          "exit_code": 0,
+          "output_sha": "32d22f65b89ee0d4d1ce4655f1f03c4e88ece0cca240767836c9e4fa1126ff2b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"getTarget\\|getAllTargets\" -r src/compiler/targets/index.ts | head -20; echo \"--- exports\"; grep -rn \"getTarget\" src/compiler/index.ts src/index.ts 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "27a037ca39afc05f02d0a73c7bc75de231428f5ab09e10c96d8b3fab4fc3e53e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n 100,140p src/compiler/targets/index.ts; echo \"=== barrel\"; grep -rn \"targets\" src/compiler/index.ts | head; echo \"=== root\"; grep -rn \"compiler\" src/index.ts | head",
+          "exit_code": 0,
+          "output_sha": "bdc4fd332dc8a8cd4074c1b65200e803a96d7ab966eefed1590ac699f00bd9a0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"codegen\" src/compiler/index.ts | head -20; echo \"=== codegen signature\"; grep -rn \"export function codegen\\|export async function codegen\" src/compiler/*.ts | head",
+          "exit_code": 0,
+          "output_sha": "3413bdea0ec81500ece851ad4fbdd3f29be101f1fb573b3114eaf04c4f0d997c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && cat src/compiler/index.ts | head -40; echo \"=== codegen defs\"; grep -rn \"codegen\" src/compiler/ --include=*.ts -l | head",
+          "exit_code": 0,
+          "output_sha": "a7c94b0cd3b1111c2b55dc323a776d473aefa371ff41eba43c1169cb52c5647a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"codegen\" src/ --include=*.ts | grep -v \"\\.spec\\.\" | head -20",
+          "exit_code": 0,
+          "output_sha": "c3b56c9cf278578a757cd605ea88f3010b131eddd114201b32d5468406651f6d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls src/codegen/ 2>/dev/null; grep -rn \"getTarget\" src/codegen/*.ts 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "777e1585757116380158dadc1a77f07c5bff498e178c9911480236c1e5cd3cb7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"getTarget\" src/codegen/ | head -20; echo \"=== codegen fn\"; grep -rn \"export function codegen\\|export async function codegen\\|function codegen\" src/codegen/ | head",
+          "exit_code": 0,
+          "output_sha": "d988e21b9db4bf09b50337a200a457f9e538a519c041c24b9d9eaf05895deda7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"codegen\" src/codegen/index.ts | head -20; echo \"=== targets dir\"; ls src/codegen/targets/; grep -rn \"getTarget\" src/codegen/targets/*.ts | head",
+          "exit_code": 0,
+          "output_sha": "194f0ed25b1b023e966072f2b3f377efe3e7780153ce9901d5fa19d3e150fab7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"getTarget\" src/codegen/targets/index.ts | head; echo \"=== codegen in codegen/index.ts\"; sed -n 1,60p src/codegen/index.ts",
+          "exit_code": 0,
+          "output_sha": "1138c736f9c7826626fd196c4eb32d7329dc035259980ad1570cbf0f6b8f8a9d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"getTarget\" src/ --include=*.ts | grep -v \"\\.d\\.ts\" | head -20; echo \"=== dist\"; grep -rn \"getTarget\" dist/src/compiler/targets/index.d.ts 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "6250fe48ea6bbbc23e01d8d4b6050c8583120bef2406734f1e99ebb254b48b25"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"getTarget\" src/compiler/targets/index.ts; echo \"=== is src/compiler/targets/index.ts a symlink?\"; ls -la src/compiler/targets/ | head",
+          "exit_code": 0,
+          "output_sha": "0ed18371ce48cfcaa02817ed4c89348110d98089febc0b4be5b2c2ae77a02222"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"getTarget\" src/compiler/targets/index.ts src/compiler/targets/index.d.ts; echo \"=== root barrel\"; ls src/index.ts dist/index.d.ts 2>&1; grep -rn \"compiler\" dist/index.d.ts 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "a044feda468a02330a566db26a4b44a50224220abb6e80519a7066fdf15bfb2a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"codegen\" src/compiler/phases/*.ts | head -20; echo \"=== phases files\"; ls src/compiler/phases/",
+          "exit_code": 0,
+          "output_sha": "3717780c9d18b7530e743336baf25d9b508340c9bf12d9115ebc1b13d34984e6"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"src/compiler/phases/codegen.ts\"}",
+          "exit_code": 0,
+          "output_sha": "977911b3a197bb1123cdac4e6ac9b4e275778c3b03fbac30bf8d93a71aab6f7b"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Repo root: /home/kara/SpecLang (git branch tmp2, HEAD ae832ac2). Commit 4d110c6c from task does NOT exist in this repo (git cat-file fails). The DF-SPECLANG-5-R5 change is NOT in the working tree: bin/speclang has no detectEmptyHistory/EMPTY_HISTORY (grep empty), docs/API_REFERENCE.md has no getTarget documentation (only a bare name in an export list at line 41), tests/cli/history.test.ts unchanged (4630 bytes, Jul 28). A copy of the fixed bin exists at /tmp/speclang-fixed-DF-SPECLANG-5-R5 (outside worktree, not evidence of landing).\", \"key\": \"state\"}",
+          "exit_code": 0,
+          "output_sha": "1ab710e12c2ab834a9607fcfafc8166cb8681830f2eb7e4bee70a2736e8d4107"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n 2470,2530p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "343c2a204e80974c9b19a407d88450439ea0a93c8cffe445ec55475a7432b49e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n 2440,2470p bin/speclang; echo \"=== catch at end of history action\"; sed -n 2600,2680p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "1e102ec730c3dfb41919073d839324d478903cb168c43bc6a6c6faa1c0d2812c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n 2425,2442p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "6a7c3d8fb911bc5b852bef4305e72ed5a9fa13d6ff9f2a0994a78d8e480e64a9"
+        },
+        {
+          "tool": "run_command",
+          "command": "rm -rf /tmp/r5-fresh && mkdir -p /tmp/r5-fresh && cd /tmp/r5-fresh && git init -q . && node /home/kara/SpecLang/bin/speclang history; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "a8022e92a51859dfc78d283a5ba96c28672f551cc2b9520da360f369b3ef92b2"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FAIL: reproduced in fresh repo /tmp/r5-fresh (git init, no commits): `node /home/kara/SpecLang/bin/speclang history` -> \\\"GitError: fatal: your current branch 'master' does not have any commits yet\\\" + full node stack trace, EXIT=1. bin/speclang:2439-2478 has no empty-state guard (grep detectEmptyHistory/EMPTY_HISTORY in bin/speclang = 0 hits).\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "e0a2147f01c8597c81261949a44cab71ef5634a91b94868283a232c2903d3b19"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"getTarget\\|codegen target\\|Compiler targets\" specs/docs.spec.dir/docs/API_REFERENCE.md; echo \"=== count lines\"; wc -l specs/docs.spec.dir/docs/API_REFERENCE.md; echo \"=== history row\"; grep -n \"history\" specs/docs.spec.dir/docs/API_REFERENCE.md | head",
+          "exit_code": 0,
+          "output_sha": "d974e9b8f18509f582ef6b46a9bedbaac0ad88b04d914e292a74627372c9e759"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n 80,148p specs/docs.spec.dir/docs/API_REFERENCE.md",
+          "exit_code": 0,
+          "output_sha": "910b3dfecced04635926b92d78ce7f4dc022fa1d4e592290cdc3379f28305d2e"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FAIL: docs/API_REFERENCE.md (symlink -> specs/docs.spec.dir/docs/API_REFERENCE.md, 148 lines) contains no statement that the codegen target comes from getTarget(). Only occurrence of getTarget is a bare name in the export list at line 41 (\\\"- Targets: ... `getTarget`, `getAllTargets`\\\"). No \\\"Compiler targets\\\" subsection, no mention of codegen()/targetId resolution. No `speclang history` CLI row either (grep \\\"history\\\" in the doc = 0 hits).\", \"key\": \"verified_0_docs\"}",
+          "exit_code": 0,
+          "output_sha": "aee900947b1cd35bf3965568eabc9327c7f4a8efcb140710ea64c94c65085365"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"unborn\\|no commits\\|detectEmptyHistory\\|GitError\" tests/cli/history.test.ts | head; echo \"=== test file head\"; sed -n 1,40p tests/cli/history.test.ts",
+          "exit_code": 0,
+          "output_sha": "48ac154377984006654ae92b9de7140ab8cfb097a4640350045710a9d8488591"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && npx vitest run tests/cli/history.test.ts 2>&1 | tail -20",
+          "exit_code": 0,
+          "output_sha": "35f47a3d6f0dab0ce44905ac4bab7f39d6c182357b8c2261479b3fca1c8a8ada"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Tests: `npx vitest run tests/cli/history.test.ts` -> \\\"Test Files 1 passed (1) / Tests 11 passed (11)\\\" \\u2014 but the file is the pre-change version (4630 bytes, no unborn/no-commits/GitError assertions; grep for unborn|no commits|detectEmptyHistory|GitError = 0 hits). So the suite is green while the crash path is unguarded \\u2014 no regression test covers the criterion.\", \"key\": \"tests\"}",
+          "exit_code": 0,
+          "output_sha": "a59244c14746d1f0b5968c99abae23644f91aeb29968401f57e9515dce20fd59"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git status --short | head -5; echo \"=== diff of the 3 claimed files vs HEAD\"; git diff HEAD --stat -- bin/speclang tests/cli/history.test.ts specs/docs.spec.dir/docs/API_REFERENCE.md; echo \"(empty = unchanged)\"",
+          "exit_code": 0,
+          "output_sha": "7f44342446b858c1bcd1eb8ec2107960c87e6b414203a392baffe78268d63204"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git log --oneline -1 -- bin/speclang; git log --oneline -1 -- specs/docs.spec.dir/docs/API_REFERENCE.md; git log --oneline -1 -- tests/cli/history.test.ts",
+          "exit_code": 0,
+          "output_sha": "76c3088514fb1a6e9b0797db981b9ab2b884e8fb1b75596a34fd9a92879f6289"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Derived criteria (proposed before grading):\\nd0: The empty-state guard is reachable from the `speclang history` entrypoint (bin/speclang history action) for the default invocation, not only for --stat/--blame/--compare.\\nd1: A regression test in tests/cli/history.test.ts exercises `speclang history` in a fresh `git init` repo with no commits and asserts no GitError/stack trace (so the fix cannot silently regress).\\nd2: The documented getTarget()/codegen-target statement matches the shipped code (codegen(ir, targetId) resolves via getTarget in src/compiler/phases/codegen.ts:10-11).\", \"key\": \"derived\"}",
+          "exit_code": 0,
+          "output_sha": "e1a8faafea9714c98d9df25b2a173d660854dcf4aac2f1ec8691ac7f9dafea05"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/r5-fresh && node /home/kara/SpecLang/bin/speclang history --stat 2>&1 | head -5; echo \"EXIT=$?\"; echo \"=== json\"; node /home/kara/SpecLang/bin/speclang history --format json 2>&1 | head -3",
+          "exit_code": 0,
+          "output_sha": "27a3bbfafb109d2cdec1cc949270867cba58a0484a14228ec11cfbbb6e251c9d"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FAIL: no guard exists at all in bin/speclang (grep detectEmptyHistory/EMPTY_HISTORY = 0 hits; history action at bin/speclang:2439-2624 calls git.log/git.diff/git.raw directly). Reproduced crash for default, --stat and --format json in /tmp/r5-fresh.\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "07ee1f56179ad412e73a9342545b5f30211deb513c596771d80377bd58842f9a"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FAIL: tests/cli/history.test.ts is unchanged (git log -1 -> 48b4886b prettier; 4630 bytes; grep unborn|no commits|GitError = 0 hits). `npx vitest run tests/cli/history.test.ts` -> 11 passed, none covering the fresh-repo path.\", \"key\": \"verified_derived_1\"}",
+          "exit_code": 0,
+          "output_sha": "c82964f0e428df40d7b0c94709e9bc2408321fd774bebee26550cf0e3bb4c2d4"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FAIL: the doc makes no statement about the codegen target at all (only the bare export name `getTarget` at specs/docs.spec.dir/docs/API_REFERENCE.md:41), so there is nothing to match. The code fact it should document is real: src/compiler/phases/codegen.ts:10-11 `codegen(ir, targetId)` -> `getTarget(targetId)`, throwing `Unknown target` when undefined; getTarget lowercases the id (src/compiler/targets/index.ts:121-123).\", \"key\": \"verified_derived_2\"}",
+          "exit_code": 0,
+          "output_sha": "6e45616acf4ef9d1d49c554f5d5e17e9e7f2fa5b7fc2cf1922ff5cca5eacf4ec"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [],
+    "summary": "",
+    "error": "no diff to review (clean tree, no commit anchor)"
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  21:21:06\n\nStage tier2: FAIL\n  INCOMPLETE\n  \u2717 speclang history in a fresh git repo with no commits prints no GitError stack trace; docs/API_REFERENCE.md documents that codegen target comes from getTarget(): Neither half is delivered in the repository. (a) Crash path: bin/speclang has no empty-state guard \u2014 `grep -n 'detectEmptyHistory\\|EMPTY_HISTORY' bin/speclang` returns 0 hits, and the history action (bin/speclang:2439-2624) calls `git.log(...)`/`git.diff(...)`/`git.raw(...)` directly. Reproduced: `mkdir /tmp/r5-fresh && cd /tmp/r5-fresh && git init -q . && node /home/kara/SpecLang/bin/speclang history` prints `GitError: fatal: your current branch 'master' does not have any commits yet` plus a full node stack trace (`at Object.action (.../simple-git/dist/cjs/index.js:1374:25)`), EXIT=1. Same for `history --stat` and `history --format json`. (b) Docs: docs/API_REFERENCE.md (symlink -> specs/docs.spec.dir/docs/API_REFERENCE.md, 148 lines) never states that the codegen target comes from getTarget(); the only occurrence is a bare export name in a list at line 41 (`- Targets: ... \\`getTarget\\`, \\`getAllTargets\\``), with no codegen()/targetId explanation. The claimed commit 4d110c6c7d2fef224156f2c1fbf09d2db0db373a does not exist in this repo (`git cat-file -t` -> 'could not get object info'), and `git diff HEAD -- bin/speclang tests/cli/history.test.ts specs/docs.spec.dir/docs/API_REFERENCE.md` is empty \u2014 the three files are unchanged (last touched by 2597ca95 / c2e39f2c / 48b4886b). Test run: `npx vitest run tests/cli/history.test.ts` -> 'Test Files 1 passed (1) / Tests 11 passed (11)', but that file is the pre-change version with no fresh-repo test.\n  \u2717 The empty-state guard is reachable from the `speclang history` entrypoint (bin/speclang history action) for the default invocation, not only for --stat/--blame/--compare: No guard exists anywhere in bin/speclang (grep for detectEmptyHistory/EMPTY_HISTORY/EMPTY_HISTORY_UNBORN = 0 hits). The history action at bin/speclang:2439-2624 goes straight to `const git = require('simple-git')()` then `git.diff`/`git.log`/`git.raw`. Reproduced in /tmp/r5-fresh (git init, no commits): default `history`, `history --stat` and `history --format json` all emit the GitError stack trace.\n  \u2717 A regression test in tests/cli/history.test.ts exercises `speclang history` in a fresh `git init` repo with no commits and asserts no GitError/stack trace: tests/cli/history.test.ts is unchanged (4630 bytes; `git log -1 -- tests/cli/history.test.ts` -> 48b4886b 'style: prettier format'); `grep -n 'unborn\\|no commits\\|detectEmptyHistory\\|GitError' tests/cli/history.test.ts` returns 0 hits. `npx vitest run tests/cli/history.test.ts` -> 'Tests 11 passed (11)' \u2014 green while the crash path is unguarded, i.e. nothing pins the behaviour.\n  \u2717 The documented getTarget()/codegen-target statement matches the shipped code (codegen(ir, targetId) resolves via getTarget): There is no such statement to match: specs/docs.spec.dir/docs/API_REFERENCE.md:41 lists `getTarget` only as an export name. The underlying code fact is real and undocumented \u2014 src/compiler/phases/codegen.ts:10-11 `export function codegen(ir: IR, targetId: string)` -> `const target = getTarget(targetId)` (throws `Unknown target: ${targetId}` when undefined), and src/compiler/targets/index.ts:121-123 `getTarget(lang)` lowercases the id before lookup.\n  \u2717 Coverage FAILED \u2014 not passing: speclang history in a fresh git repo with no commits prints no GitError stack trace; docs/API_REFERENCE.md documents that codegen target comes from getTarget()\nThe DF-SPECLANG-5-R5 change is not present in the repository at all \u2014 `speclang history` still crashes with a GitError stack trace in a fresh repo (reproduced, exit 1) and API_REFERENCE.md never documents that the codegen target comes from getTarget(). [uncovered failure paths: failure mode 0 (`speclang history` on a freshly `git init`-ed project dies with a raw simple-git GitError and a node stack trace, exit 1): detected_by is empty \u2014 uncovered failure path; failure mode 1 (`speclang history --stat` / `--format json` / `--blame` crash identically on an unborn HEAD, so even a log-only guard would leave the other modes broken): detected_by is empty \u2014 uncovered failure path; failure mode 2 (API_REFERENCE.md gives no guidance that the codegen target is resolved by getTarget(targetId) (case-insensitive id, undefined for unknown ids), so library users cannot know how to select a target): detected_by is empty \u2014 uncovered failure path]\n\nOverall: FAIL \u2717",
+  "evaluated_at": "2026-11-17T02:23:40.205393",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T02:23:40.220393+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 1049,
+        "truncated": false,
+        "source": "git show 4d110c6c7d2f"
+      }
+    ],
+    "task_id": "DF-SPECLANG-5-R5"
+  }
+}
