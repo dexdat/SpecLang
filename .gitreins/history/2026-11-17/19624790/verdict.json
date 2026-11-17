@@ -1,0 +1,531 @@
+{
+  "task_id": "DOC-1",
+  "task_title": "Document the live MCP tool surface and transport/config contract",
+  "task_criteria": [
+    "A reader-facing MCP page documents every tool name that src/mcp/tools/*.ts registers: the sorted documented-name set equals the sorted source-derived set (zero missing, zero invented, both directions proven by a diff of the two lists printed in the commit evidence), and the page states the transport (stdio/SSE), the auth switch and the config knobs. Any documented tool name must exist in source."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "1d4999f793a50d3f493fa4245b950d093220f743",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "d75c83f7f1f04b6ce1109ce0e4c0fd1c09fbe656da8c66928a69aaa455794508",
+  "working_tree_dirty_path_count": 8,
+  "items": [
+    {
+      "criterion": "A reader-facing MCP page documents every tool name that src/mcp/tools/*.ts registers: the sorted documented-name set equals the sorted source-derived set (zero missing, zero invented, both directions proven by a diff of the two lists printed in the commit evidence), and the page states the transport (stdio/SSE), the auth switch and the config knobs. Any documented tool name must exist in source.",
+      "status": "PASS",
+      "detail": "Set equality proven by an actual diff: source list `grep -n \"name: 'speclang_\" src/mcp/tools/index.ts | sed -E \"s/.*name: '([^']+)'.*/\\1/\" | sort` -> 34 names; doc list `grep -oE '^\\| `speclang_[a-z_]+`' docs/API_REFERENCE.md | sed -E 's/^\\| `([^`]+)`/\\1/' | sort -u` -> 34 names; `diff /tmp/src_tools.txt /tmp/doc_tools.txt` printed nothing, exit 0 \u2014 zero missing, zero invented, both directions. No other registration site exists (`grep -rn \"name: 'speclang_\" src/mcp/ --include=*.ts` excluding tools/index.ts -> no hits), and getToolDefinitions (src/mcp/tools/index.ts:378) is the sole source for tools/list (src/mcp/server.ts:145 HTTP, :251 stdio) and the registry switch (tools/index.ts:63). The two non-table mentions of speclang_* in the page (docs/API_REFERENCE.md:211, :303) are all members of the 34-name set, so no invented name appears anywhere. Transport stated at docs/API_REFERENCE.md:180-183 and :198-201 (stdio default via startStdio server.ts:62 / StdioServerTransport server.ts:68; HTTP+SSE via startHTTP server.ts:77, SSEServerTransport server.ts:95, POST /mcp/message server.ts:107, /events server.ts:204, /health server.ts:215, app.listen server.ts:219 \u2014 every cited line verified in src/mcp/server.ts). Auth switch stated at :204 (`--auth none|basic|token` default none, `auth.enabled = options.auth !== 'none'` at bin/speclang:1363,1388; middleware mounted on '/mcp' at server.ts:88-90; token Bearer via MCP_API_KEYS or token at auth.ts:67-89; basic exact header at auth.ts:51-62; config_file/tls_client_cert have no CLI flag, auth.ts:36-42). Config knobs stated at :206-224 \u2014 all 15 MCP_* variables with defaults and line anchors verified against src/mcp/config.ts:42,45,48,51,54,56,58,61,64,67,70,73,76,79,82 and DEFAULT_CONFIG at config.ts:10-33; the 'loader.ts is unwired' warning is true (no import of config/loader in src/, specs/mcp.spec.dir/src/ or bin/; loader.ts:125-147 uses the conflicting MCP_DB_PATH/MCP_SERVER_MODE/MCP_SERVER_PORT/MCP_SERVER_HOST/MCP_AUTH_TOKEN set). Reader-facing: docs/API_REFERENCE.md is a git symlink (mode 120000) to specs/docs.spec.dir/docs/API_REFERENCE.md and is linked from README.md:152. Tests: `timeout 120 env TMPDIR=$PWD/.tmp npx vitest run tests/mcp.test.ts tests/mcp/server.test.ts --passWithNoTests` -> exit 0, 'Test Files 2 passed (2) / Tests 62 passed (62)'. Minor imprecision noted but not a criterion failure: :303 says HTTP-mode `speclang_get_status` returns a placeholder, while src/mcp/server.ts has no such case (grep exit 1) and the `speclang_get` prefix routes to handleDashboardTool (server.ts:321) whose default returns {\"error\":\"Unknown dashboard tool: speclang_get_status\"} (server.ts:356) \u2014 the doc's own 'or an unknown-dashboard-tool error' clause covers it."
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  11:32:19",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T121505.638291Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T121505.638291Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  11:32:19\n   Duration  30.80s (transform 20.32s, setup 4.40s, import 29.75s, tests 178.40s, environment 14ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T121505.638291Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 A reader-facing MCP page documents every tool name that src/mcp/tools/*.ts registers: the sorted documented-name set equals the sorted source-derived set (zero missing, zero invented, both directions proven by a diff of the two lists printed in the commit evidence), and the page states the transport (stdio/SSE), the auth switch and the config knobs. Any documented tool name must exist in source.: Set equality proven by an actual diff: source list `grep -n \"name: 'speclang_\" src/mcp/tools/index.ts | sed -E \"s/.*name: '([^']+)'.*/\\1/\" | sort` -> 34 names; doc list `grep -oE '^\\| `speclang_[a-z_]+`' docs/API_REFERENCE.md | sed -E 's/^\\| `([^`]+)`/\\1/' | sort -u` -> 34 names; `diff /tmp/src_tools.txt /tmp/doc_tools.txt` printed nothing, exit 0 \u2014 zero missing, zero invented, both directions. No other registration site exists (`grep -rn \"name: 'speclang_\" src/mcp/ --include=*.ts` excluding tools/index.ts -> no hits), and getToolDefinitions (src/mcp/tools/index.ts:378) is the sole source for tools/list (src/mcp/server.ts:145 HTTP, :251 stdio) and the registry switch (tools/index.ts:63). The two non-table mentions of speclang_* in the page (docs/API_REFERENCE.md:211, :303) are all members of the 34-name set, so no invented name appears anywhere. Transport stated at docs/API_REFERENCE.md:180-183 and :198-201 (stdio default via startStdio server.ts:62 / StdioServerTransport server.ts:68; HTTP+SSE via startHTTP server.ts:77, SSEServerTransport server.ts:95, POST /mcp/message server.ts:107, /events server.ts:204, /health server.ts:215, app.listen server.ts:219 \u2014 every cited line verified in src/mcp/server.ts). Auth switch stated at :204 (`--auth none|basic|token` default none, `auth.enabled = options.auth !== 'none'` at bin/speclang:1363,1388; middleware mounted on '/mcp' at server.ts:88-90; token Bearer via MCP_API_KEYS or token at auth.ts:67-89; basic exact header at auth.ts:51-62; config_file/tls_client_cert have no CLI flag, auth.ts:36-42). Config knobs stated at :206-224 \u2014 all 15 MCP_* variables with defaults and line anchors verified against src/mcp/config.ts:42,45,48,51,54,56,58,61,64,67,70,73,76,79,82 and DEFAULT_CONFIG at config.ts:10-33; the 'loader.ts is unwired' warning is true (no import of config/loader in src/, specs/mcp.spec.dir/src/ or bin/; loader.ts:125-147 uses the conflicting MCP_DB_PATH/MCP_SERVER_MODE/MCP_SERVER_PORT/MCP_SERVER_HOST/MCP_AUTH_TOKEN set). Reader-facing: docs/API_REFERENCE.md is a git symlink (mode 120000) to specs/docs.spec.dir/docs/API_REFERENCE.md and is linked from README.md:152. Tests: `timeout 120 env TMPDIR=$PWD/.tmp npx vitest run tests/mcp.test.ts tests/mcp/server.test.ts --passWithNoTests` -> exit 0, 'Test Files 2 passed (2) / Tests 62 passed (62)'. Minor imprecision noted but not a criterion failure: :303 says HTTP-mode `speclang_get_status` returns a placeholder, while src/mcp/server.ts has no such case (grep exit 1) and the `speclang_get` prefix routes to handleDashboardTool (server.ts:321) whose default returns {\"error\":\"Unknown dashboard tool: speclang_get_status\"} (server.ts:356) \u2014 the doc's own 'or an unknown-dashboard-tool error' clause covers it.\nThe MCP page in docs/API_REFERENCE.md documents exactly the 34 tools registered by getToolDefinitions (proven by an empty diff of the two sorted lists) and correctly states both transports, the --auth switch and all 15 live MCP_* config knobs with verified source anchors. [uncovered failure paths: failure mode 0 (Doc/source tool-name drift goes undetected: no test asserts that the documented tool table equals getToolDefinitions(), so a future tool addition or rename silently desynchronises docs/API_REFERENCE.md from the live surface): detected_by is empty \u2014 uncovered failure path; failure mode 1 (HTTP-mode tools/call behaviour for speclang_get_status is described imprecisely (placeholder vs unknown-dashboard-tool error)): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 A reader-facing MCP page documents every tool name that src/mcp/tools/*.ts registers: the sorted documented-name set equals the sorted source-derived set (zero missing, zero invented, both directions proven by a diff of the two lists printed in the commit evidence), and the page states the transport (stdio/SSE), the auth switch and the config knobs. Any documented tool name must exist in source.: Set equality proven by an actual diff: source list `grep -n \"name: 'speclang_\" src/mcp/tools/index.ts | sed -E \"s/.*name: '([^']+)'.*/\\1/\" | sort` -> 34 names; doc list `grep -oE '^\\| `speclang_[a-z_]+`' docs/API_REFERENCE.md | sed -E 's/^\\| `([^`]+)`/\\1/' | sort -u` -> 34 names; `diff /tmp/src_tools.txt /tmp/doc_tools.txt` printed nothing, exit 0 \u2014 zero missing, zero invented, both directions. No other registration site exists (`grep -rn \"name: 'speclang_\" src/mcp/ --include=*.ts` excluding tools/index.ts -> no hits), and getToolDefinitions (src/mcp/tools/index.ts:378) is the sole source for tools/list (src/mcp/server.ts:145 HTTP, :251 stdio) and the registry switch (tools/index.ts:63). The two non-table mentions of speclang_* in the page (docs/API_REFERENCE.md:211, :303) are all members of the 34-name set, so no invented name appears anywhere. Transport stated at docs/API_REFERENCE.md:180-183 and :198-201 (stdio default via startStdio server.ts:62 / StdioServerTransport server.ts:68; HTTP+SSE via startHTTP server.ts:77, SSEServerTransport server.ts:95, POST /mcp/message server.ts:107, /events server.ts:204, /health server.ts:215, app.listen server.ts:219 \u2014 every cited line verified in src/mcp/server.ts). Auth switch stated at :204 (`--auth none|basic|token` default none, `auth.enabled = options.auth !== 'none'` at bin/speclang:1363,1388; middleware mounted on '/mcp' at server.ts:88-90; token Bearer via MCP_API_KEYS or token at auth.ts:67-89; basic exact header at auth.ts:51-62; config_file/tls_client_cert have no CLI flag, auth.ts:36-42). Config knobs stated at :206-224 \u2014 all 15 MCP_* variables with defaults and line anchors verified against src/mcp/config.ts:42,45,48,51,54,56,58,61,64,67,70,73,76,79,82 and DEFAULT_CONFIG at config.ts:10-33; the 'loader.ts is unwired' warning is true (no import of config/loader in src/, specs/mcp.spec.dir/src/ or bin/; loader.ts:125-147 uses the conflicting MCP_DB_PATH/MCP_SERVER_MODE/MCP_SERVER_PORT/MCP_SERVER_HOST/MCP_AUTH_TOKEN set). Reader-facing: docs/API_REFERENCE.md is a git symlink (mode 120000) to specs/docs.spec.dir/docs/API_REFERENCE.md and is linked from README.md:152. Tests: `timeout 120 env TMPDIR=$PWD/.tmp npx vitest run tests/mcp.test.ts tests/mcp/server.test.ts --passWithNoTests` -> exit 0, 'Test Files 2 passed (2) / Tests 62 passed (62)'. Minor imprecision noted but not a criterion failure: :303 says HTTP-mode `speclang_get_status` returns a placeholder, while src/mcp/server.ts has no such case (grep exit 1) and the `speclang_get` prefix routes to handleDashboardTool (server.ts:321) whose default returns {\"error\":\"Unknown dashboard tool: speclang_get_status\"} (server.ts:356) \u2014 the doc's own 'or an unknown-dashboard-tool error' clause covers it.\nThe MCP page in docs/API_REFERENCE.md documents exactly the 34 tools registered by getToolDefinitions (proven by an empty diff of the two sorted lists) and correctly states both transports, the --auth switch and all 15 live MCP_* config knobs with verified source anchors. [uncovered failure paths: failure mode 0 (Doc/source tool-name drift goes undetected: no test asserts that the documented tool table equals getToolDefinitions(), so a future tool addition or rename silently desynchronises docs/API_REFERENCE.md from the live surface): detected_by is empty \u2014 uncovered failure path; failure mode 1 (HTTP-mode tools/call behaviour for speclang_get_status is described imprecisely (placeholder vs unknown-dashboard-tool error)): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "A reader-facing MCP page documents every tool name that src/mcp/tools/*.ts registers: the sorted documented-name set equals the sorted source-derived set (zero missing, zero invented, both directions proven by a diff of the two lists printed in the commit evidence), and the page states the transport (stdio/SSE), the auth switch and the config knobs. Any documented tool name must exist in source.",
+                "status": "PASS",
+                "detail": "Set equality proven by an actual diff: source list `grep -n \"name: 'speclang_\" src/mcp/tools/index.ts | sed -E \"s/.*name: '([^']+)'.*/\\1/\" | sort` -> 34 names; doc list `grep -oE '^\\| `speclang_[a-z_]+`' docs/API_REFERENCE.md | sed -E 's/^\\| `([^`]+)`/\\1/' | sort -u` -> 34 names; `diff /tmp/src_tools.txt /tmp/doc_tools.txt` printed nothing, exit 0 \u2014 zero missing, zero invented, both directions. No other registration site exists (`grep -rn \"name: 'speclang_\" src/mcp/ --include=*.ts` excluding tools/index.ts -> no hits), and getToolDefinitions (src/mcp/tools/index.ts:378) is the sole source for tools/list (src/mcp/server.ts:145 HTTP, :251 stdio) and the registry switch (tools/index.ts:63). The two non-table mentions of speclang_* in the page (docs/API_REFERENCE.md:211, :303) are all members of the 34-name set, so no invented name appears anywhere. Transport stated at docs/API_REFERENCE.md:180-183 and :198-201 (stdio default via startStdio server.ts:62 / StdioServerTransport server.ts:68; HTTP+SSE via startHTTP server.ts:77, SSEServerTransport server.ts:95, POST /mcp/message server.ts:107, /events server.ts:204, /health server.ts:215, app.listen server.ts:219 \u2014 every cited line verified in src/mcp/server.ts). Auth switch stated at :204 (`--auth none|basic|token` default none, `auth.enabled = options.auth !== 'none'` at bin/speclang:1363,1388; middleware mounted on '/mcp' at server.ts:88-90; token Bearer via MCP_API_KEYS or token at auth.ts:67-89; basic exact header at auth.ts:51-62; config_file/tls_client_cert have no CLI flag, auth.ts:36-42). Config knobs stated at :206-224 \u2014 all 15 MCP_* variables with defaults and line anchors verified against src/mcp/config.ts:42,45,48,51,54,56,58,61,64,67,70,73,76,79,82 and DEFAULT_CONFIG at config.ts:10-33; the 'loader.ts is unwired' warning is true (no import of config/loader in src/, specs/mcp.spec.dir/src/ or bin/; loader.ts:125-147 uses the conflicting MCP_DB_PATH/MCP_SERVER_MODE/MCP_SERVER_PORT/MCP_SERVER_HOST/MCP_AUTH_TOKEN set). Reader-facing: docs/API_REFERENCE.md is a git symlink (mode 120000) to specs/docs.spec.dir/docs/API_REFERENCE.md and is linked from README.md:152. Tests: `timeout 120 env TMPDIR=$PWD/.tmp npx vitest run tests/mcp.test.ts tests/mcp/server.test.ts --passWithNoTests` -> exit 0, 'Test Files 2 passed (2) / Tests 62 passed (62)'. Minor imprecision noted but not a criterion failure: :303 says HTTP-mode `speclang_get_status` returns a placeholder, while src/mcp/server.ts has no such case (grep exit 1) and the `speclang_get` prefix routes to handleDashboardTool (server.ts:321) whose default returns {\"error\":\"Unknown dashboard tool: speclang_get_status\"} (server.ts:356) \u2014 the doc's own 'or an unknown-dashboard-tool error' clause covers it.",
+                "resolution_probability": 0.17
+              }
+            ],
+            "summary": "The MCP page in docs/API_REFERENCE.md documents exactly the 34 tools registered by getToolDefinitions (proven by an empty diff of the two sorted lists) and correctly states both transports, the --auth switch and all 15 live MCP_* config knobs with verified source anchors. [uncovered failure paths: failure mode 0 (Doc/source tool-name drift goes undetected: no test asserts that the documented tool table equals getToolDefinitions(), so a future tool addition or rename silently desynchronises docs/API_REFERENCE.md from the live surface): detected_by is empty \u2014 uncovered failure path; failure mode 1 (HTTP-mode tools/call behaviour for speclang_get_status is described imprecisely (placeholder vs unknown-dashboard-tool error)): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DOC-1\"}",
+          "exit_code": 0,
+          "output_sha": "1aa35600cc707b6f99658547fa2ac307ceff585f3770fbfb3338c91af3dc5607"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la; echo \"---\"; cat .gitreins/config.yaml 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "d6dc0b5d0294c679194dd8d700d0efb5bdec04bfa9aee36a0c504fcdde45ab05"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; pwd; ls src/mcp 2>/dev/null; echo \"---tools---\"; ls src/mcp/tools 2>/dev/null; echo \"---docs---\"; ls docs 2>/dev/null | head -50",
+          "exit_code": 0,
+          "output_sha": "5a4d16675d078c38e5d7acc5dee3fbcf32b5dcf773779070e0f3296ae4342df9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; git log --oneline -5; echo \"---\"; git status --short | head -30",
+          "exit_code": 0,
+          "output_sha": "1712bd2e7495655ca8af4e7c68cd648bbafc9640335ca2d16dc4b332e00caa26"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; ls src/mcp; echo \"---tools---\"; ls src/mcp/tools; echo \"---docs---\"; ls docs | head -60",
+          "exit_code": 0,
+          "output_sha": "dc2da495ad5f55c5e3d674f0cf524574c6a57f476552f0f6104bbe78f7e02842"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git log --oneline -8; echo \"---status---\"; git status --short | head -40; echo \"---diff stat---\"; git diff HEAD --stat | head -40",
+          "exit_code": 0,
+          "output_sha": "29e71e2a43bc3c91c5c013f5723184720bd7cfaa2a3e58350bf8f59aca04c1ca"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"MCP\" docs/*.md README.md | head -40",
+          "exit_code": 0,
+          "output_sha": "2e59d55f45d7a4aef4d47c823926dced5b1e746286d00745342c531c39d126af"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show --stat 9c808c8a | head -40",
+          "exit_code": 0,
+          "output_sha": "c157ffe875327c4d7b8a264faf4d66b9e3d160238b46bd607b08174e7756f4ee"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '160,260p' docs/API_REFERENCE.md",
+          "exit_code": 0,
+          "output_sha": "b1e36eef78b0625c2910f3c250518008bf16781bfb04b801e733a3056e32c230"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '174,340p' docs/API_REFERENCE.md",
+          "exit_code": 0,
+          "output_sha": "a4b13ebf610f7e9c2beb2907e1f18f4d9ae6a3a7cc311a472fc7b95dba0061d4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '200,300p' docs/API_REFERENCE.md",
+          "exit_code": 0,
+          "output_sha": "4e1b22ca8c03d2a5af24f9214005a722667079cb063bf21fdfc84b487a04cf5b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '215,275p' docs/API_REFERENCE.md",
+          "exit_code": 0,
+          "output_sha": "45edf7fd567e31c15226686cb523a93620c459d5ce4d19d5b399c6dee8683db6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '240,262p' docs/API_REFERENCE.md",
+          "exit_code": 0,
+          "output_sha": "77333bce5847d5c2d20d939bd50a4459edabcc11092b9a8953af15a77a5dcbf1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"name:\" src/mcp/tools/index.ts | head -80",
+          "exit_code": 0,
+          "output_sha": "1fb0f356b6bd68a4a10d740c4efc8f10a816b549e7fc5bcfacf580e137ec160c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"name: 'speclang_\" src/mcp/tools/index.ts | sed -E \"s/.*name: '([^']+)'.*/\\1/\" | sort > /tmp/src_tools.txt; wc -l /tmp/src_tools.txt; echo \"--- doc tools ---\"; grep -oE '^\\| `speclang_[a-z_]+`' docs/API_REFERENCE.md | sed -E 's/^\\| `([^`]+)`/\\1/' | sort -u > /tmp/doc_tools.txt; wc -l /tmp/doc_tools.txt; echo \"--- diff ---\"; diff /tmp/src_tools.txt /tmp/doc_tools.txt; echo \"diff exit: $?\"",
+          "exit_code": 0,
+          "output_sha": "97df611debfbaa005ca412db774a1b2144bab018877ea5f03a6538ef487c51ee"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat /tmp/src_tools.txt; echo \"=== other registrations ===\"; grep -rn \"name: 'speclang_\\|name: \\\"speclang_\" src/mcp/ --include=*.ts | grep -v \"tools/index.ts\" | head -20",
+          "exit_code": 0,
+          "output_sha": "ade0fd37274f485dcaddb2c181dcf3e92626ca0564006d65ee390b14b7a82fa1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"speclang_[a-z_]*\" docs/API_REFERENCE.md | grep -vE '^\\s*[0-9]+:\\| `speclang_' | head -30",
+          "exit_code": 0,
+          "output_sha": "a734ad2dc41d6ee72a120b3f904f5a7fb510165ff3cca0df9e794a0f10726b91"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '1,60p' src/mcp/config.ts",
+          "exit_code": 0,
+          "output_sha": "bec587489c182d3a153a525e7a843b77624cbc3b5cdbe577f00462ceb27ca17a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '55,120p' src/mcp/server.ts; echo \"=== 190-230 ===\"; sed -n '190,230p' src/mcp/server.ts",
+          "exit_code": 0,
+          "output_sha": "b039d4bfee2f37ff801a1d90a2ffb06af2c0fd54d42b80bb94fda7a06766fee8"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"auth\\|--remote\\|--http\\|--port\\|mcp start\\|MCP_\" bin/speclang | head -60",
+          "exit_code": 0,
+          "output_sha": "7763eb74041eb64568c52abb1b613a0310b9ca22039f423f74d49c3258f33a8a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '60,90p' src/mcp/config.ts; echo \"=== auth.ts 40-95 ===\"; sed -n '40,95p' src/mcp/auth.ts",
+          "exit_code": 0,
+          "output_sha": "b93c94af01ccf935b003440b12c971b878eb45795feabc208547b6d8cdb03f15"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '1355,1420p' bin/speclang",
+          "exit_code": 0,
+          "output_sha": "121946e73620c466db6fc26e09c4dc2400b19bd36604f590d4c3deff1a570538"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '1,40p' src/mcp/auth.ts",
+          "exit_code": 0,
+          "output_sha": "cfec285d123ace0d8a69adfa9369e6f69b13702ed505f9e966703560c2c1c91e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '30,55p' src/mcp/server.ts; echo \"=== 240-300 ===\"; sed -n '240,300p' src/mcp/server.ts",
+          "exit_code": 0,
+          "output_sha": "19e2a9045c4996cf89ec9ae19b67a3b688f99d58b5759c66c53bf126ec6bb3ac"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"getToolDefinitions\\|registerTools\" -r src/mcp/ --include=*.ts | head; echo \"=== index.ts 370-400 ===\"; sed -n '370,400p' src/mcp/tools/index.ts",
+          "exit_code": 0,
+          "output_sha": "8c729623579f13d56a3ac2095b90130e2b57e1984641f5d794ad21c51529c085"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"getToolDefinitions\\|registerTools\" src/ specs/mcp.spec.dir/src/ --include=*.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "78a329dcf6531705e97a0eb1c666f6ad4cd7a242ccd8f6442acea21bfb7c75d3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '300,360p' src/mcp/server.ts",
+          "exit_code": 0,
+          "output_sha": "6f6f271978e7b3295458c1de4cbf7f3b4620d52cf60b8a1fc01b8a55b23e79e7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '60,120p' src/mcp/tools/index.ts",
+          "exit_code": 0,
+          "output_sha": "3ba182412f7a6dd399aa0d18427961ae8ace1a323bf5a902d60f060edacc26de"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '120,200p' src/mcp/server.ts",
+          "exit_code": 0,
+          "output_sha": "d9f43ea2d1721a5905723390f93678c752478420562016b1c865d43203afb2af"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '200,260p' src/mcp/tools/index.ts",
+          "exit_code": 0,
+          "output_sha": "a01f60d83de746667f892423a2a1ecbf5a9c8c8ccb0fd2bcd4591d73924caa05"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '260,380p' src/mcp/tools/index.ts",
+          "exit_code": 0,
+          "output_sha": "4e4c1ea92ffb6ac9b243c569ae7f733af79bb05b8dedde3af2b626d86053c4c3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '120,200p' src/mcp/tools/index.ts",
+          "exit_code": 0,
+          "output_sha": "b219a00e976f40f2dfcb7c86ca3b75de939cf893cc6090a728e182526767fdbb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '196,206p' src/mcp/server.ts; echo \"=== 88-92 ===\"; sed -n '86,92p' src/mcp/server.ts; echo \"=== 62-70 ===\"; sed -n '60,70p' src/mcp/server.ts",
+          "exit_code": 0,
+          "output_sha": "17aa68f556298d98ac50459fe331cc1b73d14de7c7863a0be27c59f50fb0963d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show 9c808c8a -- docs/API_REFERENCE.md | head -200",
+          "exit_code": 0,
+          "output_sha": "7841bc60a8804a71e3438c100c27ecb5b21070eddbb1b966e09e83114d6bb549"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show 9c808c8a --stat --name-only; echo \"=== show file ===\"; git show 9c808c8a -- specs/docs.spec.dir/docs/API_REFERENCE.md | head -260",
+          "exit_code": 0,
+          "output_sha": "bb9c081d84d5aa46f2f188b8aaa79f526cd61cd326f2066874de8b66c72a775c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show 9c808c8a -- specs/docs.spec.dir/docs/API_REFERENCE.md | sed -n '30,120p'",
+          "exit_code": 0,
+          "output_sha": "3c6d7317937f37f0debf90e39e7abe18cb7fb415dd0bfd8dff0d363ae95f555b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show 9c808c8a -- specs/docs.spec.dir/docs/API_REFERENCE.md | sed -n '120,175p'",
+          "exit_code": 0,
+          "output_sha": "79315fb1d798ab863e9da381f7c9cd234b61d742f65eff55ce0dd4ea308b36aa"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show 9c808c8a -- specs/docs.spec.dir/docs/API_REFERENCE.md | sed -n '60,100p'",
+          "exit_code": 0,
+          "output_sha": "8dd270574b0becf2d155dec39718a6e4431bbac2e904aa7a9dd873735c633a48"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show 9c808c8a -- specs/docs.spec.dir/docs/API_REFERENCE.md | sed -n '44,62p'",
+          "exit_code": 0,
+          "output_sha": "5ca506a3546108ad4fcaf51f3f3c2bde5f29870bcf17710fced4871a9306f732"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"MCP_AUTH_ENABLED\\|MCP_AUTH_TYPE\\|MCP_API_KEYS\\|MCP_SSE_ENABLED\\|MCP_LOG_LEVEL\\|MCP_LOG_FILE\\|MCP_MAX_CONNECTIONS\\|MCP_QUERY_TIMEOUT_MS\\|MCP_MAX_RESULTS\\|MCP_WAL_MODE\\|MCP_SERVER_MODE\\|MCP_PORT\\|MCP_HOST\\|MCP_DATABASE\\|MCP_SPECS_DIR\" src/mcp/config.ts",
+          "exit_code": 0,
+          "output_sha": "93271eab10b99b81a8e9ebe8e465bf941c47875798f51217d37b2298963a9328"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"startHTTP\\|startStdio\\|SSEServerTransport\\|StdioServerTransport\\|app.listen\\|app.get('/health'\\|app.get('/events'\\|app.post('/mcp/message'\\|app.get('/mcp'\" src/mcp/server.ts",
+          "exit_code": 0,
+          "output_sha": "50b07fe29af9e21e0f5477dcdffc0347638a030644c2a3c909bcd536be89d0f8"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '360,400p' src/mcp/server.ts; echo \"=== 140-150 ===\"; sed -n '138,150p' src/mcp/server.ts",
+          "exit_code": 0,
+          "output_sha": "cd8c0627b442d0e54746f6ee89662581f508e81d7a69336e616c600095bf7c3a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"config/loader\\|ConfigLoader\" src/ bin/ --include=*.ts --include=speclang | head -10; echo \"=== ls config ===\"; ls src/mcp/config/",
+          "exit_code": 0,
+          "output_sha": "310267c23ec889c8728e553b17379ecd2f9bb9e913c098f00755bea21e0368f2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"mcp/config/loader\\|from './config/loader\\|config/loader.js\" src/ specs/mcp.spec.dir/src/ bin/ 2>/dev/null | head; echo \"=== loader keys ===\"; grep -n \"MCP_DB_PATH\\|MCP_SERVER_MODE\\|MCP_SERVER_PORT\\|MCP_SERVER_HOST\\|MCP_AUTH_TOKEN\" src/mcp/config/loader.ts | head",
+          "exit_code": 0,
+          "output_sha": "8049e4155f401cba803fceb8da0508ca916b28d2c2ce4e76e4eb79084c8aa476"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"speclang mcp\\|mcp start\\|API_REFERENCE\" README.md GETTING-STARTED.md docs/MASTER_GUIDE.md 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "725947b50e02a44bd27e54f1493fd9efcf567858739c40e8ec03f6dd64d66dc4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '60,125p' GETTING-STARTED.md",
+          "exit_code": 0,
+          "output_sha": "0a2f4bb4151dc57b4e7b9058addd6d504a3a044d35fee8df746d5ab8603c61e2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -la docs/API_REFERENCE.md; git ls-files -s docs/API_REFERENCE.md; echo \"=== symlink check ===\"; readlink docs/API_REFERENCE.md; echo \"=== specs dir ===\"; ls -la specs/docs.spec.dir/docs/ | head",
+          "exit_code": 0,
+          "output_sha": "270a3ab778c51d28aeb9f7afa5b20a065a2d14537103fadfcc37e7d60000fabb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"speclang_get_status\\|speclang_query_events\\|speclang_get_agent_statuses\\|speclang_get_project_stats\\|speclang_get_queue_status\\|speclang_get_system_stats\\|speclang_subscribe_events\" src/mcp/server.ts",
+          "exit_code": 0,
+          "output_sha": "e02beb627c6baa2b13b220824a0fe2286e9f0f165c3f2d55f2f4282a5978cabf"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"speclang_get_status\" src/mcp/tools/index.ts; echo \"=== doc line ===\"; grep -n \"speclang_get_status\" docs/API_REFERENCE.md",
+          "exit_code": 0,
+          "output_sha": "3a740bdcd11dc4c1344295c12b079f2cdbaa01cb0fe24b73e6809f873125ef93"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"speclang_get_status\\|speclang_query_events\" src/mcp/tools/index.ts | head; echo \"=== defs 615-700 ===\"; sed -n '615,700p' src/mcp/tools/index.ts",
+          "exit_code": 0,
+          "output_sha": "c38dcfe9e0e16a34e68930fed9651a5c06d101a646cb14e6a5ed9c4f770a2af7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"file.changed\\|cascade.progress\\|agent.spawned\\|agent.completed\\|cascade.converged\\|file_change\\|cascade_progress\" src/mcp/sse.ts src/mcp/tools/dashboard.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "a99dca822aad65e957f6a6a700b28ca3e43493126322979b10938afd7ec2cab7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"handleSubscribeEvents\" -A 25 src/mcp/tools/dashboard.ts | head -40",
+          "exit_code": 0,
+          "output_sha": "86ccb974b182079c4f4f8c35c1e81fa8ff58e0a043086ed4b7a073d4f827d51d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '349,365p' src/mcp/tools/dashboard.ts",
+          "exit_code": 0,
+          "output_sha": "3c3e771252e2fd54d078d6172ba5cdd950ed179011a878ff3743cca65b17320c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"speclang_get_status\" -B2 -A6 src/mcp/server.ts | head -20; echo \"=== 320-345 ===\"; sed -n '318,345p' src/mcp/server.ts",
+          "exit_code": 0,
+          "output_sha": "00aaf285906484bc43fffeeb9cb4afe7b862b83ebdac1b6b1217c8db03752634"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"speclang_get_status\" src/mcp/server.ts; echo \"exit=$?\"; echo \"=== 276 ===\"; sed -n '274,280p' src/mcp/server.ts",
+          "exit_code": 0,
+          "output_sha": "748860da177a448b224b66383a62dd0b265ddd369a09f90c7aaac8cf0537184c"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS (with one documented inaccuracy noted separately).\\n\\nTool-name set equality \\u2014 PROVEN by diff:\\n  src: grep -n \\\"name: 'speclang_\\\" src/mcp/tools/index.ts | sed -E \\\"s/.*name: '([^']+)'.*/\\\\1/\\\" | sort > /tmp/src_tools.txt   -> 34 lines\\n  doc: grep -oE '^\\\\| `speclang_[a-z_]+`' docs/API_REFERENCE.md | sed -E 's/^\\\\| `([^`]+)`/\\\\1/' | sort -u > /tmp/doc_tools.txt -> 34 lines\\n  diff /tmp/src_tools.txt /tmp/doc_tools.txt -> empty, exit 0. Zero missing, zero invented.\\n  No other registration site: grep -rn \\\"name: 'speclang_\\\" src/mcp/ --include=*.ts excluding tools/index.ts -> no hits.\\n  Non-table mentions of speclang_* in the page (lines 211, 303) are all members of the 34-name set.\\n  src/mcp/tools/index.ts:378 getToolDefinitions() is the only source for tools/list (server.ts:145 HTTP, server.ts:251 stdio) and the registry switch (tools/index.ts:63 registerTools).\\n\\nTransport stated: docs/API_REFERENCE.md:180-183 (stdio default `speclang mcp start`, HTTP+SSE `--remote`), :198-201 (startStdio server.ts:62, StdioServerTransport server.ts:68; startHTTP server.ts:77, SSEServerTransport server.ts:95, POST /mcp/message server.ts:107, /events server.ts:204, /health server.ts:215, app.listen server.ts:219) \\u2014 all line refs verified against src/mcp/server.ts.\\nAuth switch stated: :204 \\u2014 `--auth none|basic|token` default none, `auth.enabled = options.auth !== 'none'` (bin/speclang:1363,1388), middleware on '/mcp' (server.ts:88-90), token Bearer via MCP_API_KEYS or token (auth.ts:67-89), basic exact header (auth.ts:51-62), config_file/tls_client_cert no CLI flag (auth.ts:36-42).\\nConfig knobs stated: :206-224 table of 15 MCP_* vars; every line number verified against src/mcp/config.ts (42,45,48,51,54,56,58,61,64,67,70,73,76,79,82) and defaults against DEFAULT_CONFIG (config.ts:10-33). loader.ts unwired claim verified: grep for config/loader imports in src/, specs/mcp.spec.dir/src/, bin/ -> no hits; loader.ts:125-147 uses the conflicting MCP_DB_PATH/MCP_SERVER_MODE/MCP_SERVER_PORT/MCP_SERVER_HOST/MCP_AUTH_TOKEN set.\\nReader-facing: docs/API_REFERENCE.md is a symlink (git mode 120000) to specs/docs.spec.dir/docs/API_REFERENCE.md, linked from README.md:152.\\n\\nOne inaccuracy found (does not break the name-set criterion): docs/API_REFERENCE.md:303 claims HTTP-mode tools/call returns a placeholder for `speclang_get_status`; src/mcp/server.ts has no `speclang_get_status` case (grep exit 1) and the `speclang_get` prefix routes to handleDashboardTool (server.ts:321), whose default returns {\\\"error\\\":\\\"Unknown dashboard tool: speclang_get_status\\\"} (server.ts:356). The doc's own \\\"or an unknown-dashboard-tool error\\\" clause covers it, so the statement is imprecise but not false.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "84a57c5c66f36ce1219d487c8017cd7a920086de953036ad71804062c7b9caa9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"test_command\\|test:\" .gitreins/config.yaml | head; echo \"=== package.json scripts ===\"; python3 -c \"import json;print(json.load(open('package.json'))['scripts'])\"",
+          "exit_code": 0,
+          "output_sha": "620a3a31d6b2df534a175fec1cc517574eee70d74e9773437293f3d3c3c43ff0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && TMPDIR=$PWD/.tmp npx vitest run --passWithNoTests 2>&1 | tail -15",
+          "exit_code": -15,
+          "output_sha": "5acfb21f726d78a66fde2697eaaacbdacf960b0c13d1a9037a1e3e5c44f90b1b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls tests 2>/dev/null | head; ls test 2>/dev/null | head; grep -rln \"API_REFERENCE\\|getToolDefinitions\" tests test src/**/*.test.ts 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "37bf14d6d2dc3b7cfcef8b615c5735bb7b0b50b1741d4ee7a5fccd128f43c675"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 120 env TMPDIR=$PWD/.tmp npx vitest run tests/mcp.test.ts tests/mcp/server.test.ts --passWithNoTests 2>&1 | tail -20",
+          "exit_code": 0,
+          "output_sha": "b8d8886e05bf4f9b8dc676799b57c536a3d3d1cb3df6549ece0e7343c5f264e2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"getToolDefinitions\\|tools/list\\|toHaveLength\\|34\" tests/mcp.test.ts tests/mcp/server.test.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "b89103bf397dec8515678389d1801468f6d9d00d0b09245703115bbd93183eb7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '80,120p' tests/mcp.test.ts",
+          "exit_code": 0,
+          "output_sha": "86a210fc144a2c7be1c3f4dc320741d1d07af2b39e71d98e69e43ab9a88c236e"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Test evidence: `timeout 120 env TMPDIR=$PWD/.tmp npx vitest run tests/mcp.test.ts tests/mcp/server.test.ts --passWithNoTests` -> exit 0, \\\"Test Files  2 passed (2) / Tests  62 passed (62)\\\".\\nNo test asserts doc<->source tool-name parity (tests/mcp.test.ts:86-116 only checks a subset with toContain and length >= 30), so a future drift between docs/API_REFERENCE.md and getToolDefinitions would not be caught by CI. This is a gap, not a criterion failure (the task asked for the diff in commit evidence, which I reproduced manually).\\nFull suite run timed out at 30s (repo is large); scoped MCP suites were run instead.\", \"key\": \"tests\"}",
+          "exit_code": 0,
+          "output_sha": "83982b71bee72e4915b5d6de7fbee4d01da99697e109a1e05c4333fb9754243f"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "medium",
+        "file": "specs/docs.spec.dir/docs/CONFIGURATION.md",
+        "line": 178,
+        "detection": "documented env var `SPECLANG_BIN` is set to empty string in the example, but the doc's own text says the candidate list is 'env value, then repo-local bin/speclang, then bare speclang' \u2014 an empty env value is a value, not a fallback",
+        "detail": "The example block sets `SPECLANG_BIN=` (empty), which per the documented candidate-list semantics would be tried as the executable rather than falling through to `bin/speclang`, contradicting the 'unset \u2192 <repo>/bin/speclang' default stated in the table row."
+      },
+      {
+        "severity": "low",
+        "file": "specs/docs.spec.dir/docs/CONFIGURATION.md",
+        "line": 179,
+        "detection": "documented env var `SPECLANG_AGENT_TIMEOUT_MS` is set to `900000` in the example while the table says a non-numeric value becomes NaN and times out immediately \u2014 the example is fine, but the doc gives no guidance that an empty value (`SPECLANG_AGENT_TIMEOUT_MS=`) would be NaN",
+        "detail": "The table row warns that plain `Number()` parsing makes non-numeric values NaN, yet the example block style elsewhere in this file uses empty values for optional overrides (e.g. `SPECLANG_MODEL=`, `SPECLANG_BASE_URL=`), so a reader copying that pattern for the timeout would get immediate timeouts."
+      }
+    ],
+    "summary": "The two new env-var rows are internally consistent with the cited source lines, but the example block's empty `SPECLANG_BIN=` conflicts with the documented fallback semantics and the timeout row lacks the empty-value caveat the file's own example style invites."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  11:32:19\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 A reader-facing MCP page documents every tool name that src/mcp/tools/*.ts registers: the sorted documented-name set equals the sorted source-derived set (zero missing, zero invented, both directions proven by a diff of the two lists printed in the commit evidence), and the page states the transport (stdio/SSE), the auth switch and the config knobs. Any documented tool name must exist in source.: Set equality proven by an actual diff: source list `grep -n \"name: 'speclang_\" src/mcp/tools/index.ts | sed -E \"s/.*name: '([^']+)'.*/\\1/\" | sort` -> 34 names; doc list `grep -oE '^\\| `speclang_[a-z_]+`' docs/API_REFERENCE.md | sed -E 's/^\\| `([^`]+)`/\\1/' | sort -u` -> 34 names; `diff /tmp/src_tools.txt /tmp/doc_tools.txt` printed nothing, exit 0 \u2014 zero missing, zero invented, both directions. No other registration site exists (`grep -rn \"name: 'speclang_\" src/mcp/ --include=*.ts` excluding tools/index.ts -> no hits), and getToolDefinitions (src/mcp/tools/index.ts:378) is the sole source for tools/list (src/mcp/server.ts:145 HTTP, :251 stdio) and the registry switch (tools/index.ts:63). The two non-table mentions of speclang_* in the page (docs/API_REFERENCE.md:211, :303) are all members of the 34-name set, so no invented name appears anywhere. Transport stated at docs/API_REFERENCE.md:180-183 and :198-201 (stdio default via startStdio server.ts:62 / StdioServerTransport server.ts:68; HTTP+SSE via startHTTP server.ts:77, SSEServerTransport server.ts:95, POST /mcp/message server.ts:107, /events server.ts:204, /health server.ts:215, app.listen server.ts:219 \u2014 every cited line verified in src/mcp/server.ts). Auth switch stated at :204 (`--auth none|basic|token` default none, `auth.enabled = options.auth !== 'none'` at bin/speclang:1363,1388; middleware mounted on '/mcp' at server.ts:88-90; token Bearer via MCP_API_KEYS or token at auth.ts:67-89; basic exact header at auth.ts:51-62; config_file/tls_client_cert have no CLI flag, auth.ts:36-42). Config knobs stated at :206-224 \u2014 all 15 MCP_* variables with defaults and line anchors verified against src/mcp/config.ts:42,45,48,51,54,56,58,61,64,67,70,73,76,79,82 and DEFAULT_CONFIG at config.ts:10-33; the 'loader.ts is unwired' warning is true (no import of config/loader in src/, specs/mcp.spec.dir/src/ or bin/; loader.ts:125-147 uses the conflicting MCP_DB_PATH/MCP_SERVER_MODE/MCP_SERVER_PORT/MCP_SERVER_HOST/MCP_AUTH_TOKEN set). Reader-facing: docs/API_REFERENCE.md is a git symlink (mode 120000) to specs/docs.spec.dir/docs/API_REFERENCE.md and is linked from README.md:152. Tests: `timeout 120 env TMPDIR=$PWD/.tmp npx vitest run tests/mcp.test.ts tests/mcp/server.test.ts --passWithNoTests` -> exit 0, 'Test Files 2 passed (2) / Tests 62 passed (62)'. Minor imprecision noted but not a criterion failure: :303 says HTTP-mode `speclang_get_status` returns a placeholder, while src/mcp/server.ts has no such case (grep exit 1) and the `speclang_get` prefix routes to handleDashboardTool (server.ts:321) whose default returns {\"error\":\"Unknown dashboard tool: speclang_get_status\"} (server.ts:356) \u2014 the doc's own 'or an unknown-dashboard-tool error' clause covers it.\nThe MCP page in docs/API_REFERENCE.md documents exactly the 34 tools registered by getToolDefinitions (proven by an empty diff of the two sorted lists) and correctly states both transports, the --auth switch and all 15 live MCP_* config knobs with verified source anchors. [uncovered failure paths: failure mode 0 (Doc/source tool-name drift goes undetected: no test asserts that the documented tool table equals getToolDefinitions(), so a future tool addition or rename silently desynchronises docs/API_REFERENCE.md from the live surface): detected_by is empty \u2014 uncovered failure path; failure mode 1 (HTTP-mode tools/call behaviour for speclang_get_status is described imprecisely (placeholder vs unknown-dashboard-tool error)): detected_by is empty \u2014 uncovered failure path]\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T16:35:12.016637",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T16:35:12.042167+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 23204,
+        "truncated": false,
+        "source": "git show 1d4999f793a5"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 3486,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DOC-1"
+  }
+}
