@@ -1,0 +1,575 @@
+{
+  "task_id": "README-16",
+  "task_title": "fix: make CI-005 hermetic so a fresh clone runs the documented suite green",
+  "task_criteria": [
+    "A fresh clone of the branch with the README install path followed literally (npm install && npm run build) runs npm test to exit 0 with no 'Hook not found' failure and without any git-hook installation step; tests/ci/ci005-precommit-hook.test.ts resolves the tracked .githooks/pre-commit instead of depending on a maintainer-only .git/hooks symlink; no assertion is skipped or weakened; README install path is unchanged."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "97bad00929609e5088a673b242ed2c03a6703b79",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "1f1f3ec0bb4bb08f70c95a0ea3099de82f1150785b639f05d99d9044f083b6ef",
+  "working_tree_dirty_path_count": 5,
+  "items": [
+    {
+      "criterion": "A fresh clone of the branch with the README install path followed literally (npm install && npm run build) runs npm test to exit 0 with no 'Hook not found' failure and without any git-hook installation step; tests/ci/ci005-precommit-hook.test.ts resolves the tracked .githooks/pre-commit instead of depending on a maintainer-only .git/hooks symlink; no assertion is skipped or weakened; README install path is unchanged.",
+      "status": "PASS",
+      "detail": "Fresh clone at /home/kara/fresh-clone-README16 (git clone of HEAD 97bad009, no node_modules, .git/hooks contains only *.sample, core.hooksPath unset). npm install -> exit 0; npm run build -> exit 0; npm test -> \"Test Files 110 passed | 4 skipped (114) / Tests 1930 passed | 58 skipped (1988)\", grep for \"Hook not found\" exit=1 (absent), no hook-install step performed. ci005 file run alone in the fresh clone: 7/7 passed with AC1..AC7 present and no .skip/.todo. README unchanged in HEAD (git show --stat lists only tests/ci/ci005-precommit-hook.test.ts). [resolution 0.00; tests/ci/ci005-precommit-hook.test.ts]"
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  03:03:10",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T071926.710456Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T071926.710456Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  03:03:10\n   Duration  29.77s (transform 11.60s, setup 3.22s, import 18.23s, tests 116.12s, environment 13ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T071926.710456Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 A fresh clone of the branch with the README install path followed literally (npm install && npm run build) runs npm test to exit 0 with no 'Hook not found' failure and without any git-hook installation step; tests/ci/ci005-precommit-hook.test.ts resolves the tracked .githooks/pre-commit instead of depending on a maintainer-only .git/hooks symlink; no assertion is skipped or weakened; README install path is unchanged.: Fresh clone at /home/kara/fresh-clone-README16 (git clone of HEAD 97bad009, no node_modules, .git/hooks contains only *.sample, core.hooksPath unset). npm install -> exit 0; npm run build -> exit 0; npm test -> \"Test Files 110 passed | 4 skipped (114) / Tests 1930 passed | 58 skipped (1988)\", grep for \"Hook not found\" exit=1 (absent), no hook-install step performed. ci005 file run alone in the fresh clone: 7/7 passed with AC1..AC7 present and no .skip/.todo. README unchanged in HEAD (git show --stat lists only tests/ci/ci005-precommit-hook.test.ts). [resolution 0.00; tests/ci/ci005-precommit-hook.test.ts]\nCI-005 now reads the tracked .githooks/pre-commit, so a fresh clone following the README install path passes the full suite with no hook installation step and no weakened assertions.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 A fresh clone of the branch with the README install path followed literally (npm install && npm run build) runs npm test to exit 0 with no 'Hook not found' failure and without any git-hook installation step; tests/ci/ci005-precommit-hook.test.ts resolves the tracked .githooks/pre-commit instead of depending on a maintainer-only .git/hooks symlink; no assertion is skipped or weakened; README install path is unchanged.: Fresh clone at /home/kara/fresh-clone-README16 (git clone of HEAD 97bad009, no node_modules, .git/hooks contains only *.sample, core.hooksPath unset). npm install -> exit 0; npm run build -> exit 0; npm test -> \"Test Files 110 passed | 4 skipped (114) / Tests 1930 passed | 58 skipped (1988)\", grep for \"Hook not found\" exit=1 (absent), no hook-install step performed. ci005 file run alone in the fresh clone: 7/7 passed with AC1..AC7 present and no .skip/.todo. README unchanged in HEAD (git show --stat lists only tests/ci/ci005-precommit-hook.test.ts). [resolution 0.00; tests/ci/ci005-precommit-hook.test.ts]\nCI-005 now reads the tracked .githooks/pre-commit, so a fresh clone following the README install path passes the full suite with no hook installation step and no weakened assertions.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "A fresh clone of the branch with the README install path followed literally (npm install && npm run build) runs npm test to exit 0 with no 'Hook not found' failure and without any git-hook installation step; tests/ci/ci005-precommit-hook.test.ts resolves the tracked .githooks/pre-commit instead of depending on a maintainer-only .git/hooks symlink; no assertion is skipped or weakened; README install path is unchanged.",
+                "status": "PASS",
+                "detail": "Fresh clone at /home/kara/fresh-clone-README16 (git clone of HEAD 97bad009, no node_modules, .git/hooks contains only *.sample, core.hooksPath unset). npm install -> exit 0; npm run build -> exit 0; npm test -> \"Test Files 110 passed | 4 skipped (114) / Tests 1930 passed | 58 skipped (1988)\", grep for \"Hook not found\" exit=1 (absent), no hook-install step performed. ci005 file run alone in the fresh clone: 7/7 passed with AC1..AC7 present and no .skip/.todo. README unchanged in HEAD (git show --stat lists only tests/ci/ci005-precommit-hook.test.ts). [resolution 0.00; tests/ci/ci005-precommit-hook.test.ts]",
+                "resolution_probability": 0.0,
+                "cited_path": "tests/ci/ci005-precommit-hook.test.ts"
+              }
+            ],
+            "summary": "CI-005 now reads the tracked .githooks/pre-commit, so a fresh clone following the README install path passes the full suite with no hook installation step and no weakened assertions.",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"README-16\"}",
+          "exit_code": 0,
+          "output_sha": "c9e238eea615b6b682ac938f430ce19bca83f9a59189c8a1e6332c01a92901e2"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd && ls -la && git log --oneline -5",
+          "exit_code": 0,
+          "output_sha": "03ec060401d2bd0e2f5c213da9dac5d579e0db738a5a1a846aff70e0c2918959"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show --stat HEAD && echo \"=== DIFF ===\" && git show HEAD",
+          "exit_code": 0,
+          "output_sha": "6bd06123ba99f7fe51e1d97ebad7909222a34a2e3ef74b15596b132109fffb16"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/ci/ci005-precommit-hook.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "5d411a48551fa6ba2d622c34ae91444137876596f5f744f393c5d69fec19a674"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -la .githooks/ && echo \"=== git ls-files .githooks ===\" && git ls-files .githooks && echo \"=== .git/hooks ===\" && ls -la .git/hooks/ | head -30 && echo \"=== git status ===\" && git status --porcelain | head -20",
+          "exit_code": 0,
+          "output_sha": "660ce13aaf9a5302527fb2bd54d385defeafb67f4bf759a52ec15a65caed7261"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat package.json && echo \"=== .gitreins/config.yaml ===\" && cat .gitreins/config.yaml",
+          "exit_code": 0,
+          "output_sha": "cb7250a399dfd4db2594688d6624f24d9e646d558c0d3c0fd166f55cf08ee536"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat .githooks/pre-commit && echo \"=== .git/hooks/pre-commit ===\" && cat .git/hooks/pre-commit && echo \"=== is symlink? ===\" && ls -la .git/hooks/pre-commit && readlink -f .git/hooks/pre-commit",
+          "exit_code": 0,
+          "output_sha": "9678a18eff364261b87b099f1ad6a64e646a48c109408ed9f93e2b681313d1ea"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"npm install\\|npm run build\\|npm test\\|githooks\\|hooksPath\\|gitreins install\" README.md | head -40",
+          "exit_code": 0,
+          "output_sha": "c5ee167c9fa49b2a46f1c3fd826c7e015ae0a860b2db4366641755fe556bc9b1"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 110, \"offset\": 1, \"path\": \"README.md\"}",
+          "exit_code": 0,
+          "output_sha": "eef4d0415bca611a0e09669793762df31d113c69bf3a3d1e15012671a7971e6f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '280,340p' README.md",
+          "exit_code": 0,
+          "output_sha": "7fe0d3eea6589539e762b25da6533f7ea7712771da521e1a3b727eb55976ed7b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat .github/workflows/ci.yml",
+          "exit_code": 0,
+          "output_sha": "c878c60d99f34cf5535c85687b04050a301e9f20ecf29b2063a199888dd7acbd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat vitest.config.ts && echo \"=== tsconfig ===\" && cat tsconfig.json",
+          "exit_code": 0,
+          "output_sha": "d27ab74f046eb78bb1e9bce9eeff081df6b757f6df6414599af58cfd6628b35c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '40,120p' .github/workflows/ci.yml",
+          "exit_code": 0,
+          "output_sha": "cf6311b534dadede867032712dcaa83351ccc9af1694e9b80bc703da5bba661e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"npm test\\|npm run test\\|vitest run\" .github/workflows/ci.yml",
+          "exit_code": 0,
+          "output_sha": "4a47453a62806e70e31f66d3170b161664cd6b1480ddd7bda73cdba7f1172ff9"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Repo /home/kara/speclang. HEAD 97bad009 changes only tests/ci/ci005-precommit-hook.test.ts (HOOK resolution: TRACKED .githooks/pre-commit first, LEGACY .git/hooks fallback).\\n.githooks/pre-commit is tracked (git ls-files) and mode 755.\\n.git/hooks/pre-commit exists locally but is NOT a symlink \\u2014 it's a boardctl-rewritten copy (2503 bytes) containing the gitreins guard body.\\nREADME install path: git clone; npm install; npm run build; ./bin/speclang --help; npm link. No hook install step. README unchanged in HEAD (only test file changed).\\nCI workflow still has \\\"Install pre-commit hook\\\" step (ci.yml:51-79) and AC7 asserts it exists before npm test.\\npackage.json test = \\\"TMPDIR=$PWD/.tmp vitest run\\\".\\nNext: run the CI-005 test file, then simulate fresh clone.\\n\", \"key\": \"context\"}",
+          "exit_code": 0,
+          "output_sha": "d7378d1dba47821b4c82e42f652d3ca63388872e1e971355713aca25aed7ee77"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npx vitest run tests/ci/ci005-precommit-hook.test.ts 2>&1 | tail -40",
+          "exit_code": 0,
+          "output_sha": "d29413eea06debb2a78b6165542eefa3a447a26b3261bca0b9b228dc53eb5a99"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && which gitleaks; gitleaks version 2>&1 | head -2; echo \"---\"; git status --porcelain | wc -l",
+          "exit_code": 0,
+          "output_sha": "bd7217b50638d6e2ab5697a885b92c10648ebfcde4edc39227192f21a6afe0aa"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat tests/global-setup.ts 2>/dev/null | head -60; echo \"=== setup-tmpdir ===\"; cat tests/setup-tmpdir.ts 2>/dev/null | head -40",
+          "exit_code": 0,
+          "output_sha": "effffb228e70923d18aa10851e1f9c3d0b5e8e38da972bd51dad09e3fb43f2da"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat tests/net-guard.ts",
+          "exit_code": 0,
+          "output_sha": "7cacdf9d5e7cbf49213bba1a0aa34b7b0c614b084ae7f2455ab83326e99ccf2a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && env | grep -i proxy; echo \"--- exit $?\"",
+          "exit_code": 0,
+          "output_sha": "c0f1fca8e3867e0c9ffa1bd3f6155cf179555d5452ca3fcdaab9f572d113242b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat .npmrc; echo \"=== node/npm ===\"; node -v; npm -v; echo \"=== node_modules present? ===\"; ls -d node_modules 2>/dev/null && du -sh node_modules 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "f7de2358314f5ac73606f398ad3ebede0e7e0f86514a313cd8d357fc02576c4f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat .gitignore",
+          "exit_code": 0,
+          "output_sha": "7f9755fb43391ee142ef000e704891cfd2ad609837d0e748684e8af07c87849e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git ls-files | wc -l && git ls-files | grep -c \"^tests/\" && git ls-files | grep -c \"^src/\" && git ls-files | grep -c \"^specs/\"",
+          "exit_code": 0,
+          "output_sha": "a2a46bd8c61c56973ed175739923f3580726b7b0cbb7b7e3ffa11199fddb9d89"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && rm -rf /home/kara/fresh-clone-README16 && git clone -q --no-hardlinks /home/kara/speclang /home/kara/fresh-clone-README16 2>&1 | tail -5; echo \"clone exit=$?\"; cd /home/kara/fresh-clone-README16 && git log --oneline -1 && ls -la .githooks/ && ls -la .git/hooks/ | grep -i \"pre-commit\" && echo \"=== node_modules? ===\" && ls -d node_modules 2>/dev/null || echo \"no node_modules (fresh)\"",
+          "exit_code": 0,
+          "output_sha": "720db256197addde11251a92cd06537a559a52fd24bb01b3fbdd08473e0c628c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/fresh-clone-README16 && ls -la .git/hooks/ | head -25; echo \"=== core.hooksPath ===\"; git config --get core.hooksPath; echo \"(exit $?)\"",
+          "exit_code": 0,
+          "output_sha": "ddfe39ed45973bd3c8d32abdaea2fa27d860166771377f0254b6e6fdf5489e85"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/fresh-clone-README16 && npm install 2>&1 | tail -25; echo \"NPM_INSTALL_EXIT=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "d55379bafe796dae41768e00d4fd36019b94490fcc7048b087def4b6e7effd56"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/fresh-clone-README16 && npm install > /tmp/ni.log 2>&1; echo \"NPM_INSTALL_EXIT=$?\"; tail -6 /tmp/ni.log",
+          "exit_code": 0,
+          "output_sha": "b5a2ccdf123bcd5dc3c48c19893de51c73ad8d8ce7dae9f2da5e989499bdef46"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/fresh-clone-README16 && npm run build > /tmp/build.log 2>&1; echo \"BUILD_EXIT=$?\"; tail -15 /tmp/build.log",
+          "exit_code": 0,
+          "output_sha": "a9bbaa00be6b2a457503d665efca96e56c5d1b69f4e56900eb35ccaf15659134"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/fresh-clone-README16 && npm test > /tmp/test.log 2>&1; echo \"NPM_TEST_EXIT=$?\"; tail -60 /tmp/test.log",
+          "exit_code": -15,
+          "output_sha": "b6ccf9bf7788eb24a0dcf57cea1ba0fa9d1d347b85116b4d223ed2131197fb68"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/fresh-clone-README16 && nohup npm test > /tmp/test.log 2>&1 & echo \"started pid $!\"",
+          "exit_code": 0,
+          "output_sha": "3ebb06eb4aa2ea93a3a2fbd38f4ff9573e6db120e077812851139187cd86a8a4"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 25; tail -20 /tmp/test.log; echo \"=== running? ===\"; pgrep -f \"vitest run\" >/dev/null && echo YES || echo NO",
+          "exit_code": 0,
+          "output_sha": "b8147076e618e327173316da01e2b00ba4915c983379ab1909fa977e2f9a2c85"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 60; wc -l /tmp/test.log; tail -30 /tmp/test.log; echo \"=== running? ===\"; pgrep -f \"vitest run\" >/dev/null && echo YES || echo NO",
+          "exit_code": -15,
+          "output_sha": "17f391cee4241014f20d8bed98955686604e34f5a2236e7163da0c19489e3ab7"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 20; wc -l /tmp/test.log; tail -30 /tmp/test.log; echo \"=== running? ===\"; pgrep -f \"vitest run\" >/dev/null && echo YES || echo NO",
+          "exit_code": 0,
+          "output_sha": "d928a5e517393d51cade708692ba3fce02a497963bf519d11e9d17641120a9ab"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 25; wc -l /tmp/test.log; tail -40 /tmp/test.log; echo \"=== running? ===\"; pgrep -f \"vitest run\" >/dev/null && echo YES || echo NO",
+          "exit_code": 0,
+          "output_sha": "afd2c37bb87bc8f127c628d12e9cffe7a9f47c95a1145bcf51c10f2cda7a1677"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 28; wc -l /tmp/test.log; tail -40 /tmp/test.log; echo \"=== running? ===\"; pgrep -f \"vitest run\" >/dev/null && echo YES || echo NO; ps -o pid,etime,cmd -p $(pgrep -f \"vitest run\" | head -3 | tr '\\n' ',' | sed 's/,$//') 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "2503dcdf62823045784a37875eb7c9dbd6891415b0f545ad367242e957cdea2f"
+        },
+        {
+          "tool": "run_command",
+          "command": "ps -eo pid,etime,cmd | grep -E \"vitest|node .*npm\" | grep -v grep | head -10; echo \"=== log size ===\"; ls -la /tmp/test.log",
+          "exit_code": 0,
+          "output_sha": "7c715d0ec3ed7179b697594305f8a68dfcd9521e02ec5e32838fd313e1763b36"
+        },
+        {
+          "tool": "run_command",
+          "command": "ps -eo pid,etime,cmd | grep -E \"fresh-clone-README16\" | grep -v grep | head -10; echo \"---\"; ls -la /tmp/test.log",
+          "exit_code": 0,
+          "output_sha": "367ce313f53f82f7707f6217f8d3b80ea468c3fe966bfede880ca98cee372863"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/fresh-clone-README16 && (setsid nohup npm test > /tmp/test2.log 2>&1 < /dev/null &) ; sleep 3; ps -eo pid,etime,cmd | grep fresh-clone-README16 | grep -v grep | head -5",
+          "exit_code": 0,
+          "output_sha": "dd36c889a531c22411d1cea161fdbf35dde37451824f6702dc434cbde7b73dfe"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 28; wc -l /tmp/test2.log; tail -25 /tmp/test2.log",
+          "exit_code": 0,
+          "output_sha": "6208d927861e800819b49d45426c7b5733854506a4f03c49a616b639b3545819"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 28; wc -l /tmp/test2.log; tail -20 /tmp/test2.log; echo \"=== running? ===\"; ps -eo pid,cmd | grep fresh-clone-README16 | grep -v grep | head -2",
+          "exit_code": 0,
+          "output_sha": "f89e5fca9a1bed7dd725f73d38b326854e76450fa0cb1c93f5f9e39f491bb4ea"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/fresh-clone-README16 && grep -n \"Hook not found\" /tmp/test2.log; echo \"grep exit=$?\"; echo \"=== ci005 in log ===\"; grep -n \"ci005\" /tmp/test2.log; echo \"=== skipped files ===\"; grep -n \"skipped\" /tmp/test2.log",
+          "exit_code": 0,
+          "output_sha": "f7e2d7900f18b81d7aea128d1d627a73c7e651fd234e7a8173dd7637ebfce2eb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/fresh-clone-README16 && ls -la .git/hooks/ | grep -i pre-commit; echo \"=== core.hooksPath ===\"; git config --get core.hooksPath; echo \"(exit $?)\"; echo \"=== git status ===\"; git status --porcelain | head",
+          "exit_code": 0,
+          "output_sha": "19afa5745e8450c4e841591acfaa2d8fdde1d2fef6553399f4e9b4d81fdd2642"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/fresh-clone-README16 && npx vitest run tests/ci/ci005-precommit-hook.test.ts --reporter=verbose 2>&1 | tail -30; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "def11cecd7a5ee55e8ff45731cb378c8812bd1eb23b8b1da0368b4a303280739"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: fresh clone at /home/kara/fresh-clone-README16 (git clone of HEAD 97bad009, no node_modules, .git/hooks has only *.sample, core.hooksPath unset).\\nnpm install -> exit 0; npm run build -> exit 0; npm test -> \\\"Test Files 110 passed | 4 skipped (114) / Tests 1930 passed | 58 skipped (1988)\\\", no \\\"Hook not found\\\" (grep exit=1), no hook install step performed.\\nci005 file alone in fresh clone: 7/7 passed, AC1..AC7 all present (no .skip/.todo).\\nREADME unchanged in HEAD (git show --stat: only tests/ci/ci005-precommit-hook.test.ts).\\n\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "cce3748f3780b59967a9b79039f82a63c124334f816112f4184f507008e48945"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"\\.git/hooks/pre-commit\\|\\.git\\\", \\\"hooks\\\"\\|hooks/pre-commit\" --include=*.ts --include=*.js --include=*.sh --include=*.yml --include=*.yaml --include=*.md . 2>/dev/null | grep -v node_modules | grep -v \"^./dist/\" | grep -v \"^./.tmp/\" | head -30",
+          "exit_code": 0,
+          "output_sha": "5ed0caa1d5d217545e7358a3e0406b38a922cdfd055c7cd1e99687ba58000c71"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"githooks\" --include=*.ts --include=*.js --include=*.sh --include=*.mjs --include=*.cjs . 2>/dev/null | grep -v node_modules | grep -v \"^./dist/\" | grep -v \"^./.tmp/\" | grep -v \"^./tests/ci/ci005\" | head -20",
+          "exit_code": 0,
+          "output_sha": "6084b403559f5c467b21fa0e2522456e2faa029f3cc046d0f82739328b9930af"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"githooks\\|hooksPath\" README.md CONTRIBUTING.md GETTING-STARTED.md AGENTS.md 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "ffb037bf68bd608978274fc8cf61b6b99315c99f01b2d1bd414a016fa48b3d35"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rln \"githooks\" . --exclude-dir=node_modules --exclude-dir=.tmp --exclude-dir=dist --exclude-dir=.git 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "fb771a041914b8dad9322a32882e926505253e1958578264187452b6abb6acac"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"githooks\" specs/ci.spec.md | head -20; echo \"=== CI-005 section ===\"; grep -n \"CI-005\" specs/ci.spec.md | head",
+          "exit_code": 0,
+          "output_sha": "2bbd8726cebf0b5625785c6c9f259def8ce369f45011ffb868fb9977c50f4e6e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '70,115p' specs/ci.spec.md",
+          "exit_code": 0,
+          "output_sha": "e3a6aa383fea2c343c246aa1a2ac85b71052d1dbec218aba55e1695c7b567ba0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls setup.sh 2>/dev/null; ls -la | grep -i setup; echo \"=== search setup.sh ===\"; find . -maxdepth 2 -name \"setup.sh\" -not -path \"./node_modules/*\" 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "08a6fd99a44ca222fc22b078b1af1ba239046371b13de30cefd1c3929657f020"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"\\.skip\\|\\.todo\\|xit(\\|xdescribe(\" tests/ci/ci005-precommit-hook.test.ts; echo \"exit=$?\"; echo \"=== git diff of test file assertions ===\"; git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | grep -E \"^[-+].*expect\" ",
+          "exit_code": 1,
+          "output_sha": "2c511e643ca9612949c581c6f62a1100f177560d81cb1e065d3826f9810b8815"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | grep -E \"^[-+]\" | grep -v \"^[-+][-+]\" | grep -vE \"^\\+ \\*|^\\+//|^\\+$\" ",
+          "exit_code": 0,
+          "output_sha": "bff767e83451bc102ea79ea69e30684ee10f17cf0418a39ba0e45605c4ac503f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | grep -E \"^\\+\" | grep -v \"^+++\" | grep -E \"expect|toBe|toMatch|toContain\" ; echo \"added-assertions-exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "1442ddbe76e278382528eeaa2637ccb883f213c0afee9d41f47c5042a446f530"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | grep -E \"^-\" | grep -v \"^---\" | grep -E \"expect|toBe|toMatch|toContain\"; echo \"removed-assertions-exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "9310b6e5384ee037ce1734b687320aaef66829056ce3ff2903bdb2cd3431a7f4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | grep -cE \"^\\+.*expect\"; git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | grep -cE \"^-.*expect\"; echo \"---\"; git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | grep -E \"^\\+.*expect|^-.*expect\"",
+          "exit_code": 1,
+          "output_sha": "8e6b29eb825c795097f28a402679ee78b95bce0a5b46dcafe7f09a71919d2ab1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | grep -n \"expect\" | head -20",
+          "exit_code": 0,
+          "output_sha": "987c772b355f07b1d239eb0ae3bec7fe9c2b6b9fd4adceea1c52b185b9ae2deb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '55,80p' | cat -A | sed -n '1,30p' | cut -c1-120",
+          "exit_code": 0,
+          "output_sha": "74e8a61c0e39f40adb6e186330abd0f8aa9d392e47fa45b90ea19441be48cf69"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '55,80p' | grep -n \"expect\" | cat -A | cut -c1-80",
+          "exit_code": 0,
+          "output_sha": "a6df9176a4a08af390c703e2334b1e042068d5190149b24c252ae1198d376c54"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | od -c | head -5",
+          "exit_code": 0,
+          "output_sha": "351bab02866ebdd8187911ab6b23974e3e782743dc31a3e9321518e84bfdda29"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -c \"expect\"; echo \"---\"; git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -cE \"expect\"; echo \"---\"; git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -cE \"^[[:space:]]+expect\"",
+          "exit_code": 0,
+          "output_sha": "bdc3e045de14e1c2b8f38cc0c7293f0c4bc3103c5470ff6ecd1510f0f77a86e2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -E \"^\\+.*expect\" ; echo \"exit=$?\"; git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -E \"^\\+\" ; echo \"exit2=$?\"",
+          "exit_code": 0,
+          "output_sha": "b9816bad7e411f4cf7761447b70d97546e955aad0ab42e51b2e927b6c37f41c0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | od -c | head -3; echo \"=== count lines ===\"; git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | wc -l",
+          "exit_code": 0,
+          "output_sha": "6b66c58fdc440b3f3d82ec343df820fb227ae5dd7d70e423179fbb8bad980d5b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | od -An -c | head -2; echo \"=== hexdump first bytes ===\"; git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | od -An -tx1 | head -2",
+          "exit_code": 0,
+          "output_sha": "8944e07b408f56240f31de8e7016c26170ffea290553be8e5ead7fd691ce1edc"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '60,68p' | od -An -c | head -20",
+          "exit_code": 0,
+          "output_sha": "dd00c7f7be06f95f15ea9ef42ae00b7744594d351823b2cc0f510551ec71a3d1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -c \"expect\"; echo \"---\"; git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -cE \"expect\"; echo \"---\"; git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -cE \"^[[:space:]]+expect\"",
+          "exit_code": 0,
+          "output_sha": "3897b2d5627a79add62a8688ff761c512d1307ff1ebee2188907a4d164b11992"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -cE \"^\\+.*expect\"; echo \"A=$?\"; git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -cE \"^-.*expect\"; echo \"B=$?\"",
+          "exit_code": 0,
+          "output_sha": "852df3dba0d32ebd35cb1e4243dc3597316c735a67a4d06bb8523ff59e145147"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -cE \"^[[:space:]]+expect\"; echo \"A=$?\"; git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -cE \"^[[:space:]]+expect\"; echo \"B=$?\"",
+          "exit_code": 0,
+          "output_sha": "c0661f69f916c2d733f47b2c5e23af8ce0b3ca41ed7eda4f6d350e7971629012"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -cE \"^\\+.*expect\"; echo \"A=$?\"; git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -cE \"^\\+.*expect\"; echo \"B=$?\"",
+          "exit_code": 0,
+          "output_sha": "12df482d6474754dff5d490507c26d4a42c6b713452d7da9560c738496802756"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -cE \"^[[:space:]]+expect\"; echo \"A=$?\"; git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -cE \"^[[:space:]]+expect\"; echo \"B=$?\"",
+          "exit_code": 0,
+          "output_sha": "a09504197a0d098f724b7005ef5f5d7f830e878df24e586db50f614216407af4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -cE \"^\\+.*expect\"; echo \"A=$?\"; git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -cE \"^\\+.*expect\"; echo \"B=$?\"",
+          "exit_code": 0,
+          "output_sha": "1a56cd5888c855900e33a683e9b5494dac5f09f97dcc61a2605c435fc310e380"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -cE \"^[[:space:]]+expect\"; echo \"A=$?\"; git show HEAD -- tests/ci/ci005-precommit-hook.test.ts | sed -n '66p' | grep -cE \"^[[:space:]]+expect\"; echo \"B=$?\"",
+          "exit_code": 0,
+          "output_sha": "030748abcd8eaa62a8315ba282ac69e8aee648248f24f9ed15dda47dea8761aa"
+        },
+        {
+          "tool": "sandbox_read",
+          "command": "sandbox_read {\"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "9f4881bc19838fe072a7e6caaf4aa7a1d7653fad8e1f5f9db710682a186126c0"
+        },
+        {
+          "tool": "read_diff",
+          "command": "read_diff {}",
+          "exit_code": 0,
+          "output_sha": "ebbfddd04c8c71afcf97ab48d443e1a2c7b337a6e7712f86e9b11788297f10c5"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [],
+    "summary": "The change resolves the hook path from the tracked .githooks/pre-commit with a legacy .git/hooks fallback, and the existing AC1 existence/executable assertions still apply to whichever path is resolved, so no evidenced defect is present."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  03:03:10\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 A fresh clone of the branch with the README install path followed literally (npm install && npm run build) runs npm test to exit 0 with no 'Hook not found' failure and without any git-hook installation step; tests/ci/ci005-precommit-hook.test.ts resolves the tracked .githooks/pre-commit instead of depending on a maintainer-only .git/hooks symlink; no assertion is skipped or weakened; README install path is unchanged.: Fresh clone at /home/kara/fresh-clone-README16 (git clone of HEAD 97bad009, no node_modules, .git/hooks contains only *.sample, core.hooksPath unset). npm install -> exit 0; npm run build -> exit 0; npm test -> \"Test Files 110 passed | 4 skipped (114) / Tests 1930 passed | 58 skipped (1988)\", grep for \"Hook not found\" exit=1 (absent), no hook-install step performed. ci005 file run alone in the fresh clone: 7/7 passed with AC1..AC7 present and no .skip/.todo. README unchanged in HEAD (git show --stat lists only tests/ci/ci005-precommit-hook.test.ts). [resolution 0.00; tests/ci/ci005-precommit-hook.test.ts]\nCI-005 now reads the tracked .githooks/pre-commit, so a fresh clone following the README install path passes the full suite with no hook installation step and no weakened assertions.\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T08:09:58.115396",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T08:09:58.194113+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 3357,
+        "truncated": false,
+        "source": "git show 97bad0092960"
+      }
+    ],
+    "task_id": "README-16"
+  }
+}
