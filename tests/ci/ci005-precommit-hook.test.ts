@@ -1,7 +1,7 @@
 /**
  * CI-005: Pre-commit hook hardening
  *
- * Verifies the local `.git/hooks/pre-commit` enforces Tier 1 guards:
+ * Verifies the project's pre-commit hook enforces Tier 1 guards:
  *  1. Hook exists and is executable
  *  2. Hook body invokes `gitreins guard` (Tier 1)
  *  3. Hook BLOCKS commits containing a staged secret (positive case)
@@ -11,6 +11,15 @@
  * Uses a throwaway scratch repo under `.tmp/ci005-<pid>/` so the actual
  * git state of the project is untouched. The repo gets the project's
  * `.gitleaks.toml` so gitleaks sees the hardening rules.
+ *
+ * Hook resolution (README-16): the SOURCE OF TRUTH is the TRACKED
+ * `.githooks/pre-commit`. `.git/hooks/` is per-clone local state — a fresh
+ * `git clone` only ever contains `*.sample` files there, and a `git worktree`
+ * does not even have a `.git` directory (it is a `gitdir:` pointer file), so
+ * reading `.git/hooks/pre-commit` made this file red for strangers while
+ * green only on checkouts that happened to install a hook there. Resolve the
+ * tracked file first; fall back to `.git/hooks` so pre-existing installs that
+ * rely on the legacy path keep working.
  *
  * Spec: specs/ci.spec.md (CI-005 acceptance criteria)
  * Task: .coding-hermes/tasks.md#CI-005
@@ -32,7 +41,18 @@ import { join } from "path";
 const REPO_ROOT = execSync("git rev-parse --show-toplevel", {
   encoding: "utf8",
 }).trim();
-const HOOK = join(REPO_ROOT, ".git", "hooks", "pre-commit");
+
+// Tracked hook first (see header): present in every clone/worktree.
+const TRACKED_HOOK = join(REPO_ROOT, ".githooks", "pre-commit");
+// Legacy machine-local install path (maintainer checkouts, `gitreins
+// install`). Only consulted when the tracked hook is missing, so existing
+// installs keep working without reintroducing the fresh-clone dependency.
+const LEGACY_HOOK = join(REPO_ROOT, ".git", "hooks", "pre-commit");
+
+// Falls back to the tracked path when neither exists, so the "Hook not
+// found" error below names the path we actually require.
+const HOOK = [TRACKED_HOOK, LEGACY_HOOK].find(existsSync) ?? TRACKED_HOOK;
+
 const SCRATCH_PARENT = join(REPO_ROOT, ".tmp");
 
 // Plain exec helper that returns exit code without throwing on non-zero.
@@ -95,7 +115,7 @@ describe("CI-005: pre-commit hook hardening", () => {
     }
   });
 
-  it("AC1: .git/hooks/pre-commit exists and is executable", () => {
+  it("AC1: pre-commit hook (tracked .githooks/pre-commit) exists and is executable", () => {
     expect(existsSync(HOOK)).toBe(true);
     const s = statSync(HOOK);
     // Owner execute bit must be set (bit 0o100).
