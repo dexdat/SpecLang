@@ -11,8 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `npm run check:sqlite-binding` — asserts the `better-sqlite3` native binding really
   loads (one `require` + one in-memory `SELECT 1`, no build). On failure it prints the
   exact remedy for the detected npm version and exits non-zero. The postinstall hook
-  runs the same gate and CI runs it right after `npm ci`, so a silent binding loss turns
-  a run red instead of reaching users.
+  runs the same gate, so a silent binding loss turns an install red instead of
+  reaching users. The CI step that runs it right after `npm ci` is staged in
+  `.coding-hermes/pending/ci-sqlite-binding-step.patch` — pushing a workflow change
+  needs a `workflow`-scoped credential, which the current push token does not have.
 
 ### Fixed
 - **npm >= 12 silently installed `better-sqlite3` without its native binding.**
