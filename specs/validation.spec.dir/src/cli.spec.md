@@ -20,8 +20,12 @@ Command-line interface for running validation.
 2. Create ValidationEngine with strict mode setting
 3. Create ValidationReporter with verbose setting
 4. Expand glob patterns to find all spec files
-5. For each file: parse spec, run validation, output results
-6. Return ValidateResult with summary statistics
+5. For each file: parse spec and run validation. In `text` output, print a per-file block ONLY for a file that failed (its errors are the actionable part); clean files print nothing unless `--verbose`
+6. Print the summary (files, passed, failed, errors, warnings) and, when `warnings > 0`, the compact `formatWarningSummary` breakdown — detail stays on `--verbose` / `--format json`
+7. Return ValidateResult with summary statistics
+
+Warnings never affect `success`: only errors (and, in strict mode, warnings
+promoted to errors) do.
 
 ```typescript
 interface ValidateOptions {
