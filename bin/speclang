@@ -42,6 +42,65 @@ function removeDaemonPidFile(pidFile) {
   }
 }
 
+// DF-SPECLANG-5-R5: `speclang history` is a read-only report, so a repository
+// with no commits yet (a fresh `git init`, i.e. an *unborn* HEAD) and a
+// directory outside any repository are EMPTY ANSWERS, not crashes. Before this
+// fix both fell through to simple-git and surfaced a raw
+// `GitError: fatal: your current branch 'master' does not have any commits yet`
+// with a node stack trace, which reads as "the tool is broken" on a fresh
+// project. Detect the empty state up front (so `--compare`, `--blame` and
+// `--stat` are covered too, not just `git log`) and answer in one place.
+const EMPTY_HISTORY_UNBORN = 'unborn-head';
+const EMPTY_HISTORY_NO_REPO = 'not-a-git-repository';
+const EMPTY_HISTORY_NO_GIT = 'git-unavailable';
+
+async function detectEmptyHistory(git) {
+  try {
+    // `--git-dir` resolves inside ANY repository, including a bare one, where
+    // `checkIsRepo()` (built on `--is-inside-work-tree`) reports false and
+    // would mislabel a perfectly readable history as "not a repository".
+    await git.revparse(['--git-dir']);
+  } catch (err) {
+    // The probe shells out to git: a missing binary must not be reported as
+    // "this is not a repository" (that sentence would be a lie).
+    const message = String((err && (err.message || err)) || '');
+    if (/not found|ENOENT|spawn\s+\S+\s+ENOENT/i.test(message)) return EMPTY_HISTORY_NO_GIT;
+    return EMPTY_HISTORY_NO_REPO;
+  }
+
+  try {
+    // Resolving HEAD fails on an unborn branch — the distinguishing state,
+    // detected without parsing git's localized error prose.
+    await git.revparse(['--verify', 'HEAD']);
+    return null;
+  } catch (_) {
+    return EMPTY_HISTORY_UNBORN;
+  }
+}
+
+function emptyHistoryMessage(reason) {
+  if (reason === EMPTY_HISTORY_UNBORN) {
+    return [
+      'No commits yet — this repository has no history to show.',
+      'Create your first commit, then run `speclang history` again:',
+      '  git add -A && git commit -m "initial commit"',
+    ].join('\n');
+  }
+  if (reason === EMPTY_HISTORY_NO_REPO) {
+    return [
+      'No history found — this directory is not inside a git repository.',
+      'Run `git init` in your project root (or `speclang init`) so SpecLang can track spec changes.',
+    ].join('\n');
+  }
+  if (reason === EMPTY_HISTORY_NO_GIT) {
+    return [
+      'No history found — the `git` command is not available on PATH.',
+      'Install git and run `speclang history` again.',
+    ].join('\n');
+  }
+  return 'No history found.';
+}
+
 const program = new Command();
 
 program
@@ -2439,8 +2498,32 @@ program
   .action(async (spec, options) => {
     const git = require('simple-git')();
 
+    // DF-SPECLANG-5-R5: "no history at all" is decided BEFORE any git plumbing
+    // call, so every mode below (log, diff, blame, stat) reports it instead of
+    // throwing a bare GitError with a stack trace.
+    const emptyHistory = await detectEmptyHistory(git);
+    if (emptyHistory && emptyHistory !== EMPTY_HISTORY_UNBORN) {
+      // The questions this command answers cannot be asked here at all
+      // (no repository, or no git binary): print the actionable reason and use
+      // a defined non-zero code (git log itself exits non-zero outside a repo).
+      // With `--format json`, stdout stays machine-readable and the human
+      // reason goes to stderr.
+      const reason = emptyHistoryMessage(emptyHistory);
+      if (options.format === 'json') {
+        console.error(reason);
+        console.log(JSON.stringify(options.stat
+          ? { totalCommits: 0, uniqueAuthors: 0, filesChanged: 0, dateRange: null }
+          : []));
+      } else {
+        console.log(reason);
+      }
+      process.exitCode = 2;
+      return;
+    }
+
     // --compare mode: show diff between two versions
     if (options.compare) {
+      if (emptyHistory) { console.log(emptyHistoryMessage(emptyHistory)); return; }
       const [from, to] = options.compare.split('..');
       const fileArg = spec || (options.all ? '.' : 'specs/');
       const diff = await git.diff([from, to, '--', fileArg]);
@@ -2475,10 +2558,20 @@ program
     };
     Object.keys(logOptions).forEach(k => { if (logOptions[k] === undefined) delete logOptions[k]; });
 
-    const log = await git.log(logOptions);
+    const log = emptyHistory ? { all: [], total: 0, latest: null } : await git.log(logOptions);
 
     // --stat mode: show statistics
     if (options.stat) {
+      if (emptyHistory) {
+        // Keep the JSON shape stable for consumers while the text form gets
+        // the actionable explanation.
+        if (options.format === 'json') {
+          console.log(JSON.stringify({ totalCommits: 0, uniqueAuthors: 0, filesChanged: 0, dateRange: null }, null, 2));
+        } else {
+          console.log(emptyHistoryMessage(emptyHistory));
+        }
+        return;
+      }
       const authors = new Set(log.all.map(c => c.author_name));
       let filesChanged = 0;
       try {
@@ -2514,6 +2607,10 @@ program
     // those names. Implementing it here closes the feature gap and
     // makes --blame a real subcommand rather than a no-op flag.
     if (options.blame) {
+      if (emptyHistory) {
+        console.log(options.format === 'json' ? '[]' : emptyHistoryMessage(emptyHistory));
+        return;
+      }
       const target = spec || (options.all ? '.' : 'specs/');
       try {
         const blame = await git.raw(['blame', '--porcelain', target]);
@@ -2595,6 +2692,7 @@ program
         break;
       }
       case 'timeline': {
+        if (entries.length === 0) { console.log(emptyHistoryMessage(emptyHistory)); break; }
         const groups = {};
         for (const c of entries) {
           const d = new Date(c.date);
@@ -2613,7 +2711,7 @@ program
         break;
       }
       default: {
-        if (entries.length === 0) { console.log('No history found.'); return; }
+        if (entries.length === 0) { console.log(emptyHistoryMessage(emptyHistory)); return; }
         for (const c of entries) {
           const date = new Date(c.date).toISOString().slice(0, 10);
           console.log(`${c.hash.slice(0, 7)}  ${date}  ${c.author_name.padEnd(20)} ${c.message.split('\n')[0]}`);
