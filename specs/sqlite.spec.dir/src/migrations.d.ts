@@ -2,18 +2,25 @@
  * SPECLANG-GENERATED: Database migration system
  * Source: @speclang/sqlite @block:sqlite/schema
  *
- * NOTE ON GENERATION: this file is maintained by hand. The `sqlite/schema` block
- * in specs/sqlite.spec.dir/schema.spec.md carries the schema *description* only
- * (no TypeScript body), and specs/scripts.spec.dir/generate_sqlite_schema.py
- * reads a different, non-existent path (specs/implementation/sqlite/schema.spec.md)
- * and targets different outputs, so there is no runnable regeneration pipeline
- * for this file today. Regenerating would not reproduce these migrations.
+ * NOTE ON GENERATION: the SQL bodies in this module are GENERATED, not hand-copied. The
+ * eight shipped SQL files in ./migrations/ are the SOURCE OF TRUTH; `npm run gen:migrations`
+ * (scripts/gen-migrations.mjs) parses them and rewrites the GEN-MIGRATIONS block below, and
+ * `npm run gen:migrations -- --check` exits non-zero, naming the stale file, when a .sql
+ * changed and this module was not regenerated. Edit the .sql files, then regenerate — never
+ * hand-edit the generated block.
  *
- * SOURCE OF TRUTH for the schema pieces below are the shipped SQL files in
- * ./migrations/, which used to be dead weight: nothing read them at runtime, so a
- * fresh database never got cascades/sessions-indexes/ralph/commands upgrades.
- * They are now inlined as compiled JS so they reach the published tarball
- * (package.json "files" ships dist/ only - specs/**\/*.sql is NOT published).
+ * Why generated: this file used to inline hand-copied JavaScript of the same schema, so any
+ * edit to a .sql file silently diverged from what the runtime actually executes. Those files
+ * were also dead weight at runtime (nothing read them), so a fresh database never got the
+ * cascades / sessions-indexes / ralph / commands upgrades. The SQL is emitted as a compiled
+ * TypeScript module because the published tarball ships dist/ only — the runtime must never
+ * read a .sql file from disk.
+ *
+ * The generator also carries the JS-side steps that the files alone cannot express: an
+ * ALTER TABLE ADD COLUMN guard for tables that predate the file (cascades.root_trigger /
+ * created_at in version 3, the commands queue columns in version 7, specs.refs in version 8),
+ * and every CREATE INDEX runs through createIndexIfColumns() so an upgrade of an existing
+ * database cannot fail on a shape the shipped DDL assumed but that database never had.
  *
  * Coverage map (shipped file -> migration version):
  *   001_initial.sql   -> version 1 (initial_schema)
@@ -27,8 +34,8 @@
  *                        so only the additive columns/indexes apply)
  *   008_index.sql     -> version 8 (search_indexes)
  *
- * Note: version 2 (add_events_processed) predates the SQL files and is kept
- * as-is. Databases that already recorded versions 1 and 2 never re-run them and
+ * Note: version 2 (add_events_processed) predates the SQL files and is kept as-is.
+ * Databases that already recorded versions 1 and 2 never re-run them and
  * receive 3..8 on the next initialize().
  */
 import { type Database as DatabaseType } from 'better-sqlite3';
