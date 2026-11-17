@@ -1,0 +1,866 @@
+{
+  "task_id": "QA-SPECLANG-5-R6",
+  "task_title": "Close two corruption-guard bypasses",
+  "task_criteria": [
+    "mcp status with a corrupt .speclang/speclang.db exits non-zero or reports the DB unreadable instead of confident 'Not running'; the stale compiled specs/ralph-loop.spec.dir/src/controller.js no longer constructs new Database() unguarded (regenerated/removed or parser-fixed with a test pinning .js/.ts agreement); tests cover both; npm run build, npm run lint and the full test suite are green."
+  ],
+  "passed": false,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "2c500df6e915833042040df96bf48902a9c12242",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "a79fefc3b3183715e819a96209727fbcd8dc04c8e27c1b7da6667855838aaf2d",
+  "working_tree_dirty_path_count": 7,
+  "items": [
+    {
+      "criterion": "mcp status with a corrupt .speclang/speclang.db exits non-zero or reports the DB unreadable instead of confident 'Not running'; the stale compiled specs/ralph-loop.spec.dir/src/controller.js no longer constructs new Database() unguarded (regenerated/removed or parser-fixed with a test pinning .js/.ts agreement); tests cover both; npm run build, npm run lint and the full test suite are green.",
+      "status": "UNVERIFIED",
+      "detail": "Not examined \u2014 evaluation ended before this criterion was reached (no judgement was made about it)"
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  05:57:24",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T105317.895450Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T105317.895450Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  05:57:24\n   Duration  47.06s (transform 29.92s, setup 6.03s, import 44.22s, tests 222.43s, environment 16ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261117T105317.895450Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": false,
+      "any_failed": true,
+      "summary": "INCOMPLETE\n  \u2014 mcp status with a corrupt .speclang/speclang.db exits non-zero or reports the DB unreadable instead of confident 'Not running'; the stale compiled specs/ralph-loop.spec.dir/src/controller.js no longer constructs new Database() unguarded (regenerated/removed or parser-fixed with a test pinning .js/.ts agreement); tests cover both; npm run build, npm run lint and the full test suite are green.: Not examined \u2014 evaluation ended before this criterion was reached (no judgement was made about it)\n  \u2717 Coverage FAILED \u2014 not passing: mcp status with a corrupt .speclang/speclang.db exits non-zero or reports the DB unreadable instead of confident 'Not running'; the stale compiled specs/ralph-loop.spec.dir/src/controller.js no longer constructs new Database() unguarded (regenerated/removed or parser-fixed with a test pinning .js/.ts agreement); tests cover both; npm run build, npm run lint and the full test suite are green.\nCap exceeded: Iteration cap (100) reached (100.9 used). Increase max_iterations or split criteria. Partial verdict \u2014 0 of 1 criteria graded, 1 ungraded. The run spent 631,868 in / 4,389 out over 100.9 iterations.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": false,
+          "output": "INCOMPLETE\n  \u2014 mcp status with a corrupt .speclang/speclang.db exits non-zero or reports the DB unreadable instead of confident 'Not running'; the stale compiled specs/ralph-loop.spec.dir/src/controller.js no longer constructs new Database() unguarded (regenerated/removed or parser-fixed with a test pinning .js/.ts agreement); tests cover both; npm run build, npm run lint and the full test suite are green.: Not examined \u2014 evaluation ended before this criterion was reached (no judgement was made about it)\n  \u2717 Coverage FAILED \u2014 not passing: mcp status with a corrupt .speclang/speclang.db exits non-zero or reports the DB unreadable instead of confident 'Not running'; the stale compiled specs/ralph-loop.spec.dir/src/controller.js no longer constructs new Database() unguarded (regenerated/removed or parser-fixed with a test pinning .js/.ts agreement); tests cover both; npm run build, npm run lint and the full test suite are green.\nCap exceeded: Iteration cap (100) reached (100.9 used). Increase max_iterations or split criteria. Partial verdict \u2014 0 of 1 criteria graded, 1 ungraded. The run spent 631,868 in / 4,389 out over 100.9 iterations.",
+          "error": "",
+          "data": {
+            "verdict": "INCOMPLETE",
+            "items": [
+              {
+                "criterion": "mcp status with a corrupt .speclang/speclang.db exits non-zero or reports the DB unreadable instead of confident 'Not running'; the stale compiled specs/ralph-loop.spec.dir/src/controller.js no longer constructs new Database() unguarded (regenerated/removed or parser-fixed with a test pinning .js/.ts agreement); tests cover both; npm run build, npm run lint and the full test suite are green.",
+                "status": "UNVERIFIED",
+                "detail": "Not examined \u2014 evaluation ended before this criterion was reached (no judgement was made about it)",
+                "resolution_probability": 0.12,
+                "cited_path": "specs/ralph-loop.spec.dir/src/controller.js, .js/.ts"
+              }
+            ],
+            "summary": "Cap exceeded: Iteration cap (100) reached (100.9 used). Increase max_iterations or split criteria. Partial verdict \u2014 0 of 1 criteria graded, 1 ungraded. The run spent 631,868 in / 4,389 out over 100.9 iterations.",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"QA-SPECLANG-5-R6\"}",
+          "exit_code": 0,
+          "output_sha": "420f305a9f96a180c0325d9a39fc6ed86494c167cc04c1dae774b53a34f0238d"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && cat package.json",
+          "exit_code": 0,
+          "output_sha": "b902c453d5515c75886f65182c54a7102a927920d9624892c1b9803e265da501"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; pwd; head -60 package.json",
+          "exit_code": 0,
+          "output_sha": "7dc66a4f9a2c2ddafa4ca6e6ba882d5f42089078a19549ea4bbb7e2b5e120f48"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat .gitreins/config.yaml 2>/dev/null | head -60",
+          "exit_code": 0,
+          "output_sha": "21d1c3f0358e9b026c14b1169ca35f086296d7b914791d1c3e0cd23d8c9b503d"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; ls; git log --oneline -8",
+          "exit_code": 0,
+          "output_sha": "4c5976df471c2191dd1bf4997213707e5332436d4bfb83cb715528c99b940193"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show --stat fea446d8; echo ====; git show --stat 02964b80",
+          "exit_code": 0,
+          "output_sha": "31397e1dcc4602aded7f51b2c2a670c6ea53d2bcdd8969ef8fba358b35a43b85"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show --stat fea446d8 | head -40",
+          "exit_code": 0,
+          "output_sha": "8c5bc4f1b9a4a7ec699e042e638aba8a234eaf8283e6bc7dc13654e3df568c3f"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls specs/ralph-loop.spec.dir/src/ 2>/dev/null; echo ===; ls specs/ralph-loop.spec.dir/ 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "5ccec4d1097476bf248ae415bfa436cd52fc575dadd4a4b2c6935796115231fb"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show --stat fea446d8 | tail -30",
+          "exit_code": 0,
+          "output_sha": "972f406f928b2f8b74278c37391a0cf263af539c08aae885284909a5e69275f2"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"new Database(\" specs/ --include=*.js --include=*.ts | head -40",
+          "exit_code": 0,
+          "output_sha": "5e673a2339810e96c323bd64b2ca4cc5c6bdf93cdda990a8dfdae3969747c5be"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show fea446d8 -- bin/speclang",
+          "exit_code": 0,
+          "output_sha": "5e0c3bcee74344ed621e600b7b6810c1e16fe835eaef886f355e2a086c00f689"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"new Database(\\|new better_sqlite3_1.default(\\|new better_sqlite3.default(\" specs/ --include=*.js | head -40",
+          "exit_code": 0,
+          "output_sha": "5e71bf11b336e389e9a6233c373b2a6dde91ab7768e2697fb2f5bf118404aede"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"stateDatabaseProblem\" -r bin/ src/ tests/ scripts/ | head -30",
+          "exit_code": 0,
+          "output_sha": "7c5546fcfa9b6bf57bb58d740e22fd4e76ddfab7046e2af9780c253cd22b6130"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 1380,1500p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "9790fe9a4e8683ec2c027ba26c89005c0b81284f0a432107b494d75735bbc0cb"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 40,130p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "00e60ea3ede8e9ab4fe1927b715330131012eab09a47eae7d04e0f1001c3eb9e"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 300,360p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "95abe7f3ff918768222bc68f235fa39485fccdbf50ec57d5a7d295e5797b0989"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/mcp/mcp-status-corrupt-db.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "801601722bdbc5103e2e2d9ddaea55c950306673b51264c189bba27641c60d3d"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/db/compiled-artifact-guard.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "be8f8038c13548b38eda2a97e4b2ad0c847fab6d7bb511ed33e99c74d7c40e0e"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Repo /home/kara/speclang. Commits: fea446d8 (main fix), 02964b80 (follow-up removing index.*). bin/speclang:1430 mcp status probes stateDatabaseProblem. Tests: tests/mcp/mcp-status-corrupt-db.test.ts, tests/db/compiled-artifact-guard.test.ts. specs/ralph-loop.spec.dir/src/controller.js removed; remaining bare constructors in specs are `new better_sqlite3_1.default(` (6 files) which the guard's regex does NOT catch.\", \"key\": \"explored\"}",
+          "exit_code": 0,
+          "output_sha": "4c993f1bedf69c06655ebd9cadb4c741fede6334afd3f9f3e7242501cf3a4f63"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npx vitest run tests/mcp/mcp-status-corrupt-db.test.ts tests/db/compiled-artifact-guard.test.ts 2>&1 | tail -30",
+          "exit_code": 0,
+          "output_sha": "bbfd49f7d7acfd6fe8d688733f7fdd599018d33db684885eea542e55c826e561"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && T=$(mktemp -d) && mkdir -p \"$T/.speclang\" && head -c 4096 /dev/urandom > \"$T/.speclang/speclang.db\" && node bin/speclang mcp status -d \"$T\"; echo \"EXIT=$?\"; rm -rf \"$T\"",
+          "exit_code": 0,
+          "output_sha": "9c60e2ea34d8778c8a9480ca8148be550f6af3d4ca1b60e65939e764319da237"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && T=$(mktemp -d) && mkdir -p \"$T/.speclang\" && node bin/speclang mcp status -d \"$T\"; echo \"EXIT=$?\"; ls -la \"$T/.speclang\"; rm -rf \"$T\"",
+          "exit_code": 0,
+          "output_sha": "e52016dba66ded0c45f1d652821b951fc0ad06dfc84087645627eaa3b82fa529"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git ls-files specs | grep -E '^specs/.+/src/.+\\.js$' | wc -l; git ls-files specs | grep -E 'ralph-loop' ",
+          "exit_code": 0,
+          "output_sha": "77a791a04f98a8f5b4fef11d62424aaca0aecf963813dc91430f02a4431a72d3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"new Database(\\|new better_sqlite3_1.default(\\|new better_sqlite3.default(\" specs/ --include=*.js | grep -v \"^specs/sqlite.spec.dir/src/index.js\"",
+          "exit_code": 0,
+          "output_sha": "059c680c74188dbf0a14a6f12288bc456aa1c3ebb6d9f664a7f1cc795bda7842"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 1,60p specs/implementation.spec.dir/src/ralph-loop.js; echo ====TS; sed -n 1,60p specs/implementation.spec.dir/src/ralph-loop.ts",
+          "exit_code": 0,
+          "output_sha": "7d96f5ad8a9a394e39fbc4997f90d1698ef1bc20008587e9237e4f01d5ec98c6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 1,60p specs/ralph-loop.spec.dir/src/controller.ts",
+          "exit_code": 0,
+          "output_sha": "30929804fca30f787f8693affb1d5c61bb945c4e7437b2b955cf882be2117edd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"openStateDatabase\\|better-sqlite3\\|new Database\" specs/implementation.spec.dir/src/ralph-loop.ts | head; echo ===; grep -rn \"openStateDatabase\" specs/implementation.spec.dir/src/*.ts | head",
+          "exit_code": 0,
+          "output_sha": "9b124c3efd9e866edbb2ffeb3ee7a839e45daed2096455aef869776254b8e07f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"specs/implementation.spec.dir/src/ralph-loop\\|implementation.spec.dir/src/ralph-loop\" --include=*.ts --include=*.js --include=*.json --include=*.mjs --include=*.yaml . 2>/dev/null | grep -v node_modules | grep -v \"^./dist\" | head -20",
+          "exit_code": 0,
+          "output_sha": "6ce0146976ef4538a5efa3a9ff5b81104e31cc0582e421989b5c17c37515330b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rln \"implementation.spec.dir/src/ralph-loop\" --include=*.ts --include=*.js --include=*.mjs --include=*.json src tests bin scripts dist 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "c2ff5986d11ed302abce30935dc4aec1f8113c350a6ce91cd3a26cea56448774"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"ralph-loop\" src/ralph-loop/*.ts | grep -n \"import\" | head -20; echo ===; ls src/ralph-loop/",
+          "exit_code": 0,
+          "output_sha": "cc5bf28c4c3ede1ba06977f2956c02949dd583f9729c082dd574d291d738cad7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"new Database(\\|better-sqlite3\" src/ralph-loop/*.ts | head; echo ===; grep -rn \"openStateDatabase\" src/ralph-loop/*.ts | head",
+          "exit_code": 0,
+          "output_sha": "c5ebb0510ff36b800e04c538bad8c54368fef4c9675038244a26ed273614a124"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"specs/ralph-loop.spec.dir\\|ralph-loop.spec.dir\" --include=*.ts --include=*.js --include=*.mjs --include=*.json src tests bin scripts dist tsconfig.json vitest.config.ts 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "f8388cafd17e66fe4eab6ae740d4c2d58f3e532396217a0aa3bc920ff47b0709"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat tsconfig.json; echo ===; cat vitest.config.ts",
+          "exit_code": 0,
+          "output_sha": "4d1480f27d7c9c9d5e8b62a547daeafc1a03dbd5ba0d896957b4ae099aa840f0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"\\\"scripts\\\"\" -A 30 package.json",
+          "exit_code": 0,
+          "output_sha": "893d60d271734dc49ffa246d100906757e91bd2b0e4652c35406ba266f9b2955"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npm run build 2>&1 | tail -15; echo \"BUILD_EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "0109f8ecfe183fc537366eaea112ad011d47c76a44a68cdd67da9273fb087a08"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npm run lint 2>&1 | tail -20; echo \"LINT_EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "e311f3a0a12e9d9f0272c9f044a9f04a03c84e986e13f6479900f9859214d053"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npm test 2>&1 | tail -25",
+          "exit_code": -15,
+          "output_sha": "5e5ac612f7e526f7f20bd4ac2d6bb74b8a59fe389e173053207269aeeba685cf"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && (TMPDIR=$PWD/.tmp npx vitest run > /tmp/full-suite.log 2>&1; echo \"EXIT=$?\" >> /tmp/full-suite.log) & sleep 25; echo started",
+          "exit_code": 0,
+          "output_sha": "cb5dfef01504e2f6b6ced0acda1781e7e67dc35c2acec72082caac7d03aa6a82"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 60; tail -5 /tmp/full-suite.log",
+          "exit_code": -15,
+          "output_sha": "f1da919f178ca21c44a3d50c6711eb89fd30d8a985da1473daa1ec5ca85ab5e3"
+        },
+        {
+          "tool": "run_command",
+          "command": "tail -c 2000 /tmp/full-suite.log",
+          "exit_code": 0,
+          "output_sha": "8a6e56cfe13d5887e8918a6607eefa12bb154b311c28dfa0998e1318e15b7aaa"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 28; grep -E \"Test Files|Tests  |EXIT=\" /tmp/full-suite.log | tail -5",
+          "exit_code": 0,
+          "output_sha": "0466824d146c04ecd3dcb500a6e2e7736c50eadf6f06ed32214cc0aa842d4bde"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -E \"Test Files|Tests  |EXIT=\" /tmp/full-suite.log | tail -5; wc -l /tmp/full-suite.log",
+          "exit_code": 0,
+          "output_sha": "b25e0d74d3a06cd3625f9a2851aa854f9b5d2384e0d1aa08f055e96f567904bf"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -E \"Test Files|Tests  |EXIT=\" /tmp/full-suite.log | tail -5; ps aux | grep -c vitest",
+          "exit_code": 0,
+          "output_sha": "f5908cff75c45e907fea198f0987dc27dc3396a422922a8f215f24329a6bb15d"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -E \"Test Files|Tests  |EXIT=\" /tmp/full-suite.log | tail -5; ps aux | grep vitest | grep -v grep | head -3",
+          "exit_code": 0,
+          "output_sha": "756b5149f0b12bac566c991a03c48535b44af1126e6dfa4bc2a497314e270140"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -E \"Test Files|Tests  |EXIT=\" /tmp/full-suite.log | tail -5; ps aux | grep \"vitest run$\" | grep -v grep | head -3",
+          "exit_code": 0,
+          "output_sha": "762972924cad2eb877485c337172e658df17080dc91342380642513e87dfc715"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -E \"Test Files|Tests  |EXIT=\" /tmp/full-suite.log | tail -5; ps aux | grep -c \"vitest\"",
+          "exit_code": 0,
+          "output_sha": "0520ab6b586be6983458dd8f88e3c8b673c25efe929c7ce66cc21f57d70e7a9d"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -E \"Test Files|Tests  |EXIT=\" /tmp/full-suite.log | tail -5; ps aux | grep \"vitest\" | grep -v grep | head -5",
+          "exit_code": 0,
+          "output_sha": "e0ce581248fb695e8c651173d9da951f7333ca52e826c4acaf043e0967514812"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -E \"Test Files|Tests  |EXIT=\" /tmp/full-suite.log | tail -5; ps aux | grep \"vitest run$\" | grep -v grep | head -3",
+          "exit_code": 0,
+          "output_sha": "385f4af31a1d9c262e9ae816263ed475942c4b2c28b55e0c80bc689f7abe0ab9"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 25; tail -c 1200 /tmp/full-suite.log",
+          "exit_code": 0,
+          "output_sha": "b099637b2b7d6d490ff7e224977d230466c152f7b045e3944d2574ecd986660e"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; ps aux | grep \"vitest run$\" | grep -v grep | wc -l; tail -c 400 /tmp/full-suite.log",
+          "exit_code": 0,
+          "output_sha": "f76f7d11b6456156a37f51918788a1203ba416b61519f1b0db787daa5165b1d7"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 20; ps aux | grep -c \"[v]itest\"; tail -c 600 /tmp/full-suite.log",
+          "exit_code": 0,
+          "output_sha": "502a00699ddff4709c1e9c8e967ec7dfe2c6414e6c6334cd40ecafce8ed3d4af"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && (TMPDIR=$PWD/.tmp npx vitest run --reporter=basic > /tmp/full2.log 2>&1; echo \"EXIT=$?\" >> /tmp/full2.log) > /dev/null 2>&1 & sleep 5; echo launched",
+          "exit_code": 0,
+          "output_sha": "98ef057c87d7d3774984c9bf1be3f14d7b1b6bc8a304a1ed5894c83f7fea481c"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -cE \"\u2713|\u2717|\u00d7\" /tmp/full2.log; tail -c 300 /tmp/full2.log",
+          "exit_code": 0,
+          "output_sha": "f864e20c01b12aac6804a877d6467a6ebff194beb7d2c441f5b93a97f7e1e725"
+        },
+        {
+          "tool": "run_command",
+          "command": "head -40 /tmp/full2.log",
+          "exit_code": 0,
+          "output_sha": "086f1203a038ee612ec209f20b7f88e05444eb65d2682b70bb45e22906c5bad7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && (TMPDIR=$PWD/.tmp npx vitest run --reporter=verbose > /tmp/full3.log 2>&1; echo \"EXIT=$?\" >> /tmp/full3.log) > /dev/null 2>&1 & sleep 10; echo launched",
+          "exit_code": 0,
+          "output_sha": "d026be58c0bd72f51b9ec4cb7c2f053ed1a9110c5a0cf2cec0afb4e322995450"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -cE \"\u2713\" /tmp/full3.log; tail -c 200 /tmp/full3.log",
+          "exit_code": 0,
+          "output_sha": "adae4f78ab0a3d9a2335b1bff7fc8bd0fc3adfd879286a8889119909f838416c"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -cE \"\u2713\" /tmp/full3.log; grep -E \"EXIT=\" /tmp/full3.log",
+          "exit_code": 1,
+          "output_sha": "89b0ed870a5a1a77a33fc09b536727f8ed7fe805f535a4870b11dc8dfdc8ee99"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -cE \"\u2713\" /tmp/full3.log; grep -E \"EXIT=\" /tmp/full3.log; ps aux | grep -c \"[v]itest\"",
+          "exit_code": 0,
+          "output_sha": "4beee5135c39079c8b64a58c7e3a468de007023fe62644a3f53416e93fd89b43"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -cE \"\u2713\" /tmp/full3.log; grep -E \"EXIT=\" /tmp/full3.log; ps aux | grep -c \"[v]itest\"",
+          "exit_code": 1,
+          "output_sha": "3ba274d53f6cc17e779f8ef53d9220d2ac11cd7ddcc12ab02029d019b3693932"
+        },
+        {
+          "tool": "run_command",
+          "command": "tail -c 3000 /tmp/full3.log; echo; echo \"=== lines:\"; wc -l /tmp/full3.log",
+          "exit_code": 0,
+          "output_sha": "7195c416ec41dd1d825a69a16104b3a2a8bee721c48d18fbc9d1ffbf9fd33f5c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && (TMPDIR=$PWD/.tmp npx vitest run --reporter=json --outputFile=/tmp/full4.json > /tmp/full4.log 2>&1; echo \"EXIT=$?\" >> /tmp/full4.log) > /dev/null 2>&1 & sleep 15; echo launched",
+          "exit_code": 0,
+          "output_sha": "65178f81f0804f7adafbe8b0ead5b8b54e338ed543878c2d7526b7b336c39bdd"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -E \"EXIT=\" /tmp/full4.log; ls -la /tmp/full4.json 2>/dev/null; ps aux | grep -c \"[v]itest\"",
+          "exit_code": 1,
+          "output_sha": "e1ba4a908aebb51963205070eb9ce485406c44b74def7588b88afcf6f2835902"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -E \"EXIT=\" /tmp/full4.log; ls -la /tmp/full4.json 2>/dev/null; ps aux | grep -c \"[v]itest\"; tail -c 300 /tmp/full4.log",
+          "exit_code": 0,
+          "output_sha": "c29d83fc8356475482036700ffb10c8a8ed0c8d56e1e9c854823c0501646e3e1"
+        },
+        {
+          "tool": "run_command",
+          "command": "head -60 /tmp/full4.log",
+          "exit_code": 0,
+          "output_sha": "0c76ad045ddccf21d1b604405b4280b3efd0a24025a98715d4751c82b5ccc8c3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && (TMPDIR=$PWD/.tmp npx vitest run --maxWorkers 1 > /tmp/full5.log 2>&1; echo \"EXIT=$?\" >> /tmp/full5.log) > /dev/null 2>&1 & sleep 20; echo launched",
+          "exit_code": 0,
+          "output_sha": "672f1be9aa48a3bb3c809ff58086f94126dfb719d77de28a6d5ae4a7db8f0bcd"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -E \"EXIT=|Test Files|Tests \" /tmp/full5.log; ps aux | grep -c \"[v]itest\"",
+          "exit_code": 0,
+          "output_sha": "71cae38420b7e9c95f0e004ecaf2aea6b180bd871caaf704cdba86bea02afa19"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -E \"EXIT=|Test Files|Tests \" /tmp/full5.log; ps aux | grep -c \"[v]itest\"; tail -c 200 /tmp/full5.log",
+          "exit_code": 0,
+          "output_sha": "274ef88b5f6f6e6d8f20fe9b3532fce0196ed466df292ad3d162e7f7bb510c3e"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -E \"EXIT=|Test Files|Tests \" /tmp/full5.log; ps aux | grep -c \"[v]itest\"; wc -l /tmp/full5.log",
+          "exit_code": 0,
+          "output_sha": "e61bf1d8c0af768b5a0ad1a1d6bcee8b9ac4821731ceb1463d9600e9a21bc2b5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat /tmp/full5.log",
+          "exit_code": 0,
+          "output_sha": "14708c41b40812afa1e6bcc6ba42ab15af34db1176388f2208f367e802d032aa"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && (TMPDIR=$PWD/.tmp npx vitest run --maxWorkers 1 > /tmp/full6.log 2>&1; echo \"EXIT=$?\" >> /tmp/full6.log) > /dev/null 2>&1 & sleep 25; echo launched",
+          "exit_code": 0,
+          "output_sha": "e2e1d60256274fb7d92a404d073e94d1af54f141d735452a882bc1c4659537df"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -E \"EXIT=|Test Files|Tests \" /tmp/full6.log; ps aux | grep -c \"[v]itest\"; wc -l /tmp/full6.log",
+          "exit_code": 0,
+          "output_sha": "3a29277ed07049472d50ef7934520aa637b6446db63cbfe4ac359bf8541ebee2"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -E \"EXIT=|Test Files|Tests \" /tmp/full6.log; ps aux | grep -c \"[v]itest\"; wc -l /tmp/full6.log",
+          "exit_code": 0,
+          "output_sha": "d3c64330a07c6bae1173b8cae2044d06fd04255963d0ded59358a71e8558a367"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -E \"EXIT=|Test Files|Tests \" /tmp/full6.log; ps aux | grep -c \"[v]itest\"; wc -l /tmp/full6.log",
+          "exit_code": 0,
+          "output_sha": "9c3ce60159bc112cbd6e42007ffc51803ea1cf41cd738577be4c3827811ef4a6"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -E \"EXIT=|Test Files|Tests \" /tmp/full6.log; ps aux | grep -c \"[v]itest\"; wc -l /tmp/full6.log",
+          "exit_code": 0,
+          "output_sha": "0bcd8a75f6c759a574470fa54f297559a4385677cdf0534184f4c2654cff58b3"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -E \"EXIT=|Test Files|Tests \" /tmp/full6.log; ps aux | grep -c \"[v]itest\"; wc -l /tmp/full6.log",
+          "exit_code": 0,
+          "output_sha": "9c3d24db3468f91dfe92dce5e9869ab9b50a11e2e53d6570002a334ce260d721"
+        },
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"QA-SPECLANG-5-R6\"}",
+          "exit_code": 0,
+          "output_sha": "420f305a9f96a180c0325d9a39fc6ed86494c167cc04c1dae774b53a34f0238d"
+        },
+        {
+          "tool": "sandbox_read",
+          "command": "sandbox_read {\"key\": \"verified_0\"}",
+          "exit_code": 1,
+          "output_sha": "678be362049c858745e71e5dc8bf0bfe19e3b5a7cc3fce486ff5e05cf8a94b0f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/agent 2>/dev/null; pwd; ls",
+          "exit_code": 0,
+          "output_sha": "062271e5b20b728b587b8b77a1c6083c94b3a8298747623fcd128e132e1cd2e9"
+        },
+        {
+          "tool": "read_diff",
+          "command": "read_diff {}",
+          "exit_code": 0,
+          "output_sha": "ebbfddd04c8c71afcf97ab48d443e1a2c7b337a6e7712f86e9b11788297f10c5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git log --oneline -8 && echo \"---\" && git show --stat HEAD~1 && echo \"---\" && git show --stat HEAD",
+          "exit_code": 0,
+          "output_sha": "003ec1c6559db37faf1b8f1b843729f0de0f610a559cdd42755c4c6f14b00d41"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls specs/ralph-loop.spec.dir/src/ 2>&1; echo \"---\"; ls specs/ | head -50",
+          "exit_code": 0,
+          "output_sha": "fc1a364ce5b53b0e70bfab79b6ff37a1e1b120db978fa4e028a2298be4020ffd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show --stat fea446d8",
+          "exit_code": 0,
+          "output_sha": "bf078611131ba94aad5a20085419e1e7187e9370a577eb280c0ceb89d03185f0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"new Database(\" specs/ --include=*.js --include=*.ts | head -40",
+          "exit_code": 0,
+          "output_sha": "0fd07a8baf771d9e0598671d3fa5bcf209174c7740f3d404c85e960c92536f7d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show fea446d8 -- bin/speclang",
+          "exit_code": 0,
+          "output_sha": "30581c927bf2379df14c167e65d5e723477f120fd52ca52288da111bf448b3ec"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"new Database(\\|new better_sqlite3\" specs/ --include=*.js | head -40",
+          "exit_code": 0,
+          "output_sha": "4ca03d649a3336b4a3cf9dd6d0cf4a3ce6776a1d4c8b41f02e0445ae87404c48"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"stateDatabaseProblem\" -r bin/ src/ tests/ | head -30",
+          "exit_code": 0,
+          "output_sha": "602f26014dd184665ca38c8065430b01ff0d16801f4af01ed2b4576c8c1f6d17"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n 1380,1500p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "dedeb6fdf16bd368b17fd82dcbdaa34e60e41ffc3b8f5531dd6c0e5beb95770d"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 120, \"offset\": 40, \"path\": \"bin/speclang\"}",
+          "exit_code": 0,
+          "output_sha": "080408b30ca321b6cfa19b3523ffcc3c9269ddadbb964ab57f627c0e16c805b3"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/mcp/mcp-status-corrupt-db.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "801601722bdbc5103e2e2d9ddaea55c950306673b51264c189bba27641c60d3d"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/db/compiled-artifact-guard.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "be8f8038c13548b38eda2a97e4b2ad0c847fab6d7bb511ed33e99c74d7c40e0e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat .gitreins/config.yaml 2>/dev/null | head -40; echo \"---\"; node -e \"const p=require('./package.json'); console.log(JSON.stringify(p.scripts,null,2))\"",
+          "exit_code": 0,
+          "output_sha": "b804f9072e0db9fa178df674e4a2dd0f54990265f65c41f23cfed17266635d25"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls specs/ralph-loop.spec.dir/src/ && echo \"--- index.ts ---\" && cat specs/ralph-loop.spec.dir/src/index.ts && echo \"--- controller.ts head ---\" && sed -n 1,60p specs/ralph-loop.spec.dir/src/controller.ts",
+          "exit_code": 0,
+          "output_sha": "5809c6905fcee0ef5daea9cac54709762316ff136019339425aa2802d366a528"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"ralph-loop.spec.dir\" --include=*.ts --include=*.js --include=*.json --include=*.mjs --include=*.yaml --include=*.yml src/ tests/ bin/ scripts/ package.json tsconfig.json vitest.config.ts 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "35823ff4d4afe319bba2e2270e1576a55b6c3475f40bd95e403f5e53158456ba"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"ralph-loop.spec.dir\" --include=*.ts --include=*.js --include=*.json --include=*.mjs --include=*.yaml --include=*.yml . --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.git --exclude-dir=coverage 2>/dev/null | head -30",
+          "exit_code": 0,
+          "output_sha": "6b64087f1fcdeff7db7eb2dcb031685d7b84be272aecc529188a76336659f98f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"ralph-loop.spec.dir\" --include=*.ts --include=*.js --include=*.json --include=*.mjs --include=*.yaml --include=*.yml src/ tests/ bin/ scripts/ package.json tsconfig.json vitest.config.ts build.yaml 2>/dev/null | grep -v \"^tests/db/compiled-artifact-guard\" | head -20; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "d423023bd1a9f1124f2028fde2a7e29cd7b666bc19920c3bfe213d4cd8bd0a6d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -rn \"spec.dir/src/index\" src/ bin/ tests/ scripts/ --include=*.ts --include=*.js 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "de74d4de71b3f9365b852f0cd2011be70d8c6473b60a9367c3f027c083ab6438"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npm run build 2>&1 | tail -20; echo \"BUILD_EXIT=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "a28249fdf9a0835e2b1ff3e0ec027cb5f425d7f0b8072f9997ed05722a5cb82f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npm run build > /tmp/build.log 2>&1; echo \"BUILD_EXIT=$?\"; tail -20 /tmp/build.log",
+          "exit_code": 0,
+          "output_sha": "35787f686f6587d8b93fab50b181ae83c262cc4240764de4f880fcb2435a07b0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npm run lint > /tmp/lint.log 2>&1; echo \"LINT_EXIT=$?\"; tail -30 /tmp/lint.log",
+          "exit_code": 0,
+          "output_sha": "b7c26f7bd31c0d73e55718f94ccf07b39a1968be0ab2a02b98a18a3e0c67beef"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npm test > /tmp/test.log 2>&1; echo \"TEST_EXIT=$?\"; tail -40 /tmp/test.log",
+          "exit_code": -15,
+          "output_sha": "926b08cea3b10bd5795c18cdee282e737aae12616106bd644634b00e398f8427"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && nohup npm test > /tmp/test.log 2>&1 & echo started",
+          "exit_code": 0,
+          "output_sha": "4beb897a8e6549a39875612522d5a5e546b78b977a82a802ef58a28e620638e9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && T=$(mktemp -d) && mkdir -p \"$T/.speclang\" && head -c 4096 /dev/urandom > \"$T/.speclang/speclang.db\" && node bin/speclang mcp status -d \"$T\"; echo \"EXIT=$?\"; echo \"--- file still there? ---\"; ls -l \"$T/.speclang/\"; rm -rf \"$T\"",
+          "exit_code": 0,
+          "output_sha": "01d7bb60a57d6a2947cdfda10bf0aeef3742440960fb4807de55e0daa85ac136"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && T=$(mktemp -d) && node bin/speclang mcp status -d \"$T\"; echo \"ABSENT_EXIT=$?\"; ls -la \"$T\"; rm -rf \"$T\"",
+          "exit_code": 0,
+          "output_sha": "1ea28c4f88dbc3bef2e4cd383237cebcbc2369f7bfe6ca1b345d581793bc4466"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && T=$(mktemp -d) && mkdir -p \"$T/.speclang\" && node -e \"\nconst {createDatabase}=require('./dist/src/db/index.js');\nconst db=createDatabase({path:process.argv[1]+'/.speclang/speclang.db'}); db.close();\n\" \"$T\" && node bin/speclang mcp status -d \"$T\"; echo \"HEALTHY_EXIT=$?\"; rm -rf \"$T\"",
+          "exit_code": 0,
+          "output_sha": "2ba217c6c6d8dfbe27b17e817bc91f5b18875cffe6e423c9d45b0fc6775801ed"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && T=$(mktemp -d) && mkdir -p \"$T/.speclang\" && head -c 4096 /dev/urandom > \"$T/.speclang/speclang.db\" && echo \"$$\" > \"$T/.speclang/mcp.pid\" && echo 7777 > \"$T/.speclang/mcp.port\" && node bin/speclang mcp status -d \"$T\"; echo \"EXIT=$?\"; rm -rf \"$T\"",
+          "exit_code": 0,
+          "output_sha": "af043205a193d3c3026a4ac574219cb07c59c4ff597d66c64fbad5ee28bf2301"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && tail -5 /tmp/test.log; echo \"---\"; grep -c \"\" /tmp/test.log",
+          "exit_code": 1,
+          "output_sha": "5b08a5c1f87cb413dd543a9bffa8a86dd8132b85075f2fd479242d01703a71d0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -la /tmp/test.log; ps aux | grep -c vitest",
+          "exit_code": 0,
+          "output_sha": "1ce13f7b60cb9cdf02f5da335dd7c9cc981ea9d58cdf4d2d752434ab880caab9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ps aux | grep -E \"vitest|npm test\" | grep -v grep | head -10",
+          "exit_code": 0,
+          "output_sha": "8d62171402858c60e09dfdec4b493d273a9202f82aaac5d5fc492330cf26e5c9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && (setsid nohup npm test > /tmp/test.log 2>&1 < /dev/null &) ; sleep 25; echo \"--- log ---\"; tail -20 /tmp/test.log; ps aux | grep vitest | grep -v grep | wc -l",
+          "exit_code": 0,
+          "output_sha": "9268816d02f519e790c15f0409bfb30a2710191a8f39b20bcda0a717b619ce5b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git ls-files specs/ralph-loop.spec.dir/ && echo \"--- tracked js count ---\" && git ls-files 'specs/**/src/*.js' | wc -l",
+          "exit_code": 0,
+          "output_sha": "510538d5dd8c1bfaaac2596c24b929b713c300dd8df176a77e1fdba2d823c3b9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show ef9b12b9:specs/ralph-loop.spec.dir/src/controller.js 2>/dev/null | sed -n 28,40p",
+          "exit_code": 0,
+          "output_sha": "bbbc583b712ccc806ba48c3fe75926bac3f95908c56fb038235b8d1deeb8d1c4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git ls-files 'specs/**/src/*.js' | grep -v -E '^specs/sqlite.spec.dir/src/index.js$' | while read f; do if [ -f \"$f\" ] && grep -nE '\\bnew\\s+Database\\s*\\(' \"$f\" | grep -vE '^\\s*[0-9]+:\\s*(//|/\\*|\\*)' ; then echo \"HIT: $f\"; fi; done; echo \"SCAN_DONE\"",
+          "exit_code": 0,
+          "output_sha": "53f5de771554bdf14716e46ecbfe55db4c9c8222fa6844ece543744aba2ac0c6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && tail -30 /tmp/test.log",
+          "exit_code": 0,
+          "output_sha": "0ebf07b8ed769abfdc9da07ea0a6f2792da2152bbdbb8f3989fb4cbad1ab9301"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npx vitest run tests/db/compiled-artifact-guard.test.ts tests/mcp/mcp-status-corrupt-db.test.ts > /tmp/targeted.log 2>&1; echo \"EXIT=$?\"; tail -30 /tmp/targeted.log",
+          "exit_code": 0,
+          "output_sha": "b107afea5d8c23d6bc8dc22b16c1db82725ce44bfe45ee0e0100c1a87d2c32dc"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show ef9b12b9:specs/ralph-loop.spec.dir/src/controller.js > specs/ralph-loop.spec.dir/src/controller.js && npx vitest run tests/db/compiled-artifact-guard.test.ts > /tmp/guard-prefix.log 2>&1; echo \"EXIT=$?\"; grep -E \"controller.js:34|Tests |FAIL\" /tmp/guard-prefix.log | head -10; rm -f specs/ralph-loop.spec.dir/src/controller.js; git status --porcelain specs/",
+          "exit_code": 0,
+          "output_sha": "6f9ed949de94d636d7141fcba034d9495ce22cb391ba6b8037cf1959664a0e97"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show ef9b12b9:specs/ralph-loop.spec.dir/src/controller.js > specs/ralph-loop.spec.dir/src/controller.js && git add -f specs/ralph-loop.spec.dir/src/controller.js && npx vitest run tests/db/compiled-artifact-guard.test.ts > /tmp/guard-prefix2.log 2>&1; echo \"EXIT=$?\"; grep -E \"controller.js:34|Tests |FAIL|Tracked compiled\" /tmp/guard-prefix2.log | head -10; git rm --cached -q specs/ralph-loop.spec.dir/src/controller.js; rm -f specs/ralph-loop.spec.dir/src/controller.js; git status --porcelain specs/ralph-loop.spec.dir/",
+          "exit_code": 0,
+          "output_sha": "8b7a9d780e32775f9f5a35b6175d3e1b53fd5a841713fde5967a5e96e025ffa2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git status --porcelain | head -20; echo \"---\"; git stash list | head -3",
+          "exit_code": 0,
+          "output_sha": "b7dd2320ae55c02e8fe96889897e9ac6f156141f895f03425817ece1df49366a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && tail -40 /tmp/test.log; echo \"=== lines: $(wc -l < /tmp/test.log)\"",
+          "exit_code": 0,
+          "output_sha": "d7355afcde6d016c45fbc5da10ded60879fcda628b4e2ad863c740816d2de597"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ps aux | grep -E \"vitest\" | grep -v grep | head -5; echo \"---\"; ls -la /tmp/test.log",
+          "exit_code": 0,
+          "output_sha": "c38dab597d3579fc53ac652fc10c64b8b77ddd8154aa3d81cc3d7206704ee7f7"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Task QA-SPECLANG-5-R6, single criterion. Commits: fea446d8 (mcp status probe + remove stale controller.js + 2 tests), 02964b80 (remove orphaned index.js).\\n\\nVERIFIED SO FAR:\\n- bin/speclang:1429-1436 mcp status probes stateDatabaseProblem(projectDir/.speclang/speclang.db) BEFORE pid/port report, exits 1.\\n- Manual repro: corrupt 4096 random bytes -> EXIT=1, full diagnostic, file preserved (4096 bytes).\\n- Corrupt + pid file present -> EXIT=1, no \\\"Running (PID\\\".\\n- Absent DB -> EXIT=0 \\\"Status: Not running\\\", no DB created.\\n- Healthy DB -> EXIT=0 \\\"Status: Not running\\\".\\n- specs/ralph-loop.spec.dir/src/controller.js removed (git ls-files confirms gone); controller.ts uses openStateDatabase().\\n- index.js/index.d.ts also removed in 02964b80 (no dangling ./controller require).\\n- No tracked specs/**/src/*.js constructs new Database( outside guarded helper (manual scan SCAN_DONE, no HIT).\\n- Guard test genuinely fails on pre-fix artifact: restored ef9b12b9 controller.js + git add -f -> FAIL \\\"specs/ralph-loop.spec.dir/src/controller.js:34 const db = new Database(dbPath);\\\" 1 failed | 3 passed. Removed after.\\n- Targeted tests: npx vitest run tests/db/compiled-artifact-guard.test.ts tests/mcp/mcp-status-corrupt-db.test.ts -> EXIT=0, 2 files, 9 tests passed.\\n- npm run build -> BUILD_EXIT=0.\\n- npm run lint -> LINT_EXIT=0, 2 pre-existing warnings (src/ralph-loop/{controller,types}.ts), 0 errors.\\n\\nPENDING: full npm test suite result (running in background, /tmp/test.log).\", \"key\": \"progress\"}",
+          "exit_code": 0,
+          "output_sha": "c5ed7a37e8effcd225d4c9d8d20cccf0b12bd54007e064e66bd92309de50f02f"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "medium",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 54,
+        "detection": "row marked status=complete while retaining deferred=true and a defer_reason that says the row is deferred",
+        "detail": "DF-SPECLANG-2 is flipped to \"status\":\"complete\" but the same object still carries \"deferred\":true and defer_reason \"...the row is deferred as satisfied-by-reality\", so the row asserts two contradictory lifecycle states."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 54,
+        "detection": "field type changed from string to object on an existing schema key",
+        "detail": "The `detail` field was a plain string on the old DF-SPECLANG-2 row and is now an object {\"evidence\":[...],\"text\":...}, while sibling rows (e.g. DF-SPECLANG-1, DF-SPECLANG-4) keep `detail` as a string \u2014 any consumer reading `detail` as text will break on this row."
+      }
+    ],
+    "summary": "The board row for DF-SPECLANG-2 is marked complete while still flagged deferred with a defer_reason, and its `detail` field silently changed type from string to object relative to every sibling row."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  05:57:24\n\nStage tier2: FAIL\n  INCOMPLETE\n  \u2014 mcp status with a corrupt .speclang/speclang.db exits non-zero or reports the DB unreadable instead of confident 'Not running'; the stale compiled specs/ralph-loop.spec.dir/src/controller.js no longer constructs new Database() unguarded (regenerated/removed or parser-fixed with a test pinning .js/.ts agreement); tests cover both; npm run build, npm run lint and the full test suite are green.: Not examined \u2014 evaluation ended before this criterion was reached (no judgement was made about it)\n  \u2717 Coverage FAILED \u2014 not passing: mcp status with a corrupt .speclang/speclang.db exits non-zero or reports the DB unreadable instead of confident 'Not running'; the stale compiled specs/ralph-loop.spec.dir/src/controller.js no longer constructs new Database() unguarded (regenerated/removed or parser-fixed with a test pinning .js/.ts agreement); tests cover both; npm run build, npm run lint and the full test suite are green.\nCap exceeded: Iteration cap (100) reached (100.9 used). Increase max_iterations or split criteria. Partial verdict \u2014 0 of 1 criteria graded, 1 ungraded. The run spent 631,868 in / 4,389 out over 100.9 iterations.\n\nOverall: FAIL \u2717",
+  "evaluated_at": "2026-11-17T11:18:16.196683",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T11:18:16.221241+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 16013,
+        "truncated": false,
+        "source": "git show 2c500df6e915"
+      }
+    ],
+    "task_id": "QA-SPECLANG-5-R6"
+  }
+}
