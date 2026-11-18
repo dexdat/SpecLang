@@ -93,7 +93,9 @@ In `--remote` mode the server listens on:
 |---|---|
 | `GET /mcp` | SSE stream; the first event is `endpoint: /mcp/message?sessionId=<uuid>` |
 | `POST /mcp/message` | JSON-RPC 2.0 requests (`initialize`, `tools/list`, `tools/call`) |
+| `GET /events` | SSE event feed (enabled unless `MCP_SSE_ENABLED=false`) |
 | `GET /health` | liveness probe: `{"status":"ok","mode":"http"}` |
+| `GET /metrics` | Prometheus scrape endpoint (no auth); see `docs/observability-spec.md` §9.1 for metric families |
 
 A session end to end:
 
