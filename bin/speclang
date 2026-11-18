@@ -13,6 +13,79 @@ const { Command } = require('commander');
 const path = require('path');
 const fs = require('fs');
 
+// OBS-4: latest result per lane plus a cumulative counter, in the invocation
+// directory's ignored runtime state. Keep this in the shipped CommonJS binary
+// so usage errors and missing builds are observable without compiled modules.
+function recordCliCompletion(projectDir, lane, exitCode, durationMs) {
+  const stateDir = path.join(projectDir, '.speclang');
+  fs.mkdirSync(stateDir, { recursive: true });
+  const target = path.join(stateDir, 'cli-completion.json');
+  const lock = `${target}.lock`;
+  const deadline = performance.now() + 60_000;
+  const sleeper = new Int32Array(new SharedArrayBuffer(4));
+  // Rename protects readers from partial JSON; an exclusive lock also prevents
+  // concurrent exits from losing another lane's update or counter increment.
+  // A SIGKILL can leave a lock behind: remove it only after confirming the writer
+  // is gone. Bound waits and warn rather than changing the command's exit code.
+  let lockFd;
+  while (lockFd === undefined) {
+    try {
+      lockFd = fs.openSync(lock, 'wx', 0o600);
+    } catch (err) {
+      if (err.code !== 'EEXIST') throw err;
+      if (performance.now() >= deadline) {
+        throw new Error(`Timed out waiting for CLI completion lock: ${lock}`);
+      }
+      Atomics.wait(sleeper, 0, 0, 10);
+    }
+  }
+
+  const temp = `${target}.${process.pid}.${require('crypto').randomUUID()}.tmp`;
+  try {
+    let records = {};
+    try {
+      records = JSON.parse(fs.readFileSync(target, 'utf8'));
+    } catch (err) {
+      if (err.code !== 'ENOENT') throw err;
+    }
+    // Preserve invalid state as evidence instead of silently resetting counters.
+    if (!records || Array.isArray(records) || typeof records !== 'object') {
+      throw new Error(`Invalid CLI completion object: ${target}`);
+    }
+    const previousCount = records[lane]?.runCount ?? 0;
+    if (!Number.isSafeInteger(previousCount) || previousCount < 0 || previousCount === Number.MAX_SAFE_INTEGER) {
+      throw new Error(`Invalid CLI completion counter for ${lane}: ${target}`);
+    }
+    records[lane] = { lane, exitCode, durationMs, runCount: previousCount + 1 };
+    fs.writeFileSync(temp, `${JSON.stringify(records, null, 2)}\n`, { flag: 'wx', mode: 0o600 });
+    fs.renameSync(temp, target);
+  } finally {
+    try {
+      fs.rmSync(temp, { force: true });
+    } finally {
+      fs.closeSync(lockFd);
+      fs.unlinkSync(lock);
+    }
+  }
+}
+
+// Install before Commander parsing: natural exits, process.exit(), usage errors,
+// and uncaught failures all emit `exit` exactly once. Only synchronous work is
+// allowed here; signal handlers and existing command behavior stay unchanged.
+const completionLane = process.argv[2];
+if (['validate', 'cascade', 'generate', 'index', 'guard'].includes(completionLane)) {
+  const completionRoot = process.cwd();
+  const completionStart = process.hrtime.bigint();
+  process.once('exit', (exitCode) => {
+    const durationMs = Number((process.hrtime.bigint() - completionStart) / 1_000_000n);
+    try {
+      recordCliCompletion(completionRoot, completionLane, exitCode, durationMs);
+    } catch (err) {
+      console.error(`Warning: could not record CLI completion for ${completionLane}: ${err.message}`);
+    }
+  });
+}
+
 // Version from package.json
 const packageJson = require('../package.json');
 
