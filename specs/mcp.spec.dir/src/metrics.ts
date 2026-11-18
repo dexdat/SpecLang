@@ -13,6 +13,14 @@
 import os from 'os';
 import fs from 'fs';
 import process from 'process';
+import {
+  CONVERGENCE_FAMILY,
+  RECOVERY_FAMILY,
+  STAGE_DURATION_FAMILY,
+  STAGE_RESULTS_FAMILY,
+  decodeSeriesKey,
+  readLedger
+} from '../../pipeline.spec.dir/src/metrics-ledger';
 
 /** Exact Content-Type Prometheus expects for the text exposition format. */
 export const PROMETHEUS_CONTENT_TYPE = 'text/plain; version=0.0.4; charset=utf-8';
@@ -104,6 +112,17 @@ export class MetricsRegistry {
   /** Convenience for a family with a single unlabelled sample. */
   set(name: string, help: string, type: MetricType, value: number): void {
     this.add(name, help, type, value);
+  }
+
+  /**
+   * Declare a family without a sample, so HELP/TYPE appear in the scrape even
+   * when nothing has been observed yet (a fresh install, or a counter whose
+   * label values are only known once work happens). Prometheus accepts a family
+   * with no series; it simply has no samples to select.
+   */
+  declare(name: string, help: string, type: MetricType): void {
+    if (this.families.has(name)) return;
+    this.families.set(name, { name, help, type, samples: [] });
   }
 
   /** Snapshot of the declared families (sorted by name). */
@@ -218,8 +237,13 @@ function readDiskTotals(path: string): DiskTotals | null {
  * Build a registry populated with the current Tier-1 system families plus
  * process and uptime series. Called per scrape — all values are point-in-time
  * reads, so the endpoint never serves stale numbers.
+ *
+ * OBS-2: pipeline outcome counters live in a cross-process ledger (the pipeline
+ * runs under the daemon, the scrape is served here), so they are declared
+ * unconditionally and filled from `ledgerPath` — `$SPECLANG_METRICS_LEDGER`
+ * when set, else `<cwd>/.speclang/metrics-outcomes.json`.
  */
-export function collectMetrics(diskPath: string = process.cwd()): MetricsRegistry {
+export function collectMetrics(diskPath: string = process.cwd(), ledgerPath?: string): MetricsRegistry {
   const registry = new MetricsRegistry();
   const memoryTotal = os.totalmem();
   const memoryFree = os.freemem();
@@ -375,12 +399,76 @@ export function collectMetrics(diskPath: string = process.cwd()): MetricsRegistr
     runtime: 'mcp-http'
   });
 
+  // --- pipeline outcomes (OBS-2) ------------------------------------------
+  collectPipelineOutcomes(registry, ledgerPath);
+
   return registry;
+}
+
+/**
+ * Declare the pipeline outcome families and fill them from the cross-process
+ * ledger.
+ *
+ * The three counters are declared unconditionally: their label values only
+ * exist once a pipeline actually ran, and a scrape of a fresh install must still
+ * expose (and document) the families. A ledger that cannot be read is not an
+ * error — it is the zero state, already implied by the declarations.
+ */
+function collectPipelineOutcomes(registry: MetricsRegistry, ledgerPath?: string): void {
+  registry.declare(
+    STAGE_RESULTS_FAMILY,
+    'Pipeline stage executions by stage and terminal status (success, failure, skipped).',
+    'counter'
+  );
+  registry.declare(
+    RECOVERY_FAMILY,
+    'Recovery actions executed after a stage failure, by outcome (succeeded, failed).',
+    'counter'
+  );
+  registry.declare(
+    CONVERGENCE_FAMILY,
+    'Convergence outcomes observed by the pipeline executor, by outcome (converged, not_converged).',
+    'counter'
+  );
+  registry.declare(
+    STAGE_DURATION_FAMILY,
+    'Duration in seconds of the most recent execution of each pipeline stage.',
+    'gauge'
+  );
+
+  const ledger = readLedger(ledgerPath);
+
+  for (const [family, series] of Object.entries(ledger.families)) {
+    const help = family === STAGE_RESULTS_FAMILY
+      ? 'Pipeline stage executions by stage and terminal status (success, failure, skipped).'
+      : family === RECOVERY_FAMILY
+        ? 'Recovery actions executed after a stage failure, by outcome (succeeded, failed).'
+        : family === CONVERGENCE_FAMILY
+          ? 'Convergence outcomes observed by the pipeline executor, by outcome (converged, not_converged).'
+          : `Pipeline ledger family ${family}.`;
+
+    for (const [seriesKey, value] of Object.entries(series)) {
+      const numeric = Number(value);
+      if (!Number.isFinite(numeric)) continue;
+      registry.add(family, help, 'counter', numeric, decodeSeriesKey(seriesKey));
+    }
+  }
+
+  for (const [stage, duration] of Object.entries(ledger.stageDurationMs)) {
+    if (!Number.isFinite(duration.last)) continue;
+    registry.add(
+      STAGE_DURATION_FAMILY,
+      'Duration in seconds of the most recent execution of each pipeline stage.',
+      'gauge',
+      Math.round((duration.last / 1000) * 1e6) / 1e6,
+      { stage }
+    );
+  }
 }
 
 /**
  * Render the current scrape payload. This is what the `/metrics` route sends.
  */
-export function renderMetrics(diskPath: string = process.cwd()): string {
-  return collectMetrics(diskPath).render();
+export function renderMetrics(diskPath: string = process.cwd(), ledgerPath?: string): string {
+  return collectMetrics(diskPath, ledgerPath).render();
 }

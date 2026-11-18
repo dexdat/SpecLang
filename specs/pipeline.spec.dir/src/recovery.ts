@@ -9,6 +9,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import { execSync } from 'child_process';
 import { RecoveryAction, RecoveryContext, RecoveryResult, RecoveryActionType } from './types';
+import { recordRecoveryOutcome } from './metrics-ledger';
 
 export class RecoveryExecutor {
   private errorLogDir: string;
@@ -20,6 +21,17 @@ export class RecoveryExecutor {
   }
 
   async execute(action: RecoveryAction, context: RecoveryContext): Promise<{ success: boolean; error?: string }> {
+    const result = await this.executeAction(action, context);
+
+    // OBS-2: recovery outcomes are computed here and then only carried in the
+    // RecoveryResult — count them for the /metrics ledger. Best effort only:
+    // recordRecoveryOutcome never throws and never changes the return value.
+    recordRecoveryOutcome(result.success ? 'succeeded' : 'failed');
+
+    return result;
+  }
+
+  private async executeAction(action: RecoveryAction, context: RecoveryContext): Promise<{ success: boolean; error?: string }> {
     if (this.verbose) {
       console.log(`[RecoveryExecutor] Executing recovery action: ${action.type}`);
     }

@@ -13,6 +13,7 @@ import { PipelineConfig, PipelineResult, Stage, StageResult, ExecutorOptions, Pi
 import { PipelineConfigManager } from './config';
 import { StageExecutor, orderStages, areDependenciesMet } from './stages';
 import { RecoveryExecutor } from './recovery';
+import { recordConvergenceOutcome, recordStageOutcome } from './metrics-ledger';
 import { ConvergenceResult } from 'daemon.spec.dir/src/types.js';
 
 export class PipelineExecutor extends EventEmitter {
@@ -36,6 +37,15 @@ export class PipelineExecutor extends EventEmitter {
    */
   async execute(convergence?: ConvergenceResult): Promise<PipelineResult> {
     const startTime = Date.now();
+
+    // OBS-2: the convergence outcome that triggered this run is computed by the
+    // daemon and then only carried on the PipelineResult — i.e. discarded by
+    // every caller. Record it here, where the executor consumes it, so the
+    // /metrics ledger can count converged vs not_converged runs.
+    if (convergence) {
+      recordConvergenceOutcome(convergence.converged === false ? 'not_converged' : 'converged');
+    }
+
     const config = await this.configManager.load();
 
     // Validate config
@@ -120,6 +130,7 @@ export class PipelineExecutor extends EventEmitter {
               duration: 0,
             };
             stageResults.push(skippedResult);
+            recordStageOutcome(skippedResult.name, 'skipped', skippedResult.duration);
             completedStages.add(stage.name);
             continue;
           }
@@ -139,6 +150,9 @@ export class PipelineExecutor extends EventEmitter {
 
         const result = await this.stageExecutor.execute(stage, context, this.options.dryRun);
         stageResults.push(result);
+        // OBS-2: every completed StageResult is otherwise dropped once the
+        // pipeline returns; count it (+ its duration) for the /metrics ledger.
+        recordStageOutcome(result.name, result.success ? 'success' : 'failure', result.duration);
 
         if (result.success) {
           this.stageStates.set(stage.name, 'completed');
