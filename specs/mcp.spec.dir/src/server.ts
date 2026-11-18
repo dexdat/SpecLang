@@ -20,6 +20,7 @@ import { createSSEManager, SSEManager } from './sse.js';
 import type { MCPServerConfig } from './types.js';
 import { SearchToolHandler } from './tools/search.js';
 import { SpecsToolHandler } from './tools/specs.js';
+import { PROMETHEUS_CONTENT_TYPE, renderMetrics } from './metrics.js';
 
 // ============================================================================
 // MCP SERVER
@@ -215,11 +216,25 @@ export class MCPServer {
     app.get('/health', (req, res) => {
       res.json({ status: 'ok', mode: 'http' });
     });
+
+    // Prometheus scrape endpoint — public like /health (no auth): a scraper
+    // holds no MCP credentials, and the payload is host/process telemetry, not
+    // spec content. res.end() (not res.send()) keeps the Content-Type byte for
+    // byte: express's send() re-serialises the header and reorders the
+    // "version=0.0.4" parameter after the charset.
+    app.get('/metrics', (req, res) => {
+      const body = renderMetrics();
+      res.status(200);
+      res.set('Content-Type', PROMETHEUS_CONTENT_TYPE);
+      res.set('Content-Length', String(Buffer.byteLength(body)));
+      res.end(body);
+    });
     
     app.listen(httpPort, () => {
       console.error(`SpecLang MCP server running on http://localhost:${httpPort}`);
       console.error(`  MCP endpoint: http://localhost:${httpPort}/mcp`);
       console.error(`  Events endpoint: http://localhost:${httpPort}/events`);
+      console.error(`  Metrics endpoint: http://localhost:${httpPort}/metrics`);
     });
   }
   
