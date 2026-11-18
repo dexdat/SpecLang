@@ -1,0 +1,21 @@
+Generating spec index for ....
+Found 480 spec files
+(read-only: index computed in memory, _index.json not written)
+  - Specs: 471
+  - References: 1269
+  - Missing refs: 56
+  - Orphans: 183
+  - Cycles: 0
+  - WARNING: 56 missing reference targets!
+      @speclang/validation -> @speclang/validation/rules (children)
+      @speclang/validation -> @speclang/validation/tool (children)
+      @speclang/validation -> @speclang/validation/language-blocks (children)
+      @speclang/test-specs -> @speclang/test-specs/format.spec (children)
+      @speclang/test-specs -> @speclang/test-specs/examples.spec (children)
+      ... and 51 more
+=== Graph Statistics ===
+Nodes: 471
+Dependency edges: 687
+Dependent edges: 687
+Most dependencies: @speclang/ui (18)
+Most depended on: speclang/core (40)

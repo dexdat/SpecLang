@@ -1,0 +1,34 @@
+npm warn deprecated prebuild-install@7.1.3: No longer maintained. Please contact the author of the relevant native addon; alternatives are available.
+npm warn deprecated eslint@9.39.5: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+npm notice run speclang@1.0.0 postinstall
+npm notice run bash scripts/postinstall-lint-deps.sh && bash scripts/postinstall-ts-node.sh
+OK: better-sqlite3 native binding loads (SELECT 1 -> {"x":1})
+Setting up TS 6 side-by-side for typescript-eslint...
+  Copied TS 6 for parser
+  Copied TS 6 for eslint-plugin
+  Copied TS 6 for typescript-estree
+  Copied TS 6 for type-utils
+  Copied TS 6 for utils
+  Copied TS 6 for typescript-eslint
+  Copied TS 6 for ts-api-utils
+TS 6 side-by-side setup complete
+ts-node bin -> scripts/ts-node-classic.cjs (classic-API TypeScript 6)
+
+added 464 packages, and audited 465 packages in 7s
+
+122 packages are looking for funding
+  run `npm fund` for details
+
+35 vulnerabilities (15 moderate, 17 high, 3 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+npm warn install-scripts 1 package had install scripts blocked because they are not covered by allowScripts:
+npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.

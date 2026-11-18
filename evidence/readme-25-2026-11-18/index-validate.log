@@ -1,0 +1,46 @@
+Generating spec index for ....
+Found 480 spec files
+(read-only: index computed in memory, _index.json not written)
+  - Specs: 471
+  - References: 1269
+  - Missing refs: 56
+  - Orphans: 183
+  - Cycles: 0
+  - WARNING: 56 missing reference targets!
+      @speclang/validation -> @speclang/validation/rules (children)
+      @speclang/validation -> @speclang/validation/tool (children)
+      @speclang/validation -> @speclang/validation/language-blocks (children)
+      @speclang/test-specs -> @speclang/test-specs/format.spec (children)
+      @speclang/test-specs -> @speclang/test-specs/examples.spec (children)
+      ... and 51 more
+=== Index Validation ===
+Total specs: 480
+Total refs: 1269
+Missing refs: 56 (tolerance: 0)
+
+❌ 56 missing references exceed tolerance (0):
+  - @speclang/validation -> @speclang/validation/rules (children)
+  - @speclang/validation -> @speclang/validation/tool (children)
+  - @speclang/validation -> @speclang/validation/language-blocks (children)
+  - @speclang/test-specs -> @speclang/test-specs/format.spec (children)
+  - @speclang/test-specs -> @speclang/test-specs/examples.spec (children)
+  - @speclang/config -> @ref:speclang/config.spec.dir/schema (children)
+  - @speclang/config -> @ref:speclang/config.spec.dir/defaultsstatus: draft (children)
+  - @speclang/ui -> @speclang/ui/overview (children)
+  - @speclang/ui -> @speclang/ui/visual-design (children)
+  - @speclang/ui -> @speclang/ui/components/cascade-status (children)
+  ... and 46 more
+
+✅ No circular dependencies
+
+⚠️  Orphan specs (183) — warnings, not errors:
+  - @speclang/scripts-generate-validation-system
+  - @speclang/config-spec-dir/defaults
+  - @speclang/scripts.generate-opencode-plugin.py
+  - @specs/mcp/auth
+  - @speclang/cli-spec-dir/installation
+  - @speclang/scripts.generate-ralph-loop.py
+  - @speclang/cli-spec-dir/integration
+  - @speclang/auth/entities
+  - @specs/validation/rules/index
+  - @specs/mcp/index

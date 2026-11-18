@@ -1,0 +1,4799 @@
+Validation Report: @speclang/agent-behavior-matrix/matrix
+──────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/agent-behavior-matrix/transitions
+───────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/agent-behavior-matrix
+───────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/agent-behavior/behavior-matrix
+─────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/agent-behavior
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/index
+───────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/interceptor
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/agent-protocol/registry
+─────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/rules
+───────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/agent-protocol/sessions
+─────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/types
+───────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/violations
+────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/agent-protocol
+────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 15/15 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/agent-support-levels/behaviors
+────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/agent-support-levels/levels
+─────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/agent-support-levels
+──────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/agent-support
+───────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/agents/implementation
+────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/agents
+────────────────────────────────────
+✓ PASSED (confidence: 3.4)
+
+Checks:
+  ✓ Step-by-step descriptions: 700% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/api-spec-dir/openapi
+──────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/api-spec
+──────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 6/6 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/auth/entities
+───────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/auth/flows
+────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/auth
+──────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/autonomous-validation/rules
+─────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.05)
+
+Checks:
+  ✓ Step-by-step descriptions: 114% coverage
+  ✓ References: 17/17 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/autonomous-validation/scoring
+───────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/autonomous-validation
+───────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/autonomous
+─────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+    - tags
+    - short
+
+Validation Report: @speclang/bootstrap/execution
+─────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/bootstrap/phases
+──────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/bootstrap
+───────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 7/7 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @bugs/integration-test-template
+───────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @bugs/cascade-generates-zero-files
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @bugs/cli-missing-generate-command
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/bugs
+──────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/cascade-protocol/events
+─────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/cascade-protocol/flow
+───────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/cascade-protocol
+──────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/cascade/continuous-improvement
+────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 7/7 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/cascade/convergence
+─────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/cascade/error-handling
+────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 6/6 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/cascade/implementation
+─────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/cascade/provider-adapter
+───────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/cascade/triggers
+──────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/cascade
+─────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 7/7 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/ci
+────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/cli-spec-dir/check-command
+────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.8)
+
+Checks:
+  ✓ Step-by-step descriptions: 300% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/cli-spec-dir/commands
+───────────────────────────────────────────────────
+✓ PASSED (confidence: 0.91)
+
+Checks:
+  ✗ Step-by-step descriptions: 77% coverage
+    - Operation block cli/format has no step-by-step description
+    - Operation block cli/search has no step-by-step description
+    - Operation block cli/graph has no step-by-step description
+    - Operation block cli/cascade has no step-by-step description
+    - Operation block cli/errors has no step-by-step description
+    - Operation block cli/messages has no step-by-step description
+    - Operation block cli/agents has no step-by-step description
+    - Operation block cli/monitor has no step-by-step description
+    - Operation block cli/help has no step-by-step description
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/cli-spec-dir/configuration
+────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/cli-spec-dir/exit-codes
+─────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/cli-spec-dir/global-options
+─────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/cli-spec-dir/installation
+───────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/cli-spec-dir/integration
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/cli-spec-dir/interactive-mode
+───────────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.6)
+
+Checks:
+  ✗ Step-by-step descriptions: 0% coverage
+    - Operation block cli/interactive has no step-by-step description
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/cli-spec-dir/output-formats
+─────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/cli-spec-dir/search-command
+─────────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.6)
+
+Checks:
+  ✗ Step-by-step descriptions: 0% coverage
+    - Operation block cli/search has no step-by-step description
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/cli-spec
+──────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 8/8 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/codegen
+──────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/compiler-spec-dir/go
+──────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/compiler
+───────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/compiler-spec-dir/phases
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.17)
+
+Checks:
+  ✓ Step-by-step descriptions: 143% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/compiler-spec-dir/python
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/compiler/phases
+──────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/compiler-spec-dir/targets
+───────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/compiler-spec-dir/templates
+─────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/compiler
+──────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 12/12 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/compliance
+────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/config-spec-dir/defaults
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/config-spec-dir/schema
+────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/config/impl
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/config
+────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/convergence/detection
+───────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/convergence/triggers
+──────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/convergence
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/core/agents
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/core/cascade
+──────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/core/concurrency
+──────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/core/entities
+───────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 7/7 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/core/file-types
+─────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/core/skills
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/core
+──────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 18/18 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/daemon/architecture
+─────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/daemon/convergence
+────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/daemon/events
+───────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/daemon/routing
+────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/daemon/rust
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/daemon
+────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 8/8 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/dashboard
+────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @demo/hello-dir
+───────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/deployment/enterprise
+───────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/deployment/light
+──────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/deployment
+────────────────────────────────────────
+✓ PASSED (confidence: 1.2)
+
+Checks:
+  ✓ Step-by-step descriptions: 150% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/directory-structure/creation
+──────────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.72)
+
+Checks:
+  ✗ Step-by-step descriptions: 29% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/directory-structure/pattern
+─────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/directory-structure
+─────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/directory
+────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+    - tags
+    - short
+
+Validation Report: @specs/docs/dogfooding
+──────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+    - short
+
+Validation Report: @specs/docs/changelog
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/docs/layers
+──────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+    - short
+
+Validation Report: @specs/docs
+───────────────────────────────
+✓ PASSED (confidence: 3.7)
+
+Checks:
+  ✓ Step-by-step descriptions: 800% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/dynamic-split/strategy
+────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.8)
+
+Checks:
+  ✗ Step-by-step descriptions: 76% coverage
+  ✓ References: 11/11 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/dynamic-split/token-budget
+────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/dynamic-split
+───────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @examples/greeting-dir
+──────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/examples/api
+──────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/examples/auth
+────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/examples/auth
+───────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/examples/crud-app
+────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/examples/hello-world
+───────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/examples-spec-dir/hello-world-cascade
+───────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.11)
+
+Checks:
+  ✓ Step-by-step descriptions: 129% coverage
+  ✓ References: 11/11 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/examples/hello-world
+──────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/examples-spec
+───────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 8/8 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/executor/execution
+────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/executor/scheduling
+─────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/executor
+──────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/external-methodologies/adoption-patterns
+──────────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/external-methodologies/bmad-comparison
+────────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 8/8 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/external-methodologies/recommendations
+────────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 21/21 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/external-methodologies
+────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 6/6 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/file-naming/extensions
+────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/file-naming/patterns
+──────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/file-naming
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/git-history/commits
+─────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/git-history/rollback
+──────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/git-history
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/go
+────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @examples/greeting
+──────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @specs/guard
+────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/header
+────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/headers
+─────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @demo/hello
+───────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/hooks/handlers
+────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/hooks/lifecycle
+─────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/hooks
+───────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/implementation-path
+─────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 38/38 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/implementation-checklist
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @codegen/go
+───────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @codegen/typescript
+───────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/implementation-codegen
+────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/implementation-meta-circular
+──────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/implementation-parser
+───────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/implementation-phases
+───────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/implementation-ralph-loop
+───────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/implementation-sqlite-db
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/implementation-sqlite-schema
+──────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @tests/ui-dashboard
+───────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @implementation/ui-dashboard
+────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/implementation-validation-system
+──────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/implementation
+────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/index/tools
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/indexer
+──────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/ipc/channels
+──────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/ipc/messages
+──────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/ipc
+─────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/layer-definitions/abstraction
+───────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/layer-definitions/examples
+────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 11/11 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/layer-definitions
+───────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/layer
+───────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/lenses/code
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/lenses/entity
+───────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/lenses/formats
+────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/lenses
+─────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/lenses/mermaid
+────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/lenses/operation
+──────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/lenses/prose
+──────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/lenses
+────────────────────────────────────
+✓ PASSED (confidence: 0.92)
+
+Checks:
+  ✓ Step-by-step descriptions: 80% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/locks/management
+──────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/locks/types
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/locks
+───────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/lsp
+─────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/mapper
+────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/maturity/levels/alpha
+───────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/maturity/levels/beta
+──────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/maturity/levels/mvp
+─────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/maturity/levels/production
+────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/maturity/validation
+──────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/maturity
+───────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+    - tags
+    - short
+
+Validation Report: @speclang/mcp-daemon/architecture
+─────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/mcp-daemon/config
+───────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/mcp-daemon
+────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/mcp-ui-tools/tools
+────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/mcp-ui-tools/ui
+─────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/mcp-ui-tools
+──────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/mcp-architecture
+──────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @specs/mcp/auth
+───────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/mcp-authentication
+────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/mcp-cli
+─────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/mcp/config
+─────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/mcp-configuration
+───────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/mcp-error-handling
+────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @specs/mcp-guide
+────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/mcp/tools/handlers
+─────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/mcp/index
+────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/mcp/messages
+──────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 6/6 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/mcp-openapi-generation-cli
+────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/mcp/openapi-generation
+────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/mcp-openapi-generation-tests
+──────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/mcp-overview
+──────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 9/9 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/mcp-run-modes
+───────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @specs/mcp/server
+─────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/mcp/config/index
+───────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/mcp/errors/index
+───────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/mcp-sse-stream
+────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @specs/mcp/sse
+──────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/mcp-tools-commands
+────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/mcp-tools-locks
+─────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/mcp-tools-search
+──────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/mcp-tools-specs
+─────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @specs/mcp/tools
+────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/mcp/types
+────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/mcp
+─────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 15/15 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/meta
+───────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/migrations
+────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/opencode-plugin-spec-dir/architecture
+───────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/opencode-plugin-spec-dir/checklist
+────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/opencode-plugin-spec-dir/configuration
+────────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/opencode-plugin-spec-dir/convergence
+──────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/opencode-plugin-spec-dir/error-handling
+─────────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/opencode-plugin-spec-dir/event-system
+───────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/opencode-plugin-spec-dir/git-integration
+──────────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/opencode-plugin-spec-dir/mcp-client
+─────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/opencode-plugin-spec-dir/overview
+───────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/opencode-plugin-spec-dir/ownership-guard
+──────────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/opencode-plugin-spec-dir/plugin-lifecycle
+───────────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/opencode-plugin-spec-dir/session-manager
+──────────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/opencode-plugin-spec-dir/tools
+────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/opencode-plugin
+─────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 26/26 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/opencode/events
+─────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/opencode/integration
+──────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/opencode
+──────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/ownership
+───────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/parser/index
+──────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/parser/parsing
+────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/parser/validation
+───────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 6/6 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/parser
+────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/performance
+──────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/pipeline-spec-dir/build-yaml-spec
+───────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/pipeline/build
+────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/pipeline/hooks
+────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @specs/pipeline
+───────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/pipeline/recovery
+───────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/pipeline
+──────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 6/6 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/project-layout/conventions
+────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/project-layout/structure
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.88)
+
+Checks:
+  ✗ Step-by-step descriptions: 71% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/project-layout
+────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/project-maturity-levels/criteria
+──────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/project-maturity-levels/depth-requirements
+────────────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/project-maturity-levels/levels
+────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/project-maturity-levels
+─────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 8/8 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/project-maturity
+──────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @northstar/speclang
+───────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 24/24 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/python
+────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/ralph-loop/state
+──────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/ralph-loop/workflow
+─────────────────────────────────────────────────
+✓ PASSED (confidence: 0.97)
+
+Checks:
+  ✓ Step-by-step descriptions: 92% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/ralph-loop
+────────────────────────────────────────
+✓ PASSED (confidence: 0.97)
+
+Checks:
+  ✓ Step-by-step descriptions: 92% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/ralph
+────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+    - tags
+    - short
+
+Validation Report: @speclang/recovery/retry
+────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/recovery/rollback
+───────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/recovery
+──────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/registry/lookup
+─────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/registry/storage
+──────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/registry
+──────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/roadmap/alpha
+───────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/roadmap/beta
+──────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/roadmap/mvp
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/roadmap/poc-audit
+───────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc-vs-mvp
+────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/block-parser
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/build-integration
+───────────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/cli
+─────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/code-generation
+─────────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/code-generator
+────────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/config-loader
+───────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/convergence
+─────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/database
+──────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/demo-workflow
+───────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/error-handling
+────────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/event-routing
+───────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/events
+────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/file-watcher
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/header-parser
+───────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/installation
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/integration
+─────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/package-json
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/path-utils
+────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/poc-daemon
+────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/simple-agent
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/template-registry
+───────────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/templates
+───────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/tests
+───────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/troubleshooting
+─────────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/tsconfig-json
+───────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/types
+───────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc/user-flows
+────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/roadmap/poc
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 71/71 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/roadmap/production
+────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/roadmap
+─────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/router/agents
+───────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/router/routing
+────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/router
+────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/rust
+──────────────────────────────────
+✓ PASSED (confidence: 0.95)
+
+Checks:
+  ✓ Step-by-step descriptions: 88% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/safety-confidence/confidence-scorer
+──────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/safety-confidence
+────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/safety-detection
+───────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/safety-nets/analysis
+──────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/safety-nets/fallback
+──────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/safety-nets
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 6/6 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/safety/detection
+───────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/safety/fallback
+──────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/safety/notification
+──────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/safety/peer-review
+─────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/safety/quarantine
+────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/safety/types
+───────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/safety
+─────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts.add-missing-fields.py
+───────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-add-missing-fields
+────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts.analyze-completeness.py
+─────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-analyze-completeness
+──────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 6/6 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts/check-compliance
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+    - short
+
+Validation Report: @speclang/scripts-cleanup-temp
+──────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts.compute-header-lines.py
+─────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-compute-header-lines
+──────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts.fallback-protocol.py
+──────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-fallback-protocol
+───────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 6/6 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts.fix-headers.py
+────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-fix-headers
+─────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts.generate-from-spec.py
+───────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-generate-from-spec
+────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 6/6 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts.generate-index.py
+───────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-generate-index
+────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts.generate-mcp-server.py
+────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-generate-mcp-server
+─────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts.generate-opencode-plugin.py
+─────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-generate-opencode-plugin
+──────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts.generate-ralph-loop.py
+────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-generate-ralph-loop
+─────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts.generate-sqlite-schema.py
+───────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-generate-sqlite-schema
+────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts.generate-todo.py
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-generate-todo
+───────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts.generate-validation-system.py
+───────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-generate-validation-system
+────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts/generate
+──────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts/generate-index
+────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+    - short
+
+Validation Report: @speclang/scripts.hard-checks.py
+────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-hard-checks
+─────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts/integration-test
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts.packaging.py
+──────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts/packaging
+───────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+    - short
+
+Validation Report: @speclang/scripts-packaging
+───────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts.rename-spec-files.py
+──────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-rename-spec-files
+───────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-run-all-checks
+────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts/symlink-manager
+─────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+    - short
+
+Validation Report: @speclang/scripts.validate-autonomous.py
+────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-validate-autonomous
+─────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts.validate-refs.py
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-validate-refs
+───────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 18/18 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-validate-specs
+────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts/validate
+──────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts/validate-refs
+───────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts.verify-system.py
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts-verify-system
+───────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/scripts
+─────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/search/indexing
+─────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/search/queries
+────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/search
+────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/semantic-definitions/layer-mapping
+────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/semantic-definitions/project-levels
+─────────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/semantic-definitions
+──────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/server
+────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/session
+─────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/skills/code-gen
+─────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/skills/spec-writer
+────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/skills/test-writer
+────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/skills
+────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/spec-format/blocks
+────────────────────────────────────────────────
+✓ PASSED (confidence: 0.92)
+
+Checks:
+  ✓ Step-by-step descriptions: 80% coverage
+  ✓ References: 18/18 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/spec-format/structure
+───────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 8/8 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/spec-format
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/ui-visual-design
+──────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/speclang
+──────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/speclang/db
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/speclang/parser
+─────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/speclangd
+───────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @specs/speclangd-ts
+───────────────────────────────────────
+✓ PASSED (confidence: 1.83)
+
+Checks:
+  ✓ Step-by-step descriptions: 333% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+
+Validation Report: @speclang/specs
+───────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/split
+────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/sqlite/fts
+────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/sqlite/graph
+──────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/sqlite/migrations
+───────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/sqlite/schema
+───────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/sqlite/search
+───────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/sqlite/types
+──────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/sqlite/vectors
+────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/sqlite
+────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 8/8 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/sse
+─────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/stages
+────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/state
+───────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/stdlib/USAGE
+──────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/stdlib/mapping
+────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/stdlib/types
+──────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/stdlib
+────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 4/4 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/symlinks/creation
+───────────────────────────────────────────────
+✓ PASSED (confidence: 1.03)
+
+Checks:
+  ✓ Step-by-step descriptions: 108% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/symlinks
+───────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/symlinks/verification
+───────────────────────────────────────────────────
+✓ PASSED (confidence: 1.1)
+
+Checks:
+  ✓ Step-by-step descriptions: 125% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/symlinks
+──────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @northstar
+──────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - project_level
+    - agent_support
+    - short
+
+Validation Report: @speclang/templates
+───────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/test-specs/examples
+─────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 6/6 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/test-specs/format
+───────────────────────────────────────────────
+✓ PASSED (confidence: 1.07)
+
+Checks:
+  ✓ Step-by-step descriptions: 117% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/test-specs
+────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/testing-strategy
+──────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/tools/api
+───────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/tools/implementations
+───────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/tools
+───────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/transition-workflows/downgrade
+────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/transition-workflows/upgrade
+──────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 5/5 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/transition-workflows
+──────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 11/11 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/transition
+─────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 8/8 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/tutorial
+──────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/typescript
+────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/ui-dashboard/interactions
+───────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/ui-dashboard/testing
+──────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/ui-dashboard/visual-design
+────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/ui-dashboard
+──────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/ui-app
+────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/ui-components-agent-health
+────────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/ui-components-cascade-graph
+─────────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/ui-components-cascade-status
+──────────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/ui-components-control-panel
+─────────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/ui-components-event-timeline
+──────────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/ui-components-log-viewer
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/ui-components-queue-depth
+───────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/ui-components-system-metrics
+──────────────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/ui-index
+──────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/ui-interactions
+─────────────────────────────────────────────
+✓ PASSED (confidence: 0.84)
+
+Checks:
+  ✓ Step-by-step descriptions: 86% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/ui-overview
+─────────────────────────────────────────
+✓ PASSED (confidence: 4.1)
+
+Checks:
+  ✓ Step-by-step descriptions: 900% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/ui-state-management
+─────────────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 1/1 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/ui-testing
+────────────────────────────────────────
+✓ PASSED (confidence: 0.9)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✗ Metadata: Missing fields
+    - short
+
+Validation Report: @speclang/ui
+────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/validation-tool/api
+─────────────────────────────────────────────────
+✓ PASSED (confidence: 0.95)
+
+Checks:
+  ✓ Step-by-step descriptions: 87% coverage
+  ✓ References: 7/7 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/validation-tool/implementation
+────────────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/validation-tool
+─────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/validation/cli
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/validation/engine
+────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/validation/index
+───────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/validation/reporter
+──────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/validation/rules/autonomous
+──────────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/validation/rules/blocks
+──────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/validation/rules/header
+──────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/validation/rules/id
+──────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/validation/rules/index
+─────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/validation/rules/refs
+────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 2/2 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/validation/types
+───────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/validation
+────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/validator
+───────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/watcher
+─────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/workflow/daily-use
+────────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/workflow/examples
+───────────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @specs/workflow
+───────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/workflow/setup
+────────────────────────────────────────────
+✓ PASSED (confidence: 0.92)
+
+Checks:
+  ✓ Step-by-step descriptions: 80% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/workflow
+──────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/writer
+────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 0/0 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+
+Validation Report: @speclang/yaml-schema
+─────────────────────────────────────────
+✓ PASSED (confidence: 1.0)
+
+Checks:
+  ✓ Step-by-step descriptions: 100% coverage
+  ✓ References: 3/3 resolved
+  ✓ Ambiguity: 0 ambiguous terms
+  ✓ Metadata: All fields present
+

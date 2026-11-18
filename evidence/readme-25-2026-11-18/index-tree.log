@@ -1,0 +1,54 @@
+Generating spec index for ....
+Found 480 spec files
+(read-only: index computed in memory, _index.json not written)
+  - Specs: 471
+  - References: 1269
+  - Missing refs: 56
+  - Orphans: 183
+  - Cycles: 0
+  - WARNING: 56 missing reference targets!
+      @speclang/validation -> @speclang/validation/rules (children)
+      @speclang/validation -> @speclang/validation/tool (children)
+      @speclang/validation -> @speclang/validation/language-blocks (children)
+      @speclang/test-specs -> @speclang/test-specs/format.spec (children)
+      @speclang/test-specs -> @speclang/test-specs/examples.spec (children)
+      ... and 51 more
+=== Dependency Tree for @speclang/ui ===
+
+Depends on (18):
+  └─ speclang/ui/visual-design
+  └─ speclang/mcp
+  └─ speclang/ui/components/log-viewer
+  └─ speclang/ui/components/control-panel
+  └─ speclang/ui/components/queue-depth
+  └─ speclang/ui/state-management
+  └─ speclang/mcp-ui-tools
+  └─ speclang/ui/components/event-timeline
+  └─ speclang/ui/testing
+  └─ speclang/ui/components/agent-health
+  └─ speclang/ui/interactions
+  └─ speclang/sqlite
+  └─ speclang/ui/overview
+  └─ speclang/ui/components/cascade-status
+  └─ speclang/ui/components/system-metrics
+  └─ speclang/agent-protocol
+  └─ speclang/cascade
+  └─ speclang/ui/components/cascade-graph
+
+Depended on by (16):
+  └─ @speclang/ui-app
+  └─ @speclang/ui-visual-design
+  └─ @speclang/ui-index
+  └─ @speclang/ui-testing
+  └─ @speclang/ui-components-control-panel
+  └─ @speclang/ui-interactions
+  └─ @speclang/ui-components-agent-health
+  └─ @speclang/ui-components-queue-depth
+  └─ @speclang/ui-state-management
+  └─ @speclang/ui-components-cascade-status
+  └─ @speclang/mcp-ui-tools/ui
+  └─ @speclang/ui-components-system-metrics
+  └─ @speclang/ui-components-event-timeline
+  └─ @speclang/ui-components-log-viewer
+  └─ @speclang/ui-overview
+  └─ @speclang/ui-components-cascade-graph

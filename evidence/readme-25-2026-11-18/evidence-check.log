@@ -1,0 +1,54 @@
+PASS: Agent Roles section byte-identical to measurement base
+PASS: no stale or newly pinned suite/file totals in README
+PASS: tracked diff restricted to README.md and this task's evidence
+PASS: README evidence links resolve
+README bytes: 38165; level-two headings: 15
+Autonomous reports: 464
+Autonomous PASSED: 464
+Autonomous FAILED: 0
+tests summary:
+Test Files  4 failed | 118 passed | 4 skipped (126)
+Tests  17 failed | 2005 passed | 58 skipped (2080)
+Duration  481.58s (transform 9.80s, setup 2.13s, import 11.02s, tests 1180.60s, environment 10ms)
+integration summary:
+Test Files  3 passed (3)
+Tests  22 passed (22)
+Duration  2.86s (transform 77ms, setup 58ms, import 60ms, tests 1.88s, environment 0ms)
+e2e summary:
+Test Files  1 passed (1)
+Tests  9 passed (9)
+Duration  2.04s (transform 44ms, setup 32ms, import 27ms, tests 1.85s, environment 0ms)
+db-filter summary:
+Test Files  4 failed | 5 passed (9)
+Tests  24 failed | 63 passed (87)
+Duration  426.81s (transform 1.64s, setup 632ms, import 1.54s, tests 977.46s, environment 1ms)
+Recorded command exit codes:
+environment: 0 — pwd; git rev-parse HEAD; git branch --show-current; git status --short; date --iso-8601=seconds; node --version; npm --version; python3 --version
+install: 0 — npm ci
+sqlite-binding: 0 — npm run check:sqlite-binding
+validate-refs: 0 — python3 scripts/validate_refs.py
+validate-autonomous: 0 — python3 scripts/validate_autonomous.py --project
+typecheck: 0 — npx tsc --noEmit
+tests: 1 — npm test
+integration: 0 — npm test -- tests/e2e/spec-to-code.test.ts tests/poc-e2e.test.ts tests/dashboard/integration/git-integration.test.tsx
+e2e: 0 — npm test -- tests/e2e
+db-filter: 1 — npm test -- tests/db
+test-inventory: 0 — npx vitest list --filesOnly
+index-entries: 0 — jq '.specs | length' _index.json
+index-graph: 0 — python3 scripts/generate_index.py --graph
+index-validate: 1 — python3 scripts/generate_index.py --validate
+lint: 0 — npm run lint
+final-status: 0 — git status --short; git diff --name-only; git diff --exit-code -- _index.json package.json package-lock.json vitest.config.ts tests .coding-hermes .gitreins .opencode/agents
+index-hashes: 0 — git hash-object _index.json && git rev-parse HEAD:_index.json
+saved-index-entries: 0 — jq '.specs | length' _index.json
+saved-validate-refs: 0 — python3 scripts/validate_refs.py
+saved-validate-autonomous: 0 — python3 scripts/validate_autonomous.py --project
+index-tree: 0 — python3 scripts/generate_index.py --tree @speclang/ui
+index-impact: 0 — python3 scripts/generate_index.py --impact speclang/core
+compliance: 0 — python3 scripts/check_compliance.py --report
+tracked-dist: 0 — git ls-files dist | wc -l
+build: 0 — npm run build
+typecheck-final: 0 — npx tsc --noEmit
+scope-final: 0 — git status --short; git diff --check && git diff --exit-code -- _index.json package.json package-lock.json vitest.config.ts tests .coding-hermes .gitreins .opencode/agents
+Total command invocations: 27
+Exit-code distribution: {0: 24, 1: 3}
