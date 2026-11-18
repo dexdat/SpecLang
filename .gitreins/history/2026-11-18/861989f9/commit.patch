@@ -1,0 +1,99 @@
+commit 21a2e3d585327e6c8d029c478aee1765bcea5d92
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 19:06:43 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 19:09:09 2026 -0500
+
+    docs(readme): README-23 — generate/cascade examples match observed output
+    
+    Corrected the "Run a Mini Cascade" CLI examples against a live run in a clean
+    worktree (npm install, then npm run build):
+    
+      ./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run
+      -> exit 0; Mode: DRY RUN; Files written: 0; Would generate:
+         src/generated/hello-world.spec-hello-function.ts; nothing created on disk.
+    
+      ./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md
+      -> exit 0; Mode: LIVE; Files written: 1;
+         src/generated/hello-world.spec-hello-function.ts.
+    
+      ./bin/speclang generate ... --output-dir /tmp/... -> writes there instead (exit 0).
+    
+      ./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md
+      -> exit 0; "Cascade complete / Generated: 1 files / Converged: Yes";
+         find specs/generated -> specs/generated/hello/function.ts (1 file).
+         Prints that path ABSOLUTE, not relative.
+    
+    What changed, all inside the generate/cascade example region:
+    
+    - Documented the build prerequisite: `generate` runs from bin/, `cascade` loads
+      the compiled engine, so an unbuilt clone (npm install only) exits 1 with
+      "SpecLang not built. Run: npm run build" — verified in this worktree before
+      building.
+    - The dry-run example now states it writes nothing and shows the observed
+      `Mode: DRY RUN / Files written: 0` pair, plus the same command without
+      --dry-run writing 1 file.
+    - The cascade output line is annotated as an absolute path under the repo root.
+    - Output-locations block: the per-spec sub-path comes from the block id
+      (`@block::hello/function` -> hello/function.ts), verified by probing a spec at
+      specs/deep/nested/bar.spec.md -> specs/deep/generated/bar/function.ts; and both
+      output trees are gitignored (`generated/` in .gitignore), so running the
+      examples leaves `git status` clean.
+    
+    The rest of the row's premise was already correct at this tip: the README showed
+    specs/generated/hello/function.ts for cascade and src/generated/... for generate,
+    `cascade` has no --dry-run flag (checked with cascade --help), and no
+    "dry-run by default" wording survives anywhere in README/docs.
+    
+    Gates: npx vitest run tests/npm12-remedy-doc.test.ts -> 5 passed (the only
+    README-content test). No test pins this region. Generated trees moved out of the
+    worktree; commit touches README.md only.
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+---
+ README.md | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/README.md b/README.md
+index 30cd3874..6db88048 100644
+--- a/README.md
++++ b/README.md
+@@ -413,27 +413,33 @@ python3 scripts/generate_index.py --graph                  # graph stats (nodes,
+ 
+ The cascade has two entry points — a plain CLI that works in any terminal, and OpenCode agent commands (chat syntax, not shell commands).
+ 
+-**CLI (works in any terminal):**
++**CLI (works in any terminal).** `generate` runs straight from `bin/`; `cascade` loads the engine from
++the compiled `dist/`, so build once first — on a clone that has only had `npm install`, `cascade`
++stops at `❌ SpecLang not built. Run: npm run build`.
+ 
+ ```bash
+-# 1. Dry run — confirm the spec's TypeScript block is found
++# 1. Dry run — confirm the spec's TypeScript block is found. Writes NOTHING.
+ ./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run
+-# Output: Would generate: src/generated/hello-world.spec-hello-function.ts
++# Output: Mode: DRY RUN / Files written: 0
++#   📁 Would generate: src/generated/hello-world.spec-hello-function.ts
++# Drop --dry-run to write it for real (Mode: LIVE, Files written: 1, same path).
+ 
+ # 2. Run the cascade — it WRITES files; `cascade` has no --dry-run flag
+ ./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md
+ # Output: ✅ Cascade complete / Generated: 1 files / Converged: Yes
+-#   - specs/generated/hello/function.ts
++#   - specs/generated/hello/function.ts   (printed as an absolute path under the repo root)
+ ```
+ 
+ > **Output locations** — `cascade` and `generate` write to **different output trees, by design**:
+ > - `./bin/speclang cascade <spec>` is spec-relative, by one rule: `<directory containing the spec>/../generated/`.
+ >   E.g. `cascade specs/examples.spec.dir/hello-world.spec.md` → `specs/generated/hello/function.ts`;
+ >   a spec sitting directly in `specs/` (e.g. `specs/foo.spec.md`) → `<project root>/generated/foo/function.ts`.
++>   The sub-path and file name come from the block id (`@block::hello/function` → `hello/function.ts`).
+ > - `./bin/speclang generate <spec>` defaults to `src/generated/` (e.g.
+ >   `src/generated/hello-world.spec-hello-function.ts`) and accepts `--output-dir <dir>` to override.
+ > - **Which is canonical?** `specs/` is the source of truth; both `specs/generated/` and
+->   `src/generated/` are generated artifacts in the working tree (dual-view pattern). Use
++>   `src/generated/` are generated artifacts in the working tree (dual-view pattern, and both are
++>   gitignored — `generated/` in `.gitignore`, so running these examples leaves `git status` clean). Use
+ >   `cascade` output when iterating on a spec — it stays next to the spec it came from. Use
+ >   `generate --output-dir` when you need code in a specific location such as `src/`.
+ 
