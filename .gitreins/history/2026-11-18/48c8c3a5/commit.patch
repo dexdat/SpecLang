@@ -1,0 +1,1414 @@
+commit 0bfc57b79e3591d0e54c88b8baeaf9715423ee03
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 22:00:22 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 22:00:22 2026 -0500
+
+    feat: wire pipeline StageResult/recovery/convergence outcomes into /metrics counters. Addresses OBS-2.
+    
+    OBS-1 gave SpecLang a Prometheus scrape surface; OBS-2 makes that surface tell
+    the truth about the compile loop. The pipeline executor, the recovery executor
+    and the daemon that drives them run in a DIFFERENT process from the MCP HTTP
+    server that answers GET /metrics, so an in-memory counter can never show a delta
+    across that boundary. The outcomes those producers compute are persisted to a
+    small JSON ledger and merged into the scrape at render time.
+    
+    Ledger design (specs/pipeline.spec.dir/src/metrics-ledger.ts):
+    - path: $SPECLANG_METRICS_LEDGER, else <cwd>/.speclang/metrics-outcomes.json, so
+      a daemon and a scraper sharing a project directory share the ledger with no
+      extra wiring;
+    - atomic: temp file in the same directory + rename, so a scrape running
+      concurrently with a producer sees the old snapshot or the new one, never a
+      torn file;
+    - crash tolerant: a missing, unparsable or wrongly shaped file reads as the
+      empty ledger (counters clamped to finite non-negative numbers, unknown keys
+      dropped) — never an exception, never a fabricated count;
+    - monotonic: read-modify-write with a non-negative delta per observation, so
+      counters only ever increase;
+    - side-effect only: an unwritable ledger path makes the recorder return false;
+      it never throws and never changes pipeline control flow. A test runs a real
+      pipeline against an unwritable path and asserts the stages still complete;
+    - series keys encode the label set as sorted, backslash-escaped k=v pairs, so
+      the on-disk shape stays flat and diffable.
+    
+    Families (declared unconditionally, so a fresh install — and the acceptance
+    grep — still sees HELP/TYPE before anything has run):
+    speclang_pipeline_stage_results_total{stage,status},
+    speclang_pipeline_recovery_total{outcome},
+    speclang_pipeline_convergence_total{outcome}, and the
+    speclang_pipeline_stage_duration_seconds{stage} gauge. Label values are stage
+    names plus three fixed vocabularies, so cardinality stays bounded.
+    
+    Instrumentation sites: PipelineExecutor.execute() records every completed
+    StageResult (success/failure), every condition-skipped stage, and the
+    ConvergenceResult it was invoked with; RecoveryExecutor.execute() records each
+    action outcome (executeAll routes through it). execute() is now a thin wrapper
+    over the previous body (renamed executeAction) purely to give the recording one
+    seam — the action implementations are untouched.
+    
+    Bare `node bin/speclang cascade` cannot demonstrate this, and it was NOT faked
+    by counting help text: `cascade` is a commander command group — `speclang
+    cascade` with no <spec> prints usage, and the group only declares
+    status/trigger/abort. Nothing in bin/speclang, src/cli/*.ts or
+    src/cli/commands/*.ts references PipelineExecutor, so no CLI subcommand reaches
+    the producers. The acceptance run therefore drives the real compiled
+    PipelineExecutor (the same class the daemon calls on convergence) in its own
+    process against a scratch project, and reads the delta off a separately started
+    MCP server: 0 -> 4 -> 8 stage results, 0 -> 2 -> 4 recovery outcomes, 0 -> 1 -> 2
+    convergence outcomes, plus the stage-duration gauge. docs/observability-spec.md
+    section 9 records the families, the ledger format and the exact commands.
+    
+    Found while running that demonstration, deliberately NOT fixed here (separate
+    row): the daemon's dynamic import of the executor tries
+    '../../pipeline.spec.dir/src/executor.js' and
+    '../../specs/pipeline.spec.dir/src/executor.js', but the pipeline compiles to
+    dist/src/pipeline/, so a real `speclang start` cascade ends with
+    'Pipeline execution error ... Cannot find module
+    <repo>/dist/specs/pipeline.spec.dir/src/executor.js' and the pipeline never
+    runs. That pre-existing loader path bug is unchanged by this commit.
+    
+    Gates: npm run build exit 0; npx tsc --noEmit exit 0; focused
+    tests/mcp/metrics.test.ts + tests/mcp/pipeline-metrics.test.ts 27 passed
+    (2 files); full suite 122 passed | 4 skipped (126 files), 2022 passed |
+    58 skipped (2080 tests).
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+---
+ docs/observability-spec.md                    | 422 ++++++++++++++++++++++++++
+ specs/mcp.spec.dir/src/metrics.ts             |  94 +++++-
+ specs/pipeline.spec.dir/src/executor.ts       |  14 +
+ specs/pipeline.spec.dir/src/index.ts          |  16 +
+ specs/pipeline.spec.dir/src/metrics-ledger.ts | 289 ++++++++++++++++++
+ specs/pipeline.spec.dir/src/recovery.ts       |  12 +
+ src/pipeline/metrics-ledger.ts                |   1 +
+ tests/mcp/pipeline-metrics.test.ts            | 358 ++++++++++++++++++++++
+ 8 files changed, 1203 insertions(+), 3 deletions(-)
+
+diff --git a/docs/observability-spec.md b/docs/observability-spec.md
+new file mode 100644
+index 00000000..9550a7e5
+--- /dev/null
++++ b/docs/observability-spec.md
+@@ -0,0 +1,422 @@
++# SpecLang observability spec
++
++Status: proposed (audit 2026-11-03). Owner lane: `monitoring`.
++Repo audit point: `dexdat/SpecLang` @ `88b6023d80858500538651ebfef5696ffc785533`.
++This document specifies what SpecLang must emit, not what it emits today.
++
++---
++
++## 1. What SpecLang is, and what "healthy" means
++
++SpecLang is a **spec compiler**: a spec tree (`specs/*.spec.md`) is the source of
++truth, and the product's job is to turn specs into working code, tests and index
++artifacts, then report on the health of that tree.
++
++It has four runtime shapes, and each has a different health question:
++
++| Shape | Entry point | Long-lived? | Health question |
++|---|---|---|---|
++| `speclangd` watcher daemon | `bin/speclangd` → `dist/src/daemon/daemon.js` (`src/daemon/daemon.ts:28`) | yes (background, pid + log in `.speclang/`) | is it watching, and did the last cascade + pipeline converge? |
++| `speclang start` dashboard/MCP daemon | `bin/speclang:40` → `dist/src/daemon/index.js` | yes (HTTP) | is the dashboard up, is the watcher armed |
++| MCP HTTP server | `src/cli/commands/server.ts:36` → `MCPServer.startHTTP` (`src/mcp/server.ts:77`) | yes (HTTP, `app.listen` at `src/mcp/server.ts:219`) | serving MCP + SSE clients on the port |
++| CLI lanes (`validate`, `cascade`, `generate`, `guard`, `index`, `meta`, `autonomous`) | `src/cli/index.ts:34+` | **no** — process exits | did the run succeed, how long did it take, what did it produce |
++
++**Healthy** means:
++
++1. the daemon process is alive and its watcher is armed (state `idle`, not stuck in `cascading` / `crashed`);
++2. cascades started are finishing — the convergence-to-pipeline loop drains, it does not pile up;
++3. the compile/pipeline success ratio stays near 1.0 and a failure is always attributable to a named stage;
++4. spec validation passes on the tree (`validate` exit 0, failures 0);
++5. the generated-artifact surface does not shrink or churn unexpectedly;
++6. the guard blocks nothing that the owning agent needed to write.
++
++## 2. Current state — proven, with citations
++
++**Verdict before this spec: NONE.** SpecLang has no scrape surface at all.
++
++- No Prometheus/OpenMetrics client library anywhere in shipped source.
++  `grep -rIn -E "prom-client|prometheus_client|prometheus-fastapi|promhttp|client_golang" src specs scripts bin index.ts`
++  (excluding `node_modules`) returns **zero** hits — run 2026-11-03, probe script
++  `/home/kara/.hermes/cache/scratch/obs-speclang-probe.sh` section 1.
++  `package.json` dependencies list `express`, `commander`, `better-sqlite3`, `chokidar`,
++  `glob`, `simple-git`, `yaml`, `@modelcontextprotocol/sdk`, `fs-extra` — no metrics client.
++- No `/metrics` route. The only literal match in the tree is a *dashboard mock*,
++  `specs/dashboard.spec.dir/src/testing/mock-mcp.ts:59` (`case 'dashboard/metrics'`),
++  which is a UI test double, not an exporter.
++- The 13 "counter-looking" grep hits are **compiler bookkeeping**, not instrumentation:
++  `TokenCounter` in `specs/split.spec.dir/src/token-counter.ts:9` and
++  `// Reset depth counter` in `specs/implementation.spec.dir/src/opencode-plugin/index.ts:58`.
++  There is no `counter`/`gauge`/`histogram` metric object in the codebase.
++- What *does* exist is a real HTTP surface: `MCPServer.startHTTP` builds an Express app
++  (`src/mcp/server.ts:77`) and already serves an unauthenticated health route —
++  `app.get('/health', … res.json({ status: 'ok', mode: 'http' }))` at
++  **`src/mcp/server.ts:215-217`** — then listens at `src/mcp/server.ts:219`
++  (same code at `specs/mcp.spec.dir/src/server.ts:215-219`). This is the natural host for
++  `/metrics`; nothing else needs to be invented.
++
++### The signals that exist today, and where they die
++
++Each of these is a real observable state that is **computed and then discarded into
++stdout, a JSON file, or a return value nobody reads**:
++
++| State that exists in code | Where it lives | Where it is lost today |
++|---|---|---|
++| daemon status, cascade depth, files-changed count, active agent count, start/last-event timestamps | `State.getStatus()` — `src/daemon/state.ts:152-166` | written to `.speclang/daemon-state.json` (`src/daemon/state.ts:23`, write at `:71`) — never scraped; the file on this host has read `"status": "cascading"` since 2026-10-27 while `cascadeDepth` is 0 |
++| convergence status: files changed, current depth, time remaining in the quiet period | `ConvergenceDetector.getStatus()` — `src/daemon/convergence.ts:88-104` | not exposed outside the daemon; checked on a 1 s timer (`:149`) and thrown to `console.log` |
++| per-cascade duration + files changed | `ConvergenceDetector.getConvergenceResult()` — `src/daemon/convergence.ts:107-125` | one `console.log` line (`[Convergence] Cascade complete! …`) going to `.speclang/speclangd.log`, which does not exist on this host |
++| pipeline result: `success`, `duration`, per-stage `StageResult[]`, `recoveryAttempts` | `PipelineExecutor.execute()` — `src/pipeline/executor.ts:37`, result built at `:184-193` (success) and `:227-237` (failure) | consumed at `src/daemon/daemon.ts:309-330`, which only `console.log`s `[Daemon] Pipeline succeeded!` / `console.error`s the failure |
++| stage failures with timings | `emitEvent('stage_fail', …)` (`src/pipeline/executor.ts:130-131`) | emitted into an `EventEmitter` with no metrics listener |
++| per-recovery-attempt failure records (`stage`, `attempt`, error name/message/stack) | `RecoveryExecutor.logError()` — `src/pipeline/recovery.ts:242-270`, dir `.speclang/errors` (`src/pipeline/executor.ts:30`) | one JSON file per failure, never read back. **680 files / 2.8 MB** on this host, oldest `error-2026-07-12T13-49-48-715Z.json` |
++| per-agent invocation duration + success | `AgentInvoker.invoke()` returns `duration_ms` (`src/cascade/coordinator/invocation.ts:118`, `:128`) | return value only |
++| per-cascade token totals + per-phase token breakdown | `CascadeCoordinator.collateMetrics()` — `src/cascade/coordinator/index.ts:475-506` | only surfaced when `--metrics` is passed *and* verbose (`src/cascade/index.ts:118-134`) — printed, never stored |
++| generated file paths per cascade | `CascadeResult.filesGenerated` (`src/cascade/index.ts:26`) and `fs.writeFileSync` at `src/cascade/index.ts:404`, `:438` | return value |
++| validation pass/fail counts by rule and level | `ValidationResult { rule, level: 'error' | 'warning', location }` — `src/validation/types.ts:28-41`; summary in `src/validation/reporter.ts:91-99` | printed to stdout of an exiting CLI |
++| guard blocks/violations per agent role | `WriteInterceptor.stats` (`src/guard/interceptor.ts:47-59`, `:99-108`), exported by `getGuardStats()` (`src/guard/index.ts:116-118`) | in-memory only, lost when the process exits |
++| lock contention / deadlocks | `src/daemon/locks.ts` (300 lines), `src/daemon/deadlock.ts` (195 lines) | `console.*` only |
++
++**Blind spots that actually hurt at 3 a.m.**:
++
++1. *Is the daemon alive and armed?* The only witness is a JSON file that can say
++   `"status": "cascading"` forever (proven above); no timestamp an alert can compare to
++   now, no metric.
++2. *Is work happening?* Cascades-started vs cascades-converged exist as in-memory
++   counters (`convergence.ts:39-45`), reset on every `reset()` (`:135-141`) — the ratio
++   that shows a wedged convergence loop is never exported.
++3. *How long does a compile take?* `PipelineResult.duration` is computed
++   (`executor.ts:37`, `:183-190`) and thrown away.
++4. *Why did it fail?* Failures become one JSON file per event with no aggregate; nobody
++   can answer "which stage failed 40 times this week" without `grep`-ing 680 files.
++5. *Did the compiler actually produce anything?* Generated files are counted nowhere.
++6. *Is the tree still valid?* `validate` is a CLI that exits; there is no time series of
++   "specs failing validation".
++
++## 3. Metric catalogue
++
++Naming: `<product>_<subsystem>_<thing>_<unit>`. Prefix `speclang_`.
++Labels are capped to the enumerated sets below. **Never** a file path, spec id, agent
++session id, prompt, task id or timestamp in a label — those are unbounded; put them in
++logs (Loki) instead, joined by `spec_id` as a *log field*, not a metric label.
++
++Subsystems: `daemon`, `pipeline`, `cascade`, `compile` (CLI generation/validation),
++`guard`, `build` (process facts).
++
++### Tier 1 — minimal viable emission (answers "is it up and doing work")
++
++| Metric | Type | Unit | Labels | Question it answers |
++|---|---|---|---|---|
++| `speclang_build_info` | gauge (always 1) | — | `version`, `mode` (`daemon`/`mcp-http`/`dashboard`) | What is deployed and in which shape? |
++| `speclang_daemon_up` | gauge (0/1) | — | `host` | Is the watcher daemon process alive? |
++| `speclang_daemon_status` | gauge (enum-encoded 0..4: 0 idle, 1 cascading, 2 converged, 3 paused, 4 crashed) | — | `status` | What state is the daemon in right now (vs. what it claims in a stale file)? |
++| `speclang_daemon_last_event_timestamp_seconds` | gauge | seconds (unix) | `host` | How long since the watcher last saw a file event? (`time() - …` = staleness) |
++| `speclang_pipeline_runs_total` | counter | runs | `result` (`success`/`failure`) | How many compile pipelines ran, and what fraction failed? |
++| `speclang_pipeline_duration_seconds` | histogram (buckets 1,5,15,30,60,120,300,600) | seconds | `result` | How long does one compile pipeline take? |
++
++### Tier 2 — depth on the compile loop
++
++| Metric | Type | Unit | Labels | Question it answers |
++|---|---|---|---|---|
++| `speclang_cascade_runs_total` | counter | cascades | `result` (`converged`/`error`) | Are cascades converging? |
++| `speclang_cascade_duration_seconds` | histogram (buckets 1,5,15,30,60,120) | seconds | — | How long from first event to convergence? |
++| `speclang_cascade_files_watched` | gauge | files | — | How wide is the current change set? |
++| `speclang_cascade_depth` | gauge | levels | — | Is the cascade spiralling (depth climbing toward `maxDepth`)? |
++| `speclang_pipeline_stage_duration_seconds` | histogram | seconds | `stage` (bounded enumeration from the pipeline config), `result` (`success`/`failure`/`skipped`) | Which stage is slow or failing? |
++| `speclang_pipeline_recovery_attempts_total` | counter | attempts | `action` (`rollback`/`notify`/`retry`/`pause`) | How often is self-repair firing? |
++| `speclang_pipeline_failures_total` | counter | failures | `stage`, `error_class` (`timeout`/`exit_nonzero`/`parse`/`config`/`unknown` — a closed set derived in code, never `error.message`) | Which failure category dominates? |
++| `speclang_agent_invocations_total` | counter | invocations | `agent` (bounded role enum), `result` (`success`/`error`) | Are agents succeeding? |
++| `speclang_agent_invocation_duration_seconds` | histogram | seconds | `agent` | Which agent is the long pole? |
++| `speclang_agent_tokens_total` | counter | tokens | `agent`, `kind` (`input`/`output`/`reasoning`) | What is a compile costing in tokens? |
++
++### Tier 3 — artifact surface, validation and the guard
++
++| Metric | Type | Unit | Labels | Question it answers |
++|---|---|---|---|---|
++| `speclang_artifacts_generated_total` | counter | files | `kind` (`impl`/`test`/`index`) | Is the compiler still producing code? |
++| `speclang_specs_total` | gauge | files | `kind` (`spec_md`/`scl`) | How big is the spec corpus? (drift baseline) |
++| `speclang_specs_invalid` | gauge | files | `level` (`error`/`warning`) | Is the tree still valid? (replaces scraping CLI stdout) |
++| `speclang_validation_runs_total` | counter | runs | `result` (`pass`/`fail`) | How often does validation fail? |
++| `speclang_validation_duration_seconds` | histogram | seconds | — | Is validation getting slow as the corpus grows? |
++| `speclang_validation_findings_total` | counter | findings | `rule` (bounded rule-id enum from `ValidationRule.id`), `level` | Which rule is firing most? |
++| `speclang_drift_detections_total` | counter | detections | `kind` (`spec_behind_code`/`code_behind_spec`/`index_stale`) | Is spec↔code drift being caught? |
++| `speclang_guard_checks_total` | counter | checks | `agent_role` (bounded), `result` (`allowed`/`blocked`) | Is a writing agent being blocked? |
++| `speclang_guard_violations_total` | counter | violations | `agent_role` | Same, as an alertable count |
++| `speclang_index_specs_total` | gauge | rows | `source` (`sqlite`/`index_json`) | Does the search index cover the corpus? (`specs` table has 604 rows on this host vs 452 files in `specs/` — a real drift signal) |
++| `speclang_errors_dir_bytes` | gauge | bytes | `path_class` (`daemon` — never the literal path) | Is the unread error dump growing without bound? (2.8 MB / 680 files today) |
++
++### Cardinality budget
++
++Total worst case ≈ 4 (`speclang_*_info/up/status`) + 8 stage labels × 3 results +
++6 agent roles × 3 + ~20 validation rules × 2 + 4 guard roles ≈ **under 120 series**.
++That is the entire product. If a proposed metric would exceed this, it belongs in logs.
++
++## 4. Exposure mechanism (per runtime shape)
++
++Use `prom-client` (the Node official-cousin client, the standard for Node and the one
++that matches the fleet convention for Node services). Do **not** hand-roll a text format.
++
++1. **MCP HTTP server** (the only already-listening HTTP server): add a single route
++   next to the existing health route in `src/mcp/server.ts` (and keep
++   `specs/mcp.spec.dir/src/server.ts` in sync — that file is the spec-side twin at
++   `:215`):
++
++   ```ts
++   import { Registry, collectDefaultMetrics, Counter, Histogram, Gauge } from 'prom-client';
++   const registry = new Registry();
++   collectDefaultMetrics({ register: registry, prefix: 'speclang_' });
++   app.get('/metrics', async (_req, res) => {
++     res.set('Content-Type', registry.contentType);
++     res.end(await registry.metrics());
++   });
++   ```
++
++   Register it **before** the auth middleware if auth is enabled for `/mcp` only — the
++   existing middleware is scoped to `/mcp` (`src/mcp/server.ts:87-89`), so `/metrics` is
++   unauthenticated by default; keep it that way but bind the listener to loopback (the
++   `app.listen(httpPort, …)` call at `src/mcp/server.ts:219` takes no host today) **and**
++   add a CIDR allow-list or a bearer token check if the port is ever exposed off-host.
++   A metrics endpoint that leaks nothing but volumes is still an attack surface: it is a
++   free reconnaissance oracle.
++
++2. **`speclangd` watcher daemon** — it has **no HTTP listener today**. Do not add a
++   second server just for metrics: with the daemon's state living in-process
++   (`State`, `ConvergenceDetector`), the right answer is to (a) have the daemon record
++   cascade/pipeline outcomes to the same **textfile collector** path described in (3), and
++   (b) expose `speclang_daemon_up` / `…_status` / `…_last_event_timestamp_seconds` by
++   writing a `daemon.prom` textfile on every state change (`State.save()`,
++   `src/daemon/state.ts:66-76`). A scrape target on a second port is the *later*,
++   optional upgrade — it must not block Tier 1.
++
++3. **CLI lanes (`validate`, `cascade`, `generate`, `guard`, `index`, `meta`,
++   `autonomous`) exit.** A scrape can never see them. The correct mechanism is a
++   **completion record**: on exit, the CLI writes
++   `/var/lib/node_exporter/textfile/speclang-cli-<lane>.prom` with
++   `speclang_validation_runs_total{lane="ci"} N` style lines (counters accumulate by
++   reading the previous value from the same file), or POSTs to the fleet pushgateway.
++   Prefer the textfile if node_exporter textfile collector is already on `fleet-monitor`;
++   prefer pushgateway if not.
++
++4. **Dashboard daemon** (`specs/daemon.spec.dir/src/index.ts:76`, `:100`) already has
++   `/health` and `/api/status`; add `/metrics` on the same app, reusing the same registry
++   factory so the metric definitions have exactly one home.
++
++Create the registry in one module (e.g. `src/observability/metrics.ts`) and import it from
++each entry point — metric *definitions* must not be duplicated, or a `Counter` registered
++twice throws.
++
++## 5. Collection path
++
++Fleet facts: Prometheus 3.15 / Loki / Grafana / Alloy / blackbox / cAdvisor / Tempo /
++Pyroscope on host `fleet-monitor`; agents push via `remote_write`; scrape-only targets
++need a job in `/root/fleet-monitoring/prometheus/prometheus.yml`.
++
++- **SpecLang is a long-running service on the agent host, not on `fleet-monitor`.**
++  Therefore: keep doing what the fleet already does — the local **Alloy/agent pushes**.
++  The daemon and MCP server never push themselves; they *serve*, and the co-located
++  exporter scrapes them.
++- **Scrape job (on the host that runs SpecLang)**: a `speclang` scrape job in that host's
++  agent config, target `127.0.0.1:<port>/metrics` for the MCP HTTP server, plus a
++  `node_exporter` **textfile collector** directory `…/textfile/` for the daemon and CLI
++  completion records. Both are then remote-written up to `fleet-monitor` — no new job is
++  needed on `fleet-monitor` itself.
++- **Alloy relabel labels on every series**:
++  `host="<agent hostname>"`, `product="speclang"`, `service="speclang-mcp"` |
++  `"speclangd"` | `"speclang-cli"`, `env="prod"`.
++- **What the fleet agent already does**: node_exporter, cAdvisor and blackbox already
++  give process/container liveness and a TCP probe of the MCP port. That is *not*
++  application observability — it answers "is the port open", not "did the compile
++  converge". This spec exists for the second question.
++- **Logs**: keep `console.*` lines as they are (133 in `src/daemon/*.ts` alone) and let
++  Alloy ship the daemon's stdout to Loki — the spec-id and error message that must never
++  be a label belong there. Do **not** delete the `.speclang/errors` JSON dumps in this
++  work; add the counter and a retention job later.
++
++## 6. Verification — how a reviewer proves each metric is live
++
++Run in order; every step has an expected observable, and "done" is listed at the end.
++
++1. **Route exists (curl):**
++   ```
++   curl -s localhost:3000/metrics | grep -E '^speclang_(build_info|daemon_up|pipeline_runs_total)'
++   ```
++   Must print at least `speclang_build_info{version="1.0.0",mode="mcp-http"} 1`.
++   `curl -s localhost:3000/metrics | wc -l` must exceed 20 (default process metrics).
++2. **Counters move:** run a compile, then re-curl:
++   ```
++   node bin/speclang cascade <spec.md> ; curl -s localhost:3000/metrics | grep speclang_pipeline_runs_total
++   ```
++   the `result="success"` sample must increase by exactly 1.
++3. **Prometheus is ingesting (PromQL, on `fleet-monitor`):**
++   ```
++   up{product="speclang"}                                       # == 1
++   count({__name__=~"speclang_.+"})                             # >= 8 after Tier 1
++   rate(speclang_pipeline_runs_total{result="failure"}[15m])    # near 0 in steady state
++   histogram_quantile(0.95, sum by (le) (rate(speclang_pipeline_duration_seconds_bucket[1h])))  # p95 compile time
++   time() - speclang_daemon_last_event_timestamp_seconds        # seconds since last file event
++   ```
++4. **CLI completion record landed:**
++   ```
++   node bin/speclang validate ; grep speclang_validation_runs_total /var/lib/node_exporter/textfile/speclang-cli-*.prom
++   ```
++   the line exists, and after a second run its value is the previous + 1.
++5. **Alertable condition** (the one an operator actually wants):
++   ```
++   speclang_daemon_up == 0  OR  (time() - speclang_daemon_last_event_timestamp_seconds > 86400 and speclang_daemon_up == 1)
++   ```
++   for > 10 m pages. Plus `sum(rate(speclang_pipeline_runs_total{result="failure"}[1h])) / sum(rate(speclang_pipeline_runs_total[1h])) > 0.5`.
++
++**Done looks like:** `/metrics` returns the Tier-1 families from a running daemon/MCP
++server; Prometheus holds `speclang_pipeline_runs_total` with `product="speclang"` and a
++non-flat `result="success"` series over a 15 m window that includes a real compile;
++`speclang_daemon_last_event_timestamp_seconds` advances after touching a spec file; and a
++deliberate pipeline failure raises `speclang_pipeline_failures_total{stage=…}` within one
++scrape interval.
++
++## 7. Deliberately NOT instrumented
++
++- **No per-spec, per-file, per-cascade-id or per-session labels.** That is millions of
++  series. Spec ids belong to Loki log fields and to the SQLite `specs`/`events` tables.
++- **No raw `error.message` as a label.** Errors are bucketed into `error_class`; the
++  message and stack stay in the JSON error dump and Loki.
++- **No user/prompt content metrics.** SpecLang compiles specs; prompt text is not an
++  observable.
++- **No token cost in the metric namespace until the tokens are actually produced** —
++  `collateMetrics()` is only populated on the agent path, so `agent_tokens_total` is
++  Tier 2, gated on the agent path being live (today the template cascade path reports
++  zeros by design, `src/cascade/index.ts:121-124`).
++- **No metrics from the `poc-*` daemon files** (`src/daemon/poc-*.ts`) — proof-of-concept
++  code, not the shipped path (`bin/speclangd` loads `dist/src/daemon/daemon.js`).
++
++## 8. Open questions this audit could not settle (do not treat as facts)
++
++- Whether the `.speclang/daemon-state.json` file is actually written by the *shipped*
++  daemon or leaked by a test run: its `filesChanged` entries are all
++  `tests/daemon/fixtures/…` paths and it has not advanced past 2026-10-27.
++  `src/daemon/state.ts` writes relative to CWD; the daemon is started from wherever
++  `bin/speclangd` is invoked. A worker must not assume the file is production truth.
++- Whether `speclang start` (dashboard mode) actually serves in a given deployment — the
++  code path is `dist/src/daemon/index.js`, whose source is `specs/daemon.spec.dir/src/index.ts`
++  and is **not** in `tsconfig.json` `include` (only `specs/mcp.spec.dir/src/**` is),
++  so the freshness of that build artifact is unverified.
++- The MCP HTTP server's default port collides with the documented dashboard default
++  (3000 in both `src/mcp/server.ts` config and `bin/speclang:31`); whichever listener
++  wins decides which service `/metrics` belongs to. A worker must pick the port
++  deliberately.
++
++## 9. Implementation notes — what has landed since this audit
++
++### 9.1 OBS-1: the scrape surface exists
++
++`GET /metrics` is served by the MCP HTTP server (`specs/mcp.spec.dir/src/server.ts`,
++`app.get('/metrics', …)` → `renderMetrics()`), Content-Type
++`text/plain; version=0.0.4; charset=utf-8`. The registry and renderer live in
++`specs/mcp.spec.dir/src/metrics.ts` (`MetricsRegistry`, `collectMetrics()`,
++`renderMetrics()`); 16 tests in `tests/mcp/metrics.test.ts` pin the exposition
++grammar. Start it with:
++
++```
++node bin/speclang mcp start --remote --port 3000
++curl -s localhost:3000/metrics
++```
++
++A host that already owns 3000 wins the bind silently — the readiness probe below
++must therefore be matched against a family this server alone exposes (see 9.4).
++
++### 9.2 OBS-2: pipeline outcomes, across the process boundary
++
++The pipeline executor, the recovery executor and the daemon that drives them run in a
++different process from the MCP server that answers the scrape, so in-memory counters
++can never show a delta there. The outcomes are persisted to a small JSON ledger and
++merged at render time.
++
++**Ledger** (`specs/pipeline.spec.dir/src/metrics-ledger.ts`):
++
++- path: `$SPECLANG_METRICS_LEDGER`, else `<cwd>/.speclang/metrics-outcomes.json`
++- atomic: temp file in the same directory + `rename`
++- crash tolerant: missing / unparsable / wrongly shaped ⇒ empty ledger (counters are
++  clamped to finite non-negative numbers, unknown keys dropped) — never an exception
++- monotonic: read-modify-write with a non-negative delta per observation
++- side-effect only: an unwritable path returns `false` from the recorder and leaves
++  pipeline control flow untouched
++
++Shape:
++
++```json
++{
++  "version": 1,
++  "families": {
++    "speclang_pipeline_stage_results_total": { "stage=probe-pass,status=success": 2 },
++    "speclang_pipeline_recovery_total":       { "outcome=succeeded": 2 },
++    "speclang_pipeline_convergence_total":    { "outcome=converged": 1 }
++  },
++  "stageDurationMs": { "probe-pass": { "count": 2, "sum": 8, "last": 3 } }
++}
++```
++
++Series keys are the label set encoded as sorted `k=v` pairs (separators escaped), so the
++on-disk shape stays flat and diffable.
++
++**Families** (declared unconditionally, so a fresh install still exposes HELP/TYPE):
++
++| family | type | labels | source |
++|---|---|---|---|
++| `speclang_pipeline_stage_results_total` | counter | `stage`, `status` (`success`/`failure`/`skipped`) | every completed `StageResult` in `PipelineExecutor.execute()` |
++| `speclang_pipeline_recovery_total` | counter | `outcome` (`succeeded`/`failed`) | each `RecoveryExecutor.execute()` action (incl. via `executeAll`) |
++| `speclang_pipeline_convergence_total` | counter | `outcome` (`converged`/`not_converged`) | the `ConvergenceResult` the executor was invoked with |
++| `speclang_pipeline_stage_duration_seconds` | gauge | `stage` | last duration of that stage (seconds) |
++
++Label values are stage names and three fixed status vocabularies — bounded, per §7.
++
++### 9.3 Instrumentation sites (side-effect only)
++
++- `specs/pipeline.spec.dir/src/executor.ts` — after each `stageExecutor.execute()`
++  result and each condition-skipped stage; plus the triggering convergence outcome.
++- `specs/pipeline.spec.dir/src/recovery.ts` — every action outcome. `execute()` wraps
++  the previous switch body (`executeAction`) solely so the recording has one seam;
++  the action implementations are untouched.
++
++### 9.4 Acceptance demonstration (as run)
++
++```
++# 0. build (the AC's precondition)
++npm run build
++
++# 1. scratch project
++mkdir -p /tmp/obs2-probe && cd /tmp/obs2-probe
++node bin/speclang init probe            # writes specs/probe/probe.spec.md
++# build.yaml: on_converge = [probe-pass (echo), probe-fail (exit 3)];
++#             recovery.max_attempts = 2, recovery.on_fail = [notify -> log]
++
++# 2. scrape BEFORE (scraper process)
++node bin/speclang mcp start --remote --port 3100 &     # 3000 taken on this host
++curl -s localhost:3100/metrics | grep speclang_pipeline
++#    -> the four HELP/TYPE headers only, zero series
++
++# 3. run the producer (separate process, same cwd => same ledger)
++node <probe-driver>.js    # constructs the real PipelineExecutor, executes build.yaml
++
++# 4. scrape AFTER
++curl -s localhost:3100/metrics | grep speclang_pipeline
++#    speclang_pipeline_convergence_total{outcome="converged"} 1
++#    speclang_pipeline_recovery_total{outcome="succeeded"} 2
++#    speclang_pipeline_stage_duration_seconds{stage="probe-pass"} 0.003
++#    speclang_pipeline_stage_results_total{stage="probe-pass",status="success"} 2
++#    speclang_pipeline_stage_results_total{stage="probe-fail",status="failure"} 2
++```
++
++**Bare `node bin/speclang cascade` cannot be the demonstration.** On this tree
++`cascade` is a command group: `speclang cascade` with no `<spec>` prints commander help
++(and the `cascade` group in `src/cli/index.ts:176` has only `status` / `trigger` /
++`abort` subcommands). Nothing in `bin/speclang`, `src/cli/*.ts` or
++`src/cli/commands/*.ts` references the pipeline executor, so no CLI subcommand reaches
++`PipelineExecutor`. The counters are therefore driven by the real producer — the same
++`PipelineExecutor` the daemon calls on convergence — not by help text.
++
++**Known defect observed while running this demonstration (not fixed here, out of
++scope):** the daemon's dynamic import of the executor
++(`specs/daemon.spec.dir/src/daemon.ts`, `executePipeline`) tries
++`../../pipeline.spec.dir/src/executor.js` and `../../specs/pipeline.spec.dir/src/executor.js`,
++but the pipeline compiles to `dist/src/pipeline/` (its `specs/` mirror is not in
++`tsconfig.json` `include`), so a real `speclang start` cascade ends with
++`Pipeline execution error … Cannot find module '<repo>/dist/specs/pipeline.spec.dir/src/executor.js'`
++and the pipeline never runs. Tracking that is a separate row; it is the reason the
++acceptance demonstration invokes the compiled executor directly.
++
+diff --git a/specs/mcp.spec.dir/src/metrics.ts b/specs/mcp.spec.dir/src/metrics.ts
+index 0b797d8a..61b28a50 100644
+--- a/specs/mcp.spec.dir/src/metrics.ts
++++ b/specs/mcp.spec.dir/src/metrics.ts
+@@ -13,6 +13,14 @@
+ import os from 'os';
+ import fs from 'fs';
+ import process from 'process';
++import {
++  CONVERGENCE_FAMILY,
++  RECOVERY_FAMILY,
++  STAGE_DURATION_FAMILY,
++  STAGE_RESULTS_FAMILY,
++  decodeSeriesKey,
++  readLedger
++} from '../../pipeline.spec.dir/src/metrics-ledger';
+ 
+ /** Exact Content-Type Prometheus expects for the text exposition format. */
+ export const PROMETHEUS_CONTENT_TYPE = 'text/plain; version=0.0.4; charset=utf-8';
+@@ -106,6 +114,17 @@ export class MetricsRegistry {
+     this.add(name, help, type, value);
+   }
+ 
++  /**
++   * Declare a family without a sample, so HELP/TYPE appear in the scrape even
++   * when nothing has been observed yet (a fresh install, or a counter whose
++   * label values are only known once work happens). Prometheus accepts a family
++   * with no series; it simply has no samples to select.
++   */
++  declare(name: string, help: string, type: MetricType): void {
++    if (this.families.has(name)) return;
++    this.families.set(name, { name, help, type, samples: [] });
++  }
++
+   /** Snapshot of the declared families (sorted by name). */
+   getFamilies(): MetricFamily[] {
+     return [...this.families.values()].sort((a, b) => a.name.localeCompare(b.name));
+@@ -218,8 +237,13 @@ function readDiskTotals(path: string): DiskTotals | null {
+  * Build a registry populated with the current Tier-1 system families plus
+  * process and uptime series. Called per scrape — all values are point-in-time
+  * reads, so the endpoint never serves stale numbers.
++ *
++ * OBS-2: pipeline outcome counters live in a cross-process ledger (the pipeline
++ * runs under the daemon, the scrape is served here), so they are declared
++ * unconditionally and filled from `ledgerPath` — `$SPECLANG_METRICS_LEDGER`
++ * when set, else `<cwd>/.speclang/metrics-outcomes.json`.
+  */
+-export function collectMetrics(diskPath: string = process.cwd()): MetricsRegistry {
++export function collectMetrics(diskPath: string = process.cwd(), ledgerPath?: string): MetricsRegistry {
+   const registry = new MetricsRegistry();
+   const memoryTotal = os.totalmem();
+   const memoryFree = os.freemem();
+@@ -375,12 +399,76 @@ export function collectMetrics(diskPath: string = process.cwd()): MetricsRegistr
+     runtime: 'mcp-http'
+   });
+ 
++  // --- pipeline outcomes (OBS-2) ------------------------------------------
++  collectPipelineOutcomes(registry, ledgerPath);
++
+   return registry;
+ }
+ 
++/**
++ * Declare the pipeline outcome families and fill them from the cross-process
++ * ledger.
++ *
++ * The three counters are declared unconditionally: their label values only
++ * exist once a pipeline actually ran, and a scrape of a fresh install must still
++ * expose (and document) the families. A ledger that cannot be read is not an
++ * error — it is the zero state, already implied by the declarations.
++ */
++function collectPipelineOutcomes(registry: MetricsRegistry, ledgerPath?: string): void {
++  registry.declare(
++    STAGE_RESULTS_FAMILY,
++    'Pipeline stage executions by stage and terminal status (success, failure, skipped).',
++    'counter'
++  );
++  registry.declare(
++    RECOVERY_FAMILY,
++    'Recovery actions executed after a stage failure, by outcome (succeeded, failed).',
++    'counter'
++  );
++  registry.declare(
++    CONVERGENCE_FAMILY,
++    'Convergence outcomes observed by the pipeline executor, by outcome (converged, not_converged).',
++    'counter'
++  );
++  registry.declare(
++    STAGE_DURATION_FAMILY,
++    'Duration in seconds of the most recent execution of each pipeline stage.',
++    'gauge'
++  );
++
++  const ledger = readLedger(ledgerPath);
++
++  for (const [family, series] of Object.entries(ledger.families)) {
++    const help = family === STAGE_RESULTS_FAMILY
++      ? 'Pipeline stage executions by stage and terminal status (success, failure, skipped).'
++      : family === RECOVERY_FAMILY
++        ? 'Recovery actions executed after a stage failure, by outcome (succeeded, failed).'
++        : family === CONVERGENCE_FAMILY
++          ? 'Convergence outcomes observed by the pipeline executor, by outcome (converged, not_converged).'
++          : `Pipeline ledger family ${family}.`;
++
++    for (const [seriesKey, value] of Object.entries(series)) {
++      const numeric = Number(value);
++      if (!Number.isFinite(numeric)) continue;
++      registry.add(family, help, 'counter', numeric, decodeSeriesKey(seriesKey));
++    }
++  }
++
++  for (const [stage, duration] of Object.entries(ledger.stageDurationMs)) {
++    if (!Number.isFinite(duration.last)) continue;
++    registry.add(
++      STAGE_DURATION_FAMILY,
++      'Duration in seconds of the most recent execution of each pipeline stage.',
++      'gauge',
++      Math.round((duration.last / 1000) * 1e6) / 1e6,
++      { stage }
++    );
++  }
++}
++
+ /**
+  * Render the current scrape payload. This is what the `/metrics` route sends.
+  */
+-export function renderMetrics(diskPath: string = process.cwd()): string {
+-  return collectMetrics(diskPath).render();
++export function renderMetrics(diskPath: string = process.cwd(), ledgerPath?: string): string {
++  return collectMetrics(diskPath, ledgerPath).render();
+ }
+diff --git a/specs/pipeline.spec.dir/src/executor.ts b/specs/pipeline.spec.dir/src/executor.ts
+index 916b8d26..59144153 100644
+--- a/specs/pipeline.spec.dir/src/executor.ts
++++ b/specs/pipeline.spec.dir/src/executor.ts
+@@ -13,6 +13,7 @@ import { PipelineConfig, PipelineResult, Stage, StageResult, ExecutorOptions, Pi
+ import { PipelineConfigManager } from './config';
+ import { StageExecutor, orderStages, areDependenciesMet } from './stages';
+ import { RecoveryExecutor } from './recovery';
++import { recordConvergenceOutcome, recordStageOutcome } from './metrics-ledger';
+ import { ConvergenceResult } from 'daemon.spec.dir/src/types.js';
+ 
+ export class PipelineExecutor extends EventEmitter {
+@@ -36,6 +37,15 @@ export class PipelineExecutor extends EventEmitter {
+    */
+   async execute(convergence?: ConvergenceResult): Promise<PipelineResult> {
+     const startTime = Date.now();
++
++    // OBS-2: the convergence outcome that triggered this run is computed by the
++    // daemon and then only carried on the PipelineResult — i.e. discarded by
++    // every caller. Record it here, where the executor consumes it, so the
++    // /metrics ledger can count converged vs not_converged runs.
++    if (convergence) {
++      recordConvergenceOutcome(convergence.converged === false ? 'not_converged' : 'converged');
++    }
++
+     const config = await this.configManager.load();
+ 
+     // Validate config
+@@ -120,6 +130,7 @@ export class PipelineExecutor extends EventEmitter {
+               duration: 0,
+             };
+             stageResults.push(skippedResult);
++            recordStageOutcome(skippedResult.name, 'skipped', skippedResult.duration);
+             completedStages.add(stage.name);
+             continue;
+           }
+@@ -139,6 +150,9 @@ export class PipelineExecutor extends EventEmitter {
+ 
+         const result = await this.stageExecutor.execute(stage, context, this.options.dryRun);
+         stageResults.push(result);
++        // OBS-2: every completed StageResult is otherwise dropped once the
++        // pipeline returns; count it (+ its duration) for the /metrics ledger.
++        recordStageOutcome(result.name, result.success ? 'success' : 'failure', result.duration);
+ 
+         if (result.success) {
+           this.stageStates.set(stage.name, 'completed');
+diff --git a/specs/pipeline.spec.dir/src/index.ts b/specs/pipeline.spec.dir/src/index.ts
+index 9677b99f..2ed382d6 100644
+--- a/specs/pipeline.spec.dir/src/index.ts
++++ b/specs/pipeline.spec.dir/src/index.ts
+@@ -20,5 +20,21 @@ export { HookExecutor, BuiltInHooks, createHookContext } from './hooks';
+ // Recovery
+ export { RecoveryExecutor, RecoveryActions } from './recovery';
+ 
++// Outcome ledger (OBS-2 — cross-process counters for the MCP /metrics endpoint)
++export {
++  LEDGER_ENV_VAR,
++  DEFAULT_LEDGER_RELATIVE_PATH,
++  STAGE_RESULTS_FAMILY,
++  RECOVERY_FAMILY,
++  CONVERGENCE_FAMILY,
++  STAGE_DURATION_FAMILY,
++  readLedger,
++  resolveLedgerPath,
++  recordCounter,
++  recordStageOutcome,
++  recordRecoveryOutcome,
++  recordConvergenceOutcome
++} from './metrics-ledger';
++
+ // Executor
+ export { PipelineExecutor, createPipelineExecutor } from './executor';
+diff --git a/specs/pipeline.spec.dir/src/metrics-ledger.ts b/specs/pipeline.spec.dir/src/metrics-ledger.ts
+new file mode 100644
+index 00000000..b090794f
+--- /dev/null
++++ b/specs/pipeline.spec.dir/src/metrics-ledger.ts
+@@ -0,0 +1,289 @@
++/**
++ * Pipeline Outcome Ledger — cross-process outcome counters for `/metrics`
++ *
++ * SPECLANG-GENERATED: @speclang/pipeline
++ * Generated from: @speclang/pipeline/metrics
++ *
++ * OBS-2: the pipeline executor, the recovery executor and the daemon that
++ * drives them run in a DIFFERENT process from the MCP HTTP server that answers
++ * the `/metrics` scrape (`node bin/speclang start` for the daemon,
++ * `speclang-mcp start --http` for the server). In-memory counters can never
++ * show a delta across that boundary, so the outcomes those producers compute —
++ * `StageResult`, recovery actions and convergence — are persisted to a small
++ * JSON ledger on disk and merged into the scrape by the renderer.
++ *
++ * Contract:
++ * - path: `$SPECLANG_METRICS_LEDGER`, else `<cwd>/.speclang/metrics-outcomes.json`
++ * - atomic writes (temp file + rename), so a scrape never reads a torn file
++ * - crash tolerant: a missing, unparsable or wrongly-shaped ledger reads as an
++ *   EMPTY ledger — never an exception, never a fabricated count
++ * - monotonic: counters only ever increase (read-modify-write with a delta)
++ * - side-effect only: every recorder is best-effort, so an unwritable ledger is
++ *   a silent no-op rather than a change in pipeline control flow
++ */
++
++import fs from 'fs';
++import path from 'path';
++
++/** Environment override for the ledger path (absolute or cwd-relative). */
++export const LEDGER_ENV_VAR = 'SPECLANG_METRICS_LEDGER';
++
++/** Default ledger location, relative to the process working directory. */
++export const DEFAULT_LEDGER_RELATIVE_PATH = path.join('.speclang', 'metrics-outcomes.json');
++
++/** Ledger schema version written into every snapshot. */
++export const LEDGER_VERSION = 1;
++
++/** Family names the renderer knows how to expose. */
++export const STAGE_RESULTS_FAMILY = 'speclang_pipeline_stage_results_total';
++export const RECOVERY_FAMILY = 'speclang_pipeline_recovery_total';
++export const CONVERGENCE_FAMILY = 'speclang_pipeline_convergence_total';
++export const STAGE_DURATION_FAMILY = 'speclang_pipeline_stage_duration_seconds';
++
++/** Terminal status a stage execution can report. */
++export type StageStatus = 'success' | 'failure' | 'skipped';
++
++/** Outcome a recovery action reports. */
++export type RecoveryOutcome = 'succeeded' | 'failed';
++
++/** Outcome a convergence detection reports. */
++export type ConvergenceOutcome = 'converged' | 'not_converged';
++
++/**
++ * Per-stage duration accumulator. `last` is what the gauge renders; `count` and
++ * `sum` are kept so an average can be derived without a second ledger.
++ */
++export interface StageDuration {
++  count: number;
++  sum: number;
++  last: number;
++}
++
++/**
++ * Ledger snapshot. Counter series are keyed family -> encoded label set ->
++ * value; the label set is encoded once (see `encodeSeriesKey`) so the on-disk
++ * shape stays flat and diffable.
++ */
++export interface LedgerSnapshot {
++  version: number;
++  families: Record<string, Record<string, number>>;
++  stageDurationMs: Record<string, StageDuration>;
++}
++
++/** An empty ledger: what a missing or corrupt file reads as. */
++export function emptyLedger(): LedgerSnapshot {
++  return { version: LEDGER_VERSION, families: {}, stageDurationMs: {} };
++}
++
++/**
++ * Encode a label set as a stable series key (`stage=build,status=success`,
++ * keys sorted). Separators are backslash-escaped so a label value containing
++ * `,` or `=` cannot break the key apart.
++ */
++export function encodeSeriesKey(labels: Record<string, string | number>): string {
++  return Object.keys(labels)
++    .sort()
++    .map(key => {
++      const raw = String(labels[key]).replace(/\\/g, '\\\\').replace(/,/g, '\\,').replace(/=/g, '\\=');
++      return `${key}=${raw}`;
++    })
++    .join(',');
++}
++
++/** Inverse of `encodeSeriesKey`. */
++export function decodeSeriesKey(key: string): Record<string, string> {
++  const labels: Record<string, string> = {};
++  let field = '';
++  const fields: string[] = [];
++
++  for (let i = 0; i < key.length; i++) {
++    const char = key[i];
++    if (char === '\\' && i + 1 < key.length) {
++      field += key[i + 1];
++      i++;
++    } else if (char === ',') {
++      fields.push(field);
++      field = '';
++    } else {
++      field += char;
++    }
++  }
++  fields.push(field);
++
++  for (const entry of fields) {
++    const separator = entry.indexOf('=');
++    if (separator === -1) continue;
++    labels[entry.slice(0, separator)] = entry.slice(separator + 1);
++  }
++
++  return labels;
++}
++
++/**
++ * Resolve the ledger path for this process: explicit override, then
++ * `$SPECLANG_METRICS_LEDGER`, then `<cwd>/.speclang/metrics-outcomes.json`.
++ */
++export function resolveLedgerPath(override?: string): string {
++  if (override && override.trim() !== '') return path.resolve(override);
++
++  const fromEnv = process.env[LEDGER_ENV_VAR];
++  if (fromEnv && fromEnv.trim() !== '') return path.resolve(fromEnv);
++
++  return path.join(process.cwd(), DEFAULT_LEDGER_RELATIVE_PATH);
++}
++
++/** Coerce a parsed value into a counter: finite and non-negative, else 0. */
++function toCounter(value: unknown): number {
++  const numeric = typeof value === 'number' ? value : Number(value);
++  if (!Number.isFinite(numeric) || numeric < 0) return 0;
++  return numeric;
++}
++
++/**
++ * Normalize anything read off disk into a valid snapshot. Unknown keys are
++ * dropped, so a hand-edited or truncated file can only ever lose counts, never
++ * corrupt the scrape.
++ */
++function normalizeLedger(raw: unknown): LedgerSnapshot {
++  const snapshot = emptyLedger();
++  if (!raw || typeof raw !== 'object') return snapshot;
++
++  const families = (raw as { families?: unknown }).families;
++  if (families && typeof families === 'object') {
++    for (const [family, series] of Object.entries(families as Record<string, unknown>)) {
++      if (!series || typeof series !== 'object') continue;
++      const normalized: Record<string, number> = {};
++      for (const [key, value] of Object.entries(series as Record<string, unknown>)) {
++        normalized[key] = toCounter(value);
++      }
++      snapshot.families[family] = normalized;
++    }
++  }
++
++  const durations = (raw as { stageDurationMs?: unknown }).stageDurationMs;
++  if (durations && typeof durations === 'object') {
++    for (const [stage, entry] of Object.entries(durations as Record<string, unknown>)) {
++      if (!entry || typeof entry !== 'object') continue;
++      const duration = entry as Partial<StageDuration>;
++      snapshot.stageDurationMs[stage] = {
++        count: toCounter(duration.count),
++        sum: toCounter(duration.sum),
++        last: toCounter(duration.last),
++      };
++    }
++  }
++
++  return snapshot;
++}
++
++/**
++ * Read the ledger. Never throws: a missing file, unreadable path or malformed
++ * JSON all read as the empty ledger, which is exactly what a fresh install
++ * serves.
++ */
++export function readLedger(ledgerPath?: string): LedgerSnapshot {
++  const file = resolveLedgerPath(ledgerPath);
++
++  try {
++    const content = fs.readFileSync(file, 'utf-8');
++    return normalizeLedger(JSON.parse(content));
++  } catch {
++    return emptyLedger();
++  }
++}
++
++/**
++ * Write atomically: a unique temp file in the same directory, then a rename.
++ * A scrape running concurrently with a producer sees either the old snapshot or
++ * the new one, never a half-written file.
++ */
++function writeLedgerAtomic(file: string, snapshot: LedgerSnapshot): void {
++  fs.mkdirSync(path.dirname(file), { recursive: true });
++
++  const tempFile = `${file}.tmp-${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
++  try {
++    fs.writeFileSync(tempFile, `${JSON.stringify(snapshot, null, 2)}\n`, 'utf-8');
++    fs.renameSync(tempFile, file);
++  } catch (error) {
++    // Best effort: never leave a temp file behind, never throw.
++    try {
++      fs.unlinkSync(tempFile);
++    } catch {
++      /* already gone */
++    }
++    throw error;
++  }
++}
++
++/**
++ * Read-modify-write helper. Returns false (and swallows the error) when the
++ * ledger cannot be written, so instrumentation never changes control flow.
++ */
++function mutateLedger(mutator: (snapshot: LedgerSnapshot) => void, ledgerPath?: string): boolean {
++  const file = resolveLedgerPath(ledgerPath);
++
++  try {
++    const snapshot = readLedger(file);
++    mutator(snapshot);
++    snapshot.version = LEDGER_VERSION;
++    writeLedgerAtomic(file, snapshot);
++    return true;
++  } catch {
++    return false;
++  }
++}
++
++/** Add `delta` to one counter series (monotonic: deltas are non-negative). */
++export function recordCounter(
++  family: string,
++  labels: Record<string, string | number>,
++  delta: number = 1,
++  ledgerPath?: string
++): boolean {
++  const increment = Number.isFinite(delta) && delta > 0 ? delta : 1;
++  const key = encodeSeriesKey(labels);
++
++  return mutateLedger(snapshot => {
++    const series = snapshot.families[family] ?? {};
++    series[key] = toCounter(series[key]) + increment;
++    snapshot.families[family] = series;
++  }, ledgerPath);
++}
++
++/**
++ * Record one completed `StageResult`: a `stage_results_total{stage,status}`
++ * increment plus the stage's duration sample.
++ */
++export function recordStageOutcome(
++  stage: string,
++  status: StageStatus,
++  durationMs: number,
++  ledgerPath?: string
++): boolean {
++  const duration = Number.isFinite(durationMs) && durationMs > 0 ? durationMs : 0;
++
++  return mutateLedger(snapshot => {
++    const stageName = stage || 'unnamed';
++    const series = snapshot.families[STAGE_RESULTS_FAMILY] ?? {};
++    const key = encodeSeriesKey({ stage: stageName, status });
++    series[key] = toCounter(series[key]) + 1;
++    snapshot.families[STAGE_RESULTS_FAMILY] = series;
++
++    const current = snapshot.stageDurationMs[stageName] ?? { count: 0, sum: 0, last: 0 };
++    snapshot.stageDurationMs[stageName] = {
++      count: current.count + 1,
++      sum: current.sum + duration,
++      last: duration,
++    };
++  }, ledgerPath);
++}
++
++/** Record one recovery action outcome. */
++export function recordRecoveryOutcome(outcome: RecoveryOutcome, ledgerPath?: string): boolean {
++  return recordCounter(RECOVERY_FAMILY, { outcome }, 1, ledgerPath);
++}
++
++/** Record one convergence outcome. */
++export function recordConvergenceOutcome(outcome: ConvergenceOutcome, ledgerPath?: string): boolean {
++  return recordCounter(CONVERGENCE_FAMILY, { outcome }, 1, ledgerPath);
++}
+diff --git a/specs/pipeline.spec.dir/src/recovery.ts b/specs/pipeline.spec.dir/src/recovery.ts
+index 54490214..cad4a4a2 100644
+--- a/specs/pipeline.spec.dir/src/recovery.ts
++++ b/specs/pipeline.spec.dir/src/recovery.ts
+@@ -9,6 +9,7 @@ import * as fs from 'fs-extra';
+ import * as path from 'path';
+ import { execSync } from 'child_process';
+ import { RecoveryAction, RecoveryContext, RecoveryResult, RecoveryActionType } from './types';
++import { recordRecoveryOutcome } from './metrics-ledger';
+ 
+ export class RecoveryExecutor {
+   private errorLogDir: string;
+@@ -20,6 +21,17 @@ export class RecoveryExecutor {
+   }
+ 
+   async execute(action: RecoveryAction, context: RecoveryContext): Promise<{ success: boolean; error?: string }> {
++    const result = await this.executeAction(action, context);
++
++    // OBS-2: recovery outcomes are computed here and then only carried in the
++    // RecoveryResult — count them for the /metrics ledger. Best effort only:
++    // recordRecoveryOutcome never throws and never changes the return value.
++    recordRecoveryOutcome(result.success ? 'succeeded' : 'failed');
++
++    return result;
++  }
++
++  private async executeAction(action: RecoveryAction, context: RecoveryContext): Promise<{ success: boolean; error?: string }> {
+     if (this.verbose) {
+       console.log(`[RecoveryExecutor] Executing recovery action: ${action.type}`);
+     }
+diff --git a/src/pipeline/metrics-ledger.ts b/src/pipeline/metrics-ledger.ts
+new file mode 120000
+index 00000000..39929979
+--- /dev/null
++++ b/src/pipeline/metrics-ledger.ts
+@@ -0,0 +1 @@
++../../specs/pipeline.spec.dir/src/metrics-ledger.ts
+\ No newline at end of file
+diff --git a/tests/mcp/pipeline-metrics.test.ts b/tests/mcp/pipeline-metrics.test.ts
+new file mode 100644
+index 00000000..1ac937c2
+--- /dev/null
++++ b/tests/mcp/pipeline-metrics.test.ts
+@@ -0,0 +1,358 @@
++/**
++ * OBS-2: pipeline outcome counters for the Prometheus /metrics endpoint.
++ *
++ * The pipeline executor, the recovery executor and the daemon that drives them
++ * run in a different process from the MCP HTTP server that serves `/metrics`,
++ * so the outcome counters live in a small JSON ledger on disk (see
++ * `specs/pipeline.spec.dir/src/metrics-ledger.ts`) and are merged into the
++ * scrape at render time. These tests cover that whole path:
++ *
++ * - the three counter families (stage results, recovery, convergence) plus the
++ *   stage-duration gauge are declared even when nothing has run yet;
++ * - a producer write becomes a visible sample delta in the scrape;
++ * - the delta survives a real process boundary (a child process increments,
++ *   the parent renders);
++ * - a malformed / hostile ledger reads as the zero state and never throws;
++ * - counters are monotonic;
++ * - an unwritable ledger is a silent no-op and does not change pipeline
++ *   control flow.
++ */
++
++import { describe, it, expect, afterEach } from 'vitest';
++import fs from 'fs';
++import os from 'os';
++import path from 'path';
++import { execFileSync } from 'child_process';
++import { renderMetrics, collectMetrics } from '../../src/mcp/metrics.js';
++import {
++  CONVERGENCE_FAMILY,
++  LEDGER_ENV_VAR,
++  RECOVERY_FAMILY,
++  STAGE_DURATION_FAMILY,
++  STAGE_RESULTS_FAMILY,
++  decodeSeriesKey,
++  encodeSeriesKey,
++  readLedger,
++  recordConvergenceOutcome,
++  recordCounter,
++  recordRecoveryOutcome,
++  recordStageOutcome,
++  resolveLedgerPath
++} from '../../src/pipeline/metrics-ledger.js';
++
++interface ParsedSample {
++  labels: Record<string, string>;
++  value: number;
++}
++
++const tmpDirs: string[] = [];
++const restoreFns: Array<() => void> = [];
++
++/** Create a scratch directory that `afterEach` removes. */
++function makeTmpDir(): string {
++  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'speclang-pipeline-metrics-'));
++  tmpDirs.push(dir);
++  return dir;
++}
++
++/** Parse the sample lines of one family out of an exposition payload. */
++function parseSamples(payload: string, family: string): ParsedSample[] {
++  const samples: ParsedSample[] = [];
++
++  for (const line of payload.split('\n')) {
++    if (!line.startsWith(family) || line.startsWith('# ')) continue;
++
++    const rest = line.slice(family.length);
++    if (rest.startsWith('{')) {
++      const close = rest.indexOf('}');
++      const labelText = rest.slice(1, close);
++      const labels: Record<string, string> = {};
++      for (const pair of labelText.split(',')) {
++        const separator = pair.indexOf('=');
++        if (separator === -1) continue;
++        labels[pair.slice(0, separator)] = pair.slice(separator + 1).replace(/^"|"$/g, '');
++      }
++      samples.push({ labels, value: Number(rest.slice(close + 1).trim()) });
++    } else {
++      samples.push({ labels: {}, value: Number(rest.trim()) });
++    }
++  }
++
++  return samples;
++}
++
++/** The value of one labelled series, or NaN when the series is absent. */
++function seriesValue(payload: string, family: string, expected: Record<string, string>): number {
++  const match = parseSamples(payload, family).find(sample =>
++    Object.entries(expected).every(([key, value]) => sample.labels[key] === value)
++  );
++  return match ? match.value : Number.NaN;
++}
++
++afterEach(() => {
++  while (restoreFns.length > 0) {
++    const restore = restoreFns.pop();
++    if (restore) restore();
++  }
++  while (tmpDirs.length > 0) {
++    const dir = tmpDirs.pop();
++    if (dir) fs.rmSync(dir, { recursive: true, force: true });
++  }
++});
++
++describe('pipeline outcome families (OBS-2)', () => {
++  it('declares the stage/stage-duration/recovery/convergence families with no ledger', () => {
++    const dir = makeTmpDir();
++    const payload = renderMetrics(dir, path.join(dir, 'metrics-outcomes.json'));
++
++    for (const family of [STAGE_RESULTS_FAMILY, RECOVERY_FAMILY, CONVERGENCE_FAMILY]) {
++      expect(payload).toContain(`# HELP ${family} `);
++      expect(payload).toContain(`# TYPE ${family} counter`);
++      // Declared, but no series until a producer records one.
++      expect(parseSamples(payload, family)).toEqual([]);
++    }
++
++    expect(payload).toContain(`# TYPE ${STAGE_DURATION_FAMILY} gauge`);
++    expect(parseSamples(payload, STAGE_DURATION_FAMILY)).toEqual([]);
++  });
++
++  it('renders one series per (stage, status) and the last stage duration', () => {
++    const dir = makeTmpDir();
++    const ledger = path.join(dir, 'metrics-outcomes.json');
++
++    expect(recordStageOutcome('build', 'success', 1250, ledger)).toBe(true);
++    expect(recordStageOutcome('build', 'success', 750, ledger)).toBe(true);
++    expect(recordStageOutcome('test', 'failure', 500, ledger)).toBe(true);
++    expect(recordStageOutcome('lint', 'skipped', 0, ledger)).toBe(true);
++
++    const payload = renderMetrics(dir, ledger);
++
++    expect(seriesValue(payload, STAGE_RESULTS_FAMILY, { stage: 'build', status: 'success' })).toBe(2);
++    expect(seriesValue(payload, STAGE_RESULTS_FAMILY, { stage: 'test', status: 'failure' })).toBe(1);
++    expect(seriesValue(payload, STAGE_RESULTS_FAMILY, { stage: 'lint', status: 'skipped' })).toBe(1);
++    // Same stage, different status => different series.
++    expect(seriesValue(payload, STAGE_RESULTS_FAMILY, { stage: 'build', status: 'failure' })).toBeNaN();
++
++    // Gauge carries the LAST execution of the stage, in seconds.
++    expect(seriesValue(payload, STAGE_DURATION_FAMILY, { stage: 'build' })).toBeCloseTo(0.75, 6);
++    expect(seriesValue(payload, STAGE_DURATION_FAMILY, { stage: 'test' })).toBeCloseTo(0.5, 6);
++    expect(seriesValue(payload, STAGE_DURATION_FAMILY, { stage: 'lint' })).toBe(0);
++  });
++
++  it('renders recovery and convergence outcomes as separate series', () => {
++    const dir = makeTmpDir();
++    const ledger = path.join(dir, 'metrics-outcomes.json');
++
++    recordRecoveryOutcome('succeeded', ledger);
++    recordRecoveryOutcome('succeeded', ledger);
++    recordRecoveryOutcome('failed', ledger);
++    recordConvergenceOutcome('converged', ledger);
++    recordConvergenceOutcome('not_converged', ledger);
++    recordConvergenceOutcome('not_converged', ledger);
++
++    const payload = renderMetrics(dir, ledger);
++
++    expect(seriesValue(payload, RECOVERY_FAMILY, { outcome: 'succeeded' })).toBe(2);
++    expect(seriesValue(payload, RECOVERY_FAMILY, { outcome: 'failed' })).toBe(1);
++    expect(seriesValue(payload, CONVERGENCE_FAMILY, { outcome: 'converged' })).toBe(1);
++    expect(seriesValue(payload, CONVERGENCE_FAMILY, { outcome: 'not_converged' })).toBe(2);
++  });
++
++  it('carries a delta across a real process boundary', () => {
++    const dir = makeTmpDir();
++    const ledger = path.join(dir, 'metrics-outcomes.json');
++
++    recordStageOutcome('parent-stage', 'success', 100, ledger);
++    const before = renderMetrics(dir, ledger);
++    expect(seriesValue(before, STAGE_RESULTS_FAMILY, { stage: 'parent-stage', status: 'success' })).toBe(1);
++
++    // A separate node process — exactly the daemon-vs-scrape split the ledger
++    // exists for. `npm test` builds first (pretest), so dist/ is current.
++    const distLedger = path.resolve(process.cwd(), 'dist', 'specs', 'pipeline.spec.dir', 'src', 'metrics-ledger.js');
++    expect(fs.existsSync(distLedger)).toBe(true);
++
++    const childScript = `
++      const ledger = require(${JSON.stringify(distLedger)});
++      const target = ${JSON.stringify(ledger)};
++      ledger.recordStageOutcome('child-stage', 'success', 250, target);
++      ledger.recordRecoveryOutcome('succeeded', target);
++      ledger.recordConvergenceOutcome('converged', target);
++    `;
++    execFileSync(process.execPath, ['-e', childScript], { encoding: 'utf-8' });
++
++    const after = renderMetrics(dir, ledger);
++
++    // The parent's own series is untouched, the child's series appeared.
++    expect(seriesValue(after, STAGE_RESULTS_FAMILY, { stage: 'parent-stage', status: 'success' })).toBe(1);
++    expect(seriesValue(after, STAGE_RESULTS_FAMILY, { stage: 'child-stage', status: 'success' })).toBe(1);
++    expect(seriesValue(after, RECOVERY_FAMILY, { outcome: 'succeeded' })).toBe(1);
++    expect(seriesValue(after, CONVERGENCE_FAMILY, { outcome: 'converged' })).toBe(1);
++  });
++
++  it('is monotonic: repeat increments only ever add', () => {
++    const dir = makeTmpDir();
++    const ledger = path.join(dir, 'metrics-outcomes.json');
++    const readings: number[] = [];
++
++    for (let i = 0; i < 4; i++) {
++      recordCounter(CONVERGENCE_FAMILY, { outcome: 'converged' }, 1, ledger);
++      readings.push(seriesValue(renderMetrics(dir, ledger), CONVERGENCE_FAMILY, { outcome: 'converged' }));
++    }
++
++    expect(readings).toEqual([1, 2, 3, 4]);
++    // A recorded but non-positive delta still counts as one observation.
++    recordCounter(CONVERGENCE_FAMILY, { outcome: 'converged' }, 0, ledger);
++    expect(seriesValue(renderMetrics(dir, ledger), CONVERGENCE_FAMILY, { outcome: 'converged' })).toBe(5);
++  });
++
++  it('reads a malformed ledger as the zero state and never throws', () => {
++    const dir = makeTmpDir();
++    const ledger = path.join(dir, 'metrics-outcomes.json');
++
++    fs.writeFileSync(ledger, '{ this is not json', 'utf-8');
++    expect(() => renderMetrics(dir, ledger)).not.toThrow();
++    expect(parseSamples(renderMetrics(dir, ledger), STAGE_RESULTS_FAMILY)).toEqual([]);
++    expect(readLedger(ledger).families).toEqual({});
++
++    // Wrongly shaped counters (negative, non-numeric) are dropped, not trusted.
++    fs.writeFileSync(
++      ledger,
++      JSON.stringify({
++        version: 1,
++        families: { [STAGE_RESULTS_FAMILY]: { 'stage=build,status=success': -7, 'stage=test,status=failure': 'NaN' } },
++        stageDurationMs: 'not-an-object',
++      }),
++      'utf-8'
++    );
++    const payload = renderMetrics(dir, ledger);
++    expect(seriesValue(payload, STAGE_RESULTS_FAMILY, { stage: 'build', status: 'success' })).toBe(0);
++    expect(seriesValue(payload, STAGE_RESULTS_FAMILY, { stage: 'test', status: 'failure' })).toBe(0);
++    expect(parseSamples(payload, STAGE_DURATION_FAMILY)).toEqual([]);
++
++    // Recording over a corrupt file starts from zero rather than throwing.
++    fs.writeFileSync(ledger, 'garbage', 'utf-8');
++    expect(recordStageOutcome('build', 'success', 100, ledger)).toBe(true);
++    expect(seriesValue(renderMetrics(dir, ledger), STAGE_RESULTS_FAMILY, { stage: 'build', status: 'success' })).toBe(1);
++  });
++
++  it('honours $SPECLANG_METRICS_LEDGER when no explicit path is given', () => {
++    const dir = makeTmpDir();
++    const envLedger = path.join(dir, 'env-ledger.json');
++    const previous = process.env[LEDGER_ENV_VAR];
++    restoreFns.push(() => {
++      if (previous === undefined) delete process.env[LEDGER_ENV_VAR];
++      else process.env[LEDGER_ENV_VAR] = previous;
++    });
++
++    process.env[LEDGER_ENV_VAR] = envLedger;
++
++    expect(resolveLedgerPath()).toBe(path.resolve(envLedger));
++    expect(recordRecoveryOutcome('failed')).toBe(true);
++    expect(fs.existsSync(envLedger)).toBe(true);
++    // The scraper resolves the same path, so the write shows up with no wiring.
++    expect(seriesValue(renderMetrics(dir), RECOVERY_FAMILY, { outcome: 'failed' })).toBe(1);
++  });
++
++  it('round-trips label sets containing separators', () => {
++    const labels = { stage: 'build,all=1', status: 'success' };
++    expect(decodeSeriesKey(encodeSeriesKey(labels))).toEqual(labels);
++  });
++
++  it('is a silent no-op when the ledger path is unwritable', () => {
++    const dir = makeTmpDir();
++    const blocker = path.join(dir, 'blocker');
++    fs.writeFileSync(blocker, 'not a directory', 'utf-8');
++    const unwritable = path.join(blocker, 'metrics-outcomes.json');
++
++    expect(() => recordStageOutcome('build', 'success', 10, unwritable)).not.toThrow();
++    expect(recordStageOutcome('build', 'success', 10, unwritable)).toBe(false);
++    expect(recordRecoveryOutcome('succeeded', unwritable)).toBe(false);
++    expect(recordConvergenceOutcome('converged', unwritable)).toBe(false);
++    // An unreadable ledger renders as the zero state, not an error.
++    expect(parseSamples(renderMetrics(dir, unwritable), STAGE_RESULTS_FAMILY)).toEqual([]);
++  });
++
++  it('leaves pipeline control flow untouched when the ledger is unwritable', async () => {
++    const dir = makeTmpDir();
++    const projectDir = path.join(dir, 'project');
++    fs.mkdirSync(projectDir, { recursive: true });
++    fs.writeFileSync(
++      path.join(projectDir, 'build.yaml'),
++      ['pipeline:', '  on_converge:', '    - name: probe', '      run: "echo obs2"', ''].join('\n'),
++      'utf-8'
++    );
++
++    const blocker = path.join(dir, 'blocker');
++    fs.writeFileSync(blocker, 'not a directory', 'utf-8');
++    const unwritable = path.join(blocker, 'metrics-outcomes.json');
++
++    const previousEnv = process.env[LEDGER_ENV_VAR];
++    const previousCwd = process.cwd();
++    restoreFns.push(() => {
++      process.chdir(previousCwd);
++      if (previousEnv === undefined) delete process.env[LEDGER_ENV_VAR];
++      else process.env[LEDGER_ENV_VAR] = previousEnv;
++    });
++
++    process.env[LEDGER_ENV_VAR] = unwritable;
++    process.chdir(projectDir);
++
++    const { PipelineExecutor } = await import('../../src/pipeline/executor.js');
++    const executor = new PipelineExecutor({ configPath: 'build.yaml' });
++    const result = await executor.execute();
++
++    expect(result.success).toBe(true);
++    expect(result.stages.map(stage => stage.name)).toEqual(['probe']);
++    expect(result.stages[0].success).toBe(true);
++  });
++});
++
++describe('pipeline outcome wiring (OBS-2)', () => {
++  it('counts a real pipeline run: stage results and the triggering convergence outcome', async () => {
++    const dir = makeTmpDir();
++    const projectDir = path.join(dir, 'project');
++    fs.mkdirSync(projectDir, { recursive: true });
++    fs.writeFileSync(
++      path.join(projectDir, 'build.yaml'),
++      ['pipeline:', '  on_converge:', '    - name: probe', '      run: "echo obs2"', ''].join('\n'),
++      'utf-8'
++    );
++
++    const ledger = path.join(dir, 'metrics-outcomes.json');
++    const previousEnv = process.env[LEDGER_ENV_VAR];
++    const previousCwd = process.cwd();
++    restoreFns.push(() => {
++      process.chdir(previousCwd);
++      if (previousEnv === undefined) delete process.env[LEDGER_ENV_VAR];
++      else process.env[LEDGER_ENV_VAR] = previousEnv;
++    });
++
++    process.env[LEDGER_ENV_VAR] = ledger;
++    process.chdir(projectDir);
++
++    const { PipelineExecutor } = await import('../../src/pipeline/executor.js');
++    const executor = new PipelineExecutor({ configPath: 'build.yaml' });
++
++    const convergence = {
++      converged: false,
++      timestamp: new Date().toISOString(),
++      cascadeDepth: 1,
++      filesChanged: [],
++      duration: 0,
++    } as unknown as Parameters<typeof executor.execute>[0];
++
++    const result = await executor.execute(convergence);
++    expect(result.success).toBe(true);
++
++    // The scraper resolves its ledger path the same way the producer did.
++    const payload = renderMetrics(process.cwd());
++    expect(seriesValue(payload, STAGE_RESULTS_FAMILY, { stage: 'probe', status: 'success' })).toBe(1);
++    expect(seriesValue(payload, CONVERGENCE_FAMILY, { outcome: 'not_converged' })).toBe(1);
++    expect(seriesValue(payload, STAGE_DURATION_FAMILY, { stage: 'probe' })).not.toBeNaN();
++
++    // collectMetrics exposes the same families to in-process callers.
++    const families = collectMetrics(process.cwd()).getFamilies().map(family => family.name);
++    expect(families).toContain(STAGE_RESULTS_FAMILY);
++    expect(families).toContain(CONVERGENCE_FAMILY);
++  });
++});
