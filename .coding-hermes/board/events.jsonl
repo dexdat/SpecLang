@@ -486,9 +486,5 @@
 {"id":485,"timestamp":"2026-11-18 02:02:59.848905","event_type":"task_completed","task_id":"README-25","actor":"foreman","detail":"Judge run 428c8950 tier2 FAIL (real stale-count gap); row stays in_progress with named gaps for fixup dispatch next tick","tick_number":null}
 {"id":486,"timestamp":"2026-11-18 03:21:08.154092","event_type":"task_completed","task_id":"OBS-2","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":487,"timestamp":"2026-11-18 03:32:36.811658","event_type":"task_created","task_id":"OBS-7","actor":"foreman","detail":"{\"id\":\"OBS-7\",\"status\":\"pending\"}","tick_number":null}
-{"id":488,"timestamp":"2026-11-18 14:09:41.997594","event_type":"task_updated","task_id":"README-25","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
-{"id":489,"timestamp":"2026-11-18 14:09:42.106007","event_type":"task_updated","task_id":"DOC-4","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
-{"id":490,"timestamp":"2026-11-18 14:26:16.45333","event_type":"task_updated","task_id":"OBS-7","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
-{"id":491,"timestamp":"2026-11-18 14:26:23.179839","event_type":"task_updated","task_id":"OBS-4","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
-{"id":492,"timestamp":"2026-11-18 14:26:23.303166","event_type":"task_updated","task_id":"OBS-6","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
-{"id":493,"timestamp":"2026-11-18 14:26:23.427757","event_type":"task_updated","task_id":"README-6","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
+{"id":488,"timestamp":"2026-11-18 14:12:23.363824","event_type":"task_created","task_id":"CLN-002","actor":"foreman","detail":"{\"id\":\"CLN-002\",\"status\":\"pending\"}","tick_number":null}
+{"id":489,"timestamp":"2026-11-18 14:25:49.348843","event_type":"task_created","task_id":"DOC-10","actor":"foreman","detail":"{\"id\":\"DOC-10\",\"status\":\"pending\"}","tick_number":null}
