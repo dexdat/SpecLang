@@ -2,7 +2,7 @@
 id: "@speclang/opencode-plugin-spec-dir/ownership-guard"
 version: 0.1.0
 layer: 5
-imports: ["@speclang/opencode-plugin.spec.dir/session-manager"]
+imports: ["@speclang/opencode-plugin-spec-dir/session-manager"]
 tags: [opencode, plugin, ownership, locks]
 short: Ownership guard for OpenCode Speclang plugin
 project_level: Alpha

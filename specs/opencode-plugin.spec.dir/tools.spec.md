@@ -2,7 +2,7 @@
 id: "@speclang/opencode-plugin-spec-dir/tools"
 version: 0.1.0
 layer: 5
-imports: ["@speclang/opencode-plugin.spec.dir/configuration", "@speclang/mcp"]
+imports: ["@speclang/opencode-plugin-spec-dir/configuration", "@speclang/mcp"]
 tags: [opencode, plugin, tools]
 short: Tools provided by OpenCode Speclang plugin
 project_level: Alpha

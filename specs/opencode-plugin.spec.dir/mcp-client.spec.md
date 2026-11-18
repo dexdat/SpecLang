@@ -2,7 +2,7 @@
 id: "@speclang/opencode-plugin-spec-dir/mcp-client"
 version: 0.1.0
 layer: 5
-imports: ["@speclang/opencode-plugin.spec.dir/architecture", "@speclang/mcp"]
+imports: ["@speclang/opencode-plugin-spec-dir/architecture", "@speclang/mcp"]
 tags: [opencode, plugin, mcp, client]
 short: MCP client integration for OpenCode Speclang plugin
 project_level: Alpha

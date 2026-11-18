@@ -10,7 +10,7 @@ status: draft
 project_level: Alpha
 agent_support: agent_assisted
 short: Test Specs
-children: ["@speclang/test-specs/format.spec", "@speclang/test-specs/examples.spec"]
+children: ["@speclang/test-specs/format", "@speclang/test-specs/examples"]
 ---
 
 # Test Specs
