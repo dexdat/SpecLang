@@ -12,8 +12,8 @@ depends_on:
     - "@ref:speclang/cascade"
     - "@ref:speclang/headers"
 children:
-    - "@ref:specs/bootstrap/phases"
-    - "@ref:specs/bootstrap/execution"
+    - "@ref:speclang/bootstrap/phases"
+    - "@ref:speclang/bootstrap/execution"
 ---
 # Bootstrap Process
 

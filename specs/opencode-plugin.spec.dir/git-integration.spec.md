@@ -2,7 +2,7 @@
 id: "@speclang/opencode-plugin-spec-dir/git-integration"
 version: 0.1.0
 layer: 5
-imports: ["@speclang/opencode-plugin.spec.dir/architecture"]
+imports: ["@speclang/opencode-plugin-spec-dir/architecture"]
 tags: [opencode, plugin, git, version-control]
 short: Git integration for OpenCode Speclang plugin
 project_level: Alpha

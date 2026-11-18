@@ -2,7 +2,7 @@
 id: "@speclang/opencode-plugin-spec-dir/checklist"
 version: 0.2.0
 layer: 5
-imports: ["@speclang/opencode-plugin.spec.dir/overview"]
+imports: ["@speclang/opencode-plugin-spec-dir/overview"]
 tags: [opencode, plugin, checklist, implementation]
 short: Implementation checklist for OpenCode Speclang plugin
 project_level: Alpha

@@ -2,7 +2,7 @@
 id: "@speclang/opencode-plugin-spec-dir/event-system"
 version: 0.1.0
 layer: 5
-imports: ["@speclang/opencode-plugin.spec.dir/architecture", "@speclang/opencode"]
+imports: ["@speclang/opencode-plugin-spec-dir/architecture", "@speclang/opencode"]
 tags: [opencode, plugin, events, implementation]
 short: Event system integration for OpenCode Speclang plugin
 project_level: Alpha
