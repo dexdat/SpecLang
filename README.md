@@ -666,12 +666,12 @@ examples/                # Runnable example outputs (symlinks → specs/examples
 ├── auth/index.ts        # → specs/examples.spec.dir/auth/src/auth.ts
 └── crud-app/index.ts    # → specs/examples.spec.dir/crud-app/src/crud-app.ts
 
-src/                     # Generated code
+src/                     # Generated code (selected paths; build evidence below)
 ├── examples/
-│   └── hello-world.ts   # ✅ Compiles
-├── db/                  # ⚠️ Has compilation errors
-├── auth/                # ⚠️ Has compilation errors
-└── ...                  # ⚠️ Various issues
+│   ├── auth.ts          # Auth example (not a src/auth/ directory)
+│   └── hello-world.ts   # Hello World example
+├── db/                  # Existing source directory
+└── ...                  # Other source paths omitted
 
 scripts/                 # Tools
 ├── validate_refs.py     # ✅ Works
@@ -689,6 +689,31 @@ scripts/                 # Tools
 └── cascade_state.json         # Current cascade
 ```
 
+### TypeScript Build Verification
+
+Measured on 2026-11-17 at `6e69f3ae`, after `npm ci --no-audit --no-fund`
+and `npm rebuild better-sqlite3`. Run these commands from the repository root;
+the captured output is quoted below (npm's notice lines omitted):
+
+```console
+$ ls -d src/db src/auth; printf 'rc=%s\n' "$?"
+ls: cannot access 'src/auth': No such file or directory
+src/db
+rc=2
+$ ls -1 src/examples/auth.ts src/examples/hello-world.ts
+src/examples/auth.ts
+src/examples/hello-world.ts
+$ npx tsc --noEmit; printf 'rc=%s\n' "$?"
+rc=0
+$ npm run build; printf 'rc=%s\n' "$?"
+rc=0
+```
+
+Both TypeScript commands succeed using the repository's `tsconfig.json`, which
+already enables `skipLibCheck` and excludes some source paths. These results prove
+the configured typecheck and build pass, not that every file or dependency
+declaration is checked, or that runtime behavior is correct.
+
 ---
 
 ## What Works vs What Doesn't
@@ -703,12 +728,12 @@ scripts/                 # Tools
 - **Hello World**: Compiles successfully (proof of concept)
 - **Cascade protocol**: Documented explicit coordination
 - **Agent definitions**: Complete for all 5 roles
+- **TypeScript compilation**: `npx tsc --noEmit` and `npm run build` both exit with `rc=0` under the repository configuration (see [TypeScript Build Verification](#typescript-build-verification) for commands and captured output)
 - **Integration / E2E tests**: 3 files, 22 tests passing — `tests/e2e/spec-to-code.test.ts`, `tests/poc-e2e.test.ts`, `tests/dashboard/integration/git-integration.test.tsx` (`npx vitest run` on those three files, 2026-11-17 → Test Files 3 passed, Tests 22 passed)
 
 ### ⚠️ Partially Working
 
 - **Code generation**: Scripts exist but have bugs (nested backticks, duplication)
-- **TypeScript compilation**: Works with `--skipLibCheck`, has type conflicts
 - **Test suite**: Green — 1949 tests passing, 58 skipped (`npm test`, 2026-11-17: Tests 1949 passed | 58 skipped (2007), Test Files 113 passed | 4 skipped (117); the number is checkout-dependent — this is a fully provisioned checkout on node 22.22.3 / npm 12.2.2)
 - **Steering packets**: Now accurate (fixed in redesign)
 
@@ -749,9 +774,8 @@ scripts/                 # Tools
 ### Short-term (This Month)
 
 1. **Create coordinator tree traversal** - Automate multi-tree spanning
-2. **Fix TypeScript type conflicts** - @types/glob issues
-3. **Build 3-5 working examples** - Counter, Database, API
-4. **Create cascade templates** - Reusable patterns
+2. **Build 3-5 working examples** - Counter, Database, API
+3. **Create cascade templates** - Reusable patterns
 
 ### Medium-term (This Quarter)
 
