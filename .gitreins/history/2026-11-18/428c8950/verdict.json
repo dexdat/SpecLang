@@ -1,0 +1,619 @@
+{
+  "task_id": "README-25",
+  "task_title": "README validation/test claims hold in a fresh public clone",
+  "task_criteria": [
+    "From git clone https://github.com/dexdat/SpecLang.git at origin/main, following the README install+validate+test instructions exactly as written, each documented command exits with the status the README implies; where a command cannot pass as written the README is corrected to the real prerequisite/command or the claim is removed. Evidence: clone path, commands, exit codes, output pasted."
+  ],
+  "passed": false,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "4528a30e3c6372370fa563d1a6099edc77998ff5",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "df35907f882ee2fd6bbe3c485f6b1373155e9c2b8846000358dfa1cd7c341832",
+  "working_tree_dirty_path_count": 6,
+  "items": [
+    {
+      "criterion": "From git clone https://github.com/dexdat/SpecLang.git at origin/main, following the README install+validate+test instructions exactly as written, each documented command exits with the status the README implies; where a command cannot pass as written the README is corrected to the real prerequisite/command or the claim is removed. Evidence: clone path, commands, exit codes, output pasted.",
+      "status": "FAIL",
+      "detail": "The README-25 commit (1a217abe, README.md only, 16+/13-) rewrote the validation/test claims, but the rewritten numbers do not match the commands the README tells the reader to run. Full suite at origin/main 4528a30e (TMPDIR=$PWD/.tmp npx vitest run, i.e. `npm test` minus the pretest build): EXIT=0, 'Test Files 121 passed | 4 skipped (125)' / 'Tests 2011 passed | 58 skipped (2069)' \u2014 README:166, README:748 and README:831 claim 'Tests 1995 passed | 58 skipped (2053), Test Files 120 passed | 4 skipped (124)' and README:732 says '2053-test suite'. README:579-581 says 'tests/ holds 124 test files ... 120 of the 124 files pass'; `git ls-tree -r --name-only origin/main tests | grep -E '\\.test\\.(ts|tsx)$' | wc -l` = 125. README:592 lists `tests/mcp/` as 4 files; origin/main tracks 5. README:396-398/409 say '--graph ... Nodes: 470 from 479 spec files'; actual `python3 scripts/generate_index.py --graph` prints 'Found 481 spec files' / 'Nodes: 472'. README:381-382 says `node bin/speclang status` prints 'Specs: 452 (450 .spec.md + 2 .scl)'; actual prints 'Specs: 453 (451 .spec.md + 2 .scl)'. No evidence transcript (clone path, commands, exit codes, pasted output) was committed \u2014 `git show --stat 1a217abe` shows only README.md. Many other documented commands do hold: validate_refs.py EXIT=0 'All references valid.'; validate_autonomous.py --project EXIT=0 with 464 'Validation Report' blocks, 464 PASSED, 0 FAILED, confidence 0.6-4.1; npx tsc --noEmit EXIT=0; npm run lint EXIT=0 (1 warning, src/ralph-loop/types.ts:11); npm run check:sqlite-binding EXIT=0; npx vitest run tests/parser.test.ts EXIT=0 (1 file/28 tests); npx vitest run tests/db EXIT=0 ('Test Files 9 passed (9)'); npx vitest run tests/e2e EXIT=0 (1 file/9 tests); the 3 integration files EXIT=0 (3 files/22 tests); npx tsx examples/hello-world/index.ts EXIT=0 'Hello, World!'; generate --dry-run EXIT=0; cascade EXIT=0; agent --dry-run EXIT=0; generate_index.py bare EXIT=2 and --tree without arg EXIT=2 as documented."
+    },
+    {
+      "criterion": "The test-suite counts the README states (tests passed/skipped, test files passed/skipped) match an actual full-suite run at origin/main.",
+      "status": "FAIL",
+      "detail": "README:166/748/831 state 'Tests 1995 passed | 58 skipped (2053), Test Files 120 passed | 4 skipped (124)'. Actual run at HEAD 4528a30e (== origin/main): 'Test Files 121 passed | 4 skipped (125)' / 'Tests 2011 passed | 58 skipped (2069)', EXIT=0. Off by 16 tests and 1 file; README:732 repeats the stale '2053-test suite'.",
+      "derived": true
+    },
+    {
+      "criterion": "The per-directory test-file counts in the README's 'Where the tests live' table match the files tracked at origin/main.",
+      "status": "FAIL",
+      "detail": "README:592 lists `tests/mcp/` as 4 files; `git ls-tree -r --name-only origin/main tests/mcp` returns 5 (bin-path, commands, mcp-status-corrupt-db, metrics, server). All other rows verified correct against origin/main (cli 10, daemon 10, dashboard 16, db 8, cascade 6, cascade_new 3, maturity 5, autonomous 4, codegen 3, validation 4, performance 3, ci 2, meta 2, stdlib 2, agent-driver 1, agents/examples/transition/workflow 1 each, e2e 1).",
+      "derived": true
+    },
+    {
+      "criterion": "The spec/index counts the README states (status Specs:, --graph Nodes:, spec-file count) match the commands the README tells the reader to run.",
+      "status": "FAIL",
+      "detail": "README:396-398/409 claim '--graph ... Nodes: 470 from 479 spec files'; `python3 scripts/generate_index.py --graph` prints 'Found 481 spec files' and 'Nodes: 472' (EXIT=0). README:381-382 claims `node bin/speclang status` prints 'Specs: 452 (450 .spec.md + 2 .scl)'; actual output is 'Specs: 453 (451 .spec.md + 2 .scl)' (EXIT=0). README:579-581 claims 'tests/ holds 124 test files ... 120 of the 124 files pass'; origin/main tracks 125 and the run reports 121 passed + 4 skipped = 125.",
+      "derived": true
+    },
+    {
+      "criterion": "The README's documented CLI commands that the commit touched (validate/generate/cascade/agent) exit with the status the README implies.",
+      "status": "PASS",
+      "detail": "./bin/speclang --help EXIT=0; ./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run EXIT=0 with 'Mode: DRY RUN / Files written: 0 / Would generate: src/generated/hello-world.spec-hello-function.ts'; ./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md EXIT=0 with 'Cascade complete / Generated: 1 files / Converged: Yes / specs/generated/hello/function.ts'; ./bin/speclang agent --trigger specs/main.spec.md --dry-run EXIT=0; npx tsx examples/hello-world/index.ts EXIT=0 'Hello, World!'. Caveat recorded: README:113 './bin/speclang validate' exits 1 here ('Error validating .../specs/main.spec.md: No speclang-header declaration found', 452 passed / 1 failed) because of an untracked empty specs/main.spec.md that is not in origin/main, so that one command's fresh-clone status cannot be settled from this checkout.",
+      "derived": true
+    },
+    {
+      "criterion": "The commit carries the evidence the task demands (clone path, commands, exit codes, pasted output) so the claim is reproducible.",
+      "status": "FAIL",
+      "detail": "`git show --stat 1a217abe` shows only 'README.md | 29 ++++++++++++++-------------'; no clone path, command transcript, exit codes or pasted output were committed anywhere (no docs/ or evidence file in the commit). The asserted numbers are contradicted by a real run (2011/2069 vs claimed 1995/2053), so the claim is neither evidenced nor reproducible.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "changes_required",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  20:56:59",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261118T015641.590336Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\nnpm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261118T015641.590336Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  20:56:59\n   Duration  32.07s (transform 8.34s, setup 1.74s, import 13.74s, tests 193.02s, environment 15ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261118T015641.590336Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": false,
+      "any_failed": true,
+      "summary": "INCOMPLETE\n  \u2717 From git clone https://github.com/dexdat/SpecLang.git at origin/main, following the README install+validate+test instructions exactly as written, each documented command exits with the status the README implies; where a command cannot pass as written the README is corrected to the real prerequisite/command or the claim is removed. Evidence: clone path, commands, exit codes, output pasted.: The README-25 commit (1a217abe, README.md only, 16+/13-) rewrote the validation/test claims, but the rewritten numbers do not match the commands the README tells the reader to run. Full suite at origin/main 4528a30e (TMPDIR=$PWD/.tmp npx vitest run, i.e. `npm test` minus the pretest build): EXIT=0, 'Test Files 121 passed | 4 skipped (125)' / 'Tests 2011 passed | 58 skipped (2069)' \u2014 README:166, README:748 and README:831 claim 'Tests 1995 passed | 58 skipped (2053), Test Files 120 passed | 4 skipped (124)' and README:732 says '2053-test suite'. README:579-581 says 'tests/ holds 124 test files ... 120 of the 124 files pass'; `git ls-tree -r --name-only origin/main tests | grep -E '\\.test\\.(ts|tsx)$' | wc -l` = 125. README:592 lists `tests/mcp/` as 4 files; origin/main tracks 5. README:396-398/409 say '--graph ... Nodes: 470 from 479 spec files'; actual `python3 scripts/generate_index.py --graph` prints 'Found 481 spec files' / 'Nodes: 472'. README:381-382 says `node bin/speclang status` prints 'Specs: 452 (450 .spec.md + 2 .scl)'; actual prints 'Specs: 453 (451 .spec.md + 2 .scl)'. No evidence transcript (clone path, commands, exit codes, pasted output) was committed \u2014 `git show --stat 1a217abe` shows only README.md. Many other documented commands do hold: validate_refs.py EXIT=0 'All references valid.'; validate_autonomous.py --project EXIT=0 with 464 'Validation Report' blocks, 464 PASSED, 0 FAILED, confidence 0.6-4.1; npx tsc --noEmit EXIT=0; npm run lint EXIT=0 (1 warning, src/ralph-loop/types.ts:11); npm run check:sqlite-binding EXIT=0; npx vitest run tests/parser.test.ts EXIT=0 (1 file/28 tests); npx vitest run tests/db EXIT=0 ('Test Files 9 passed (9)'); npx vitest run tests/e2e EXIT=0 (1 file/9 tests); the 3 integration files EXIT=0 (3 files/22 tests); npx tsx examples/hello-world/index.ts EXIT=0 'Hello, World!'; generate --dry-run EXIT=0; cascade EXIT=0; agent --dry-run EXIT=0; generate_index.py bare EXIT=2 and --tree without arg EXIT=2 as documented.\n  \u2717 The test-suite counts the README states (tests passed/skipped, test files passed/skipped) match an actual full-suite run at origin/main.: README:166/748/831 state 'Tests 1995 passed | 58 skipped (2053), Test Files 120 passed | 4 skipped (124)'. Actual run at HEAD 4528a30e (== origin/main): 'Test Files 121 passed | 4 skipped (125)' / 'Tests 2011 passed | 58 skipped (2069)', EXIT=0. Off by 16 tests and 1 file; README:732 repeats the stale '2053-test suite'.\n  \u2717 The per-directory test-file counts in the README's 'Where the tests live' table match the files tracked at origin/main.: README:592 lists `tests/mcp/` as 4 files; `git ls-tree -r --name-only origin/main tests/mcp` returns 5 (bin-path, commands, mcp-status-corrupt-db, metrics, server). All other rows verified correct against origin/main (cli 10, daemon 10, dashboard 16, db 8, cascade 6, cascade_new 3, maturity 5, autonomous 4, codegen 3, validation 4, performance 3, ci 2, meta 2, stdlib 2, agent-driver 1, agents/examples/transition/workflow 1 each, e2e 1).\n  \u2717 The spec/index counts the README states (status Specs:, --graph Nodes:, spec-file count) match the commands the README tells the reader to run.: README:396-398/409 claim '--graph ... Nodes: 470 from 479 spec files'; `python3 scripts/generate_index.py --graph` prints 'Found 481 spec files' and 'Nodes: 472' (EXIT=0). README:381-382 claims `node bin/speclang status` prints 'Specs: 452 (450 .spec.md + 2 .scl)'; actual output is 'Specs: 453 (451 .spec.md + 2 .scl)' (EXIT=0). README:579-581 claims 'tests/ holds 124 test files ... 120 of the 124 files pass'; origin/main tracks 125 and the run reports 121 passed + 4 skipped = 125.\n  \u2713 The README's documented CLI commands that the commit touched (validate/generate/cascade/agent) exit with the status the README implies.: ./bin/speclang --help EXIT=0; ./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run EXIT=0 with 'Mode: DRY RUN / Files written: 0 / Would generate: src/generated/hello-world.spec-hello-function.ts'; ./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md EXIT=0 with 'Cascade complete / Generated: 1 files / Converged: Yes / specs/generated/hello/function.ts'; ./bin/speclang agent --trigger specs/main.spec.md --dry-run EXIT=0; npx tsx examples/hello-world/index.ts EXIT=0 'Hello, World!'. Caveat recorded: README:113 './bin/speclang validate' exits 1 here ('Error validating .../specs/main.spec.md: No speclang-header declaration found', 452 passed / 1 failed) because of an untracked empty specs/main.spec.md that is not in origin/main, so that one command's fresh-clone status cannot be settled from this checkout.\n  \u2717 The commit carries the evidence the task demands (clone path, commands, exit codes, pasted output) so the claim is reproducible.: `git show --stat 1a217abe` shows only 'README.md | 29 ++++++++++++++-------------'; no clone path, command transcript, exit codes or pasted output were committed anywhere (no docs/ or evidence file in the commit). The asserted numbers are contradicted by a real run (2011/2069 vs claimed 1995/2053), so the claim is neither evidenced nor reproducible.\n  \u2717 Coverage FAILED \u2014 not passing: From git clone https://github.com/dexdat/SpecLang.git at origin/main, following the README install+validate+test instructions exactly as written, each documented command exits with the status the README implies; where a command cannot pass as written the README is corrected to the real prerequisite/command or the claim is removed. Evidence: clone path, commands, exit codes, output pasted.\nThe README-25 commit corrected several validation/test claims that do hold (validate_refs, validate_autonomous, tsc, lint, vitest filters, examples, generate/cascade/agent all exit as documented), but the headline test counts it rewrote (1995/2053/120/124 vs the actual 2011/2069/121/125), the tests/mcp row, the --graph node count and the status spec count are all wrong, and no clone/command/exit-code evidence was committed.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": false,
+          "output": "INCOMPLETE\n\n\u2026 [5050 chars omitted \u2014 5 line(s)] \u2026\n  \u2717 The commit carries the evidence the task demands (clone path, commands, exit codes, pasted output) so the claim is reproducible.: `git show --stat 1a217abe` shows only 'README.md | 29 ++++++++++++++-------------'; no clone path, command transcript, exit codes or pasted output were committed anywhere (no docs/ or evidence file in the commit). The asserted numbers are contradicted by a real run (2011/2069 vs claimed 1995/2053), so the claim is neither evidenced nor reproducible.\n  \u2717 Coverage FAILED \u2014 not passing: From git clone https://github.com/dexdat/SpecLang.git at origin/main, following the README install+validate+test instructions exactly as written, each documented command exits with the status the README implies; where a command cannot pass as written the README is corrected to the real prerequisite/command or the claim is removed. Evidence: clone path, commands, exit codes, output pasted.\nThe README-25 commit corrected several validation/test claims that do hold (validate_refs, validate_autonomous, tsc, lint, vitest filters, examples, generate/cascade/agent all exit as documented), but the headline test counts it rewrote (1995/2053/120/124 vs the actual 2011/2069/121/125), the tests/mcp row, the --graph node count and the status spec count are all wrong, and no clone/command/exit-code evidence was committed.",
+          "error": "",
+          "data": {
+            "verdict": "INCOMPLETE",
+            "items": [
+              {
+                "criterion": "From git clone https://github.com/dexdat/SpecLang.git at origin/main, following the README install+validate+test instructions exactly as written, each documented command exits with the status the README implies; where a command cannot pass as written the README is corrected to the real prerequisite/command or the claim is removed. Evidence: clone path, commands, exit codes, output pasted.",
+                "status": "FAIL",
+                "detail": "The README-25 commit (1a217abe, README.md only, 16+/13-) rewrote the validation/test claims, but the rewritten numbers do not match the commands the README tells the reader to run. Full suite at origin/main 4528a30e (TMPDIR=$PWD/.tmp npx vitest run, i.e. `npm test` minus the pretest build): EXIT=0, 'Test Files 121 passed | 4 skipped (125)' / 'Tests 2011 passed | 58 skipped (2069)' \u2014 README:166, README:748 and README:831 claim 'Tests 1995 passed | 58 skipped (2053), Test Files 120 passed | 4 skipped (124)' and README:732 says '2053-test suite'. README:579-581 says 'tests/ holds 124 test files ... 120 of the 124 files pass'; `git ls-tree -r --name-only origin/main tests | grep -E '\\.test\\.(ts|tsx)$' | wc -l` = 125. README:592 lists `tests/mcp/` as 4 files; origin/main tracks 5. README:396-398/409 say '--graph ... Nodes: 470 from 479 spec files'; actual `python3 scripts/generate_index.py --graph` prints 'Found 481 spec files' / 'Nodes: 472'. README:381-382 says `node bin/speclang status` prints 'Specs: 452 (450 .spec.md + 2 .scl)'; actual prints 'Specs: 453 (451 .spec.md + 2 .scl)'. No evidence transcript (clone path, commands, exit codes, pasted output) was committed \u2014 `git show --stat 1a217abe` shows only README.md. Many other documented commands do hold: validate_refs.py EXIT=0 'All references valid.'; validate_autonomous.py --project EXIT=0 with 464 'Validation Report' blocks, 464 PASSED, 0 FAILED, confidence 0.6-4.1; npx tsc --noEmit EXIT=0; npm run lint EXIT=0 (1 warning, src/ralph-loop/types.ts:11); npm run check:sqlite-binding EXIT=0; npx vitest run tests/parser.test.ts EXIT=0 (1 file/28 tests); npx vitest run tests/db EXIT=0 ('Test Files 9 passed (9)'); npx vitest run tests/e2e EXIT=0 (1 file/9 tests); the 3 integration files EXIT=0 (3 files/22 tests); npx tsx examples/hello-world/index.ts EXIT=0 'Hello, World!'; generate --dry-run EXIT=0; cascade EXIT=0; agent --dry-run EXIT=0; generate_index.py bare EXIT=2 and --tree without arg EXIT=2 as documented.",
+                "resolution_probability": 0.04
+              },
+              {
+                "criterion": "The test-suite counts the README states (tests passed/skipped, test files passed/skipped) match an actual full-suite run at origin/main.",
+                "status": "FAIL",
+                "detail": "README:166/748/831 state 'Tests 1995 passed | 58 skipped (2053), Test Files 120 passed | 4 skipped (124)'. Actual run at HEAD 4528a30e (== origin/main): 'Test Files 121 passed | 4 skipped (125)' / 'Tests 2011 passed | 58 skipped (2069)', EXIT=0. Off by 16 tests and 1 file; README:732 repeats the stale '2053-test suite'.",
+                "derived": true
+              },
+              {
+                "criterion": "The per-directory test-file counts in the README's 'Where the tests live' table match the files tracked at origin/main.",
+                "status": "FAIL",
+                "detail": "README:592 lists `tests/mcp/` as 4 files; `git ls-tree -r --name-only origin/main tests/mcp` returns 5 (bin-path, commands, mcp-status-corrupt-db, metrics, server). All other rows verified correct against origin/main (cli 10, daemon 10, dashboard 16, db 8, cascade 6, cascade_new 3, maturity 5, autonomous 4, codegen 3, validation 4, performance 3, ci 2, meta 2, stdlib 2, agent-driver 1, agents/examples/transition/workflow 1 each, e2e 1).",
+                "derived": true
+              },
+              {
+                "criterion": "The spec/index counts the README states (status Specs:, --graph Nodes:, spec-file count) match the commands the README tells the reader to run.",
+                "status": "FAIL",
+                "detail": "README:396-398/409 claim '--graph ... Nodes: 470 from 479 spec files'; `python3 scripts/generate_index.py --graph` prints 'Found 481 spec files' and 'Nodes: 472' (EXIT=0). README:381-382 claims `node bin/speclang status` prints 'Specs: 452 (450 .spec.md + 2 .scl)'; actual output is 'Specs: 453 (451 .spec.md + 2 .scl)' (EXIT=0). README:579-581 claims 'tests/ holds 124 test files ... 120 of the 124 files pass'; origin/main tracks 125 and the run reports 121 passed + 4 skipped = 125.",
+                "derived": true
+              },
+              {
+                "criterion": "The README's documented CLI commands that the commit touched (validate/generate/cascade/agent) exit with the status the README implies.",
+                "status": "PASS",
+                "detail": "./bin/speclang --help EXIT=0; ./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run EXIT=0 with 'Mode: DRY RUN / Files written: 0 / Would generate: src/generated/hello-world.spec-hello-function.ts'; ./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md EXIT=0 with 'Cascade complete / Generated: 1 files / Converged: Yes / specs/generated/hello/function.ts'; ./bin/speclang agent --trigger specs/main.spec.md --dry-run EXIT=0; npx tsx examples/hello-world/index.ts EXIT=0 'Hello, World!'. Caveat recorded: README:113 './bin/speclang validate' exits 1 here ('Error validating .../specs/main.spec.md: No speclang-header declaration found', 452 passed / 1 failed) because of an untracked empty specs/main.spec.md that is not in origin/main, so that one command's fresh-clone status cannot be settled from this checkout.",
+                "derived": true
+              },
+              {
+                "criterion": "The commit carries the evidence the task demands (clone path, commands, exit codes, pasted output) so the claim is reproducible.",
+                "status": "FAIL",
+                "detail": "`git show --stat 1a217abe` shows only 'README.md | 29 ++++++++++++++-------------'; no clone path, command transcript, exit codes or pasted output were committed anywhere (no docs/ or evidence file in the commit). The asserted numbers are contradicted by a real run (2011/2069 vs claimed 1995/2053), so the claim is neither evidenced nor reproducible.",
+                "derived": true
+              }
+            ],
+            "summary": "The README-25 commit corrected several validation/test claims that do hold (validate_refs, validate_autonomous, tsc, lint, vitest filters, examples, generate/cascade/agent all exit as documented), but the headline test counts it rewrote (1995/2053/120/124 vs the actual 2011/2069/121/125), the tests/mcp row, the --graph node count and the status spec count are all wrong, and no clone/command/exit-code evidence was committed.",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"README-25\"}",
+          "exit_code": 0,
+          "output_sha": "861cb27b7d18df93a6cbede5b4acde4d79ac1920ff753b9034e85b4427c453db"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd && ls -la && git log --oneline -5",
+          "exit_code": 0,
+          "output_sha": "c14b687e83fbdfff29b137da161f4062d8eaabae75169bd15b99b144863c40d2"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"README-25: README validation/test claims hold in fresh public clone. Criterion: from git clone https://github.com/dexdat/SpecLang.git at origin/main, following README install+validate+test instructions exactly, each documented command exits with status README implies; where a command cannot pass as written, README corrected or claim removed. Evidence: clone path, commands, exit codes, output pasted.\", \"key\": \"task\"}",
+          "exit_code": 0,
+          "output_sha": "6f8a91458d407762a93cf48b6d1dd37ffdf4fb93e9ac1edd94875b4bdf87b832"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git status --short | head -20 && echo \"---REMOTE---\" && git remote -v && echo \"---BRANCH---\" && git branch -a | head -20",
+          "exit_code": 0,
+          "output_sha": "5783e33de6db496151685386804c0deb84947c401e1c58dae368a6e0b451e4ee"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git log --oneline -3 origin/main 2>&1 | head -5; echo \"---\"; git rev-parse HEAD origin/main 2>&1",
+          "exit_code": 0,
+          "output_sha": "dc2bd8c35b3c4a9eb800b2ec297d51307ba2369ed72217a5b1b4415f2912dc83"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n -i -E \"npm install|npm i |npx|validate|npm test|pnpm|yarn|bun \" README.md | head -80",
+          "exit_code": 0,
+          "output_sha": "832c2649545c5d11ca44f7ba528c58378ddf255e2a9984c0551c6acaec0a4576"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 200, \"path\": \"README.md\"}",
+          "exit_code": 0,
+          "output_sha": "e4c2b1676f91079d11db3cc4e9c529afa1e165cafb3c44a48c15d6db1873784c"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 120, \"offset\": 290, \"path\": \"README.md\"}",
+          "exit_code": 0,
+          "output_sha": "0c3ecf629c7d96e3f685671e3a9e457f16ee9ad9954b60543fa05233f8b0de94"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 160, \"offset\": 410, \"path\": \"README.md\"}",
+          "exit_code": 0,
+          "output_sha": "b765fba580d72f7fe0bb554feb22b9ad816fbf3df562a58278e0f04368e68178"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 180, \"offset\": 570, \"path\": \"README.md\"}",
+          "exit_code": 0,
+          "output_sha": "9d1fb4b1af9b6337608fe2bba48b09e3262c6274e4bc17c5f180035d5e663f15"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git log --oneline -20 -- README.md",
+          "exit_code": 0,
+          "output_sha": "52e55737c9f838046e377798af581e4be9b3a7ba444b4005842bfe68f184c4d0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat .gitreins/config.yaml 2>/dev/null | head -60",
+          "exit_code": 0,
+          "output_sha": "eb832ae67e531f2cbe50b5e4826a3affe74d7e51dba0607a4d94adad3217fdf3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show --stat 1a217abe | head -30",
+          "exit_code": 0,
+          "output_sha": "d634264d17248af8a48fd47759c3989e7cbcbbf86dbaea387a2688ec4c5081c5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show 1a217abe -- README.md | head -400",
+          "exit_code": 0,
+          "output_sha": "031850820b754a9ea4956aa3e5ee983f1e2fc94ef0fe34feee5a1eef30476a5e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show 1a217abe -- README.md | sed -n '30,120p'",
+          "exit_code": 0,
+          "output_sha": "10ec5d62518b7f36ccec0819575e74ef12c434d518cf4cdfd6bb6ad14813141e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show 1a217abe -- README.md | sed -n '60,110p'",
+          "exit_code": 0,
+          "output_sha": "9b1cf1f7d6452f4b6207e070a8f5e6f131629518d9c7c8f5c9a4b426da4ca6bd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git show 1a217abe -- README.md | sed -n '20,40p'",
+          "exit_code": 0,
+          "output_sha": "31d67c57ec8b5b2ceca2d183761bd19beeef48f65edee615843d5e27253349d5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls tests/*.test.ts tests/*.test.tsx 2>/dev/null | wc -l; echo \"--- all test files ---\"; find tests -name '*.test.ts' -o -name '*.test.tsx' | wc -l; echo \"--- e2e ---\"; ls tests/e2e/",
+          "exit_code": 0,
+          "output_sha": "291af82f4aca327262fad6740591b259cfaf5666e1099c620153def3ef2e02b5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && for d in cli daemon dashboard db cascade cascade_new maturity mcp autonomous codegen validation performance ci meta stdlib agent-driver agents examples transition workflow e2e; do n=$(find tests/$d -name '*.test.ts' -o -name '*.test.tsx' 2>/dev/null | wc -l); echo \"$d: $n\"; done",
+          "exit_code": 0,
+          "output_sha": "8c5a0224e573a4834df45e2d5a8d6d5feded6a29f39178a6f88aea1104d1d2d8"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat vitest.config.ts",
+          "exit_code": 0,
+          "output_sha": "9b377a1ed2b27b809d16306bc7a6a497483d2eae2f3fbc83e2bacbf84fedb546"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && find tests -name '*.test.ts' -o -name '*.test.tsx' | sort",
+          "exit_code": 0,
+          "output_sha": "9220a801aded80bbb135c0e4c3751dd7d91c44869d96b5b7e2b598cee25651c7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && find tests -name '*.test.ts' -o -name '*.test.tsx' | wc -l; echo \"--- mcp dir ---\"; ls tests/mcp/; echo \"--- db dir ---\"; ls tests/db/",
+          "exit_code": 0,
+          "output_sha": "166161d47a2fc1bef0c4851a52e4bce033dd7e7eb9dd981673db944f62fea730"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git ls-tree -r --name-only origin/main tests | grep -E '\\.test\\.(ts|tsx)$' | wc -l; echo \"--- mcp ---\"; git ls-tree -r --name-only origin/main tests/mcp; echo \"--- db ---\"; git ls-tree -r --name-only origin/main tests/db",
+          "exit_code": 0,
+          "output_sha": "287a26ecb846dd958cfb945a84cdfc70ca568eef7738cef32d45482cf44a4246"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git ls-tree -r --name-only origin/main tests | grep -E '\\.test\\.(ts|tsx)$' | awk -F/ 'NF==2' | wc -l; echo \"--- top-level list ---\"; git ls-tree -r --name-only origin/main tests | grep -E '^tests/[^/]+\\.test\\.(ts|tsx)$' | wc -l",
+          "exit_code": 0,
+          "output_sha": "09633e322fe95a9dc519b0ca86b00d2598cd3760c897197d657e8ca102ed46d1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && cat package.json | head -60",
+          "exit_code": 0,
+          "output_sha": "9959fde55b02a7c0fa79b13f6b0cb62fc8a0e97916fe0fe4f7249b83c19c6a4e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && node --version; npm --version; python3 --version; echo \"--- dist ---\"; ls -d dist 2>&1; echo \"--- node_modules ---\"; ls -d node_modules 2>&1 | head -2",
+          "exit_code": 0,
+          "output_sha": "218436dcf5883b9f786d284f631967facae4af04b345f3584be00e807463b9e2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 300 python3 scripts/validate_refs.py 2>&1 | tail -20; echo \"EXIT=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "90d30a0577bc418a62c355035b4fd0d32f7aeaa63d746f0f59c6d6a046e3feb3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 300 python3 scripts/validate_refs.py > /tmp/vr.out 2>&1; echo \"EXIT=$?\"; tail -5 /tmp/vr.out",
+          "exit_code": 0,
+          "output_sha": "c9b77711c8219c348e2f9c2eb0ed94ac8daaebd00be45375e33de21f01afe682"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 600 python3 scripts/validate_autonomous.py --project > /tmp/va.out 2>&1; echo \"EXIT=$?\"; wc -l /tmp/va.out; grep -c \"Validation Report\" /tmp/va.out; grep -c \"PASSED\" /tmp/va.out; grep -c \"FAILED\" /tmp/va.out; tail -20 /tmp/va.out",
+          "exit_code": 0,
+          "output_sha": "710aef2f347ef4c2208e04925bfc0cb82fa93d75c23a2ca02658f213b4051131"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -oE \"confidence: [0-9.]+\" /tmp/va.out | sort -u | head -20; echo \"--- spec files count ---\"; git ls-tree -r --name-only origin/main specs | grep -cE '\\.spec\\.md$'; git ls-tree -r --name-only origin/main specs | grep -cE '\\.scl$'",
+          "exit_code": 0,
+          "output_sha": "a61dfcaba38b815a7d6e045ddc6ef0992e0c1299cab608ab776ad87a374b5f11"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -oE \"confidence: [0-9.]+\" /tmp/va.out | sort -u | tail -10; echo \"--- max ---\"; grep -oE \"confidence: [0-9.]+\" /tmp/va.out | sed 's/confidence: //' | sort -g | tail -3",
+          "exit_code": 0,
+          "output_sha": "e020da14474f36a619e2f8fec0d426be05279ba845a4731b9d8b3573a9898968"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 600 npx tsc --noEmit > /tmp/tsc.out 2>&1; echo \"EXIT=$?\"; tail -5 /tmp/tsc.out",
+          "exit_code": 0,
+          "output_sha": "446d3d34c7f0f47532c1af9f10667019a1104c1481cdca08341f29345ebc2f6f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 900 npx vitest run tests/db > /tmp/vdb.out 2>&1; echo \"EXIT=$?\"; grep -E \"Test Files|Tests \" /tmp/vdb.out | tail -5",
+          "exit_code": 0,
+          "output_sha": "ea88a148f2a3690a7c49485c2ff769dac922505824e1348cde9d033d25b0dd1e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 900 npx vitest run tests/parser.test.ts > /tmp/vp.out 2>&1; echo \"EXIT=$?\"; grep -E \"Test Files|Tests \" /tmp/vp.out | tail -5",
+          "exit_code": 0,
+          "output_sha": "002149fd72a390813e8f01562370feeed4bfd4b805e5385d97092d518dce1d3a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && nohup bash -c 'TMPDIR=$PWD/.tmp npx vitest run > /tmp/vfull.out 2>&1; echo \"EXIT=$?\" >> /tmp/vfull.out' > /dev/null 2>&1 &\necho started",
+          "exit_code": 0,
+          "output_sha": "486b30ff66f3c1a76a7d9b0b5566885b1797b3eb9b1398b2b2b968739b4945a1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 120 ./bin/speclang --help > /tmp/help.out 2>&1; echo \"EXIT=$?\"; head -40 /tmp/help.out",
+          "exit_code": 0,
+          "output_sha": "6f9f804dcfda4ffc869810590db310e91aeba96e55e82eeb9616d334003b5276"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 300 ./bin/speclang validate > /tmp/val.out 2>&1; echo \"EXIT=$?\"; tail -20 /tmp/val.out",
+          "exit_code": 0,
+          "output_sha": "4412ae54e0cd6d963578aebb0cda772d7f4625d5bfbbf44310bcc6acda958abc"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git status --short specs/main.spec.md; git ls-tree -r --name-only origin/main specs/main.spec.md; echo \"---\"; head -5 specs/main.spec.md",
+          "exit_code": 0,
+          "output_sha": "32597131c8967afaf6f45a1ec001bb81ded89fd63d63b839ec2be22aa62b0eb0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && ls -la specs/main.spec.md; wc -c specs/main.spec.md; echo \"---\"; cat specs/main.spec.md | head -20",
+          "exit_code": 0,
+          "output_sha": "dad04d396025d9228788a8bb229a46f68973acfac496d4411c19a19f1b74e844"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 300 ./bin/speclang status > /tmp/st.out 2>&1; echo \"EXIT=$?\"; head -20 /tmp/st.out",
+          "exit_code": 0,
+          "output_sha": "298816c0a7d4e8ade3f9cfc01bb5446b2ec4782f28b66d4286dfe2be745b99f1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 300 python3 scripts/generate_index.py --tree @speclang/ui > /tmp/gi1.out 2>&1; echo \"EXIT_TREE=$?\"; head -20 /tmp/gi1.out; echo \"=== IMPACT ===\"; timeout 300 python3 scripts/generate_index.py --impact speclang/core > /tmp/gi2.out 2>&1; echo \"EXIT_IMPACT=$?\"; head -20 /tmp/gi2.out",
+          "exit_code": 0,
+          "output_sha": "432d66215cd7cbd41b3aee94020e4a4eccc202208650224769a7df2880169c83"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 300 python3 scripts/generate_index.py --graph > /tmp/gi3.out 2>&1; echo \"EXIT_GRAPH=$?\"; head -25 /tmp/gi3.out",
+          "exit_code": 0,
+          "output_sha": "55e7515595e30936cd191606951008085d2737a19834544abc1e11b572b30617"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 300 python3 scripts/generate_index.py > /tmp/gi4.out 2>&1; echo \"EXIT_BARE=$?\"; head -10 /tmp/gi4.out; echo \"=== TREE no arg ===\"; timeout 300 python3 scripts/generate_index.py --tree > /tmp/gi5.out 2>&1; echo \"EXIT_TREE_NOARG=$?\"; head -5 /tmp/gi5.out",
+          "exit_code": 0,
+          "output_sha": "709c342cc001f10a75c96f838264b1673e4133290ba78c875517215c3b7c1e06"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 300 python3 scripts/generate_index.py --validate > /tmp/gi6.out 2>&1; echo \"EXIT_VALIDATE=$?\"; tail -8 /tmp/gi6.out",
+          "exit_code": 0,
+          "output_sha": "eccdbbee3560882dbe63613df56a9f78b3c7b3c86f906f2ba7fc663806c3edd0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 300 npx tsx examples/hello-world/index.ts > /tmp/ex1.out 2>&1; echo \"EXIT_EX1=$?\"; cat /tmp/ex1.out; echo \"=== EX2 ===\"; timeout 300 npx tsx specs/examples.spec.dir/hello-world/src/hello-world.ts > /tmp/ex2.out 2>&1; echo \"EXIT_EX2=$?\"; cat /tmp/ex2.out",
+          "exit_code": 0,
+          "output_sha": "c1c05b3cca11f0e7a3e69a9b452474d7bcf9de2d59a67436c3834f195d2ab40d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 300 ./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run > /tmp/gen.out 2>&1; echo \"EXIT_GEN=$?\"; cat /tmp/gen.out",
+          "exit_code": 0,
+          "output_sha": "5a85b53f153ac3b9dddfc8617499c61c093966dc0566c87ebd7a7181922937d0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 300 ./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md > /tmp/casc.out 2>&1; echo \"EXIT_CASCADE=$?\"; cat /tmp/casc.out; echo \"=== git status ===\"; git status --short | head -10",
+          "exit_code": 0,
+          "output_sha": "d7a6e5ba9f07de8d3b1b62cd13b5aaedeb9a3fd38261c3211404c935bb4e0cf4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 300 ./bin/speclang agent --trigger specs/main.spec.md --dry-run > /tmp/ag.out 2>&1; echo \"EXIT_AGENT=$?\"; cat /tmp/ag.out | head -20",
+          "exit_code": 0,
+          "output_sha": "f4da0b3cd7e95769d03f03887f38740d84a14230149e4432a39a80f8499e8c48"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 300 npm run check:sqlite-binding > /tmp/sql.out 2>&1; echo \"EXIT_SQL=$?\"; tail -10 /tmp/sql.out",
+          "exit_code": 0,
+          "output_sha": "d07674c3054c59f9aab9225a2a176ce1526943fd2fd4aa2dbc172feab00844a5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 300 npm run lint > /tmp/lint.out 2>&1; echo \"EXIT_LINT=$?\"; tail -15 /tmp/lint.out",
+          "exit_code": 0,
+          "output_sha": "584643ff8c2ee1c8a4386d2da1dccc5f90ee9a046e52a7028759063259904c5a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 300 npx vitest run tests/e2e > /tmp/ve2e.out 2>&1; echo \"EXIT_E2E=$?\"; grep -E \"Test Files|Tests \" /tmp/ve2e.out | tail -3",
+          "exit_code": 0,
+          "output_sha": "a0ead84924b55bae4fac08c2ecb550aef3ede8449629701a9a36dcc829756720"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && timeout 300 npx vitest run tests/e2e/spec-to-code.test.ts tests/poc-e2e.test.ts tests/dashboard/integration/git-integration.test.tsx > /tmp/v3.out 2>&1; echo \"EXIT_3=$?\"; grep -E \"Test Files|Tests \" /tmp/v3.out | tail -3",
+          "exit_code": 0,
+          "output_sha": "1244dbcec7feddda3f9f09056d5f2f050c2ebec5e3c51d2f81bc472ef814ed32"
+        },
+        {
+          "tool": "run_command",
+          "command": "tail -30 /tmp/vfull.out 2>/dev/null; echo \"=== grep ===\"; grep -E \"Test Files|Tests |EXIT=\" /tmp/vfull.out 2>/dev/null | tail -5",
+          "exit_code": 0,
+          "output_sha": "4a46808fd2f3f5d876ccd1e20909d65cd5064c58df2cfb1e50df0894d6297300"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la /tmp/vfull.out; wc -l /tmp/vfull.out; tail -5 /tmp/vfull.out",
+          "exit_code": 0,
+          "output_sha": "ed5d97e3394d97b8258c7f9fea7e92726d11db2b7dff1ca8c8f90c3ea4bafea6"
+        },
+        {
+          "tool": "run_command",
+          "command": "ps aux | grep -c vitest; ps aux | grep vitest | head -5",
+          "exit_code": 0,
+          "output_sha": "a31a66bfab5e00f050e553458937433d6b2768770c2e5df4de284a2ce3f5f2ce"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && setsid nohup bash -c 'TMPDIR=$PWD/.tmp npx vitest run > /tmp/vfull2.out 2>&1; echo \"EXIT=$?\" >> /tmp/vfull2.out' < /dev/null > /dev/null 2>&1 & disown; sleep 5; ls -la /tmp/vfull2.out",
+          "exit_code": 0,
+          "output_sha": "c598a7f165c040e7a347d607a74c420609982f3bbcfa7f57fa05d3772b5e52eb"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 20; cat /tmp/vfull2.out; echo \"=== ps ===\"; ps aux | grep -c \"[v]itest\"",
+          "exit_code": 0,
+          "output_sha": "6810186f39f367dadc2ff9f11191b9f5f8d03f7bad937faa3c223cd72668a796"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"npm test\\|npm install\\|npm run build\\|validate_refs\\|validate_autonomous\\|tsc --noEmit\\|vitest run\" README.md | sed -n '1,60p'",
+          "exit_code": 0,
+          "output_sha": "33055a0001baf949953f9f44105f27314ccb80a165ccd4a1006534b2a263f34a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && sed -n '160,170p' README.md; echo \"=== 585-600 ===\"; sed -n '583,600p' README.md",
+          "exit_code": 0,
+          "output_sha": "79f1f73eacb2cdf77d2bd88fb438609640418267f74c2a369f8a38b4715f40ea"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 25; grep -E \"Test Files|Tests |EXIT=\" /tmp/vfull2.out | tail -5; echo \"=== ps ===\"; ps aux | grep -c \"[v]itest\"",
+          "exit_code": 1,
+          "output_sha": "e7a96dfe706800ea1b7dbea9cfa0bfd72404dd3f6da63b0bfcfd847c974429f9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && grep -n \"1995\\|2053\\|120 passed\\|124\" README.md",
+          "exit_code": 0,
+          "output_sha": "24a5c0198872a8afd85a0bd2d78c4df7607c78b1ef488c2db4654b3dda33504c"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"README-25 commit = 1a217abe (docs(readme): README-25 \\u2014 validation/test claims match a fresh public clone), only README.md changed (16+/13-).\\n\\nVerified commands at HEAD 4528a30e (== origin/main), node v22.22.3 / npm 12.3 / python 3.14.9:\\n- python3 scripts/validate_refs.py -> EXIT=0, \\\"All references valid.\\\" (README:376-377 OK)\\n- python3 scripts/validate_autonomous.py --project -> EXIT=0, 464 \\\"Validation Report\\\" blocks, 464 PASSED, 0 FAILED; confidence range 0.6..4.1 (README:380-381 + README:738 OK)\\n- npx tsc --noEmit -> EXIT=0 (README:387 OK)\\n- python3 scripts/generate_index.py (bare) -> EXIT=2 usage (README:400-402 OK); --tree no arg -> EXIT=2 \\\"argument --tree: expected one argument\\\" (README:405-406 OK); --tree @speclang/ui -> 18 edges (README:407 OK); --impact speclang/core -> 40 direct dependents (README:408 OK); --graph -> Nodes: 472 (README:409 says 470 \\u2014 stale); --validate -> EXIT=1 (README:410 OK)\\n- npx tsx examples/hello-world/index.ts -> EXIT=0 \\\"Hello, World!\\\" (README:513 OK); spec-tree copy -> EXIT=0 \\\"Hello, World!\\\" (README:520 OK)\\n- ./bin/speclang generate ... --dry-run -> EXIT=0, Mode: DRY RUN / Files written: 0 / Would generate src/generated/hello-world.spec-hello-function.ts (README:423-426 OK)\\n- ./bin/speclang cascade ... -> EXIT=0, Cascade complete / Generated: 1 files / Converged: Yes / specs/generated/hello/function.ts (README:430-433 OK)\\n- ./bin/speclang agent --trigger specs/main.spec.md --dry-run -> EXIT=0 (README:487 OK)\\n- npm run check:sqlite-binding -> EXIT=0 \\\"OK: better-sqlite3 native binding loads (SELECT 1 -> {\\\"x\\\":1})\\\" (README:66 OK)\\n- npm run lint -> EXIT=0, 1 warning src/ralph-loop/types.ts:11 (README:637-643 OK)\\n- npx vitest run tests/parser.test.ts -> EXIT=0, 1 file / 28 tests (README:566 OK)\\n- npx vitest run tests/db -> EXIT=0, Test Files 9 passed (9) (README:567 \\\"9 files\\\" OK)\\n- npx vitest run tests/e2e -> EXIT=0, 1 file / 9 tests (README:613-614 OK)\\n- npx vitest run <3 integration files> -> EXIT=0, Test Files 3 passed, Tests 22 passed (README:743 OK)\\n- FULL SUITE (TMPDIR=$PWD/.tmp npx vitest run, same as npm test minus pretest build) -> EXIT=0, \\\"Test Files 121 passed | 4 skipped (125)\\\", \\\"Tests 2011 passed | 58 skipped (2069)\\\"\\n\\nDEFECTS FOUND (all in the lines this commit rewrote):\\n1. README:166, 748, 831 claim \\\"1995 tests passing ... Tests 1995 passed | 58 skipped (2053), Test Files 120 passed | 4 skipped (124)\\\". Actual run: 2011 passed | 58 skipped (2069), Test Files 121 passed | 4 skipped (125). README:732 repeats \\\"2053-test suite\\\".\\n2. README:579-581 \\\"tests/ holds 124 test files and vitest collects all of them ... 120 of the 124 files pass and 4 run with every test conditionally skipped\\\". Actual: 125 test files tracked at origin/main (git ls-tree), 121 pass + 4 skipped = 125.\\n3. README:592 table row `tests/mcp/` = 4 files; actual 5 (bin-path, commands, mcp-status-corrupt-db, metrics, server).\\n4. README:409 \\\"--graph # graph stats (nodes, edges, most connected)\\\" with README:396-398 \\\"Nodes: 470 from 479 spec files\\\"; actual --graph prints \\\"Nodes: 472\\\" from \\\"Found 481 spec files\\\".\\n5. README:381-382 \\\"node bin/speclang status prints Specs: 452 (450 .spec.md + 2 .scl)\\\"; actual prints \\\"Specs: 453 (451 .spec.md + 2 .scl)\\\" (extra untracked specs/main.spec.md in this checkout; tracked count is 450+2).\\n6. README:113 \\\"./bin/speclang validate # Validate all specs\\\" \\u2014 exits 1 in this checkout (untracked empty specs/main.spec.md). Not verifiable as a fresh-clone claim from here.\\n\\nNo evidence artifact (clone path/transcript) was committed with 1a217abe \\u2014 only README.md changed.\", \"key\": \"evidence\"}",
+          "exit_code": 0,
+          "output_sha": "d7d75f6a83e5a5db2d4ef1bda04209091f7bbd854199158dcaf5120f3cc90a12"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Derived criteria for README-25:\\n0. The test-suite counts the README states (tests passed/skipped, test files passed/skipped) match an actual full-suite run at origin/main.\\n1. The per-directory test-file counts in the README's \\\"Where the tests live\\\" table match the files tracked at origin/main.\\n2. The spec/index counts the README states (status Specs:, --graph Nodes:, spec-file count) match the commands the README tells the reader to run.\\n3. The README's documented CLI commands that the commit touched (validate/generate/cascade/agent) exit with the status the README implies.\\n4. The commit carries the evidence the task demands (clone path, commands, exit codes, pasted output) so the claim is reproducible.\", \"key\": \"derived\"}",
+          "exit_code": 0,
+          "output_sha": "c95aeca17d02a2dc64e3a6ccc3ca768667a6d75ee286f2ceb1813bb6f57ec92f"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FAIL: README:166, 748, 831 state \\\"Tests 1995 passed | 58 skipped (2053), Test Files 120 passed | 4 skipped (124)\\\" (and README:732 \\\"2053-test suite\\\"). Actual full run at origin/main 4528a30e: \\\"Test Files 121 passed | 4 skipped (125)\\\" / \\\"Tests 2011 passed | 58 skipped (2069)\\\", EXIT=0. The commit's headline claim is off by 16 tests and 1 file.\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "592739d70b7b91b9323655b4371f43096ef1fb2cca7982e98fad52d9c9fbf9c3"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FAIL: README:592 lists `tests/mcp/` as 4 files; origin/main tracks 5 (git ls-tree -r --name-only origin/main tests/mcp -> bin-path, commands, mcp-status-corrupt-db, metrics, server). Other rows verified correct (cli 10, daemon 10, dashboard 16, db 8, cascade 6, cascade_new 3, maturity 5, autonomous 4, codegen 3, validation 4, performance 3, ci 2, meta 2, stdlib 2, agent-driver 1, agents/examples/transition/workflow 1 each, e2e 1).\", \"key\": \"verified_derived_1\"}",
+          "exit_code": 0,
+          "output_sha": "316a545f4f8a8bc0ff863e6c9d1b41478273e809d42cf752436c7f7698358158"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FAIL: README:396-398/409 say \\\"--graph ... Nodes: 470 from 479 spec files\\\"; actual `python3 scripts/generate_index.py --graph` prints \\\"Found 481 spec files\\\" and \\\"Nodes: 472\\\" (EXIT=0). README:381-382 says `node bin/speclang status` prints \\\"Specs: 452 (450 .spec.md + 2 .scl)\\\"; actual prints \\\"Specs: 453 (451 .spec.md + 2 .scl)\\\" (EXIT=0). README:579-581 says \\\"tests/ holds 124 test files ... 120 of the 124 files pass\\\"; origin/main tracks 125 test files and the run reports 121 passed + 4 skipped = 125.\", \"key\": \"verified_derived_2\"}",
+          "exit_code": 0,
+          "output_sha": "2f985ebb157b123e8af880e7392d19cecbd0c94b6c5a4a54ea599a5a9385fc41"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS (with one caveat): ./bin/speclang --help EXIT=0; generate --dry-run EXIT=0 with \\\"Mode: DRY RUN / Files written: 0 / Would generate: src/generated/hello-world.spec-hello-function.ts\\\"; cascade EXIT=0 with \\\"Cascade complete / Generated: 1 files / Converged: Yes / specs/generated/hello/function.ts\\\"; agent --dry-run EXIT=0; npx tsx examples/hello-world/index.ts EXIT=0 \\\"Hello, World!\\\". Caveat: README:113 \\\"./bin/speclang validate # Validate all specs\\\" exits 1 in this checkout (\\\"Error validating .../specs/main.spec.md: No speclang-header declaration found\\\", 452 passed / 1 failed) because of an untracked empty specs/main.spec.md; that file is not in origin/main, so the fresh-clone status cannot be settled from this checkout.\", \"key\": \"verified_derived_3\"}",
+          "exit_code": 0,
+          "output_sha": "2ac48597e7d3af9d6c8c744821471eaffaaf7ced57e2ec18b988c16c50466676"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FAIL: `git show --stat 1a217abe` shows only \\\"README.md | 29 ++++++++++++++-------------\\\" \\u2014 no clone path, no command transcript, no exit codes, no pasted output was committed anywhere (no docs/ or evidence file in the commit). The task's required evidence is absent from the repository, and the numbers it asserts are contradicted by a real run (2011/2069 vs claimed 1995/2053).\", \"key\": \"verified_derived_4\"}",
+          "exit_code": 0,
+          "output_sha": "12fe22b84e16ccab68c6a4e48129c9489b52fb4a85f835a08e5426db2815fd0e"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Criterion 1 verdict: FAIL. The commit 1a217abe rewrote the validation/test claims but several of the rewritten numbers do not match the commands the README tells the reader to run: test counts (1995/2053/120/124 vs actual 2011/2069/121/125), tests/mcp row (4 vs 5), --graph Nodes (470 vs 472), status Specs (452 vs 453). No evidence transcript committed. Many other documented commands do pass (validate_refs 0, validate_autonomous 0 with 464 PASSED, tsc 0, lint 0, vitest filters 0, examples 0, generate/cascade/agent 0).\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "eddb74167a737988bd88c8b8ee74df445d6db49b7626f0b868902a49ab5f7b4c"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 162,
+        "detection": "board row marked complete while a sibling field still records the pre-completion state",
+        "detail": "OBS-1 is flipped to status \"complete\" with worker_status \"done\", but the row's `detail` was rewritten from a plain string to an object with `evidence`/`text` while every other row on the board (GAP-004, GAP-005, OBS-2..4) keeps `detail` as a plain string \u2014 a schema drift in the same file."
+      },
+      {
+        "severity": "info",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 162,
+        "detection": "completion event cites a merge commit that differs from the recorded commit_hash",
+        "detail": "The OBS-1 worker_summary says \"Merged 7adc5dcf via 7c87c7aadd1c7f8e304e58eaf66a95663c41a89b\", while commit_hash is 7c87c7aa and the events.jsonl line 484 says \"merge 7c87c7aa\" \u2014 the two records name different commits as the merge."
+      }
+    ],
+    "summary": "Board-only bookkeeping change closing OBS-1; the row's `detail` field changes shape versus every other row and the merge commit is named inconsistently between the task row and the completion event."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  20:56:59\n\nStage tier2: FAIL\n  INCOMPLETE\n  \u2717 From git clone https://github.com/dexdat/SpecLang.git at origin/main, following the README install+validate+test instructions exactly as written, each documented command exits with the status the README implies; where a command cannot pass as written the README is corrected to the real prerequisite/command or the claim is removed. Evidence: clone path, commands, exit codes, output pasted.: The README-25 commit (1a217abe, README.md only, 16+/13-) rewrote the validation/test claims, but the rewritten numbers do not match the commands the README tells the reader to run. Full suite at origin/main 4528a30e (TMPDIR=$PWD/.tmp npx vitest run, i.e. `npm test` minus the pretest build): EXIT=0, 'Test Files 121 passed | 4 skipped (125)' / 'Tests 2011 passed | 58 skipped (2069)' \u2014 README:166, README:748 and README:831 claim 'Tests 1995 passed | 58 skipped (2053), Test Files 120 passed | 4 skipped (124)' and README:732 says '2053-test suite'. README:579-581 says 'tests/ holds 124 test files ... 120 of the 124 files pass'; `git ls-tree -r --name-only origin/main tests | grep -E '\\.test\\.(ts|tsx)$' | wc -l` = 125. README:592 lists `tests/mcp/` as 4 files; origin/main tracks 5. README:396-398/409 say '--graph ... Nodes: 470 from 479 spec files'; actual `python3 scripts/generate_index.py --graph` prints 'Found 481 spec files' / 'Nodes: 472'. README:381-382 says `node bin/speclang status` prints 'Specs: 452 (450 .spec.md + 2 .scl)'; actual prints 'Specs: 453 (451 .spec.md + 2 .scl)'. No evidence transcript (clone path, commands, exit codes, pasted output) was committed \u2014 `git show --stat 1a217abe` shows only README.md. Many other documented commands do hold: validate_refs.py EXIT=0 'All references valid.'; validate_autonomous.py --project EXIT=0 with 464 'Validation Report' blocks, 464 PASSED, 0 FAILED, confidence 0.6-4.1; npx tsc --noEmit EXIT=0; npm run lint EXIT=0 (1 warning, src/ralph-loop/types.ts:11); npm run check:sqlite-binding EXIT=0; npx vitest run tests/parser.test.ts EXIT=0 (1 file/28 tests); npx vitest run tests/db EXIT=0 ('Test Files 9 passed (9)'); npx vitest run tests/e2e EXIT=0 (1 file/9 tests); the 3 integration files EXIT=0 (3 files/22 tests); npx tsx examples/hello-world/index.ts EXIT=0 'Hello, World!'; generate --dry-run EXIT=0; cascade EXIT=0; agent --dry-run EXIT=0; generate_index.py bare EXIT=2 and --tree without arg EXIT=2 as documented.\n  \u2717 The test-suite counts the README states (tests passed/skipped, test files passed/skipped) match an actual full-suite run at origin/main.: README:166/748/831 state 'Tests 1995 passed | 58 skipped (2053), Test Files 120 passed | 4 skipped (124)'. Actual run at HEAD 4528a30e (== origin/main): 'Test Files 121 passed | 4 skipped (125)' / 'Tests 2011 passed | 58 skipped (2069)', EXIT=0. Off by 16 tests and 1 file; README:732 repeats the stale '2053-test suite'.\n  \u2717 The per-directory test-file counts in the README's 'Where the tests live' table match the files tracked at origin/main.: README:592 lists `tests/mcp/` as 4 files; `git ls-tree -r --name-only origin/main tests/mcp` returns 5 (bin-path, commands, mcp-status-corrupt-db, metrics, server). All other rows verified correct against origin/main (cli 10, daemon 10, dashboard 16, db 8, cascade 6, cascade_new 3, maturity 5, autonomous 4, codegen 3, validation 4, performance 3, ci 2, meta 2, stdlib 2, agent-driver 1, agents/examples/transition/workflow 1 each, e2e 1).\n  \u2717 The spec/index counts the README states (status Specs:, --graph Nodes:, spec-file count) match the commands the README tells the reader to run.: README:396-398/409 claim '--graph ... Nodes: 470 from 479 spec files'; `python3 scripts/generate_index.py --graph` prints 'Found 481 spec files' and 'Nodes: 472' (EXIT=0). README:381-382 claims `node bin/speclang status` prints 'Specs: 452 (450 .spec.md + 2 .scl)'; actual output is 'Specs: 453 (451 .spec.md + 2 .scl)' (EXIT=0). README:579-581 claims 'tests/ holds 124 test files ... 120 of the 124 files pass'; origin/main tracks 125 and the run reports 121 passed + 4 skipped = 125.\n  \u2713 The README's documented CLI commands that the commit touched (validate/generate/cascade/agent) exit with the status the README implies.: ./bin/speclang --help EXIT=0; ./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run EXIT=0 with 'Mode: DRY RUN / Files written: 0 / Would generate: src/generated/hello-world.spec-hello-function.ts'; ./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md EXIT=0 with 'Cascade complete / Generated: 1 files / Converged: Yes / specs/generated/hello/function.ts'; ./bin/speclang agent --trigger specs/main.spec.md --dry-run EXIT=0; npx tsx examples/hello-world/index.ts EXIT=0 'Hello, World!'. Caveat recorded: README:113 './bin/speclang validate' exits 1 here ('Error validating .../specs/main.spec.md: No speclang-header declaration found', 452 passed / 1 failed) because of an untracked empty specs/main.spec.md that is not in origin/main, so that one command's fresh-clone status cannot be settled from this checkout.\n  \u2717 The commit carries the evidence the task demands (clone path, commands, exit codes, pasted output) so the claim is reproducible.: `git show --stat 1a217abe` shows only 'README.md | 29 ++++++++++++++-------------'; no clone path, command transcript, exit codes or pasted output were committed anywhere (no docs/ or evidence file in the commit). The asserted numbers are contradicted by a real run (2011/2069 vs claimed 1995/2053), so the claim is neither evidenced nor reproducible.\n  \u2717 Coverage FAILED \u2014 not passing: From git clone https://github.com/dexdat/SpecLang.git at origin/main, following the README install+validate+test instructions exactly as written, each documented command exits with the status the README implies; where a command cannot pass as written the README is corrected to the real prerequisite/command or the claim is removed. Evidence: clone path, commands, exit codes, output pasted.\nThe README-25 commit corrected several validation/test claims that do hold (validate_refs, validate_autonomous, tsc, lint, vitest filters, examples, generate/cascade/agent all exit as documented), but the headline test counts it rewrote (1995/2053/120/124 vs the actual 2011/2069/121/125), the tests/mcp row, the --graph node count and the status spec count are all wrong, and no clone/command/exit-code evidence was committed.\n\nOverall: FAIL \u2717",
+  "evaluated_at": "2026-11-18T02:01:37.228657",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-18T02:01:37.264805+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 20852,
+        "truncated": false,
+        "source": "git show 4528a30e3c63"
+      }
+    ],
+    "task_id": "README-25"
+  }
+}
