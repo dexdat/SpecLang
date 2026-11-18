@@ -17,6 +17,7 @@ import { IPC } from './ipc';
 import { Config } from './config';
 import { LockManager } from './locks';
 import { SessionStore } from './session-store';
+import { writeDaemonPromMetrics } from './daemon-prom';
 import {
   FileEvent,
   DaemonCommand,
@@ -53,6 +54,8 @@ export class Daemon extends EventEmitter {
   // DF-SPECLANG-014 / DF-SPECLANG-2-R5: consecutive pipeline failure counter.
   // Reset on success; at >= 3 the daemon stops auto-recascading and goes Error.
   private pipelineFailures: number;
+  // Cumulative counter, separate from the consecutive-failure guard.
+  private pipelineErrors = 0;
 
   constructor(configPath?: string) {
     super();
@@ -99,6 +102,7 @@ export class Daemon extends EventEmitter {
     this.convergence.on('converged', async (result) => {
       console.log('[Daemon] Cascade converged!', result);
       this.state.setStatus(DaemonStatusKind.Converged);
+      await this.publishMetrics();
       this.emit('converged', result);
 
       // Execute pipeline on convergence
@@ -114,6 +118,7 @@ export class Daemon extends EventEmitter {
         console.error('[Daemon] Daemon state: error. Fix the pipeline failure, then restart or resume the daemon to retry.');
         console.error('===================================================================');
         this.state.setStatus(DaemonStatusKind.Error);
+        await this.publishMetrics();
         this.emit('pipeline_failed', `pipeline failed ${this.pipelineFailures} consecutive times; auto-recascade stopped`);
         return;
       }
@@ -135,6 +140,7 @@ export class Daemon extends EventEmitter {
         // next cascade and resets the depth/start time for it.
         console.log('[Daemon] Auto-recascade enabled — armed for next cascade');
         this.state.setStatus(DaemonStatusKind.Converged);
+        await this.publishMetrics();
         this.emit('armed', result);
       } else {
         console.log('[Daemon] Auto-recascade disabled — awaiting user input');
@@ -149,6 +155,7 @@ export class Daemon extends EventEmitter {
     
     this.running = true;
     this.state.setStatus(DaemonStatusKind.Idle);
+    await this.publishMetrics();
     
     console.log('[Daemon] Started successfully');
     this.emit('started');
@@ -172,6 +179,7 @@ export class Daemon extends EventEmitter {
     
     this.running = false;
     this.state.setStatus(DaemonStatusKind.Idle);
+    await this.publishMetrics();
     
     console.log('[Daemon] Stopped');
     this.emit('stopped');
@@ -203,6 +211,7 @@ export class Daemon extends EventEmitter {
     // DF-SPECLANG-4: read the depth AFTER onEvent() — it was read before the
     // increment, so the persisted cascadeDepth lagged the live cascade by one.
     this.state.setCascadeDepth(this.convergence.getCascadeDepth());
+    void this.publishMetrics();
     
     // Route to agent
     const task = this.router.route(event);
@@ -224,12 +233,14 @@ export class Daemon extends EventEmitter {
       case DaemonCommandKind.Pause:
         this.paused = true;
         this.state.setStatus(DaemonStatusKind.Paused);
+        await this.publishMetrics();
         console.log('[Daemon] Paused');
         break;
         
       case DaemonCommandKind.Resume:
         this.paused = false;
         this.state.setStatus(DaemonStatusKind.Idle);
+        await this.publishMetrics();
         console.log('[Daemon] Resumed');
         break;
         
@@ -266,7 +277,23 @@ export class Daemon extends EventEmitter {
     this.router.resetCascadeDepth();
     await this.state.reset();
     this.state.setStatus(DaemonStatusKind.Idle);
+    await this.publishMetrics();
     console.log('[Daemon] Aborted');
+  }
+
+  /** Publish a snapshot without letting telemetry failures break a cascade. */
+  private async publishMetrics(): Promise<void> {
+    try {
+      const current = this.state.get();
+      await writeDaemonPromMetrics(process.cwd(), {
+        up: this.running,
+        status: current.status,
+        lastEventAt: current.lastEventAt,
+        errors: this.pipelineErrors,
+      });
+    } catch (error) {
+      console.warn('[Daemon] Failed to write .speclang/daemon.prom:', error);
+    }
   }
 
   /**
@@ -392,10 +419,13 @@ export class Daemon extends EventEmitter {
       
       if (result.success) {
         this.pipelineFailures = 0;
+        await this.publishMetrics();
         console.log('[Daemon] Pipeline succeeded!');
         this.emit('pipeline_success', result);
       } else {
         this.pipelineFailures++;
+        this.pipelineErrors++;
+        await this.publishMetrics();
         console.error(`[Daemon] Pipeline failed (consecutive failure ${this.pipelineFailures}):`, result.error);
         console.error('[Daemon] Cascade NOT complete — pipeline did not succeed.');
         this.emit('pipeline_failed', result.error);
@@ -403,6 +433,8 @@ export class Daemon extends EventEmitter {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.pipelineFailures++;
+      this.pipelineErrors++;
+      await this.publishMetrics();
       console.error(`[Daemon] Pipeline execution error (consecutive failure ${this.pipelineFailures}):`, errorMessage);
       console.error('[Daemon] Cascade NOT complete — pipeline did not succeed.');
       this.emit('pipeline_failed', errorMessage);
