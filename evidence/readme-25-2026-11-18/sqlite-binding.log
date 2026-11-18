@@ -1,0 +1,3 @@
+npm notice run speclang@1.0.0 check:sqlite-binding
+npm notice run bash scripts/postinstall-lint-deps.sh --sqlite-binding-only
+OK: better-sqlite3 native binding loads (SELECT 1 -> {"x":1})

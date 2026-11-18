@@ -1,0 +1,15 @@
+npm notice run speclang@1.0.0 pretest
+npm notice run npm run build
+npm notice run speclang@1.0.0 build
+npm notice run tsc
+npm notice run speclang@1.0.0 test
+npm notice run TMPDIR=$PWD/.tmp vitest run tests/e2e
+
+ RUN  v4.1.11 /home/kara/worktrees/SpecLang-README-25
+
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  09:18:47
+   Duration  2.04s (transform 44ms, setup 32ms, import 27ms, tests 1.85s, environment 0ms)
+

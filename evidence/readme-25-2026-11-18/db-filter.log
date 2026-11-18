@@ -1,0 +1,586 @@
+npm notice run speclang@1.0.0 pretest
+npm notice run npm run build
+npm notice run speclang@1.0.0 build
+npm notice run tsc
+npm notice run speclang@1.0.0 test
+npm notice run TMPDIR=$PWD/.tmp vitest run tests/db
+
+ RUN  v4.1.11 /home/kara/worktrees/SpecLang-README-25
+
+stdout | tests/db/corrupt-state-db-surfaces.test.ts > corrupt state database reaches the MCP and Ralph Loop openers (QA-SPECLANG-5-R2) > Ralph Loop still opens a healthy (absent) file
+Applying migration 1: initial_schema
+Applying migration 2: add_events_processed
+Applying migration 3: cascade_support
+Applying migration 4: session_indexes
+Applying migration 5: ralph_loop
+Applying migration 6: lock_indexes
+Applying migration 7: command_queue
+Applying migration 8: search_indexes
+
+stderr | tests/db/corrupt-state-db-surfaces.test.ts > corrupt state database reaches the MCP and Ralph Loop openers (QA-SPECLANG-5-R2) > Ralph Loop still opens a healthy (absent) file
+Ralph Loop state database ready at /home/kara/worktrees/SpecLang-README-25/.tmp/corrupt-surfaces-3No7JL/speclang.db (schema version 8)
+
+ ❯ tests/db/corrupt-state-db-surfaces.test.ts (7 tests | 1 failed) 55670ms
+     × Ralph Loop still opens a healthy (absent) file 49610ms
+stdout | tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > stop() ends a running loop, clears its poll timer, and logs reason=stopped
+Applying migration 1: initial_schema
+Applying migration 2: add_events_processed
+Applying migration 3: cascade_support
+Applying migration 4: session_indexes
+Applying migration 5: ralph_loop
+Applying migration 6: lock_indexes
+Applying migration 7: command_queue
+Applying migration 8: search_indexes
+
+stderr | tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > stop() ends a running loop, clears its poll timer, and logs reason=stopped
+Ralph Loop state database ready at /home/kara/worktrees/SpecLang-README-25/.tmp/ralph-lifecycle-tQJxFZ/stop.db (schema version 8)
+
+stdout | tests/db/ralph-loop-fresh-state.test.ts > Ralph Loop bootstraps a fresh state database (QA-SPECLANG-5-R3) > creates the canonical state schema plus the loop's own tables on an absent file
+Applying migration 1: initial_schema
+Applying migration 2: add_events_processed
+Applying migration 3: cascade_support
+Applying migration 4: session_indexes
+Applying migration 5: ralph_loop
+Applying migration 6: lock_indexes
+Applying migration 7: command_queue
+Applying migration 8: search_indexes
+
+stderr | tests/db/ralph-loop-fresh-state.test.ts > Ralph Loop bootstraps a fresh state database (QA-SPECLANG-5-R3) > creates the canonical state schema plus the loop's own tables on an absent file
+Ralph Loop state database ready at /home/kara/worktrees/SpecLang-README-25/.tmp/ralph-fresh-mJerLd/speclang.db (schema version 8)
+
+stdout | tests/db.test.ts > Full-Text Search > should search by content
+Applying migration 1: initial_schema
+Applying migration 2: add_events_processed
+Applying migration 3: cascade_support
+Applying migration 4: session_indexes
+Applying migration 5: ralph_loop
+Applying migration 6: lock_indexes
+Applying migration 7: command_queue
+Applying migration 8: search_indexes
+
+stderr | tests/db.test.ts > Full-Text Search > should search by content
+Database initialized at version 8
+
+stdout | tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > stops itself with reason=idle-timeout after maxIdlePolls idle polls
+Applying migration 1: initial_schema
+Applying migration 2: add_events_processed
+Applying migration 3: cascade_support
+Applying migration 4: session_indexes
+Applying migration 5: ralph_loop
+Applying migration 6: lock_indexes
+Applying migration 7: command_queue
+Applying migration 8: search_indexes
+
+stderr | tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > stops itself with reason=idle-timeout after maxIdlePolls idle polls
+Ralph Loop state database ready at /home/kara/worktrees/SpecLang-README-25/.tmp/ralph-lifecycle-RSMoaF/idle.db (schema version 8)
+
+stdout | tests/db/ralph-loop-fresh-state.test.ts > Ralph Loop bootstraps a fresh state database (QA-SPECLANG-5-R3) > every statement the loop prepares runs against the freshly created DB
+Applying migration 1: initial_schema
+Applying migration 2: add_events_processed
+Applying migration 3: cascade_support
+Applying migration 4: session_indexes
+Applying migration 5: ralph_loop
+Applying migration 6: lock_indexes
+Applying migration 7: command_queue
+Applying migration 8: search_indexes
+
+stderr | tests/db/ralph-loop-fresh-state.test.ts > Ralph Loop bootstraps a fresh state database (QA-SPECLANG-5-R3) > every statement the loop prepares runs against the freshly created DB
+Ralph Loop state database ready at /home/kara/worktrees/SpecLang-README-25/.tmp/ralph-fresh-uBSILk/statements.db (schema version 8)
+
+stdout | tests/db/ralph-loop-fresh-state.test.ts > Ralph Loop bootstraps a fresh state database (QA-SPECLANG-5-R3) > creates a missing directory for an explicit DB path
+Applying migration 1: initial_schema
+Applying migration 2: add_events_processed
+Applying migration 3: cascade_support
+Applying migration 4: session_indexes
+Applying migration 5: ralph_loop
+Applying migration 6: lock_indexes
+Applying migration 7: command_queue
+Applying migration 8: search_indexes
+
+stderr | tests/db/ralph-loop-fresh-state.test.ts > Ralph Loop bootstraps a fresh state database (QA-SPECLANG-5-R3) > creates a missing directory for an explicit DB path
+Ralph Loop state database ready at /home/kara/worktrees/SpecLang-README-25/.tmp/ralph-fresh-W19vXd/nested/state/speclang.db (schema version 8)
+
+ ❯ tests/db/ralph-loop-fresh-state.test.ts (7 tests | 4 failed) 160036ms
+     × creates the canonical state schema plus the loop's own tables on an absent file 46745ms
+     × every statement the loop prepares runs against the freshly created DB 43757ms
+     × creates a missing directory for an explicit DB path 39445ms
+     × bootstraps .speclang/speclang.db and keeps looping where it used to exit 1 30083ms
+stdout | tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > never stops on idleness when the bound is disabled explicitly
+Applying migration 1: initial_schema
+Applying migration 2: add_events_processed
+Applying migration 3: cascade_support
+Applying migration 4: session_indexes
+Applying migration 5: ralph_loop
+Applying migration 6: lock_indexes
+Applying migration 7: command_queue
+Applying migration 8: search_indexes
+
+stderr | tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > never stops on idleness when the bound is disabled explicitly
+Ralph Loop state database ready at /home/kara/worktrees/SpecLang-README-25/.tmp/ralph-lifecycle-kNnlmk/unbounded.db (schema version 8)
+
+stdout | tests/db.test.ts > Graph Queries > should find dependents
+Applying migration 1: initial_schema
+Applying migration 2: add_events_processed
+Applying migration 3: cascade_support
+Applying migration 4: session_indexes
+Applying migration 5: ralph_loop
+Applying migration 6: lock_indexes
+Applying migration 7: command_queue
+Applying migration 8: search_indexes
+
+stderr | tests/db.test.ts > Graph Queries > should find dependents
+Database initialized at version 8
+
+stdout | tests/db.test.ts > Graph Queries > should find dependencies
+Applying migration 1: initial_schema
+Applying migration 2: add_events_processed
+Applying migration 3: cascade_support
+Applying migration 4: session_indexes
+Applying migration 5: ralph_loop
+Applying migration 6: lock_indexes
+Applying migration 7: command_queue
+Applying migration 8: search_indexes
+
+stderr | tests/db.test.ts > Graph Queries > should find dependencies
+Database initialized at version 8
+
+stdout | tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > stops with reason=launcher-gone when the launching process has exited
+Applying migration 1: initial_schema
+Applying migration 2: add_events_processed
+Applying migration 3: cascade_support
+Applying migration 4: session_indexes
+Applying migration 5: ralph_loop
+Applying migration 6: lock_indexes
+Applying migration 7: command_queue
+Applying migration 8: search_indexes
+
+stderr | tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > stops with reason=launcher-gone when the launching process has exited
+Ralph Loop state database ready at /home/kara/worktrees/SpecLang-README-25/.tmp/ralph-lifecycle-CEmhsY/launcher.db (schema version 8)
+
+stdout | tests/db.test.ts > Graph Queries > should find ancestors
+Applying migration 1: initial_schema
+Applying migration 2: add_events_processed
+Applying migration 3: cascade_support
+Applying migration 4: session_indexes
+Applying migration 5: ralph_loop
+Applying migration 6: lock_indexes
+Applying migration 7: command_queue
+Applying migration 8: search_indexes
+
+stderr | tests/db.test.ts > Graph Queries > should find ancestors
+Database initialized at version 8
+
+stdout | tests/db.test.ts > JSON Queries > should find by tag
+Applying migration 1: initial_schema
+Applying migration 2: add_events_processed
+Applying migration 3: cascade_support
+Applying migration 4: session_indexes
+Applying migration 5: ralph_loop
+Applying migration 6: lock_indexes
+Applying migration 7: command_queue
+Applying migration 8: search_indexes
+
+stderr | tests/db.test.ts > JSON Queries > should find by tag
+Database initialized at version 8
+
+stdout | tests/db.test.ts > JSON Queries > should find by field
+Applying migration 1: initial_schema
+
+stdout | tests/db.test.ts > Migrations > should run migrations
+Applying migration 1: initial_schema
+
+stdout | tests/db.test.ts > Migrations > should not re-run migrations
+Applying migration 1: initial_schema
+
+stdout | tests/db.test.ts > Migrations > should get current version
+Applying migration 1: initial_schema
+
+stdout | tests/db.test.ts > Vector Search > should report availability correctly
+Applying migration 1: initial_schema
+
+stdout | tests/db.test.ts > Vector Search > should return empty results for stub implementation
+Applying migration 1: initial_schema
+
+ ❯ tests/db.test.ts (35 tests | 11 failed) 304240ms
+     × should search by content 43528ms
+     × should find dependents 39447ms
+     × should find dependencies 41593ms
+     × should find ancestors 41181ms
+     × should find by tag 37351ms
+     × should find by field 1604ms
+     × should run migrations 1927ms
+     × should not re-run migrations 659ms
+     × should get current version 781ms
+     × should report availability correctly 705ms
+     × should return empty results for stub implementation 454ms
+stdout | tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > does not mistake a live launcher for a dead one
+Applying migration 1: initial_schema
+Applying migration 2: add_events_processed
+Applying migration 3: cascade_support
+Applying migration 4: session_indexes
+Applying migration 5: ralph_loop
+Applying migration 6: lock_indexes
+Applying migration 7: command_queue
+Applying migration 8: search_indexes
+
+stderr | tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > does not mistake a live launcher for a dead one
+Ralph Loop state database ready at /home/kara/worktrees/SpecLang-README-25/.tmp/ralph-lifecycle-pDHYFH/alive-launcher.db (schema version 8)
+
+stdout | tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > stops on SIGTERM through the handler start() registered, and removes it again
+Applying migration 1: initial_schema
+Applying migration 2: add_events_processed
+Applying migration 3: cascade_support
+Applying migration 4: session_indexes
+Applying migration 5: ralph_loop
+Applying migration 6: lock_indexes
+Applying migration 7: command_queue
+Applying migration 8: search_indexes
+
+stderr | tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > stops on SIGTERM through the handler start() registered, and removes it again
+Ralph Loop state database ready at /home/kara/worktrees/SpecLang-README-25/.tmp/ralph-lifecycle-BjBGIw/signal.db (schema version 8)
+
+stdout | tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > does not stack signal listeners when the loop is started twice
+Applying migration 1: initial_schema
+Applying migration 2: add_events_processed
+Applying migration 3: cascade_support
+Applying migration 4: session_indexes
+Applying migration 5: ralph_loop
+Applying migration 6: lock_indexes
+Applying migration 7: command_queue
+Applying migration 8: search_indexes
+
+stderr | tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > does not stack signal listeners when the loop is started twice
+Ralph Loop state database ready at /home/kara/worktrees/SpecLang-README-25/.tmp/ralph-lifecycle-T03Nv2/restart-0.db (schema version 8)
+
+ ❯ tests/db/ralph-loop-lifecycle.test.ts (10 tests | 8 failed) 426200ms
+     × stop() ends a running loop, clears its poll timer, and logs reason=stopped 45744ms
+     × stops itself with reason=idle-timeout after maxIdlePolls idle polls 43757ms
+     × never stops on idleness when the bound is disabled explicitly 39946ms
+     × stops with reason=launcher-gone when the launching process has exited 61901ms
+     × does not mistake a live launcher for a dead one 60931ms
+     × stops on SIGTERM through the handler start() registered, and removes it again 55664ms
+     × does not stack signal listeners when the loop is started twice 58803ms
+     × the CLI entry exits 0 on a real SIGTERM instead of being SIGKILLed 30026ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 24 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/db.test.ts > Full-Text Search > should search by content
+Error: Hook timed out in 30000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+ ❯ tests/db.test.ts:320:3
+    318|   let fts: FullTextSearch;
+    319|
+    320|   beforeEach(() => {
+       |   ^
+    321|     if (fs.existsSync(TEST_DB_PATH)) {
+    322|       fs.unlinkSync(TEST_DB_PATH);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/24]⎯
+
+ FAIL  tests/db.test.ts > Graph Queries > should find dependents
+ FAIL  tests/db.test.ts > Graph Queries > should find dependencies
+ FAIL  tests/db.test.ts > Graph Queries > should find ancestors
+Error: Hook timed out in 30000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+ ❯ tests/db.test.ts:389:3
+    387|   let graph: GraphQueries;
+    388|
+    389|   beforeEach(() => {
+       |   ^
+    390|     if (fs.existsSync(TEST_DB_PATH)) {
+    391|       fs.unlinkSync(TEST_DB_PATH);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/24]⎯
+
+ FAIL  tests/db.test.ts > JSON Queries > should find by tag
+Error: Hook timed out in 30000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+ ❯ tests/db.test.ts:465:3
+    463|   let json: JSONQueries;
+    464|
+    465|   beforeEach(() => {
+       |   ^
+    466|     if (fs.existsSync(TEST_DB_PATH)) {
+    467|       fs.unlinkSync(TEST_DB_PATH);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/24]⎯
+
+ FAIL  tests/db.test.ts > JSON Queries > should find by field
+SqliteError: attempt to write a readonly database
+ ❯ Database.exec node_modules/better-sqlite3/lib/methods/wrappers.js:9:14
+ ❯ applySqlFile specs/sqlite.spec.dir/src/migrations.ts:536:8
+    534|       continue;
+    535|     }
+    536|     db.exec(statement.sql);
+       |        ^
+    537|   }
+    538|
+ ❯ Object.up specs/sqlite.spec.dir/src/migrations.ts:558:7
+ ❯ migrate specs/sqlite.spec.dir/src/migrations.ts:679:17
+ ❯ SpecLangDB.initialize specs/sqlite.spec.dir/src/index.ts:202:20
+ ❯ tests/db.test.ts:475:8
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/24]⎯
+
+ FAIL  tests/db.test.ts > Migrations > should run migrations
+SqliteError: disk I/O error
+ ❯ Database.exec node_modules/better-sqlite3/lib/methods/wrappers.js:9:14
+ ❯ applySqlFile specs/sqlite.spec.dir/src/migrations.ts:536:8
+    534|       continue;
+    535|     }
+    536|     db.exec(statement.sql);
+       |        ^
+    537|   }
+    538|
+ ❯ Object.up specs/sqlite.spec.dir/src/migrations.ts:558:7
+ ❯ migrate specs/sqlite.spec.dir/src/migrations.ts:679:17
+ ❯ tests/db.test.ts:541:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/24]⎯
+
+ FAIL  tests/db.test.ts > Migrations > should not re-run migrations
+SqliteError: disk I/O error
+ ❯ Database.exec node_modules/better-sqlite3/lib/methods/wrappers.js:9:14
+ ❯ applySqlFile specs/sqlite.spec.dir/src/migrations.ts:536:8
+    534|       continue;
+    535|     }
+    536|     db.exec(statement.sql);
+       |        ^
+    537|   }
+    538|
+ ❯ Object.up specs/sqlite.spec.dir/src/migrations.ts:558:7
+ ❯ migrate specs/sqlite.spec.dir/src/migrations.ts:679:17
+ ❯ tests/db.test.ts:547:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/24]⎯
+
+ FAIL  tests/db.test.ts > Migrations > should get current version
+SqliteError: attempt to write a readonly database
+ ❯ Database.exec node_modules/better-sqlite3/lib/methods/wrappers.js:9:14
+ ❯ applySqlFile specs/sqlite.spec.dir/src/migrations.ts:536:8
+    534|       continue;
+    535|     }
+    536|     db.exec(statement.sql);
+       |        ^
+    537|   }
+    538|
+ ❯ Object.up specs/sqlite.spec.dir/src/migrations.ts:558:7
+ ❯ migrate specs/sqlite.spec.dir/src/migrations.ts:679:17
+ ❯ tests/db.test.ts:553:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/24]⎯
+
+ FAIL  tests/db.test.ts > Vector Search > should report availability correctly
+SqliteError: disk I/O error
+ ❯ Database.exec node_modules/better-sqlite3/lib/methods/wrappers.js:9:14
+ ❯ applySqlFile specs/sqlite.spec.dir/src/migrations.ts:536:8
+    534|       continue;
+    535|     }
+    536|     db.exec(statement.sql);
+       |        ^
+    537|   }
+    538|
+ ❯ Object.up specs/sqlite.spec.dir/src/migrations.ts:558:7
+ ❯ migrate specs/sqlite.spec.dir/src/migrations.ts:679:17
+ ❯ SpecLangDB.initialize specs/sqlite.spec.dir/src/index.ts:202:20
+ ❯ tests/db.test.ts:571:8
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/24]⎯
+
+ FAIL  tests/db.test.ts > Vector Search > should return empty results for stub implementation
+SqliteError: attempt to write a readonly database
+ ❯ Database.exec node_modules/better-sqlite3/lib/methods/wrappers.js:9:14
+ ❯ applySqlFile specs/sqlite.spec.dir/src/migrations.ts:536:8
+    534|       continue;
+    535|     }
+    536|     db.exec(statement.sql);
+       |        ^
+    537|   }
+    538|
+ ❯ Object.up specs/sqlite.spec.dir/src/migrations.ts:558:7
+ ❯ migrate specs/sqlite.spec.dir/src/migrations.ts:679:17
+ ❯ SpecLangDB.initialize specs/sqlite.spec.dir/src/index.ts:202:20
+ ❯ tests/db.test.ts:571:8
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/24]⎯
+
+ FAIL  tests/db/corrupt-state-db-surfaces.test.ts > corrupt state database reaches the MCP and Ralph Loop openers (QA-SPECLANG-5-R2) > Ralph Loop still opens a healthy (absent) file
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/db/corrupt-state-db-surfaces.test.ts:147:3
+    145|   });
+    146|
+    147|   it("Ralph Loop still opens a healthy (absent) file", async () => {
+       |   ^
+    148|     expect(existsSync(dbPath)).toBe(false);
+    149|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/24]⎯
+
+ FAIL  tests/db/ralph-loop-fresh-state.test.ts > Ralph Loop bootstraps a fresh state database (QA-SPECLANG-5-R3) > creates the canonical state schema plus the loop's own tables on an absent file
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/db/ralph-loop-fresh-state.test.ts:165:3
+    163|   });
+    164|
+    165|   it("creates the canonical state schema plus the loop's own tables on…
+       |   ^
+    166|     const dbPath = join(dir, "speclang.db");
+    167|     expect(existsSync(dbPath)).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/24]⎯
+
+ FAIL  tests/db/ralph-loop-fresh-state.test.ts > Ralph Loop bootstraps a fresh state database (QA-SPECLANG-5-R3) > every statement the loop prepares runs against the freshly created DB
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/db/ralph-loop-fresh-state.test.ts:194:3
+    192|   });
+    193|
+    194|   it("every statement the loop prepares runs against the freshly creat…
+       |   ^
+    195|     const dbPath = join(dir, "statements.db");
+    196|     const controller = await LoopController.create(dbPath);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/24]⎯
+
+ FAIL  tests/db/ralph-loop-fresh-state.test.ts > Ralph Loop bootstraps a fresh state database (QA-SPECLANG-5-R3) > creates a missing directory for an explicit DB path
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/db/ralph-loop-fresh-state.test.ts:229:3
+    227|   });
+    228|
+    229|   it("creates a missing directory for an explicit DB path", async () =…
+       |   ^
+    230|     const dbPath = join(dir, "nested", "state", "speclang.db");
+    231|     expect(existsSync(join(dir, "nested"))).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/24]⎯
+
+ FAIL  tests/db/ralph-loop-fresh-state.test.ts > Ralph Loop entry point on a fresh project (QA-SPECLANG-5-R3) > bootstraps .speclang/speclang.db and keeps looping where it used to exit 1
+AssertionError: expected '' to contain 'Ralph Loop state database ready at'
+
+- Expected
++ Received
+
+- Ralph Loop state database ready at
+
+ ❯ tests/db/ralph-loop-fresh-state.test.ts:319:24
+    317|     expect(res.stillRunning).toBe(true);
+    318|     expect(res.exitCode).toBeNull();
+    319|     expect(res.stderr).toContain("Ralph Loop state database ready at");
+       |                        ^
+    320|
+    321|     expect(existsSync(dbPath)).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/24]⎯
+
+ FAIL  tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > stop() ends a running loop, clears its poll timer, and logs reason=stopped
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/db/ralph-loop-lifecycle.test.ts:100:3
+     98|   });
+     99|
+    100|   it("stop() ends a running loop, clears its poll timer, and logs reas…
+       |   ^
+    101|     const { lines, log } = captureLog();
+    102|     const controller = await LoopController.create(join(dir, "stop.db"…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/24]⎯
+
+ FAIL  tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > stops itself with reason=idle-timeout after maxIdlePolls idle polls
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/db/ralph-loop-lifecycle.test.ts:139:3
+    137|   });
+    138|
+    139|   it("stops itself with reason=idle-timeout after maxIdlePolls idle po…
+       |   ^
+    140|     const { lines, log } = captureLog();
+    141|     const controller = await LoopController.create(join(dir, "idle.db"…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/24]⎯
+
+ FAIL  tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > never stops on idleness when the bound is disabled explicitly
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/db/ralph-loop-lifecycle.test.ts:159:3
+    157|   });
+    158|
+    159|   it("never stops on idleness when the bound is disabled explicitly", …
+       |   ^
+    160|     const { log } = captureLog();
+    161|     const controller = await LoopController.create(join(dir, "unbounde…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/24]⎯
+
+ FAIL  tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > stops with reason=launcher-gone when the launching process has exited
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/db/ralph-loop-lifecycle.test.ts:179:3
+    177|   });
+    178|
+    179|   it("stops with reason=launcher-gone when the launching process has e…
+       |   ^
+    180|     const deadPid = await pidOfExitedProcess();
+    181|     // Premise: this pid really is dead, otherwise the test proves not…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/24]⎯
+
+ FAIL  tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > does not mistake a live launcher for a dead one
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/db/ralph-loop-lifecycle.test.ts:224:3
+    222|   });
+    223|
+    224|   it("does not mistake a live launcher for a dead one", async () => {
+       |   ^
+    225|     const { log } = captureLog();
+    226|     const controller = await LoopController.create(join(dir, "alive-la…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/24]⎯
+
+ FAIL  tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > stops on SIGTERM through the handler start() registered, and removes it again
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/db/ralph-loop-lifecycle.test.ts:236:3
+    234|   });
+    235|
+    236|   it("stops on SIGTERM through the handler start() registered, and rem…
+       |   ^
+    237|     const preexisting = new Map(
+    238|       RALPH_LOOP_STOP_SIGNALS.map((s) => [s, process.listeners(s)] as …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/24]⎯
+
+ FAIL  tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > does not stack signal listeners when the loop is started twice
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/db/ralph-loop-lifecycle.test.ts:279:3
+    277|   });
+    278|
+    279|   it("does not stack signal listeners when the loop is started twice",…
+       |   ^
+    280|     const before = new Map(RALPH_LOOP_STOP_SIGNALS.map((s) => [s, proc…
+    281|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/24]⎯
+
+ FAIL  tests/db/ralph-loop-lifecycle.test.ts > Ralph Loop exit paths (GAP-004) > the CLI entry exits 0 on a real SIGTERM instead of being SIGKILLed
+Error: timed out after 30000ms waiting for the CLI entry to bootstrap its state DB
+ ❯ waitFor tests/db/ralph-loop-lifecycle.test.ts:60:9
+     58|     await sleep(2);
+     59|   }
+     60|   throw new Error(`timed out after ${timeoutMs}ms waiting for ${what}`…
+       |         ^
+     61| }
+     62|
+ ❯ tests/db/ralph-loop-lifecycle.test.ts:332:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/24]⎯
+
+
+ Test Files  4 failed | 5 passed (9)
+      Tests  24 failed | 63 passed (87)
+   Start at  09:18:51
+   Duration  426.81s (transform 1.64s, setup 632ms, import 1.54s, tests 977.46s, environment 1ms)
+

@@ -1,0 +1,9 @@
+npm notice run speclang@1.0.0 lint
+npm notice run NODE_OPTIONS="--require ./scripts/lint/ts6-resolution.cjs" eslint "src/**/*.ts"
+
+/home/kara/worktrees/SpecLang-README-25/src/ralph-loop/types.ts
+  11:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-var-requires')
+
+✖ 1 problem (0 errors, 1 warning)
+  0 errors and 1 warning potentially fixable with the `--fix` option.
+

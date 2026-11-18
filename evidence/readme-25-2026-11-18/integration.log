@@ -1,0 +1,15 @@
+npm notice run speclang@1.0.0 pretest
+npm notice run npm run build
+npm notice run speclang@1.0.0 build
+npm notice run tsc
+npm notice run speclang@1.0.0 test
+npm notice run TMPDIR=$PWD/.tmp vitest run tests/e2e/spec-to-code.test.ts tests/poc-e2e.test.ts tests/dashboard/integration/git-integration.test.tsx
+
+ RUN  v4.1.11 /home/kara/worktrees/SpecLang-README-25
+
+
+ Test Files  3 passed (3)
+      Tests  22 passed (22)
+   Start at  09:18:41
+   Duration  2.86s (transform 77ms, setup 58ms, import 60ms, tests 1.88s, environment 0ms)
+
