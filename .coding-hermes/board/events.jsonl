@@ -475,3 +475,9 @@
 {"id":474,"timestamp":"2026-11-17 23:53:39.885114","event_type":"task_completed","task_id":"GAP-005","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":475,"timestamp":"2026-11-18 00:10:11.917558","event_type":"task_completed","task_id":"README-9","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":476,"timestamp":"2026-11-18 00:11:13.302813","event_type":"task_completed","task_id":"README-9","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":477,"timestamp":"2026-11-18 01:00:19.920562","event_type":"task_completed","task_id":"README-22","actor":"foreman","detail":"Closed on judge run 861989f9 (tier1+tier2 PASS); commit 0c73b428 pushed to origin/main","tick_number":261}
+{"id":478,"timestamp":"2026-11-18 01:00:24.573174","event_type":"task_completed","task_id":"README-22","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":479,"timestamp":"2026-11-18 01:02:33.180447","event_type":"task_completed","task_id":"README-23","actor":"foreman","detail":"Closed on judge run 39ae3d9e (tier1+tier2 PASS); commit 21a2e3d5 pushed to origin/main","tick_number":null}
+{"id":480,"timestamp":"2026-11-18 01:10:42.422407","event_type":"task_completed","task_id":"README-23","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":481,"timestamp":"2026-11-18 01:10:42.445345","event_type":"task_completed","task_id":"README-23","actor":"foreman","detail":"Closed on judge run 4ab3b09a (tier1+tier2 PASS); commit 21a2e3d5 pushed to origin/main","tick_number":null}
+{"id":482,"timestamp":"2026-11-18 01:11:36.666477","event_type":"task_updated","task_id":"OBS-1","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
