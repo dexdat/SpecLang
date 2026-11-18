@@ -1,0 +1,16 @@
+commit 7c87c7aadd1c7f8e304e58eaf66a95663c41a89b
+Merge: c37ccdc8 7adc5dcf
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 20:48:34 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 20:48:34 2026 -0500
+
+    merge wt/OBS-1: Prometheus /metrics endpoint (OBS-1) — build 0, 16/16 metrics tests, live scrape 200/175 series, all Tier-1 families (tick speclang-foreman-2026-11-18-00-54-47)
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+
+ specs/mcp.spec.dir/src/metrics.ts | 386 ++++++++++++++++++++++++++++++++++++++
+ specs/mcp.spec.dir/src/server.ts  |  15 ++
+ src/mcp/metrics.ts                |   1 +
+ tests/mcp/metrics.test.ts         | 217 +++++++++++++++++++++
+ 4 files changed, 619 insertions(+)
