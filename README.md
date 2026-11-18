@@ -163,7 +163,7 @@ For programmatic access, see:
 - Explicit cascade protocol with verification gates
 - Working agent definitions for OpenCode
 - Dual-view compliance: 99.2% of non-exempt files follow the specs→working-location pattern (the only non-compliant files are legacy `scripts/archive/` scripts with no spec source; run `python3 scripts/check_compliance.py --report` for live counts and the exempt list, last measured 2026-11-17)
-- 1949 tests passing (58 skipped; `npm test` on 2026-11-17, node 22.22.3 / npm 12.2.2 → Tests 1949 passed | 58 skipped (2007), Test Files 113 passed | 4 skipped (117); the count moves whenever tests are added, so run `npm test` for the authoritative number; arch004 cascade convergence flake quarantined — daemon watcher scoped to its own fixture dir in the test, per-test timeouts aligned with polling budgets)
+- 1995 tests passing (58 skipped; `npm test` on a fresh public clone of origin/main, 2026-11-17, node 22.22.3 / npm 12.2.2 → Tests 1995 passed | 58 skipped (2053), Test Files 120 passed | 4 skipped (124); the count moves whenever tests are added, so run `npm test` for the authoritative number; arch004 cascade convergence flake quarantined — daemon watcher scoped to its own fixture dir in the test, per-test timeouts aligned with polling budgets)
 
 **⚠️ Current Limitations:**
 - **Daemon is opt-in** - `speclang start` runs the file watcher + MCP server + dashboard (and `daemon`/`stop` manage it); without it, everything runs in the foreground as explicit commands
@@ -378,8 +378,8 @@ python3 scripts/validate_refs.py
 
 # 2. Run autonomous validation
 python3 scripts/validate_autonomous.py --project
-# Output: one Validation Report block per spec, each PASSED
-# (measured 2026-11-17 at 6e69f3ae: 464 blocks, all PASSED; for the CLI's own
+# Output: one Validation Report block per spec document, each PASSED
+# (measured 2026-11-17: 464 blocks from the 452 spec files, all PASSED; for the CLI's own
 #  count, `node bin/speclang status` prints `Specs: 452 (450 .spec.md + 2 .scl)`
 #  — top-level .spec.md/.scl only, so it reads lower than the --graph counts)
 
@@ -564,20 +564,22 @@ machine is not already saturated (`GAP-003` bounded the vitest worker pool for e
 
 ```bash
 npx vitest run tests/parser.test.ts    # 1 file
-npx vitest run tests/db                # path filter: 8 files
+npx vitest run tests/db                # path filter: 9 files
 ```
 
 `npx vitest run` does **not** run `pretest`, so build first (or use `npm test -- <path>`, which runs
 the same filter with the build attached). The positional argument is a path *filter* — a substring
 match on the file path, not a strict scope — so `tests/db` also picks up the root-level
-`tests/db.test.ts` (hence 8 files: the 7 under `tests/db/` plus `tests/db.test.ts`).
+`tests/db.test.ts` (hence 9 files: the 8 under `tests/db/` plus `tests/db.test.ts`).
 
 ### Where the tests live
 
 `vitest.config.ts` collects `tests/**/*.test.ts` and `tests/**/*.test.tsx`, with
 `tests/global-setup.ts` and `tests/setup-tmpdir.ts` redirecting `TMPDIR` to the gitignored `.tmp/`.
-`tests/` holds 121 test files; vitest collects 120 of them (the Playwright `*.spec.ts` files under
-`tests/e2e/` have no runner — see below), 36 at the top of `tests/` (`tests/parser.test.ts`,
+`tests/` holds 124 test files and vitest collects all of them — the Playwright `*.spec.ts` files
+under `tests/e2e/` are outside that count (`vitest.config.ts` excludes them, so they have no
+runner — see below). On a fresh public clone of origin/main (2026-11-17) 120 of the 124 files pass
+and 4 run with every test conditionally skipped, 36 at the top of `tests/` (`tests/parser.test.ts`,
 `tests/config.test.ts`, …) plus these directories:
 
 | directory | what it covers | files |
@@ -585,17 +587,18 @@ match on the file path, not a strict scope — so `tests/db` also picks up the r
 | `tests/cli/` | CLI command surface (`bin/speclang` end to end) | 10 |
 | `tests/daemon/` | file-watcher daemon | 10 |
 | `tests/dashboard/` | dashboard hooks and React components (React mocked, node env) | 16 |
-| `tests/db/` | SQLite layer, migrations | 7 |
+| `tests/db/` | SQLite layer, migrations | 8 |
 | `tests/cascade/`, `tests/cascade_new/` | cascade execution | 6 + 3 |
 | `tests/maturity/` | maturity levels, criteria, MVP validator | 5 |
 | `tests/mcp/` | MCP server, tools and bin-path resolution | 4 |
 | `tests/autonomous/` | autonomous validation runs and confidence scoring | 4 |
 | `tests/codegen/` | TypeScript and Go code generation | 3 |
-| `tests/validation/` | validation engine, rules, parse-and-validate | 3 |
+| `tests/validation/` | validation engine, rules, parse-and-validate | 4 |
 | `tests/performance/` | performance checks for cascade, daemon and MCP | 3 |
 | `tests/ci/` | CI self-checks (pre-commit hook, coverage run) | 2 |
 | `tests/meta/` | spec-index generator and repo bootstrap | 2 |
 | `tests/stdlib/` | standard-library spec functions and types | 2 |
+| `tests/agent-driver/` | `scripts/agent-driver/drive.mjs` fail-closed contract and happy path | 1 |
 | `tests/agents/`, `tests/examples/`, `tests/transition/`, `tests/workflow/` | agent communication, hello-world example, spec transitions, conversation workflow | 1 each |
 | `tests/e2e/` | end-to-end cascade run (`spec-to-code.test.ts` only — see below) | 1 |
 
@@ -726,13 +729,13 @@ declaration is checked, or that runtime behavior is correct.
 
 ## What Works vs What Doesn't
 
-*(Last reconciled 2026-11-17 against live state: `./bin/speclang --help` command surface + the 1949-test suite.)*
+*(Last reconciled 2026-11-17 against live state: `./bin/speclang --help` command surface + the 2053-test suite.)*
 
 ### ✅ Working
 
 - **Spec validation**: All 452 specs have valid headers and references
 - **Reference resolution**: `validate_refs.py` confirms 100% accuracy
-- **Autonomous validation**: Scores specs for agent readiness (0.75-1.05 confidence)
+- **Autonomous validation**: Scores specs for agent readiness (0.6-4.1 confidence across the 464 report blocks, most at 1.0; measured 2026-11-17)
 - **Hello World**: Compiles successfully (proof of concept)
 - **Cascade protocol**: Documented explicit coordination
 - **Agent definitions**: Complete for all 5 roles
@@ -742,7 +745,7 @@ declaration is checked, or that runtime behavior is correct.
 ### ⚠️ Partially Working
 
 - **Code generation**: Scripts exist but have bugs (nested backticks, duplication)
-- **Test suite**: Green — 1949 tests passing, 58 skipped (`npm test`, 2026-11-17: Tests 1949 passed | 58 skipped (2007), Test Files 113 passed | 4 skipped (117); the number is checkout-dependent — this is a fully provisioned checkout on node 22.22.3 / npm 12.2.2)
+- **Test suite**: Green in a fresh public clone — `npm test` exits 0 (`git clone` of origin/main, 2026-11-17, node 22.22.3 / npm 12.2.2: Tests 1995 passed | 58 skipped (2053), Test Files 120 passed | 4 skipped (124); the counts move as tests land, so run `npm test` for the authoritative number)
 - **Steering packets**: Now accurate (fixed in redesign)
 
 ### ❌ Not Working (Yet)
@@ -825,4 +828,4 @@ MIT
 **Status**: Alpha - One working example, solid foundation, much more to build.
 
 **Last Updated**: 2026-11-17
-**Specs**: 450 .spec.md (452 incl .scl) | **Examples**: 1 working | **Tests**: 1949 passing | 58 skipped
+**Specs**: 450 .spec.md (452 incl .scl) | **Examples**: 1 working | **Tests**: 1995 passing | 58 skipped
