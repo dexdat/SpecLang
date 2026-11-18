@@ -413,27 +413,33 @@ python3 scripts/generate_index.py --graph                  # graph stats (nodes,
 
 The cascade has two entry points — a plain CLI that works in any terminal, and OpenCode agent commands (chat syntax, not shell commands).
 
-**CLI (works in any terminal):**
+**CLI (works in any terminal).** `generate` runs straight from `bin/`; `cascade` loads the engine from
+the compiled `dist/`, so build once first — on a clone that has only had `npm install`, `cascade`
+stops at `❌ SpecLang not built. Run: npm run build`.
 
 ```bash
-# 1. Dry run — confirm the spec's TypeScript block is found
+# 1. Dry run — confirm the spec's TypeScript block is found. Writes NOTHING.
 ./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run
-# Output: Would generate: src/generated/hello-world.spec-hello-function.ts
+# Output: Mode: DRY RUN / Files written: 0
+#   📁 Would generate: src/generated/hello-world.spec-hello-function.ts
+# Drop --dry-run to write it for real (Mode: LIVE, Files written: 1, same path).
 
 # 2. Run the cascade — it WRITES files; `cascade` has no --dry-run flag
 ./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md
 # Output: ✅ Cascade complete / Generated: 1 files / Converged: Yes
-#   - specs/generated/hello/function.ts
+#   - specs/generated/hello/function.ts   (printed as an absolute path under the repo root)
 ```
 
 > **Output locations** — `cascade` and `generate` write to **different output trees, by design**:
 > - `./bin/speclang cascade <spec>` is spec-relative, by one rule: `<directory containing the spec>/../generated/`.
 >   E.g. `cascade specs/examples.spec.dir/hello-world.spec.md` → `specs/generated/hello/function.ts`;
 >   a spec sitting directly in `specs/` (e.g. `specs/foo.spec.md`) → `<project root>/generated/foo/function.ts`.
+>   The sub-path and file name come from the block id (`@block::hello/function` → `hello/function.ts`).
 > - `./bin/speclang generate <spec>` defaults to `src/generated/` (e.g.
 >   `src/generated/hello-world.spec-hello-function.ts`) and accepts `--output-dir <dir>` to override.
 > - **Which is canonical?** `specs/` is the source of truth; both `specs/generated/` and
->   `src/generated/` are generated artifacts in the working tree (dual-view pattern). Use
+>   `src/generated/` are generated artifacts in the working tree (dual-view pattern, and both are
+>   gitignored — `generated/` in `.gitignore`, so running these examples leaves `git status` clean). Use
 >   `cascade` output when iterating on a spec — it stays next to the spec it came from. Use
 >   `generate --output-dir` when you need code in a specific location such as `src/`.
 
