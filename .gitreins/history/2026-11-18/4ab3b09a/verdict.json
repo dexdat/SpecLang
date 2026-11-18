@@ -1,0 +1,400 @@
+{
+  "task_id": "README-23",
+  "task_title": "README generate/cascade examples reproduce",
+  "task_criteria": [
+    "Running each documented generate/cascade command exactly as the README shows exits 0 and produces the depicted output tree (paths and names match both directions), and the dry-run wording matches observed behaviour."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "92cd95f6c0db1bfe75e7c8f633059fcf706144e9",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "6ac4acbe8fd0c54d1b1570e423cb2f6ba8b49785bebda5ac3364d7d15041df9d",
+  "working_tree_dirty_path_count": 9,
+  "items": [
+    {
+      "criterion": "Running each documented generate/cascade command exactly as the README shows exits 0 and produces the depicted output tree (paths and names match both directions), and the dry-run wording matches observed behaviour.",
+      "status": "PASS",
+      "detail": "Ran both commands verbatim from the repo root. (1) `./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run` -> exit 0, stdout contains `Mode: DRY RUN`, `Files written: 0`, `\ud83d\udcc1 Would generate:` / `- src/generated/hello-world.spec-hello-function.ts` \u2014 exactly the README.md:420-424 depiction. (2) Dropping --dry-run -> exit 0, `Mode: LIVE`, `Files written: 1`, same path; file exists at src/generated/hello-world.spec-hello-function.ts. (3) `./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md` -> exit 0, `\u2705 Cascade complete` / `Generated: 1 files` / `Converged: Yes` / `- /home/kara/speclang/specs/generated/hello/function.ts` \u2014 matches README.md:426-431 including the 'printed as an absolute path under the repo root' note; file exists at specs/generated/hello/function.ts. Supporting claims also hold: `./bin/speclang cascade --help` lists no --dry-run flag (README: 'cascade has no --dry-run flag'), `git status --porcelain` shows no generated/ entries after both runs (README: 'leaves git status clean'; .gitignore:2 `generated/`), and src/cascade/index.ts:86 `path.join(specDir,'..','generated')` is the documented rule. Tests: `TMPDIR=$PWD/.tmp npx vitest run tests/cli/generate-extraction.test.ts tests/examples/hello-world-verification.test.ts` -> exit 0, `Test Files 2 passed (2)`, `Tests 11 passed (11)`; `npx vitest run tests/e2e/spec-to-code.test.ts` -> exit 0, `Tests 9 passed (9)`."
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  20:00:32",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261118T005838.012234Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\nnpm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261118T005838.012234Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  20:00:32\n   Duration  41.93s (transform 2.62s, setup 2.18s, import 5.98s, tests 192.84s, environment 10ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261118T005838.012234Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 Running each documented generate/cascade command exactly as the README shows exits 0 and produces the depicted output tree (paths and names match both directions), and the dry-run wording matches observed behaviour.: Ran both commands verbatim from the repo root. (1) `./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run` -> exit 0, stdout contains `Mode: DRY RUN`, `Files written: 0`, `\ud83d\udcc1 Would generate:` / `- src/generated/hello-world.spec-hello-function.ts` \u2014 exactly the README.md:420-424 depiction. (2) Dropping --dry-run -> exit 0, `Mode: LIVE`, `Files written: 1`, same path; file exists at src/generated/hello-world.spec-hello-function.ts. (3) `./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md` -> exit 0, `\u2705 Cascade complete` / `Generated: 1 files` / `Converged: Yes` / `- /home/kara/speclang/specs/generated/hello/function.ts` \u2014 matches README.md:426-431 including the 'printed as an absolute path under the repo root' note; file exists at specs/generated/hello/function.ts. Supporting claims also hold: `./bin/speclang cascade --help` lists no --dry-run flag (README: 'cascade has no --dry-run flag'), `git status --porcelain` shows no generated/ entries after both runs (README: 'leaves git status clean'; .gitignore:2 `generated/`), and src/cascade/index.ts:86 `path.join(specDir,'..','generated')` is the documented rule. Tests: `TMPDIR=$PWD/.tmp npx vitest run tests/cli/generate-extraction.test.ts tests/examples/hello-world-verification.test.ts` -> exit 0, `Test Files 2 passed (2)`, `Tests 11 passed (11)`; `npx vitest run tests/e2e/spec-to-code.test.ts` -> exit 0, `Tests 9 passed (9)`.\nBoth documented generate (dry-run and live) and cascade commands were run verbatim and exit 0 with output paths, names and dry-run wording matching the README exactly, with the relevant CLI/example tests green. [uncovered failure paths: failure mode 0 (The README's cascade example output tree (specs/generated/hello/function.ts) is not asserted by any test, so a future change to the cascade output rule could silently invalidate the README example): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 Running each documented generate/cascade command exactly as the README shows exits 0 and produces the depicted output tree (paths and names match both directions), and the dry-run wording matches observed behaviour.: Ran both commands verbatim from the repo root. (1) `./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run` -> exit 0, stdout contains `Mode: DRY RUN`, `Files written: 0`, `\ud83d\udcc1 Would generate:` / `- src/generated/hello-world.spec-hello-function.ts` \u2014 exactly the README.md:420-424 depiction. (2) Dropping --dry-run -> exit 0, `Mode: LIVE`, `Files written: 1`, same path; file exists at src/generated/hello-world.spec-hello-function.ts. (3) `./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md` -> exit 0, `\u2705 Cascade complete` / `Generated: 1 files` / `Converged: Yes` / `- /home/kara/speclang/specs/generated/hello/function.ts` \u2014 matches README.md:426-431 including the 'printed as an absolute path under the repo root' note; file exists at specs/generated/hello/function.ts. Supporting claims also hold: `./bin/speclang cascade --help` lists no --dry-run flag (README: 'cascade has no --dry-run flag'), `git status --porcelain` shows no generated/ entries after both runs (README: 'leaves git status clean'; .gitignore:2 `generated/`), and src/cascade/index.ts:86 `path.join(specDir,'..','generated')` is the documented rule. Tests: `TMPDIR=$PWD/.tmp npx vitest run tests/cli/generate-extraction.test.ts tests/examples/hello-world-verification.test.ts` -> exit 0, `Test Files 2 passed (2)`, `Tests 11 passed (11)`; `npx vitest run tests/e2e/spec-to-code.test.ts` -> exit 0, `Tests 9 passed (9)`.\nBoth documented generate (dry-run and live) and cascade commands were run verbatim and exit 0 with output paths, names and dry-run wording matching the README exactly, with the relevant CLI/example tests green. [uncovered failure paths: failure mode 0 (The README's cascade example output tree (specs/generated/hello/function.ts) is not asserted by any test, so a future change to the cascade output rule could silently invalidate the README example): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "Running each documented generate/cascade command exactly as the README shows exits 0 and produces the depicted output tree (paths and names match both directions), and the dry-run wording matches observed behaviour.",
+                "status": "PASS",
+                "detail": "Ran both commands verbatim from the repo root. (1) `./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run` -> exit 0, stdout contains `Mode: DRY RUN`, `Files written: 0`, `\ud83d\udcc1 Would generate:` / `- src/generated/hello-world.spec-hello-function.ts` \u2014 exactly the README.md:420-424 depiction. (2) Dropping --dry-run -> exit 0, `Mode: LIVE`, `Files written: 1`, same path; file exists at src/generated/hello-world.spec-hello-function.ts. (3) `./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md` -> exit 0, `\u2705 Cascade complete` / `Generated: 1 files` / `Converged: Yes` / `- /home/kara/speclang/specs/generated/hello/function.ts` \u2014 matches README.md:426-431 including the 'printed as an absolute path under the repo root' note; file exists at specs/generated/hello/function.ts. Supporting claims also hold: `./bin/speclang cascade --help` lists no --dry-run flag (README: 'cascade has no --dry-run flag'), `git status --porcelain` shows no generated/ entries after both runs (README: 'leaves git status clean'; .gitignore:2 `generated/`), and src/cascade/index.ts:86 `path.join(specDir,'..','generated')` is the documented rule. Tests: `TMPDIR=$PWD/.tmp npx vitest run tests/cli/generate-extraction.test.ts tests/examples/hello-world-verification.test.ts` -> exit 0, `Test Files 2 passed (2)`, `Tests 11 passed (11)`; `npx vitest run tests/e2e/spec-to-code.test.ts` -> exit 0, `Tests 9 passed (9)`.",
+                "resolution_probability": 0.06
+              }
+            ],
+            "summary": "Both documented generate (dry-run and live) and cascade commands were run verbatim and exit 0 with output paths, names and dry-run wording matching the README exactly, with the relevant CLI/example tests green. [uncovered failure paths: failure mode 0 (The README's cascade example output tree (specs/generated/hello/function.ts) is not asserted by any test, so a future change to the cascade output rule could silently invalidate the README example): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"README-23\"}",
+          "exit_code": 0,
+          "output_sha": "8f40710080c3dcafc2ff67fd0a086c80b2709d6e292bf622b26ebd72f05b5263"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la",
+          "exit_code": 0,
+          "output_sha": "39785622e7f4426e6c816b98b264918d3b24466b705b5529992ef19f4eecd9bf"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n -i \"generate\\|cascade\" README.md | head -100",
+          "exit_code": 0,
+          "output_sha": "72916c43610e2db695ead3fd19a0bda626cfec8dd8c4835236b78eafa49d1a43"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat package.json; cat .gitreins/config.yaml 2>/dev/null | head -60",
+          "exit_code": 0,
+          "output_sha": "85174603670fe903aecda1553beed1a7cbf207a7de30d82d6a533526ea02ead7"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 100,180p README.md",
+          "exit_code": 0,
+          "output_sha": "3dd885d1d6eb934f5803537e7eb03c2f68810e912efb912b3766fc1a278e182f"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 280,420p README.md",
+          "exit_code": 0,
+          "output_sha": "b335892cbb1cbf78ed903c5cb20de184fe4c34d92f10683971759cc325d18a66"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 420,560p README.md",
+          "exit_code": 0,
+          "output_sha": "144defa1545f38bd0234dc5faf237594913b173294d47c619c320c9acd0a413f"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 480,530p README.md",
+          "exit_code": 0,
+          "output_sha": "b036443b5eb92b8bd1db7764bf2f20576c2657b780a88de651ba804b411e3f08"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls specs/examples.spec.dir/ 2>/dev/null; echo ---; cat specs/examples.spec.dir/hello-world.spec.md 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "23c8aebeb0140a943c669d4aa4b1570a2874c439179243cd48fad855dd9a5399"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; pwd; ls dist 2>/dev/null | head; echo \"---\"; ./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "3b9faddad4293397cd781bd1880f639be1d5cf23a2e62f2835e42a9cbc15b242"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; ls dist | head; echo \"---\"; ./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "c1ece8f058ce15aac10973468eae27d841d127ddd04858e81cbb31497ba3e5d3"
+        },
+        {
+          "tool": "run_command",
+          "command": "./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "07ead9d4283e502ac2a902b5e70fe52f59401a6eda566807e1f0e06e89b750b7"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la specs/generated/hello/ 2>/dev/null; echo \"---\"; cat specs/generated/hello/function.ts 2>/dev/null | head -20; echo \"--- git status\"; git status --porcelain | head -20",
+          "exit_code": 0,
+          "output_sha": "ced15d86e1b891bda74098a467c57ed665a58b9fc8e6a22941fd84bf3abe96e8"
+        },
+        {
+          "tool": "run_command",
+          "command": "./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md; echo \"EXIT=$?\"; echo \"---\"; ls -la src/generated/ 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "17d98e99979ce986f88533929f7d360cbbcb0cc51ae705e0f442b23f01228794"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la src/generated/hello-world.spec-hello-function.ts; echo \"---\"; git status --porcelain | grep -i \"generated\" ; echo \"grep-exit=$?\"; echo \"--- gitignore\"; grep -n \"generated\" .gitignore",
+          "exit_code": 0,
+          "output_sha": "6c8a1fe9a6e08a5f0e80fa46b672d371d29eae62f9a26d92c28a6cfea608e8a2"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"dry-run\\|dryRun\" bin/speclang | head -40",
+          "exit_code": 0,
+          "output_sha": "68a540ef5db29b9a25d04a99d85cdebd17c215e1cff3afac33b0ff5d0d4f20d4"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 680,840p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "be5c574f6774d05c3125a2e79cbf6d136db8b9c1ded4cc85822addf43b782724"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 740,800p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "47df9eadd0f05ed63cac4907ff0c777c7fb14cb5f1c098ffda7576f6f24f6a44"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"cascade\" bin/speclang | head -40",
+          "exit_code": 0,
+          "output_sha": "304cafad262a15d99090d6f3afd8f2ffdcfaf65f3e8c06e673b33f57141a4688"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 205,270p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "7abe42f3dee252e2523f05baa42ebcfd36c2c80a2a00867fcd2dee7c2d883631"
+        },
+        {
+          "tool": "run_command",
+          "command": "./bin/speclang cascade --help; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "b621a871a7415235ebc02ca4da7065abfe98d3eab863cd9468fd833a0e011358"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"generated\" src/cascade/*.ts | grep -i \"path\\|dir\\|join\" | head -30",
+          "exit_code": 0,
+          "output_sha": "3da9142f95c7df899ebe5df7878ab4be3d29c9ca7f08203d5608b8c12e116d9d"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 60,110p src/cascade/index.ts",
+          "exit_code": 0,
+          "output_sha": "3eba2765e931f072c716c246ae10ef9fc1c139c38a5ac33ac32de5462ea386b2"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"hello-world.spec.md\\|hello/function\\|specs/generated\" tests/ --include=*.ts -l | head -20",
+          "exit_code": 0,
+          "output_sha": "7abc44224fae0a8caeb648955e9071322f05e017d8f2dc42f67c76dfe9646c1e"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"hello-world.spec.md\\|hello/function\\|specs/generated\\|dry-run\\|DRY RUN\" tests/cli/generate-extraction.test.ts tests/examples/hello-world-verification.test.ts | head -40",
+          "exit_code": 0,
+          "output_sha": "0d1ba2a3058bbef2959ab075ade9adfd3fe29e44059ffd59c1861e6591b1809f"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/cli/generate-extraction.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "887b044aa370d3a15bc0e971d01d547060ee6ba2e674864add7b9505df0d7091"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 120, \"offset\": 280, \"path\": \"tests/examples/hello-world-verification.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "e9068cc2b35c2b4c9d673591789fe048382b1c3976b01fbeecc214e888f4ca46"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 280, \"offset\": 1, \"path\": \"tests/examples/hello-world-verification.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "98e27bf5e04c76ee9befa059c1863247602e720ab0d777a8b53a4071d2cdd711"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"cascade specs/examples.spec.dir/hello-world.spec.md\\|Cascade complete\\|Converged: Yes\" tests/ --include=*.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "830ee66a8cb07f57fab391a5f07c33ce0d4807f9a21c7869ab9aa6d75c5a4673"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"README\" tests/ --include=*.ts -l | head -20",
+          "exit_code": 0,
+          "output_sha": "0427180f49b65219f90f1378974b866039c2b0b700de963336ba5f0b5c26dca0"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 60,120p tests/e2e/spec-to-code.test.ts",
+          "exit_code": 0,
+          "output_sha": "55b70c4c60ecd66ce4b192b93d39eb91dc4f5d0e299ebff70c855844726a06a6"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"README\" tests/npm12-remedy-doc.test.ts | head -20; echo ---; grep -rn \"README\" tests/layers.test.ts | head",
+          "exit_code": 0,
+          "output_sha": "2b3712fbfa7aa6dd6234787ee54079ac7b0f2e1333cf9fff9c645a542af96212"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"test_command\\|test_mode\" .gitreins/config.yaml | head",
+          "exit_code": 0,
+          "output_sha": "b667420a0a22fa76cd6ed5f568761a1e69a84c07702839d52d2318bf196fa679"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"generate\\|cascade\" GETTING-STARTED.md | head -40",
+          "exit_code": 0,
+          "output_sha": "26bc28a4cba78d1d5a56464f1c2ef675f877ab0397c457a5773635373128fa64"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 40,70p GETTING-STARTED.md",
+          "exit_code": 0,
+          "output_sha": "9eba95b4b54d478dc528922f8cfdf12bfd2db864365f442f56744bebd03d865a"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 1,30p .gitreins/config.yaml",
+          "exit_code": 0,
+          "output_sha": "174e16a8a46a36b72407df933d97929a5393b3c8facb6dcd70191b3de21d2ada"
+        },
+        {
+          "tool": "run_command",
+          "command": "TMPDIR=$PWD/.tmp npx vitest run tests/cli/generate-extraction.test.ts tests/examples/hello-world-verification.test.ts 2>&1 | tail -30",
+          "exit_code": 0,
+          "output_sha": "c93d3b0229ba17acff9d7edc883a7f3f59a948580cfa156f35e9d93e621212b5"
+        },
+        {
+          "tool": "run_command",
+          "command": "TMPDIR=$PWD/.tmp npx vitest run tests/e2e/spec-to-code.test.ts 2>&1 | tail -20",
+          "exit_code": 0,
+          "output_sha": "d1db55882af1870eb099fe06c5041d5552820178e407924a49d88ea73e153f19"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"README.md:420-431 documents:\\n  ./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run\\n  # Output: Mode: DRY RUN / Files written: 0\\n  #   \\ud83d\\udcc1 Would generate: src/generated/hello-world.spec-hello-function.ts\\n  ./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md\\n  # Output: \\u2705 Cascade complete / Generated: 1 files / Converged: Yes\\n  #   - specs/generated/hello/function.ts (absolute path under repo root)\\n\\nOBSERVED (run verbatim from repo root):\\n- generate --dry-run: exit 0; \\\"Mode: DRY RUN\\\", \\\"Files written: 0\\\", \\\"\\ud83d\\udcc1 Would generate: - src/generated/hello-world.spec-hello-function.ts\\\" -> MATCH\\n- generate (LIVE): exit 0; \\\"Mode: LIVE\\\", \\\"Files written: 1\\\", same path -> MATCH; file exists at src/generated/hello-world.spec-hello-function.ts\\n- cascade: exit 0; \\\"\\u2705 Cascade complete\\\", \\\"Generated: 1 files\\\", \\\"Converged: Yes\\\", \\\"- /home/kara/speclang/specs/generated/hello/function.ts\\\" -> MATCH; file exists\\n- cascade --help: no --dry-run flag (README \\\"cascade has no --dry-run flag\\\" correct)\\n- git status after both runs: no generated/ entries (README \\\"leaves git status clean\\\" correct; .gitignore:2 generated/)\\n- src/cascade/index.ts:86 generatedDir = path.join(specDir,'..','generated') matches README rule\\n- tests: tests/cli/generate-extraction.test.ts + tests/examples/hello-world-verification.test.ts -> 2 files, 11 tests passed; tests/e2e/spec-to-code.test.ts -> 9 passed\\n- No test asserts the README's cascade example output tree (grep for \\\"cascade specs/examples.spec.dir/hello-world.spec.md\\\" in tests/ -> none)\\n\", \"key\": \"evidence\"}",
+          "exit_code": 0,
+          "output_sha": "754a98365e7381e6da408c4bcd3ee26a91ddfdf80e667f809dd46828cece8cd3"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: Ran both README commands verbatim from repo root. generate --dry-run exit 0, printed \\\"Mode: DRY RUN\\\", \\\"Files written: 0\\\", \\\"\\ud83d\\udcc1 Would generate: - src/generated/hello-world.spec-hello-function.ts\\\" (README.md:420-424). generate LIVE exit 0, \\\"Mode: LIVE\\\", \\\"Files written: 1\\\", same path, file exists. cascade exit 0, \\\"\\u2705 Cascade complete / Generated: 1 files / Converged: Yes / - /home/kara/speclang/specs/generated/hello/function.ts\\\" (README.md:426-431), file exists at specs/generated/hello/function.ts. cascade --help shows no --dry-run (README claim correct). git status shows no generated/ churn (.gitignore:2). src/cascade/index.ts:86 confirms <specdir>/../generated rule. Tests: npx vitest run tests/cli/generate-extraction.test.ts tests/examples/hello-world-verification.test.ts -> \\\"Test Files 2 passed (2) / Tests 11 passed (11)\\\"; tests/e2e/spec-to-code.test.ts -> 9 passed.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "0ecc16f0693862fa331a4b8015f3c7a442e92ad7ee3af723b63107b284754a24"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 135,
+        "detection": "task marked status=complete while its own foreman_note still states 'merge pending in this tick'",
+        "detail": "README-22 is flipped to \"status\":\"complete\" but the retained foreman_note still reads \"worker dispatched and committed 77c66908 (rebased); merge pending in this tick\", contradicting the completion and the new worker_summary that claims the commit landed on main."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 135,
+        "detection": "completion evidence cites commit 0c73b428 but the note cites a different worker commit 77c66908 with no reconciliation",
+        "detail": "The new commit_hash/worker_summary reference 0c73b4281a0d50c64462bef5466415eb1054ecab while the foreman_note names worker commit 77c66908, leaving two unreconciled commit identities for the same task."
+      },
+      {
+        "severity": "info",
+        "file": ".coding-hermes/board/board.jsonl",
+        "line": 1,
+        "detection": "board last_commit not advanced despite a task being closed on a new commit",
+        "detail": "board.jsonl keeps \"last_commit\":\"9cbd9470\" while the same diff records README-22 closed on commit 0c73b428 pushed to origin/main, so the board's last_commit no longer reflects the tip it just recorded."
+      }
+    ],
+    "summary": "Board bookkeeping only: README-22 is closed with stale/contradictory foreman_note and commit references, and board last_commit was not advanced to the newly landed commit."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  20:00:32\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 Running each documented generate/cascade command exactly as the README shows exits 0 and produces the depicted output tree (paths and names match both directions), and the dry-run wording matches observed behaviour.: Ran both commands verbatim from the repo root. (1) `./bin/speclang generate specs/examples.spec.dir/hello-world.spec.md --dry-run` -> exit 0, stdout contains `Mode: DRY RUN`, `Files written: 0`, `\ud83d\udcc1 Would generate:` / `- src/generated/hello-world.spec-hello-function.ts` \u2014 exactly the README.md:420-424 depiction. (2) Dropping --dry-run -> exit 0, `Mode: LIVE`, `Files written: 1`, same path; file exists at src/generated/hello-world.spec-hello-function.ts. (3) `./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md` -> exit 0, `\u2705 Cascade complete` / `Generated: 1 files` / `Converged: Yes` / `- /home/kara/speclang/specs/generated/hello/function.ts` \u2014 matches README.md:426-431 including the 'printed as an absolute path under the repo root' note; file exists at specs/generated/hello/function.ts. Supporting claims also hold: `./bin/speclang cascade --help` lists no --dry-run flag (README: 'cascade has no --dry-run flag'), `git status --porcelain` shows no generated/ entries after both runs (README: 'leaves git status clean'; .gitignore:2 `generated/`), and src/cascade/index.ts:86 `path.join(specDir,'..','generated')` is the documented rule. Tests: `TMPDIR=$PWD/.tmp npx vitest run tests/cli/generate-extraction.test.ts tests/examples/hello-world-verification.test.ts` -> exit 0, `Test Files 2 passed (2)`, `Tests 11 passed (11)`; `npx vitest run tests/e2e/spec-to-code.test.ts` -> exit 0, `Tests 9 passed (9)`.\nBoth documented generate (dry-run and live) and cascade commands were run verbatim and exit 0 with output paths, names and dry-run wording matching the README exactly, with the relevant CLI/example tests green. [uncovered failure paths: failure mode 0 (The README's cascade example output tree (specs/generated/hello/function.ts) is not asserted by any test, so a future change to the cascade output rule could silently invalidate the README example): detected_by is empty \u2014 uncovered failure path]\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-18T01:02:25.395332",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-18T01:02:25.421108+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 21609,
+        "truncated": false,
+        "source": "git show 92cd95f6c0db"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 26735,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "README-23"
+  }
+}
