@@ -12,7 +12,9 @@ HERE = pathlib.Path(__file__).resolve().parent
 
 def main():
     readme = (ROOT / "README.md").read_text()
-    baseline = subprocess.check_output(["git", "show", "HEAD:README.md"], cwd=ROOT, text=True)
+    baseline = subprocess.check_output(
+        ["git", "show", "1a2134ac7d82395c22594c0d9a104cbc65ca06dc:README.md"], cwd=ROOT, text=True
+    )
     def agent_roles(text):
         return text.split("### Agent Roles\n", 1)[1].split("### File Structure\n", 1)[0]
     assert agent_roles(readme) == agent_roles(baseline), "Protected Agent Roles section changed"

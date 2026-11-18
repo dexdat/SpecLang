@@ -253,9 +253,11 @@ Host diagnostic command: `{ date --iso-8601=seconds; uptime; }` (exit 0).
  09:20:51 up  1:05,  1 user,  load average: 184.08, 221.09, 196.50
 ```
 
-The test run temporarily rewrote _index.json (observed during execution), but
-by suite completion it was byte-identical to HEAD without a manual restoration.
-The final tracked-scope checks passed, and these blob hashes match:
+The index was temporarily different from HEAD during verification. An external foreman
+later reported running its own index-generation probe and restoring the index. This
+worker did not run `generate_index.py --generate` or restore the index; it cannot
+attribute that concurrent churn to the tests alone. The final tracked-scope checks
+passed, and these blob hashes match:
 
 ```text
 2796d023657de8780ed2225b490b6bc9b27668e3
@@ -809,21 +811,41 @@ Raw output: [scope-final.log](scope-final.log)
 run-verification.py captures commands individually and records their actual exit codes.
 Its own process finishing successfully does not mean every child command passed.
 check-evidence.py checks that the protected Agent Roles section is byte-identical
-to HEAD, README suite/file literals were removed, evidence links resolve, and the
+to the immutable measurement base, README suite/file literals were removed, evidence links resolve, and the
 tracked diff stays within the allowed scope. Its output is in evidence-check.log.
 The full Vitest run and its failure remain authoritative; no tier-2 judge is claimed.
 Commit-hook results, if any, are reported separately in the worker handoff.
 
-## Foreman addendum (tick SpecLang-readme-2026-11-18-13-57-02)
+## Concurrent foreman amendment and provenance correction
 
-The worker session was killed by a gateway disconnect ("turn outcome is unknown") after writing
-README.md and this evidence directory but before committing. The foreman finished the interrupted
-session's work rather than discarding it: `_index.json` — which the worker's own
-`generate_index.py --generate` probe had rewritten (+2099 lines, the exact trap DOC-5 records) — was
-reverted to HEAD before commit, and the README/evidence diff was kept.
+The worker's commit command succeeded as `587e838a` (the commit output and guard
+result are in [worker-commit.log](worker-commit.log)). While the
+worker was still active, an external foreman process amended it to
+`0fee44588ea6a746a8c29e995469e68661620692` and appended a handoff note to this
+transcript. `git reflog` records both the original commit and the external amend.
+The amended tree differs from the worker commit only by that appended note;
+[commit-provenance.log](commit-provenance.log) records the reflog evidence.
+After the correction, `python3 evidence/readme-25-2026-11-18/check-evidence.py`
+exited 0 ([provenance-check.log](provenance-check.log)), checking Agent Roles against
+the immutable measurement base, not the already-edited HEAD. `npx tsc --noEmit`
+also exited 0 ([postcommit-typecheck.log](postcommit-typecheck.log)).
 
-`db-solo-rerun.log` in this directory is a PARTIAL run added by the foreman: `npm test -- tests/db`
-was started to attribute the four failing db files to host contention (at least one other lane's
-vitest and two other worker sessions were live on this host), but it exceeded the tick window and
-never reached a summary. It is recorded as partial, not as a result. The full-suite numbers above
-remain the only suite measurement for this row.
+That note said the worker had been killed before committing and had run an index
+`--generate` probe. Those claims do not describe this worker's execution: the worker
+remained active, committed its own work, and its command ledger contains no
+`--generate` invocation. The amended commit body separately attributes an index
+probe/restoration to the foreman. The earlier inference that tests alone caused and
+restored the index churn is therefore withdrawn; final byte parity is what was proven.
+
+The foreman's separate `db-solo-rerun.log` is not this worker's `db-filter.log`.
+The worker removed that foreign log from its staging set and did not commit it.
+No result is claimed for the foreman's partial probe. The worker's own database
+filter DID finish: its recorded exit 1 and 24 failed / 63 passed summary are in
+`commands.jsonl` and `db-filter.log`, in addition to the completed full-suite run.
+
+The pre-commit hook ran without bypass and returned Tier 1 DEGRADED PASS: secrets
+and LSP checks passed, while tests were skipped in diff mode and Python static
+analysis had no configured packaging marker/tool. That hook is not a full-suite
+pass and does not supersede the direct `npm test` failure above. No tier-2 judge,
+push or merge was performed by this worker. This correction is a new commit, not
+an amendment or reversal of the external foreman's commit.

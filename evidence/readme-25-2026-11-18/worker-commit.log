@@ -1,0 +1,78 @@
+gitreins: WARNING: /home/kara/worktrees/SpecLang-README-25/.gitreins/config.yaml: WARN: guards.assemble: unknown key — this key is ignored
+gitreins: WARNING: /home/kara/worktrees/SpecLang-README-25/.gitreins/config.yaml: WARN: guards.assemble_command: unknown key — did you mean 'test_command'?
+gitreins: WARNING: /home/kara/worktrees/SpecLang-README-25/.gitreins/config.yaml: WARN: guards.build: unknown key — this key is ignored
+gitreins: WARNING: /home/kara/worktrees/SpecLang-README-25/.gitreins/config.yaml: WARN: guards.build_command: unknown key — did you mean 'test_command'?
+gitreins: WARNING: /home/kara/worktrees/SpecLang-README-25/.gitreins/config.yaml: WARN: defaults.provider: unknown key — this key is ignored
+gitreins: WARNING: /home/kara/worktrees/SpecLang-README-25/.gitreins/config.yaml: WARN: defaults.api_key_env: unknown key — this key is ignored
+Tier 1: DEGRADED PASS (skips: tests=no test files match the changed sources (diff mode), static_analysis=python sources present but no packaging marker (pyproject.toml / setup.py / setup.cfg) — no Python tool selected)  (test mode: diff, no test files matched — diff mode skipped)
+  ✓ secrets — clean (gitleaks + builtin cross-check); scanners: nice=nice -n 10
+  ~ tests — skipped (no test files match the changed sources (diff mode))
+  ~ static_analysis — skipped (python sources present but no packaging marker (pyproject.toml / setup.py / setup.cfg) — no Python tool selected)
+  ✓ lsp; scanners: nice=nice -n 10
+  guard log: /home/kara/worktrees/SpecLang-README-25/.gitreins/logs/guard-20261118T143234.756040Z.log
+Discovered 4636 edges across 1636 files (5 languages)
+Excluded 9921 supported source files (node_modules: 9915, hidden: 6)
+Coverage: 2514 files = 1636 contribute edges + 0 package facades (__init__.py) + 872 no imports + 6 parse-miss + 0 unreadable + 0 unsupported extension
+  parse-miss: specs/ui-dashboard.spec.dir/src/hooks/useTheme.spec.ts — syntax errors
+  parse-miss: specs/dashboard.spec.dir/src/tailwind.config.js — syntax errors
+  parse-miss: specs/dashboard.spec.dir/src/interactions/spec-editor.ts — syntax errors
+  parse-miss: specs/implementation.spec.dir/src/codegen.js — syntax errors
+  parse-miss: specs/implementation.spec.dir/src/validation.js — syntax errors
+  parse-miss: specs/codegen.spec.dir/src/codegen/targets/typescript/types_primitives.d.ts — syntax errors
+  parse recovered: specs/ui-dashboard.spec.dir/src/components/MainContent.tsx — syntax errors (direct recovery)
+  parse recovered: specs/ui-dashboard.spec.dir/src/components/DashboardHeader.tsx — syntax errors (direct recovery)
+  parse recovered: specs/ui-dashboard.spec.dir/src/components/CascadeIndicator.tsx — syntax errors (direct recovery)
+  parse recovered: specs/ui-dashboard.spec.dir/src/components/SystemDashboard.tsx — syntax errors (direct recovery)
+  parse recovered: specs/ui-dashboard.spec.dir/src/components/CascadeIndicator.js — syntax errors (direct recovery)
+  parse recovered: specs/ui-dashboard.spec.dir/src/components/SystemDashboard.js — syntax errors (direct recovery)
+  parse recovered: specs/ui-dashboard.spec.dir/src/components/Sidebar.js — syntax errors (direct recovery)
+  parse recovered: specs/ui-dashboard.spec.dir/src/components/Sidebar.tsx — syntax errors (direct recovery)
+  parse recovered: specs/ui-dashboard.spec.dir/src/components/MainContent.js — syntax errors (direct recovery)
+  parse recovered: specs/ui-dashboard.spec.dir/src/components/DashboardHeader.js — syntax errors (direct recovery)
+  parse recovered: specs/pipeline.spec.dir/src/config.d.ts — syntax errors (direct recovery)
+  parse recovered: specs/implementation.spec.dir/src/validation.ts — syntax errors (direct recovery)
+  parse recovered: specs/implementation.spec.dir/src/codegen.ts — syntax errors (direct recovery)
+  parse recovered: specs/implementation.spec.dir/src/speclang-mcp.js — syntax errors (direct recovery)
+  parse recovered: specs/implementation.spec.dir/src/validation-system.js — syntax errors (direct recovery)
+  parse recovered: specs/implementation.spec.dir/src/ralph-loop.js — syntax errors (direct recovery)
+  parse recovered: specs/ui.spec.dir/src/dashboard/app.tsx — syntax errors (direct recovery)
+  parse recovered: specs/agents.spec.dir/src/interceptor.d.ts — syntax errors (direct recovery)
+  parse recovered: specs/compiler.spec.dir/src/phases/resolve.ts — syntax errors (direct recovery)
+  parse recovered: specs/compiler.spec.dir/src/phases/transform.ts — syntax errors (direct recovery)
+  ... and 7 more parse recovered
+[wt/README-25 587e838a] docs(readme): make test/spec counts drift-proof and record measurements (README-25)
+ 35 files changed, 13130 insertions(+), 86 deletions(-)
+ create mode 100644 evidence/readme-25-2026-11-18/build.log
+ create mode 100644 evidence/readme-25-2026-11-18/check-evidence.py
+ create mode 100644 evidence/readme-25-2026-11-18/commands.jsonl
+ create mode 100644 evidence/readme-25-2026-11-18/compliance.log
+ create mode 100644 evidence/readme-25-2026-11-18/db-filter.log
+ create mode 100644 evidence/readme-25-2026-11-18/e2e.log
+ create mode 100644 evidence/readme-25-2026-11-18/environment.log
+ create mode 100644 evidence/readme-25-2026-11-18/evidence-check.log
+ create mode 100644 evidence/readme-25-2026-11-18/final-status.log
+ create mode 100644 evidence/readme-25-2026-11-18/host-load.log
+ create mode 100644 evidence/readme-25-2026-11-18/index-entries.log
+ create mode 100644 evidence/readme-25-2026-11-18/index-graph.log
+ create mode 100644 evidence/readme-25-2026-11-18/index-hashes.log
+ create mode 100644 evidence/readme-25-2026-11-18/index-impact.log
+ create mode 100644 evidence/readme-25-2026-11-18/index-tree.log
+ create mode 100644 evidence/readme-25-2026-11-18/index-validate.log
+ create mode 100644 evidence/readme-25-2026-11-18/install.log
+ create mode 100644 evidence/readme-25-2026-11-18/integration.log
+ create mode 100644 evidence/readme-25-2026-11-18/lint.log
+ create mode 100644 evidence/readme-25-2026-11-18/render-transcript.py
+ create mode 100644 evidence/readme-25-2026-11-18/run-verification.py
+ create mode 100644 evidence/readme-25-2026-11-18/saved-index-entries.log
+ create mode 100644 evidence/readme-25-2026-11-18/saved-validate-autonomous.log
+ create mode 100644 evidence/readme-25-2026-11-18/saved-validate-refs.log
+ create mode 100644 evidence/readme-25-2026-11-18/scope-final.log
+ create mode 100644 evidence/readme-25-2026-11-18/sqlite-binding.log
+ create mode 100644 evidence/readme-25-2026-11-18/test-inventory.log
+ create mode 100644 evidence/readme-25-2026-11-18/tests.log
+ create mode 100644 evidence/readme-25-2026-11-18/tracked-dist.log
+ create mode 100644 evidence/readme-25-2026-11-18/transcript.md
+ create mode 100644 evidence/readme-25-2026-11-18/typecheck-final.log
+ create mode 100644 evidence/readme-25-2026-11-18/typecheck.log
+ create mode 100644 evidence/readme-25-2026-11-18/validate-autonomous.log
+ create mode 100644 evidence/readme-25-2026-11-18/validate-refs.log

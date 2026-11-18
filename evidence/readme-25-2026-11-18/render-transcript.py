@@ -88,9 +88,11 @@ def main():
               "dependency approvals, lockfile edits or audit fixes were made by this task.", "",
               "Host diagnostic command: `{ date --iso-8601=seconds; uptime; }` (exit 0).", "",
               "```text", (HERE / "host-load.log").read_text().rstrip(), "```", "",
-              "The test run temporarily rewrote _index.json (observed during execution), but",
-              "by suite completion it was byte-identical to HEAD without a manual restoration.",
-              "The final tracked-scope checks passed, and these blob hashes match:", "",
+              "The index was temporarily different from HEAD during verification. An external foreman",
+              "later reported running its own index-generation probe and restoring the index. This",
+              "worker did not run `generate_index.py --generate` or restore the index; it cannot",
+              "attribute that concurrent churn to the tests alone. The final tracked-scope checks",
+              "passed, and these blob hashes match:", "",
               "```text", (HERE / "index-hashes.log").read_text().rstrip(), "```", "",
               "No historical fallback suite totals were used. Raw output is unfiltered; only",
               "the excerpts below are shortened. commands.jsonl carries invocation time, command,",
@@ -106,11 +108,14 @@ def main():
               "run-verification.py captures commands individually and records their actual exit codes.",
               "Its own process finishing successfully does not mean every child command passed.",
               "check-evidence.py checks that the protected Agent Roles section is byte-identical",
-              "to HEAD, README suite/file literals were removed, evidence links resolve, and the",
+              "to the immutable measurement base, README suite/file literals were removed, evidence links resolve, and the",
               "tracked diff stays within the allowed scope. Its output is in evidence-check.log.",
               "The full Vitest run and its failure remain authoritative; no tier-2 judge is claimed.",
               "Commit-hook results, if any, are reported separately in the worker handoff.", ""]
     target = HERE / "transcript.md"
+    correction = "## Concurrent foreman amendment and provenance correction"
+    if target.exists() and correction in target.read_text():
+        lines += [correction + target.read_text().split(correction, 1)[1]]
     target.write_text("\n".join(lines))
     print(f"Wrote {target}: {target.stat().st_size} bytes; {len(records)} captured invocations")
 
