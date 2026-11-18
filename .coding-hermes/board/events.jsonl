@@ -483,3 +483,4 @@
 {"id":482,"timestamp":"2026-11-18 01:11:36.666477","event_type":"task_updated","task_id":"OBS-1","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
 {"id":483,"timestamp":"2026-11-18 01:56:30.914461","event_type":"task_completed","task_id":"OBS-1","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":484,"timestamp":"2026-11-18 01:56:30.937727","event_type":"task_completed","task_id":"OBS-1","actor":"foreman","detail":"OBS-1 closed: merge 7c87c7aa, judge run 311f692f PASS, live scrape verified","tick_number":null}
+{"id":485,"timestamp":"2026-11-18 02:02:59.848905","event_type":"task_completed","task_id":"README-25","actor":"foreman","detail":"Judge run 428c8950 tier2 FAIL (real stale-count gap); row stays in_progress with named gaps for fixup dispatch next tick","tick_number":null}
