@@ -379,7 +379,9 @@ python3 scripts/validate_refs.py
 # 2. Run autonomous validation
 python3 scripts/validate_autonomous.py --project
 # Output: one Validation Report block per spec, each PASSED
-# (for the live spec count, run: node bin/speclang status)
+# (measured 2026-11-17 at 6e69f3ae: 464 blocks, all PASSED; for the CLI's own
+#  count, `node bin/speclang status` prints `Specs: 452 (450 .spec.md + 2 .scl)`
+#  — top-level .spec.md/.scl only, so it reads lower than the --graph counts)
 
 # 3. Try Hello World example
 npx tsc --noEmit
@@ -387,7 +389,7 @@ npx tsc --noEmit
 
 # 4. Inspect or regenerate the spec index
 # The spec index (_index.json) is a checked-in snapshot: `jq '.specs | length'
-# _index.json` prints 464 entries (measured 2026-11-17). The spec tree has
+# _index.json` prints 464 entries (measured 2026-11-17 at 6e69f3ae). The spec tree has
 # grown past that snapshot — `--graph` recounts live (Nodes: 470 from 479 spec
 # files on the same date) — so 464 is "what is committed", not "how many specs
 # exist". The generator is explicit-mode only: a bare
