@@ -7,6 +7,8 @@
  */
 
 import { EventEmitter } from 'events';
+import { existsSync } from 'fs';
+import { pathToFileURL } from 'url';
 import { Watcher } from './watcher';
 import { Router } from './router';
 import { ConvergenceDetector } from './convergence';
@@ -24,6 +26,17 @@ import {
   AgentTask,
   ConvergenceResult,
 } from './types';
+
+/** Executor locations for the source symlink, spec tree and compiled tree. */
+export function getPipelineExecutorCandidates(moduleUrl: URL = pathToFileURL(__filename)): string[] {
+  // CommonJS emits __filename. Anchor to this module, not the user's project cwd.
+  // Source runners need TS, not the potentially stale JS beside spec-tree sources.
+  const extension = moduleUrl.pathname.endsWith('.ts') ? 'ts' : 'js';
+  return [
+    `../pipeline/executor.${extension}`,
+    `../../pipeline.spec.dir/src/executor.${extension}`,
+  ].map(spec => new URL(spec, moduleUrl).href);
+}
 
 export class Daemon extends EventEmitter {
   private watcher: Watcher | null = null;
@@ -349,21 +362,15 @@ export class Daemon extends EventEmitter {
    */
   private async executePipeline(convergenceResult: ConvergenceResult): Promise<void> {
     try {
-      // Dynamic import to avoid circular dependencies.
-      // DF-SPECLANG-014: was '../pipeline/executor.js', which resolved to
-      // specs/daemon.spec.dir/pipeline/ (nonexistent). This file is reachable
-      // under multiple paths (src/daemon/ is a symlink to
-      // specs/daemon.spec.dir/src/, and tsc emits a dist copy), so relative
-      // specifiers diverge per layout — try each candidate in order.
+      // Dynamic import to avoid circular dependencies. Check the real files
+      // before importing: .js specifiers are not present in TS source layouts.
       let PipelineExecutor: any;
-      const executorCandidates = [
-        '../../pipeline.spec.dir/src/executor.js',
-        '../../specs/pipeline.spec.dir/src/executor.js',
-      ];
+      const executorCandidates = getPipelineExecutorCandidates();
       let lastExecutorError: unknown = null;
       let executorLoaded = false;
       for (const spec of executorCandidates) {
         try {
+          if (!existsSync(new URL(spec))) continue;
           const mod: any = await import(spec);
           PipelineExecutor = mod.PipelineExecutor;
           executorLoaded = true;
