@@ -316,7 +316,7 @@ The coordinator processes in layer order (0 → 1 → 2 → ... → 10):
 → Verify: npx tsc --noEmit
 
 # Pass 5: Layer 10+ (Tests)
-→ Invoke @speclang-test-writer
+→ Invoke @speclang-spec-writer for test specs, then @speclang-code-gen for test code
 → Verify: npm test
 ```
 
@@ -653,11 +653,12 @@ src/ralph-loop/types.ts
 
 | Agent | Role | Verification |
 |-------|------|--------------|
-| `@speclang-coordinator` | Orchestrates cascade | Tracks state, manages depth |
-| `@speclang-spec-writer` | Creates/updates specs | validate_refs.py |
-| `@speclang-code-gen` | Generates code | npx tsc --noEmit |
-| `@speclang-test-writer` | Creates tests | npm test |
-| `@speclang-verifier` | Validates output | All checks + steering |
+| `@speclang-coordinator` | Explicitly orchestrates cascade steps | Runs verification gates, tracks state and depth, asks user to continue |
+| `@speclang-spec-writer` | Creates/updates specs with headers and references | validate_refs.py and validate_autonomous.py |
+| `@speclang-code-gen` | Extracts spec code blocks into implementation files | TypeScript, Go, or Python compilation checks |
+| `@speclang-verifier` | Validates cascade output and creates steering packets | Spec validation, compilation, tests, and recorded verification results |
+| `@speclang-simulator` | Simulates cascade and agent roles within spec-file boundaries | Checks file patterns, headers, and references before writes; limits cascade depth |
+| `@speclang-simulator-verify` | Validates Builder work and creates Ralph Loop steering packets | Spec format, compilation, tests, and integration checks |
 
 ### File Structure
 
@@ -738,7 +739,7 @@ declaration is checked, or that runtime behavior is correct.
 - **Autonomous validation**: Scores specs for agent readiness (0.6-4.1 confidence across the 464 report blocks, most at 1.0; measured 2026-11-17)
 - **Hello World**: Compiles successfully (proof of concept)
 - **Cascade protocol**: Documented explicit coordination
-- **Agent definitions**: Complete for all 5 roles
+- **Agent definitions**: 6 definitions in `.opencode/agents/` (excluding its README.md)
 - **TypeScript compilation**: `npx tsc --noEmit` and `npm run build` both exit with `rc=0` under the repository configuration (see [TypeScript Build Verification](#typescript-build-verification) for commands and captured output)
 - **Integration / E2E tests**: 3 files, 22 tests passing — `tests/e2e/spec-to-code.test.ts`, `tests/poc-e2e.test.ts`, `tests/dashboard/integration/git-integration.test.tsx` (`npx vitest run` on those three files, 2026-11-17 → Test Files 3 passed, Tests 22 passed)
 
