@@ -488,3 +488,4 @@
 {"id":487,"timestamp":"2026-11-18 03:32:36.811658","event_type":"task_created","task_id":"OBS-7","actor":"foreman","detail":"{\"id\":\"OBS-7\",\"status\":\"pending\"}","tick_number":null}
 {"id":488,"timestamp":"2026-11-18 14:12:23.363824","event_type":"task_created","task_id":"CLN-002","actor":"foreman","detail":"{\"id\":\"CLN-002\",\"status\":\"pending\"}","tick_number":null}
 {"id":489,"timestamp":"2026-11-18 14:25:49.348843","event_type":"task_created","task_id":"DOC-10","actor":"foreman","detail":"{\"id\":\"DOC-10\",\"status\":\"pending\"}","tick_number":null}
+{"id":490,"timestamp":"2026-11-18 14:42:06.083404","event_type":"task_updated","task_id":"OBS-6","actor":"foreman","detail":"{\"status\":\"pending\"}","tick_number":null}
