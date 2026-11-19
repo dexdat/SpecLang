@@ -2,8 +2,15 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Daemon } from '../../specs/daemon.spec.dir/src/daemon.ts';
 import { writeDaemonPromMetrics } from '../../specs/daemon.spec.dir/src/daemon-prom';
 
-const { execute } = vi.hoisted(() => ({ execute: vi.fn() }));
-vi.mock('../../specs/pipeline.spec.dir/src/executor.js', () => ({
+const { execute, executorHref } = vi.hoisted(() => ({
+  execute: vi.fn(),
+  // The daemon loads its executor through an absolute file:// URL resolved from
+  // its own module (see getPipelineExecutorCandidates), so a test-relative
+  // specifier does NOT register a mock for that import. Key the mock on the
+  // exact href the daemon computes.
+  executorHref: new URL('../../specs/pipeline.spec.dir/src/executor.ts', import.meta.url).href,
+}));
+vi.mock(executorHref, () => ({
   PipelineExecutor: class { execute = execute; },
 }));
 vi.mock('../../specs/daemon.spec.dir/src/daemon-prom', () => ({
