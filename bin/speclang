@@ -16,6 +16,39 @@ const fs = require('fs');
 // OBS-4: latest result per lane plus a cumulative counter, in the invocation
 // directory's ignored runtime state. Keep this in the shipped CommonJS binary
 // so usage errors and missing builds are observable without compiled modules.
+const MAX_LOCK_RECLAIMS = 8;
+const LOCK_STALE_MS = 5 * 60_000;
+
+// Classify an existing lock as 'stale' (safe to remove), 'contended' (a writer
+// may still own it) or 'gone'. A recorded PID is authoritative: EPERM means the
+// process exists under another uid, ESRCH means it is dead. Without a usable
+// PID (an older lock, or one truncated by a crash mid-write) age is the only
+// signal left, so a young unreadable lock keeps the old bounded wait.
+function lockOwnerState(lock) {
+  let body;
+  try {
+    body = fs.readFileSync(lock, 'utf8').trim();
+  } catch (err) {
+    return err.code === 'ENOENT' ? 'gone' : 'contended';
+  }
+  const pid = /^[1-9][0-9]{0,9}$/.test(body) ? Number(body) : 0;
+  if (pid > 0 && pid !== process.pid) {
+    try {
+      process.kill(pid, 0);
+      return 'contended';
+    } catch (err) {
+      if (err.code !== 'ESRCH') return 'contended';
+      return 'stale';
+    }
+  }
+  if (pid === process.pid) return 'contended';
+  try {
+    return Date.now() - fs.statSync(lock).mtimeMs > LOCK_STALE_MS ? 'stale' : 'contended';
+  } catch (err) {
+    return err.code === 'ENOENT' ? 'gone' : 'contended';
+  }
+}
+
 function recordCliCompletion(projectDir, lane, exitCode, durationMs) {
   const stateDir = path.join(projectDir, '.speclang');
   fs.mkdirSync(stateDir, { recursive: true });
@@ -28,11 +61,31 @@ function recordCliCompletion(projectDir, lane, exitCode, durationMs) {
   // A SIGKILL can leave a lock behind: remove it only after confirming the writer
   // is gone. Bound waits and warn rather than changing the command's exit code.
   let lockFd;
+  let reclaims = 0;
   while (lockFd === undefined) {
     try {
-      lockFd = fs.openSync(lock, 'wx', 0o600);
+      const fd = fs.openSync(lock, 'wx', 0o600);
+      try {
+        // Record the owner so a later process can tell a killed writer from a
+        // live one instead of waiting out the full deadline on a stale lock.
+        fs.writeSync(fd, `${process.pid}`);
+      } catch (err) {
+        try { fs.closeSync(fd); } catch (closeErr) { /* already closed */ }
+        try { fs.unlinkSync(lock); } catch (unlinkErr) { /* already gone */ }
+        throw err;
+      }
+      lockFd = fd;
     } catch (err) {
       if (err.code !== 'EEXIST') throw err;
+      if (reclaims < MAX_LOCK_RECLAIMS && lockOwnerState(lock) === 'stale') {
+        reclaims += 1;
+        try {
+          fs.unlinkSync(lock);
+        } catch (unlinkErr) {
+          if (unlinkErr.code !== 'ENOENT') throw unlinkErr;
+        }
+        continue;
+      }
       if (performance.now() >= deadline) {
         throw new Error(`Timed out waiting for CLI completion lock: ${lock}`);
       }

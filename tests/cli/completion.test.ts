@@ -1,5 +1,5 @@
 import { spawn, spawnSync } from 'child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, utimesSync, writeFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { join, resolve } from 'path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -153,5 +153,58 @@ describe('OBS-4 CLI completion records', () => {
     const root = project();
     expect(run(root, '--version').status).toBe(0);
     expect(existsSync(join(root, '.speclang/cli-completion.json'))).toBe(false);
+  });
+
+  it('reclaims a lock left behind by a killed writer instead of waiting out the deadline', async () => {
+    const root = project();
+    mkdirSync(join(root, '.speclang'), { recursive: true });
+    const dead = spawn(process.execPath, ['-e', 'process.exit(0)'], { stdio: 'ignore' });
+    const deadPid = dead.pid;
+    await new Promise(resolve => dead.once('exit', resolve));
+    const lock = join(root, '.speclang/cli-completion.json.lock');
+    writeFileSync(lock, String(deadPid));
+    const started = Date.now();
+    const result = run(root, 'validate');
+    expect(Date.now() - started).toBeLessThan(5_000);
+    expect(records(root).validate).toEqual({
+      lane: 'validate', exitCode: result.status, durationMs: expect.any(Number), runCount: 1,
+    });
+    expect(existsSync(lock)).toBe(false);
+  });
+
+  it('reclaims an unreadable lock once it is older than the staleness window', () => {
+    const root = project();
+    mkdirSync(join(root, '.speclang'), { recursive: true });
+    const lock = join(root, '.speclang/cli-completion.json.lock');
+    writeFileSync(lock, '');
+    const stale = new Date(Date.now() - 10 * 60_000);
+    utimesSync(lock, stale, stale);
+    const started = Date.now();
+    const result = run(root, 'guard');
+    expect(Date.now() - started).toBeLessThan(5_000);
+    expect(records(root).guard).toEqual({
+      lane: 'guard', exitCode: result.status, durationMs: expect.any(Number), runCount: 1,
+    });
+    expect(existsSync(lock)).toBe(false);
+  });
+
+  it('never reclaims a lock whose recorded owner is alive', async () => {
+    const root = project();
+    mkdirSync(join(root, '.speclang'), { recursive: true });
+    const lock = join(root, '.speclang/cli-completion.json.lock');
+    const holder = spawn(process.execPath, ['-e', 'setTimeout(() => {}, 30_000)'], { stdio: 'ignore' });
+    let waiter: ReturnType<typeof spawn> | undefined;
+    try {
+      writeFileSync(lock, String(holder.pid));
+      waiter = spawn(process.execPath, [cli, 'validate'], { cwd: root, stdio: 'ignore' });
+      await new Promise(resolve => setTimeout(resolve, 1_500));
+      expect(waiter.exitCode).toBeNull();
+      expect(readFileSync(lock, 'utf8')).toBe(String(holder.pid));
+      expect(existsSync(join(root, '.speclang/cli-completion.json'))).toBe(false);
+    } finally {
+      waiter?.kill('SIGKILL');
+      holder.kill('SIGKILL');
+      if (waiter) await new Promise(resolve => waiter!.once('exit', resolve));
+    }
   });
 });
