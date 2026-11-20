@@ -1,0 +1,133 @@
+{
+  "task_id": "README-5",
+  "task_title": "README: runnable-examples honesty, Testing section, dated Path Forward",
+  "task_criteria": [
+    "AC-1: grep -qE '^#{2,4} .*[Tt]est' README.md exits 0. AC-2: awk '/Path Forward/,0' README.md | grep -qE '20[0-9]{2}' exits 0. AC-3: every examples/ path advertised in README.md is accompanied by a runnable command. AC-4: npx vitest run tests/readme-doc-claims.test.ts exits 0."
+  ],
+  "passed": false,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "69abf2ab2acfbc435d31b7cc9b8297c7a90ee8d1",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "2ad2f9599dc7152dfcd0a798eca7628a74cde9f76a5ac44569ddca741f7b5b74",
+  "working_tree_dirty_path_count": 6,
+  "items": [],
+  "merge_recommendation": "needs_review",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: RUN  v4.1.11 /home/kara/speclang",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T075134.482497Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\n\n> speclang@1.0.0 build\n> tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T075134.482497Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "\n RUN  v4.1.11 /home/kara/speclang\n\nError: --to <level> is required\n\u274c Unknown target level: INVALID_LEVEL\n\u274c Downgrade must go to a lower level\nspeclang shim: $SPECLANG_CLI points at a path that does not exist:\n  /home/kara/speclang/.tmp/speclang-new-runnable-SJfJ46/does-not-exist\n\u274c Spec file not found: /home/kara/speclang/.tmp/speclang-test-downgrade/specs/nonexistent-file.spec.md\n\u274c No specs directory found. Run from a speclang project.\n\u274c Block not found: nonexistent-block-that-does-not-exist\nerror: missing required argument 'block-id'\nSourcemap for \"/home/kara/speclang/specs/project-layout.spec.dir/src/templates.js\" points to missing source files\n\n Test Files  127 passed | 4 skipped (131)\n      Tests  2071 passed | 58 skipped (2129)\n   Start at  02:59:26\n   Duration  52.24s (transform 15.09s, setup 3.65s, import 26.33s, tests 255.37s, environment 21ms)\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T075134.482497Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": false,
+      "any_failed": true,
+      "summary": "INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: AC-1: grep -qE '^#{2,4} .*[Tt]est' README.md exits 0. AC-2: awk '/Path Forward/,0' README.md | grep -qE '20[0-9]{2}' exits 0. AC-3: every examples/ path advertised in README.md is accompanied by a runnable command. AC-4: npx vitest run tests/readme-doc-claims.test.ts exits 0.\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": false,
+          "output": "INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: AC-1: grep -qE '^#{2,4} .*[Tt]est' README.md exits 0. AC-2: awk '/Path Forward/,0' README.md | grep -qE '20[0-9]{2}' exits 0. AC-3: every examples/ path advertised in README.md is accompanied by a runnable command. AC-4: npx vitest run tests/readme-doc-claims.test.ts exits 0.\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+          "error": "",
+          "data": {
+            "verdict": "INCOMPLETE",
+            "items": [],
+            "summary": "Evaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+            "ungraded_criteria": [
+              "AC-1: grep -qE '^#{2,4} .*[Tt]est' README.md exits 0. AC-2: awk '/Path Forward/,0' README.md | grep -qE '20[0-9]{2}' exits 0. AC-3: every examples/ path advertised in README.md is accompanied by a runnable command. AC-4: npx vitest run tests/readme-doc-claims.test.ts exits 0."
+            ],
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "ungraded_criteria": [
+        "AC-1: grep -qE '^#{2,4} .*[Tt]est' README.md exits 0. AC-2: awk '/Path Forward/,0' README.md | grep -qE '20[0-9]{2}' exits 0. AC-3: every examples/ path advertised in README.md is accompanied by a runnable command. AC-4: npx vitest run tests/readme-doc-claims.test.ts exits 0."
+      ]
+    }
+  },
+  "ungraded_criteria": [
+    "AC-1: grep -qE '^#{2,4} .*[Tt]est' README.md exits 0. AC-2: awk '/Path Forward/,0' README.md | grep -qE '20[0-9]{2}' exits 0. AC-3: every examples/ path advertised in README.md is accompanied by a runnable command. AC-4: npx vitest run tests/readme-doc-claims.test.ts exits 0."
+  ],
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [],
+    "summary": "",
+    "error": "LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)"
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: RUN  v4.1.11 /home/kara/speclang\n\nStage tier2: FAIL\n  INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: AC-1: grep -qE '^#{2,4} .*[Tt]est' README.md exits 0. AC-2: awk '/Path Forward/,0' README.md | grep -qE '20[0-9]{2}' exits 0. AC-3: every examples/ path advertised in README.md is accompanied by a runnable command. AC-4: npx vitest run tests/readme-doc-claims.test.ts exits 0.\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)\n\nOverall: FAIL \u2717",
+  "evaluated_at": "2026-11-20T08:00:38.566108",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-20T08:00:38.634276+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 2872,
+        "truncated": false,
+        "source": "git show 69abf2ab2acf"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 112452,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "README-5"
+  }
+}
