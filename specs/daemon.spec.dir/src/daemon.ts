@@ -436,7 +436,14 @@ export class Daemon extends EventEmitter {
         throw error;
       }
 
-      this.reportPipelineOutputs(beforeOutputs, pipelineResult?.success === true);
+      // DF-SPECLANG-024: attribute what this convergence pass WROTE — but only
+      // when the detector exists. this.convergence is constructed in start()
+      // (after config.load()), so a directly-constructed Daemon (tests, embedders)
+      // has no detector; skipping accounting there matches the pre-024 behavior
+      // instead of crashing every pipeline on "reading 'recordOutputs' of null".
+      if (this.convergence) {
+        this.reportPipelineOutputs(beforeOutputs, pipelineResult?.success === true);
+      }
 
       if (pipelineResult.success) {
         this.pipelineFailures = 0;
