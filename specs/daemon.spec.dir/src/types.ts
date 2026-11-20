@@ -118,7 +118,21 @@ export interface AgentStatus {
 // Convergence result
 export interface ConvergenceResult {
   converged: boolean;
+  /**
+   * DF-SPECLANG-024: files this convergence pass WROTE — the size of `outputs`.
+   * It is never a count of watcher events or of edited spec/source files; a
+   * pass that generated nothing reports 0.
+   */
   filesChanged: number;
+  /**
+   * DF-SPECLANG-024: project-relative paths of the files the pass wrote (in
+   * sorted order where the writer knows it). Empty on a zero-output save.
+   */
+  outputs?: string[];
+  /** DF-SPECLANG-024: `outputs.length`, exposed so the count is checkable alone. */
+  outputsCount?: number;
+  /** DF-SPECLANG-024: distinct spec/source files the watcher reported (inputs). */
+  inputFiles?: number;
   duration: number;
   cascadeDepth: number;
   timestamp: number;
