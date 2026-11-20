@@ -525,3 +525,4 @@
 {"id":524,"timestamp":"2026-11-20 14:27:35.325283","event_type":"task_updated","task_id":"DF-SPECLANG-024","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
 {"id":525,"timestamp":"2026-11-20 14:27:35.35802","event_type":"task_updated","task_id":"DF-SPECLANG-026","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
 {"id":526,"timestamp":"2026-11-20 14:27:35.395373","event_type":"task_updated","task_id":"GEN-1","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
+{"id":527,"timestamp":"2026-11-20 15:11:46.413898","event_type":"task_completed","task_id":"DF-SPECLANG-024","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
