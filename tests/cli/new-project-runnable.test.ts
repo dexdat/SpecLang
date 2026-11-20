@@ -22,6 +22,7 @@ import { execFileSync } from "child_process";
 import { mkdtempSync, readFileSync, rmSync, existsSync, statSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
+import { PipelineConfigManager } from "../../src/pipeline/config.js";
 
 const REPO_ROOT = process.cwd();
 const CLI = join(REPO_ROOT, "bin/speclang");
@@ -162,6 +163,37 @@ describe("new scaffolding -> runnable project (UX-003)", () => {
     // It must not send the reader down the broken path: no file: dependency
     // (mentioning the pattern while explaining why it is wrong is fine).
     expect(readme).not.toMatch(/file:\//);
+    // DF-SPECLANG-020: the shipped pipeline is part of the layout it lists.
+    expect(readme).toContain("build.yaml");
+  });
+
+  it("ships a build.yaml whose on_converge generates code (DF-SPECLANG-020)", async () => {
+    const buildPath = join(projectPath, "build.yaml");
+    expect(existsSync(buildPath), "speclang new must write build.yaml").toBe(true);
+
+    // Load it through the daemon's own config manager: this asserts the file
+    // really configures the pipeline, not merely that a file exists. Without
+    // it the daemon loaded defaults with an EMPTY on_converge, so the first
+    // save after scaffolding converged and produced zero code.
+    const manager = new PipelineConfigManager(buildPath);
+    const config = await manager.load();
+
+    expect(manager.validate()).toEqual({ valid: true, errors: [] });
+
+    const stages = manager.getPipelineStages();
+    expect(stages).toHaveLength(1);
+    expect(stages[0].name).toBe("generate");
+    // The stage must call the project's own shim (no install, no bare
+    // `speclang` on PATH, no bun).
+    expect(stages[0].run).toBe("node scripts/speclang.cjs generate");
+
+    // A scaffold must never commit on the user's behalf.
+    expect(config.pipeline.on_success).toEqual([]);
+  });
+
+  it("still writes the starter spec alongside build.yaml", () => {
+    expect(existsSync(join(projectPath, "build.yaml"))).toBe(true);
+    expect(existsSync(join(projectPath, "specs", "main.spec.md"))).toBe(true);
   });
 
   it("prints next steps that match the shipped scripts", () => {
@@ -184,6 +216,7 @@ describe("new scaffolding -> runnable project (UX-003)", () => {
     expect(existsSync(join(barePath, "scripts", "speclang.cjs"))).toBe(true);
     expect(existsSync(join(barePath, "package.json"))).toBe(true);
     expect(existsSync(join(barePath, "README.md"))).toBe(true);
+    expect(existsSync(join(barePath, "build.yaml"))).toBe(true);
 
     const pkg = JSON.parse(read(barePath, "package.json")) as {
       scripts: Record<string, string>;
