@@ -1,0 +1,197 @@
+{
+  "task_id": "CLN-002",
+  "task_title": "delete dead generate_index.py.handwritten",
+  "task_criteria": [
+    "The dead tracked file generate_index.py.handwritten no longer exists in the repository tree (git ls-files returns no match) and npm run build still exits 0."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "5cd4ca7126ded9bb82b0cde9bca394fcb948180d",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "45b24c76a046bce98a58f81d9d95ab5032bf584c79cd64c3f49b0433668c2c80",
+  "working_tree_dirty_path_count": 6,
+  "items": [
+    {
+      "criterion": "The dead tracked file generate_index.py.handwritten no longer exists in the repository tree (git ls-files returns no match) and npm run build still exits 0.",
+      "status": "PASS",
+      "detail": "`git ls-files | grep -i handwritten` exits 1 (no match) \u2014 the file is not tracked; commit 180d2b55 deleted generate_index.py.handwritten (201 lines, shown in `git show --stat 180d2b55`). The only remaining copies (./.tmp/df013-fresh/ and ./.tmp/freshclone/) are untracked and ignored via .gitignore:98 `.tmp/` (confirmed by `git check-ignore -v`), so they are not in the repository tree. `npm run build` (tsc) ran fresh and printed `BUILD EXIT: 0`."
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  01:37:58",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T062200.397773Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\n\n> speclang@1.0.0 build\n> tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T062200.397773Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  01:37:58\n   Duration  65.57s (transform 20.44s, setup 5.97s, import 36.98s, tests 284.72s, environment 40ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T062200.397773Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 The dead tracked file generate_index.py.handwritten no longer exists in the repository tree (git ls-files returns no match) and npm run build still exits 0.: `git ls-files | grep -i handwritten` exits 1 (no match) \u2014 the file is not tracked; commit 180d2b55 deleted generate_index.py.handwritten (201 lines, shown in `git show --stat 180d2b55`). The only remaining copies (./.tmp/df013-fresh/ and ./.tmp/freshclone/) are untracked and ignored via .gitignore:98 `.tmp/` (confirmed by `git check-ignore -v`), so they are not in the repository tree. `npm run build` (tsc) ran fresh and printed `BUILD EXIT: 0`.\nThe tracked file generate_index.py.handwritten was deleted in commit 180d2b55, git ls-files returns no match (remaining copies live only in the gitignored .tmp/ scratch dir), and a fresh `npm run build` exits 0.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 The dead tracked file generate_index.py.handwritten no longer exists in the repository tree (git ls-files returns no match) and npm run build still exits 0.: `git ls-files | grep -i handwritten` exits 1 (no match) \u2014 the file is not tracked; commit 180d2b55 deleted generate_index.py.handwritten (201 lines, shown in `git show --stat 180d2b55`). The only remaining copies (./.tmp/df013-fresh/ and ./.tmp/freshclone/) are untracked and ignored via .gitignore:98 `.tmp/` (confirmed by `git check-ignore -v`), so they are not in the repository tree. `npm run build` (tsc) ran fresh and printed `BUILD EXIT: 0`.\nThe tracked file generate_index.py.handwritten was deleted in commit 180d2b55, git ls-files returns no match (remaining copies live only in the gitignored .tmp/ scratch dir), and a fresh `npm run build` exits 0.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "The dead tracked file generate_index.py.handwritten no longer exists in the repository tree (git ls-files returns no match) and npm run build still exits 0.",
+                "status": "PASS",
+                "detail": "`git ls-files | grep -i handwritten` exits 1 (no match) \u2014 the file is not tracked; commit 180d2b55 deleted generate_index.py.handwritten (201 lines, shown in `git show --stat 180d2b55`). The only remaining copies (./.tmp/df013-fresh/ and ./.tmp/freshclone/) are untracked and ignored via .gitignore:98 `.tmp/` (confirmed by `git check-ignore -v`), so they are not in the repository tree. `npm run build` (tsc) ran fresh and printed `BUILD EXIT: 0`.",
+                "resolution_probability": 0.03
+              }
+            ],
+            "summary": "The tracked file generate_index.py.handwritten was deleted in commit 180d2b55, git ls-files returns no match (remaining copies live only in the gitignored .tmp/ scratch dir), and a fresh `npm run build` exits 0.",
+            "provenance": {
+              "model": "accounts/fireworks/models/kimi-k3",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "accounts/fireworks/models/kimi-k3",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"CLN-002\"}",
+          "exit_code": 0,
+          "output_sha": "f48c092e9fcd00c631f51606d6c5bc7ff505f4658ed32f3eec7d6deba06828b3"
+        },
+        {
+          "tool": "run_command",
+          "command": "git ls-files | grep -i handwritten; echo \"grep exit: $?\"",
+          "exit_code": 0,
+          "output_sha": "7c22eec64cf6fe92c6cbbbe8bbf28826b6488d7a13323e6047a83b0023df5205"
+        },
+        {
+          "tool": "run_command",
+          "command": "find . -name \"generate_index.py.handwritten\" -not -path \"*/node_modules/*\" 2>/dev/null; echo \"find exit: $?\"",
+          "exit_code": 0,
+          "output_sha": "dd5b3ea4f0e1280cce1834e004f4acdc249d68a5ecd698d9853a68cf57be4a03"
+        },
+        {
+          "tool": "run_command",
+          "command": "git status --porcelain | head -20; echo \"---\"; git check-ignore -v .tmp/df013-fresh/generate_index.py.handwritten .tmp/freshclone/generate_index.py.handwritten; echo \"---\"; cat .gitignore 2>/dev/null | head -30",
+          "exit_code": 0,
+          "output_sha": "701ece0da1974f4cef546d7261b9d20d816e168e5fd489309f683f538b525522"
+        },
+        {
+          "tool": "run_command",
+          "command": "git log --oneline --all -- generate_index.py.handwritten | head -5; echo \"---\"; git log --diff-filter=D --oneline -- generate_index.py.handwritten | head -5",
+          "exit_code": 0,
+          "output_sha": "c964e954698e8e00d9a0dc4cd44844d176495e07b17218b60ffc864d60813d49"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat .gitreins/config.yaml 2>/dev/null | head -40",
+          "exit_code": 0,
+          "output_sha": "64610bb1ec986afa3957cd0445998160aabf69987f24c831f41659607c5b430c"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -A5 '\"scripts\"' package.json | head -20",
+          "exit_code": 0,
+          "output_sha": "9c7f596cf66f46c67fe47a3dd4747196603a06b9ce5f0f02275d965c1d072257"
+        },
+        {
+          "tool": "run_command",
+          "command": "npm run build; echo \"BUILD EXIT: $?\"",
+          "exit_code": 0,
+          "output_sha": "d8495ca529112bf148b480d1cd1fbebd48d83593dac39f14ddf08e74019a4256"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show --stat 180d2b55 | head -20",
+          "exit_code": 0,
+          "output_sha": "0608a6d772f8e7f5ccdc88fb4ebff6dcb8de9b6ad33efd09e618ede903ee4bf1"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show --stat 180d2b55 | tail -20",
+          "exit_code": 0,
+          "output_sha": "b4db9e9486e1c231ef4d0d014d5091f7d15f4f0e2c403d17ce8a88bf6f2ab737"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: `git ls-files | grep -i handwritten` exits 1 (no match) \\u2014 file not tracked. Commit 180d2b55 deleted generate_index.py.handwritten (201 lines). Copies in ./.tmp/ are gitignored (.gitignore:98 `.tmp/`) and untracked, so not in the repository tree. `npm run build` (tsc) ran fresh and printed BUILD EXIT: 0.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "101a0ea5a5aa45085fde3fd4d5becc7fafe30d35cc03d7ff0a1a6eff4a885d6d"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [],
+    "summary": "",
+    "error": "unparseable reviewer reply: no parseable JSON object in reply: ''"
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  01:37:58\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 The dead tracked file generate_index.py.handwritten no longer exists in the repository tree (git ls-files returns no match) and npm run build still exits 0.: `git ls-files | grep -i handwritten` exits 1 (no match) \u2014 the file is not tracked; commit 180d2b55 deleted generate_index.py.handwritten (201 lines, shown in `git show --stat 180d2b55`). The only remaining copies (./.tmp/df013-fresh/ and ./.tmp/freshclone/) are untracked and ignored via .gitignore:98 `.tmp/` (confirmed by `git check-ignore -v`), so they are not in the repository tree. `npm run build` (tsc) ran fresh and printed `BUILD EXIT: 0`.\nThe tracked file generate_index.py.handwritten was deleted in commit 180d2b55, git ls-files returns no match (remaining copies live only in the gitignored .tmp/ scratch dir), and a fresh `npm run build` exits 0.\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-20T06:41:22.334700",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-20T06:41:22.412183+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 180067,
+        "truncated": false,
+        "source": "git show 5cd4ca7126de"
+      }
+    ],
+    "task_id": "CLN-002"
+  }
+}
