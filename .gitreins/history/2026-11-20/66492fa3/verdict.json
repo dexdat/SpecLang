@@ -1,0 +1,394 @@
+{
+  "task_id": "LAND-001",
+  "task_title": "LAND-001 \u2014 verify and land the twin checkout's 8 unmerged commits (OBS-3/OBS-4/OBS-7/CLN-002/DOC-10)",
+  "task_criteria": [
+    "The five landed implementation commits are reachable from origin/main, the daemon/CLI/docs work they address is present at the landed tip, tier-2 PASS verdicts exist for OBS-3, OBS-4, OBS-7, CLN-002 and DOC-10, and the five board rows are closed with commit_hash bound to the landed sha 4a80b494."
+  ],
+  "passed": false,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "land/2117",
+  "commit": "ae7baab24c48cf482e21b99de42e1052a1913c02",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "5174fba5e7e48160490b2f4cd967e50c04d291c3f497159ab52c95b237187f1c",
+  "working_tree_dirty_path_count": 1,
+  "items": [
+    {
+      "criterion": "The five landed implementation commits are reachable from origin/main, the daemon/CLI/docs work they address is present at the landed tip, tier-2 PASS verdicts exist for OBS-3, OBS-4, OBS-7, CLN-002 and DOC-10, and the five board rows are closed with commit_hash bound to the landed sha 4a80b494.",
+      "status": "FAIL",
+      "detail": "Conjunction fails on two clauses. (a) Reachability PASSES: git merge-base --is-ancestor exits 0 for 70eda8c6, ba65d500, 33c33ce4, 180d2b55, 4a80b494 against origin/main. (b) Work present PASSES: src/daemon/daemon-prom.ts:55 writes daemon.prom, bin/speclang:55 records cli-completion.json, src/daemon/daemon.ts:32 getPipelineExecutorCandidates resolves src/dist layouts, scripts/generate_index.py.handwritten is absent, docs/API_REFERENCE.md:185 documents GET /metrics; fresh run `npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts tests/cli/completion.test.ts` exited 0 with 'Test Files 3 passed (3), Tests 33 passed (33)'. (c) Tier-2 PASS verdicts FAIL: the durable verdict store refs/gitreins/history contains only FAIL verdicts for these ids \u2014 78e4e1b1 (OBS-3, passed:false), 25dff53a (OBS-4, passed:false), 49043952 (OBS-7, passed:false), 61e183b6 (DOC10-CLN002, passed:false), each with tier2 INCOMPLETE 'Evaluator error: LLM call failed: 402 Payment Required'. The six run ids the board cites as PASS evidence (f12932c0, 4dd63351, 45bdaf8d, 9c58b2a7, d2bd2614, 92ba109d, plus LAND-001's c2ec7a65) resolve to nothing: absent from .gitreins/history working copy, absent from `git ls-tree -r refs/gitreins/history`, and `git cat-file -t <id>` returns 'Not a valid object name' for all six \u2014 the claimed PASS verdicts are phantom references. (d) Board rows closed PASSES but the 4a80b494 binding FAILS for 3 of 5 rows: .coding-hermes/board/tasks.jsonl (as of 66e5be83) binds OBS-3\u21924a80b494 and LAND-001\u21924a80b494, but OBS-4\u219233c33ce4, OBS-7\u219270eda8c6, CLN-002\u2192180d2b55, DOC-10\u2192180d2b55 \u2014 a deliberate per-row rebinding, not the uniform 4a80b494 the criterion states."
+    }
+  ],
+  "merge_recommendation": "changes_required",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: RUN  v4.1.11 /home/kara/SpecLang",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261120T060146.308506Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\n\n> speclang@1.0.0 build\n> tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261120T060146.308506Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "\n RUN  v4.1.11 /home/kara/SpecLang\n\nspeclang shim: $SPECLANG_CLI points at a path that does not exist:\n  /home/kara/SpecLang/.tmp/speclang-new-runnable-GJzsFX/does-not-exist\n\u274c No specs directory found. Run from a speclang project.\n\u274c Block not found: nonexistent-block-that-does-not-exist\nError: --to <level> is required\nerror: missing required argument 'block-id'\n\u274c Unknown target level: INVALID_LEVEL\n\u274c Downgrade must go to a lower level\n\u274c Spec file not found: /home/kara/SpecLang/.tmp/speclang-test-downgrade/specs/nonexistent-file.spec.md\nSourcemap for \"/home/kara/SpecLang/specs/project-layout.spec.dir/src/templates.js\" points to missing source files\n\n Test Files  126 passed | 4 skipped (130)\n      Tests  2064 passed | 58 skipped (2122)\n   Start at  02:25:06\n   Duration  34.85s (transform 10.74s, setup 3.02s, import 18.11s, tests 192.83s, environment 15ms)\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261120T060146.308506Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": false,
+      "any_failed": true,
+      "summary": "INCOMPLETE\n  \u2717 The five landed implementation commits are reachable from origin/main, the daemon/CLI/docs work they address is present at the landed tip, tier-2 PASS verdicts exist for OBS-3, OBS-4, OBS-7, CLN-002 and DOC-10, and the five board rows are closed with commit_hash bound to the landed sha 4a80b494.: Conjunction fails on two clauses. (a) Reachability PASSES: git merge-base --is-ancestor exits 0 for 70eda8c6, ba65d500, 33c33ce4, 180d2b55, 4a80b494 against origin/main. (b) Work present PASSES: src/daemon/daemon-prom.ts:55 writes daemon.prom, bin/speclang:55 records cli-completion.json, src/daemon/daemon.ts:32 getPipelineExecutorCandidates resolves src/dist layouts, scripts/generate_index.py.handwritten is absent, docs/API_REFERENCE.md:185 documents GET /metrics; fresh run `npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts tests/cli/completion.test.ts` exited 0 with 'Test Files 3 passed (3), Tests 33 passed (33)'. (c) Tier-2 PASS verdicts FAIL: the durable verdict store refs/gitreins/history contains only FAIL verdicts for these ids \u2014 78e4e1b1 (OBS-3, passed:false), 25dff53a (OBS-4, passed:false), 49043952 (OBS-7, passed:false), 61e183b6 (DOC10-CLN002, passed:false), each with tier2 INCOMPLETE 'Evaluator error: LLM call failed: 402 Payment Required'. The six run ids the board cites as PASS evidence (f12932c0, 4dd63351, 45bdaf8d, 9c58b2a7, d2bd2614, 92ba109d, plus LAND-001's c2ec7a65) resolve to nothing: absent from .gitreins/history working copy, absent from `git ls-tree -r refs/gitreins/history`, and `git cat-file -t <id>` returns 'Not a valid object name' for all six \u2014 the claimed PASS verdicts are phantom references. (d) Board rows closed PASSES but the 4a80b494 binding FAILS for 3 of 5 rows: .coding-hermes/board/tasks.jsonl (as of 66e5be83) binds OBS-3\u21924a80b494 and LAND-001\u21924a80b494, but OBS-4\u219233c33ce4, OBS-7\u219270eda8c6, CLN-002\u2192180d2b55, DOC-10\u2192180d2b55 \u2014 a deliberate per-row rebinding, not the uniform 4a80b494 the criterion states.\n  \u2717 Coverage FAILED \u2014 not passing: The five landed implementation commits are reachable from origin/main, the daemon/CLI/docs work they address is present at the landed tip, tier-2 PASS verdicts exist for OBS-3, OBS-4, OBS-7, CLN-002 and DOC-10, and the five board rows are closed with commit_hash bound to the landed sha 4a80b494.\nThe five commits are genuinely landed on origin/main with the daemon/CLI/docs work present and focused tests green (33 passed, exit 0), but the criterion fails: no tier-2 PASS verdict exists for any of the five tasks \u2014 the cited verdict run ids are unresolvable phantoms and the only real verdicts are 402 FAILs \u2014 and three of the five board rows are bound to their own landed shas (33c33ce4, 70eda8c6, 180d2b55) rather than to 4a80b494.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": false,
+          "output": "INCOMPLETE\n  \u2717 The five landed implementation commits are reachable from origin/main, the daemon/CLI/docs work they address is present at the landed tip, tier-2 PASS verdicts exist for OBS-3, OBS-4, OBS-7, CLN-002 and DOC-10, and the five board rows are closed with commit_hash bound to the landed sha 4a80b494.: Conjunction fails on two clauses. (a) Reachability PASSES: git merge-base --is-ancestor exits 0 for 70eda8c6, ba65d500, 33c33ce4, 180d2b55, 4a80b494 against origin/main. (b) Work present PASSES: src/daemon/daemon-prom.ts:55 writes daemon.prom, bin/speclang:55 records cli-completion.json, src/daemon/daemon.ts:32 getPipelineExecutorCandidates resolves src/dist layouts, scripts/generate_index.py.handwritten is absent, docs/API_REFERENCE.md:185 documents GET /metrics; fresh run `npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts tests/cli/completion.test.ts` exited 0 with 'Test Files 3 passed (3), Tests 33 passed (33)'. (c) Tier-2 PASS verdicts FAIL: the durable verdict store refs/gitreins/history contains only FAIL verdicts for these ids \u2014 78e4e1b1 (OBS-3, passed:false), 25dff53a (OBS-4, passed:false), 49043952 (OBS-7, passed:false), 61e183b6 (DOC10-CLN002, passed:false), each with tier2 INCOMPLETE 'Evaluator error: LLM call failed: 402 Payment Required'. The six run ids the board cites as PASS evidence (f12932c0, 4dd63351, 45bdaf8d, 9c58b2a7, d2bd2614, 92ba109d, plus LAND-001's c2ec7a65) resolve to nothing: absent from .gitreins/history working copy, absent from `git ls-tree -r refs/gitreins/history`, and `git cat-file -t <id>` returns 'Not a valid object name' for all six \u2014 the claimed PASS verdicts are phantom references. (d) Board rows closed PASSES but the 4a80b494 binding FAILS for 3 of 5 rows: .coding-hermes/board/tasks.jsonl (as of 66e5be83) binds OBS-3\u21924a80b494 and LAND-001\u21924a80b494, but OBS-4\u219233c33ce4, OBS-7\u219270eda8c6, CLN-002\u2192180d2b55, DOC-10\u2192180d2b55 \u2014 a deliberate per-row rebinding, not the uniform 4a80b494 the criterion states.\n  \u2717 Coverage FAILED \u2014 not passing: The five landed implementation commits are reachable from origin/main, the daemon/CLI/docs work they address is present at the landed tip, tier-2 PASS verdicts exist for OBS-3, OBS-4, OBS-7, CLN-002 and DOC-10, and the five board rows are closed with commit_hash bound to the landed sha 4a80b494.\nThe five commits are genuinely landed on origin/main with the daemon/CLI/docs work present and focused tests green (33 passed, exit 0), but the criterion fails: no tier-2 PASS verdict exists for any of the five tasks \u2014 the cited verdict run ids are unresolvable phantoms and the only real verdicts are 402 FAILs \u2014 and three of the five board rows are bound to their own landed shas (33c33ce4, 70eda8c6, 180d2b55) rather than to 4a80b494.",
+          "error": "",
+          "data": {
+            "verdict": "INCOMPLETE",
+            "items": [
+              {
+                "criterion": "The five landed implementation commits are reachable from origin/main, the daemon/CLI/docs work they address is present at the landed tip, tier-2 PASS verdicts exist for OBS-3, OBS-4, OBS-7, CLN-002 and DOC-10, and the five board rows are closed with commit_hash bound to the landed sha 4a80b494.",
+                "status": "FAIL",
+                "detail": "Conjunction fails on two clauses. (a) Reachability PASSES: git merge-base --is-ancestor exits 0 for 70eda8c6, ba65d500, 33c33ce4, 180d2b55, 4a80b494 against origin/main. (b) Work present PASSES: src/daemon/daemon-prom.ts:55 writes daemon.prom, bin/speclang:55 records cli-completion.json, src/daemon/daemon.ts:32 getPipelineExecutorCandidates resolves src/dist layouts, scripts/generate_index.py.handwritten is absent, docs/API_REFERENCE.md:185 documents GET /metrics; fresh run `npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts tests/cli/completion.test.ts` exited 0 with 'Test Files 3 passed (3), Tests 33 passed (33)'. (c) Tier-2 PASS verdicts FAIL: the durable verdict store refs/gitreins/history contains only FAIL verdicts for these ids \u2014 78e4e1b1 (OBS-3, passed:false), 25dff53a (OBS-4, passed:false), 49043952 (OBS-7, passed:false), 61e183b6 (DOC10-CLN002, passed:false), each with tier2 INCOMPLETE 'Evaluator error: LLM call failed: 402 Payment Required'. The six run ids the board cites as PASS evidence (f12932c0, 4dd63351, 45bdaf8d, 9c58b2a7, d2bd2614, 92ba109d, plus LAND-001's c2ec7a65) resolve to nothing: absent from .gitreins/history working copy, absent from `git ls-tree -r refs/gitreins/history`, and `git cat-file -t <id>` returns 'Not a valid object name' for all six \u2014 the claimed PASS verdicts are phantom references. (d) Board rows closed PASSES but the 4a80b494 binding FAILS for 3 of 5 rows: .coding-hermes/board/tasks.jsonl (as of 66e5be83) binds OBS-3\u21924a80b494 and LAND-001\u21924a80b494, but OBS-4\u219233c33ce4, OBS-7\u219270eda8c6, CLN-002\u2192180d2b55, DOC-10\u2192180d2b55 \u2014 a deliberate per-row rebinding, not the uniform 4a80b494 the criterion states.",
+                "resolution_probability": 0.0
+              }
+            ],
+            "summary": "The five commits are genuinely landed on origin/main with the daemon/CLI/docs work present and focused tests green (33 passed, exit 0), but the criterion fails: no tier-2 PASS verdict exists for any of the five tasks \u2014 the cited verdict run ids are unresolvable phantoms and the only real verdicts are 402 FAILs \u2014 and three of the five board rows are bound to their own landed shas (33c33ce4, 70eda8c6, 180d2b55) rather than to 4a80b494.",
+            "provenance": {
+              "model": "accounts/fireworks/models/kimi-k3",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "accounts/fireworks/models/kimi-k3",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"LAND-001\"}",
+          "exit_code": 0,
+          "output_sha": "64668afb19e1f23cbabdf14702c3026dd8670da2d0a90c08b39ce82b555e6322"
+        },
+        {
+          "tool": "run_command",
+          "command": "git log --oneline -30 && echo \"---\" && git status && echo \"---\" && git branch -a",
+          "exit_code": 0,
+          "output_sha": "8274849358fed74dd2d28ae20c5ad619f6ead9a068c136fc8c33b96cff6b904a"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && cat .gitreins/config.yaml 2>/dev/null | head -80",
+          "exit_code": 0,
+          "output_sha": "e0621be2529131186d0bebcd8622e43e021bcfb1804e048b85e37870589e19f1"
+        },
+        {
+          "tool": "run_command",
+          "command": "for c in 4a80b494 180d2b55 33c33ce4 ba65d500 70eda8c6; do git merge-base --is-ancestor $c origin/main && echo \"$c: ancestor of origin/main\" || echo \"$c: NOT ancestor\"; done; echo \"---\"; git log --oneline origin/main -3",
+          "exit_code": 0,
+          "output_sha": "63f767363c6f2005c32e173e98e60bfd3f39a3028965033d541f7bf3683ce0bb"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls .speclang/ && find .speclang -maxdepth 2 -name \"*board*\" -o -maxdepth 2 -name \"*.json\" | head -20",
+          "exit_code": 0,
+          "output_sha": "f529d3c297b79f44282254c3503f53cace377da638ba7a200dea1356171bc660"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rl \"LAND-001\" --include=\"*.json\" --include=\"*.md\" --include=\"*.yaml\" --include=\"*.yml\" . 2>/dev/null | grep -v \"^./.git/\" | grep -v node_modules | grep -v \"^./.tmp\" | head -20",
+          "exit_code": 0,
+          "output_sha": "40b81a5e5787a9409bfcbfd07ea2d172e84afc1a486059234acd614662ad8de5"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show 66e5be83 --stat && echo \"=====\" && git show 684d6cbd --stat",
+          "exit_code": 0,
+          "output_sha": "b09d0775955e1edf3f0ee96432bb79129ba678571ae7c4442919c07ee3cb1156"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -E '\"id\": ?\"(OBS-3|OBS-4|OBS-7|CLN-002|DOC-10|LAND-001)\"' .coding-hermes/board/tasks.jsonl | python3 -c \"\nimport sys, json\nfor line in sys.stdin:\n    d = json.loads(line)\n    print(d.get('id'), '|', d.get('status'), '|', d.get('commit_hash'), '|', json.dumps(d.get('evidence', d.get('verdict', '')))[:200])\n\"",
+          "exit_code": 0,
+          "output_sha": "ac8e1e78aef80d3c1fedca4d1e372d3e2e2e7c4b5b25fb6971e930d92c220c37"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -E '\"id\": ?\"(OBS-3|OBS-4|OBS-7|CLN-002|DOC-10|LAND-001)\"' .coding-hermes/board/tasks.jsonl | python3 -m json.tool --no-ensure-ascii 2>/dev/null | head -5; grep '\"id\": \"OBS-3\"' .coding-hermes/board/tasks.jsonl | python3 -c \"import sys,json; d=json.loads(sys.stdin.read()); print(json.dumps(d, indent=1)[:3000])\"",
+          "exit_code": 0,
+          "output_sha": "bbf0e1439f5fd2f8f4a80d9cd2b3af35dd08738949d271ba4e8947784f9f70a9"
+        },
+        {
+          "tool": "run_command",
+          "command": "for id in OBS-3 OBS-4 OBS-7 CLN-002 DOC-10; do grep \"\\\"id\\\": \\\"$id\\\"\" .coding-hermes/board/tasks.jsonl | python3 -c \"\nimport sys,json\nd=json.loads(sys.stdin.read())\nev=d.get('detail',{}).get('evidence',[])\nruns=sorted({e.get('run_id') for e in ev if e.get('run_id')})\narts=[a for e in ev for a in e.get('artifacts',[])]\nprint(d['id'], '| runs:', runs, '| artifacts:', arts)\n\"; done",
+          "exit_code": 0,
+          "output_sha": "22b408f82ac4cdf08df06bdb8e6e1eda63305d90fd856404f50f17de5dbb642b"
+        },
+        {
+          "tool": "run_command",
+          "command": "for r in f12932c0 4dd63351 45bdaf8d 9c58b2a7 d2bd2614 92ba109d; do f=.gitreins/history/2026-11-20/$r/verdict.json; if [ -f \"$f\" ]; then python3 -c \"\nimport json\nd=json.load(open('$f'))\nprint('$r', '| verdict:', d.get('verdict'), '| task:', d.get('task_id', d.get('id','?')))\n\"; else echo \"$r: MISSING $f\"; fi; done",
+          "exit_code": 0,
+          "output_sha": "49198de278819396cb2889615324edd26d2f47b8c896ba7c7cba3da3de51a1ae"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls .gitreins/history/2026-11-20/ 2>/dev/null; echo \"---\"; git ls-tree -r --name-only refs/gitreins/history 2>/dev/null | grep -E \"(f12932c0|4dd63351|45bdaf8d|9c58b2a7|d2bd2614|92ba109d)\" | head -20",
+          "exit_code": 0,
+          "output_sha": "6d9edd76be581e1a72c222eec1eb6dcc1cc3189f7ea3101fc2aac5d83fdcabed"
+        },
+        {
+          "tool": "run_command",
+          "command": "git for-each-ref | grep -i -E \"gitreins|history\" ; echo \"---\"; git ls-remote origin 2>/dev/null | grep -i -E \"gitreins|history\" | head",
+          "exit_code": 0,
+          "output_sha": "edb8e420d7a62611e8e25c515e2e1aa945becd2ce717f7afe67d82ee378c0a89"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat .gitreins/history/2026-11-20/d9f63640/verdict.json | python3 -c \"import json,sys; d=json.load(sys.stdin); print(json.dumps({k:d[k] for k in list(d)[:8]}, indent=1)[:800])\"",
+          "exit_code": 0,
+          "output_sha": "03f021033c4468ed7fff567462b54b5f9c95a229b2484db99fcfc6e067bfeaf5"
+        },
+        {
+          "tool": "run_command",
+          "command": "git ls-tree -r --name-only refs/gitreins/history | grep \"2026-11-20\" | head -40; echo \"---total:\"; git ls-tree -r --name-only refs/gitreins/history | wc -l",
+          "exit_code": 0,
+          "output_sha": "0c7f0d4bf21c5dbda137cac9ffebf7991beba4488fc13a142a5539ee83ad6130"
+        },
+        {
+          "tool": "run_command",
+          "command": "git ls-tree -r --name-only refs/gitreins/history | grep verdict.json | tail -30",
+          "exit_code": 0,
+          "output_sha": "c91a3ca3ad6f10693a4bc82bcdddd3961303f343c1d6e15f3b021052a3a5b701"
+        },
+        {
+          "tool": "run_command",
+          "command": "git log --all --oneline --grep=\"f12932c0\\|4dd63351\\|45bdaf8d\\|d2bd2614\\|92ba109d\" | head; echo \"---\"; grep -rn \"f12932c0\" .gitreins/ .coding-hermes/ 2>/dev/null | grep -v tasks.jsonl | head",
+          "exit_code": 0,
+          "output_sha": "8b17a7d4c98dcaaaf8344fc1899463f2b32978d8380106e74db1b65dbda97978"
+        },
+        {
+          "tool": "run_command",
+          "command": "git ls-tree -r --name-only refs/gitreins/history | grep -E \"2026-11-1[89]\" | grep -v verdict | head -20; echo \"---\"; git ls-tree --name-only refs/gitreins/history; echo \"---\"; git ls-tree --name-only refs/gitreins/history .gitreins/history/2026-11-19/ 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "0baf0604fdbe48be2c1c13bff3f1b327e50710ee82908e4073a2ed228874fdfe"
+        },
+        {
+          "tool": "run_command",
+          "command": "for r in 25dff53a 49043952 61e183b6 63d7c3e3 78e4e1b1 a7091c57 1f2aae83 f616dfba; do git show refs/gitreins/history:.gitreins/history/2026-11-19/$r/verdict.json 2>/dev/null | python3 -c \"import json,sys; d=json.load(sys.stdin); print('$r', d.get('task_id'), d.get('passed'))\" 2>/dev/null || git show refs/gitreins/history:.gitreins/history/2026-11-18/$r/verdict.json 2>/dev/null | python3 -c \"import json,sys; d=json.load(sys.stdin); print('$r', d.get('task_id'), d.get('passed'))\" 2>/dev/null; done",
+          "exit_code": 0,
+          "output_sha": "0edd55fa55c5a5e25540502b19edba152c8df1a47bc3f7b739d1517a5e29d543"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show refs/gitreins/history:.gitreins/history/2026-11-19/78e4e1b1/verdict.json | python3 -m json.tool | head -40; echo \"=====\"; git show refs/gitreins/history:.gitreins/history/2026-11-19/25dff53a/verdict.json | python3 -c \"import json,sys; d=json.load(sys.stdin); print(json.dumps(d,indent=1)[:1500])\"",
+          "exit_code": 0,
+          "output_sha": "2a719d5f620f39063aacf01cd5ba67a242bc6f10eeb275626996320dd0a40aeb"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show refs/gitreins/history --stat --oneline | head -5; echo \"---\"; git log refs/gitreins/history --oneline | head -5; echo \"---\"; git ls-tree -r refs/gitreins/history | awk '{print $4}' | grep -c f12932c0; echo \"--- search blobs for run id:\"; git grep -l \"f12932c0\" refs/gitreins/history 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "ffa6484fd50c2321a095eed980a27a4b91258a4532b89a2ffb67273b66c03e31"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"45bdaf8d\\|4dd63351\\|d2bd2614\\|92ba109d\\|c2ec7a65\" .coding-hermes/board/events.jsonl 2>/dev/null | head -5; echo \"---\"; ls .gitreins/logs/ 2>/dev/null | tail -10",
+          "exit_code": 0,
+          "output_sha": "2d197901dcc4c9aeef54ff7821206e723356f8bb66cea83c124448cfbdb8c9ba"
+        },
+        {
+          "tool": "run_command",
+          "command": "tail -60 .gitreins/logs/guard-20261120T060146.308506Z.log",
+          "exit_code": 0,
+          "output_sha": "230dc02d8a50c09e8456c645f32b760af488f9f7ecaec8043f1cd40b43af287f"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show 4a80b494 --stat | head -20; echo \"=====\"; git show ba65d500 --stat | head -25; echo \"=====\"; git show 33c33ce4 --stat | head -25",
+          "exit_code": 0,
+          "output_sha": "91aad90e3087167efd9d8b688acc163af20cacf150e8572bcbe78adfd5a56dc5"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show 70eda8c6 --stat | head -20; echo \"=====\"; git show 180d2b55 --stat | head -25",
+          "exit_code": 0,
+          "output_sha": "09bd8df597d9d7d4a58ce581dae8e037ded841decf42e4b52bd487e05025cca3"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls src/daemon/ 2>/dev/null | head; echo \"---\"; ls tests/daemon/ 2>/dev/null | grep prom; echo \"---\"; ls tests/cli/ 2>/dev/null | head; echo \"---\"; ls scripts/generate_index.py* 2>/dev/null; echo \"---\"; grep -rn \"metrics\" docs/observability-spec.md 2>/dev/null | head -3",
+          "exit_code": 0,
+          "output_sha": "b58d5d24628e6b22f7bb04513d432beb01dd6830bb3c50adcdb2d5b4752afcb6"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"daemon.prom\\|textfile\" src/daemon/daemon-prom.ts | head -5; echo \"---\"; grep -n \"cli-completion\" bin/speclang | head -5; echo \"---\"; grep -rn \"GET /metrics\\|/metrics\" docs/*.md GETTING-STARTED.md 2>/dev/null | head -6; echo \"---\"; grep -n \"getPipelineExecutorCandidates\\|file://\" src/daemon/daemon.ts | head -5",
+          "exit_code": 0,
+          "output_sha": "bccfa94ea5afd22960bbe1fb9a52a62803ad9e498674c94925ad6269c10a96ca"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"test_command\\|guards:\" -A4 .gitreins/config.yaml | head -30",
+          "exit_code": 0,
+          "output_sha": "5346eb2e0d818ed367fa7f6c929593711ca3229522ef4bbe5c07475ba6851a6f"
+        },
+        {
+          "tool": "run_command",
+          "command": "npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts tests/cli/completion.test.ts 2>&1 | tail -15",
+          "exit_code": 0,
+          "output_sha": "33476745d0be99b4bd6e06cc2dabd2f2879cd01320c350b090b49f627af2aee8"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"c2ec7a65\" . --include=\"*.jsonl\" --include=\"*.json\" --include=\"*.md\" 2>/dev/null | grep -v \"^./.git/\" | grep -v node_modules | grep -v \"^./.tmp\" | head -5; echo \"---\"; git log --all --format=\"%H %s\" | grep -i \"c2ec7a65\" | head -3; echo \"---\"; git cat-file -t c2ec7a65 2>&1",
+          "exit_code": 128,
+          "output_sha": "d2cd3fb3d8cb774914336b4038bc86362663ee47850fa324bfb56958ac97577a"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"OBS-7\" .coding-hermes/board/tasks.jsonl | head -2; grep '\"id\": \"OBS-7\"' .coding-hermes/board/tasks.jsonl | python3 -c \"import sys,json; d=json.loads(sys.stdin.read()); print('commit_hash:', d.get('commit_hash')); print('worker_summary:', d.get('worker_summary','')[:600])\"",
+          "exit_code": 0,
+          "output_sha": "b7c7ebfa2e46b129be096e276aa13d92a55eb3635a9bb415b3281b12f4b98b1a"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -c \"9c58b2a7\" .coding-hermes/board/tasks.jsonl; grep -rn \"9c58b2a7\" .coding-hermes/board/events.jsonl | head -3; echo \"---\"; grep '\"id\": \"OBS-7\"' .coding-hermes/board/tasks.jsonl | python3 -c \"\nimport sys,json\nd=json.loads(sys.stdin.read())\nprint(json.dumps(d.get('detail',{}).get('evidence',[]), indent=1))\nprint('foreman_note tail:', d.get('foreman_note','')[-400:])\n\"",
+          "exit_code": 0,
+          "output_sha": "334f8781bc74348e81c3fb85ca279ff67302864c3999c52c8755fca1d0c7683c"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show 684d6cbd -- .coding-hermes/board/tasks.jsonl | grep -E \"^[+-].*OBS-7\" | python3 -c \"\nimport sys, json\nfor line in sys.stdin:\n    sign = line[0]\n    try:\n        d = json.loads(line[1:].strip())\n        ev = d.get('detail',{}).get('evidence',[])\n        print(sign, d.get('id'), 'evidence runs:', [e.get('run_id') for e in ev])\n    except Exception as e:\n        print(sign, 'unparseable', str(e)[:80])\n\"",
+          "exit_code": 0,
+          "output_sha": "f6a8abe0d18c7dd2df7c283a7ab9b5e9190b005463de538b79d18207f62e65c7"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show 66e5be83 -- .coding-hermes/board/tasks.jsonl | grep -E \"^[+-].*\\\"id\\\": \\\"OBS-7\\\"\" | python3 -c \"\nimport sys, json\nfor line in sys.stdin:\n    sign = line[0]\n    d = json.loads(line[1:].strip())\n    ev = d.get('detail',{}).get('evidence',[])\n    print(sign, d.get('id'), 'runs:', [(e.get('run_id'), e.get('artifacts')) for e in ev])\n\"",
+          "exit_code": 0,
+          "output_sha": "3a4d1321fcac5a885af70426655cb4df7a5bc501974666daf9b0bba3d4b66667"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show 684d6cbd -- .coding-hermes/board/tasks.jsonl | grep -E \"^\\+\" | python3 -c \"\nimport sys, json\nfor line in sys.stdin:\n    try:\n        d = json.loads(line[1:].strip())\n    except Exception:\n        continue\n    if d.get('id') in ('OBS-3','OBS-4','OBS-7','CLN-002','DOC-10','LAND-001'):\n        print(d['id'], '| status:', d.get('status'), '| commit_hash:', d.get('commit_hash'))\n\"",
+          "exit_code": 0,
+          "output_sha": "0d54173af1d8843eb5fc5ef4165d9d5adb684fb3216ea1d7b5a383919f3bb0da"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show 66e5be83 -- .coding-hermes/board/tasks.jsonl | grep -E \"^\\+\" | python3 -c \"\nimport sys, json\nfor line in sys.stdin:\n    try:\n        d = json.loads(line[1:].strip())\n    except Exception:\n        continue\n    if d.get('id') in ('OBS-3','OBS-4','OBS-7','CLN-002','DOC-10','LAND-001'):\n        print(d['id'], '| status:', d.get('status'), '| commit_hash:', d.get('commit_hash'))\n\"",
+          "exit_code": 0,
+          "output_sha": "938c6311470a15ed24974479dea45994220c3f490c11670e80b91cfc9983f960"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS on reachability+work-present+rows-closed: all 5 commits (4a80b494, 180d2b55, 33c33ce4, ba65d500, 70eda8c6) are ancestors of origin/main (git merge-base --is-ancestor exit 0 each); work present at tip (src/daemon/daemon-prom.ts:55, bin/speclang:55 cli-completion, src/daemon/daemon.ts:32 getPipelineExecutorCandidates, scripts/generate_index.py.handwritten absent, docs/API_REFERENCE.md:185 /metrics documented); focused vitest 3 files/33 passed exit 0. FAIL on tier-2 PASS verdicts: no PASS verdict exists for any of OBS-3/OBS-4/OBS-7/CLN-002/DOC-10 \\u2014 refs/gitreins/history holds only FAIL verdicts (78e4e1b1 OBS-3, 25dff53a OBS-4, 49043952 OBS-7, 61e183b6 DOC10-CLN002, all passed:false); the six run ids cited by the board (f12932c0, 4dd63351, 45bdaf8d, 9c58b2a7, d2bd2614, 92ba109d, c2ec7a65) resolve to nothing in the working tree, refs/gitreins/history, or any git object. FAIL on commit_hash binding: only OBS-3 and LAND-001 are bound to 4a80b494; OBS-4\\u219233c33ce4, OBS-7\\u219270eda8c6, CLN-002/DOC-10\\u2192180d2b55 (66e5be83).\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "42fdfeaba2bd519cf57230968da328cb972f3fd4838390f48db3e85d4e0579dd"
+        },
+        {
+          "tool": "run_command",
+          "command": "git ls-tree -r refs/gitreins/history --name-only | grep -E \"2026-11-1[89]\" | grep -v -E \"verdict.json|commit.patch|summary.md|worktree.patch\" | head; echo \"---all files under 11-19/78e4e1b1:\"; git ls-tree -r refs/gitreins/history --name-only | grep 78e4e1b1",
+          "exit_code": 0,
+          "output_sha": "7ee46b3133a17d49daee652d046e31b139e02dac6b50cd366c2b40cdb0fc4ed6"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show refs/gitreins/history:.gitreins/history/2026-11-19/78e4e1b1/verdict.json | python3 -c \"\nimport json,sys\nd=json.load(sys.stdin)\nt2 = d.get('stages',{}).get('tier2',{})\nprint('tier2 keys:', list(t2.keys())[:10])\nprint(json.dumps(t2, indent=1)[:1200])\n\"",
+          "exit_code": 0,
+          "output_sha": "e52b2ce878d278dff4a347bb5ea33fb8dc5933e2ee19548e39305b8f4a0d836f"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show refs/gitreins/history:.gitreins/history/2026-11-19/49043952/verdict.json | python3 -c \"\nimport json,sys\nd=json.load(sys.stdin)\nprint('task:', d.get('task_id'), '| passed:', d.get('passed'))\nprint('tier2 summary:', d.get('stages',{}).get('tier2',{}).get('summary','')[:300])\n\"",
+          "exit_code": 0,
+          "output_sha": "670a54df8de63ed906dbb3c702e2cf27ed10922e8bc1c1914965a9a299e9fa98"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show refs/gitreins/history:.gitreins/history/2026-11-19/61e183b6/verdict.json | python3 -c \"\nimport json,sys\nd=json.load(sys.stdin)\nprint('task:', d.get('task_id'), '| title:', d.get('task_title','')[:100], '| passed:', d.get('passed'))\nprint('tier2 summary:', d.get('stages',{}).get('tier2',{}).get('summary','')[:250])\n\"",
+          "exit_code": 0,
+          "output_sha": "ac45fb29f2a3c11769c51d8e766b292fc27c33afbcce71f596742115a3141f47"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show 66e5be83 -- .coding-hermes/board/tasks.jsonl | grep -E \"^\\+\" | python3 -c \"\nimport sys, json\nfor line in sys.stdin:\n    try:\n        d = json.loads(line[1:].strip())\n    except Exception:\n        continue\n    if d.get('id') in ('OBS-3','OBS-4','OBS-7','CLN-002','DOC-10','LAND-001'):\n        ev = d.get('detail',{}).get('evidence',[])\n        print(d['id'], '->', [(e.get('run_id'), bool(e.get('artifacts'))) for e in ev])\n\"",
+          "exit_code": 0,
+          "output_sha": "808a78e66985e0a4ef6083d1fa397b3da33ff8f03df29036584b37d4bf02a484"
+        },
+        {
+          "tool": "run_command",
+          "command": "git cat-file -t f12932c0 2>&1; git cat-file -t 4dd63351 2>&1; git cat-file -t 45bdaf8d 2>&1; git cat-file -t 9c58b2a7 2>&1; git cat-file -t d2bd2614 2>&1; git cat-file -t 92ba109d 2>&1",
+          "exit_code": 128,
+          "output_sha": "90e71507e9476248095e33ffabe14f8fbf17dbeba6c9af9690bd840f9ea45a26"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"No additional derived criteria needed: the single given criterion is a fully checkable conjunction (ancestry, file presence, verdict existence, board state) and every clause was verified directly against git refs, the board jsonl, and a fresh vitest run.\", \"key\": \"derived_none\"}",
+          "exit_code": 0,
+          "output_sha": "5db1c91d9e1fa1ef6ad2d331fd03c196b7a1df4b001988d87018c28af4b35b8a"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [],
+    "summary": "Both hunks correctly replace output-scraping (grep/tail) with propagation of vitest's own exit status; the new capture-then-exit script is POSIX-correct and no new unwired symbols or untested paths are introduced."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: RUN  v4.1.11 /home/kara/SpecLang\n\nStage tier2: FAIL\n  INCOMPLETE\n  \u2717 The five landed implementation commits are reachable from origin/main, the daemon/CLI/docs work they address is present at the landed tip, tier-2 PASS verdicts exist for OBS-3, OBS-4, OBS-7, CLN-002 and DOC-10, and the five board rows are closed with commit_hash bound to the landed sha 4a80b494.: Conjunction fails on two clauses. (a) Reachability PASSES: git merge-base --is-ancestor exits 0 for 70eda8c6, ba65d500, 33c33ce4, 180d2b55, 4a80b494 against origin/main. (b) Work present PASSES: src/daemon/daemon-prom.ts:55 writes daemon.prom, bin/speclang:55 records cli-completion.json, src/daemon/daemon.ts:32 getPipelineExecutorCandidates resolves src/dist layouts, scripts/generate_index.py.handwritten is absent, docs/API_REFERENCE.md:185 documents GET /metrics; fresh run `npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts tests/cli/completion.test.ts` exited 0 with 'Test Files 3 passed (3), Tests 33 passed (33)'. (c) Tier-2 PASS verdicts FAIL: the durable verdict store refs/gitreins/history contains only FAIL verdicts for these ids \u2014 78e4e1b1 (OBS-3, passed:false), 25dff53a (OBS-4, passed:false), 49043952 (OBS-7, passed:false), 61e183b6 (DOC10-CLN002, passed:false), each with tier2 INCOMPLETE 'Evaluator error: LLM call failed: 402 Payment Required'. The six run ids the board cites as PASS evidence (f12932c0, 4dd63351, 45bdaf8d, 9c58b2a7, d2bd2614, 92ba109d, plus LAND-001's c2ec7a65) resolve to nothing: absent from .gitreins/history working copy, absent from `git ls-tree -r refs/gitreins/history`, and `git cat-file -t <id>` returns 'Not a valid object name' for all six \u2014 the claimed PASS verdicts are phantom references. (d) Board rows closed PASSES but the 4a80b494 binding FAILS for 3 of 5 rows: .coding-hermes/board/tasks.jsonl (as of 66e5be83) binds OBS-3\u21924a80b494 and LAND-001\u21924a80b494, but OBS-4\u219233c33ce4, OBS-7\u219270eda8c6, CLN-002\u2192180d2b55, DOC-10\u2192180d2b55 \u2014 a deliberate per-row rebinding, not the uniform 4a80b494 the criterion states.\n  \u2717 Coverage FAILED \u2014 not passing: The five landed implementation commits are reachable from origin/main, the daemon/CLI/docs work they address is present at the landed tip, tier-2 PASS verdicts exist for OBS-3, OBS-4, OBS-7, CLN-002 and DOC-10, and the five board rows are closed with commit_hash bound to the landed sha 4a80b494.\nThe five commits are genuinely landed on origin/main with the daemon/CLI/docs work present and focused tests green (33 passed, exit 0), but the criterion fails: no tier-2 PASS verdict exists for any of the five tasks \u2014 the cited verdict run ids are unresolvable phantoms and the only real verdicts are 402 FAILs \u2014 and three of the five board rows are bound to their own landed shas (33c33ce4, 70eda8c6, 180d2b55) rather than to 4a80b494.\n\nOverall: FAIL \u2717",
+  "evaluated_at": "2026-11-20T07:30:11.460391",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-20T07:30:11.488650+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 2520,
+        "truncated": false,
+        "source": "git show ae7baab24c48"
+      }
+    ],
+    "task_id": "LAND-001"
+  }
+}

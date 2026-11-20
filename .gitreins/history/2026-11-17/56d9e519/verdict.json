@@ -1,0 +1,618 @@
+{
+  "task_id": "DF-SPECLANG-016",
+  "task_title": "MCP/dashboard tools 500 no such table cascades - migrations never loaded",
+  "task_criteria": [
+    "SpeclangDB.initialize creates the cascades/sessions/ralph/locks/commands tables on a FRESH db file; JSON-RPC tools/call for speclang_cascade_status returns non-500 with a fresh dist build; a test asserts the cascades table exists after initialize; npm run build exits 0 and tests/mcp tests stay green"
+  ],
+  "passed": true,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "tmp2",
+  "commit": "8ac77df48ef3f13c8b55b0f7128be3fa2a5f39b7",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "59bcd1590b0a4d053324d29471ffd40fb7ae8e1eb599066a5a2aef1ae0236085",
+  "working_tree_dirty_path_count": 2,
+  "items": [
+    {
+      "criterion": "SpeclangDB.initialize creates the cascades/sessions/ralph/locks/commands tables on a FRESH db file; JSON-RPC tools/call for speclang_cascade_status returns non-500 with a fresh dist build; a test asserts the cascades table exists after initialize; npm run build exits 0 and tests/mcp tests stay green",
+      "status": "PASS",
+      "detail": "src/db/index.ts initialize() calls migrate(); migrations v1 creates sessions/events/commands/locks, v3 creates cascades, v5 ralph_tasks/steering_packets/validation_results. tests/db/migrations.test.ts:66-88 asserts REQUIRED_TABLES (incl. cascades/sessions/ralph/locks/commands) on a fresh file db; tests/db/cascades-migration.test.ts:70-118 asserts the cascades table + columns + indexes exist after initialize. Ran `npx vitest run tests/db/cascades-migration.test.ts tests/mcp` -> 'Test Files 6 passed (6)', 'Tests 95 passed (95)', exit_code=0. `npm run build` -> exit_code=0. (Note: `npx vitest run tests/db tests/mcp` additionally picks up tests/db.test.ts with 5 'attempt to write a readonly database' failures on .speclang/test.db \u2014 a pre-existing environment issue outside tests/db/ and tests/mcp/.)"
+    },
+    {
+      "criterion": "The JSON-RPC tools/call path for speclang_cascade_status is reachable end-to-end from a freshly built dist server against a brand-new database file (no pre-seeded schema), returning a non-500 JSON-RPC result",
+      "status": "PASS",
+      "detail": "Ran a node script against the fresh dist build (dist/specs/mcp.spec.dir/src/server.js) with a brand-new db file in a temp dir: POST /mcp/message {\"method\":\"tools/call\",\"params\":{\"name\":\"speclang_cascade_status\",\"arguments\":{}}} -> HTTP_STATUS=200, BODY={\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"idle\"},\"id\":1}; server log 'Database initialized at version 8' confirms migrations 1-8 applied on the fresh file.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  22:39:34",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  22:39:34\n   Duration  33.73s (transform 15.95s, setup 2.57s, import 22.91s, tests 121.78s, environment 16ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 SpeclangDB.initialize creates the cascades/sessions/ralph/locks/commands tables on a FRESH db file; JSON-RPC tools/call for speclang_cascade_status returns non-500 with a fresh dist build; a test asserts the cascades table exists after initialize; npm run build exits 0 and tests/mcp tests stay green: src/db/index.ts initialize() calls migrate(); migrations v1 creates sessions/events/commands/locks, v3 creates cascades, v5 ralph_tasks/steering_packets/validation_results. tests/db/migrations.test.ts:66-88 asserts REQUIRED_TABLES (incl. cascades/sessions/ralph/locks/commands) on a fresh file db; tests/db/cascades-migration.test.ts:70-118 asserts the cascades table + columns + indexes exist after initialize. Ran `npx vitest run tests/db/cascades-migration.test.ts tests/mcp` -> 'Test Files 6 passed (6)', 'Tests 95 passed (95)', exit_code=0. `npm run build` -> exit_code=0. (Note: `npx vitest run tests/db tests/mcp` additionally picks up tests/db.test.ts with 5 'attempt to write a readonly database' failures on .speclang/test.db \u2014 a pre-existing environment issue outside tests/db/ and tests/mcp/.)\n  \u2713 The JSON-RPC tools/call path for speclang_cascade_status is reachable end-to-end from a freshly built dist server against a brand-new database file (no pre-seeded schema), returning a non-500 JSON-RPC result: Ran a node script against the fresh dist build (dist/specs/mcp.spec.dir/src/server.js) with a brand-new db file in a temp dir: POST /mcp/message {\"method\":\"tools/call\",\"params\":{\"name\":\"speclang_cascade_status\",\"arguments\":{}}} -> HTTP_STATUS=200, BODY={\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"idle\"},\"id\":1}; server log 'Database initialized at version 8' confirms migrations 1-8 applied on the fresh file.\nThe migration set creates all required tables on a fresh database, the speclang_cascade_status JSON-RPC tool answers 200 against a fresh dist build, and build plus the db/mcp test suites pass.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 SpeclangDB.initialize creates the cascades/sessions/ralph/locks/commands tables on a FRESH db file; JSON-RPC tools/call for speclang_cascade_status returns non-500 with a fresh dist build; a test asserts the cascades table exists after initialize; npm run build exits 0 and tests/mcp tests stay green: src/db/index.ts initialize() calls migrate(); migrations v1 creates sessions/events/commands/locks, v3 creates cascades, v5 ralph_tasks/steering_packets/validation_results. tests/db/migrations.test.ts:66-88 asserts REQUIRED_TABLES (incl. cascades/sessions/ralph/locks/commands) on a fresh file db; tests/db/cascades-migration.test.ts:70-118 asserts the cascades table + columns + indexes exist after initialize. Ran `npx vitest run tests/db/cascades-migration.test.ts tests/mcp` -> 'Test Files 6 passed (6)', 'Tests 95 passed (95)', exit_code=0. `npm run build` -> exit_code=0. (Note: `npx vitest run tests/db tests/mcp` additionally picks up tests/db.test.ts with 5 'attempt to write a readonly database' failures on .speclang/test.db \u2014 a pre-existing environment issue outside tests/db/ and tests/mcp/.)\n  \u2713 The JSON-RPC tools/call path for speclang_cascade_status is reachable end-to-end from a freshly built dist server against a brand-new database file (no pre-seeded schema), returning a non-500 JSON-RPC result: Ran a node script against the fresh dist build (dist/specs/mcp.spec.dir/src/server.js) with a brand-new db file in a temp dir: POST /mcp/message {\"method\":\"tools/call\",\"params\":{\"name\":\"speclang_cascade_status\",\"arguments\":{}}} -> HTTP_STATUS=200, BODY={\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"idle\"},\"id\":1}; server log 'Database initialized at version 8' confirms migrations 1-8 applied on the fresh file.\nThe migration set creates all required tables on a fresh database, the speclang_cascade_status JSON-RPC tool answers 200 against a fresh dist build, and build plus the db/mcp test suites pass.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "SpeclangDB.initialize creates the cascades/sessions/ralph/locks/commands tables on a FRESH db file; JSON-RPC tools/call for speclang_cascade_status returns non-500 with a fresh dist build; a test asserts the cascades table exists after initialize; npm run build exits 0 and tests/mcp tests stay green",
+                "status": "PASS",
+                "detail": "src/db/index.ts initialize() calls migrate(); migrations v1 creates sessions/events/commands/locks, v3 creates cascades, v5 ralph_tasks/steering_packets/validation_results. tests/db/migrations.test.ts:66-88 asserts REQUIRED_TABLES (incl. cascades/sessions/ralph/locks/commands) on a fresh file db; tests/db/cascades-migration.test.ts:70-118 asserts the cascades table + columns + indexes exist after initialize. Ran `npx vitest run tests/db/cascades-migration.test.ts tests/mcp` -> 'Test Files 6 passed (6)', 'Tests 95 passed (95)', exit_code=0. `npm run build` -> exit_code=0. (Note: `npx vitest run tests/db tests/mcp` additionally picks up tests/db.test.ts with 5 'attempt to write a readonly database' failures on .speclang/test.db \u2014 a pre-existing environment issue outside tests/db/ and tests/mcp/.)",
+                "resolution_probability": 0.12
+              },
+              {
+                "criterion": "The JSON-RPC tools/call path for speclang_cascade_status is reachable end-to-end from a freshly built dist server against a brand-new database file (no pre-seeded schema), returning a non-500 JSON-RPC result",
+                "status": "PASS",
+                "detail": "Ran a node script against the fresh dist build (dist/specs/mcp.spec.dir/src/server.js) with a brand-new db file in a temp dir: POST /mcp/message {\"method\":\"tools/call\",\"params\":{\"name\":\"speclang_cascade_status\",\"arguments\":{}}} -> HTTP_STATUS=200, BODY={\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"idle\"},\"id\":1}; server log 'Database initialized at version 8' confirms migrations 1-8 applied on the fresh file.",
+                "derived": true
+              }
+            ],
+            "summary": "The migration set creates all required tables on a fresh database, the speclang_cascade_status JSON-RPC tool answers 200 against a fresh dist build, and build plus the db/mcp test suites pass.",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-016\"}",
+          "exit_code": 0,
+          "output_sha": "8c42f388a15dddb91089b9380b41d0a7124c68af055bb132a58806a7ff05e8c3"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && cat package.json 2>/dev/null | head -60",
+          "exit_code": 0,
+          "output_sha": "4b121d7b0dbc05a557e6f9e1172eb32799dd8fce13b821ef24882ad73bc8375c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat .gitreins/config.yaml 2>/dev/null; echo ---; git log --oneline -8; echo ---; git status --short | head -20",
+          "exit_code": 0,
+          "output_sha": "919012569221a2c1ddadfc0d9eed22135eb856fd6663dda51ad624d9561ddee2"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls src/ src/db 2>/dev/null; echo ---; ls specs/sqlite.spec.dir/src/ 2>/dev/null; echo ---; ls tests/db tests/mcp 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "9d461d977f5cd32fcb7d58148229496e27bdf69e3417a068fe36e812430fee29"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat src/db/index.ts",
+          "exit_code": 0,
+          "output_sha": "e90e910a5f37af42f42b43fae03eb3977e9509c6f871391c27f89e04525da937"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat src/db/migrations.ts",
+          "exit_code": 0,
+          "output_sha": "e475cbab2bfada2f13ee431f21ba5bc7ad5917e78b5223520540c93e75421a16"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 40,300p src/db/migrations.ts",
+          "exit_code": 0,
+          "output_sha": "bafdb3d5b5724b1c3305fd628ebd56a0c376485516272cbcfbdd520826cce5dd"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 120,260p src/db/migrations.ts",
+          "exit_code": 0,
+          "output_sha": "1ce105c0de3609eb6900c73f79d9c479fc7387847cdd328d3a950022fc95b9de"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 260,420p src/db/migrations.ts",
+          "exit_code": 0,
+          "output_sha": "48a90e14ed9504586a0be2ca48ca15693eb021b40dd89dfc7e7f350270f1b26c"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 320,400p src/db/migrations.ts",
+          "exit_code": 0,
+          "output_sha": "19bcf99ff42a98ade6b1b6c8639f2a172af921b23ca0dc9d882cc56ea2c98e73"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat tests/db/cascades-migration.test.ts",
+          "exit_code": 0,
+          "output_sha": "190cf641c96e30474b61118273e16b34c378bdd0a1745b5e5993848070a9afea"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 60,180p tests/db/cascades-migration.test.ts",
+          "exit_code": 0,
+          "output_sha": "7057df25197a0c8a92246bc229b4c27eea298bac1e24bb363ad5f20cb842dc99"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Read src/db/index.ts (initialize -> migrate), src/db/migrations.ts (v1 creates sessions/events/commands/locks; v3 creates cascades; v5 ralph; v7 commands cols; v8 indexes). tests/db/cascades-migration.test.ts asserts cascades table after initialize on fresh db. Next: run build, tests, and JSON-RPC tools/call check.\", \"key\": \"explored\"}",
+          "exit_code": 0,
+          "output_sha": "ba0fd1612dd7f75f5b98972f0b64a9880ff988649100a233ef6432cd243ed530"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; pwd; npm run build 2>&1 | tail -20; echo \"BUILD_EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "da84044ce306beaa73bf47af8d1a294f7e26c46bd2df6c0bb4f7107941591418"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; ls package.json; npm run build 2>&1 | tail -20; echo \"BUILD_EXIT=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "44a65c5f324bd798b217bb3ecf7d73876faa61d410c5748ed8c815b635aae3a3"
+        },
+        {
+          "tool": "run_command",
+          "command": "npm run build > /tmp/build.log 2>&1; echo \"BUILD_EXIT=$?\"; tail -20 /tmp/build.log",
+          "exit_code": 0,
+          "output_sha": "9b030ddb1355b2d77d5f799183bc7a06db5c5f9fe2177dc76c1333669c31fdb3"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la dist/db/ 2>/dev/null | head; echo ---; grep -n \"cascades\" dist/db/migrations.js | head -20",
+          "exit_code": 0,
+          "output_sha": "5b3f5cd50e0bf05c57a07e622e424139187b8aa8558aecd6024d89704b1b5ece"
+        },
+        {
+          "tool": "run_command",
+          "command": "npx vitest run tests/db tests/mcp > /tmp/tests.log 2>&1; echo \"EXIT=$?\"; tail -40 /tmp/tests.log",
+          "exit_code": -15,
+          "output_sha": "521ede85228bb10d7b9f62cdcec5b08a6ab128435b74df1e2a507ca41780597d"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls dist | head -30; echo ---; cat tsconfig.json",
+          "exit_code": 0,
+          "output_sha": "64a8a2b8ef880f9c70b32834e22e2f01915623c8d1140eef8373dc4608024b53"
+        },
+        {
+          "tool": "run_command",
+          "command": "TMPDIR=$PWD/.tmp timeout 600 npx vitest run tests/db tests/mcp > /tmp/tests.log 2>&1; echo \"EXIT=$?\"; tail -50 /tmp/tests.log",
+          "exit_code": -15,
+          "output_sha": "36f5147294154198db06d92b8c2d3e224cca3e32aaa1b3cb441d18f8d215478a"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls dist/src/db/ 2>/dev/null | head; echo ---; grep -n \"CREATE TABLE IF NOT EXISTS cascades\" dist/src/db/migrations.js 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "40278a1248a95776907e47a883a3670bce0c5fed75ec38bb6681999ec40abf73"
+        },
+        {
+          "tool": "run_command",
+          "command": "nohup bash -c 'TMPDIR=$PWD/.tmp npx vitest run tests/db tests/mcp > /tmp/tests.log 2>&1; echo \"EXIT=$?\" >> /tmp/tests.log' > /dev/null 2>&1 &\nsleep 25; tail -5 /tmp/tests.log",
+          "exit_code": 0,
+          "output_sha": "cd26025cfa8dd1106909b5499f45cdb7b5c624a0b1b513191f008e1114fd6f18"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"FAIL\\|\u2715\\|\u00d7\\|AssertionError\\|Error:\" /tmp/tests.log | head -60",
+          "exit_code": 0,
+          "output_sha": "9dc783de2cc548c2bfccd5de2242addb7318e33b69f6a1737d956b26baa0717e"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 1,60p /tmp/tests.log",
+          "exit_code": 0,
+          "output_sha": "ad5cd96a34f45e53431b9c7823d4b8d8e1095f97bc1884e4a78ea86947550960"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 500,560p tests/db.test.ts",
+          "exit_code": 0,
+          "output_sha": "a39f13e68d289528c98c9671b80440fdfd1e2a431ca205d4fff57cd699f3b25b"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"tests/db\\|tests/mcp\\|cascades-migration\" /tmp/tests.log | head -20; echo ---; grep -n \"Test Files\\|Tests \" /tmp/tests.log",
+          "exit_code": 0,
+          "output_sha": "33160ad9ec01c990617e3d127468e5c836a352a4bbfab4fa32766983611b8649"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"TEST_DB_PATH\\s*=\" tests/db.test.ts | head; echo ---; ls -la .tmp 2>/dev/null | head -5; echo ---; ls -la /tmp/*.db 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "0dc1cc96097d06ba97ed820d621e62378194559bd751e1464f03680912242c20"
+        },
+        {
+          "tool": "run_command",
+          "command": "nohup bash -c 'TMPDIR=$PWD/.tmp npx vitest run tests/db/cascades-migration.test.ts tests/mcp > /tmp/t2.log 2>&1; echo \"EXIT=$?\" >> /tmp/t2.log' >/dev/null 2>&1 & sleep 28; tail -20 /tmp/t2.log",
+          "exit_code": 0,
+          "output_sha": "8403df730cfc382e265c01a8af5befcec65b692e95138df59a918d83113e4c71"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la .speclang/ | head -20; echo ---; ls -la .speclang/test.db* 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "1e8abb76725f485c4d250fbb6f40719634a83de7db3aaa83a34aa66af5af7ed7"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"speclang_cascade_status\" --include=*.ts --include=*.js -l . 2>/dev/null | grep -v node_modules | head -20",
+          "exit_code": 0,
+          "output_sha": "f7d09aba3b0d092dfa983ee9468dea982a8660946ef3812531e3701c34a55d6b"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 1,120p specs/mcp.spec.dir/src/tools/cascade.ts",
+          "exit_code": 0,
+          "output_sha": "cafaa778e1c038d05ba9333815fbb164a34e3801a8d617ddfaf139bb85f453b2"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"cascade_status\\|tools/call\\|initialize\\|SpecLangDB\\|createDatabase\" specs/mcp.spec.dir/src/server.ts | head -40",
+          "exit_code": 0,
+          "output_sha": "4f01ebd1557a82315c1b81455a42b031c188d7ebf0276046141e5df6b0ec38c8"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 30,80p specs/mcp.spec.dir/src/server.ts; echo '=== 120-200'; sed -n 120,200p specs/mcp.spec.dir/src/server.ts",
+          "exit_code": 0,
+          "output_sha": "8fcfe9463f524a1e4bdc3df744611730180fdff87bed58efb938e59ea371d12d"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 80,120p specs/mcp.spec.dir/src/server.ts; echo '=== 260-340'; sed -n 260,340p specs/mcp.spec.dir/src/server.ts",
+          "exit_code": 0,
+          "output_sha": "a68e209a02690f3fc2ac419ce9ef678db8a4ee173f8fbcc3976f4c1ec7e9a9f7"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"toolRegistry\\s*=\" -A6 specs/mcp.spec.dir/src/server.ts | head -40; echo ---; grep -n \"loadConfig\" -A25 specs/mcp.spec.dir/src/config.ts 2>/dev/null | head -50",
+          "exit_code": 0,
+          "output_sha": "149f83025c65a53f17a6a59d7f949022221a60dbc6a3ef8a032d82fc538b1360"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 1,40p specs/mcp.spec.dir/src/config.ts",
+          "exit_code": 0,
+          "output_sha": "96de00b8dd7f0e2e53bc624574dc34be73b32d2523ae1200aea5d366a58c2c85"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"cascade_status\\|tools/call\\|500\\|status(200)\\|fresh\" tests/mcp/server.test.ts | head -40",
+          "exit_code": 0,
+          "output_sha": "bbe5427abbd3a9f7b680a84635891cf31558080fb7e26467cfe98f147df75393"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"cascade_status\" tests/ | head -20",
+          "exit_code": 0,
+          "output_sha": "06843063cee0377d4ff1763c2d06adffdb5ec33959c042ee17de069d3e8351d1"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"startHTTP\\|/mcp/message\" tests/ | head -20",
+          "exit_code": 0,
+          "output_sha": "7d3565b68bbe1562082fcf45d67b28a2b44c9fd72d558694eb8d3cd563bb573e"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 80,140p tests/db/migrations.test.ts",
+          "exit_code": 0,
+          "output_sha": "d2aee7070c213c6774378aab56b9c4509b9392a2b235cd6b6f76bb15fe14b3ee"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 1,80p tests/db/migrations.test.ts",
+          "exit_code": 0,
+          "output_sha": "11c7d5ac684b6169dc0ac1e6014aad5a8b6164b825501585b7ed44e3359b37dc"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: src/db/index.ts initialize() -> migrate(); migrations v1 creates sessions/events/commands/locks, v3 creates cascades, v5 ralph_tasks/steering_packets/validation_results. tests/db/migrations.test.ts:66-88 asserts REQUIRED_TABLES incl cascades/sessions/ralph/locks/commands on fresh file db; tests/db/cascades-migration.test.ts:70-118 asserts cascades table+columns+indexes after initialize. Ran `npx vitest run tests/db/cascades-migration.test.ts tests/mcp` -> Test Files 6 passed (6), Tests 95 passed (95), EXIT=0. npm run build -> BUILD_EXIT=0. NOTE: `npx vitest run tests/db tests/mcp` also picks up tests/db.test.ts (5 failures, \\\"attempt to write a readonly database\\\" on .speclang/test.db) - pre-existing env issue, not in tests/db/ or tests/mcp/ dirs.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "125f7cf633098bb5d68fb2cb88016170feea126907eebdf54777b4799144393e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat > /tmp/rpc-check.js <<'EOF'\nconst path = require('path');\nconst fs = require('fs');\nconst os = require('os');\nconst { MCPServer } = require('/home/kara/SpecLang/dist/specs/mcp.spec.dir/src/server.js');\n\n(async () => {\n  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'rpc-'));\n  const dbPath = path.join(dir, 'fresh.db');\n  const port = 3999;\n  const server = new MCPServer({ database: dbPath, port, auth: { enabled: false, type: 'none' } });\n  await server.startHTTP(port);\n  const body = { jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'speclang_cascade_status', arguments: {} } };\n  const res = await fetch(`http://127.0.0.1:${port}/mcp/message`, {\n    method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body)\n  });\n  const text = await res.text();\n  console.log('HTTP_STATUS=' + res.status);\n  console.log('BODY=' + text.slice(0, 400));\n  await server.stop();\n  process.exit(0);\n})().catch(e => { console.error('ERR', e); process.exit(1); });\nEOF\ntimeout 60 node /tmp/rpc-check.js 2>&1 | tail -20",
+          "exit_code": 0,
+          "output_sha": "3ac6636928bf750ae27a67da6261d0d39f7fb71a899a1bd8be9042fa22ece822"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: Ran node script against fresh dist build (dist/specs/mcp.spec.dir/src/server.js) with a brand-new db file in a temp dir: POST /mcp/message {\\\"method\\\":\\\"tools/call\\\",\\\"params\\\":{\\\"name\\\":\\\"speclang_cascade_status\\\",\\\"arguments\\\":{}}} -> HTTP_STATUS=200, BODY={\\\"jsonrpc\\\":\\\"2.0\\\",\\\"result\\\":{\\\"status\\\":\\\"idle\\\"},\\\"id\\\":1}. Migrations 1-8 applied on the fresh file (\\\"Database initialized at version 8\\\").\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "cc69964bf6195dc15b0f5a15ab265a01f1ce8b0122f34613738984c4cbca413d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git show --stat HEAD~3 HEAD~2 HEAD~1 HEAD | head -60",
+          "exit_code": 0,
+          "output_sha": "b91de67bf7036b59f065ff73abccf4b2cd9385c435ed074016c333df2a1c879f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git show --stat HEAD~3 HEAD~2 HEAD~1 HEAD | grep -E \"^\\s+\\S+\\s+\\|\" | head -40",
+          "exit_code": 0,
+          "output_sha": "43cb7fa271da36c76568733fe3ee9e0ac0ad5bc35189108bda9d9d79ddf0303e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls -la src/db/migrations.ts src/db/index.ts; echo ---; diff <(sed -n 1,5p src/db/migrations.ts) <(sed -n 1,5p specs/sqlite.spec.dir/src/migrations.ts) && echo SAME_HEAD; echo ---; grep -c \"\" src/db/migrations.ts specs/sqlite.spec.dir/src/migrations.ts",
+          "exit_code": 2,
+          "output_sha": "802fc8dd44069ac457028a8a21e7c539a3cedb20582bc8e2db847fbf457e644a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls -la src/db/migrations.ts src/db/index.ts; echo ---; md5sum src/db/migrations.ts specs/sqlite.spec.dir/src/migrations.ts",
+          "exit_code": 0,
+          "output_sha": "865e8e11236515f2851392bf0e99f11fca23e202b7e9f90e119e957819ae6b27"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"idx_cascades_converged_at\" specs/sqlite.spec.dir/src/migrations.ts specs/sqlite.spec.dir/src/migrations.js dist/src/db/migrations.js",
+          "exit_code": 0,
+          "output_sha": "90451a86c4106100bbfa87141116d1d6bf2e4e0ede6877cba9392a8808a2fa02"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"cascades\" specs/sqlite.spec.dir/src/migrations/003_cascades.sql | head -20",
+          "exit_code": 0,
+          "output_sha": "b60847ed2a0e04f32bc9d87424942d176edd21cd8a909fdcae5ba1a0a35229fa"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n 1,30p specs/sqlite.spec.dir/src/migrations/003_cascades.sql",
+          "exit_code": 0,
+          "output_sha": "8db98e863c289cb287f5048b871c71302f35358b482d3754f962cbff49dcf808"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"cascades\" specs/mcp.spec.dir/src/sse.ts | head -20; echo ---; grep -rn \"FROM cascades\\|INTO cascades\\|UPDATE cascades\" --include=*.ts src specs | grep -v node_modules | head -20",
+          "exit_code": 0,
+          "output_sha": "52114871af4742ffe7f0302b4abd00ae4c26cf8e02f92a21a8568331186d89bb"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: npm run build -> BUILD_EXIT=0 (tsc, no errors). `npx vitest run tests/db/cascades-migration.test.ts tests/mcp` -> \\\"Test Files 6 passed (6) / Tests 95 passed (95)\\\", EXIT=0. Caveat: `npx vitest run tests/db tests/mcp` also matches tests/db.test.ts (5 failures: \\\"SqliteError: attempt to write a readonly database\\\" at tests/db.test.ts:541 on .speclang/test.db) - that file is outside tests/db/ and tests/mcp/ dirs and fails on a pre-existing env/permission issue, not on the migration change.\", \"key\": \"verified_0_build_tests\"}",
+          "exit_code": 0,
+          "output_sha": "0ed96bb3b60c3aa45028ea196731b0f7d3fdbaf6dfa97e083ea06efd77d17e59"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"ended\" specs/sqlite.spec.dir/src/migrations.ts | head; echo ---; sed -n 280,300p specs/opencode.spec.dir/src/convergence.ts",
+          "exit_code": 0,
+          "output_sha": "835ec0a4563f292612114710d2ca2e5e9a65954ca6e5b7827302a9812ce0ddb8"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"convergence\" --include=*.ts src specs | grep -v node_modules | grep -i \"import\\|require\" | head -10; echo ---; grep -rn \"opencode.spec.dir/src/convergence\" --include=*.ts --include=*.js . 2>/dev/null | grep -v node_modules | head -10",
+          "exit_code": 0,
+          "output_sha": "6a00d9366f9524b7f2b347b95f5d8d70986987841b0795d9c89b865626e24999"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n 1,60p specs/opencode.spec.dir/src/plugin.ts | head -60; echo '=== grep class'; grep -n \"class\\|UPDATE cascades\" specs/opencode.spec.dir/src/convergence.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "6daad244231c9be602703472cf8daaaacf82e04811231b363bb239c4ee008a2d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n 255,300p specs/opencode.spec.dir/src/convergence.ts",
+          "exit_code": 0,
+          "output_sha": "545f38265d04303ccb0ccb8c84fe9fe1df027d485ee2dc56373dfaffc116c3e9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"db\\b\\|Database\\|OpenCodeDatabase\" specs/opencode.spec.dir/src/convergence.ts | head -20; echo ---; grep -n \"initializeDatabase\" -A20 specs/opencode.spec.dir/src/plugin.ts | head -40",
+          "exit_code": 0,
+          "output_sha": "e7a4accee80dee0926c43db8d3b321487f83a3b03b4362786806163cffbf20d5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n 106,200p specs/opencode.spec.dir/src/plugin.ts",
+          "exit_code": 0,
+          "output_sha": "ced588a3eb3c23484415514f4c4bba4d6a9c0679f3733520d74c1e69e00d1f0e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n 40,70p specs/opencode.spec.dir/src/convergence.ts",
+          "exit_code": 0,
+          "output_sha": "4a6967918e35f346893c1c7893176a69e0fda9e987f310444a0fa083eca2f558"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"runPipeline\" -r --include=*.ts specs src | grep -v node_modules | head",
+          "exit_code": 0,
+          "output_sha": "41d00816d4b6e681aab3e03aa534869cc7c3c06e43bf4b7a0a0db6de1236d54f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n 130,150p specs/opencode.spec.dir/src/convergence.ts",
+          "exit_code": 0,
+          "output_sha": "7efef0b1b751bd5ce7dfdaba1c133ae8b316d63a6780a616a42e51816cf37bb4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"opencode.spec.dir/src/plugin\\|from './plugin'\" --include=*.ts --include=*.js . 2>/dev/null | grep -v node_modules | grep -v \"\\.d\\.ts\" | head -10; echo '=== tests'; grep -rln \"ConvergenceDetector\" tests/ | head",
+          "exit_code": 0,
+          "output_sha": "cd7dcd19e9c8ebbef999d711e4a27a44a6d5534b507df5361c705facc1541b41"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"ConvergenceDetector\" tests/cascade-depth.test.ts | head -5; echo ---; grep -rn \"opencode\" tests/*.ts | head -10",
+          "exit_code": 0,
+          "output_sha": "3d2453038235c74fee70304e2936166b630722fd629df25df56045e3d2be178f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n 1,20p tests/cascade-depth.test.ts",
+          "exit_code": 0,
+          "output_sha": "2a64a65e5c335a24dd859ed1686443cf5b81d8d40c119b314feae34264b4090f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"opencode.spec.dir\" --include=*.ts --include=*.js --include=*.json . 2>/dev/null | grep -v node_modules | grep -v \"^./.tmp\" | grep -v \"\\.d\\.ts\" | head -20",
+          "exit_code": 0,
+          "output_sha": "589df612f13f0e2fb2ff0a759984176160c045de157012d11c84176ecdc71b7f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"opencode\" --include=*.ts src/ | grep -v node_modules | head -10; echo '=== index.ts of opencode'; sed -n 1,30p specs/opencode.spec.dir/src/index.ts",
+          "exit_code": 0,
+          "output_sha": "06ed4fc2661527a55eb00b28f56a95bc4c74ac9e7063c2a2f4e7d1951709c4b5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"opencode\" package.json; echo ---; grep -rn \"opencode\" --include=*.ts --include=*.js --include=*.json --include=*.md . 2>/dev/null | grep -v node_modules | grep -v \"^./.tmp\" | grep -v \"_index.json\" | grep -v \"\\.d\\.ts\" | grep -v \"^./specs/opencode.spec.dir\" | grep -v \"^./dist\" | head -20",
+          "exit_code": 0,
+          "output_sha": "3ad71082ea9babfd2a1a9a527cc73f3b7e3c69f84b463ee65102aecc83ade074"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls .opencode/plugins/; echo ---; grep -rn \"cascades\" .opencode/plugins/*.ts 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "03f764cd6ec0cdd24d75e71adda46ddff1f504de323bc7ff0483fbeb246b2c2e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"cascades\\|cascade_status\\|import\" .opencode/plugins/speclang.sts | head -20",
+          "exit_code": 0,
+          "output_sha": "a0c5ac8b645ea5d51a78aca0bb7402955ab585bdaf7146615453c4c2ec0339f3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"CREATE TABLE\" .opencode/plugins/speclang.sts | head -20; echo ---; grep -n \"cascades\" -B3 -A12 .opencode/plugins/speclang.sts | sed -n 1,40p",
+          "exit_code": 0,
+          "output_sha": "48b76d1963fad7acb4939f44664de70c95903159a11f0e1ccd35f3110f85685d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"this.db\\s*=\\|db:\\|Database\\|sqlite\" .opencode/plugins/speclang.sts | head -20",
+          "exit_code": 0,
+          "output_sha": "252497fc006124ea21ecb17d2150e2df6a310d51b3456dea993dc11918b0e552"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"class MCPClient\" -A40 .opencode/plugins/speclang.sts | head -60",
+          "exit_code": 0,
+          "output_sha": "ecd38166899ba7b84f58417958427f03ae53a92c49245ebe9dbb199d23b0142c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"cascades\\|CREATE TABLE\" specs/implementation.spec.dir/src/mcp/server.ts | head -20; echo '=== speclang-mcp'; grep -n \"cascades\\|CREATE TABLE\" specs/implementation.spec.dir/src/speclang-mcp.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "cf3f348cc11270cadd3fb51348bd8340eee4fc256027e328a9fdee0d19ab7597"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n 140,160p specs/implementation.spec.dir/src/speclang-mcp.ts; echo '=== who imports speclang-mcp'; grep -rn \"speclang-mcp\" --include=*.ts --include=*.js --include=*.json . 2>/dev/null | grep -v node_modules | grep -v \"^./.tmp\" | grep -v \"\\.d\\.ts\" | grep -v \"^./dist\" | head -10",
+          "exit_code": 0,
+          "output_sha": "300f372a8d0c49a67d3989ca032e5330272544426f7f249013a868662edfa17f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls -la src/speclang-mcp.ts; echo ---; grep -n \"cascades\" src/speclang-mcp.ts | head; echo '=== bin'; cat bin/speclang | head -40",
+          "exit_code": 0,
+          "output_sha": "d9a8ad4b7bb136b15260335510c3791d0c299ca56f18ece56567fb5ce12512b5"
+        },
+        {
+          "tool": "sandbox_read",
+          "command": "sandbox_read {\"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "461eb0d49f436e4eac93d276f90aa532b4f50a25c83e76bd6b36eaf0ca6be595"
+        },
+        {
+          "tool": "sandbox_read",
+          "command": "sandbox_read {\"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "1092ea84481a2cb548d6166e06f7074b372d7ed7b46a4441cbee5671e056a276"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [],
+    "summary": "The diff only appends two new pending task rows and their matching task_created board events, with consistent ids, timestamps and JSON structure; no code, wiring or test changes are involved."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  22:39:34\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 SpeclangDB.initialize creates the cascades/sessions/ralph/locks/commands tables on a FRESH db file; JSON-RPC tools/call for speclang_cascade_status returns non-500 with a fresh dist build; a test asserts the cascades table exists after initialize; npm run build exits 0 and tests/mcp tests stay green: src/db/index.ts initialize() calls migrate(); migrations v1 creates sessions/events/commands/locks, v3 creates cascades, v5 ralph_tasks/steering_packets/validation_results. tests/db/migrations.test.ts:66-88 asserts REQUIRED_TABLES (incl. cascades/sessions/ralph/locks/commands) on a fresh file db; tests/db/cascades-migration.test.ts:70-118 asserts the cascades table + columns + indexes exist after initialize. Ran `npx vitest run tests/db/cascades-migration.test.ts tests/mcp` -> 'Test Files 6 passed (6)', 'Tests 95 passed (95)', exit_code=0. `npm run build` -> exit_code=0. (Note: `npx vitest run tests/db tests/mcp` additionally picks up tests/db.test.ts with 5 'attempt to write a readonly database' failures on .speclang/test.db \u2014 a pre-existing environment issue outside tests/db/ and tests/mcp/.)\n  \u2713 The JSON-RPC tools/call path for speclang_cascade_status is reachable end-to-end from a freshly built dist server against a brand-new database file (no pre-seeded schema), returning a non-500 JSON-RPC result: Ran a node script against the fresh dist build (dist/specs/mcp.spec.dir/src/server.js) with a brand-new db file in a temp dir: POST /mcp/message {\"method\":\"tools/call\",\"params\":{\"name\":\"speclang_cascade_status\",\"arguments\":{}}} -> HTTP_STATUS=200, BODY={\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"idle\"},\"id\":1}; server log 'Database initialized at version 8' confirms migrations 1-8 applied on the fresh file.\nThe migration set creates all required tables on a fresh database, the speclang_cascade_status JSON-RPC tool answers 200 against a fresh dist build, and build plus the db/mcp test suites pass.\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T03:44:35.249689",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T03:44:35.289777+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 5137,
+        "truncated": false,
+        "source": "git show 8ac77df48ef3"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 13889,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DF-SPECLANG-016"
+  }
+}

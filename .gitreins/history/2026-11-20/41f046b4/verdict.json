@@ -1,0 +1,383 @@
+{
+  "task_id": "OBS-8",
+  "task_title": "Reclaim stale CLI completion locks and make tier-1 test gates honest",
+  "task_criteria": [
+    "Land two commits on origin/main: (1) bin/speclang's recordCliCompletion() must record its owner PID and reclaim a lock whose recorded PID is dead, never removing a lock whose owner is alive, and tests/cli/completion.test.ts must cover a dead-PID lock, an unreadable lock past the staleness window, and a live owner; (2) .gitreins/config.yaml's tier1 tests step and guards.test_command must both propagate vitest's exit status instead of tail's or grep's, red-proofed by a deliberately failing test. Evidence: full suite green (2122 tests, 0 failed) after the fix, versus 20 failures and 601s before, and gitreins config-validate with only the pre-existing unknown-key warnings."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "land/2117",
+  "commit": "ae7baab24c48cf482e21b99de42e1052a1913c02",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "5174fba5e7e48160490b2f4cd967e50c04d291c3f497159ab52c95b237187f1c",
+  "working_tree_dirty_path_count": 1,
+  "items": [
+    {
+      "criterion": "Land two commits on origin/main: (1) bin/speclang's recordCliCompletion() must record its owner PID and reclaim a lock whose recorded PID is dead, never removing a lock whose owner is alive, and tests/cli/completion.test.ts must cover a dead-PID lock, an unreadable lock past the staleness window, and a live owner; (2) .gitreins/config.yaml's tier1 tests step and guards.test_command must both propagate vitest's exit status instead of tail's or grep's, red-proofed by a deliberately failing test. Evidence: full suite green (2122 tests, 0 failed) after the fix, versus 20 failures and 601s before, and gitreins config-validate with only the pre-existing unknown-key warnings.",
+      "status": "PASS",
+      "detail": "Both commits on origin/main (git branch -r --contains: 2ecc2d2d 'fix: reclaim stale CLI completion locks' and ae7baab2 'gate: make both tier-1 test arms report the suite's real status'). (1) bin/speclang: lock owner PID written at acquisition (`fs.writeSync(fd, `${process.pid}`)`, ~line 66); lockOwnerState() lines 27-50 returns 'stale' only for ESRCH dead PID or age>LOCK_STALE_MS (5 min) when no usable PID, 'contended' for live PID/EPERM/own PID \u2014 reclaim at lines 80-87 bounded by MAX_LOCK_RECLAIMS=8, live owner never unlinked. tests/cli/completion.test.ts covers dead-PID lock (line 159, reclaims in <5s), unreadable lock past staleness window (line 176, empty body + mtime 10min old), live owner never stolen (line 191, spawns live holder, asserts lock content unchanged and waiter still blocked). Targeted run: `npx vitest run tests/cli/completion.test.ts` \u2192 'Tests 20 passed (20)', exit 0. (2) .gitreins/config.yaml line 9 test_command is now bare `npx vitest run --passWithNoTests` (vitest's own exit status); tier1 tests step lines 84-86 capture `rc=$?` and `exit $rc` while keeping tail -20 for triage. Red-proof executed by me: deliberately failing test through the step's exact shell shape \u2192 'Tests  1 failed (1)', STEP_RC=1. Full suite run by me: `npx vitest run --passWithNoTests` \u2192 'Test Files 126 passed | 4 skipped (130)', 'Tests 2064 passed | 58 skipped (2122)', EXIT_CODE=0 \u2014 2122 total, 0 failed as claimed. `gitreins config-validate` \u2192 only 6 unknown-key warnings (assemble, assemble_command, build, build_command, provider, api_key_env), all keys present in the parent commit's config, i.e. pre-existing. [resolution 0.00; tests/cli/completion.test.ts]"
+    },
+    {
+      "criterion": "Reachability \u2014 recordCliCompletion (with the new reclaim logic) must be reachable from the CLI entrypoint for the lanes it records.",
+      "status": "PASS",
+      "detail": "bin/speclang:128-138 installs a process.once('exit') hook for lanes validate/cascade/generate/index/guard that calls recordCliCompletion(completionRoot, completionLane, exitCode, durationMs) at line 135, so the new lock-reclaim path (lines 80-87) runs on every CLI exit in those lanes; the new tests exercise it end-to-end by spawning the real bin/speclang binary.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: RUN  v4.1.11 /home/kara/SpecLang",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261120T060146.308506Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\n\n> speclang@1.0.0 build\n> tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261120T060146.308506Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "\n RUN  v4.1.11 /home/kara/SpecLang\n\nspeclang shim: $SPECLANG_CLI points at a path that does not exist:\n  /home/kara/SpecLang/.tmp/speclang-new-runnable-Fio1ny/does-not-exist\n\u274c No specs directory found. Run from a speclang project.\n\u274c Block not found: nonexistent-block-that-does-not-exist\nerror: missing required argument 'block-id'\nError: --to <level> is required\n\u274c Unknown target level: INVALID_LEVEL\n\u274c Downgrade must go to a lower level\n\u274c Spec file not found: /home/kara/SpecLang/.tmp/speclang-test-downgrade/specs/nonexistent-file.spec.md\nSourcemap for \"/home/kara/SpecLang/specs/project-layout.spec.dir/src/templates.js\" points to missing source files\n\n Test Files  126 passed | 4 skipped (130)\n      Tests  2064 passed | 58 skipped (2122)\n   Start at  02:32:06\n   Duration  65.58s (transform 23.32s, setup 6.49s, import 41.77s, tests 301.79s, environment 87ms)\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261120T060146.308506Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 Land two commits on origin/main: (1) bin/speclang's recordCliCompletion() must record its owner PID and reclaim a lock whose recorded PID is dead, never removing a lock whose owner is alive, and tests/cli/completion.test.ts must cover a dead-PID lock, an unreadable lock past the staleness window, and a live owner; (2) .gitreins/config.yaml's tier1 tests step and guards.test_command must both propagate vitest's exit status instead of tail's or grep's, red-proofed by a deliberately failing test. Evidence: full suite green (2122 tests, 0 failed) after the fix, versus 20 failures and 601s before, and gitreins config-validate with only the pre-existing unknown-key warnings.: Both commits on origin/main (git branch -r --contains: 2ecc2d2d 'fix: reclaim stale CLI completion locks' and ae7baab2 'gate: make both tier-1 test arms report the suite's real status'). (1) bin/speclang: lock owner PID written at acquisition (`fs.writeSync(fd, `${process.pid}`)`, ~line 66); lockOwnerState() lines 27-50 returns 'stale' only for ESRCH dead PID or age>LOCK_STALE_MS (5 min) when no usable PID, 'contended' for live PID/EPERM/own PID \u2014 reclaim at lines 80-87 bounded by MAX_LOCK_RECLAIMS=8, live owner never unlinked. tests/cli/completion.test.ts covers dead-PID lock (line 159, reclaims in <5s), unreadable lock past staleness window (line 176, empty body + mtime 10min old), live owner never stolen (line 191, spawns live holder, asserts lock content unchanged and waiter still blocked). Targeted run: `npx vitest run tests/cli/completion.test.ts` \u2192 'Tests 20 passed (20)', exit 0. (2) .gitreins/config.yaml line 9 test_command is now bare `npx vitest run --passWithNoTests` (vitest's own exit status); tier1 tests step lines 84-86 capture `rc=$?` and `exit $rc` while keeping tail -20 for triage. Red-proof executed by me: deliberately failing test through the step's exact shell shape \u2192 'Tests  1 failed (1)', STEP_RC=1. Full suite run by me: `npx vitest run --passWithNoTests` \u2192 'Test Files 126 passed | 4 skipped (130)', 'Tests 2064 passed | 58 skipped (2122)', EXIT_CODE=0 \u2014 2122 total, 0 failed as claimed. `gitreins config-validate` \u2192 only 6 unknown-key warnings (assemble, assemble_command, build, build_command, provider, api_key_env), all keys present in the parent commit's config, i.e. pre-existing. [resolution 0.00; tests/cli/completion.test.ts]\n  \u2713 Reachability \u2014 recordCliCompletion (with the new reclaim logic) must be reachable from the CLI entrypoint for the lanes it records.: bin/speclang:128-138 installs a process.once('exit') hook for lanes validate/cascade/generate/index/guard that calls recordCliCompletion(completionRoot, completionLane, exitCode, durationMs) at line 135, so the new lock-reclaim path (lines 80-87) runs on every CLI exit in those lanes; the new tests exercise it end-to-end by spawning the real bin/speclang binary.\nBoth commits are on origin/main and fully deliver: the lock now records its owner PID and reclaims only dead-PID or past-window stale locks (never a live owner) with all three required regression tests passing, and both tier-1 test arms propagate vitest's exit status \u2014 red-proofed with a deliberately failing test (STEP_RC=1) and confirmed by a full green suite run (2122 tests, 0 failed, exit 0) plus a clean config-validate.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 Land two commits on origin/main: (1) bin/speclang's recordCliCompletion() must record its owner PID and reclaim a lock whose recorded PID is dead, never removing a lock whose owner is alive, and tests/cli/completion.test.ts must cover a dead-PID lock, an unreadable lock past the staleness window, and a live owner; (2) .gitreins/config.yaml's tier1 tests step and guards.test_command must both propagate vitest's exit status instead of tail's or grep's, red-proofed by a deliberately failing test. Evidence: full suite green (2122 tests, 0 failed) after the fix, versus 20 failures and 601s before, and gitreins config-validate with only the pre-existing unknown-key warnings.: Both commits on origin/main (git branch -r --contains: 2ecc2d2d 'fix: reclaim stale CLI completion locks' and ae7baab2 'gate: make both tier-1 test arms report the suite's real status'). (1) bin/speclang: lock owner PID written at acquisition (`fs.writeSync(fd, `${process.pid}`)`, ~line 66); lockOwnerState() lines 27-50 returns 'stale' only for ESRCH dead PID or age>LOCK_STALE_MS (5 min) when no usable PID, 'contended' for live PID/EPERM/own PID \u2014 reclaim at lines 80-87 bounded by MAX_LOCK_RECLAIMS=8, live owner never unlinked. tests/cli/completion.test.ts covers dead-PID lock (line 159, reclaims in <5s), unreadable lock past staleness window (line 176, empty body + mtime 10min old), live owner never stolen (line 191, spawns live holder, asserts lock content unchanged and waiter still blocked). Targeted run: `npx vitest run tests/cli/completion.test.ts` \u2192 'Tests 20 passed (20)', exit 0. (2) .gitreins/config.yaml line 9 test_command is now bare `npx vitest run --passWithNoTests` (vitest's own exit status); tier1 tests step lines 84-86 capture `rc=$?` and `exit $rc` while keeping tail -20 for triage. Red-proof executed by me: deliberately failing test through the step's exact shell shape \u2192 'Tests  1 failed (1)', STEP_RC=1. Full suite run by me: `npx vitest run --passWithNoTests` \u2192 'Test Files 126 passed | 4 skipped (130)', 'Tests 2064 passed | 58 skipped (2122)', EXIT_CODE=0 \u2014 2122 total, 0 failed as claimed. `gitreins config-validate` \u2192 only 6 unknown-key warnings (assemble, assemble_command, build, build_command, provider, api_key_env), all keys present in the parent commit's config, i.e. pre-existing. [resolution 0.00; tests/cli/completion.test.ts]\n  \u2713 Reachability \u2014 recordCliCompletion (with the new reclaim logic) must be reachable from the CLI entrypoint for the lanes it records.: bin/speclang:128-138 installs a process.once('exit') hook for lanes validate/cascade/generate/index/guard that calls recordCliCompletion(completionRoot, completionLane, exitCode, durationMs) at line 135, so the new lock-reclaim path (lines 80-87) runs on every CLI exit in those lanes; the new tests exercise it end-to-end by spawning the real bin/speclang binary.\nBoth commits are on origin/main and fully deliver: the lock now records its owner PID and reclaims only dead-PID or past-window stale locks (never a live owner) with all three required regression tests passing, and both tier-1 test arms propagate vitest's exit status \u2014 red-proofed with a deliberately failing test (STEP_RC=1) and confirmed by a full green suite run (2122 tests, 0 failed, exit 0) plus a clean config-validate.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "Land two commits on origin/main: (1) bin/speclang's recordCliCompletion() must record its owner PID and reclaim a lock whose recorded PID is dead, never removing a lock whose owner is alive, and tests/cli/completion.test.ts must cover a dead-PID lock, an unreadable lock past the staleness window, and a live owner; (2) .gitreins/config.yaml's tier1 tests step and guards.test_command must both propagate vitest's exit status instead of tail's or grep's, red-proofed by a deliberately failing test. Evidence: full suite green (2122 tests, 0 failed) after the fix, versus 20 failures and 601s before, and gitreins config-validate with only the pre-existing unknown-key warnings.",
+                "status": "PASS",
+                "detail": "Both commits on origin/main (git branch -r --contains: 2ecc2d2d 'fix: reclaim stale CLI completion locks' and ae7baab2 'gate: make both tier-1 test arms report the suite's real status'). (1) bin/speclang: lock owner PID written at acquisition (`fs.writeSync(fd, `${process.pid}`)`, ~line 66); lockOwnerState() lines 27-50 returns 'stale' only for ESRCH dead PID or age>LOCK_STALE_MS (5 min) when no usable PID, 'contended' for live PID/EPERM/own PID \u2014 reclaim at lines 80-87 bounded by MAX_LOCK_RECLAIMS=8, live owner never unlinked. tests/cli/completion.test.ts covers dead-PID lock (line 159, reclaims in <5s), unreadable lock past staleness window (line 176, empty body + mtime 10min old), live owner never stolen (line 191, spawns live holder, asserts lock content unchanged and waiter still blocked). Targeted run: `npx vitest run tests/cli/completion.test.ts` \u2192 'Tests 20 passed (20)', exit 0. (2) .gitreins/config.yaml line 9 test_command is now bare `npx vitest run --passWithNoTests` (vitest's own exit status); tier1 tests step lines 84-86 capture `rc=$?` and `exit $rc` while keeping tail -20 for triage. Red-proof executed by me: deliberately failing test through the step's exact shell shape \u2192 'Tests  1 failed (1)', STEP_RC=1. Full suite run by me: `npx vitest run --passWithNoTests` \u2192 'Test Files 126 passed | 4 skipped (130)', 'Tests 2064 passed | 58 skipped (2122)', EXIT_CODE=0 \u2014 2122 total, 0 failed as claimed. `gitreins config-validate` \u2192 only 6 unknown-key warnings (assemble, assemble_command, build, build_command, provider, api_key_env), all keys present in the parent commit's config, i.e. pre-existing. [resolution 0.00; tests/cli/completion.test.ts]",
+                "resolution_probability": 0.0,
+                "cited_path": "tests/cli/completion.test.ts"
+              },
+              {
+                "criterion": "Reachability \u2014 recordCliCompletion (with the new reclaim logic) must be reachable from the CLI entrypoint for the lanes it records.",
+                "status": "PASS",
+                "detail": "bin/speclang:128-138 installs a process.once('exit') hook for lanes validate/cascade/generate/index/guard that calls recordCliCompletion(completionRoot, completionLane, exitCode, durationMs) at line 135, so the new lock-reclaim path (lines 80-87) runs on every CLI exit in those lanes; the new tests exercise it end-to-end by spawning the real bin/speclang binary.",
+                "derived": true
+              }
+            ],
+            "summary": "Both commits are on origin/main and fully deliver: the lock now records its owner PID and reclaims only dead-PID or past-window stale locks (never a live owner) with all three required regression tests passing, and both tier-1 test arms propagate vitest's exit status \u2014 red-proofed with a deliberately failing test (STEP_RC=1) and confirmed by a full green suite run (2122 tests, 0 failed, exit 0) plus a clean config-validate.",
+            "provenance": {
+              "model": "accounts/fireworks/models/kimi-k3",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "accounts/fireworks/models/kimi-k3",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"OBS-8\"}",
+          "exit_code": 0,
+          "output_sha": "b680f67b09083b25219e6a33443660756d63abf1ab69a205c512e95a2d95be8a"
+        },
+        {
+          "tool": "run_command",
+          "command": "git log --oneline -10 && git status",
+          "exit_code": 0,
+          "output_sha": "5db5e33600cb199e21ab16628be3690259ef518ae793adfd6076d949fffbfd51"
+        },
+        {
+          "tool": "run_command",
+          "command": "git branch -r --contains ae7baab2 2>/dev/null; git branch -r --contains 2ecc2d2d 2>/dev/null; git log origin/main --oneline -3 2>/dev/null || echo \"no origin/main ref locally\"",
+          "exit_code": 0,
+          "output_sha": "379d639cad1a9cf0491a5dfe4ce396a6ef835ff370a58c5da34f7d54f7bd38c1"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show 2ecc2d2d --stat && git show ae7baab2 --stat",
+          "exit_code": 0,
+          "output_sha": "5bee4ba46302ea327d36b5de97772ad46611772e59af50086755431119f7744f"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show 2ecc2d2d -- bin/speclang",
+          "exit_code": 0,
+          "output_sha": "377f4f79fbcd6e99d5538a34437b0fe551dc3dd6f0259a1ccd7c80c382fce8a6"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show ae7baab2 -- .gitreins/config.yaml",
+          "exit_code": 0,
+          "output_sha": "6dd13faf7198cd592198bacbd8532fd67d5e20a2ea66482951e976546c9f4adf"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show 2ecc2d2d -- tests/cli/completion.test.ts",
+          "exit_code": 0,
+          "output_sha": "c3a0c61b69c71f5a9338cabefee59ad6a701337f617e1dd265e82aa1b2265337"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"lockOwnerState\" -A 30 bin/speclang | head -60",
+          "exit_code": 0,
+          "output_sha": "49ac8e525a89af5a00d5a7a2be28f332ee44339667d4fb808175f0a8b3dbfba0"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"offset\": 140, \"path\": \"tests/cli/completion.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "0494d764a3f5f6e054015a0515c756123a6dcf911eae7f61494a209e12121384"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat .gitreins/config.yaml | head -30 && echo \"---\" && grep -n \"test_command\\|vitest\" .gitreins/config.yaml",
+          "exit_code": 0,
+          "output_sha": "e8c04a5025834bc4041b585e5f376f6510b4aa96bbfb34217185dd578f760d40"
+        },
+        {
+          "tool": "run_command",
+          "command": "npx vitest run tests/cli/completion.test.ts 2>&1 | tail -15",
+          "exit_code": 0,
+          "output_sha": "e2013b6a098c845af3f55ba0bf1ca001ed38c6b91fca5e08dce6f819b96a8853"
+        },
+        {
+          "tool": "run_command",
+          "command": "npx vitest run --passWithNoTests 2>&1 | tail -8; echo \"EXIT_CODE=$?\"",
+          "exit_code": -15,
+          "output_sha": "b5239cedc24050a13aca89633802f2470cc8600feed82b3dfee2a4808ec2504b"
+        },
+        {
+          "tool": "run_command",
+          "command": "npx vitest run --passWithNoTests > /tmp/vitest_full.log 2>&1; echo \"EXIT_CODE=$?\"; tail -8 /tmp/vitest_full.log",
+          "exit_code": -15,
+          "output_sha": "3cbbdd78c2992eff370a782c198d3e91d110739356f90fee4de9076e702a0ad9"
+        },
+        {
+          "tool": "run_command",
+          "command": "nohup bash -c 'npx vitest run --passWithNoTests > /tmp/vitest_full.log 2>&1; echo \"EXIT_CODE=$?\" >> /tmp/vitest_full.log' > /dev/null 2>&1 & echo \"started $!\"",
+          "exit_code": 0,
+          "output_sha": "0391a4e204fb054aa84ad88e94a1ec48a478d619f4fe0f5b60521d8ffdef13e5"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 25; tail -3 /tmp/vitest_full.log 2>/dev/null; echo \"---\"; ps aux | grep -c \"[v]itest\"",
+          "exit_code": 0,
+          "output_sha": "28663dcff8831593a209db492762f0259f154c69960ba7887686a46a4da2d865"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 28; tail -5 /tmp/vitest_full.log 2>/dev/null; echo \"---procs:\"; ps aux | grep -c \"[v]itest\"",
+          "exit_code": 0,
+          "output_sha": "45aa3b45682df222900286ae59a325d7bc10163a1b7fd878943e9a798ece70b5"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 28; tail -6 /tmp/vitest_full.log 2>/dev/null; echo \"---procs:\"; ps aux | grep -c \"[v]itest\" || true",
+          "exit_code": 0,
+          "output_sha": "e15e531e8b34fbc882d9cf9b67d6719823f4da9caef8cb61e295448f9fa3fe9e"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; wc -l /tmp/vitest_full.log; tail -6 /tmp/vitest_full.log; echo \"---procs:\"; ps aux | grep -c \"[v]itest\" || true",
+          "exit_code": 0,
+          "output_sha": "dba91aa8c21b459925ccd4cd2a349b6347e016463b474e4243bf48eec5ff3008"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; wc -l /tmp/vitest_full.log; tail -8 /tmp/vitest_full.log; echo \"---procs:\"; ps aux | grep -c \"[v]itest\" || true",
+          "exit_code": 0,
+          "output_sha": "aecc576c652d41b8d79c93e41af745e1f0637eb46f0bad51a4a2a4b881cf2e33"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; wc -l /tmp/vitest_full.log; tail -10 /tmp/vitest_full.log; echo \"---procs:\"; ps aux | grep -c \"[v]itest\" || true",
+          "exit_code": 0,
+          "output_sha": "27c43700feff06a1b72f46979ae87c66568addd53c5d5c80bf24ae831d6e7230"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; wc -l /tmp/vitest_full.log; tail -12 /tmp/vitest_full.log; echo \"---procs:\"; ps aux | grep -c \"[v]itest\" || true",
+          "exit_code": 0,
+          "output_sha": "165926f0296edc3f48eeac2f139ceffff6689ded7ac4599d004b44fa9dc100a2"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; wc -l /tmp/vitest_full.log; tail -12 /tmp/vitest_full.log; echo \"---procs:\"; ps aux | grep -c \"[v]itest\" || true",
+          "exit_code": 0,
+          "output_sha": "835fd7915eb67214a80681b9a62c320a9d64a2f860efd21d2e4a7cb3e8eb814a"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; ls -la /tmp/vitest_full.log; ps aux | grep \"[v]itest\" | head -3; echo \"---\"; date",
+          "exit_code": 0,
+          "output_sha": "930ea7ecfa61e7889605141fae925a4634df0dee6caf1db9451279b5dd8ba33d"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; ls -la /tmp/vitest_full.log; tail -12 /tmp/vitest_full.log 2>/dev/null; echo \"---my vitest procs:\"; ps aux | grep \"[v]itest run --passWithNoTests\" | wc -l",
+          "exit_code": 0,
+          "output_sha": "7e70f04fc02727d5bf03626ea5a00b5e6feb8ae792e3d681ac91b3409b8a5369"
+        },
+        {
+          "tool": "run_command",
+          "command": "ps aux | grep 2459248 | grep -v grep; echo \"---\"; ls -la /tmp/vitest_full.log; ps aux | grep \"[n]px vitest\" | head -5",
+          "exit_code": 0,
+          "output_sha": "a1c697d1c3627f671301eb9bb2d2cffce7063e9b5728c584f46b4931a0cdb977"
+        },
+        {
+          "tool": "run_command",
+          "command": "nohup bash -c 'cd /home/kara/SpecLang && npx vitest run --passWithNoTests > /tmp/vitest_full2.log 2>&1; echo \"EXIT_CODE=$?\" >> /tmp/vitest_full2.log' > /dev/null 2>&1 & disown; echo \"started\"",
+          "exit_code": 0,
+          "output_sha": "aeea38351042d812f1bbbf5b617c3c706b344569143ec22346486b9ea558f2de"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; ls -la /tmp/vitest_full2.log 2>/dev/null; tail -5 /tmp/vitest_full2.log 2>/dev/null; echo \"---procs:\"; ps aux | grep \"[v]itest run --passWithNoTests\" | wc -l",
+          "exit_code": 0,
+          "output_sha": "b1a23b24785e5bffb0226e7eccbbac0f12c7f5da2146cdacc11c8475ded87b26"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; ls -d .git 2>/dev/null; git rev-parse --show-toplevel",
+          "exit_code": 0,
+          "output_sha": "60f3f9bc6064a19291f8de78e677a187e182ea6db2d2fe6238d9f4e8a0c47ff8"
+        },
+        {
+          "tool": "run_command",
+          "command": "setsid bash -c 'cd /home/kara/SpecLang && npx vitest run --passWithNoTests > /tmp/vitest_full3.log 2>&1; echo \"EXIT_CODE=$?\" >> /tmp/vitest_full3.log' < /dev/null > /dev/null 2>&1 & echo \"launched pid $!\"",
+          "exit_code": 0,
+          "output_sha": "c1991443064de1c226030582b89cfb7b6c12ca9933e6edba453076f38f92b675"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; ls -la /tmp/vitest_full3.log 2>/dev/null; tail -5 /tmp/vitest_full3.log 2>/dev/null; echo \"---procs:\"; ps aux | grep \"[v]itest run --passWithNoTests\" | wc -l",
+          "exit_code": 0,
+          "output_sha": "a146cb94d7386de6e7f343df1648e07bf24c06524560c765de5895a436652bfe"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; tail -8 /tmp/vitest_full3.log 2>/dev/null; echo \"---procs:\"; ps aux | grep \"[v]itest run --passWithNoTests\" | wc -l",
+          "exit_code": 0,
+          "output_sha": "59f54da960d77822ea6efea44a7c43e62f12747a2828f0537875aab7b89b2700"
+        },
+        {
+          "tool": "run_command",
+          "command": "mkdir -p /tmp/redproof && cat > /tmp/redproof/redproof.test.ts <<'EOF'\nimport { describe, expect, it } from 'vitest';\ndescribe('redproof', () => {\n  it('deliberately fails', () => {\n    expect(1).toBe(2);\n  });\n});\nEOF\ncp /tmp/redproof/redproof.test.ts /home/kara/SpecLang/tests/redproof.test.ts\nbash -c 'out=$(npx vitest run --passWithNoTests tests/redproof.test.ts 2>&1); rc=$?; printf \"%s\\n\" \"$out\" | tail -6; echo \"STEP_RC=$rc\"'\nrm /home/kara/SpecLang/tests/redproof.test.ts",
+          "exit_code": 0,
+          "output_sha": "3acc7e0d7cf9eaf47927fb2c91d27c83213bfe6dea72eb11be997537752dfa19"
+        },
+        {
+          "tool": "run_command",
+          "command": "which gitreins && gitreins config-validate 2>&1 | head -20 || echo \"gitreins not found\"",
+          "exit_code": 0,
+          "output_sha": "95fcb10a568884c9e5978a4e918e5eb223fe9f3e06a5e5645ccb5c7d43426eab"
+        },
+        {
+          "tool": "run_command",
+          "command": "git log --oneline --all -- .gitreins/config.yaml | head -5; echo \"---\"; git show 2ecc2d2d^:.gitreins/config.yaml | grep -A2 \"test_command:\" | head -5; echo \"---\"; git show 2ecc2d2d^:.gitreins/config.yaml | grep -c \"assemble\\|build_command\\|provider\\|api_key_env\"",
+          "exit_code": 0,
+          "output_sha": "b819a87552ee0ed4846d58eb4c418299f1b5c0b94d556d23ea54531d716b592c"
+        },
+        {
+          "tool": "run_command",
+          "command": "git status --short; echo \"---\"; git log origin/main --oneline -2",
+          "exit_code": 0,
+          "output_sha": "8e0e60542aa65e5f48840d80089baf9dc47a5e5173ac6213b0f3562019486b48"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: Both commits landed on origin/main (2ecc2d2d + ae7baab2, confirmed via `git branch -r --contains` and `git log origin/main`). Commit 1: bin/speclang lockOwnerState() at lines 27-50 classifies EEXIST lock as stale/contended/gone \\u2014 dead PID (ESRCH) \\u2192 'stale' reclaimed (line 80-87, bounded to MAX_LOCK_RECLAIMS=8), live PID/EPERM/own PID \\u2192 'contended' never removed; PID written into lock at acquisition (line ~66 `fs.writeSync(fd, `${process.pid}`)`); unreadable lock falls back to 5-min age window (LOCK_STALE_MS, line 46). tests/cli/completion.test.ts covers all three cases: dead-PID reclaim (line 159), unreadable lock past staleness window (line 176), live owner never stolen (line 191). Targeted run: `npx vitest run tests/cli/completion.test.ts` \\u2192 20 passed, exit 0. Commit 2: .gitreins/config.yaml test_command now `npx vitest run --passWithNoTests` (line 9, propagates vitest exit), tier1 tests step captures rc and `exit $rc` (lines 84-86). Red-proof: deliberately failing test through the step's exact shell shape \\u2192 STEP_RC=1, \\\"Tests  1 failed\\\". Full suite: `npx vitest run --passWithNoTests` \\u2192 \\\"Test Files 126 passed | 4 skipped (130)\\\", \\\"Tests 2064 passed | 58 skipped (2122)\\\", EXIT_CODE=0 \\u2014 matches claimed 2122 total, 0 failed. `gitreins config-validate` \\u2192 only 6 pre-existing unknown-key warnings (assemble, assemble_command, build, build_command, provider, api_key_env \\u2014 all present in parent commit's config).\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "1dfcd409e60f1292be4cebce72eabe18d4edfc0cd07e715e710053edb3948cc9"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"recordCliCompletion\\|cli\\]\" bin/speclang | head -20",
+          "exit_code": 0,
+          "output_sha": "e508c94ccc3e6115067d82c1816dcacc1eac9d53b5afaaf434bb353ef941fbfb"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 30, \"offset\": 115, \"path\": \"bin/speclang\"}",
+          "exit_code": 0,
+          "output_sha": "6d6b9799ce40b592253585bbd8fb77081b56080dde1c07b865b44a53a7f6e80f"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: recordCliCompletion is invoked from the CLI entrypoint \\u2014 bin/speclang:128-138 registers a process.once('exit') hook for lanes validate/cascade/generate/index/guard that calls recordCliCompletion(completionRoot, completionLane, ...) at line 135. The new lock-reclaim path (lines 80-87) is therefore reachable from every CLI run in those lanes; the three new tests exercise it end-to-end by spawning the real CLI binary (tests/cli/completion.test.ts run() helper spawns bin/speclang).\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "c2313ce1cbdeacf7116ef9693f5b503f7ac3dc61b7379be27b43c639e48b737e"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"derived_0: Reachability \\u2014 recordCliCompletion (with the new reclaim logic) must be reachable from the CLI entrypoint for the lanes it records.\", \"key\": \"derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "b57d752efbeefe16a7026070e3fc10d3046fb4fd1d87faa950b001f16ef0e4df"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [],
+    "summary": "Both changes correctly replace exit-code-masked pipelines (grep/tail swallowing vitest's status) with direct propagation of vitest's exit code; the capture-then-tail-then-exit pattern in the tier1 step is sound, and no unwired symbols or convention drift are evident."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: RUN  v4.1.11 /home/kara/SpecLang\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 Land two commits on origin/main: (1) bin/speclang's recordCliCompletion() must record its owner PID and reclaim a lock whose recorded PID is dead, never removing a lock whose owner is alive, and tests/cli/completion.test.ts must cover a dead-PID lock, an unreadable lock past the staleness window, and a live owner; (2) .gitreins/config.yaml's tier1 tests step and guards.test_command must both propagate vitest's exit status instead of tail's or grep's, red-proofed by a deliberately failing test. Evidence: full suite green (2122 tests, 0 failed) after the fix, versus 20 failures and 601s before, and gitreins config-validate with only the pre-existing unknown-key warnings.: Both commits on origin/main (git branch -r --contains: 2ecc2d2d 'fix: reclaim stale CLI completion locks' and ae7baab2 'gate: make both tier-1 test arms report the suite's real status'). (1) bin/speclang: lock owner PID written at acquisition (`fs.writeSync(fd, `${process.pid}`)`, ~line 66); lockOwnerState() lines 27-50 returns 'stale' only for ESRCH dead PID or age>LOCK_STALE_MS (5 min) when no usable PID, 'contended' for live PID/EPERM/own PID \u2014 reclaim at lines 80-87 bounded by MAX_LOCK_RECLAIMS=8, live owner never unlinked. tests/cli/completion.test.ts covers dead-PID lock (line 159, reclaims in <5s), unreadable lock past staleness window (line 176, empty body + mtime 10min old), live owner never stolen (line 191, spawns live holder, asserts lock content unchanged and waiter still blocked). Targeted run: `npx vitest run tests/cli/completion.test.ts` \u2192 'Tests 20 passed (20)', exit 0. (2) .gitreins/config.yaml line 9 test_command is now bare `npx vitest run --passWithNoTests` (vitest's own exit status); tier1 tests step lines 84-86 capture `rc=$?` and `exit $rc` while keeping tail -20 for triage. Red-proof executed by me: deliberately failing test through the step's exact shell shape \u2192 'Tests  1 failed (1)', STEP_RC=1. Full suite run by me: `npx vitest run --passWithNoTests` \u2192 'Test Files 126 passed | 4 skipped (130)', 'Tests 2064 passed | 58 skipped (2122)', EXIT_CODE=0 \u2014 2122 total, 0 failed as claimed. `gitreins config-validate` \u2192 only 6 unknown-key warnings (assemble, assemble_command, build, build_command, provider, api_key_env), all keys present in the parent commit's config, i.e. pre-existing. [resolution 0.00; tests/cli/completion.test.ts]\n  \u2713 Reachability \u2014 recordCliCompletion (with the new reclaim logic) must be reachable from the CLI entrypoint for the lanes it records.: bin/speclang:128-138 installs a process.once('exit') hook for lanes validate/cascade/generate/index/guard that calls recordCliCompletion(completionRoot, completionLane, exitCode, durationMs) at line 135, so the new lock-reclaim path (lines 80-87) runs on every CLI exit in those lanes; the new tests exercise it end-to-end by spawning the real bin/speclang binary.\nBoth commits are on origin/main and fully deliver: the lock now records its owner PID and reclaims only dead-PID or past-window stale locks (never a live owner) with all three required regression tests passing, and both tier-1 test arms propagate vitest's exit status \u2014 red-proofed with a deliberately failing test (STEP_RC=1) and confirmed by a full green suite run (2122 tests, 0 failed, exit 0) plus a clean config-validate.\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-20T07:44:09.092017",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-20T07:44:09.121074+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 2520,
+        "truncated": false,
+        "source": "git show ae7baab24c48"
+      }
+    ],
+    "task_id": "OBS-8"
+  }
+}

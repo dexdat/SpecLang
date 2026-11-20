@@ -1,0 +1,85 @@
+{
+  "task_id": "PROBE-DF12",
+  "task_title": "DF-SPECLANG-12 verdict-persistence probe",
+  "task_criteria": [
+    "tier1 pipeline runs and a verdict record lands in the history store"
+  ],
+  "passed": true,
+  "worktree": "/home/kara/worktrees/SpecLang-DF-SPECLANG-12",
+  "branch": "wt/DF-SPECLANG-12",
+  "commit": "3cb333b5de3020845a83f370da395f77cea0faf3",
+  "pass_class": "tier1-only",
+  "tier2_skipped": true,
+  "working_tree_content_fingerprint": "0a6f3c86cf44ed766379d644d8b687b0d333207a1f44b3d3dabecb50e8396d01",
+  "working_tree_dirty_path_count": 1,
+  "items": [],
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  00:51:49",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/worktrees/SpecLang-DF-SPECLANG-12/.gitreins/logs/guard-20261117T055144.535141Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/worktrees/SpecLang-DF-SPECLANG-12/.gitreins/logs/guard-20261117T055144.535141Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  00:51:49\n   Duration  28.81s (transform 17.14s, setup 4.63s, import 24.62s, tests 117.45s, environment 17ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/worktrees/SpecLang-DF-SPECLANG-12/.gitreins/logs/guard-20261117T055144.535141Z.log"
+          }
+        }
+      ]
+    }
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  00:51:49\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T05:52:19.230485",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T05:52:19.255490+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 4064,
+        "truncated": false,
+        "source": "git show 3cb333b5de30"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 206112,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "PROBE-DF12"
+  }
+}

@@ -1,0 +1,421 @@
+{
+  "task_id": "DF-SPECLANG-2-R4",
+  "task_title": "Fix minimatch API import break in guard and ownership runtime",
+  "task_criteria": [
+    "1. npx vitest run tests/guard.test.ts tests/agent-ownership.test.ts tests/agents.test.ts exits 0 with 0 failed tests. 2. npx tsc --noEmit exits 0 with no TS2724 minimatch export error."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "",
+  "commit": "6430f3701330128ab73830b82de7fc2bf06a51a9",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "d2d6ee40086596a8c105792c8547c89e017963cd92be6fc23d7ed63f04ca03fe",
+  "working_tree_dirty_path_count": 6,
+  "items": [
+    {
+      "criterion": "1. npx vitest run tests/guard.test.ts tests/agent-ownership.test.ts tests/agents.test.ts exits 0 with 0 failed tests. 2. npx tsc --noEmit exits 0 with no TS2724 minimatch export error.",
+      "status": "PASS",
+      "detail": "Both halves verified by fresh runs. (1) `npx vitest run tests/guard.test.ts tests/agent-ownership.test.ts tests/agents.test.ts` -> EXIT_CODE=0, output: \"Test Files  3 passed (3) / Tests  107 passed (107)\"; a verbose re-run greps clean for \"minimatch\" / \"not a function\" / \"FAIL\". (2) `npx tsc --noEmit` -> EXIT_CODE=0, output is only npm notices (2 lines), `grep -n TS2724` = 0 hits and `grep -n minimatch` = 0 hits. Root cause is genuinely fixed, not masked: src/guard/registry.ts:8 and src/agents/ownership.ts:8 (symlinks to specs/guard.spec.dir/src/registry.ts and specs/agents.spec.dir/src/ownership.ts) use the named export `import { minimatch } from 'minimatch'`, which is correct for minimatch 10.2.5 (node_modules/minimatch/dist/commonjs/index.d.ts:103 `export declare const minimatch`); `node -e \"const {minimatch}=require('minimatch'); minimatch('src/main.ts','src/**')\"` -> true, whereas calling the module namespace directly reproduces the original break: \"mm is not a function\". The commit 6430f370 pins minimatch ^10.2.5 in package.json:63 and package-lock.json:20/4984. [resolution 0.09; tests/guard.test.ts, tests/agent-ownership.test.ts, tests/agents.test.ts]"
+    },
+    {
+      "criterion": "The minimatch version the source imports at runtime is the one pinned in package.json/package-lock.json (no floating/duplicate top-level minimatch that could reintroduce the API break).",
+      "status": "PASS",
+      "detail": "`npm ls minimatch` -> \"speclang@1.0.0 /home/kara/SpecLang \u251c\u2500\u252c glob@13.0.6 \u2502 \u2514\u2500\u2500 minimatch@10.2.5 deduped \u2514\u2500\u2500 minimatch@10.2.5\" \u2014 a single top-level minimatch 10.2.5, matching package.json:63 (\"minimatch\": \"^10.2.5\") and package-lock.json:20 + the resolved entry at package-lock.json:4984 (version 10.2.5, registry tarball). node_modules/minimatch/package.json reports 10.2.5. No floating or duplicate top-level copy exists.",
+      "derived": true
+    },
+    {
+      "criterion": "The guard/ownership pattern-matching behaviour actually works at runtime (glob matching returns correct results, not merely 'no throw'), i.e. the fix restored behaviour rather than silencing the import error.",
+      "status": "PASS",
+      "detail": "Runtime behaviour restored in both modules: `node -e` against dist/src/agents/ownership.js -> createOwnershipRegistry().getOwner('src/main.ts') = \"code-gen\", getOwner('unknown.file') = null; against dist/src/guard/registry.js -> getOwner('src/main.ts') = \"code-gen\", getOwner('unknown.file') = null. These are exactly the assertions in tests/agent-ownership.test.ts:31-38, which pass in the 107/107 run. Direct minimatch check returns true for 'src/main.ts' vs 'src/**'.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  08:59:20",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261116T134804.329630Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261116T134804.329630Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  08:59:20\n   Duration  38.65s (transform 8.62s, setup 1.55s, import 12.52s, tests 94.54s, environment 11ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261116T134804.329630Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 1. npx vitest run tests/guard.test.ts tests/agent-ownership.test.ts tests/agents.test.ts exits 0 with 0 failed tests. 2. npx tsc --noEmit exits 0 with no TS2724 minimatch export error.: Both halves verified by fresh runs. (1) `npx vitest run tests/guard.test.ts tests/agent-ownership.test.ts tests/agents.test.ts` -> EXIT_CODE=0, output: \"Test Files  3 passed (3) / Tests  107 passed (107)\"; a verbose re-run greps clean for \"minimatch\" / \"not a function\" / \"FAIL\". (2) `npx tsc --noEmit` -> EXIT_CODE=0, output is only npm notices (2 lines), `grep -n TS2724` = 0 hits and `grep -n minimatch` = 0 hits. Root cause is genuinely fixed, not masked: src/guard/registry.ts:8 and src/agents/ownership.ts:8 (symlinks to specs/guard.spec.dir/src/registry.ts and specs/agents.spec.dir/src/ownership.ts) use the named export `import { minimatch } from 'minimatch'`, which is correct for minimatch 10.2.5 (node_modules/minimatch/dist/commonjs/index.d.ts:103 `export declare const minimatch`); `node -e \"const {minimatch}=require('minimatch'); minimatch('src/main.ts','src/**')\"` -> true, whereas calling the module namespace directly reproduces the original break: \"mm is not a function\". The commit 6430f370 pins minimatch ^10.2.5 in package.json:63 and package-lock.json:20/4984. [resolution 0.09; tests/guard.test.ts, tests/agent-ownership.test.ts, tests/agents.test.ts]\n  \u2713 The minimatch version the source imports at runtime is the one pinned in package.json/package-lock.json (no floating/duplicate top-level minimatch that could reintroduce the API break).: `npm ls minimatch` -> \"speclang@1.0.0 /home/kara/SpecLang \u251c\u2500\u252c glob@13.0.6 \u2502 \u2514\u2500\u2500 minimatch@10.2.5 deduped \u2514\u2500\u2500 minimatch@10.2.5\" \u2014 a single top-level minimatch 10.2.5, matching package.json:63 (\"minimatch\": \"^10.2.5\") and package-lock.json:20 + the resolved entry at package-lock.json:4984 (version 10.2.5, registry tarball). node_modules/minimatch/package.json reports 10.2.5. No floating or duplicate top-level copy exists.\n  \u2713 The guard/ownership pattern-matching behaviour actually works at runtime (glob matching returns correct results, not merely 'no throw'), i.e. the fix restored behaviour rather than silencing the import error.: Runtime behaviour restored in both modules: `node -e` against dist/src/agents/ownership.js -> createOwnershipRegistry().getOwner('src/main.ts') = \"code-gen\", getOwner('unknown.file') = null; against dist/src/guard/registry.js -> getOwner('src/main.ts') = \"code-gen\", getOwner('unknown.file') = null. These are exactly the assertions in tests/agent-ownership.test.ts:31-38, which pass in the 107/107 run. Direct minimatch check returns true for 'src/main.ts' vs 'src/**'.\nThe minimatch named-export import in src/guard/registry.ts:8 and src/agents/ownership.ts:8 is correct for the pinned minimatch 10.2.5, and fresh runs confirm the three named test files pass 107/107 (exit 0) and `npx tsc --noEmit` exits 0 with no TS2724 error.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 1. npx vitest run tests/guard.test.ts tests/agent-ownership.test.ts tests/agents.test.ts exits 0 with 0 failed tests. 2. npx tsc --noEmit exits 0 with no TS2724 minimatch export error.: Both halves verified by fresh runs. (1) `npx vitest run tests/guard.test.ts tests/agent-ownership.test.ts tests/agents.test.ts` -> EXIT_CODE=0, output: \"Test Files  3 passed (3) / Tests  107 passed (107)\"; a verbose re-run greps clean for \"minimatch\" / \"not a function\" / \"FAIL\". (2) `npx tsc --noEmit` -> EXIT_CODE=0, output is only npm notices (2 lines), `grep -n TS2724` = 0 hits and `grep -n minimatch` = 0 hits. Root cause is genuinely fixed, not masked: src/guard/registry.ts:8 and src/agents/ownership.ts:8 (symlinks to specs/guard.spec.dir/src/registry.ts and specs/agents.spec.dir/src/ownership.ts) use the named export `import { minimatch } from 'minimatch'`, which is correct for minimatch 10.2.5 (node_modules/minimatch/dist/commonjs/index.d.ts:103 `export declare const minimatch`); `node -e \"const {minimatch}=require('minimatch'); minimatch('src/main.ts','src/**')\"` -> true, whereas calling the module namespace directly reproduces the original break: \"mm is not a function\". The commit 6430f370 pins minimatch ^10.2.5 in package.json:63 and package-lock.json:20/4984. [resolution 0.09; tests/guard.test.ts, tests/agent-ownership.test.ts, tests/agents.test.ts]\n  \u2713 The minimatch version the source imports at runtime is the one pinned in package.json/package-lock.json (no floating/duplicate top-level minimatch that could reintroduce the API break).: `npm ls minimatch` -> \"speclang@1.0.0 /home/kara/SpecLang \u251c\u2500\u252c glob@13.0.6 \u2502 \u2514\u2500\u2500 minimatch@10.2.5 deduped \u2514\u2500\u2500 minimatch@10.2.5\" \u2014 a single top-level minimatch 10.2.5, matching package.json:63 (\"minimatch\": \"^10.2.5\") and package-lock.json:20 + the resolved entry at package-lock.json:4984 (version 10.2.5, registry tarball). node_modules/minimatch/package.json reports 10.2.5. No floating or duplicate top-level copy exists.\n  \u2713 The guard/ownership pattern-matching behaviour actually works at runtime (glob matching returns correct results, not merely 'no throw'), i.e. the fix restored behaviour rather than silencing the import error.: Runtime behaviour restored in both modules: `node -e` against dist/src/agents/ownership.js -> createOwnershipRegistry().getOwner('src/main.ts') = \"code-gen\", getOwner('unknown.file') = null; against dist/src/guard/registry.js -> getOwner('src/main.ts') = \"code-gen\", getOwner('unknown.file') = null. These are exactly the assertions in tests/agent-ownership.test.ts:31-38, which pass in the 107/107 run. Direct minimatch check returns true for 'src/main.ts' vs 'src/**'.\nThe minimatch named-export import in src/guard/registry.ts:8 and src/agents/ownership.ts:8 is correct for the pinned minimatch 10.2.5, and fresh runs confirm the three named test files pass 107/107 (exit 0) and `npx tsc --noEmit` exits 0 with no TS2724 error.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "1. npx vitest run tests/guard.test.ts tests/agent-ownership.test.ts tests/agents.test.ts exits 0 with 0 failed tests. 2. npx tsc --noEmit exits 0 with no TS2724 minimatch export error.",
+                "status": "PASS",
+                "detail": "Both halves verified by fresh runs. (1) `npx vitest run tests/guard.test.ts tests/agent-ownership.test.ts tests/agents.test.ts` -> EXIT_CODE=0, output: \"Test Files  3 passed (3) / Tests  107 passed (107)\"; a verbose re-run greps clean for \"minimatch\" / \"not a function\" / \"FAIL\". (2) `npx tsc --noEmit` -> EXIT_CODE=0, output is only npm notices (2 lines), `grep -n TS2724` = 0 hits and `grep -n minimatch` = 0 hits. Root cause is genuinely fixed, not masked: src/guard/registry.ts:8 and src/agents/ownership.ts:8 (symlinks to specs/guard.spec.dir/src/registry.ts and specs/agents.spec.dir/src/ownership.ts) use the named export `import { minimatch } from 'minimatch'`, which is correct for minimatch 10.2.5 (node_modules/minimatch/dist/commonjs/index.d.ts:103 `export declare const minimatch`); `node -e \"const {minimatch}=require('minimatch'); minimatch('src/main.ts','src/**')\"` -> true, whereas calling the module namespace directly reproduces the original break: \"mm is not a function\". The commit 6430f370 pins minimatch ^10.2.5 in package.json:63 and package-lock.json:20/4984. [resolution 0.09; tests/guard.test.ts, tests/agent-ownership.test.ts, tests/agents.test.ts]",
+                "resolution_probability": 0.09,
+                "cited_path": "tests/guard.test.ts, tests/agent-ownership.test.ts, tests/agents.test.ts"
+              },
+              {
+                "criterion": "The minimatch version the source imports at runtime is the one pinned in package.json/package-lock.json (no floating/duplicate top-level minimatch that could reintroduce the API break).",
+                "status": "PASS",
+                "detail": "`npm ls minimatch` -> \"speclang@1.0.0 /home/kara/SpecLang \u251c\u2500\u252c glob@13.0.6 \u2502 \u2514\u2500\u2500 minimatch@10.2.5 deduped \u2514\u2500\u2500 minimatch@10.2.5\" \u2014 a single top-level minimatch 10.2.5, matching package.json:63 (\"minimatch\": \"^10.2.5\") and package-lock.json:20 + the resolved entry at package-lock.json:4984 (version 10.2.5, registry tarball). node_modules/minimatch/package.json reports 10.2.5. No floating or duplicate top-level copy exists.",
+                "derived": true
+              },
+              {
+                "criterion": "The guard/ownership pattern-matching behaviour actually works at runtime (glob matching returns correct results, not merely 'no throw'), i.e. the fix restored behaviour rather than silencing the import error.",
+                "status": "PASS",
+                "detail": "Runtime behaviour restored in both modules: `node -e` against dist/src/agents/ownership.js -> createOwnershipRegistry().getOwner('src/main.ts') = \"code-gen\", getOwner('unknown.file') = null; against dist/src/guard/registry.js -> getOwner('src/main.ts') = \"code-gen\", getOwner('unknown.file') = null. These are exactly the assertions in tests/agent-ownership.test.ts:31-38, which pass in the 107/107 run. Direct minimatch check returns true for 'src/main.ts' vs 'src/**'.",
+                "derived": true
+              }
+            ],
+            "summary": "The minimatch named-export import in src/guard/registry.ts:8 and src/agents/ownership.ts:8 is correct for the pinned minimatch 10.2.5, and fresh runs confirm the three named test files pass 107/107 (exit 0) and `npx tsc --noEmit` exits 0 with no TS2724 error.",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-2-R4\"}",
+          "exit_code": 0,
+          "output_sha": "7bc98951ff61d8459d2de97482cc116ba6413566153ae7e651f83fbc8d9bcc74"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && cat package.json",
+          "exit_code": 0,
+          "output_sha": "a45ec6a05ef91af6c45f2a04371a2bef8bd9a773d972018e345bbf787be55c3e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; pwd; git -C . status --short | head -50; echo \"---DIFF---\"; git diff --stat",
+          "exit_code": 129,
+          "output_sha": "b7eb0e698918a7cf0be1081fc093a09cf6bb9b73a2383900244dd59550dde7e9"
+        },
+        {
+          "tool": "read_diff",
+          "command": "read_diff {}",
+          "exit_code": 0,
+          "output_sha": "49e23d9fc0b26add920d31a86ddb34050ec8ec337a775b83f2a7640a6e72a178"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; ls -d .git; git status --short | head -30; echo \"---\"; git log --oneline -5",
+          "exit_code": 0,
+          "output_sha": "e27d1dba7dd3d75c68508777809e1a9b1f9482b2c81d75fb9674f914eac1a111"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git show --stat 6430f370 && echo \"=====FULL DIFF=====\" && git show 6430f370",
+          "exit_code": 0,
+          "output_sha": "1da3d8c5e8c8d13082b4d3ccfe4b67ee22c96d5206bcc163596aef736148f32f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"minimatch\" --include=*.ts --include=*.js --include=*.mjs --include=*.cjs -l . | grep -v node_modules | grep -v \"^./dist/\" | head -40",
+          "exit_code": 0,
+          "output_sha": "98d30d34752efc7db2c860575a5482c5966685ff5fb29c3e751b4b0a017bd809"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls tests/ | head -60; echo \"---\"; ls node_modules/minimatch/package.json && node -e \"console.log(require('./node_modules/minimatch/package.json').version)\"",
+          "exit_code": 0,
+          "output_sha": "aa57f8b1bf25ddf70d91682e1c7422bb915a8903bab983019488e073dca1d611"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"minimatch\" specs/guard.spec.dir/src/registry.ts specs/agents.spec.dir/src/ownership.ts src/generated/guard.spec.ts-impl-3.ts src/generated/daemon.spec.ts-impl-6.ts",
+          "exit_code": 0,
+          "output_sha": "30254aff1c40118d1266b611a6d8277a84d6fb4c67ebcf53e88774cea9e7443a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && cat .gitreins/config.yaml",
+          "exit_code": 0,
+          "output_sha": "ed67fa23253af437c82e2a6274b0a9f5dac45a2eab828ad0bf18f5fb4c587240"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && npx vitest run tests/guard.test.ts tests/agent-ownership.test.ts tests/agents.test.ts 2>&1 | tail -60; echo \"EXIT_CODE=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "4bf83a94426ce367b449a5d85b20348ec20b2c651de7635425b7c3e621818c6d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && npx vitest run tests/guard.test.ts tests/agent-ownership.test.ts tests/agents.test.ts > /tmp/vt.log 2>&1; echo \"EXIT_CODE=$?\"; tail -20 /tmp/vt.log",
+          "exit_code": 0,
+          "output_sha": "558bdfedbfd443ecadb09b04dec012caac6e2c8679e81ae4dba0e9486fa4786b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && npx tsc --noEmit > /tmp/tsc.log 2>&1; echo \"EXIT_CODE=$?\"; wc -l /tmp/tsc.log; grep -n \"TS2724\" /tmp/tsc.log | head -20; echo \"--- minimatch mentions ---\"; grep -n \"minimatch\" /tmp/tsc.log | head -20; echo \"--- head ---\"; head -30 /tmp/tsc.log",
+          "exit_code": 0,
+          "output_sha": "bb2aad6f3ef0100ddefa2c55e28250ddda683745f1c5efae1cbccbd9d198907b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && cat tsconfig.json; echo \"=== files/include ===\"; npx tsc --noEmit --listFilesOnly 2>/dev/null | grep -v node_modules | head -40",
+          "exit_code": 0,
+          "output_sha": "d4f8178968704f415616fee895207e3f397a9c8a79135eda3e2fe2a0eb899ac1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && npx tsc --noEmit --listFilesOnly 2>/dev/null | grep -v node_modules | grep -E \"guard|agents|ownership|registry\" ",
+          "exit_code": 0,
+          "output_sha": "bc44f4ef19173ba21aea91ff786673e0ec5a7e44cedecdaf20fc98961f0c54f5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && head -40 tests/guard.test.ts; echo \"=== ownership test ===\"; head -40 tests/agent-ownership.test.ts; echo \"=== agents test ===\"; head -40 tests/agents.test.ts",
+          "exit_code": 0,
+          "output_sha": "a73987eedf175804cfffd7a979c7143ad72afe62493265f53e613f0e24bf56c5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"minimatch\" src/guard/registry.ts src/agents/ownership.ts src/guard/index.ts src/agents/index.ts 2>/dev/null; echo \"=== guard/registry.ts head ===\"; head -20 src/guard/registry.ts; echo \"=== agents/ownership.ts head ===\"; head -20 src/agents/ownership.ts",
+          "exit_code": 0,
+          "output_sha": "e8702b18b61c323141ace86e8dc32d993cfe56a922be88f4b4c1cd420e5913be"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n 225,260p src/guard/registry.ts; echo \"=== ownership 125,155 ===\"; sed -n 125,155p src/agents/ownership.ts",
+          "exit_code": 0,
+          "output_sha": "bd0b7bfc5a41ce34af9a8bf03824af91f57cf7a0e3fd2f65fa8f4d3972c0ccd8"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && node -e \"const m=require('minimatch'); console.log(typeof m.minimatch, typeof m.default, Object.keys(m).slice(0,10))\"; echo \"=== types ===\"; grep -n \"export\" node_modules/minimatch/dist/commonjs/index.d.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "31650cfc8f42a213da02d46c501a67456a0ef5cf74e7661ccd49f94917011b41"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"minimatch\" package-lock.json | head -20; echo \"=== node_modules/minimatch versions ===\"; find node_modules -path \"*minimatch/package.json\" -maxdepth 4 | while read f; do echo -n \"$f: \"; node -e \"console.log(require('./$f').version)\"; done",
+          "exit_code": 0,
+          "output_sha": "21b2b3745ebe1dfc2e9a02dd6686d556e2f9c7e5efcc89b583c449e76f50f08e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n 4980,5010p package-lock.json",
+          "exit_code": 0,
+          "output_sha": "0c08afbf6622528929a33cbadda1d8c2a9e2942f7f4dd7ab3404e8fb460bf7cd"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git log --oneline -3 -- package-lock.json; echo \"=== was minimatch in lock before? ===\"; git show 6430f370^:package-lock.json | grep -n \"\\\"node_modules/minimatch\\\"\" ; echo \"---\"; git show 6430f370^:package-lock.json | sed -n '/\"node_modules\\/minimatch\": {/,/^    },/p' | head -20",
+          "exit_code": 0,
+          "output_sha": "4b24afd74e9bb8c99a745347de3c42a8c8a5075f905928b5333cc0fd3fa37f0b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"minimatch\" --include=*.ts --include=*.tsx --include=*.js --include=*.mjs . 2>/dev/null | grep -v node_modules | grep -v \"^./dist/\" | grep -v \"^./.tmp/\" | grep -v \"^./specs/\" | grep -v \"^./src/generated/\" | head -30",
+          "exit_code": 0,
+          "output_sha": "d5a948154bcd82c220bb923d1dddc518a4faaf2cd69f726fc00536c0d56b89ea"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"minimatch\" --include=*.ts --include=*.js . 2>/dev/null | grep -v node_modules | grep -v \"^./dist/\" | grep -v \"^./.tmp/\" | grep -v \"^./specs/\" | grep -v \"^./src/generated/\" | wc -l; echo \"=== all incl dist ===\"; grep -rln \"minimatch\" dist/ 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "9d135b525e5a62c3bfed4d04539e894d9fec9c2c7263471c1c1334dadbc52811"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"minimatch\" dist/src/guard/registry.js dist/src/agents/ownership.js; echo \"=== dist mtime vs src ===\"; ls -la dist/src/guard/registry.js dist/src/agents/ownership.js src/guard/registry.ts src/agents/ownership.ts",
+          "exit_code": 0,
+          "output_sha": "e888690436c12a6e7c7422dfe7b314d87f1a1e44b4c41c86412d0b640a37024c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"minimatch\" --include=*.ts --include=*.js --include=*.mjs --include=*.cjs . 2>/dev/null | grep -v node_modules | grep -v \"^./dist/\" | grep -v \"^./.tmp/\" | grep -v \"^./specs/\" | grep -v \"^./src/generated/\" | head; echo \"=== broader: any file type ===\"; grep -rln \"minimatch\" . 2>/dev/null | grep -v node_modules | grep -v \"^./.tmp/\" | grep -v \"^./.git/\" | head -30",
+          "exit_code": 0,
+          "output_sha": "2eb083d08985de62216a4f4dfa896b78dc35b9b6330c03f1c1d0cc9219fca14d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n -A30 \"DF-SPECLANG-2-R4\" .gitreins/tasks.yaml | head -60",
+          "exit_code": 0,
+          "output_sha": "e378a26d1b3f90c8a0287c3d51f16a3992c306991e4cfea7d290860f2a925b35"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n -B3 -A25 \"DF-SPECLANG-2-R4\" .coding-hermes/tasks.md | head -80",
+          "exit_code": 0,
+          "output_sha": "ad26738d37fd5e362bb4789247e37c38523f7fb2fcb9ff379ee3193937a5a2d4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"DF-SPECLANG-2\" .coding-hermes/board/tasks.jsonl | head -5",
+          "exit_code": 0,
+          "output_sha": "5316906d9b2fff5d5d928aaa536094cb6e308dbce4a2669784946c9cb81343e8"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"minimatch\" .coding-hermes/evidence/speclang-releng-2026-11-16-11-07-39/READINESS.md | head -20",
+          "exit_code": 0,
+          "output_sha": "e7a67b9674afa174e1d4f53f6f5bcbcd921625d680315da68ab5fd3da602c174"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n 150,200p .coding-hermes/evidence/speclang-releng-2026-11-16-11-07-39/READINESS.md",
+          "exit_code": 0,
+          "output_sha": "bef013b8d46a4104ade481fcc00f14bb81cdc97c57432b3b3d9ca194c3d6ad26"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"QA-SPECLANG-2-R6\" .coding-hermes/board/tasks.jsonl | head -3",
+          "exit_code": 0,
+          "output_sha": "7708968254c931642d32658b2c5642411f832633a438bc26cb58cdbf696801c1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git log --oneline -3 -- specs/guard.spec.dir/src/registry.ts specs/agents.spec.dir/src/ownership.ts; echo \"=== blame import line ===\"; git log -S\"import { minimatch } from 'minimatch'\" --oneline -- specs/guard.spec.dir/src/registry.ts | head -5",
+          "exit_code": 0,
+          "output_sha": "2dfe083d2721bbff59a77342113dea6a858504b312ed12c2c393cc8cd8f3b301"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && node -e \"\nconst {minimatch} = require('minimatch');\nconsole.log('named export works:', minimatch('src/main.ts','src/**'));\n\" ; echo \"=== simulate old default-import break ===\"; node -e \"\nconst mm = require('minimatch');\ntry { mm('src/main.ts','src/**') } catch(e) { console.log('default-call error:', e.message) }\n\"",
+          "exit_code": 0,
+          "output_sha": "6a0861e397bf6fd37651a657d265635d89cce7795e67d064f09e4a1850c26d16"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: `npx vitest run tests/guard.test.ts tests/agent-ownership.test.ts tests/agents.test.ts` -> EXIT_CODE=0, \\\"Test Files 3 passed (3) / Tests 107 passed (107)\\\". `npx tsc --noEmit` -> EXIT_CODE=0, output only npm notices, grep TS2724 = 0 hits, grep minimatch = 0 hits. Runtime path verified: src/guard/registry.ts:8 and src/agents/ownership.ts:8 use `import { minimatch } from 'minimatch'` (named export, correct for minimatch 10.2.5); node -e \\\"const {minimatch}=require('minimatch'); minimatch('src/main.ts','src/**')\\\" -> true, while calling the module namespace directly -> \\\"mm is not a function\\\" (the original break). minimatch 10.2.5 pinned in package.json:63 + package-lock.json:20/4984 (commit 6430f370).\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "14805d7d79f43e82022f9ef074383483889c6c7e324a71fade5375d4832ec2ea"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Derived: The minimatch version the source imports at runtime is the one pinned in package.json/package-lock.json (no floating/duplicate top-level minimatch that could reintroduce the API break).\", \"key\": \"derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "ee78464ddfda3377365fb52c1f3a6138c1beec8e02a0f8e954796dabc943d022"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Derived: The guard/ownership pattern-matching behaviour actually works at runtime (glob matching returns true/false correctly, not just \\\"no throw\\\"), i.e. the fix restored behaviour and not merely silenced the import error.\", \"key\": \"derived_1\"}",
+          "exit_code": 0,
+          "output_sha": "2eec29af61bf453458fcbd0eb5d29f7fb93e33fd588497c1d0bd6ab07ad5f9db"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && node -e \"\nconst {createOwnershipRegistry} = require('./dist/src/agents/ownership.js');\nconst r = createOwnershipRegistry();\nconsole.log('owner(src/main.ts) =', r.getOwner('src/main.ts'));\nconsole.log('owner(unknown.file) =', r.getOwner('unknown.file'));\n\" 2>&1 | head -20",
+          "exit_code": 0,
+          "output_sha": "b733dce650c428509236f2174ea524092d7a9cfdf7a536554a10b33ad9f069ca"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && node -e \"\nconst {createOwnershipRegistry} = require('./dist/src/guard/registry.js');\nconst r = createOwnershipRegistry();\nconsole.log('guard owner(src/main.ts) =', r.getOwner('src/main.ts'));\nconsole.log('guard owner(unknown.file) =', r.getOwner('unknown.file'));\nconsole.log('checkWrite src/main.ts =', JSON.stringify(r.checkWrite ? r.checkWrite('src/main.ts','code-gen') : 'n/a'));\n\" 2>&1 | head -20",
+          "exit_code": 0,
+          "output_sha": "d22a4c2a857fe873cd708e6cc4adcb21c5b070dda3f6e3f2b315c8827b2d387e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && npm ls minimatch 2>&1 | head -20",
+          "exit_code": 0,
+          "output_sha": "62c6724a2efd5e900ea18f5e8e0918dd3d510311f2d81a7747d80275de35ef8b"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: `npm ls minimatch` -> \\\"speclang@1.0.0 /home/kara/SpecLang \\u251c\\u2500\\u252c glob@13.0.6 \\u2502 \\u2514\\u2500\\u2500 minimatch@10.2.5 deduped \\u2514\\u2500\\u2500 minimatch@10.2.5\\\" \\u2014 single top-level minimatch 10.2.5, matching package.json:63 \\\"^10.2.5\\\" and package-lock.json:20/4984 (version 10.2.5, resolved tarball). node_modules/minimatch/package.json version = 10.2.5. No floating/duplicate top-level copy.\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "568cc40c5636dd859ca1080c1c5a352d850c52d2a9af1ff752f5b6d5f40f6950"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: runtime behaviour restored, not just import silenced. dist/src/agents/ownership.js createOwnershipRegistry().getOwner('src/main.ts') -> \\\"code-gen\\\", getOwner('unknown.file') -> null; dist/src/guard/registry.js createOwnershipRegistry().getOwner('src/main.ts') -> \\\"code-gen\\\", getOwner('unknown.file') -> null. Direct check: node -e \\\"const {minimatch}=require('minimatch'); minimatch('src/main.ts','src/**')\\\" -> true. Tests tests/agent-ownership.test.ts:31-38 assert exactly these two outcomes and pass (107/107).\", \"key\": \"verified_derived_1\"}",
+          "exit_code": 0,
+          "output_sha": "84f9d8d01fc497f6503a5b8e8c8e158a2bd02ca8555d9c5f0561ce4dea36f7d7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && npx vitest run tests/guard.test.ts tests/agent-ownership.test.ts tests/agents.test.ts --reporter=verbose 2>&1 | grep -iE \"minimatch|not a function|FAIL|failed\" | head -20; echo \"grep_done\"",
+          "exit_code": 0,
+          "output_sha": "da61e3925725716b616e9208f4a3449f1629f8972fcd3f35de4cabbdd7ce59db"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [],
+    "summary": "A single config flag flip from false to true with no accompanying code in the diff to contradict it; nothing evidenced to report."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  08:59:20\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 1. npx vitest run tests/guard.test.ts tests/agent-ownership.test.ts tests/agents.test.ts exits 0 with 0 failed tests. 2. npx tsc --noEmit exits 0 with no TS2724 minimatch export error.: Both halves verified by fresh runs. (1) `npx vitest run tests/guard.test.ts tests/agent-ownership.test.ts tests/agents.test.ts` -> EXIT_CODE=0, output: \"Test Files  3 passed (3) / Tests  107 passed (107)\"; a verbose re-run greps clean for \"minimatch\" / \"not a function\" / \"FAIL\". (2) `npx tsc --noEmit` -> EXIT_CODE=0, output is only npm notices (2 lines), `grep -n TS2724` = 0 hits and `grep -n minimatch` = 0 hits. Root cause is genuinely fixed, not masked: src/guard/registry.ts:8 and src/agents/ownership.ts:8 (symlinks to specs/guard.spec.dir/src/registry.ts and specs/agents.spec.dir/src/ownership.ts) use the named export `import { minimatch } from 'minimatch'`, which is correct for minimatch 10.2.5 (node_modules/minimatch/dist/commonjs/index.d.ts:103 `export declare const minimatch`); `node -e \"const {minimatch}=require('minimatch'); minimatch('src/main.ts','src/**')\"` -> true, whereas calling the module namespace directly reproduces the original break: \"mm is not a function\". The commit 6430f370 pins minimatch ^10.2.5 in package.json:63 and package-lock.json:20/4984. [resolution 0.09; tests/guard.test.ts, tests/agent-ownership.test.ts, tests/agents.test.ts]\n  \u2713 The minimatch version the source imports at runtime is the one pinned in package.json/package-lock.json (no floating/duplicate top-level minimatch that could reintroduce the API break).: `npm ls minimatch` -> \"speclang@1.0.0 /home/kara/SpecLang \u251c\u2500\u252c glob@13.0.6 \u2502 \u2514\u2500\u2500 minimatch@10.2.5 deduped \u2514\u2500\u2500 minimatch@10.2.5\" \u2014 a single top-level minimatch 10.2.5, matching package.json:63 (\"minimatch\": \"^10.2.5\") and package-lock.json:20 + the resolved entry at package-lock.json:4984 (version 10.2.5, registry tarball). node_modules/minimatch/package.json reports 10.2.5. No floating or duplicate top-level copy exists.\n  \u2713 The guard/ownership pattern-matching behaviour actually works at runtime (glob matching returns correct results, not merely 'no throw'), i.e. the fix restored behaviour rather than silencing the import error.: Runtime behaviour restored in both modules: `node -e` against dist/src/agents/ownership.js -> createOwnershipRegistry().getOwner('src/main.ts') = \"code-gen\", getOwner('unknown.file') = null; against dist/src/guard/registry.js -> getOwner('src/main.ts') = \"code-gen\", getOwner('unknown.file') = null. These are exactly the assertions in tests/agent-ownership.test.ts:31-38, which pass in the 107/107 run. Direct minimatch check returns true for 'src/main.ts' vs 'src/**'.\nThe minimatch named-export import in src/guard/registry.ts:8 and src/agents/ownership.ts:8 is correct for the pinned minimatch 10.2.5, and fresh runs confirm the three named test files pass 107/107 (exit 0) and `npx tsc --noEmit` exits 0 with no TS2724 error.\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-16T14:01:07.960113",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-16T14:01:07.980461+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 1120,
+        "truncated": false,
+        "source": "git show 6430f3701330"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 296,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DF-SPECLANG-2-R4"
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "task_id": "NEVER-DONE",
+  "task_title": "NEVER-DONE \u2014 perpetual 12-point audit",
+  "task_criteria": [
+    "must exit 0 with 0 open rows failing (6 open rows fail today: NEVER-DONE, QA-SPECLANG-1, QA-SPECLANG-4, QA-SPECLANG-5-R4, QA-SPECLANG-3-R5, QA-SPECLANG-5-R5)"
+  ],
+  "passed": false,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "land/2117",
+  "commit": "180d2b551c9a93db02e4d236988dd03f00474f9a",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "ca2368df13d2ce6c6b76bcdb4859ffc7b447ef530fb146bca6b5a52fafc85701",
+  "working_tree_dirty_path_count": 0,
+  "items": [],
+  "merge_recommendation": "needs_review",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": false,
+      "any_failed": true,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  ~ tests: Command timed out after 120s (step budget)",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261118T221341.200792Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\nnpm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261118T221341.200792Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": false,
+          "output": "",
+          "error": "Command timed out after 120s (step budget)",
+          "data": {
+            "timed_out": true,
+            "timeout_s": 120
+          }
+        }
+      ],
+      "degraded": true,
+      "skipped_steps": [
+        "tests"
+      ],
+      "degradation_reason": "skipped at runtime \u2014 tests: timed out after 120s (step budget)"
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": false,
+      "any_failed": true,
+      "summary": "INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: must exit 0 with 0 open rows failing (6 open rows fail today: NEVER-DONE, QA-SPECLANG-1, QA-SPECLANG-4, QA-SPECLANG-5-R4, QA-SPECLANG-3-R5, QA-SPECLANG-5-R5)\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": false,
+          "output": "INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: must exit 0 with 0 open rows failing (6 open rows fail today: NEVER-DONE, QA-SPECLANG-1, QA-SPECLANG-4, QA-SPECLANG-5-R4, QA-SPECLANG-3-R5, QA-SPECLANG-5-R5)\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+          "error": "",
+          "data": {
+            "verdict": "INCOMPLETE",
+            "items": [],
+            "summary": "Evaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+            "ungraded_criteria": [
+              "must exit 0 with 0 open rows failing (6 open rows fail today: NEVER-DONE, QA-SPECLANG-1, QA-SPECLANG-4, QA-SPECLANG-5-R4, QA-SPECLANG-3-R5, QA-SPECLANG-5-R5)"
+            ],
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "ungraded_criteria": [
+        "must exit 0 with 0 open rows failing (6 open rows fail today: NEVER-DONE, QA-SPECLANG-1, QA-SPECLANG-4, QA-SPECLANG-5-R4, QA-SPECLANG-3-R5, QA-SPECLANG-5-R5)"
+      ]
+    }
+  },
+  "ungraded_criteria": [
+    "must exit 0 with 0 open rows failing (6 open rows fail today: NEVER-DONE, QA-SPECLANG-1, QA-SPECLANG-4, QA-SPECLANG-5-R4, QA-SPECLANG-3-R5, QA-SPECLANG-5-R5)"
+  ],
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [],
+    "summary": "",
+    "error": "LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)"
+  },
+  "summary": "Stage tier1: FAIL (DEGRADED - skipped checks)\n  WARNING: coverage is unknown \u2014 tests did not run (skipped at runtime \u2014 tests: timed out after 120s (step budget)); run `gitreins guard` for the full gate\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  ~ tests: Command timed out after 120s (step budget)\n\nStage tier2: FAIL\n  INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: must exit 0 with 0 open rows failing (6 open rows fail today: NEVER-DONE, QA-SPECLANG-1, QA-SPECLANG-4, QA-SPECLANG-5-R4, QA-SPECLANG-3-R5, QA-SPECLANG-5-R5)\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)\n\nOverall: FAIL \u2717 [DEGRADED \u2014 skipped: tier1(tests)=skipped at runtime \u2014 tests: timed out after 120s (step budget)]",
+  "evaluated_at": "2026-11-19T05:18:54.899856",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-19T05:18:55.075962+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 15387,
+        "truncated": false,
+        "source": "git show 180d2b551c9a"
+      }
+    ],
+    "task_id": "NEVER-DONE"
+  }
+}

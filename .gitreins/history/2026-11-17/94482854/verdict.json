@@ -1,0 +1,310 @@
+{
+  "task_id": "UX-003",
+  "task_title": "UX-003: a project created by 'speclang new' is runnable without a machine-specific file: dependency",
+  "task_criteria": [
+    "In a fresh temp dir, node bin/speclang new demo exits 0; cd demo && npm install --no-audit --no-fund exits 0; the generated package.json carries no absolute file: dependency and declares validate/generate/start scripts; node scripts/speclang.cjs validate exits 0 and reports the generated spec validated. failure_condition = a file:/home/... dependency in the generated package.json, or validate exiting non-zero, or the shim missing. proof = the pasted scaffold output, package.json, npm install tail and validate summary, plus the new test file passing."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "tmp2",
+  "commit": "ad5f0ec93ae6fad9325ff6e818506dde949b40d9",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "28a5c7ccfcf80ba1aa2c6ab80124723f12edae34e7ef7d932313b575da2ead2d",
+  "working_tree_dirty_path_count": 2,
+  "items": [
+    {
+      "criterion": "In a fresh temp dir, node bin/speclang new demo exits 0; cd demo && npm install --no-audit --no-fund exits 0; the generated package.json carries no absolute file: dependency and declares validate/generate/start scripts; node scripts/speclang.cjs validate exits 0 and reports the generated spec validated. failure_condition = a file:/home/... dependency in the generated package.json, or validate exiting non-zero, or the shim missing. proof = the pasted scaffold output, package.json, npm install tail and validate summary, plus the new test file passing.",
+      "status": "PASS",
+      "detail": "Live run in fresh dir /tmp/ux003-CUbo7p: `node /home/kara/SpecLang/bin/speclang new demo` -> NEW_EXIT=0, scaffold output '\u2713 Created .speclangrc / initial spec / package.json / scripts/speclang.cjs / README.md'. Generated package.json (bin/speclang:1527-1546) = {\"scripts\":{speclang,validate,generate,start,build,test,dev all 'node scripts/speclang.cjs ...'},\"dependencies\":{},\"devDependencies\":{}}; `grep -n 'file:' package.json` -> exit 1 (no match) and `grep -c '/home/' package.json` -> 0, so no absolute file: dependency. `npm install --no-audit --no-fund` -> INSTALL_EXIT=0 ('up to date in 213ms'). `node scripts/speclang.cjs validate` -> VALIDATE_EXIT=0 with 'Validation Summary: 1 files / \u2705 Passed: 1 / \u274c Failed: 0'; `npm run validate` also NPM_VALIDATE_EXIT=0. Shim exists and is executable: -rwxr-xr-x scripts/speclang.cjs (written at bin/speclang:1663-1666). New test file tests/cli/new-project-runnable.test.ts: `npx vitest run tests/cli/new-project-runnable.test.ts` -> 'Tests 8 passed (8)'. Re-scoped e2e tests/e2e/spec-to-code.test.ts -> 'Tests 9 passed (9)'. Full suite `npx vitest run --passWithNoTests` -> EXIT=0, 'Test Files 107 passed | 4 skipped (111)', 'Tests 1912 passed | 58 skipped (1970)'. [resolution 0.01; package.json]"
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  01:04:18",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  01:04:18\n   Duration  31.43s (transform 10.59s, setup 2.43s, import 16.09s, tests 117.44s, environment 12ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 In a fresh temp dir, node bin/speclang new demo exits 0; cd demo && npm install --no-audit --no-fund exits 0; the generated package.json carries no absolute file: dependency and declares validate/generate/start scripts; node scripts/speclang.cjs validate exits 0 and reports the generated spec validated. failure_condition = a file:/home/... dependency in the generated package.json, or validate exiting non-zero, or the shim missing. proof = the pasted scaffold output, package.json, npm install tail and validate summary, plus the new test file passing.: Live run in fresh dir /tmp/ux003-CUbo7p: `node /home/kara/SpecLang/bin/speclang new demo` -> NEW_EXIT=0, scaffold output '\u2713 Created .speclangrc / initial spec / package.json / scripts/speclang.cjs / README.md'. Generated package.json (bin/speclang:1527-1546) = {\"scripts\":{speclang,validate,generate,start,build,test,dev all 'node scripts/speclang.cjs ...'},\"dependencies\":{},\"devDependencies\":{}}; `grep -n 'file:' package.json` -> exit 1 (no match) and `grep -c '/home/' package.json` -> 0, so no absolute file: dependency. `npm install --no-audit --no-fund` -> INSTALL_EXIT=0 ('up to date in 213ms'). `node scripts/speclang.cjs validate` -> VALIDATE_EXIT=0 with 'Validation Summary: 1 files / \u2705 Passed: 1 / \u274c Failed: 0'; `npm run validate` also NPM_VALIDATE_EXIT=0. Shim exists and is executable: -rwxr-xr-x scripts/speclang.cjs (written at bin/speclang:1663-1666). New test file tests/cli/new-project-runnable.test.ts: `npx vitest run tests/cli/new-project-runnable.test.ts` -> 'Tests 8 passed (8)'. Re-scoped e2e tests/e2e/spec-to-code.test.ts -> 'Tests 9 passed (9)'. Full suite `npx vitest run --passWithNoTests` -> EXIT=0, 'Test Files 107 passed | 4 skipped (111)', 'Tests 1912 passed | 58 skipped (1970)'. [resolution 0.01; package.json]\nUX-003 is delivered: a freshly scaffolded project has no file:/absolute dependency, ships an executable scripts/speclang.cjs shim with validate/generate/start scripts, installs and validates with exit 0 in a temp dir, and the new plus re-scoped tests pass (8/8, 9/9, full suite 1912 passed). [uncovered failure paths: failure mode 0 (The shim's last-resort fallback is the absolute path of the checkout that ran `speclang new` (GENERATOR_CLI), so on a machine without that checkout and without $SPECLANG_CLI or an installed CLI, `npm run validate` exits 127 with 'no SpecLang CLI found'): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 In a fresh temp dir, node bin/speclang new demo exits 0; cd demo && npm install --no-audit --no-fund exits 0; the generated package.json carries no absolute file: dependency and declares validate/generate/start scripts; node scripts/speclang.cjs validate exits 0 and reports the generated spec validated. failure_condition = a file:/home/... dependency in the generated package.json, or validate exiting non-zero, or the shim missing. proof = the pasted scaffold output, package.json, npm install tail and validate summary, plus the new test file passing.: Live run in fresh dir /tmp/ux003-CUbo7p: `node /home/kara/SpecLang/bin/speclang new demo` -> NEW_EXIT=0, scaffold output '\u2713 Created .speclangrc / initial spec / package.json / scripts/speclang.cjs / README.md'. Generated package.json (bin/speclang:1527-1546) = {\"scripts\":{speclang,validate,generate,start,build,test,dev all 'node scripts/speclang.cjs ...'},\"dependencies\":{},\"devDependencies\":{}}; `grep -n 'file:' package.json` -> exit 1 (no match) and `grep -c '/home/' package.json` -> 0, so no absolute file: dependency. `npm install --no-audit --no-fund` -> INSTALL_EXIT=0 ('up to date in 213ms'). `node scripts/speclang.cjs validate` -> VALIDATE_EXIT=0 with 'Validation Summary: 1 files / \u2705 Passed: 1 / \u274c Failed: 0'; `npm run validate` also NPM_VALIDATE_EXIT=0. Shim exists and is executable: -rwxr-xr-x scripts/speclang.cjs (written at bin/speclang:1663-1666). New test file tests/cli/new-project-runnable.test.ts: `npx vitest run tests/cli/new-project-runnable.test.ts` -> 'Tests 8 passed (8)'. Re-scoped e2e tests/e2e/spec-to-code.test.ts -> 'Tests 9 passed (9)'. Full suite `npx vitest run --passWithNoTests` -> EXIT=0, 'Test Files 107 passed | 4 skipped (111)', 'Tests 1912 passed | 58 skipped (1970)'. [resolution 0.01; package.json]\nUX-003 is delivered: a freshly scaffolded project has no file:/absolute dependency, ships an executable scripts/speclang.cjs shim with validate/generate/start scripts, installs and validates with exit 0 in a temp dir, and the new plus re-scoped tests pass (8/8, 9/9, full suite 1912 passed). [uncovered failure paths: failure mode 0 (The shim's last-resort fallback is the absolute path of the checkout that ran `speclang new` (GENERATOR_CLI), so on a machine without that checkout and without $SPECLANG_CLI or an installed CLI, `npm run validate` exits 127 with 'no SpecLang CLI found'): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "In a fresh temp dir, node bin/speclang new demo exits 0; cd demo && npm install --no-audit --no-fund exits 0; the generated package.json carries no absolute file: dependency and declares validate/generate/start scripts; node scripts/speclang.cjs validate exits 0 and reports the generated spec validated. failure_condition = a file:/home/... dependency in the generated package.json, or validate exiting non-zero, or the shim missing. proof = the pasted scaffold output, package.json, npm install tail and validate summary, plus the new test file passing.",
+                "status": "PASS",
+                "detail": "Live run in fresh dir /tmp/ux003-CUbo7p: `node /home/kara/SpecLang/bin/speclang new demo` -> NEW_EXIT=0, scaffold output '\u2713 Created .speclangrc / initial spec / package.json / scripts/speclang.cjs / README.md'. Generated package.json (bin/speclang:1527-1546) = {\"scripts\":{speclang,validate,generate,start,build,test,dev all 'node scripts/speclang.cjs ...'},\"dependencies\":{},\"devDependencies\":{}}; `grep -n 'file:' package.json` -> exit 1 (no match) and `grep -c '/home/' package.json` -> 0, so no absolute file: dependency. `npm install --no-audit --no-fund` -> INSTALL_EXIT=0 ('up to date in 213ms'). `node scripts/speclang.cjs validate` -> VALIDATE_EXIT=0 with 'Validation Summary: 1 files / \u2705 Passed: 1 / \u274c Failed: 0'; `npm run validate` also NPM_VALIDATE_EXIT=0. Shim exists and is executable: -rwxr-xr-x scripts/speclang.cjs (written at bin/speclang:1663-1666). New test file tests/cli/new-project-runnable.test.ts: `npx vitest run tests/cli/new-project-runnable.test.ts` -> 'Tests 8 passed (8)'. Re-scoped e2e tests/e2e/spec-to-code.test.ts -> 'Tests 9 passed (9)'. Full suite `npx vitest run --passWithNoTests` -> EXIT=0, 'Test Files 107 passed | 4 skipped (111)', 'Tests 1912 passed | 58 skipped (1970)'. [resolution 0.01; package.json]",
+                "resolution_probability": 0.01,
+                "cited_path": "package.json"
+              }
+            ],
+            "summary": "UX-003 is delivered: a freshly scaffolded project has no file:/absolute dependency, ships an executable scripts/speclang.cjs shim with validate/generate/start scripts, installs and validates with exit 0 in a temp dir, and the new plus re-scoped tests pass (8/8, 9/9, full suite 1912 passed). [uncovered failure paths: failure mode 0 (The shim's last-resort fallback is the absolute path of the checkout that ran `speclang new` (GENERATOR_CLI), so on a machine without that checkout and without $SPECLANG_CLI or an installed CLI, `npm run validate` exits 127 with 'no SpecLang CLI found'): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"UX-003\"}",
+          "exit_code": 0,
+          "output_sha": "64f8cfc33de7d4cec79291252e4fa732d18f6d923dbe16b1db26b6e2d9ca8005"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && cat package.json",
+          "exit_code": 0,
+          "output_sha": "8083a90f1c926f36690add1bd6fdf3e29b42da623d5318c08c68dc2676df4cb0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat .gitreins/config.yaml 2>/dev/null; echo ---; ls bin/ scripts/ 2>/dev/null | head -50",
+          "exit_code": 0,
+          "output_sha": "8d7c9259e04ba481412f780ba237eadc5bb1bb55a034285949f63c4ac94901df"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; pwd; git -C . log --oneline -5 2>/dev/null",
+          "exit_code": 128,
+          "output_sha": "b37dd35c859bb20de72575bfb13eb0b1bee2c59b313a3adeb9821d7efdb3d0cf"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat bin/speclang; echo \"=== git log ===\"; git log --oneline -5",
+          "exit_code": 0,
+          "output_sha": "7ee3388471418ebd64f77b9bb49e5d3116611469c53c15342583cf967ddc16ff"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show --stat HEAD; echo ===; git show HEAD",
+          "exit_code": 0,
+          "output_sha": "229a7c25086873562733e598b96be956f0267bfa4a862853a9245af5681b36da"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show a4170279 --stat; echo ===; git show a4170279 | head -600",
+          "exit_code": 0,
+          "output_sha": "57b6f2e62bccd5535d4f155bfb052f3c9f97952e522acd145b06fc3e0c7155b0"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show a4170279 -- bin/speclang | head -400",
+          "exit_code": 0,
+          "output_sha": "915dfdfef349985ab4772ce295536c038402398b8832dd878659e43047c399da"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"speclang.cjs\\|SHIM\\|shim\" bin/speclang | head -60",
+          "exit_code": 0,
+          "output_sha": "9a42dd10a03f9686358a365a88ae0734296031fa254c04af38b80118aca5c2c8"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 280, \"offset\": 1500, \"path\": \"bin/speclang\"}",
+          "exit_code": 0,
+          "output_sha": "c6e62b61200e50ba58f2e51da6f6a73e6856b2f789654c760f84292cec684443"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"\\.command('new\" -A 40 bin/speclang | head -60",
+          "exit_code": 0,
+          "output_sha": "e7f663f8140721dcfa0d5a28b0109ac66648998890b07411713b097320b74194"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls tests/cli/ | head -40; echo ===; sed -n 1,80p tests/cli/new-project-runnable.test.ts",
+          "exit_code": 0,
+          "output_sha": "4fd2a226da42a4402004cfbb10e07d8cf7b8554e1a9b664e17b4040d1cf6611c"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 80,200p tests/cli/new-project-runnable.test.ts",
+          "exit_code": 0,
+          "output_sha": "cc290c4ff5e2c702576409c2a13a679a3e2ee0d0d2f281ec20b2e0b6e93e5500"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls dist 2>/dev/null | head; echo \"=== dist/src ===\"; ls dist/src 2>/dev/null | head -20; echo \"=== node_modules/speclang ===\"; ls -la node_modules/speclang 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "2176cbb221c7b3e015437db5f259b488da807847d8f18c955a0e50cfb712b798"
+        },
+        {
+          "tool": "run_command",
+          "command": "TMPD=$(mktemp -d /tmp/ux003-XXXXXX); echo \"TMPD=$TMPD\"; cd \"$TMPD\" && node /home/kara/SpecLang/bin/speclang new demo; echo \"NEW_EXIT=$?\"; echo \"=== tree ===\"; find demo -maxdepth 2 -not -path '*/.git/*' | sort; echo \"=== package.json ===\"; cat demo/package.json",
+          "exit_code": 0,
+          "output_sha": "0b5aa35b7151418583264001eec4f485bbda56fcf6991571a5a10f4c2122eab6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/ux003-CUbo7p/demo && npm install --no-audit --no-fund 2>&1 | tail -15; echo \"INSTALL_EXIT=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "cd828aeabf41232bec0e642995767642b4a3d61db235d0709de29226ccb715d9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/ux003-CUbo7p/demo && npm install --no-audit --no-fund > /tmp/ux003-install.log 2>&1; echo \"INSTALL_EXIT=$?\"; tail -5 /tmp/ux003-install.log",
+          "exit_code": 0,
+          "output_sha": "27a6a9861663b6c694c64da814406b52ce7239d35144ff7ba8d9f0d536d6bb62"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/ux003-CUbo7p/demo && node scripts/speclang.cjs validate > /tmp/ux003-validate.log 2>&1; echo \"VALIDATE_EXIT=$?\"; cat /tmp/ux003-validate.log",
+          "exit_code": 0,
+          "output_sha": "c07575630478505e444fc788bda666bc8f5403776f3188ff3bfdad99f928b3de"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/ux003-CUbo7p/demo && grep -n \"file:\" package.json; echo \"grep_exit=$?\"; grep -c \"/home/\" package.json; echo \"=== shim head ===\"; head -5 scripts/speclang.cjs; ls -l scripts/speclang.cjs",
+          "exit_code": 0,
+          "output_sha": "7a13aec30c2a30e8b662da817a1c17683ded4542c9f6f7b10598136f80144d48"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && npx vitest run tests/cli/new-project-runnable.test.ts 2>&1 | tail -25",
+          "exit_code": 0,
+          "output_sha": "cf6ba6b56b87e8ce567b6d5b5b9e0e9b50494d8b425850638b3a0ef6c1bdbee9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && npx vitest run tests/e2e/spec-to-code.test.ts 2>&1 | tail -20",
+          "exit_code": 0,
+          "output_sha": "7d75703305cb58d66e06c11b1ee5833d5eda7e5338406f568dd36b224fe8f040"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"file:\" tests/ --include=*.ts | grep -i \"speclang\\|devDep\" | head -20",
+          "exit_code": 0,
+          "output_sha": "aec477fc4fb9a7b23116e8840e5858f9d3af43cacf9f1f26109fc6c034694c8f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && npx vitest run --passWithNoTests 2>&1 | tail -20",
+          "exit_code": -15,
+          "output_sha": "787b413c0cdc7598cfeb2921ec66abf3ab0e540053c9fd056be9beed79b98370"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && timeout 600 npx vitest run --passWithNoTests > /tmp/ux003-full.log 2>&1; echo \"EXIT=$?\"; tail -25 /tmp/ux003-full.log",
+          "exit_code": 0,
+          "output_sha": "c4d9d56a699ea190e5bbdb93467cfaadbc2768bcce30ffd21abb102583588f53"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: live run in /tmp/ux003-CUbo7p \\u2014 `node /home/kara/SpecLang/bin/speclang new demo` exit 0 (scaffold output: Created .speclangrc/initial spec/package.json/scripts/speclang.cjs/README.md); generated package.json has dependencies:{} devDependencies:{} and scripts validate/generate/start/build/test/dev all `node scripts/speclang.cjs ...`; `grep -n \\\"file:\\\" package.json` -> exit 1 (no match), `grep -c /home/` -> 0; `npm install --no-audit --no-fund` -> INSTALL_EXIT=0 (\\\"up to date in 213ms\\\"); `node scripts/speclang.cjs validate` -> VALIDATE_EXIT=0 with \\\"Validation Summary: 1 files / Passed: 1\\\"; shim present and executable (-rwxr-xr-x scripts/speclang.cjs). New test file tests/cli/new-project-runnable.test.ts: `npx vitest run tests/cli/new-project-runnable.test.ts` -> Tests 8 passed (8). Re-scoped e2e tests/e2e/spec-to-code.test.ts -> 9 passed. Full suite `npx vitest run --passWithNoTests` -> EXIT=0, Test Files 107 passed | 4 skipped, Tests 1912 passed | 58 skipped.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "8dd63b8f99e863b4bbfba287f146e9c0f07eedae09a5322fd7d17ffe6d5ed2e4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/ux003-CUbo7p/demo && npm run validate > /tmp/ux003-npmvalidate.log 2>&1; echo \"NPM_VALIDATE_EXIT=$?\"; tail -8 /tmp/ux003-npmvalidate.log; echo \"=== SPECLANG_CLI bogus ===\"; SPECLANG_CLI=/nope node scripts/speclang.cjs validate > /tmp/ux003-bogus.log 2>&1; echo \"BOGUS_EXIT=$?\"; cat /tmp/ux003-bogus.log",
+          "exit_code": 0,
+          "output_sha": "bc9d1b55cf9810228a4f43ec978d6096bd18cee362d5e83c26fe009de49c04c5"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "medium",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 126,
+        "detection": "task marked complete with a worker_summary that contradicts the row's own acceptance criteria (depth ../../ vs ../../../)",
+        "detail": "DOC-9 is flipped to \"complete\" and its foreman_note claims verification of `../../../docs/NORTH_STAR.md` etc., while the row's acceptance_criteria (unchanged in this diff) require exactly `../../docs/NORTH_STAR.md` at lines 49-51 \u2014 the worker_summary itself says the row's two-level claim \"was wrong\", so the recorded completion does not satisfy the criteria as written."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 126,
+        "detection": "completion event recorded without the artifact the row's acceptance criteria require to be pasted",
+        "detail": "The acceptance criteria demand pasted `link-anchor-check.py` output (must print 0) and the `sed -n '49,51p'` output, but the foreman_note/worker_summary contain neither command's output, only a prose claim of PASS."
+      }
+    ],
+    "summary": "The board-only change marks DOC-9 complete, but the recorded verification uses a different link depth than the row's own acceptance criteria and omits the required pasted evidence."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  01:04:18\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 In a fresh temp dir, node bin/speclang new demo exits 0; cd demo && npm install --no-audit --no-fund exits 0; the generated package.json carries no absolute file: dependency and declares validate/generate/start scripts; node scripts/speclang.cjs validate exits 0 and reports the generated spec validated. failure_condition = a file:/home/... dependency in the generated package.json, or validate exiting non-zero, or the shim missing. proof = the pasted scaffold output, package.json, npm install tail and validate summary, plus the new test file passing.: Live run in fresh dir /tmp/ux003-CUbo7p: `node /home/kara/SpecLang/bin/speclang new demo` -> NEW_EXIT=0, scaffold output '\u2713 Created .speclangrc / initial spec / package.json / scripts/speclang.cjs / README.md'. Generated package.json (bin/speclang:1527-1546) = {\"scripts\":{speclang,validate,generate,start,build,test,dev all 'node scripts/speclang.cjs ...'},\"dependencies\":{},\"devDependencies\":{}}; `grep -n 'file:' package.json` -> exit 1 (no match) and `grep -c '/home/' package.json` -> 0, so no absolute file: dependency. `npm install --no-audit --no-fund` -> INSTALL_EXIT=0 ('up to date in 213ms'). `node scripts/speclang.cjs validate` -> VALIDATE_EXIT=0 with 'Validation Summary: 1 files / \u2705 Passed: 1 / \u274c Failed: 0'; `npm run validate` also NPM_VALIDATE_EXIT=0. Shim exists and is executable: -rwxr-xr-x scripts/speclang.cjs (written at bin/speclang:1663-1666). New test file tests/cli/new-project-runnable.test.ts: `npx vitest run tests/cli/new-project-runnable.test.ts` -> 'Tests 8 passed (8)'. Re-scoped e2e tests/e2e/spec-to-code.test.ts -> 'Tests 9 passed (9)'. Full suite `npx vitest run --passWithNoTests` -> EXIT=0, 'Test Files 107 passed | 4 skipped (111)', 'Tests 1912 passed | 58 skipped (1970)'. [resolution 0.01; package.json]\nUX-003 is delivered: a freshly scaffolded project has no file:/absolute dependency, ships an executable scripts/speclang.cjs shim with validate/generate/start scripts, installs and validates with exit 0 in a temp dir, and the new plus re-scoped tests pass (8/8, 9/9, full suite 1912 passed). [uncovered failure paths: failure mode 0 (The shim's last-resort fallback is the absolute path of the checkout that ran `speclang new` (GENERATOR_CLI), so on a machine without that checkout and without $SPECLANG_CLI or an installed CLI, `npm run validate` exits 127 with 'no SpecLang CLI found'): detected_by is empty \u2014 uncovered failure path]\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T06:06:39.053543",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T06:06:39.073361+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 2732,
+        "truncated": false,
+        "source": "git show ad5f0ec93ae6"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 32184,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "UX-003"
+  }
+}

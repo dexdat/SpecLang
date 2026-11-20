@@ -1,0 +1,325 @@
+{
+  "task_id": "README-19",
+  "task_title": "README spec counts are stale (447/449 quoted; live 450 .spec.md + 2 .scl = 452)",
+  "task_criteria": [
+    "grep -n '447' README.md prints nothing; every count line quotes 450 and 452 or the command that produces them"
+  ],
+  "passed": true,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "tmp2",
+  "commit": "99a68a4fb08b1d2255ecf5043071b3c04bc68b82",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "831d81f7f8e311b8dbdd4babae9e36d2a28f1e02c821fbc801dca8cc0c9fb6ac",
+  "working_tree_dirty_path_count": 0,
+  "items": [
+    {
+      "criterion": "grep -n '447' README.md prints nothing; every count line quotes 450 and 452 or the command that produces them",
+      "status": "PASS",
+      "detail": "`grep -n '447' README.md` -> exit_code 1, no output. All four count locations now quote 450/452: README.md:159 \"- 450 .spec.md files (452 incl .scl) with proper headers and references\"; README.md:495 \"specs/  # Source of truth (450 .spec.md files, 452 incl .scl)\"; README.md:541 \"- **Spec validation**: All 452 specs have valid headers and references\"; README.md:635 \"**Specs**: 450 .spec.md (452 incl .scl) | ...\". The fifth stale line (old \"# Output: 449 specs validated\") is now README.md:355-356 \"# Output: one Validation Report block per spec, each PASSED / # (for the live spec count, run: node bin/speclang status)\" \u2014 i.e. the command that produces the count. `grep -n -E '\\b(44[0-9]|45[0-9]|46[0-9])\\b' README.md` returns only those four count lines plus README.md:364 \"holds 466 entries\", which is the _index.json entry count, not a spec count. Live figures confirmed: `find specs -name '*.spec.md' | wc -l` -> 450, `find specs -name '*.scl' | wc -l` -> 2, `node bin/speclang status` -> \"Specs: 452 (450 .spec.md + 2 .scl)\". Remaining 447/449 strings are outside README.md (PACKAGING.md:101, docs/dogfood/diagnostics.md:15-18, specs/skills.spec.dir/skills/speclang-usage.md:71) and in .tmp/rev9-prefix/README.md, which is gitignored (.gitignore:98 `.tmp/`) and untracked (`git ls-files | grep -c '^\\.tmp/'` -> 0). Tests: `npx vitest run tests/npm12-remedy-doc.test.ts tests/layers.test.ts` -> exit_code 0, \"Test Files 2 passed (2) / Tests 39 passed (39)\". [resolution 0.19; README.md]"
+    },
+    {
+      "criterion": "The quoted figures (450 .spec.md, 452 incl .scl) match the live tree and the tool the README points readers to (`node bin/speclang status`), so the corrected numbers are not themselves stale.",
+      "status": "PASS",
+      "detail": "`find specs -name '*.spec.md' | wc -l` -> 450; `find specs -name '*.scl' | wc -l` -> 2 (specs/project.scl, specs/templates.spec.dir/src/project.scl); `node bin/speclang status` -> \"Specs: 452 (450 .spec.md + 2 .scl)\". README.md:159/495/541/635 quote exactly 450 and 452, and README.md:356 directs readers to `node bin/speclang status`, which exists at bin/speclang and prints those figures.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  02:58:44",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T075555.851906Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T075555.851906Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  02:58:44\n   Duration  50.09s (transform 28.38s, setup 11.14s, import 46.50s, tests 246.66s, environment 23ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T075555.851906Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 grep -n '447' README.md prints nothing; every count line quotes 450 and 452 or the command that produces them: `grep -n '447' README.md` -> exit_code 1, no output. All four count locations now quote 450/452: README.md:159 \"- 450 .spec.md files (452 incl .scl) with proper headers and references\"; README.md:495 \"specs/  # Source of truth (450 .spec.md files, 452 incl .scl)\"; README.md:541 \"- **Spec validation**: All 452 specs have valid headers and references\"; README.md:635 \"**Specs**: 450 .spec.md (452 incl .scl) | ...\". The fifth stale line (old \"# Output: 449 specs validated\") is now README.md:355-356 \"# Output: one Validation Report block per spec, each PASSED / # (for the live spec count, run: node bin/speclang status)\" \u2014 i.e. the command that produces the count. `grep -n -E '\\b(44[0-9]|45[0-9]|46[0-9])\\b' README.md` returns only those four count lines plus README.md:364 \"holds 466 entries\", which is the _index.json entry count, not a spec count. Live figures confirmed: `find specs -name '*.spec.md' | wc -l` -> 450, `find specs -name '*.scl' | wc -l` -> 2, `node bin/speclang status` -> \"Specs: 452 (450 .spec.md + 2 .scl)\". Remaining 447/449 strings are outside README.md (PACKAGING.md:101, docs/dogfood/diagnostics.md:15-18, specs/skills.spec.dir/skills/speclang-usage.md:71) and in .tmp/rev9-prefix/README.md, which is gitignored (.gitignore:98 `.tmp/`) and untracked (`git ls-files | grep -c '^\\.tmp/'` -> 0). Tests: `npx vitest run tests/npm12-remedy-doc.test.ts tests/layers.test.ts` -> exit_code 0, \"Test Files 2 passed (2) / Tests 39 passed (39)\". [resolution 0.19; README.md]\n  \u2713 The quoted figures (450 .spec.md, 452 incl .scl) match the live tree and the tool the README points readers to (`node bin/speclang status`), so the corrected numbers are not themselves stale.: `find specs -name '*.spec.md' | wc -l` -> 450; `find specs -name '*.scl' | wc -l` -> 2 (specs/project.scl, specs/templates.spec.dir/src/project.scl); `node bin/speclang status` -> \"Specs: 452 (450 .spec.md + 2 .scl)\". README.md:159/495/541/635 quote exactly 450 and 452, and README.md:356 directs readers to `node bin/speclang status`, which exists at bin/speclang and prints those figures.\nREADME.md no longer contains 447 and all four count lines plus the Quick Start output line now quote 450 .spec.md / 452 incl .scl (or the `node bin/speclang status` command), matching the live tree and CLI output. [uncovered failure paths: failure mode 0 (Other docs still quote the stale 447/449 spec counts (PACKAGING.md:101, docs/dogfood/diagnostics.md:15-18, specs/skills.spec.dir/skills/speclang-usage.md:71), so the corpus remains internally inconsistent even though README.md is fixed): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 grep -n '447' README.md prints nothing; every count line quotes 450 and 452 or the command that produces them: `grep -n '447' README.md` -> exit_code 1, no output. All four count locations now quote 450/452: README.md:159 \"- 450 .spec.md files (452 incl .scl) with proper headers and references\"; README.md:495 \"specs/  # Source of truth (450 .spec.md files, 452 incl .scl)\"; README.md:541 \"- **Spec validation**: All 452 specs have valid headers and references\"; README.md:635 \"**Specs**: 450 .spec.md (452 incl .scl) | ...\". The fifth stale line (old \"# Output: 449 specs validated\") is now README.md:355-356 \"# Output: one Validation Report block per spec, each PASSED / # (for the live spec count, run: node bin/speclang status)\" \u2014 i.e. the command that produces the count. `grep -n -E '\\b(44[0-9]|45[0-9]|46[0-9])\\b' README.md` returns only those four count lines plus README.md:364 \"holds 466 entries\", which is the _index.json entry count, not a spec count. Live figures confirmed: `find specs -name '*.spec.md' | wc -l` -> 450, `find specs -name '*.scl' | wc -l` -> 2, `node bin/speclang status` -> \"Specs: 452 (450 .spec.md + 2 .scl)\". Remaining 447/449 strings are outside README.md (PACKAGING.md:101, docs/dogfood/diagnostics.md:15-18, specs/skills.spec.dir/skills/speclang-usage.md:71) and in .tmp/rev9-prefix/README.md, which is gitignored (.gitignore:98 `.tmp/`) and untracked (`git ls-files | grep -c '^\\.tmp/'` -> 0). Tests: `npx vitest run tests/npm12-remedy-doc.test.ts tests/layers.test.ts` -> exit_code 0, \"Test Files 2 passed (2) / Tests 39 passed (39)\". [resolution 0.19; README.md]\n  \u2713 The quoted figures (450 .spec.md, 452 incl .scl) match the live tree and the tool the README points readers to (`node bin/speclang status`), so the corrected numbers are not themselves stale.: `find specs -name '*.spec.md' | wc -l` -> 450; `find specs -name '*.scl' | wc -l` -> 2 (specs/project.scl, specs/templates.spec.dir/src/project.scl); `node bin/speclang status` -> \"Specs: 452 (450 .spec.md + 2 .scl)\". README.md:159/495/541/635 quote exactly 450 and 452, and README.md:356 directs readers to `node bin/speclang status`, which exists at bin/speclang and prints those figures.\nREADME.md no longer contains 447 and all four count lines plus the Quick Start output line now quote 450 .spec.md / 452 incl .scl (or the `node bin/speclang status` command), matching the live tree and CLI output. [uncovered failure paths: failure mode 0 (Other docs still quote the stale 447/449 spec counts (PACKAGING.md:101, docs/dogfood/diagnostics.md:15-18, specs/skills.spec.dir/skills/speclang-usage.md:71), so the corpus remains internally inconsistent even though README.md is fixed): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "grep -n '447' README.md prints nothing; every count line quotes 450 and 452 or the command that produces them",
+                "status": "PASS",
+                "detail": "`grep -n '447' README.md` -> exit_code 1, no output. All four count locations now quote 450/452: README.md:159 \"- 450 .spec.md files (452 incl .scl) with proper headers and references\"; README.md:495 \"specs/  # Source of truth (450 .spec.md files, 452 incl .scl)\"; README.md:541 \"- **Spec validation**: All 452 specs have valid headers and references\"; README.md:635 \"**Specs**: 450 .spec.md (452 incl .scl) | ...\". The fifth stale line (old \"# Output: 449 specs validated\") is now README.md:355-356 \"# Output: one Validation Report block per spec, each PASSED / # (for the live spec count, run: node bin/speclang status)\" \u2014 i.e. the command that produces the count. `grep -n -E '\\b(44[0-9]|45[0-9]|46[0-9])\\b' README.md` returns only those four count lines plus README.md:364 \"holds 466 entries\", which is the _index.json entry count, not a spec count. Live figures confirmed: `find specs -name '*.spec.md' | wc -l` -> 450, `find specs -name '*.scl' | wc -l` -> 2, `node bin/speclang status` -> \"Specs: 452 (450 .spec.md + 2 .scl)\". Remaining 447/449 strings are outside README.md (PACKAGING.md:101, docs/dogfood/diagnostics.md:15-18, specs/skills.spec.dir/skills/speclang-usage.md:71) and in .tmp/rev9-prefix/README.md, which is gitignored (.gitignore:98 `.tmp/`) and untracked (`git ls-files | grep -c '^\\.tmp/'` -> 0). Tests: `npx vitest run tests/npm12-remedy-doc.test.ts tests/layers.test.ts` -> exit_code 0, \"Test Files 2 passed (2) / Tests 39 passed (39)\". [resolution 0.19; README.md]",
+                "resolution_probability": 0.19,
+                "cited_path": "README.md"
+              },
+              {
+                "criterion": "The quoted figures (450 .spec.md, 452 incl .scl) match the live tree and the tool the README points readers to (`node bin/speclang status`), so the corrected numbers are not themselves stale.",
+                "status": "PASS",
+                "detail": "`find specs -name '*.spec.md' | wc -l` -> 450; `find specs -name '*.scl' | wc -l` -> 2 (specs/project.scl, specs/templates.spec.dir/src/project.scl); `node bin/speclang status` -> \"Specs: 452 (450 .spec.md + 2 .scl)\". README.md:159/495/541/635 quote exactly 450 and 452, and README.md:356 directs readers to `node bin/speclang status`, which exists at bin/speclang and prints those figures.",
+                "derived": true
+              }
+            ],
+            "summary": "README.md no longer contains 447 and all four count lines plus the Quick Start output line now quote 450 .spec.md / 452 incl .scl (or the `node bin/speclang status` command), matching the live tree and CLI output. [uncovered failure paths: failure mode 0 (Other docs still quote the stale 447/449 spec counts (PACKAGING.md:101, docs/dogfood/diagnostics.md:15-18, specs/skills.spec.dir/skills/speclang-usage.md:71), so the corpus remains internally inconsistent even though README.md is fixed): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"README-19\"}",
+          "exit_code": 0,
+          "output_sha": "e6b6c46573cbbb7e799989bd625546c81c5c2677c56db30d9c40b553b6b37292"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && git log --oneline -3 && git status --short",
+          "exit_code": 0,
+          "output_sha": "a9a97e4be7f4137d4d372fc2a483151de4e8b87f6e8f0950afc65c3a68de67ac"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && grep -n '447' README.md; echo \"EXIT:$?\"",
+          "exit_code": 0,
+          "output_sha": "5629db27c8459ffc667d95d298ead2f1a3bba7cca3c9b9b4e5ed4c16d8d11de5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && grep -n -E '44[0-9]|45[0-9]|spec\\.md|\\.scl' README.md",
+          "exit_code": 0,
+          "output_sha": "24d724875bd565e783c256a5618a54ceb384187f7880437f878ef9a3713e73de"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && find . -name '*.spec.md' -not -path './node_modules/*' | wc -l && find . -name '*.scl' -not -path './node_modules/*' | wc -l",
+          "exit_code": 0,
+          "output_sha": "0883dbed74ee78cdba4409ba2f7f9f0aab2912fb8b2b9f42bb4cc1811446c4c3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && git show 99a68a4f --stat && git show 99a68a4f -- README.md",
+          "exit_code": 0,
+          "output_sha": "c981729129b89699d7bcc0d92c4ecf4f917987e9c477bbdc821b4e6693c61ab7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && find specs -name '*.spec.md' | wc -l && find specs -name '*.scl' | wc -l && find specs -name '*.scl'",
+          "exit_code": 0,
+          "output_sha": "adcc2290f2e17379fc0c995470f753b7f5b8c3be94d1bb7c13ae1fbb7c017ece"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && ls && cat .gitreins/config.yaml 2>/dev/null | head -40",
+          "exit_code": 0,
+          "output_sha": "e9cf9f0c390aea9f186115a996309bdf6726064fda312a63cfc6c47929b26b4d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && node bin/speclang status 2>&1 | head -30",
+          "exit_code": 0,
+          "output_sha": "86942c54a5ab8148b1c9ca3a796c8f7b9b8eb8c5ba16ae05d988e69e92d9dc3d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && grep -rn -E '\\b(447|449)\\b' README.md docs/*.md GETTING-STARTED.md 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "dd04c1c34ec0eb00cb73174b8fbe47e0cf2d2ae887f4182468f62544a74fdb65"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 20, \"offset\": 150, \"path\": \"README.md\"}",
+          "exit_code": 0,
+          "output_sha": "6c828638d64a105297c7f98cf8039ad8c336e40cb59c319ccedb4e9cab82484b"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 30, \"offset\": 340, \"path\": \"README.md\"}",
+          "exit_code": 0,
+          "output_sha": "cb08606d831da9ad2ef369c1dab26c831fababbd4ee4c8e5d0d00aa5643ae8cc"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 20, \"offset\": 488, \"path\": \"README.md\"}",
+          "exit_code": 0,
+          "output_sha": "95ea2c8b90cc34873d69bca9e8d683c30c4c974eb3eca0e60d26f7ba513797b3"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 20, \"offset\": 530, \"path\": \"README.md\"}",
+          "exit_code": 0,
+          "output_sha": "2f19c9bdb05aea003eebeaa0db91852986ef050167f7cff708627da55a61f0c4"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 10, \"offset\": 628, \"path\": \"README.md\"}",
+          "exit_code": 0,
+          "output_sha": "9a5ee4b848663d91561c22005c77a83b1de4904bfade845ca852cbc52a4c6238"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && grep -n -E 'specs? (validated|count)|[0-9]+ specs' README.md",
+          "exit_code": 0,
+          "output_sha": "a13f35dc2f0b32b768922027abe540238d3170611f9d551bc03d82219c189161"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && grep -n -E '\\b(44[0-9]|45[0-9]|46[0-9])\\b' README.md",
+          "exit_code": 0,
+          "output_sha": "4d660d50ebb6f5344fb050c12449b181be5da4a9ec4e4ce665df94b1660af3b9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && grep -rn -E '\\b(447|449)\\b' --include='*.md' . --exclude-dir=node_modules --exclude-dir=dist | head -20",
+          "exit_code": 0,
+          "output_sha": "5bbbebbbaa89b6d8434ccac77fedfd7c986b241e69f0d8557dc1dfccbe5fc8ee"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && git ls-files .tmp | head -5; echo \"---\"; git check-ignore -v .tmp/rev9-prefix/README.md; echo \"---\"; git ls-files | grep -c '^\\.tmp/'",
+          "exit_code": 1,
+          "output_sha": "5620e474893430e10e76644a1076acc68203b88160b369134ddae1f73360d973"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && grep -rn 'README' tests/*.ts tests/**/*.ts 2>/dev/null | grep -i -E 'count|spec|447|450' | head -20",
+          "exit_code": 0,
+          "output_sha": "d1f24c8d29b3aa9c593cccc87db5eb4f43c5c3a492d2f4daa39e86bc09cd7241"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && grep -rln -E 'README\\.md' tests/ scripts/ src/ 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "aa35d003424da3db00a363a42b142be76a6a8c54b6ebffdc1cd43227047c0757"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && grep -rn -E '447|449' scripts/*.py scripts/*.ts 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "a15710959244612e96a90f4fc60d57e1b6fefb206de4ee9b295ab243651f8e33"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && grep -n -E 'README|spec' tests/layers.test.ts | head -30",
+          "exit_code": 0,
+          "output_sha": "5d9cade9e56ed393e93214c90b78407f3acbd734496bb66320d8a038ad786aa7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && grep -rn -E 'README' tests/npm12-remedy-doc.test.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "9eae27dd49a1456e05e918549a48d97af19a33ea9044e7ad39773131bb350e3f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && npx vitest run --passWithNoTests 2>&1 | tail -25",
+          "exit_code": -15,
+          "output_sha": "77df6fdb91a00f17b7d3cc77bff6603451757cdb6fc43aade1d52b0ba998d4a2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && timeout 600 npx vitest run tests/npm12-remedy-doc.test.ts tests/layers.test.ts 2>&1 | tail -20",
+          "exit_code": 0,
+          "output_sha": "8a19b5175afdb8c2c352915c6fce02fda035405ab773dd2d5319aa3d5d4047d3"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: `grep -n '447' README.md` -> exit 1, no output. All count lines now quote 450/452: README.md:159 \\\"450 .spec.md files (452 incl .scl)\\\", :495 \\\"Source of truth (450 .spec.md files, 452 incl .scl)\\\", :541 \\\"All 452 specs\\\", :635 \\\"**Specs**: 450 .spec.md (452 incl .scl)\\\". Line 356 (was \\\"Output: 449 specs validated\\\") replaced with \\\"one Validation Report block per spec, each PASSED\\\" + \\\"(for the live spec count, run: node bin/speclang status)\\\". Counts verified live: `find specs -name '*.spec.md' | wc -l` -> 450; `find specs -name '*.scl' | wc -l` -> 2; `node bin/speclang status` -> \\\"Specs: 452 (450 .spec.md + 2 .scl)\\\". No other 44x/45x/46x count in README (only 466 at :364, which is the _index.json entry count, not a spec count). Remaining 447/449 hits are outside README.md (PACKAGING.md:101, docs/dogfood/diagnostics.md, specs/skills.spec.dir/skills/speclang-usage.md) and .tmp/rev9-prefix/README.md which is gitignored (.gitignore:98) and untracked. Tests: `npx vitest run tests/npm12-remedy-doc.test.ts tests/layers.test.ts` -> \\\"Test Files 2 passed (2) / Tests 39 passed (39)\\\", exit 0.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "13741099646d8546cf80a6caaf3c1a4800d34ca1d8a018441ac8062ef905e2d1"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"The quoted figures (450 .spec.md, 452 incl .scl) match the live tree and the tool the README points readers to (`node bin/speclang status`), so the corrected numbers are not themselves stale.\", \"key\": \"derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "1cf1657af18a9b2588f4676ec482fe806169438c57c6547e6a8e3e48ab79346c"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: `find specs -name '*.spec.md' | wc -l` -> 450; `find specs -name '*.scl' | wc -l` -> 2 (specs/project.scl, specs/templates.spec.dir/src/project.scl); `node bin/speclang status` -> \\\"Specs: 452 (450 .spec.md + 2 .scl)\\\". README.md:159/495/541/635 all quote 450 and 452 consistently; README.md:356 points at `node bin/speclang status` as the live-count command, which exists (bin/speclang) and prints exactly those figures.\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "302308c4dee7dfeec603f663008e67478fcc32fb83557e9994d4311b6745639d"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "low",
+        "file": "README.md",
+        "line": 159,
+        "detection": "hardcoded spec count in docs is inconsistent with other hardcoded counts in the same file",
+        "detail": "The diff updates the count to 450 .spec.md / 452 incl .scl here, but the 'Working' section at line 541 says 'All 452 specs' while the file-structure block and status footer say 450 .spec.md (452 incl .scl) \u2014 the '452 specs' phrasing conflates the two numbers, and the diff leaves that line's wording inconsistent with the 450/452 split it introduces elsewhere."
+      }
+    ],
+    "summary": "Documentation-only count update; the numbers are internally inconsistent in phrasing (450 .spec.md vs '452 specs') but no code is affected."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  02:58:44\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 grep -n '447' README.md prints nothing; every count line quotes 450 and 452 or the command that produces them: `grep -n '447' README.md` -> exit_code 1, no output. All four count locations now quote 450/452: README.md:159 \"- 450 .spec.md files (452 incl .scl) with proper headers and references\"; README.md:495 \"specs/  # Source of truth (450 .spec.md files, 452 incl .scl)\"; README.md:541 \"- **Spec validation**: All 452 specs have valid headers and references\"; README.md:635 \"**Specs**: 450 .spec.md (452 incl .scl) | ...\". The fifth stale line (old \"# Output: 449 specs validated\") is now README.md:355-356 \"# Output: one Validation Report block per spec, each PASSED / # (for the live spec count, run: node bin/speclang status)\" \u2014 i.e. the command that produces the count. `grep -n -E '\\b(44[0-9]|45[0-9]|46[0-9])\\b' README.md` returns only those four count lines plus README.md:364 \"holds 466 entries\", which is the _index.json entry count, not a spec count. Live figures confirmed: `find specs -name '*.spec.md' | wc -l` -> 450, `find specs -name '*.scl' | wc -l` -> 2, `node bin/speclang status` -> \"Specs: 452 (450 .spec.md + 2 .scl)\". Remaining 447/449 strings are outside README.md (PACKAGING.md:101, docs/dogfood/diagnostics.md:15-18, specs/skills.spec.dir/skills/speclang-usage.md:71) and in .tmp/rev9-prefix/README.md, which is gitignored (.gitignore:98 `.tmp/`) and untracked (`git ls-files | grep -c '^\\.tmp/'` -> 0). Tests: `npx vitest run tests/npm12-remedy-doc.test.ts tests/layers.test.ts` -> exit_code 0, \"Test Files 2 passed (2) / Tests 39 passed (39)\". [resolution 0.19; README.md]\n  \u2713 The quoted figures (450 .spec.md, 452 incl .scl) match the live tree and the tool the README points readers to (`node bin/speclang status`), so the corrected numbers are not themselves stale.: `find specs -name '*.spec.md' | wc -l` -> 450; `find specs -name '*.scl' | wc -l` -> 2 (specs/project.scl, specs/templates.spec.dir/src/project.scl); `node bin/speclang status` -> \"Specs: 452 (450 .spec.md + 2 .scl)\". README.md:159/495/541/635 quote exactly 450 and 452, and README.md:356 directs readers to `node bin/speclang status`, which exists at bin/speclang and prints those figures.\nREADME.md no longer contains 447 and all four count lines plus the Quick Start output line now quote 450 .spec.md / 452 incl .scl (or the `node bin/speclang status` command), matching the live tree and CLI output. [uncovered failure paths: failure mode 0 (Other docs still quote the stale 447/449 spec counts (PACKAGING.md:101, docs/dogfood/diagnostics.md:15-18, specs/skills.spec.dir/skills/speclang-usage.md:71), so the corpus remains internally inconsistent even though README.md is fixed): detected_by is empty \u2014 uncovered failure path]\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T08:00:51.415296",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T08:00:51.440269+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 3487,
+        "truncated": false,
+        "source": "git show 99a68a4fb08b"
+      }
+    ],
+    "task_id": "README-19"
+  }
+}

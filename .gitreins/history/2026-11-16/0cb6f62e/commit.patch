@@ -1,0 +1,221 @@
+commit 0ed92385535f6c387cea492ce3b40afae4c92678
+Author:     kara <totalwindupflightsystems@gmail.com>
+AuthorDate: Mon Nov 16 10:20:24 2026 -0500
+Commit:     kara <totalwindupflightsystems@gmail.com>
+CommitDate: Mon Nov 16 10:20:24 2026 -0500
+
+    fix(mcp): add events.processed migration so the SSE poll query stops throwing SQLITE_ERROR (DF-SPECLANG-4-R4)
+    
+    The SSE manager's poll loop queries
+      SELECT * FROM events WHERE timestamp > ? AND processed = 0 ORDER BY timestamp LIMIT 10
+    but `events` was created without a `processed` column, so better-sqlite3 raised
+    `SQLITE_ERROR: no such column: processed`. Because pollChanges() wraps the poll in
+    try/catch, the failure was silent: no file-change event was ever broadcast.
+    
+    Fix: keep the query and give the schema the column it asks for.
+    - migrations.ts: new migration `version: 2, name: 'add_events_processed'` that runs
+      `ALTER TABLE events ADD COLUMN processed INTEGER NOT NULL DEFAULT 0` plus
+      `CREATE INDEX IF NOT EXISTS idx_events_processed_timestamp ON events(processed, timestamp)`.
+      It flows through the existing `migrate()` gate (`version > getCurrentVersion()`), so an
+      existing version-1 database is upgraded on the next initialize(), not just a fresh one.
+    - The committed compiled artifacts next to the source (migrations.js / .js.map / .d.ts.map)
+      were regenerated in place because the specs/*.spec.dir tree is what the test runner and
+      runtime actually load (`./migrations.js` resolves to the physical .js, which shadows the
+      .ts). Emitted with the same flags the committed artifacts used, so the diff is the new
+      migration block plus the source-map lines only.
+    
+    Tests:
+    - tests/mcp.test.ts: new case under "SSE Module" — opens a freshly migrated temp DB,
+      inserts two `events` rows, flips one to processed = 1, then drives the SSE poll and
+      asserts it does not throw and broadcasts only the unprocessed row.
+      RED-proven: with migrations.ts reverted it fails with `SqliteError: no such column: processed`.
+    - tests/db.test.ts: migration-count assertions updated 1 -> 2 (four call sites).
+    
+    Gates: npx vitest run tests/mcp.test.ts 33/33 pass; tests/db.test.ts 35/35 pass;
+    npx tsc --noEmit exit 0; npm run build exit 0.
+---
+ specs/sqlite.spec.dir/src/migrations.d.ts.map |  2 +-
+ specs/sqlite.spec.dir/src/migrations.js       | 10 +++++
+ specs/sqlite.spec.dir/src/migrations.js.map   |  2 +-
+ specs/sqlite.spec.dir/src/migrations.ts       | 10 +++++
+ tests/db.test.ts                              | 10 ++---
+ tests/mcp.test.ts                             | 60 +++++++++++++++++++++++++++
+ 6 files changed, 87 insertions(+), 7 deletions(-)
+
+diff --git a/specs/sqlite.spec.dir/src/migrations.d.ts.map b/specs/sqlite.spec.dir/src/migrations.d.ts.map
+index 592984bc..1dd89be6 100644
+--- a/specs/sqlite.spec.dir/src/migrations.d.ts.map
++++ b/specs/sqlite.spec.dir/src/migrations.d.ts.map
+@@ -1 +1 @@
+-{"version":3,"file":"migrations.d.ts","sourceRoot":"","sources":["migrations.ts"],"names":[],"mappings":"AAAA;;;GAGG;AAEH,OAAiB,EAAE,KAAK,QAAQ,IAAI,YAAY,EAAE,MAAM,gBAAgB,CAAC;AACzE,OAAO,KAAK,EAAE,SAAS,EAAE,MAAM,YAAY,CAAC;AAO5C;;GAEG;AACH,QAAA,MAAM,UAAU,EAAE,SAAS,EA6J1B,CAAC;AAEF;;GAEG;AACH,wBAAgB,iBAAiB,CAAC,EAAE,EAAE,YAAY,GAAG,MAAM,CAQ1D;AAED;;GAEG;AACH,wBAAgB,OAAO,CAAC,EAAE,EAAE,YAAY,GAAG;IAAE,OAAO,EAAE,MAAM,CAAC;IAAC,cAAc,EAAE,MAAM,CAAA;CAAE,CAsBrF;AAED;;GAEG;AACH,wBAAgB,QAAQ,CAAC,EAAE,EAAE,YAAY,EAAE,aAAa,EAAE,MAAM,GAAG,OAAO,CAwBzE;AAED,OAAO,EAAE,UAAU,EAAE,CAAC"}
+\ No newline at end of file
++{"version":3,"file":"migrations.d.ts","sourceRoot":"","sources":["migrations.ts"],"names":[],"mappings":"AAAA;;;GAGG;AAEH,OAAiB,EAAE,KAAK,QAAQ,IAAI,YAAY,EAAE,MAAM,gBAAgB,CAAC;AACzE,OAAO,KAAK,EAAE,SAAS,EAAE,MAAM,YAAY,CAAC;AAO5C;;GAEG;AACH,QAAA,MAAM,UAAU,EAAE,SAAS,EAuK1B,CAAC;AAEF;;GAEG;AACH,wBAAgB,iBAAiB,CAAC,EAAE,EAAE,YAAY,GAAG,MAAM,CAQ1D;AAED;;GAEG;AACH,wBAAgB,OAAO,CAAC,EAAE,EAAE,YAAY,GAAG;IAAE,OAAO,EAAE,MAAM,CAAC;IAAC,cAAc,EAAE,MAAM,CAAA;CAAE,CAsBrF;AAED;;GAEG;AACH,wBAAgB,QAAQ,CAAC,EAAE,EAAE,YAAY,EAAE,aAAa,EAAE,MAAM,GAAG,OAAO,CAwBzE;AAED,OAAO,EAAE,UAAU,EAAE,CAAC"}
+\ No newline at end of file
+diff --git a/specs/sqlite.spec.dir/src/migrations.js b/specs/sqlite.spec.dir/src/migrations.js
+index 30e5a792..a82a7690 100644
+--- a/specs/sqlite.spec.dir/src/migrations.js
++++ b/specs/sqlite.spec.dir/src/migrations.js
+@@ -158,6 +158,16 @@ const migrations = [
+         END;
+       `);
+         }
++    },
++    {
++        version: 2,
++        name: 'add_events_processed',
++        up: (db) => {
++            db.exec(`
++        ALTER TABLE events ADD COLUMN processed INTEGER NOT NULL DEFAULT 0;
++        CREATE INDEX IF NOT EXISTS idx_events_processed_timestamp ON events(processed, timestamp);
++      `);
++        }
+     }
+ ];
+ exports.migrations = migrations;
+diff --git a/specs/sqlite.spec.dir/src/migrations.js.map b/specs/sqlite.spec.dir/src/migrations.js.map
+index 739b979e..92851f2d 100644
+--- a/specs/sqlite.spec.dir/src/migrations.js.map
++++ b/specs/sqlite.spec.dir/src/migrations.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"migrations.js","sourceRoot":"","sources":["migrations.ts"],"names":[],"mappings":"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"}
+\ No newline at end of file
++{"version":3,"file":"migrations.js","sourceRoot":"","sources":["migrations.ts"],"names":[],"mappings":"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"}
+\ No newline at end of file
+diff --git a/specs/sqlite.spec.dir/src/migrations.ts b/specs/sqlite.spec.dir/src/migrations.ts
+index d71d5063..d14fb912 100644
+--- a/specs/sqlite.spec.dir/src/migrations.ts
++++ b/specs/sqlite.spec.dir/src/migrations.ts
+@@ -170,6 +170,16 @@ const migrations: Migration[] = [
+         END;
+       `);
+     }
++  },
++  {
++    version: 2,
++    name: 'add_events_processed',
++    up: (db: DatabaseType) => {
++      db.exec(`
++        ALTER TABLE events ADD COLUMN processed INTEGER NOT NULL DEFAULT 0;
++        CREATE INDEX IF NOT EXISTS idx_events_processed_timestamp ON events(processed, timestamp);
++      `);
++    }
+   }
+ ];
+ 
+diff --git a/tests/db.test.ts b/tests/db.test.ts
+index a4724e7b..52b522af 100644
+--- a/tests/db.test.ts
++++ b/tests/db.test.ts
+@@ -53,12 +53,12 @@ describe("Database", () => {
+ 
+   describe("Initialization", () => {
+     it("should create database with correct version", () => {
+-      expect(db.getVersion()).toBe(1);
++      expect(db.getVersion()).toBe(2);
+     });
+ 
+     it("should apply migrations", () => {
+       const result = db.initialize();
+-      expect(result.version).toBe(1);
++      expect(result.version).toBe(2);
+       expect(result.applied).toBe(0); // Already applied
+     });
+   });
+@@ -538,8 +538,8 @@ describe("Migrations", () => {
+ 
+   it("should run migrations", () => {
+     const result = migrate(db);
+-    expect(result.currentVersion).toBe(1);
+-    expect(result.applied).toBe(1);
++    expect(result.currentVersion).toBe(2);
++    expect(result.applied).toBe(2);
+   });
+ 
+   it("should not re-run migrations", () => {
+@@ -550,7 +550,7 @@ describe("Migrations", () => {
+ 
+   it("should get current version", () => {
+     migrate(db);
+-    expect(getCurrentVersion(db)).toBe(1);
++    expect(getCurrentVersion(db)).toBe(2);
+   });
+ });
+ 
+diff --git a/tests/mcp.test.ts b/tests/mcp.test.ts
+index 856d5d28..35b35838 100644
+--- a/tests/mcp.test.ts
++++ b/tests/mcp.test.ts
+@@ -2,6 +2,22 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+ import * as fs from "fs";
+ import * as path from "path";
+ import * as os from "os";
++import { SpecLangDB } from "../src/db/index.js";
++import type { MCPSSEConfig } from "../src/mcp/types.js";
++
++const SSE_TEST_CONFIG: MCPSSEConfig = {
++  enabled: false,
++  heartbeatInterval: 0,
++};
++
++function pollSSEManager(manager: object): void {
++  const internalManager = manager as {
++    pollChanges: () => void;
++    lastPollTime: number;
++  };
++  internalManager.lastPollTime = 0;
++  internalManager.pollChanges();
++}
+ 
+ // Test MCP server configuration and integration
+ // The MCP server is implemented in src/mcp/server.ts
+@@ -164,6 +180,50 @@ describe("MCP Server", () => {
+       const { createSSEManager } = await import("../src/mcp/sse.js");
+       expect(createSSEManager).toBeDefined();
+     });
++
++    it("polls unprocessed events after a fresh database migration", async () => {
++      const { SSEManager } = await import("../src/mcp/sse.js");
++      const db = new SpecLangDB({ path: path.join(tempDir, "sse.db"), wal: false });
++      db.initialize();
++      const events = db.getDatabase().prepare("SELECT id, processed FROM events");
++      expect(() => events.all()).not.toThrow();
++      db.insertEvent({
++        timestamp: 1,
++        kind: "modify",
++        path: "src/changed.ts",
++        session: null,
++        cascade_id: null,
++        details: null,
++      });
++      db.insertEvent({
++        timestamp: 2,
++        kind: "create",
++        path: "src/created.ts",
++        session: null,
++        cascade_id: null,
++        details: null,
++      });
++      db.getDatabase().prepare("UPDATE events SET processed = 1 WHERE path = ?").run("src/created.ts");
++
++      const writes: string[] = [];
++      const response = {
++        writeHead: vi.fn(),
++        write: (data: string) => {
++          writes.push(data);
++        },
++        on: vi.fn(),
++      };
++      const manager = new SSEManager(db, SSE_TEST_CONFIG);
++      manager.addClient("test-client", response);
++
++      expect(() => pollSSEManager(manager)).not.toThrow();
++      expect(writes).toHaveLength(1);
++      expect(writes[0]).toContain("src/changed.ts");
++      expect(writes[0]).not.toContain("src/created.ts");
++
++      manager.stop();
++      db.close();
++    });
+   });
+ 
+   describe("Config Module", () => {

@@ -1,0 +1,766 @@
+{
+  "task_id": "UX-005",
+  "task_title": "Agent-driver mode: document and harden driving speclang from another coding agent",
+  "task_criteria": [
+    "A new Agent Driver guide exists in docs and every command it documents exits 0 when run verbatim from a fresh clone; a full agent-driven loop is proven by a walkthrough transcript plus a generated-file listing with sizes: single-seed baseline prompt file written, cascade run, generated files on disk all non-empty, per-stage progress record produced."
+  ],
+  "passed": false,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "land/2117",
+  "commit": "8f7b9b362a5e293af3593bbd444d3001294d6570",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "37bf267b93c295d7f471d0c2a3434904c4a3d38fddd0f5ce2f347df41ebd7e3a",
+  "working_tree_dirty_path_count": 0,
+  "items": [
+    {
+      "criterion": "A new Agent Driver guide exists in docs and every command it documents exits 0 when run verbatim from a fresh clone; a full agent-driven loop is proven by a walkthrough transcript plus a generated-file listing with sizes: single-seed baseline prompt file written, cascade run, generated files on disk all non-empty, per-stage progress record produced.",
+      "status": "PASS",
+      "detail": "docs/AGENT_DRIVER.md exists (381 lines, tracked: `git ls-files docs/AGENT_DRIVER.md`). Every \u00a74 Runbook command run verbatim from repo root exits 0: `./bin/speclang --version` -> 1.0.0; `./bin/speclang status` -> \"Specs: 452 (450 .spec.md + 2 .scl)\"; `./bin/speclang validate scripts/agent-driver/seed.example.spec.md` -> \"Validation Summary: 1 files / Passed: 1\"; `./bin/speclang cascade -v scripts/agent-driver/seed.example.spec.md` -> \"Generated: 2 files / Converged: Yes\"; `node scripts/agent-driver/drive.mjs --seed ... --run-dir .speclang/agent-driver` -> \"## SpecLang agent-driver run \u2014 PASS\"; `--json | jq .ok` -> true; `./bin/speclangd status` -> \"\ud83d\udd34 Daemon: Stopped\"; \u00a78 `./bin/speclang agent --trigger ... --provider openai --dry-run --json` -> exact JSON in doc; daemon start -d/status/stop all exit 0. Walkthrough transcript + generated-file listing with sizes in \u00a74/\u00a76 reproduced live: scripts/generated/greeting.ts 442 bytes (body 261), farewell.ts 300 bytes (body 119), both non-empty (`stat -c '%n %s'`). Per-stage progress record produced: .speclang/agent-driver/progress.{json,jsonl,md}, 5 stages all exit_code 0, ok:true. Tests: `npx vitest run tests/agent-driver/drive.test.ts` -> \"Tests 6 passed (6)\", exit 0; full guard `npx vitest run --passWithNoTests` -> \"Tests 1995 passed | 58 skipped (2053)\", exit 0. Caveat: \"fresh clone\" not literally reproducible here (dist/ is gitignored and must be built via `npm ci && npm run build`, which the doc states); verified on the built checkout."
+    },
+    {
+      "criterion": "The guide is reachable from the repository's documentation entry points (README / AGENTS.md / GETTING-STARTED / docs index), so an agent session told to use SpecLang can find it.",
+      "status": "FAIL",
+      "detail": "docs/AGENT_DRIVER.md is an orphan with zero inbound links. `grep -rn \"AGENT_DRIVER\\|agent-driver\\|Agent Driver\" --include=*.md .` excluding the guide itself, node_modules and .speclang returns exactly one hit \u2014 scripts/agent-driver/seed.example.spec.md:2 (`id: \"@agent-driver/baseline\"`), a spec id, not a link. README.md:740-746 \"Documentation\" lists only docs/CONFIGURATION.md, docs/CASCADE_DEMO.md, specs/cascade-protocol.spec.md, specs/examples.spec.dir/hello-world.spec.md, .opencode/agents/; README.md:150-153 \"API Reference\" lists docs/API_REFERENCE.md. AGENTS.md:37-44 \"Critical Specs (Read First)\" lists NORTH_STAR/project.scl/core/headers/speclang only, and AGENTS.md:196-199 docs/ tree lists only NORTH_STAR.md. GETTING-STARTED.md:194,239 and CONTRIBUTING.md:144 mention docs/ generically. docs/MASTER_GUIDE.md:12,238, docs/OPERATIONS.md:353 and specs/docs.spec.dir/layers.md:170-173 (\"See Also\") do not reference it. `grep -rln \"AGENT_DRIVER\" .opencode/ specs/` -> empty; `grep -rn \"drive.mjs\" --include=*.md` outside the guide -> empty. The guide's own \u00a79 \"Related\" links point outward only (../GETTING-STARTED.md, CONFIGURATION.md, troubleshooting.md). Commit 2e5bb76e touched only 4 files (docs/AGENT_DRIVER.md, scripts/agent-driver/drive.mjs, seed.example.spec.md, tests/agent-driver/drive.test.ts) \u2014 no README/AGENTS.md/index update. The guide's stated audience (docs/AGENT_DRIVER.md:3-5, \"an agent session ... told to use SpecLang\") therefore has no discoverable path to it.",
+      "derived": true
+    },
+    {
+      "criterion": "The driver fails closed on the documented negative probes (banner-only artifact, vacuous 0/0 test convergence, missing seed, unknown flag, zero artifacts) rather than reporting success.",
+      "status": "PASS",
+      "detail": "drive.mjs fails closed on every documented probe: banner-only artifact -> exit 1, stderr \"artifact carries only the generated banner, no body: /tmp/generated/hollow.ts\" (drive.mjs:340-343); vacuous 0/0 test convergence -> exit 1, \"test block(s) were generated but 0 tests executed \u2014 \\\"converged\\\" is vacuous\" (drive.mjs:322-330); missing seed -> exit 2 (\"seed not found\"); unknown flag -> exit 2 (parseArgs fail()); zero-artifact case -> drive.mjs:305-309 pushes 'cascade reported no artifacts (exit 0 with zero files is a no-op, not a pass)'. Tests: `npx vitest run tests/agent-driver/drive.test.ts` -> \"Tests 6 passed (6)\", exit 0. Note (doc inaccuracy, not a driver defect): a probe seed with @kind:endpoint produced 1 artifact (196 bytes) and exited 0, contradicting docs/AGENT_DRIVER.md \u00a75 rule 4 and \u00a77 probe row 1 which claim non-code kinds are skipped.",
+      "derived": true
+    },
+    {
+      "criterion": "The documented progress-record shape (progress.json / progress.jsonl / progress.md) matches what drive.mjs actually writes.",
+      "status": "PASS",
+      "detail": "docs/AGENT_DRIVER.md \u00a73 table matches the live artifact: .speclang/agent-driver/progress.json keys = artifacts, finished_at, generated_dir, ok, reason, schema, seed, stages, started_at, warnings; stages[0] keys = command, detail, duration_ms, exit_code, name; artifacts[0] keys = absolute_path, body_bytes, bytes, exists, path, sha256. progress.jsonl has one JSON line per run (append-only, 2 lines after 2 runs); progress.md renders the stage and artifact Markdown tables. Matches drive.mjs finish()/renderMarkdown().",
+      "derived": true
+    },
+    {
+      "criterion": "The documented artifact placement rule and byte sizes match reality, and the loop leaves the working tree clean (generated outputs gitignored).",
+      "status": "PASS",
+      "detail": "docs \u00a72 \"<artifacts> = <dir containing the seed>/../generated/\" holds: seed scripts/agent-driver/seed.example.spec.md produced scripts/generated/{greeting,farewell}.ts (confirmed by `ls -la scripts/generated/` and the cascade's own \"Generated: .../scripts/generated/greeting.ts\" lines). Documented sizes 442/300 bytes and body_bytes 261/119 reproduce exactly (`stat -c '%n %s'` -> farewell.ts 300, greeting.ts 442; independent banner-strip recomputation -> 442/261 and 300/119). Banner text matches the documented \"Auto-generated by SpecLang \u2026 DO NOT EDIT\". Both paths are gitignored (.gitignore:2 `generated/`, .gitignore:38 `.speclang/`); `git status --porcelain` empty after the runs.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "changes_required",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: \u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[1/1]\u23af",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T212318.683079Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\nnpm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T212318.683079Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "\n\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[1/1]\u23af\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T212318.683079Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": false,
+      "any_failed": true,
+      "summary": "INCOMPLETE\n  \u2713 A new Agent Driver guide exists in docs and every command it documents exits 0 when run verbatim from a fresh clone; a full agent-driven loop is proven by a walkthrough transcript plus a generated-file listing with sizes: single-seed baseline prompt file written, cascade run, generated files on disk all non-empty, per-stage progress record produced.: docs/AGENT_DRIVER.md exists (381 lines, tracked: `git ls-files docs/AGENT_DRIVER.md`). Every \u00a74 Runbook command run verbatim from repo root exits 0: `./bin/speclang --version` -> 1.0.0; `./bin/speclang status` -> \"Specs: 452 (450 .spec.md + 2 .scl)\"; `./bin/speclang validate scripts/agent-driver/seed.example.spec.md` -> \"Validation Summary: 1 files / Passed: 1\"; `./bin/speclang cascade -v scripts/agent-driver/seed.example.spec.md` -> \"Generated: 2 files / Converged: Yes\"; `node scripts/agent-driver/drive.mjs --seed ... --run-dir .speclang/agent-driver` -> \"## SpecLang agent-driver run \u2014 PASS\"; `--json | jq .ok` -> true; `./bin/speclangd status` -> \"\ud83d\udd34 Daemon: Stopped\"; \u00a78 `./bin/speclang agent --trigger ... --provider openai --dry-run --json` -> exact JSON in doc; daemon start -d/status/stop all exit 0. Walkthrough transcript + generated-file listing with sizes in \u00a74/\u00a76 reproduced live: scripts/generated/greeting.ts 442 bytes (body 261), farewell.ts 300 bytes (body 119), both non-empty (`stat -c '%n %s'`). Per-stage progress record produced: .speclang/agent-driver/progress.{json,jsonl,md}, 5 stages all exit_code 0, ok:true. Tests: `npx vitest run tests/agent-driver/drive.test.ts` -> \"Tests 6 passed (6)\", exit 0; full guard `npx vitest run --passWithNoTests` -> \"Tests 1995 passed | 58 skipped (2053)\", exit 0. Caveat: \"fresh clone\" not literally reproducible here (dist/ is gitignored and must be built via `npm ci && npm run build`, which the doc states); verified on the built checkout.\n  \u2717 The guide is reachable from the repository's documentation entry points (README / AGENTS.md / GETTING-STARTED / docs index), so an agent session told to use SpecLang can find it.: docs/AGENT_DRIVER.md is an orphan with zero inbound links. `grep -rn \"AGENT_DRIVER\\|agent-driver\\|Agent Driver\" --include=*.md .` excluding the guide itself, node_modules and .speclang returns exactly one hit \u2014 scripts/agent-driver/seed.example.spec.md:2 (`id: \"@agent-driver/baseline\"`), a spec id, not a link. README.md:740-746 \"Documentation\" lists only docs/CONFIGURATION.md, docs/CASCADE_DEMO.md, specs/cascade-protocol.spec.md, specs/examples.spec.dir/hello-world.spec.md, .opencode/agents/; README.md:150-153 \"API Reference\" lists docs/API_REFERENCE.md. AGENTS.md:37-44 \"Critical Specs (Read First)\" lists NORTH_STAR/project.scl/core/headers/speclang only, and AGENTS.md:196-199 docs/ tree lists only NORTH_STAR.md. GETTING-STARTED.md:194,239 and CONTRIBUTING.md:144 mention docs/ generically. docs/MASTER_GUIDE.md:12,238, docs/OPERATIONS.md:353 and specs/docs.spec.dir/layers.md:170-173 (\"See Also\") do not reference it. `grep -rln \"AGENT_DRIVER\" .opencode/ specs/` -> empty; `grep -rn \"drive.mjs\" --include=*.md` outside the guide -> empty. The guide's own \u00a79 \"Related\" links point outward only (../GETTING-STARTED.md, CONFIGURATION.md, troubleshooting.md). Commit 2e5bb76e touched only 4 files (docs/AGENT_DRIVER.md, scripts/agent-driver/drive.mjs, seed.example.spec.md, tests/agent-driver/drive.test.ts) \u2014 no README/AGENTS.md/index update. The guide's stated audience (docs/AGENT_DRIVER.md:3-5, \"an agent session ... told to use SpecLang\") therefore has no discoverable path to it.\n  \u2713 The driver fails closed on the documented negative probes (banner-only artifact, vacuous 0/0 test convergence, missing seed, unknown flag, zero artifacts) rather than reporting success.: drive.mjs fails closed on every documented probe: banner-only artifact -> exit 1, stderr \"artifact carries only the generated banner, no body: /tmp/generated/hollow.ts\" (drive.mjs:340-343); vacuous 0/0 test convergence -> exit 1, \"test block(s) were generated but 0 tests executed \u2014 \\\"converged\\\" is vacuous\" (drive.mjs:322-330); missing seed -> exit 2 (\"seed not found\"); unknown flag -> exit 2 (parseArgs fail()); zero-artifact case -> drive.mjs:305-309 pushes 'cascade reported no artifacts (exit 0 with zero files is a no-op, not a pass)'. Tests: `npx vitest run tests/agent-driver/drive.test.ts` -> \"Tests 6 passed (6)\", exit 0. Note (doc inaccuracy, not a driver defect): a probe seed with @kind:endpoint produced 1 artifact (196 bytes) and exited 0, contradicting docs/AGENT_DRIVER.md \u00a75 rule 4 and \u00a77 probe row 1 which claim non-code kinds are skipped.\n  \u2713 The documented progress-record shape (progress.json / progress.jsonl / progress.md) matches what drive.mjs actually writes.: docs/AGENT_DRIVER.md \u00a73 table matches the live artifact: .speclang/agent-driver/progress.json keys = artifacts, finished_at, generated_dir, ok, reason, schema, seed, stages, started_at, warnings; stages[0] keys = command, detail, duration_ms, exit_code, name; artifacts[0] keys = absolute_path, body_bytes, bytes, exists, path, sha256. progress.jsonl has one JSON line per run (append-only, 2 lines after 2 runs); progress.md renders the stage and artifact Markdown tables. Matches drive.mjs finish()/renderMarkdown().\n  \u2713 The documented artifact placement rule and byte sizes match reality, and the loop leaves the working tree clean (generated outputs gitignored).: docs \u00a72 \"<artifacts> = <dir containing the seed>/../generated/\" holds: seed scripts/agent-driver/seed.example.spec.md produced scripts/generated/{greeting,farewell}.ts (confirmed by `ls -la scripts/generated/` and the cascade's own \"Generated: .../scripts/generated/greeting.ts\" lines). Documented sizes 442/300 bytes and body_bytes 261/119 reproduce exactly (`stat -c '%n %s'` -> farewell.ts 300, greeting.ts 442; independent banner-strip recomputation -> 442/261 and 300/119). Banner text matches the documented \"Auto-generated by SpecLang \u2026 DO NOT EDIT\". Both paths are gitignored (.gitignore:2 `generated/`, .gitignore:38 `.speclang/`); `git status --porcelain` empty after the runs.\nThe guide and the agent-driven loop are real and fully exercised (all documented commands exit 0, artifacts non-empty, progress record produced, 6/6 driver tests and 1995-test suite green), but docs/AGENT_DRIVER.md is linked from no documentation entry point, so the guide's intended audience cannot discover it. [uncovered failure paths: failure mode 0 (The Agent Driver guide is undiscoverable: no README/AGENTS.md/GETTING-STARTED/docs-index link points to docs/AGENT_DRIVER.md, so an agent session told to use SpecLang never finds the runbook.): detected_by is empty \u2014 uncovered failure path; failure mode 1 (Documented negative-probe claim is wrong: docs say non-code kinds (endpoint, operation, doc) are skipped and produce no artifacts, but the cascade emits a file for @kind:endpoint.): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": false,
+          "output": "INCOMPLETE\n  \u2713 A new Agent Driver guide exists in docs and every command it documents exits 0 when run verbatim from a fresh clone; a full agent-driven loop is proven by a walkthrough transcript plus a generated-file listing with sizes: single-seed baseline prompt file written, cascade run, generated files on disk all non-empty, per-stage progress record produced.: docs/AGENT_DRIVER.md exists (381 lines, tracked: `git ls-files docs/AGENT_DRIVER.md`). Every \u00a74 Runbook command run verbatim from repo root exits 0: `./bin/speclang --version` -> 1.0.0; `./bin/speclang status` -> \"Specs: 452 (450 .spec.md + 2 .scl)\"; `./bin/speclang validate scripts/agent-driver/seed.example.spec.md` -> \"Validation Summary: 1 files / Passed: 1\"; `./bin/speclang cascade -v scripts/agent-driver/seed.example.spec.md` -> \"Generated: 2 files / Converged: Yes\"; `node scripts/agent-driver/drive.mjs --seed ... --run-dir .speclang/agent-driver` -> \"## SpecLang agent-driver run \u2014 PASS\"; `--json | jq .ok` -> true; `./bin/speclangd status` -> \"\ud83d\udd34 Daemon: Stopped\"; \u00a78 `./bin/speclang agent --trigger ... --provider openai --dry-run --json` -> exact JSON in doc; daemon start -d/status/stop all exit 0. Walkthrough transcript + generated-file listing with sizes in \u00a74/\u00a76 reproduced live: scripts/generated/greeting.ts 442 bytes (body 261), farewell.ts 300 bytes (body 119), both non-empty (`stat -c '%n %s'`). Per-stage progress record produced: .speclang/agent-driver/progress.{json,jsonl,md}, 5 stages all exit_code 0, ok:true. Tests: `npx vitest run tests/agent-driver/drive.test.ts` -> \"Tests 6 passed (6)\", exit 0; full guard `npx vitest run --passWithNoTests` -> \"Tests 1995 passed | 58 skipped (2053)\", exit 0. Caveat: \"fresh clone\" not literally reproducible here (dist/ is gitignored and must be built via `npm ci && npm run build`, which the doc states); verified on the built checkout.\n\n\u2026 [4214 chars omitted \u2014 4 line(s)] \u2026\nThe guide and the agent-driven loop are real and fully exercised (all documented commands exit 0, artifacts non-empty, progress record produced, 6/6 driver tests and 1995-test suite green), but docs/AGENT_DRIVER.md is linked from no documentation entry point, so the guide's intended audience cannot discover it. [uncovered failure paths: failure mode 0 (The Agent Driver guide is undiscoverable: no README/AGENTS.md/GETTING-STARTED/docs-index link points to docs/AGENT_DRIVER.md, so an agent session told to use SpecLang never finds the runbook.): detected_by is empty \u2014 uncovered failure path; failure mode 1 (Documented negative-probe claim is wrong: docs say non-code kinds (endpoint, operation, doc) are skipped and produce no artifacts, but the cascade emits a file for @kind:endpoint.): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "INCOMPLETE",
+            "items": [
+              {
+                "criterion": "A new Agent Driver guide exists in docs and every command it documents exits 0 when run verbatim from a fresh clone; a full agent-driven loop is proven by a walkthrough transcript plus a generated-file listing with sizes: single-seed baseline prompt file written, cascade run, generated files on disk all non-empty, per-stage progress record produced.",
+                "status": "PASS",
+                "detail": "docs/AGENT_DRIVER.md exists (381 lines, tracked: `git ls-files docs/AGENT_DRIVER.md`). Every \u00a74 Runbook command run verbatim from repo root exits 0: `./bin/speclang --version` -> 1.0.0; `./bin/speclang status` -> \"Specs: 452 (450 .spec.md + 2 .scl)\"; `./bin/speclang validate scripts/agent-driver/seed.example.spec.md` -> \"Validation Summary: 1 files / Passed: 1\"; `./bin/speclang cascade -v scripts/agent-driver/seed.example.spec.md` -> \"Generated: 2 files / Converged: Yes\"; `node scripts/agent-driver/drive.mjs --seed ... --run-dir .speclang/agent-driver` -> \"## SpecLang agent-driver run \u2014 PASS\"; `--json | jq .ok` -> true; `./bin/speclangd status` -> \"\ud83d\udd34 Daemon: Stopped\"; \u00a78 `./bin/speclang agent --trigger ... --provider openai --dry-run --json` -> exact JSON in doc; daemon start -d/status/stop all exit 0. Walkthrough transcript + generated-file listing with sizes in \u00a74/\u00a76 reproduced live: scripts/generated/greeting.ts 442 bytes (body 261), farewell.ts 300 bytes (body 119), both non-empty (`stat -c '%n %s'`). Per-stage progress record produced: .speclang/agent-driver/progress.{json,jsonl,md}, 5 stages all exit_code 0, ok:true. Tests: `npx vitest run tests/agent-driver/drive.test.ts` -> \"Tests 6 passed (6)\", exit 0; full guard `npx vitest run --passWithNoTests` -> \"Tests 1995 passed | 58 skipped (2053)\", exit 0. Caveat: \"fresh clone\" not literally reproducible here (dist/ is gitignored and must be built via `npm ci && npm run build`, which the doc states); verified on the built checkout.",
+                "resolution_probability": 0.17
+              },
+              {
+                "criterion": "The guide is reachable from the repository's documentation entry points (README / AGENTS.md / GETTING-STARTED / docs index), so an agent session told to use SpecLang can find it.",
+                "status": "FAIL",
+                "detail": "docs/AGENT_DRIVER.md is an orphan with zero inbound links. `grep -rn \"AGENT_DRIVER\\|agent-driver\\|Agent Driver\" --include=*.md .` excluding the guide itself, node_modules and .speclang returns exactly one hit \u2014 scripts/agent-driver/seed.example.spec.md:2 (`id: \"@agent-driver/baseline\"`), a spec id, not a link. README.md:740-746 \"Documentation\" lists only docs/CONFIGURATION.md, docs/CASCADE_DEMO.md, specs/cascade-protocol.spec.md, specs/examples.spec.dir/hello-world.spec.md, .opencode/agents/; README.md:150-153 \"API Reference\" lists docs/API_REFERENCE.md. AGENTS.md:37-44 \"Critical Specs (Read First)\" lists NORTH_STAR/project.scl/core/headers/speclang only, and AGENTS.md:196-199 docs/ tree lists only NORTH_STAR.md. GETTING-STARTED.md:194,239 and CONTRIBUTING.md:144 mention docs/ generically. docs/MASTER_GUIDE.md:12,238, docs/OPERATIONS.md:353 and specs/docs.spec.dir/layers.md:170-173 (\"See Also\") do not reference it. `grep -rln \"AGENT_DRIVER\" .opencode/ specs/` -> empty; `grep -rn \"drive.mjs\" --include=*.md` outside the guide -> empty. The guide's own \u00a79 \"Related\" links point outward only (../GETTING-STARTED.md, CONFIGURATION.md, troubleshooting.md). Commit 2e5bb76e touched only 4 files (docs/AGENT_DRIVER.md, scripts/agent-driver/drive.mjs, seed.example.spec.md, tests/agent-driver/drive.test.ts) \u2014 no README/AGENTS.md/index update. The guide's stated audience (docs/AGENT_DRIVER.md:3-5, \"an agent session ... told to use SpecLang\") therefore has no discoverable path to it.",
+                "derived": true
+              },
+              {
+                "criterion": "The driver fails closed on the documented negative probes (banner-only artifact, vacuous 0/0 test convergence, missing seed, unknown flag, zero artifacts) rather than reporting success.",
+                "status": "PASS",
+                "detail": "drive.mjs fails closed on every documented probe: banner-only artifact -> exit 1, stderr \"artifact carries only the generated banner, no body: /tmp/generated/hollow.ts\" (drive.mjs:340-343); vacuous 0/0 test convergence -> exit 1, \"test block(s) were generated but 0 tests executed \u2014 \\\"converged\\\" is vacuous\" (drive.mjs:322-330); missing seed -> exit 2 (\"seed not found\"); unknown flag -> exit 2 (parseArgs fail()); zero-artifact case -> drive.mjs:305-309 pushes 'cascade reported no artifacts (exit 0 with zero files is a no-op, not a pass)'. Tests: `npx vitest run tests/agent-driver/drive.test.ts` -> \"Tests 6 passed (6)\", exit 0. Note (doc inaccuracy, not a driver defect): a probe seed with @kind:endpoint produced 1 artifact (196 bytes) and exited 0, contradicting docs/AGENT_DRIVER.md \u00a75 rule 4 and \u00a77 probe row 1 which claim non-code kinds are skipped.",
+                "derived": true
+              },
+              {
+                "criterion": "The documented progress-record shape (progress.json / progress.jsonl / progress.md) matches what drive.mjs actually writes.",
+                "status": "PASS",
+                "detail": "docs/AGENT_DRIVER.md \u00a73 table matches the live artifact: .speclang/agent-driver/progress.json keys = artifacts, finished_at, generated_dir, ok, reason, schema, seed, stages, started_at, warnings; stages[0] keys = command, detail, duration_ms, exit_code, name; artifacts[0] keys = absolute_path, body_bytes, bytes, exists, path, sha256. progress.jsonl has one JSON line per run (append-only, 2 lines after 2 runs); progress.md renders the stage and artifact Markdown tables. Matches drive.mjs finish()/renderMarkdown().",
+                "derived": true
+              },
+              {
+                "criterion": "The documented artifact placement rule and byte sizes match reality, and the loop leaves the working tree clean (generated outputs gitignored).",
+                "status": "PASS",
+                "detail": "docs \u00a72 \"<artifacts> = <dir containing the seed>/../generated/\" holds: seed scripts/agent-driver/seed.example.spec.md produced scripts/generated/{greeting,farewell}.ts (confirmed by `ls -la scripts/generated/` and the cascade's own \"Generated: .../scripts/generated/greeting.ts\" lines). Documented sizes 442/300 bytes and body_bytes 261/119 reproduce exactly (`stat -c '%n %s'` -> farewell.ts 300, greeting.ts 442; independent banner-strip recomputation -> 442/261 and 300/119). Banner text matches the documented \"Auto-generated by SpecLang \u2026 DO NOT EDIT\". Both paths are gitignored (.gitignore:2 `generated/`, .gitignore:38 `.speclang/`); `git status --porcelain` empty after the runs.",
+                "derived": true
+              }
+            ],
+            "summary": "The guide and the agent-driven loop are real and fully exercised (all documented commands exit 0, artifacts non-empty, progress record produced, 6/6 driver tests and 1995-test suite green), but docs/AGENT_DRIVER.md is linked from no documentation entry point, so the guide's intended audience cannot discover it. [uncovered failure paths: failure mode 0 (The Agent Driver guide is undiscoverable: no README/AGENTS.md/GETTING-STARTED/docs-index link points to docs/AGENT_DRIVER.md, so an agent session told to use SpecLang never finds the runbook.): detected_by is empty \u2014 uncovered failure path; failure mode 1 (Documented negative-probe claim is wrong: docs say non-code kinds (endpoint, operation, doc) are skipped and produce no artifacts, but the cascade emits a file for @kind:endpoint.): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"UX-005\"}",
+          "exit_code": 0,
+          "output_sha": "9f1d9e060b0e5fcd9f9bdcfdd21dbe7e504af08d4db54c4b3e7f89678ae4e289"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && cat .gitreins/config.yaml 2>/dev/null | head -50",
+          "exit_code": 0,
+          "output_sha": "1000449d008c60659365d7259b77eaffbcaf967ea6be4544419361c7f9e44e7b"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls docs/ | head -100; echo ---; ls docs | wc -l",
+          "exit_code": 0,
+          "output_sha": "adcc7c552a7e4624b3fde579be1a54bd957ef3f3f179db73ac915d0bc6c7adeb"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -ril \"agent.driver\\|agent-driver\\|agent_driver\" --include=*.md --include=*.ts --include=*.json . 2>/dev/null | grep -v node_modules | grep -v '\\.tmp/' | head -50",
+          "exit_code": 0,
+          "output_sha": "a0fb898514a96bcf2e25f0b093fdd56fec2e6ba2c95da167767806ecbd72ec8e"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"docs/AGENT_DRIVER.md\"}",
+          "exit_code": 0,
+          "output_sha": "7b74b4cbe72a36c2bceff3f4d060a54aa5b89c8a4623c8c23af72b81bc10507b"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"offset\": 340, \"path\": \"docs/AGENT_DRIVER.md\"}",
+          "exit_code": 0,
+          "output_sha": "62e180c9e75bf7df97ff63a688b621e7e7e8540c13c8a6722a7a03e9769131b3"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la scripts/agent-driver/ tests/agent-driver/ 2>&1; echo ---; cat scripts/agent-driver/seed.example.spec.md",
+          "exit_code": 0,
+          "output_sha": "24685fce732b0a27d1f88163088c1ad490c91e7cf8d44c54c6de186b97b0ac86"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"scripts/agent-driver/drive.mjs\"}",
+          "exit_code": 0,
+          "output_sha": "175bc922923baf374a5073321f2dce0eb32fb1676b5016dae9bcee23f804e602"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"offset\": 400, \"path\": \"scripts/agent-driver/drive.mjs\"}",
+          "exit_code": 0,
+          "output_sha": "37df061b295dd53b3b96b53e7ecc5c396abf8a1bf1eff9effb5b08337cabad80"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; pwd; ls dist/src/cascade/index.js 2>&1; node --version; ./bin/speclang --version; echo \"exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "cffbbbf59a16e83adf09a2980d7b91bbc18f1a6c3b26d09d69f50cb1f0fd1607"
+        },
+        {
+          "tool": "run_command",
+          "command": "./bin/speclang status; echo \"exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "456b32404a29dbbf99876f658139fc02da0bde667e473e3a8eda9276ecbcc48e"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; ls dist/src/cascade/index.js; ./bin/speclang --version; echo \"exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "29001a3d8187a8f6fdb4ea93a1700079525e6c1bbc0aae0dcc7a23905005cd76"
+        },
+        {
+          "tool": "run_command",
+          "command": "./bin/speclang validate scripts/agent-driver/seed.example.spec.md; echo \"exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "820a0b4c90cd359e951e94694bdd6aae68db076ff1252d26ababd2f385849534"
+        },
+        {
+          "tool": "run_command",
+          "command": "./bin/speclang cascade -v scripts/agent-driver/seed.example.spec.md; echo \"exit=$?\"; echo ---; ls -la scripts/generated/",
+          "exit_code": 0,
+          "output_sha": "325570027df4f28826d17e92d91fc169ded65441cc861b22653f04dae1defa18"
+        },
+        {
+          "tool": "run_command",
+          "command": "node scripts/agent-driver/drive.mjs --seed scripts/agent-driver/seed.example.spec.md --run-dir .speclang/agent-driver; echo \"exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "3821e2daabc0f13394ba3a420cda473c54a943a0ef6a6c2c841cdf89fe345ae4"
+        },
+        {
+          "tool": "run_command",
+          "command": "node scripts/agent-driver/drive.mjs --seed scripts/agent-driver/seed.example.spec.md --run-dir .speclang/agent-driver --json | jq .ok; echo \"exit=$?\"; echo ---; ls -la .speclang/agent-driver/",
+          "exit_code": 0,
+          "output_sha": "12603a0041823570bb10188ba72559c9093174976ffa9e1c9d9fb4b35a1b2bbd"
+        },
+        {
+          "tool": "run_command",
+          "command": "./bin/speclangd status; echo \"exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "56aeb345141d4cef1653bfd6eea7dd90851a66c90fe5621bf249b0122ff3e369"
+        },
+        {
+          "tool": "run_command",
+          "command": "./bin/speclang agent --trigger scripts/agent-driver/seed.example.spec.md --provider openai --dry-run --json; echo \"exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "20fbb7bb9745922cec7ef87f208a9103d5c3b56814c7e2002077912fa6b03723"
+        },
+        {
+          "tool": "run_command",
+          "command": "./bin/speclang agent --trigger scripts/agent-driver/seed.example.spec.md --provider deepseek --dry-run; echo \"exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "77ae8748973f4d4efede0db2f71a9f2db13b9cac6d89da328003e9f6e517b600"
+        },
+        {
+          "tool": "run_command",
+          "command": "./bin/speclangd start -d; echo \"start_exit=$?\"; sleep 2; ./bin/speclangd status; echo \"status_exit=$?\"; ./bin/speclangd stop; echo \"stop_exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "fefd65ed6ce7025364a7b391d781f19129358d2ebad768f9537a3fed2408233b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat tests/agent-driver/drive.test.ts",
+          "exit_code": 0,
+          "output_sha": "e06abe0fd262de749d4f12819ca82f4d6ae4541d7022b31a289246f6af996dff"
+        },
+        {
+          "tool": "run_command",
+          "command": "git status --porcelain | head -20; echo ---; git log --oneline -5",
+          "exit_code": 0,
+          "output_sha": "4171a7bcc3cd23930a4ba05cc2fdf9025e6c50ffe06028d600bdc16ca25d7901"
+        },
+        {
+          "tool": "run_command",
+          "command": "npx vitest run tests/agent-driver/drive.test.ts 2>&1 | tail -30",
+          "exit_code": 0,
+          "output_sha": "9980b2b955d482b92b9c935d36390a87b1831c7e4050d25f37c6535b7a72add9"
+        },
+        {
+          "tool": "run_command",
+          "command": "npx vitest run --passWithNoTests 2>&1 | grep -q 'Tests.*passed' && echo GUARD_PASS || echo GUARD_FAIL; npx vitest run --passWithNoTests 2>&1 | tail -15",
+          "exit_code": -15,
+          "output_sha": "927a4295861c95189110c8b1def88837077ac00cbfb2cc0840792c5b5308c36a"
+        },
+        {
+          "tool": "run_command",
+          "command": "timeout 600 npx vitest run --passWithNoTests > /tmp/vitest-full.log 2>&1; echo \"exit=$?\"; tail -20 /tmp/vitest-full.log",
+          "exit_code": -15,
+          "output_sha": "a1be4efc8c76dd4ce03cb575125445290fe614ece24748f939c2f6d2a8c25a8c"
+        },
+        {
+          "tool": "run_command",
+          "command": "nohup npx vitest run --passWithNoTests > /tmp/vitest-full.log 2>&1 & echo started",
+          "exit_code": 0,
+          "output_sha": "8c488a9d4aa4feac321095bf2433c34a558c0356285d798a350a2d89ae9993d9"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"AGENT_DRIVER\\|agent-driver\\|Agent Driver\" README.md GETTING-STARTED.md docs/MASTER_GUIDE.md docs/CONFIGURATION.md 2>/dev/null | head -30",
+          "exit_code": 0,
+          "output_sha": "6f240aad8ff393ec74cf9491f4ebccd13f7ed59432113e6d370e5f477cf37a62"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"AGENT_DRIVER\" --include=*.md --include=*.ts --include=*.json --include=*.yaml . 2>/dev/null | grep -v node_modules | grep -v '\\.tmp/' | grep -v '\\.vfs/' | head -20",
+          "exit_code": 0,
+          "output_sha": "2f468a8b99eef166376674c3ac2ea2404f548efe8e2efd0ee6f8b084f8e7231c"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"docs/\" README.md | head -40",
+          "exit_code": 0,
+          "output_sha": "0ede6ebd89fc957870c2578581ec6b995d53f58913bc6d6c4023fa03ee667f22"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 40, \"offset\": 730, \"path\": \"README.md\"}",
+          "exit_code": 0,
+          "output_sha": "58bb4608bfaf83c8c79ba5da551ef897be4c673bf9fca8fb50a0091bb11f58a0"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"AGENT_DRIVER\\|agent-driver\" docs/MASTER_GUIDE.md docs/playbook/*.md AGENTS.md 2>/dev/null | head; echo ---; ls docs/playbook",
+          "exit_code": 0,
+          "output_sha": "76c4bb8b515949dc32fb2f0563b2a0504f1f3a7f72453b78a2830fe7c5afae74"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"docs/\" GETTING-STARTED.md | head -20; echo ---; grep -rn \"AGENT_DRIVER\" .github/ .gitreins/ 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "60dfb912d39670f6ad10d907c22ef99d9e15836a215ae3cd5a0f698903ad8aa6"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 60; tail -25 /tmp/vitest-full.log",
+          "exit_code": -15,
+          "output_sha": "f3fc367b6beed3ad62ff74b7c8a57bf58d35c5b4f98d4491b0ba14166c961093"
+        },
+        {
+          "tool": "run_command",
+          "command": "tail -25 /tmp/vitest-full.log; echo \"---\"; grep -c \"\" /tmp/vitest-full.log",
+          "exit_code": 0,
+          "output_sha": "a9550018f598cf8d56a856efb809ceeaa972498c2e1e903ebd30e07920c19bdf"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"Tests.*passed\" /tmp/vitest-full.log | head -3; echo \"guard_exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "fb4a4b36288a0bc033b280284c6bbb5e6a37bb2ba1b11c7514e1542c04b1945e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat .speclang/agent-driver/progress.md; echo ---; jq '{ok, seed, generated_dir, stages: [.stages[] | {name, exit_code}], artifacts: [.artifacts[] | {path, bytes, body_bytes}], warnings}' .speclang/agent-driver/progress.json",
+          "exit_code": 0,
+          "output_sha": "6116d0b53dc3268c0f93975b5bc259881b3aa1aaaea799dc56124c6a894843e7"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -a -n \"Tests.*passed\" /tmp/vitest-full.log | head -3",
+          "exit_code": 0,
+          "output_sha": "767e4510bfc6be9e0eff557dac970fd78fc8f7a7a5206f5aa60418c93ed941dc"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"generated\\|\\.speclang\" .gitignore | head -20",
+          "exit_code": 0,
+          "output_sha": "e4225bb164306de0074c2aaefe02123f86fb03cb2340d48c72943fb369cd1b8b"
+        },
+        {
+          "tool": "run_command",
+          "command": "git check-ignore -v scripts/generated/greeting.ts .speclang/agent-driver/progress.json; echo \"exit=$?\"; git status --porcelain | head",
+          "exit_code": 0,
+          "output_sha": "deb6fb0e321f8d257258b1f477373e869ebb919f4e8e19204e1741b009e5c0d8"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"agent-driver\\|AGENT_DRIVER\\|drive.mjs\" package.json; echo ---; grep -n '\"files\"' -A15 package.json",
+          "exit_code": 0,
+          "output_sha": "4b482b5674c389aab6818d2dbe3606fbe20d68dd2051d64f5b7a327f02b9459d"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"agent-driver\\|AGENT_DRIVER\\|drive.mjs\" CHANGELOG.md | head; echo ---; grep -rn \"agent-driver\" specs/ 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "2443a1efcb9a334e1d9dcaa4f502e221e11de1401f830e24a328eaba952d17ed"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 1,60p docs/CASCADE_DEMO.md",
+          "exit_code": 0,
+          "output_sha": "02e895c4f7372b4e2cee67c11ae4c6ac6251f322e8f38d45a800cb96ac25311c"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: docs/AGENT_DRIVER.md exists (381 lines). Every command in \\u00a74 Runbook run verbatim from repo root, all exit 0:\\n- ./bin/speclang --version -> 1.0.0, exit=0\\n- ./bin/speclang status -> \\\"Specs: 452 (450 .spec.md + 2 .scl)\\\", exit=0\\n- ./bin/speclang validate scripts/agent-driver/seed.example.spec.md -> \\\"Validation Summary: 1 files / Passed: 1\\\", exit=0\\n- ./bin/speclang cascade -v scripts/agent-driver/seed.example.spec.md -> \\\"Generated: 2 files / Converged: Yes\\\", exit=0\\n- node scripts/agent-driver/drive.mjs --seed ... --run-dir .speclang/agent-driver -> \\\"## SpecLang agent-driver run \\u2014 PASS\\\", exit=0\\n- ... --json | jq .ok -> true, exit=0\\n- ./bin/speclangd status -> \\\"\\ud83d\\udd34 Daemon: Stopped\\\", exit=0\\n- \\u00a78 dry run: ./bin/speclang agent --trigger ... --provider openai --dry-run --json -> exact JSON in doc, exit=0\\n- \\u00a78 daemon: start -d / status / stop all exit=0\\nWalkthrough transcript + generated-file listing with sizes present in doc \\u00a74/\\u00a76 and reproduced live: scripts/generated/greeting.ts 442 bytes (body 261), farewell.ts 300 bytes (body 119) \\u2014 both non-empty (ls -la confirms 442/300).\\nPer-stage progress record produced: .speclang/agent-driver/progress.{json,jsonl,md} with 5 stages all exit_code 0, ok:true.\\nTests: npx vitest run tests/agent-driver/drive.test.ts -> \\\"Tests 6 passed (6)\\\", exit 0. Full guard command `npx vitest run --passWithNoTests` -> \\\"Tests 1995 passed | 58 skipped (2053)\\\", grep 'Tests.*passed' matches (guard exit 0).\\nCaveat: \\\"fresh clone\\\" not literally reproducible here (dist/ is gitignored and must be built via `npm ci && npm run build`, which the doc states); verified on the built checkout.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "b516392f1f0bf8c509b09c649aa7e2f5579bc0a191e4918fa63231ab0d595598"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"AGENT_DRIVER\\|agent-driver\\|Agent Driver\" docs/*.md README.md GETTING-STARTED.md AGENTS.md CONTRIBUTING.md 2>/dev/null | grep -v \"^docs/AGENT_DRIVER.md\" | head -20",
+          "exit_code": 0,
+          "output_sha": "a456f4e793510e1fb86af2ef85a87ae61e581a43e21b46c341da48822b08ddde"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Derived criteria:\\n0. The guide is discoverable from the repo's documentation entry points (README \\\"Documentation\\\" section / GETTING-STARTED / docs index) \\u2014 otherwise an agent session told to \\\"use SpecLang\\\" never finds it.\\n1. The driver fails closed: a seed that produces no artifacts / banner-only artifacts / vacuous 0/0 test convergence exits non-zero rather than reporting success.\\n2. The documented progress-record shape (progress.json/jsonl/md with stages[] and artifacts[] bytes) is what the driver actually writes.\\n3. The documented artifact-placement rule (<seed-dir>/../generated) and the documented byte sizes match what the cascade actually produces.\\n4. The documented negative probes (\\u00a77) actually exit non-zero for the stated reason.\", \"key\": \"derived\"}",
+          "exit_code": 0,
+          "output_sha": "bf8020a595c04bfb289f5cfeedc7e043f22b24e201992dec1461b9876a299e75"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"docs/\" README.md | sed -n 1,20p; echo \"=== GETTING-STARTED doc list ===\"; sed -n 230,250p GETTING-STARTED.md",
+          "exit_code": 0,
+          "output_sha": "13eafe1d514e3c208e9fa7a9e674a5bd7373ad3e6e176cd22e95df77ee49cc2d"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 140,160p README.md; echo \"=== 470-490 ===\"; sed -n 470,490p README.md",
+          "exit_code": 0,
+          "output_sha": "388be31e19a6087b47a528d855132076ffd59997c6bcbb29dbe81231c3008a2e"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"Documentation\\|docs/\" AGENTS.md | head -20; echo \"=== CONTRIBUTING ===\"; grep -n \"docs/\" CONTRIBUTING.md | head -10",
+          "exit_code": 0,
+          "output_sha": "c6c38c9b5affbe453300266d9107fbb55b06d5dc9cbde6ed116a2630dfd31b88"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 190,215p AGENTS.md",
+          "exit_code": 0,
+          "output_sha": "812d1735b89238d5109504dbc7587e03851b3162e42d9adde208a5f4d0468f8b"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 30,60p AGENTS.md",
+          "exit_code": 0,
+          "output_sha": "d5edc1fb8f11e8a536b6e27d2eb56316640ed0cd20b2dbc6c7157c192294adb1"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FAIL: docs/AGENT_DRIVER.md is not linked from any documentation entry point. `grep -rn \\\"AGENT_DRIVER\\\\|agent-driver\\\\|Agent Driver\\\" docs/*.md README.md GETTING-STARTED.md AGENTS.md CONTRIBUTING.md` (excluding the file itself) returns ZERO matches. README.md:742-743 \\\"Documentation\\\" section lists only CONFIGURATION.md and CASCADE_DEMO.md; README.md:150-153 \\\"API Reference\\\" lists API_REFERENCE.md; AGENTS.md:37-44 \\\"Critical Specs (Read First)\\\" lists NORTH_STAR/project.scl/core/headers/speclang; GETTING-STARTED.md:230-239 lists specs + docs/prompts. The guide's own \\u00a79 \\\"Related\\\" links point outward only (GETTING-STARTED, CONFIGURATION, troubleshooting) \\u2014 nothing points in. An agent session told to \\\"use SpecLang\\\" has no path to the guide.\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "00e6027eea94f6ffea5ab78e6ed1c79820d744bc5be7da867eff66f4b3d43a76"
+        },
+        {
+          "tool": "run_command",
+          "command": "mkdir -p /tmp/probe1 && cat > /tmp/probe1/seed.spec.md <<'EOF'\n# speclang-header lines:6\nid: \"@agent-driver/probe\"\nversion: 0.1.0\nlayer: 1\ntarget_lang: ts\n---\n\n# probe\n\n### @block::nothing @kind:endpoint\n```ts\nexport const x = 1;\n```\nEOF\nnode scripts/agent-driver/drive.mjs --seed /tmp/probe1/seed.spec.md --run-dir /tmp/probe1/run; echo \"exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "b0c0a61bb50794bfd0b3db5a1dc69dac757ceb360d1332b1d0078e99fde980ae"
+        },
+        {
+          "tool": "run_command",
+          "command": "mkdir -p /tmp/probe2 && cat > /tmp/probe2/seed.spec.md <<'EOF'\n# speclang-header lines:6\nid: \"@agent-driver/probe2\"\nversion: 0.1.0\nlayer: 1\ntarget_lang: ts\n---\n\n# probe2\n\n### @block::hollow @kind:code\n```ts\n```\nEOF\nnode scripts/agent-driver/drive.mjs --seed /tmp/probe2/seed.spec.md --run-dir /tmp/probe2/run 2>&1 | tail -5; echo \"exit=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "617b7dcc6dddbeaa8c5552d7d23bedd1c07a2e8834f2df9f5708beeb5973b51b"
+        },
+        {
+          "tool": "run_command",
+          "command": "mkdir -p /tmp/probe3 && cat > /tmp/probe3/seed.spec.md <<'EOF'\n# speclang-header lines:6\nid: \"@agent-driver/probe3\"\nversion: 0.1.0\nlayer: 1\ntarget_lang: ts\n---\n\n# probe3\n\n### @block::thing @kind:code\n```ts\nexport const thing = 1;\n```\n\n### @block::thing-test @kind:test\n```ts\nimport { describe, it, expect } from 'vitest';\nimport { thing } from './thing';\ndescribe('thing', () => { it('is one', () => { expect(thing).toBe(1); }); });\n```\nEOF\nnode scripts/agent-driver/drive.mjs --seed /tmp/probe3/seed.spec.md --run-dir /tmp/probe3/run 2>&1 | tail -4; echo \"exit=${PIPESTATUS[0]}\"; echo \"=== missing seed ===\"; node scripts/agent-driver/drive.mjs --seed /tmp/nope.spec.md 2>&1 | tail -2; echo \"exit=${PIPESTATUS[0]}\"; echo \"=== unknown flag ===\"; node scripts/agent-driver/drive.mjs --seed scripts/agent-driver/seed.example.spec.md --bogus 2>&1 | tail -2; echo \"exit=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "6b86e5887233e6831d85b9639894244dbad1282d87bf3f5f28f540babd178fe3"
+        },
+        {
+          "tool": "run_command",
+          "command": "node scripts/agent-driver/drive.mjs --seed /tmp/probe2/seed.spec.md --run-dir /tmp/probe2/run >/dev/null 2>&1; echo \"hollow_exit=$?\"; node scripts/agent-driver/drive.mjs --seed /tmp/probe3/seed.spec.md --run-dir /tmp/probe3/run >/dev/null 2>&1; echo \"vacuous_exit=$?\"; node scripts/agent-driver/drive.mjs --seed /tmp/nope.spec.md >/dev/null 2>&1; echo \"missing_seed_exit=$?\"; node scripts/agent-driver/drive.mjs --seed scripts/agent-driver/seed.example.spec.md --bogus >/dev/null 2>&1; echo \"unknown_flag_exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "296375ddb71a5fb4c83f4eb6e341a2a9080c666d5c9ab53674ec5d555161a04b"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: drive.mjs fails closed on the documented probes.\\n- banner-only artifact: /tmp/probe2 seed -> exit 1, stderr \\\"artifact carries only the generated banner, no body: /tmp/generated/hollow.ts\\\" (drive.mjs:340-343)\\n- vacuous 0/0 test convergence: /tmp/probe3 seed -> exit 1, \\\"test block(s) were generated but 0 tests executed \\u2014 \\\\\\\"converged\\\\\\\" is vacuous\\\" (drive.mjs:322-330)\\n- missing seed -> exit 2 (\\\"seed not found\\\"); unknown flag -> exit 2 (drive.mjs:parseArgs fail())\\n- zero-artifact case: drive.mjs:305-309 pushes 'cascade reported no artifacts (exit 0 with zero files is a no-op, not a pass)'. NOTE: my /tmp/probe1 seed with @kind:endpoint actually produced 1 artifact (196 bytes) and exited 0 \\u2014 the cascade DOES emit files for @kind:endpoint, contradicting docs/AGENT_DRIVER.md \\u00a75 rule 4 (\\\"other kinds (endpoint, operation, doc, \\u2026) are descriptive and are skipped\\\") and \\u00a77 probe row 1. Doc inaccuracy, not a driver defect.\\n- tests: npx vitest run tests/agent-driver/drive.test.ts -> 6 passed, exit 0.\", \"key\": \"verified_derived_1\"}",
+          "exit_code": 0,
+          "output_sha": "579041aa57bdabee1b99b82eb0c4e8dd89dac176af940a958bb8c406088bbf20"
+        },
+        {
+          "tool": "run_command",
+          "command": "head -c 600 .speclang/agent-driver/progress.jsonl; echo; echo \"=== jsonl lines ===\"; wc -l .speclang/agent-driver/progress.jsonl; echo \"=== json keys ===\"; jq -r 'keys|join(\",\")' .speclang/agent-driver/progress.json; jq -r '.stages[0]|keys|join(\",\")' .speclang/agent-driver/progress.json; jq -r '.artifacts[0]|keys|join(\",\")' .speclang/agent-driver/progress.json",
+          "exit_code": 0,
+          "output_sha": "64f334836150cdaff3ee1102c7d2fe6918acf226bf60ef6cf30a1e6a30393ff3"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: documented progress-record shape matches what drive.mjs writes. docs/AGENT_DRIVER.md \\u00a73 table says progress.json carries schema, seed, generated dir, timestamps, ok, reason, stages[], artifacts[] (path, bytes, body_bytes, sha256), warnings[]; progress.jsonl one JSON line per run; progress.md a Markdown table.\\nLive: .speclang/agent-driver/progress.json keys = artifacts,finished_at,generated_dir,ok,reason,schema,seed,stages,started_at,warnings; stages[0] keys = command,detail,duration_ms,exit_code,name; artifacts[0] keys = absolute_path,body_bytes,bytes,exists,path,sha256. progress.jsonl has 2 lines (one per run, append-only). progress.md renders the stage + artifact tables. Matches drive.mjs:finish()/renderMarkdown().\", \"key\": \"verified_derived_2\"}",
+          "exit_code": 0,
+          "output_sha": "7c5fed5f52c5004be343cfde6c743431bcc6dca818681f1cc80d75f64159daa2"
+        },
+        {
+          "tool": "run_command",
+          "command": "head -20 scripts/generated/greeting.ts; echo \"=== sizes ===\"; stat -c '%n %s' scripts/generated/*.ts; echo \"=== body bytes check ===\"; node -e \"const fs=require('fs');for(const f of ['scripts/generated/greeting.ts','scripts/generated/farewell.ts']){const t=fs.readFileSync(f,'utf8');const b=t.replace(/^\\/\\*\\*\\n \\* Auto-generated(?: test)? by SpecLang\\n[\\s\\S]*?\\*\\/\\n\\n?/,'').trim();console.log(f, fs.statSync(f).size, Buffer.byteLength(b))}\"",
+          "exit_code": 0,
+          "output_sha": "f5a0b4e5ede641e7ac41262bbd9418fe8f6c38c37a6e975a9722ffc3ab71843e"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: documented placement rule and byte sizes match reality. docs \\u00a72 \\\"<artifacts> = <dir containing the seed>/../generated/\\\" \\u2014 seed scripts/agent-driver/seed.example.spec.md produced scripts/generated/{greeting,farewell}.ts (confirmed by `ls -la scripts/generated/` and by the cascade's own \\\"Generated: /home/kara/SpecLang/scripts/generated/greeting.ts\\\" lines). Documented sizes 442/300 bytes and body_bytes 261/119 reproduce exactly: `stat -c '%n %s'` -> farewell.ts 300, greeting.ts 442; independent banner-strip recomputation -> 442/261 and 300/119. Banner text matches the documented \\\"Auto-generated by SpecLang \\u2026 DO NOT EDIT\\\". Both paths are gitignored (.gitignore:2 `generated/`, .gitignore:38 `.speclang/`), so the loop leaves the tree clean \\u2014 `git status --porcelain` empty after the runs.\", \"key\": \"verified_derived_3\"}",
+          "exit_code": 0,
+          "output_sha": "34b3aa9890a25e9c8e1aa63f031794866f06fa54a8b204a4942000c079099b9f"
+        },
+        {
+          "tool": "run_command",
+          "command": "mkdir -p /tmp/probe4 && cat > /tmp/probe4/seed.spec.md <<'EOF'\n# speclang-header lines:6\nid: \"@agent-driver/probe4\"\nversion: 0.1.0\nlayer: 1\ntarget_lang: ts\n---\n\n# probe4\n\n### @block::nothing @kind:doc\n```ts\nexport const x = 1;\n```\nEOF\n./bin/speclang cascade -v /tmp/probe4/seed.spec.md; echo \"cascade_exit=$?\"; node scripts/agent-driver/drive.mjs --seed /tmp/probe4/seed.spec.md --run-dir /tmp/probe4/run >/dev/null 2>&1; echo \"driver_exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "7e3d4f2e6e39d2bc872729c0637a776f91385f0563d54ca512e72f71633e1555"
+        },
+        {
+          "tool": "run_command",
+          "command": "node scripts/agent-driver/drive.mjs --seed /tmp/probe4/seed.spec.md --run-dir /tmp/probe4/run 2>&1 | tail -6",
+          "exit_code": 0,
+          "output_sha": "0e9adc8152a16603eef426d800d987920a2939746ea4272cade52b07b65d3ab9"
+        },
+        {
+          "tool": "run_command",
+          "command": "./bin/speclang validate /tmp/probe4/seed.spec.md 2>&1 | tail -12",
+          "exit_code": 0,
+          "output_sha": "1272f7570eaa9dd1bf8d56d567ff5a85e325be453c70aa0d87fb29151950957a"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"Invalid block kind\" src/ | head -5; echo ---; grep -rn \"VALID_KINDS\\|validKinds\\|blockKinds\" src/ | head -10",
+          "exit_code": 0,
+          "output_sha": "4cb631e4c05ee7ed0edd6a03dfb32f5ca2ab5e3233adbb941734d8d9b26a69a8"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 300,345p src/parser/block-parser.js; echo \"=== kinds ===\"; grep -rn \"kind\" src/parser/block-parser.js | head -30",
+          "exit_code": 0,
+          "output_sha": "ee1d1fa1c23e44a6b0a2ea07e0f1cd38dcc1db5da014a173066cdab07ae0691c"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"VALID_BLOCK_KINDS\" src/ --include=*.ts --include=*.js | head -5",
+          "exit_code": 0,
+          "output_sha": "2448d7c63cf96b78141e88e262edb541244193a1bb25b6c83218808ca72e647f"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 40,70p src/types/poc.js",
+          "exit_code": 0,
+          "output_sha": "3aa1617ad33589bd67a8126f1de061e3f1ccda6b1a4c8c59bf1fbe4a0d3dd391"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"kind\" src/cascade/index.ts | head -40",
+          "exit_code": 0,
+          "output_sha": "0072445d38f3094749618bb09e8122feb9ffde7b95443b66ba6dd0697137a3bd"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 355,440p src/cascade/index.ts",
+          "exit_code": 0,
+          "output_sha": "d39955e8adad471b031c348471b74ef1df7b2c5f359aba185454bdc9b8cc6e5e"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 195,260p src/cascade/index.ts",
+          "exit_code": 0,
+          "output_sha": "db95210a45953affe7eacf4d00f2cc7118445faf7c728aae9b23e8d0d5d3c2ed"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 60,140p src/cascade/index.ts",
+          "exit_code": 0,
+          "output_sha": "821dedc4fcb00d7eb5532542fe4343d713a8adbe730bb05c7dc80077cb76b8fe"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 140,195p src/cascade/index.ts",
+          "exit_code": 0,
+          "output_sha": "7f08e6ec3af1febb125a982ddf8f4a5c025677244479099d8f657cd319fb0780"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"kind:code\\|@kind:\" src/parser/*.ts src/parser/*.js 2>/dev/null | head -20; echo \"=== validator block kinds ===\"; grep -rn \"block\" src/validation/*.ts 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "3ea68eb968c0e4e88f5c14f51bd48af831c85688a6d8709469164573805b220a"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"kind\" src/validation/rules/blocks.ts 2>/dev/null | head -30; ls src/validation/rules/ 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "a245a682e31374ee6455b3a9aa4350253b02f85eda0affed6ac1ff2313c54043"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 130, \"path\": \"src/validation/rules/blocks.ts\"}",
+          "exit_code": 0,
+          "output_sha": "aadfd9e8daf7c22aa2d93791e56de861349f941b02b780c9a9b8b287bc6d2a55"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"kind\" src/parser/header.ts | head -20; echo \"=== parseBlocks in header.ts ===\"; sed -n 1,60p src/parser/header.ts",
+          "exit_code": 0,
+          "output_sha": "d6dde5e197cfe94ec6dbde8b6f59d9a9cf32949b28ef44b288a35c1a11ec3ed2"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 130,200p src/parser/header.ts",
+          "exit_code": 0,
+          "output_sha": "bbee4c6d689a48f99fb6807679558d561447d9f7fc08e4b4b425618108ee670d"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"extractBlocks\\|parseBlocks\" src/validation/*.ts src/validation/rules/*.ts | head -10",
+          "exit_code": 0,
+          "output_sha": "10cc90a035ddee41519cc47a369807863d637ced2662a23231ba9ecfa42b3d4a"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"extractBlocks\" src/ --include=*.ts | head -10; echo \"=== validate entry ===\"; grep -rn \"blocks\" src/validation/validator.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "41ef4253e1f0298fff779860e3126563bcc0a80187c9749a9eb160e765e87a03"
+        },
+        {
+          "tool": "sandbox_read",
+          "command": "sandbox_read {\"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "21f006830e488254fb9a5151edd9408ad68277b2b3487746c18c30f1d6fa1abc"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang 2>/dev/null || cd \"$(pwd)\"; pwd; ls docs/ | head -50",
+          "exit_code": 0,
+          "output_sha": "1baa265d2530fe78dd849be8b9301968ff5be9773e79f6d979d48a83a4116f24"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang; grep -rn \"AGENT_DRIVER\\|agent-driver\\|Agent Driver\" --include=*.md --include=*.json --include=*.yaml --include=*.yml . 2>/dev/null | grep -v \"^./docs/AGENT_DRIVER.md\" | grep -v node_modules | head -40",
+          "exit_code": 0,
+          "output_sha": "5a98aa348938cec5320592e737b62075610a06a4cdb518bef23f3e8651316a6d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang; sed -n '730,760p' README.md; echo ---; sed -n '140,160p' README.md",
+          "exit_code": 0,
+          "output_sha": "0c675a3e3c8e15c0215b35cc996006f5e738610f5edc8430b980fee9fa499cca"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang; grep -rn \"AGENT_DRIVER\\|agent-driver\\|Agent Driver\" --include=*.md . 2>/dev/null | grep -v \"^./docs/AGENT_DRIVER.md\" | grep -v node_modules | grep -v \"^./.speclang\" | head -20; echo \"=== exit $?\"",
+          "exit_code": 0,
+          "output_sha": "a732e73f074f07d66d396f39640c32136c98199a1e686eebc0d0db29c3a98d6d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang; grep -rn \"docs/\" AGENTS.md | head -30; echo ---; grep -rn \"docs/\" GETTING-STARTED.md | head -30",
+          "exit_code": 0,
+          "output_sha": "80aefdf42c6bfc7ea2ee8267d42bb40c27e74676999502bea1929dfca4da9823"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang; sed -n '30,60p' AGENTS.md; echo \"=== 190-215\"; sed -n '190,215p' AGENTS.md",
+          "exit_code": 0,
+          "output_sha": "5b9b83fb5bbad533003e80c38d8d0c02305033eeac400f4fc501ad00399732f6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang; sed -n '1,40p' docs/AGENT_DRIVER.md; echo \"=== tail\"; tail -40 docs/AGENT_DRIVER.md",
+          "exit_code": 0,
+          "output_sha": "7e97ad50561c8dcdaa8e7729946cead02a6cebc9cc4a52a4de0438303349db87"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang; grep -rn \"AGENT_DRIVER\\|agent-driver\" --include=*.md --include=*.json --include=*.yaml --include=*.yml --include=*.ts --include=*.mjs . 2>/dev/null | grep -v node_modules | grep -v \"^./.speclang\" | grep -v \"^./docs/AGENT_DRIVER.md\" | grep -v \"^./scripts/agent-driver/\" | grep -v \"^./tests/agent-driver/\" | head -20; echo \"=== done\"",
+          "exit_code": 0,
+          "output_sha": "ec8361721f5274b7bbef458ea8eeab899777af3dda9d5b4e9e52070d7d646d3a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang; grep -rn \"CASCADE_DEMO\\|CONFIGURATION.md\" --include=*.md . | grep -v node_modules | grep -v \"^./docs/CASCADE_DEMO.md\" | grep -v \"^./docs/CONFIGURATION.md\" | head -20",
+          "exit_code": 0,
+          "output_sha": "1cde2db7c3d295c751045bc0afd66feef7c68d228ae624092994727ac23f532a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang; sed -n '160,180p' specs/docs.spec.dir/layers.md; echo \"=== ls specs/docs.spec.dir\"; ls specs/docs.spec.dir/ | head -40",
+          "exit_code": 0,
+          "output_sha": "c432403907afdf7758fd77d0cf2ee8c4526163ad9855427b5a4f5b3d047f93d5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang; ls -la docs/AGENT_DRIVER.md; git log --oneline -3 -- docs/AGENT_DRIVER.md; echo \"=== tracked?\"; git ls-files docs/AGENT_DRIVER.md scripts/agent-driver/ tests/agent-driver/",
+          "exit_code": 0,
+          "output_sha": "22f3046a04c9949344fb6474a0ac19d5e11ec58a87bc7a101dec36f61ef3a4be"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang; git show --stat 2e5bb76e | head -30",
+          "exit_code": 0,
+          "output_sha": "3a4d3e510610e5b8b775005e725589cf0b257933fe991460944a2312e88d4276"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang; grep -rn \"docs/\" README.md | head -40",
+          "exit_code": 0,
+          "output_sha": "636e0c30918d2dddd79ec046d3d61dab523d6393b250255ba53af251b77e09ad"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang; grep -rn \"docs/\" GETTING-STARTED.md | head -40; echo \"=== CONTRIBUTING\"; ls CONTRIBUTING.md 2>/dev/null && grep -rn \"docs/\" CONTRIBUTING.md | head -20",
+          "exit_code": 0,
+          "output_sha": "d1da4dfdc7f1202b638b7f53af30e3bdd90863a09c3be0987f8d81752f180018"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang; grep -rln \"AGENT_DRIVER\" .opencode/ specs/ 2>/dev/null | head; echo \"=== skills/agents referencing driver\"; grep -rn \"drive.mjs\" --include=*.md . 2>/dev/null | grep -v node_modules | grep -v \"^./docs/AGENT_DRIVER.md\" | head",
+          "exit_code": 0,
+          "output_sha": "d9abaa8037edbd9ae6b5673f173e7c0490416ee0c65814f558b1b346ecfc0355"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang; grep -rn \"docs/\" docs/MASTER_GUIDE.md | head -30; echo \"=== docs/CONTEXT.md\"; grep -rn \"docs/\" docs/CONTEXT.md | head -20",
+          "exit_code": 0,
+          "output_sha": "4044ef12ecdd019c65fbf2e837892b7ffe145c31cb01f5c3518b8cb9dbee69e0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang; grep -rn \"docs/\" docs/OPERATIONS.md docs/DOGFOODING.md 2>/dev/null | head -20; echo \"=== index\"; ls docs/playbook docs/prompts | head -20",
+          "exit_code": 0,
+          "output_sha": "7c851ce35bd2f571cf61dd36ecfa0b8c12c9eaa21944be66b153c0a122fb74c7"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FAIL (re-confirmed with fresh evidence): docs/AGENT_DRIVER.md is an orphan \\u2014 no documentation entry point links to it.\\n- `grep -rn \\\"AGENT_DRIVER\\\\|agent-driver\\\\|Agent Driver\\\" --include=*.md .` excluding docs/AGENT_DRIVER.md, node_modules, .speclang -> only hit is scripts/agent-driver/seed.example.spec.md:2 (`id: \\\"@agent-driver/baseline\\\"`), i.e. a spec id, not a link. Zero inbound links.\\n- README.md \\\"Documentation\\\" section (README.md:740-746) lists only docs/CONFIGURATION.md, docs/CASCADE_DEMO.md, specs/cascade-protocol.spec.md, specs/examples.spec.dir/hello-world.spec.md, .opencode/agents/. README.md:150-153 \\\"API Reference\\\" lists docs/API_REFERENCE.md. No AGENT_DRIVER entry.\\n- AGENTS.md:37-44 \\\"Critical Specs (Read First)\\\" lists NORTH_STAR/project.scl/core/headers/speclang only; AGENTS.md:196-199 docs/ tree lists only NORTH_STAR.md.\\n- GETTING-STARTED.md:194,239 and CONTRIBUTING.md:144 mention docs/ generically only.\\n- docs/MASTER_GUIDE.md:12,238, docs/CONTEXT.md, docs/OPERATIONS.md:353, specs/docs.spec.dir/layers.md:170-173 (\\\"See Also\\\") \\u2014 none reference AGENT_DRIVER.md.\\n- .opencode/ and specs/ contain zero references to AGENT_DRIVER or drive.mjs (`grep -rln AGENT_DRIVER .opencode/ specs/` -> empty; `grep -rn \\\"drive.mjs\\\" --include=*.md` outside the guide -> empty).\\n- The guide's own \\u00a79 \\\"Related\\\" links point outward only (../GETTING-STARTED.md, CONFIGURATION.md, troubleshooting.md) \\u2014 nothing points in.\\n- Commit 2e5bb76e touched exactly 4 files (docs/AGENT_DRIVER.md, scripts/agent-driver/drive.mjs, seed.example.spec.md, tests/agent-driver/drive.test.ts) \\u2014 no index/README/AGENTS.md update.\\nConsequence: an agent session told to \\\"use SpecLang\\\" (the guide's stated audience, docs/AGENT_DRIVER.md:3-5) has no discoverable path to the guide.\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "5ba83a36e434a0319aa2c255c3abfa4edf6a6e83141f36911ae170a990475b77"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [],
+    "summary": "The change tightens an existing test to assert the new guard-build.sh wrapper is referenced in config and that the wrapper itself invokes `npm run build`, with no logic, wiring, or convention defects visible in the diff."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: \u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[1/1]\u23af\n\nStage tier2: FAIL\n  INCOMPLETE\n  \u2713 A new Agent Driver guide exists in docs and every command it documents exits 0 when run verbatim from a fresh clone; a full agent-driven loop is proven by a walkthrough transcript plus a generated-file listing with sizes: single-seed baseline prompt file written, cascade run, generated files on disk all non-empty, per-stage progress record produced.: docs/AGENT_DRIVER.md exists (381 lines, tracked: `git ls-files docs/AGENT_DRIVER.md`). Every \u00a74 Runbook command run verbatim from repo root exits 0: `./bin/speclang --version` -> 1.0.0; `./bin/speclang status` -> \"Specs: 452 (450 .spec.md + 2 .scl)\"; `./bin/speclang validate scripts/agent-driver/seed.example.spec.md` -> \"Validation Summary: 1 files / Passed: 1\"; `./bin/speclang cascade -v scripts/agent-driver/seed.example.spec.md` -> \"Generated: 2 files / Converged: Yes\"; `node scripts/agent-driver/drive.mjs --seed ... --run-dir .speclang/agent-driver` -> \"## SpecLang agent-driver run \u2014 PASS\"; `--json | jq .ok` -> true; `./bin/speclangd status` -> \"\ud83d\udd34 Daemon: Stopped\"; \u00a78 `./bin/speclang agent --trigger ... --provider openai --dry-run --json` -> exact JSON in doc; daemon start -d/status/stop all exit 0. Walkthrough transcript + generated-file listing with sizes in \u00a74/\u00a76 reproduced live: scripts/generated/greeting.ts 442 bytes (body 261), farewell.ts 300 bytes (body 119), both non-empty (`stat -c '%n %s'`). Per-stage progress record produced: .speclang/agent-driver/progress.{json,jsonl,md}, 5 stages all exit_code 0, ok:true. Tests: `npx vitest run tests/agent-driver/drive.test.ts` -> \"Tests 6 passed (6)\", exit 0; full guard `npx vitest run --passWithNoTests` -> \"Tests 1995 passed | 58 skipped (2053)\", exit 0. Caveat: \"fresh clone\" not literally reproducible here (dist/ is gitignored and must be built via `npm ci && npm run build`, which the doc states); verified on the built checkout.\n  \u2717 The guide is reachable from the repository's documentation entry points (README / AGENTS.md / GETTING-STARTED / docs index), so an agent session told to use SpecLang can find it.: docs/AGENT_DRIVER.md is an orphan with zero inbound links. `grep -rn \"AGENT_DRIVER\\|agent-driver\\|Agent Driver\" --include=*.md .` excluding the guide itself, node_modules and .speclang returns exactly one hit \u2014 scripts/agent-driver/seed.example.spec.md:2 (`id: \"@agent-driver/baseline\"`), a spec id, not a link. README.md:740-746 \"Documentation\" lists only docs/CONFIGURATION.md, docs/CASCADE_DEMO.md, specs/cascade-protocol.spec.md, specs/examples.spec.dir/hello-world.spec.md, .opencode/agents/; README.md:150-153 \"API Reference\" lists docs/API_REFERENCE.md. AGENTS.md:37-44 \"Critical Specs (Read First)\" lists NORTH_STAR/project.scl/core/headers/speclang only, and AGENTS.md:196-199 docs/ tree lists only NORTH_STAR.md. GETTING-STARTED.md:194,239 and CONTRIBUTING.md:144 mention docs/ generically. docs/MASTER_GUIDE.md:12,238, docs/OPERATIONS.md:353 and specs/docs.spec.dir/layers.md:170-173 (\"See Also\") do not reference it. `grep -rln \"AGENT_DRIVER\" .opencode/ specs/` -> empty; `grep -rn \"drive.mjs\" --include=*.md` outside the guide -> empty. The guide's own \u00a79 \"Related\" links point outward only (../GETTING-STARTED.md, CONFIGURATION.md, troubleshooting.md). Commit 2e5bb76e touched only 4 files (docs/AGENT_DRIVER.md, scripts/agent-driver/drive.mjs, seed.example.spec.md, tests/agent-driver/drive.test.ts) \u2014 no README/AGENTS.md/index update. The guide's stated audience (docs/AGENT_DRIVER.md:3-5, \"an agent session ... told to use SpecLang\") therefore has no discoverable path to it.\n  \u2713 The driver fails closed on the documented negative probes (banner-only artifact, vacuous 0/0 test convergence, missing seed, unknown flag, zero artifacts) rather than reporting success.: drive.mjs fails closed on every documented probe: banner-only artifact -> exit 1, stderr \"artifact carries only the generated banner, no body: /tmp/generated/hollow.ts\" (drive.mjs:340-343); vacuous 0/0 test convergence -> exit 1, \"test block(s) were generated but 0 tests executed \u2014 \\\"converged\\\" is vacuous\" (drive.mjs:322-330); missing seed -> exit 2 (\"seed not found\"); unknown flag -> exit 2 (parseArgs fail()); zero-artifact case -> drive.mjs:305-309 pushes 'cascade reported no artifacts (exit 0 with zero files is a no-op, not a pass)'. Tests: `npx vitest run tests/agent-driver/drive.test.ts` -> \"Tests 6 passed (6)\", exit 0. Note (doc inaccuracy, not a driver defect): a probe seed with @kind:endpoint produced 1 artifact (196 bytes) and exited 0, contradicting docs/AGENT_DRIVER.md \u00a75 rule 4 and \u00a77 probe row 1 which claim non-code kinds are skipped.\n  \u2713 The documented progress-record shape (progress.json / progress.jsonl / progress.md) matches what drive.mjs actually writes.: docs/AGENT_DRIVER.md \u00a73 table matches the live artifact: .speclang/agent-driver/progress.json keys = artifacts, finished_at, generated_dir, ok, reason, schema, seed, stages, started_at, warnings; stages[0] keys = command, detail, duration_ms, exit_code, name; artifacts[0] keys = absolute_path, body_bytes, bytes, exists, path, sha256. progress.jsonl has one JSON line per run (append-only, 2 lines after 2 runs); progress.md renders the stage and artifact Markdown tables. Matches drive.mjs finish()/renderMarkdown().\n  \u2713 The documented artifact placement rule and byte sizes match reality, and the loop leaves the working tree clean (generated outputs gitignored).: docs \u00a72 \"<artifacts> = <dir containing the seed>/../generated/\" holds: seed scripts/agent-driver/seed.example.spec.md produced scripts/generated/{greeting,farewell}.ts (confirmed by `ls -la scripts/generated/` and the cascade's own \"Generated: .../scripts/generated/greeting.ts\" lines). Documented sizes 442/300 bytes and body_bytes 261/119 reproduce exactly (`stat -c '%n %s'` -> farewell.ts 300, greeting.ts 442; independent banner-strip recomputation -> 442/261 and 300/119). Banner text matches the documented \"Auto-generated by SpecLang \u2026 DO NOT EDIT\". Both paths are gitignored (.gitignore:2 `generated/`, .gitignore:38 `.speclang/`); `git status --porcelain` empty after the runs.\nThe guide and the agent-driven loop are real and fully exercised (all documented commands exit 0, artifacts non-empty, progress record produced, 6/6 driver tests and 1995-test suite green), but docs/AGENT_DRIVER.md is linked from no documentation entry point, so the guide's intended audience cannot discover it. [uncovered failure paths: failure mode 0 (The Agent Driver guide is undiscoverable: no README/AGENTS.md/GETTING-STARTED/docs-index link points to docs/AGENT_DRIVER.md, so an agent session told to use SpecLang never finds the runbook.): detected_by is empty \u2014 uncovered failure path; failure mode 1 (Documented negative-probe claim is wrong: docs say non-code kinds (endpoint, operation, doc) are skipped and produce no artifacts, but the cascade emits a file for @kind:endpoint.): detected_by is empty \u2014 uncovered failure path]\n\nOverall: FAIL \u2717",
+  "evaluated_at": "2026-11-17T21:35:44.212305",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T21:35:44.227938+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 2500,
+        "truncated": false,
+        "source": "git show 8f7b9b362a5e"
+      }
+    ],
+    "task_id": "UX-005"
+  }
+}

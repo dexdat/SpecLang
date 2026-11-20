@@ -1,0 +1,406 @@
+{
+  "task_id": "DOC-7",
+  "task_title": "DOC-7: document the five shipped CLI commands missing from docs/API_REFERENCE.md plus a parity check",
+  "task_criteria": [
+    "docs/API_REFERENCE.md documents search, maturity, upgrade, downgrade and history|log with their real options read from 'node bin/speclang <cmd> --help', and scripts/check_docs_vs_cli_help.js exits 0 on the tree, non-zero when a documented command row is removed. failure_condition = any of the five commands absent from the table, or the parity script exiting 0 while a command is missing. proof = pasted parity output, the five documented greps, and a red-proof of the script on a mutated copy."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "tmp2",
+  "commit": "ad5f0ec93ae6fad9325ff6e818506dde949b40d9",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "28a5c7ccfcf80ba1aa2c6ab80124723f12edae34e7ef7d932313b575da2ead2d",
+  "working_tree_dirty_path_count": 2,
+  "items": [
+    {
+      "criterion": "docs/API_REFERENCE.md documents search, maturity, upgrade, downgrade and history|log with their real options read from 'node bin/speclang <cmd> --help', and scripts/check_docs_vs_cli_help.js exits 0 on the tree, non-zero when a documented command row is removed. failure_condition = any of the five commands absent from the table, or the parity script exiting 0 while a command is missing. proof = pasted parity output, the five documented greps, and a red-proof of the script on a mutated copy.",
+      "status": "PASS",
+      "detail": "All five commands are documented as table rows in docs/API_REFERENCE.md:150-154 (file is a symlink -> specs/docs.spec.dir/docs/API_REFERENCE.md; commit 9bcea767 edited the target). grep -nE 'speclang (search|maturity|upgrade|downgrade|history)' returns lines 150,151,152,153,154. Options match `node bin/speclang <cmd> --help` exactly: search -k/--kind, -t/--tag, -l/--limit (default 20), -v/--verbose; maturity --level, --json, --verbose; upgrade --to, --json, --plan; downgrade --to, --json, --plan; history|log -a/--all, -b/--block, --author, --since, --until, --compare, -f/--format (text|json|timeline, default text), --follow, --stat, --blame. They also match the commander option() registrations at bin/speclang:2005-2008, 2147-2149, 2317-2319, 2442-2444, 2672-2681. PARITY ON TREE: `node scripts/check_docs_vs_cli_help.js` -> 'commands: 20 from --help, 21 names in the table' / 'OK: every command from --help is documented in docs/API_REFERENCE.md', EXIT=0. RED-PROOF (mutated copies via --docs): removing the search row -> 'FAIL: 1 CLI command(s) missing from the table: search' EXIT=1; maturity -> '...missing from the table: maturity' EXIT=1; upgrade -> EXIT=1; downgrade -> EXIT=1; history -> '...missing from the table: history|log' EXIT=1. Additional robustness: empty table -> 'FAIL: 20 CLI command(s) missing' EXIT=1; missing '## 2. CLI' heading -> 'ERROR: gate could not run' EXIT=2; prose-only mention of `speclang search` outside the table -> still EXIT=1 (not fooled). Runtime spot-checks confirm the documented flags are real: `search hello --limit 1` (1 result), `maturity --json` (JSON levels), `history --format json` (JSON array), `log` alias (same JSON), `upgrade ... --to Production --plan` prints '=== Upgrade Plan ===' without executing. TESTS: `npx vitest run tests/cli.test.ts` -> 'Test Files 1 passed (1) / Tests 43 passed | 2 skipped (45)', VITEST_EXIT=0; `npx vitest run tests/cli/history.test.ts tests/cli/downgrade.test.ts tests/maturity` -> 'Test Files 7 passed (7) / Tests 93 passed (93)', VITEST_EXIT=0. [resolution 0.13; docs/API_REFERENCE.md, scripts/check_docs_vs_cli_help.js]"
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  00:55:58",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  00:55:58\n   Duration  36.50s (transform 27.31s, setup 7.47s, import 41.13s, tests 165.28s, environment 20ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 docs/API_REFERENCE.md documents search, maturity, upgrade, downgrade and history|log with their real options read from 'node bin/speclang <cmd> --help', and scripts/check_docs_vs_cli_help.js exits 0 on the tree, non-zero when a documented command row is removed. failure_condition = any of the five commands absent from the table, or the parity script exiting 0 while a command is missing. proof = pasted parity output, the five documented greps, and a red-proof of the script on a mutated copy.: All five commands are documented as table rows in docs/API_REFERENCE.md:150-154 (file is a symlink -> specs/docs.spec.dir/docs/API_REFERENCE.md; commit 9bcea767 edited the target). grep -nE 'speclang (search|maturity|upgrade|downgrade|history)' returns lines 150,151,152,153,154. Options match `node bin/speclang <cmd> --help` exactly: search -k/--kind, -t/--tag, -l/--limit (default 20), -v/--verbose; maturity --level, --json, --verbose; upgrade --to, --json, --plan; downgrade --to, --json, --plan; history|log -a/--all, -b/--block, --author, --since, --until, --compare, -f/--format (text|json|timeline, default text), --follow, --stat, --blame. They also match the commander option() registrations at bin/speclang:2005-2008, 2147-2149, 2317-2319, 2442-2444, 2672-2681. PARITY ON TREE: `node scripts/check_docs_vs_cli_help.js` -> 'commands: 20 from --help, 21 names in the table' / 'OK: every command from --help is documented in docs/API_REFERENCE.md', EXIT=0. RED-PROOF (mutated copies via --docs): removing the search row -> 'FAIL: 1 CLI command(s) missing from the table: search' EXIT=1; maturity -> '...missing from the table: maturity' EXIT=1; upgrade -> EXIT=1; downgrade -> EXIT=1; history -> '...missing from the table: history|log' EXIT=1. Additional robustness: empty table -> 'FAIL: 20 CLI command(s) missing' EXIT=1; missing '## 2. CLI' heading -> 'ERROR: gate could not run' EXIT=2; prose-only mention of `speclang search` outside the table -> still EXIT=1 (not fooled). Runtime spot-checks confirm the documented flags are real: `search hello --limit 1` (1 result), `maturity --json` (JSON levels), `history --format json` (JSON array), `log` alias (same JSON), `upgrade ... --to Production --plan` prints '=== Upgrade Plan ===' without executing. TESTS: `npx vitest run tests/cli.test.ts` -> 'Test Files 1 passed (1) / Tests 43 passed | 2 skipped (45)', VITEST_EXIT=0; `npx vitest run tests/cli/history.test.ts tests/cli/downgrade.test.ts tests/maturity` -> 'Test Files 7 passed (7) / Tests 93 passed (93)', VITEST_EXIT=0. [resolution 0.13; docs/API_REFERENCE.md, scripts/check_docs_vs_cli_help.js]\nAll five commands are documented with options that exactly match the real `--help` output, the parity script exits 0 on the tree and 1 for each of the five removed rows (2 when the CLI section is missing), and the CLI/maturity/history test suites pass. [uncovered failure paths: failure mode 0 (The parity gate is never executed automatically, so the docs can silently drift from the CLI again after this commit): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 docs/API_REFERENCE.md documents search, maturity, upgrade, downgrade and history|log with their real options read from 'node bin/speclang <cmd> --help', and scripts/check_docs_vs_cli_help.js exits 0 on the tree, non-zero when a documented command row is removed. failure_condition = any of the five commands absent from the table, or the parity script exiting 0 while a command is missing. proof = pasted parity output, the five documented greps, and a red-proof of the script on a mutated copy.: All five commands are documented as table rows in docs/API_REFERENCE.md:150-154 (file is a symlink -> specs/docs.spec.dir/docs/API_REFERENCE.md; commit 9bcea767 edited the target). grep -nE 'speclang (search|maturity|upgrade|downgrade|history)' returns lines 150,151,152,153,154. Options match `node bin/speclang <cmd> --help` exactly: search -k/--kind, -t/--tag, -l/--limit (default 20), -v/--verbose; maturity --level, --json, --verbose; upgrade --to, --json, --plan; downgrade --to, --json, --plan; history|log -a/--all, -b/--block, --author, --since, --until, --compare, -f/--format (text|json|timeline, default text), --follow, --stat, --blame. They also match the commander option() registrations at bin/speclang:2005-2008, 2147-2149, 2317-2319, 2442-2444, 2672-2681. PARITY ON TREE: `node scripts/check_docs_vs_cli_help.js` -> 'commands: 20 from --help, 21 names in the table' / 'OK: every command from --help is documented in docs/API_REFERENCE.md', EXIT=0. RED-PROOF (mutated copies via --docs): removing the search row -> 'FAIL: 1 CLI command(s) missing from the table: search' EXIT=1; maturity -> '...missing from the table: maturity' EXIT=1; upgrade -> EXIT=1; downgrade -> EXIT=1; history -> '...missing from the table: history|log' EXIT=1. Additional robustness: empty table -> 'FAIL: 20 CLI command(s) missing' EXIT=1; missing '## 2. CLI' heading -> 'ERROR: gate could not run' EXIT=2; prose-only mention of `speclang search` outside the table -> still EXIT=1 (not fooled). Runtime spot-checks confirm the documented flags are real: `search hello --limit 1` (1 result), `maturity --json` (JSON levels), `history --format json` (JSON array), `log` alias (same JSON), `upgrade ... --to Production --plan` prints '=== Upgrade Plan ===' without executing. TESTS: `npx vitest run tests/cli.test.ts` -> 'Test Files 1 passed (1) / Tests 43 passed | 2 skipped (45)', VITEST_EXIT=0; `npx vitest run tests/cli/history.test.ts tests/cli/downgrade.test.ts tests/maturity` -> 'Test Files 7 passed (7) / Tests 93 passed (93)', VITEST_EXIT=0. [resolution 0.13; docs/API_REFERENCE.md, scripts/check_docs_vs_cli_help.js]\nAll five commands are documented with options that exactly match the real `--help` output, the parity script exits 0 on the tree and 1 for each of the five removed rows (2 when the CLI section is missing), and the CLI/maturity/history test suites pass. [uncovered failure paths: failure mode 0 (The parity gate is never executed automatically, so the docs can silently drift from the CLI again after this commit): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "docs/API_REFERENCE.md documents search, maturity, upgrade, downgrade and history|log with their real options read from 'node bin/speclang <cmd> --help', and scripts/check_docs_vs_cli_help.js exits 0 on the tree, non-zero when a documented command row is removed. failure_condition = any of the five commands absent from the table, or the parity script exiting 0 while a command is missing. proof = pasted parity output, the five documented greps, and a red-proof of the script on a mutated copy.",
+                "status": "PASS",
+                "detail": "All five commands are documented as table rows in docs/API_REFERENCE.md:150-154 (file is a symlink -> specs/docs.spec.dir/docs/API_REFERENCE.md; commit 9bcea767 edited the target). grep -nE 'speclang (search|maturity|upgrade|downgrade|history)' returns lines 150,151,152,153,154. Options match `node bin/speclang <cmd> --help` exactly: search -k/--kind, -t/--tag, -l/--limit (default 20), -v/--verbose; maturity --level, --json, --verbose; upgrade --to, --json, --plan; downgrade --to, --json, --plan; history|log -a/--all, -b/--block, --author, --since, --until, --compare, -f/--format (text|json|timeline, default text), --follow, --stat, --blame. They also match the commander option() registrations at bin/speclang:2005-2008, 2147-2149, 2317-2319, 2442-2444, 2672-2681. PARITY ON TREE: `node scripts/check_docs_vs_cli_help.js` -> 'commands: 20 from --help, 21 names in the table' / 'OK: every command from --help is documented in docs/API_REFERENCE.md', EXIT=0. RED-PROOF (mutated copies via --docs): removing the search row -> 'FAIL: 1 CLI command(s) missing from the table: search' EXIT=1; maturity -> '...missing from the table: maturity' EXIT=1; upgrade -> EXIT=1; downgrade -> EXIT=1; history -> '...missing from the table: history|log' EXIT=1. Additional robustness: empty table -> 'FAIL: 20 CLI command(s) missing' EXIT=1; missing '## 2. CLI' heading -> 'ERROR: gate could not run' EXIT=2; prose-only mention of `speclang search` outside the table -> still EXIT=1 (not fooled). Runtime spot-checks confirm the documented flags are real: `search hello --limit 1` (1 result), `maturity --json` (JSON levels), `history --format json` (JSON array), `log` alias (same JSON), `upgrade ... --to Production --plan` prints '=== Upgrade Plan ===' without executing. TESTS: `npx vitest run tests/cli.test.ts` -> 'Test Files 1 passed (1) / Tests 43 passed | 2 skipped (45)', VITEST_EXIT=0; `npx vitest run tests/cli/history.test.ts tests/cli/downgrade.test.ts tests/maturity` -> 'Test Files 7 passed (7) / Tests 93 passed (93)', VITEST_EXIT=0. [resolution 0.13; docs/API_REFERENCE.md, scripts/check_docs_vs_cli_help.js]",
+                "resolution_probability": 0.13,
+                "cited_path": "docs/API_REFERENCE.md, scripts/check_docs_vs_cli_help.js"
+              }
+            ],
+            "summary": "All five commands are documented with options that exactly match the real `--help` output, the parity script exits 0 on the tree and 1 for each of the five removed rows (2 when the CLI section is missing), and the CLI/maturity/history test suites pass. [uncovered failure paths: failure mode 0 (The parity gate is never executed automatically, so the docs can silently drift from the CLI again after this commit): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DOC-7\"}",
+          "exit_code": 0,
+          "output_sha": "07fae580587fbb88650e95a2bdda76517f9fe236ef430069c1f946794e80af28"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la; echo \"---\"; ls docs/ 2>/dev/null; echo \"---\"; ls scripts/ 2>/dev/null | head -50",
+          "exit_code": 0,
+          "output_sha": "796f43a51ffab6e62055e7f0a85ef75e04bd1267c36e1cc68b8dd2dbfd54df48"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"scripts/check_docs_vs_cli_help.js\"}",
+          "exit_code": 0,
+          "output_sha": "3469c71d4e961ebe8a3661a9a60d6b461863a03a9628d7a49fac2636f643823c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; pwd; git -C . log --oneline -3 2>/dev/null; echo \"---\"; wc -l docs/API_REFERENCE.md",
+          "exit_code": 1,
+          "output_sha": "4738a0ad2fa7760ca9d7e8551a1efc46219b880c4c996281e02bae096bd6f430"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; ls; echo \"---\"; wc -l docs/API_REFERENCE.md; echo \"---\"; git log --oneline -3",
+          "exit_code": 0,
+          "output_sha": "183d0234f53819094d989200367010bb46f1045c59b27f352e6287d182dce284"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"docs/API_REFERENCE.md\"}",
+          "exit_code": 0,
+          "output_sha": "7a9efb3d41308db183bcd289248f4837da5af33043b6eb12f332e778e8e40436"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && node bin/speclang --help 2>&1 | head -60; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "08091d79b59f8550a20712f0b45a265cb0afab33e8e6f1a415e92704bc62f965"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && for c in search maturity upgrade downgrade history; do echo \"===== $c =====\"; node bin/speclang $c --help 2>&1; echo \"EXIT=$?\"; done",
+          "exit_code": 0,
+          "output_sha": "2a25dee68e1247de7210a8bcaf89c27f60d52995496d20e3e1b859870fce7589"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && node scripts/check_docs_vs_cli_help.js; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "2a53a4879525183c5490e9b267f29584314afdb8d0f25d024d91f0fe59e00795"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -nE 'speclang (search|maturity|upgrade|downgrade|history)' docs/API_REFERENCE.md",
+          "exit_code": 0,
+          "output_sha": "cda7d9aa766e6a864f2e79c1d5144d2ce5ac4698d0e2e83f58abc4a7934ad087"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && mkdir -p /tmp/doc7red && for cmd in search maturity upgrade downgrade history; do\n  cp docs/API_REFERENCE.md /tmp/doc7red/API_REFERENCE.md\n  grep -v \"speclang $cmd\" /tmp/doc7red/API_REFERENCE.md > /tmp/doc7red/mut.md\n  echo \"===== removed row: $cmd =====\"\n  node scripts/check_docs_vs_cli_help.js --docs /tmp/doc7red/mut.md; echo \"EXIT=$?\"\ndone",
+          "exit_code": 0,
+          "output_sha": "77aaec90cd75f457b86b85698877f62eab90c3bfe55f024cea9f56d7bd4bed57"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS so far: docs/API_REFERENCE.md:150-154 document search, maturity, upgrade, downgrade, history|log. Options match `node bin/speclang <cmd> --help` exactly (search -k/-t/-l/-v; maturity --level/--json/--verbose; upgrade --to/--json/--plan; downgrade --to/--json/--plan; history -a/-b/--author/--since/--until/--compare/-f/--follow/--stat/--blame). Parity script exits 0 on tree (\\\"OK: every command from --help is documented\\\", EXIT=0). Red-proof: removing each of the 5 rows -> EXIT=1 with \\\"FAIL: 1 CLI command(s) missing from the table: <cmd>\\\".\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "60317ad7549f72b83ecb7e20105b604356f48d84b29b18d219b63009bfce32c7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && echo \"=== alias-only removal (history row -> log only) ===\"; sed 's/`speclang history\\\\|log \\[spec\\]`/`speclang log [spec]`/' docs/API_REFERENCE.md > /tmp/doc7red/alias.md; grep -n 'speclang log' /tmp/doc7red/alias.md; node scripts/check_docs_vs_cli_help.js --docs /tmp/doc7red/alias.md; echo \"EXIT=$?\"\necho \"=== missing CLI section ===\"; grep -v '^## 2. CLI' docs/API_REFERENCE.md > /tmp/doc7red/nosec.md; node scripts/check_docs_vs_cli_help.js --docs /tmp/doc7red/nosec.md; echo \"EXIT=$?\"\necho \"=== empty table ===\"; awk '/^## 2\\. CLI/{f=1} f&&/^\\|/{next} {print}' docs/API_REFERENCE.md > /tmp/doc7red/notable.md; node scripts/check_docs_vs_cli_help.js --docs /tmp/doc7red/notable.md; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "d39cab6e4053effcc60708a5fcfb512215e10e0382a2df8777ed6f210a543e15"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"check_docs_vs_cli_help\" --include=*.json --include=*.yaml --include=*.yml --include=*.md --include=*.sh --include=*.ts --include=*.js . 2>/dev/null | grep -v node_modules | grep -v '^./.tmp' | head -30",
+          "exit_code": 0,
+          "output_sha": "da791194e07af76235ecffc5286ca55eb527a3346a4c9fe51fd3902fd5f8e43e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git show --stat 9bcea767 | head -20; echo \"=== diff ===\"; git show 9bcea767 -- docs/API_REFERENCE.md | head -80",
+          "exit_code": 0,
+          "output_sha": "cfb516ddf77a8c3f3dca4631e0daf46aec5833d609e700137e1d8c52e97f42fa"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls tests/ | head -40; echo \"---\"; grep -rln \"check_docs_vs_cli_help\\|API_REFERENCE\" tests/ 2>/dev/null | head; echo \"--- gitreins config ---\"; cat .gitreins/config.yaml 2>/dev/null | head -40",
+          "exit_code": 0,
+          "output_sha": "e7a36a096126844ddffde99f703bf0fde86f1aa69babab4c9c5af0bac1ceda77"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls -la docs/API_REFERENCE.md; echo \"---\"; git show 9bcea767 --stat --format=\"\" ; echo \"=== full diff ===\"; git show 9bcea767 --format=\"\" | head -120",
+          "exit_code": 0,
+          "output_sha": "598e0013358b6387acfd444c7b2ad0c5687659c2faa059bc8b71c8b09c8dbb25"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git show 9bcea767 --format=\"\" -- specs/docs.spec.dir/docs/API_REFERENCE.md",
+          "exit_code": 0,
+          "output_sha": "883095205ffec40adec7119df74446a95533957fd4987a581dd50e8314c74bb1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"option(\" bin/speclang | sed -n '1,200p' | grep -nE \"kind|tag|limit|verbose|level|json|plan|--to|--all|--block|--author|--since|--until|--compare|--format|--follow|--stat|--blame\"",
+          "exit_code": 0,
+          "output_sha": "d057865e39af6e9a60dd0be47370cd08af0df31977e6acb68088ac860c889e1d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"command('search\\|command('maturity\\|command('upgrade\\|command('downgrade\\|command('history\" bin/speclang",
+          "exit_code": 0,
+          "output_sha": "6cf0772fa51cd09f1c4b8baf76d2cfdf39a4a78fe1833f83163ea982181a47b6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && timeout 900 npx vitest run --passWithNoTests 2>&1 | tail -30; echo \"EXIT=${PIPESTATUS[0]}\"",
+          "exit_code": -15,
+          "output_sha": "fc8f82d5547165d4a05e00b7d5c447b877be89346bba0f74e093d2348a5d6249"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && timeout 25 npx vitest run tests/cli.test.ts --passWithNoTests 2>&1 | tail -25; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "51fbafc4ad9f700eef75c1cbfed15a6e59ef999b81d3a44e2422e10b1e718e51"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && timeout 28 npx vitest run tests/cli.test.ts --passWithNoTests --reporter=basic 2>&1 | tail -30; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "0fd90055ef7e801e149d35b857b3f7dd67aceef5be32e9ece2a83791bfaeba0d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && timeout 28 npx vitest run tests/cli.test.ts --passWithNoTests 2>&1 | tail -20; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "6a604ac17caad55e0f65c9bc7623f9e34447bc9c866b3faa4773af7ca7f7b992"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && nohup npx vitest run tests/cli.test.ts --passWithNoTests > /tmp/doc7red/vitest-cli.log 2>&1 &\necho started; sleep 25; tail -20 /tmp/doc7red/vitest-cli.log",
+          "exit_code": 0,
+          "output_sha": "267cb05fedc44d59c050f96d528c90be20c3af20782f2c3df05eb4e83152f5ed"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 28; tail -25 /tmp/doc7red/vitest-cli.log; echo \"---\"; pgrep -f vitest | head",
+          "exit_code": 0,
+          "output_sha": "fdcb8f0c1da292f7dd4cacb8305df067c65c984f874ae018eb5d511b9783e9fd"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; tail -30 /tmp/doc7red/vitest-cli.log",
+          "exit_code": 0,
+          "output_sha": "df21f5f2d8585c4981a586af432f9fcd0133f39d43270c7e0e7f22bf3cdbd48d"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; tail -30 /tmp/doc7red/vitest-cli.log; echo \"=== procs ===\"; pgrep -f \"vitest run\" | wc -l",
+          "exit_code": 0,
+          "output_sha": "857e909f552d30cc7efc1c3c8744993e01c8df58a19ae543d049853c697276e9"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; tail -40 /tmp/doc7red/vitest-cli.log; echo \"=== procs ===\"; pgrep -f \"vitest\" | wc -l",
+          "exit_code": 0,
+          "output_sha": "a454b1b292a929a220752437836b622192729cd139682436ecf5798e4102adcd"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; tail -40 /tmp/doc7red/vitest-cli.log; echo \"=== procs ===\"; pgrep -af \"vitest\" | head -3",
+          "exit_code": 0,
+          "output_sha": "6c3f1a26abbc4143b13667b260e528545d6691393fa6424b29cd51f9857d1968"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && cat /tmp/doc7red/vitest-cli.log; echo \"=== bytes ===\"; wc -c /tmp/doc7red/vitest-cli.log; echo \"=== vitest config ===\"; cat vitest.config.ts",
+          "exit_code": 0,
+          "output_sha": "018b4b8374b6dfe03c547209305e7e46ed1485786b6107ad3fd63fa3b114db53"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && nohup sh -c 'npx vitest run tests/cli.test.ts --passWithNoTests; echo \"VITEST_EXIT=$?\"' > /tmp/doc7red/v2.log 2>&1 &\nsleep 27; cat /tmp/doc7red/v2.log",
+          "exit_code": 0,
+          "output_sha": "bd1de9d000ea0772551fa04353e020a2a114dbde15ce6c01bef7e068598e9dfb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls tests/cli/ tests/maturity/ 2>/dev/null; echo \"=== grep parity in tests ===\"; grep -rln \"check_docs_vs_cli_help\\|API_REFERENCE\" tests/ scripts/ .github/ 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "c09cd9e307b780e1d71fee656621fc948d0a122e1d7cb6f64417c95f76c38b53"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls .github/workflows/ 2>/dev/null; echo \"---\"; grep -rn \"check_docs\\|parity\" .github/ package.json 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "f5efb294e4aeb44b8eeb7f678c3f5574198e16347100c0dc30852a89e4e75fcc"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && nohup sh -c 'npx vitest run tests/cli/history.test.ts tests/cli/downgrade.test.ts tests/maturity --passWithNoTests; echo \"VITEST_EXIT=$?\"' > /tmp/doc7red/v3.log 2>&1 &\nsleep 28; cat /tmp/doc7red/v3.log",
+          "exit_code": 0,
+          "output_sha": "30f0404a511bfcd765590244e06c9dd4b1eeee90ea2d88269c664571c2110823"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Tests: `npx vitest run tests/cli.test.ts` -> \\\"Test Files 1 passed (1) / Tests 43 passed | 2 skipped (45)\\\", VITEST_EXIT=0. `npx vitest run tests/cli/history.test.ts tests/cli/downgrade.test.ts tests/maturity` -> \\\"Test Files 7 passed (7) / Tests 93 passed (93)\\\", VITEST_EXIT=0.\\nParity script NOT wired into CI (.github/workflows/ci.yml has no reference) nor any test (grep for check_docs_vs_cli_help in tests/ returns nothing). But the task criterion only requires the script to exit 0 on tree and non-zero on mutation \\u2014 both verified.\\nOptions in docs match bin/speclang option() registrations at lines 2005-2008 (search), 2147-2149 (maturity), 2317-2319 (upgrade), 2442-2444 (downgrade), 2672-2681 (history).\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "f82b8414f7c1d649a5ad2a4af8b1847ad805fef947795694762503f93854470c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && echo \"=== search --limit 1 ===\"; node bin/speclang search hello --limit 1 2>&1 | head -8; echo \"EXIT=$?\"; echo \"=== maturity --json ===\"; node bin/speclang maturity --json 2>&1 | head -8; echo \"EXIT=$?\"; echo \"=== history --format json ===\"; node bin/speclang history --format json 2>&1 | head -5; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "6ec7c2a800f8b11cb816043fca42c3a5537e80fc7ca2e616a484124ee235601f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && echo \"=== log alias ===\"; node bin/speclang log --format json 2>&1 | head -3; echo \"EXIT=$?\"; echo \"=== upgrade --plan ===\"; node bin/speclang upgrade specs/examples.spec.dir/hello-world.spec.md --plan 2>&1 | head -10; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "45f5db627764c07b39ab7aafabb27d84ee0b99b2da580fa2cf083fe0ebad8b1e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && node bin/speclang upgrade specs/examples.spec.dir/hello-world.spec.md --to Production --plan 2>&1 | head -15; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "46091f7629aef823825f9658bced04154a40a49674341a9b64e580ee650e6d4e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n '2660,2700p' bin/speclang",
+          "exit_code": 0,
+          "output_sha": "b2655be1fa83452565bbab967ca52a29a293b2a3874908219b1c30a2e73ba213"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && echo \"=== row present but only in prose (not table) ===\"; python3 - <<'EOF'\nimport re\nsrc=open('docs/API_REFERENCE.md').read()\n# remove the search table row, add a prose mention of search\nlines=src.split('\\n')\nout=[l for l in lines if not l.startswith('| `speclang search')]\nout.append('\\nYou can also use `speclang search <query>` to search specs.\\n')\nopen('/tmp/doc7red/prose.md','w').write('\\n'.join(out))\nEOF\nnode scripts/check_docs_vs_cli_help.js --docs /tmp/doc7red/prose.md; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "b056febdcbff84bebc66a7121801eab4a258530f82812de9a3e62a6cd061c83f"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FINAL: All checks pass.\\n- docs/API_REFERENCE.md (symlink -> specs/docs.spec.dir/docs/API_REFERENCE.md) lines 150-154 document all five: search, maturity, upgrade, downgrade, history|log.\\n- Options verified against `node bin/speclang <cmd> --help` for all five; exact match. Also match option() registrations in bin/speclang:2005-2008, 2147-2149, 2317-2319, 2442-2444, 2672-2681.\\n- Parity script on tree: \\\"OK: every command from --help is documented\\\", EXIT=0.\\n- Red-proof: removing each of the 5 rows individually -> EXIT=1 \\\"FAIL: 1 CLI command(s) missing from the table: <cmd>\\\". Empty table -> EXIT=1 listing all 20. Missing \\\"## 2. CLI\\\" heading -> EXIT=2. Prose-only mention (not a table row) -> EXIT=1 (correctly not fooled).\\n- Runtime spot-checks: `search hello --limit 1` works; `maturity --json` works; `history --format json` works; `log` alias works; `upgrade --to Production --plan` prints plan without executing.\\n- Tests: tests/cli.test.ts 43 passed/2 skipped exit 0; tests/cli/history.test.ts + downgrade.test.ts + tests/maturity 93 passed exit 0.\\n- Minor non-blocking: parity script not wired into CI (.github/workflows/ci.yml) nor any test \\u2014 but the criterion only requires the script's exit behavior, which is verified.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "495da329599b91cf743beb3a6870104672e511fd820a356600892a91010610c8"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "medium",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 126,
+        "detection": "task marked complete with commit_hash/worker_summary but the row's own acceptance_criteria (sed -n '49,51p' must show ../../ targets) is contradicted by the worker_summary, which says the depth was changed to ../../../",
+        "detail": "The row's AC2 requires the three links to read ../../docs/NORTH_STAR.md, ../../specs/core.spec.md, ../../specs/speclang.spec.md, but the closing worker_summary states 'repointed to ../../../ targets; depth corrected from the row's own two-level claim which was wrong' \u2014 the completion records a result that does not satisfy the recorded acceptance criteria."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 126,
+        "detection": "completed row retains worktree:null/branch:null while every other completed row in the file records worktree, branch, commit_hash, guard_result and ci_result",
+        "detail": "DOC-9 is flipped to status complete with commit_hash 4455371a and guard/ci results, but worktree and branch remain null, unlike sibling completed rows (e.g. DOC-8, DF-SPECLANG-9) which carry both."
+      }
+    ],
+    "summary": "The board-only change closes DOC-9 as complete even though the recorded worker summary describes a link depth (../../../) that contradicts the row's own acceptance criterion (../../), and leaves worktree/branch unset unlike other completed rows."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  00:55:58\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 docs/API_REFERENCE.md documents search, maturity, upgrade, downgrade and history|log with their real options read from 'node bin/speclang <cmd> --help', and scripts/check_docs_vs_cli_help.js exits 0 on the tree, non-zero when a documented command row is removed. failure_condition = any of the five commands absent from the table, or the parity script exiting 0 while a command is missing. proof = pasted parity output, the five documented greps, and a red-proof of the script on a mutated copy.: All five commands are documented as table rows in docs/API_REFERENCE.md:150-154 (file is a symlink -> specs/docs.spec.dir/docs/API_REFERENCE.md; commit 9bcea767 edited the target). grep -nE 'speclang (search|maturity|upgrade|downgrade|history)' returns lines 150,151,152,153,154. Options match `node bin/speclang <cmd> --help` exactly: search -k/--kind, -t/--tag, -l/--limit (default 20), -v/--verbose; maturity --level, --json, --verbose; upgrade --to, --json, --plan; downgrade --to, --json, --plan; history|log -a/--all, -b/--block, --author, --since, --until, --compare, -f/--format (text|json|timeline, default text), --follow, --stat, --blame. They also match the commander option() registrations at bin/speclang:2005-2008, 2147-2149, 2317-2319, 2442-2444, 2672-2681. PARITY ON TREE: `node scripts/check_docs_vs_cli_help.js` -> 'commands: 20 from --help, 21 names in the table' / 'OK: every command from --help is documented in docs/API_REFERENCE.md', EXIT=0. RED-PROOF (mutated copies via --docs): removing the search row -> 'FAIL: 1 CLI command(s) missing from the table: search' EXIT=1; maturity -> '...missing from the table: maturity' EXIT=1; upgrade -> EXIT=1; downgrade -> EXIT=1; history -> '...missing from the table: history|log' EXIT=1. Additional robustness: empty table -> 'FAIL: 20 CLI command(s) missing' EXIT=1; missing '## 2. CLI' heading -> 'ERROR: gate could not run' EXIT=2; prose-only mention of `speclang search` outside the table -> still EXIT=1 (not fooled). Runtime spot-checks confirm the documented flags are real: `search hello --limit 1` (1 result), `maturity --json` (JSON levels), `history --format json` (JSON array), `log` alias (same JSON), `upgrade ... --to Production --plan` prints '=== Upgrade Plan ===' without executing. TESTS: `npx vitest run tests/cli.test.ts` -> 'Test Files 1 passed (1) / Tests 43 passed | 2 skipped (45)', VITEST_EXIT=0; `npx vitest run tests/cli/history.test.ts tests/cli/downgrade.test.ts tests/maturity` -> 'Test Files 7 passed (7) / Tests 93 passed (93)', VITEST_EXIT=0. [resolution 0.13; docs/API_REFERENCE.md, scripts/check_docs_vs_cli_help.js]\nAll five commands are documented with options that exactly match the real `--help` output, the parity script exits 0 on the tree and 1 for each of the five removed rows (2 when the CLI section is missing), and the CLI/maturity/history test suites pass. [uncovered failure paths: failure mode 0 (The parity gate is never executed automatically, so the docs can silently drift from the CLI again after this commit): detected_by is empty \u2014 uncovered failure path]\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T06:03:05.557102",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T06:03:05.577953+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 2732,
+        "truncated": false,
+        "source": "git show ad5f0ec93ae6"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 32184,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DOC-7"
+  }
+}

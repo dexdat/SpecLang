@@ -1,0 +1,85 @@
+{
+  "task_id": "DF-SPECLANG-8",
+  "task_title": "hello-world spec Verification Steps run verbatim end-to-end at HEAD, with a test that executes them as written",
+  "task_criteria": [
+    "The four Verification Steps in specs/examples.spec.dir/hello-world.spec.md run verbatim from repo root, each exit 0, final step prints the promised string. PROOF: paste the four commands and their output; npx vitest run tests/examples/hello-world-verification.test.ts passes and was proven to FAIL when the spec/source was corrupted (red control). FAILIF: any step is prose or fails, or no test executes the steps."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "tmp2",
+  "commit": "ec444d46f2fbadfe388043c89da64c4831d209e0",
+  "pass_class": "tier1-only",
+  "tier2_skipped": true,
+  "working_tree_content_fingerprint": "5521e873200cd5da3ca1ae406b501705e2e882ef501ce332580e95b723ef796f",
+  "working_tree_dirty_path_count": 2,
+  "items": [],
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  02:12:23",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T063905.840202Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T063905.840202Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  02:12:23\n   Duration  51.38s (transform 33.15s, setup 9.09s, import 55.42s, tests 229.25s, environment 23ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T063905.840202Z.log"
+          }
+        }
+      ]
+    }
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  02:12:23\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T07:13:15.373216",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T07:13:15.457444+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 461,
+        "truncated": false,
+        "source": "git show ec444d46f2fb"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 26469,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DF-SPECLANG-8"
+  }
+}

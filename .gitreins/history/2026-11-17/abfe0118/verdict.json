@@ -1,0 +1,484 @@
+{
+  "task_id": "DF-SPECLANG-7",
+  "task_title": "fresh npm install on npm>=12 leaves better-sqlite3 without native binding",
+  "task_criteria": [
+    "package.json declares the better-sqlite3 build script trust (allowScripts or equivalent) and documents the manual remedy; a CI step asserts new better-sqlite3(':memory:').prepare('select 1').get() works after install; documented remedy appears in README/CHANGELOG"
+  ],
+  "passed": false,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "tmp2",
+  "commit": "8ac77df48ef3f13c8b55b0f7128be3fa2a5f39b7",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "bcfe5d4b662927c052bea3cdc4f4b65d641f4807934ff6081fe81cf0eddc2f45",
+  "working_tree_dirty_path_count": 2,
+  "items": [
+    {
+      "criterion": "package.json declares the better-sqlite3 build script trust (allowScripts or equivalent) and documents the manual remedy; a CI step asserts new better-sqlite3(':memory:').prepare('select 1').get() works after install; documented remedy appears in README/CHANGELOG",
+      "status": "FAIL",
+      "detail": "Two of three parts hold, the CI part does not. (a) package.json:34-36 declares \"allowScripts\": { \"better-sqlite3\": true } and real npm 12.2.2 honours it: `npm install-scripts ls` reports only \"esbuild@0.28.2 (postinstall: node install.js)\" as blocked \u2014 better-sqlite3 is NOT listed \u2014 and `npm install-scripts approve --no-allow-scripts-pin --dry-run better-sqlite3` prints \"Nothing to approve; allowScripts unchanged.\" (control: the same command for esbuild prints \"Approved esbuild: added esbuild\"). The probe is exactly the required one at scripts/postinstall-lint-deps.sh:26-45 (`new Database(\":memory:\").prepare(\"select 1 as x\").get()`), and `npm run check:sqlite-binding` -> \"OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})\", exit 0. (b) Remedy is documented at README.md:39-88 (\"Troubleshooting: `better-sqlite3` native binding (npm >= 12)\", with npm rebuild / install-scripts approve / --build-from-source / reinstall steps) and CHANGELOG.md:10-27. (c) MISSING: `.github/workflows/ci.yml` has no such step \u2014 `grep -n \"sqlite-binding\\|better-sqlite3\\|allowScripts\" .github/workflows/ci.yml` returns \"NO MATCHES IN CI.YML\". Commit 6cb184b4 added the step, then commit e8343f1c (\"chore(ci): stage the sqlite-binding CI step instead of pushing it\") removed those 11 lines and left them only as an unapplied patch at .coding-hermes/pending/ci-sqlite-binding-step.patch; CHANGELOG.md:14-17 states the step \"is staged in .coding-hermes/pending/ci-sqlite-binding-step.patch\". No test covers the gate either (`grep -rln \"sqlite-binding\\|allowScripts\\|native binding\" tests/` -> empty). Suite run: `npx vitest run --passWithNoTests` -> \"Test Files 1 failed | 104 passed | 4 skipped (109)\", \"Tests 1 failed | 1876 passed | 58 skipped (1935)\"; the lone failure tests/mcp.test.ts:184 is a 5000ms timeout that passes in isolation (\"Tests 1 passed | 32 skipped\", EXIT=0)."
+    },
+    {
+      "criterion": "The binding gate fails closed: when better-sqlite3 is installed but its native binding cannot load, `npm run check:sqlite-binding` exits non-zero (so a CI step running it turns red), rather than silently passing.",
+      "status": "PASS",
+      "detail": "scripts/postinstall-lint-deps.sh:26-45 runs the require + `select 1` probe and exits 3 on a wrong result; on any probe failure it prints the remedy and `return 1`, and --sqlite-binding-only does `check_sqlite_binding; exit $?` (lines 105-108). Proven empirically: with node_modules/better-sqlite3/build/Release/better_sqlite3.node moved aside, `bash scripts/postinstall-lint-deps.sh --sqlite-binding-only` printed \"FAIL: better-sqlite3 is installed but its native binding does not load.\" plus the npm>=12 remedy and returned RED_EXIT=1; after restoring the file the probe returned {\"x\":1} again.",
+      "derived": true
+    },
+    {
+      "criterion": "The declared trust is actually honoured by the npm in use: with package.json `allowScripts: {\"better-sqlite3\": true}` present, a fresh install on npm >= 12 produces a loadable binding (no \"install scripts blocked\" for better-sqlite3).",
+      "status": "PASS",
+      "detail": "On this box (node v22.22.3 / npm 12.2.2) `npm install-scripts ls` lists only esbuild as blocked, not better-sqlite3, and `npm install-scripts approve --no-allow-scripts-pin --dry-run better-sqlite3` -> \"Nothing to approve; allowScripts unchanged.\" while the same command for esbuild -> \"Approved esbuild: added esbuild\", showing the entry is parsed and matched. The installed tree loads: `node -e 'new (require(\"better-sqlite3\"))(\":memory:\").prepare(\"select 1 as x\").get()'` -> PROBE {\"x\":1}, and `npm run check:sqlite-binding` -> \"OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})\" exit 0.",
+      "derived": true
+    },
+    {
+      "criterion": "The postinstall hook runs the same binding gate, so a plain `npm install` (not just the explicit check script) fails loudly when the binding is missing.",
+      "status": "PASS",
+      "detail": "package.json:31 \"postinstall\": \"bash scripts/postinstall-lint-deps.sh\" and scripts/postinstall-lint-deps.sh:110-112 `check_sqlite_binding || exit 1` runs the identical gate before the TS-6 setup; the --sqlite-binding-only branch (lines 105-108) is the same function, so the red path demonstrated above (RED_EXIT=1 with the .node file hidden) is the path a plain install takes.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "changes_required",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  22:44:37",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  22:44:37\n   Duration  39.01s (transform 28.42s, setup 7.48s, import 38.92s, tests 143.43s, environment 14ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": false,
+      "any_failed": true,
+      "summary": "INCOMPLETE\n  \u2717 package.json declares the better-sqlite3 build script trust (allowScripts or equivalent) and documents the manual remedy; a CI step asserts new better-sqlite3(':memory:').prepare('select 1').get() works after install; documented remedy appears in README/CHANGELOG: Two of three parts hold, the CI part does not. (a) package.json:34-36 declares \"allowScripts\": { \"better-sqlite3\": true } and real npm 12.2.2 honours it: `npm install-scripts ls` reports only \"esbuild@0.28.2 (postinstall: node install.js)\" as blocked \u2014 better-sqlite3 is NOT listed \u2014 and `npm install-scripts approve --no-allow-scripts-pin --dry-run better-sqlite3` prints \"Nothing to approve; allowScripts unchanged.\" (control: the same command for esbuild prints \"Approved esbuild: added esbuild\"). The probe is exactly the required one at scripts/postinstall-lint-deps.sh:26-45 (`new Database(\":memory:\").prepare(\"select 1 as x\").get()`), and `npm run check:sqlite-binding` -> \"OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})\", exit 0. (b) Remedy is documented at README.md:39-88 (\"Troubleshooting: `better-sqlite3` native binding (npm >= 12)\", with npm rebuild / install-scripts approve / --build-from-source / reinstall steps) and CHANGELOG.md:10-27. (c) MISSING: `.github/workflows/ci.yml` has no such step \u2014 `grep -n \"sqlite-binding\\|better-sqlite3\\|allowScripts\" .github/workflows/ci.yml` returns \"NO MATCHES IN CI.YML\". Commit 6cb184b4 added the step, then commit e8343f1c (\"chore(ci): stage the sqlite-binding CI step instead of pushing it\") removed those 11 lines and left them only as an unapplied patch at .coding-hermes/pending/ci-sqlite-binding-step.patch; CHANGELOG.md:14-17 states the step \"is staged in .coding-hermes/pending/ci-sqlite-binding-step.patch\". No test covers the gate either (`grep -rln \"sqlite-binding\\|allowScripts\\|native binding\" tests/` -> empty). Suite run: `npx vitest run --passWithNoTests` -> \"Test Files 1 failed | 104 passed | 4 skipped (109)\", \"Tests 1 failed | 1876 passed | 58 skipped (1935)\"; the lone failure tests/mcp.test.ts:184 is a 5000ms timeout that passes in isolation (\"Tests 1 passed | 32 skipped\", EXIT=0).\n  \u2713 The binding gate fails closed: when better-sqlite3 is installed but its native binding cannot load, `npm run check:sqlite-binding` exits non-zero (so a CI step running it turns red), rather than silently passing.: scripts/postinstall-lint-deps.sh:26-45 runs the require + `select 1` probe and exits 3 on a wrong result; on any probe failure it prints the remedy and `return 1`, and --sqlite-binding-only does `check_sqlite_binding; exit $?` (lines 105-108). Proven empirically: with node_modules/better-sqlite3/build/Release/better_sqlite3.node moved aside, `bash scripts/postinstall-lint-deps.sh --sqlite-binding-only` printed \"FAIL: better-sqlite3 is installed but its native binding does not load.\" plus the npm>=12 remedy and returned RED_EXIT=1; after restoring the file the probe returned {\"x\":1} again.\n  \u2713 The declared trust is actually honoured by the npm in use: with package.json `allowScripts: {\"better-sqlite3\": true}` present, a fresh install on npm >= 12 produces a loadable binding (no \"install scripts blocked\" for better-sqlite3).: On this box (node v22.22.3 / npm 12.2.2) `npm install-scripts ls` lists only esbuild as blocked, not better-sqlite3, and `npm install-scripts approve --no-allow-scripts-pin --dry-run better-sqlite3` -> \"Nothing to approve; allowScripts unchanged.\" while the same command for esbuild -> \"Approved esbuild: added esbuild\", showing the entry is parsed and matched. The installed tree loads: `node -e 'new (require(\"better-sqlite3\"))(\":memory:\").prepare(\"select 1 as x\").get()'` -> PROBE {\"x\":1}, and `npm run check:sqlite-binding` -> \"OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})\" exit 0.\n  \u2713 The postinstall hook runs the same binding gate, so a plain `npm install` (not just the explicit check script) fails loudly when the binding is missing.: package.json:31 \"postinstall\": \"bash scripts/postinstall-lint-deps.sh\" and scripts/postinstall-lint-deps.sh:110-112 `check_sqlite_binding || exit 1` runs the identical gate before the TS-6 setup; the --sqlite-binding-only branch (lines 105-108) is the same function, so the red path demonstrated above (RED_EXIT=1 with the .node file hidden) is the path a plain install takes.\n  \u2717 Coverage FAILED \u2014 not passing: package.json declares the better-sqlite3 build script trust (allowScripts or equivalent) and documents the manual remedy; a CI step asserts new better-sqlite3(':memory:').prepare('select 1').get() works after install; documented remedy appears in README/CHANGELOG\npackage.json's allowScripts trust, the :memory: SELECT 1 probe and the README/CHANGELOG remedy are all real and verified on npm 12.2.2, but the required CI step was deliberately removed in commit e8343f1c and survives only as an unapplied patch, so the criterion's CI assertion is not delivered. [uncovered failure paths: failure mode 0 (The binding regression the task exists to catch is not asserted in CI: a fresh npm>=12 install that silently drops the better-sqlite3 binding still yields a green pipeline, because the only enforcement is the local postinstall hook and a manual `npm run check:sqlite-binding`.): detected_by is empty \u2014 uncovered failure path; failure mode 1 (The documented remedy's approval command is unverified against a real npm 12: `npm install-scripts approve --no-allow-scripts-pin better-sqlite3` is printed by the script and README, but only the --dry-run form was exercised here.): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": false,
+          "output": "INCOMPLETE\n  \u2717 package.json declares the better-sqlite3 build script trust (allowScripts or equivalent) and documents the manual remedy; a CI step asserts new better-sqlite3(':memory:').prepare('select 1').get() works after install; documented remedy appears in README/CHANGELOG: Two of three parts hold, the CI part does not. (a) package.json:34-36 declares \"allowScripts\": { \"better-sqlite3\": true } and real npm 12.2.2 honours it: `npm install-scripts ls` reports only \"esbuild@0.28.2 (postinstall: node install.js)\" as blocked \u2014 better-sqlite3 is NOT listed \u2014 and `npm install-scripts approve --no-allow-scripts-pin --dry-run better-sqlite3` prints \"Nothing to approve; allowScripts unchanged.\" (control: the same command for esbuild prints \"Approved esbuild: added esbuild\"). The probe is exactly the required one at scripts/postinstall-lint-deps.sh:26-45 (`new Database(\":memory:\").prepare(\"select 1 as x\").get()`), and `npm run check:sqlite-binding` -> \"OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})\", exit 0. (b) Remedy is documented at README.md:39-88 (\"Troubleshooting: `better-sqlite3` native binding (npm >= 12)\", with npm rebuild / install-scripts approve / --build-from-source / reinstall steps) and CHANGELOG.md:10-27. (c) MISSING: `.github/workflows/ci.yml` has no such step \u2014 `grep -n \"sqlite-binding\\|better-sqlite3\\|allowScripts\" .github/workflows/ci.yml` returns \"NO MATCHES IN CI.YML\". Commit 6cb184b4 added the step, then commit e8343f1c (\"chore(ci): stage the sqlite-binding CI step instead of pushing it\") removed those 11 lines and left them only as an unapplied patch at .coding-hermes/pending/ci-sqlite-binding-step.patch; CHANGELOG.md:14-17 states the step \"is staged in .coding-hermes/pending/ci-sqlite-binding-step.patch\". No test covers the gate either (`grep -rln \"sqlite-binding\\|allowScripts\\|native binding\" tests/` -> empty). Suite run: `npx vitest run --passWithNoTests` -> \"Test Files 1 failed | 104 passed | 4 skipped (109)\", \"Tests 1 failed | 1876 passed | 58 skipped (1935)\"; the lone failure tests/mcp.test.ts:184 is a 5000ms timeout that passes in isolation (\"Tests 1 passed | 32 skipped\", EXIT=0).\n\n\u2026 [2192 chars omitted \u2014 3 line(s)] \u2026\n  \u2717 Coverage FAILED \u2014 not passing: package.json declares the better-sqlite3 build script trust (allowScripts or equivalent) and documents the manual remedy; a CI step asserts new better-sqlite3(':memory:').prepare('select 1').get() works after install; documented remedy appears in README/CHANGELOG\npackage.json's allowScripts trust, the :memory: SELECT 1 probe and the README/CHANGELOG remedy are all real and verified on npm 12.2.2, but the required CI step was deliberately removed in commit e8343f1c and survives only as an unapplied patch, so the criterion's CI assertion is not delivered. [uncovered failure paths: failure mode 0 (The binding regression the task exists to catch is not asserted in CI: a fresh npm>=12 install that silently drops the better-sqlite3 binding still yields a green pipeline, because the only enforcement is the local postinstall hook and a manual `npm run check:sqlite-binding`.): detected_by is empty \u2014 uncovered failure path; failure mode 1 (The documented remedy's approval command is unverified against a real npm 12: `npm install-scripts approve --no-allow-scripts-pin better-sqlite3` is printed by the script and README, but only the --dry-run form was exercised here.): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "INCOMPLETE",
+            "items": [
+              {
+                "criterion": "package.json declares the better-sqlite3 build script trust (allowScripts or equivalent) and documents the manual remedy; a CI step asserts new better-sqlite3(':memory:').prepare('select 1').get() works after install; documented remedy appears in README/CHANGELOG",
+                "status": "FAIL",
+                "detail": "Two of three parts hold, the CI part does not. (a) package.json:34-36 declares \"allowScripts\": { \"better-sqlite3\": true } and real npm 12.2.2 honours it: `npm install-scripts ls` reports only \"esbuild@0.28.2 (postinstall: node install.js)\" as blocked \u2014 better-sqlite3 is NOT listed \u2014 and `npm install-scripts approve --no-allow-scripts-pin --dry-run better-sqlite3` prints \"Nothing to approve; allowScripts unchanged.\" (control: the same command for esbuild prints \"Approved esbuild: added esbuild\"). The probe is exactly the required one at scripts/postinstall-lint-deps.sh:26-45 (`new Database(\":memory:\").prepare(\"select 1 as x\").get()`), and `npm run check:sqlite-binding` -> \"OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})\", exit 0. (b) Remedy is documented at README.md:39-88 (\"Troubleshooting: `better-sqlite3` native binding (npm >= 12)\", with npm rebuild / install-scripts approve / --build-from-source / reinstall steps) and CHANGELOG.md:10-27. (c) MISSING: `.github/workflows/ci.yml` has no such step \u2014 `grep -n \"sqlite-binding\\|better-sqlite3\\|allowScripts\" .github/workflows/ci.yml` returns \"NO MATCHES IN CI.YML\". Commit 6cb184b4 added the step, then commit e8343f1c (\"chore(ci): stage the sqlite-binding CI step instead of pushing it\") removed those 11 lines and left them only as an unapplied patch at .coding-hermes/pending/ci-sqlite-binding-step.patch; CHANGELOG.md:14-17 states the step \"is staged in .coding-hermes/pending/ci-sqlite-binding-step.patch\". No test covers the gate either (`grep -rln \"sqlite-binding\\|allowScripts\\|native binding\" tests/` -> empty). Suite run: `npx vitest run --passWithNoTests` -> \"Test Files 1 failed | 104 passed | 4 skipped (109)\", \"Tests 1 failed | 1876 passed | 58 skipped (1935)\"; the lone failure tests/mcp.test.ts:184 is a 5000ms timeout that passes in isolation (\"Tests 1 passed | 32 skipped\", EXIT=0).",
+                "resolution_probability": 0.1,
+                "cited_path": "package.json"
+              },
+              {
+                "criterion": "The binding gate fails closed: when better-sqlite3 is installed but its native binding cannot load, `npm run check:sqlite-binding` exits non-zero (so a CI step running it turns red), rather than silently passing.",
+                "status": "PASS",
+                "detail": "scripts/postinstall-lint-deps.sh:26-45 runs the require + `select 1` probe and exits 3 on a wrong result; on any probe failure it prints the remedy and `return 1`, and --sqlite-binding-only does `check_sqlite_binding; exit $?` (lines 105-108). Proven empirically: with node_modules/better-sqlite3/build/Release/better_sqlite3.node moved aside, `bash scripts/postinstall-lint-deps.sh --sqlite-binding-only` printed \"FAIL: better-sqlite3 is installed but its native binding does not load.\" plus the npm>=12 remedy and returned RED_EXIT=1; after restoring the file the probe returned {\"x\":1} again.",
+                "derived": true
+              },
+              {
+                "criterion": "The declared trust is actually honoured by the npm in use: with package.json `allowScripts: {\"better-sqlite3\": true}` present, a fresh install on npm >= 12 produces a loadable binding (no \"install scripts blocked\" for better-sqlite3).",
+                "status": "PASS",
+                "detail": "On this box (node v22.22.3 / npm 12.2.2) `npm install-scripts ls` lists only esbuild as blocked, not better-sqlite3, and `npm install-scripts approve --no-allow-scripts-pin --dry-run better-sqlite3` -> \"Nothing to approve; allowScripts unchanged.\" while the same command for esbuild -> \"Approved esbuild: added esbuild\", showing the entry is parsed and matched. The installed tree loads: `node -e 'new (require(\"better-sqlite3\"))(\":memory:\").prepare(\"select 1 as x\").get()'` -> PROBE {\"x\":1}, and `npm run check:sqlite-binding` -> \"OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})\" exit 0.",
+                "derived": true
+              },
+              {
+                "criterion": "The postinstall hook runs the same binding gate, so a plain `npm install` (not just the explicit check script) fails loudly when the binding is missing.",
+                "status": "PASS",
+                "detail": "package.json:31 \"postinstall\": \"bash scripts/postinstall-lint-deps.sh\" and scripts/postinstall-lint-deps.sh:110-112 `check_sqlite_binding || exit 1` runs the identical gate before the TS-6 setup; the --sqlite-binding-only branch (lines 105-108) is the same function, so the red path demonstrated above (RED_EXIT=1 with the .node file hidden) is the path a plain install takes.",
+                "derived": true
+              }
+            ],
+            "summary": "package.json's allowScripts trust, the :memory: SELECT 1 probe and the README/CHANGELOG remedy are all real and verified on npm 12.2.2, but the required CI step was deliberately removed in commit e8343f1c and survives only as an unapplied patch, so the criterion's CI assertion is not delivered. [uncovered failure paths: failure mode 0 (The binding regression the task exists to catch is not asserted in CI: a fresh npm>=12 install that silently drops the better-sqlite3 binding still yields a green pipeline, because the only enforcement is the local postinstall hook and a manual `npm run check:sqlite-binding`.): detected_by is empty \u2014 uncovered failure path; failure mode 1 (The documented remedy's approval command is unverified against a real npm 12: `npm install-scripts approve --no-allow-scripts-pin better-sqlite3` is printed by the script and README, but only the --dry-run form was exercised here.): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-7\"}",
+          "exit_code": 0,
+          "output_sha": "0c926c5f3092556b95af0d5a3f001a19a494ef183f8e693ed54e0b0af30ee926"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd && ls -la",
+          "exit_code": 0,
+          "output_sha": "687c37f646f974b73139c41adf31efd8c8b06357cf5083ae4a98adda5400cb00"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"package.json\"}",
+          "exit_code": 0,
+          "output_sha": "ede87b5e28234def457c6b3b5020d4d92510d6b2058d90f9000dc4b2aa84ca53"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git log --oneline -15 && echo \"---\" && git status --short | head -20",
+          "exit_code": 0,
+          "output_sha": "dd9ba884fa6e293c2dc11d01d43862749c0f316c364683f439f8b294a0d615a6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git show --stat 6cb184b4 && echo \"=== e8343f1c ===\" && git show --stat e8343f1c",
+          "exit_code": 0,
+          "output_sha": "86e974dbd4f4ddc20df194ff1af8e3c48e5af4b8d25178c54f82538ec4f0ef1f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls scripts/ && echo \"---\" && cat scripts/postinstall-lint-deps.sh",
+          "exit_code": 0,
+          "output_sha": "172c16c9a5028231d6d60bdd2e29c3915a6870f440d168697b8a4c6d8ca0d55f"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 80, \"offset\": 20, \"path\": \"scripts/postinstall-lint-deps.sh\"}",
+          "exit_code": 0,
+          "output_sha": "cd8a1fee8a9cacc2f8e6e435fa47d3238efbe31b388becc4a601c452528cdbc4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && cat .github/workflows/ci.yml && echo \"=== pending patch ===\" && cat .coding-hermes/pending/ci-sqlite-binding-step.patch 2>/dev/null || echo \"NO PENDING PATCH\"",
+          "exit_code": 0,
+          "output_sha": "4f37df8e0088f75162f7f2cdb088d64412965102a081e03e003b21c4b5fb6ff4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"sqlite-binding\\|better-sqlite3\\|allowScripts\" .github/workflows/ci.yml || echo \"NO MATCHES IN CI.YML\"",
+          "exit_code": 0,
+          "output_sha": "7b7ff7562bee54d39bc5cd6849a5d50fdef914da1c9c2d9190426319f0a0ab38"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"better-sqlite3\\|allowScripts\\|sqlite-binding\" README.md CHANGELOG.md",
+          "exit_code": 0,
+          "output_sha": "5c3d3dc5ef21daace58eb6bfc12b6e2650f2f283f980fbef5b939e98201a56a9"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 65, \"offset\": 30, \"path\": \"README.md\"}",
+          "exit_code": 0,
+          "output_sha": "fcec5f2bd56fdeed6394b5aa1287f6361add58ae892dd02a95bc781a73940b24"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 40, \"offset\": 1, \"path\": \"CHANGELOG.md\"}",
+          "exit_code": 0,
+          "output_sha": "4057d1435361c8cf760ece460648c1075b986108a8444b4a49b7294a67033152"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && npm run check:sqlite-binding 2>&1 | tail -20; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "c8ad1dd5e288f49dad974ccc7981acaa52450f875608105333587c384ce6ab76"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && node -e 'const D=require(\"better-sqlite3\"); const r=new D(\":memory:\").prepare(\"select 1 as x\").get(); console.log(\"PROBE\", JSON.stringify(r));' 2>&1 | tail -5; echo \"EXIT=$?\"; echo \"--- npm/node versions ---\"; node --version; npm --version",
+          "exit_code": 0,
+          "output_sha": "c9657e462c71df3e1bc357f9706f48e9b83c44a00d44510bb12305b7b09b5d7b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"check:sqlite-binding\\|sqlite-binding-only\\|allowScripts\" --include=*.ts --include=*.js --include=*.json --include=*.yml --include=*.yaml --include=*.sh --include=*.md . 2>/dev/null | grep -v node_modules | grep -v package-lock | head -40",
+          "exit_code": 0,
+          "output_sha": "03029df2e74d14daa6dca0f9f692d8a47cbe4b6c74d7cc631485ecb344053ad6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls tests/ && echo \"--- grep tests for sqlite binding ---\" && grep -rln \"sqlite-binding\\|allowScripts\\|native binding\" tests/ 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "37587582391b1a38e7a62b111c79d723f0f391cb911bb82d98b7738cf9c6c223"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && cat .gitreins/config.yaml 2>/dev/null | head -40",
+          "exit_code": 0,
+          "output_sha": "222805af8ba537b9423085a23d2d074c9fd13779d64608182e247c822f8616c3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n '95,120p' .gitreins/tasks.yaml",
+          "exit_code": 0,
+          "output_sha": "7d9d9b8a6f3490e6a3aaf2f5c182ae1fc8a574b30e8ea2f8f493395d361f39bc"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"The binding gate fails closed: when better-sqlite3 is installed but its native binding cannot load, `npm run check:sqlite-binding` exits non-zero (so a CI step running it turns red), rather than silently passing.\", \"key\": \"derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "695605e3e6854b84a851ff9135d7b6197ee12303effaac1f1a8c2c73d768e25e"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"The declared trust is actually honoured by the npm in use: with package.json `allowScripts: {\\\"better-sqlite3\\\": true}` present, a fresh install on npm >= 12 produces a loadable binding (no \\\"install scripts blocked\\\" for better-sqlite3).\", \"key\": \"derived_1\"}",
+          "exit_code": 0,
+          "output_sha": "8c0f0c333ff1b1e9a2d6f3985583a2e48b5b5bb83c9ed339a126187b4361a99d"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"The postinstall hook runs the same binding gate, so a plain `npm install` (not just the explicit check script) fails loudly when the binding is missing.\", \"key\": \"derived_2\"}",
+          "exit_code": 0,
+          "output_sha": "9f7653127558865503825edb10599de59dc3c83806d73ed0a77a3e2fcc8733cb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls node_modules/better-sqlite3/build/Release/ 2>&1 | head; echo \"--- simulate red path: hide the binding ---\"; mv node_modules/better-sqlite3/build/Release/better_sqlite3.node /tmp/bs3.node.bak && bash scripts/postinstall-lint-deps.sh --sqlite-binding-only; echo \"RED_EXIT=$?\"; mv /tmp/bs3.node.bak node_modules/better-sqlite3/build/Release/better_sqlite3.node; echo \"restored\"; ls node_modules/better-sqlite3/build/Release/ | head",
+          "exit_code": 0,
+          "output_sha": "f14f1a0779aa1776b13669d13c493b9754fd9cdc21d23b304fbe027a82f0b2c0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && node -e 'const D=require(\"better-sqlite3\"); console.log(\"restored OK\", JSON.stringify(new D(\":memory:\").prepare(\"select 1 as x\").get()))'",
+          "exit_code": 0,
+          "output_sha": "47a8ca4fa9156d5019ee1fa5439950023084cfb11dcda3844833fe0db7632fe1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"allowScripts\" package-lock.json | head -5; echo \"--- npm help for allowScripts ---\"; npm help install-scripts 2>&1 | head -30",
+          "exit_code": 0,
+          "output_sha": "bb1d165d66c2184b4d7d3e8c7c76da409ee3e93b1848aca832e3e703b9b8f1ac"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && npm install-scripts ls 2>&1 | head -20; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "5d1988f9c599d4e7ba73d00411acb0e5a190320f13ccef372be884b3689e0c71"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"allowScripts\" -A3 -B3 node_modules/npm/lib/utils/resolve-allow-scripts.js 2>/dev/null | head -40 || find / -name \"resolve-allow-scripts.js\" -path \"*npm*\" 2>/dev/null | head -3",
+          "exit_code": 0,
+          "output_sha": "4571baf2345139f8b79a459bd9cf2b31e0745aa7332c27b882c1533dd675c0ff"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && npm config get strict-allow-scripts; npm config get ignore-scripts; echo \"--- npm root ---\"; npm root -g; which npm; readlink -f $(which npm)",
+          "exit_code": 0,
+          "output_sha": "693ba013a764d55d266a83ea4339fde1a4117fe0bb6e06a15ca26aea9e46fc84"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls /var/tmp/heading-readme-fresh-20261027/.npm-global/lib/node_modules 2>/dev/null; find / -name \"resolve-allow-scripts.js\" 2>/dev/null | head -5",
+          "exit_code": -15,
+          "output_sha": "937c0e4162baa101cf354f93251bfc6dbf42036dde9ab185d966d76d047b1d2e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls -la /home/kara/.local/share/vite-plus/0.3.2/ 2>/dev/null | head; echo \"---\"; ls /home/kara/.local/share/vite-plus/0.3.2/lib/node_modules 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "6e47ef260c50e36c15a66bdfe15a350479bc31107be0cfb8a7bf3c184e90a6e6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls /home/kara/.local/share/vite-plus/0.3.2/node_modules | head -20; echo \"--- find npm pkg ---\"; ls -d /home/kara/.local/share/vite-plus/0.3.2/node_modules/npm 2>/dev/null && grep -rn \"allowScripts\" /home/kara/.local/share/vite-plus/0.3.2/node_modules/npm/lib/utils/resolve-allow-scripts.js 2>/dev/null | head -20",
+          "exit_code": 2,
+          "output_sha": "9e3e11491b003cedfbfb52189e645be2714d77a72fbf287beea9e42c61e6b7c7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls /home/kara/.local/share/vite-plus/0.3.2/node_modules/vite-plus | head -20; echo \"---\"; ls /home/kara/.local/share/vite-plus/0.3.2/node_modules/vite-plus/node_modules 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "2af2bba132d96befdb7729eafa5ce4f2737f0d67fd8ae043cf02bfc464f0e5b9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rln \"allowScripts\" /home/kara/.local/share/vite-plus/0.3.2/node_modules/vite-plus/dist 2>/dev/null | head -5",
+          "exit_code": 0,
+          "output_sha": "4b4227bf307f5d2d36c53fd43e881ca47233287abd5d4224e7f9ceb6b56c300c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"allowScripts\" -B5 -A15 /home/kara/.local/share/vite-plus/0.3.2/node_modules/vite-plus/dist/prompts-CujFOJXu.js | head -60",
+          "exit_code": 0,
+          "output_sha": "6eea4e050d35007afdd995d2c6b4f93ed45f7daecacafb9e6627ffb3d1dce035"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"approve-builds\\|approve-scripts\\|install-scripts approve\" -r /home/kara/.local/share/vite-plus/0.3.2/node_modules/vite-plus/dist/*.js 2>/dev/null | head -10; echo \"=== npm help approve-builds ===\"; npm help approve-builds 2>&1 | head -20",
+          "exit_code": 0,
+          "output_sha": "2861440b13dadc484abc6f99a0f363e39cc2034df272273290c8cb34e51901a7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && npm install-scripts approve --help 2>&1 | head -40",
+          "exit_code": 0,
+          "output_sha": "7443c92fd7e69f1f875573e00b6da054354a8654a1ebc2eaf3da8f623fd0b2c7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && npm install-scripts approve --no-allow-scripts-pin --dry-run better-sqlite3 2>&1 | head -20; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "ef2532cccf91e0cd21e73e68986e75d3485bc1791b44ca7aa10a3281c576b566"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && npm install-scripts approve --no-allow-scripts-pin --dry-run esbuild 2>&1 | head -20; echo \"EXIT=$?\"; echo \"=== json ===\"; npm install-scripts ls --json 2>&1 | head -30",
+          "exit_code": 0,
+          "output_sha": "e645cc7b15e610134b542a80cf06ff20e38491961c6c4cdcad4ea6c3a2e46a96"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git status --short package.json && grep -n \"allowScripts\" -A3 package.json",
+          "exit_code": 0,
+          "output_sha": "33ef9ff4397de9cda797560d78c845e3ae06a5f07d05d3fef0afeacd14f6c313"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git checkout -- package.json && git status --short package.json; grep -n \"allowScripts\" -A3 package.json",
+          "exit_code": 0,
+          "output_sha": "6a936b9f33581d71e1be1d83df836825f2cd26299e61d440fa3bd859b0b0f3fb"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: package.json:34-36 declares \\\"allowScripts\\\": {\\\"better-sqlite3\\\": true}. Verified honoured by real npm 12.2.2: `npm install-scripts ls` lists only esbuild as blocked, NOT better-sqlite3 (so the entry is accepted and matched); `npm install-scripts approve --no-allow-scripts-pin --dry-run better-sqlite3` -> \\\"Nothing to approve; allowScripts unchanged.\\\" (control: same command for esbuild -> \\\"Approved esbuild: added esbuild\\\"). Binding loads: `npm run check:sqlite-binding` -> \\\"OK: better-sqlite3 native binding loads (SELECT 1 -> {\\\"x\\\":1})\\\" exit 0; direct node probe -> PROBE {\\\"x\\\":1}.\", \"key\": \"verified_derived_1\"}",
+          "exit_code": 0,
+          "output_sha": "1c085434f60b2e773456e217d34290f36aae774714e479a5bea6f807534958c9"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: scripts/postinstall-lint-deps.sh:105-108 routes --sqlite-binding-only to check_sqlite_binding; package.json:32 \\\"check:sqlite-binding\\\" -> that flag; package.json:31 \\\"postinstall\\\": \\\"bash scripts/postinstall-lint-deps.sh\\\" and line ~110 `check_sqlite_binding || exit 1` runs the same gate on every install. Red path proven: moved node_modules/better-sqlite3/build/Release/better_sqlite3.node aside, ran `bash scripts/postinstall-lint-deps.sh --sqlite-binding-only` -> \\\"FAIL: better-sqlite3 is installed but its native binding does not load.\\\" + remedy, RED_EXIT=1; binding restored and re-probe OK {\\\"x\\\":1}.\", \"key\": \"verified_derived_2\"}",
+          "exit_code": 0,
+          "output_sha": "934e1fcd69f682d8b230f266913c99357e1aaf414f1535b12c1321ab2875e185"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: scripts/postinstall-lint-deps.sh:26-45 \\u2014 probe is `new Database(\\\":memory:\\\").prepare(\\\"select 1 as x\\\").get()` with row.x !== 1 -> exit 3; on failure the function prints remedy and `return 1`; --sqlite-binding-only does `check_sqlite_binding; exit $?` (line 106-108). Empirically: RED_EXIT=1 with binding hidden, exit 0 with binding present.\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "6bd65d75ed704a7ab6c2e2c43c4b3f053dc75ae89d3718f1e4fa3019a0f966b5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && timeout 600 npx vitest run --passWithNoTests 2>&1 | tail -25",
+          "exit_code": -15,
+          "output_sha": "59ec49cc434d41dd275f7af8d4cf8c40a38ee95daefd3cd1cf97612078051375"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && (TMPDIR=$PWD/.tmp timeout 900 npx vitest run --passWithNoTests > /tmp/vitest-out.txt 2>&1; echo \"EXIT=$?\" >> /tmp/vitest-out.txt) & sleep 25; echo started",
+          "exit_code": 0,
+          "output_sha": "c803aead98be80beee0bff3c25d6858d2caab4a9664bec57c8fa9977b0f2f474"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 25; tail -5 /tmp/vitest-out.txt 2>/dev/null; echo \"---\"; wc -l /tmp/vitest-out.txt 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "1546a3b89c82f559361881ff2d658fe921ec471a90954b8e250debbac1cded97"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat /tmp/vitest-out.txt",
+          "exit_code": 0,
+          "output_sha": "d2fcebfc28bd41dfb8beca3ea89b98b1a083019a00f70aef66000576f217321f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && (TMPDIR=$PWD/.tmp timeout 300 npx vitest run tests/mcp.test.ts -t \"polls unprocessed events after a fresh database migration\" > /tmp/vitest-mcp.txt 2>&1; echo \"EXIT=$?\" >> /tmp/vitest-mcp.txt) & sleep 28; echo started",
+          "exit_code": 0,
+          "output_sha": "f6bdbd64827f35f9797c2dcc00f474f3e83836ce14ae291ec163d681c68eef5a"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 20; cat /tmp/vitest-mcp.txt",
+          "exit_code": 0,
+          "output_sha": "f032ecfa4206771a56c7e0d7363dfbfcb87576a93589401bf32a3850b8284ee7"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FAIL (CI step part): .github/workflows/ci.yml contains NO sqlite-binding step \\u2014 `grep -n \\\"sqlite-binding\\\\|better-sqlite3\\\\|allowScripts\\\" .github/workflows/ci.yml` -> \\\"NO MATCHES IN CI.YML\\\". Commit e8343f1c (\\\"chore(ci): stage the sqlite-binding CI step instead of pushing it\\\") deliberately REMOVED the 11-line step that 6cb184b4 had added, leaving it only as an unapplied patch at .coding-hermes/pending/ci-sqlite-binding-step.patch. CHANGELOG.md:14-17 admits \\\"The CI step that runs it right after `npm ci` is staged in `.coding-hermes/pending/ci-sqlite-binding-step.patch`\\\". No test in tests/ references the gate (`grep -rln \\\"sqlite-binding\\\\|allowScripts\\\\|native binding\\\" tests/` -> empty). PASS parts: package.json:34-36 allowScripts {\\\"better-sqlite3\\\": true} (honoured by real npm 12.2.2 \\u2014 `npm install-scripts ls` lists only esbuild as blocked; `npm install-scripts approve --dry-run better-sqlite3` -> \\\"Nothing to approve\\\"); probe `new Database(\\\":memory:\\\").prepare(\\\"select 1 as x\\\").get()` at scripts/postinstall-lint-deps.sh:26-45, `npm run check:sqlite-binding` -> \\\"OK: better-sqlite3 native binding loads (SELECT 1 -> {\\\"x\\\":1})\\\" exit 0; remedy documented README.md:39-88 and CHANGELOG.md:10-27. Test suite: `npx vitest run --passWithNoTests` -> \\\"Test Files 1 failed | 104 passed | 4 skipped (109)\\\", \\\"Tests 1 failed | 1876 passed | 58 skipped (1935)\\\"; the single failure tests/mcp.test.ts:184 is a 5000ms timeout that passes in isolation (EXIT=0, \\\"Tests 1 passed | 32 skipped\\\").\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "b001e2ad42f012071cb60e86d8590a9c74c28c75d05353faebbb415b03b0e645"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/events.jsonl",
+        "line": 360,
+        "detection": "event log records task_created for INT-CI-1 but the diff shows no corresponding event id for the DF-SPECLANG-016 update, and the INT-CI-1 event detail omits fields present in tasks.jsonl",
+        "detail": "Event 359 for INT-CI-1 carries detail {\"id\":\"INT-CI-1\",\"status\":\"pending\"} while the tasks.jsonl row for the same task has type/priority/complexity/acceptance_criteria \u2014 the event is a thin stub, consistent with existing task_created events, so this is informational only."
+      },
+      {
+        "severity": "observation",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 146,
+        "detection": "new task DF-SPECLANG-017 declares depends_on:[\"DF-SPECLANG-016\"] but DF-SPECLANG-016 is already status complete, so the dependency is satisfied and the field is inert",
+        "detail": "DF-SPECLANG-017's depends_on references DF-SPECLANG-016, which the same diff shows as status complete with commit_hash b3658460, so the dependency gate is already met."
+      }
+    ],
+    "summary": "Board-only bookkeeping diff (task rows and events); no product code changed, and the only notable items are informational \u2014 a thin task_created event payload and an already-satisfied depends_on."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  22:44:37\n\nStage tier2: FAIL\n  INCOMPLETE\n  \u2717 package.json declares the better-sqlite3 build script trust (allowScripts or equivalent) and documents the manual remedy; a CI step asserts new better-sqlite3(':memory:').prepare('select 1').get() works after install; documented remedy appears in README/CHANGELOG: Two of three parts hold, the CI part does not. (a) package.json:34-36 declares \"allowScripts\": { \"better-sqlite3\": true } and real npm 12.2.2 honours it: `npm install-scripts ls` reports only \"esbuild@0.28.2 (postinstall: node install.js)\" as blocked \u2014 better-sqlite3 is NOT listed \u2014 and `npm install-scripts approve --no-allow-scripts-pin --dry-run better-sqlite3` prints \"Nothing to approve; allowScripts unchanged.\" (control: the same command for esbuild prints \"Approved esbuild: added esbuild\"). The probe is exactly the required one at scripts/postinstall-lint-deps.sh:26-45 (`new Database(\":memory:\").prepare(\"select 1 as x\").get()`), and `npm run check:sqlite-binding` -> \"OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})\", exit 0. (b) Remedy is documented at README.md:39-88 (\"Troubleshooting: `better-sqlite3` native binding (npm >= 12)\", with npm rebuild / install-scripts approve / --build-from-source / reinstall steps) and CHANGELOG.md:10-27. (c) MISSING: `.github/workflows/ci.yml` has no such step \u2014 `grep -n \"sqlite-binding\\|better-sqlite3\\|allowScripts\" .github/workflows/ci.yml` returns \"NO MATCHES IN CI.YML\". Commit 6cb184b4 added the step, then commit e8343f1c (\"chore(ci): stage the sqlite-binding CI step instead of pushing it\") removed those 11 lines and left them only as an unapplied patch at .coding-hermes/pending/ci-sqlite-binding-step.patch; CHANGELOG.md:14-17 states the step \"is staged in .coding-hermes/pending/ci-sqlite-binding-step.patch\". No test covers the gate either (`grep -rln \"sqlite-binding\\|allowScripts\\|native binding\" tests/` -> empty). Suite run: `npx vitest run --passWithNoTests` -> \"Test Files 1 failed | 104 passed | 4 skipped (109)\", \"Tests 1 failed | 1876 passed | 58 skipped (1935)\"; the lone failure tests/mcp.test.ts:184 is a 5000ms timeout that passes in isolation (\"Tests 1 passed | 32 skipped\", EXIT=0).\n  \u2713 The binding gate fails closed: when better-sqlite3 is installed but its native binding cannot load, `npm run check:sqlite-binding` exits non-zero (so a CI step running it turns red), rather than silently passing.: scripts/postinstall-lint-deps.sh:26-45 runs the require + `select 1` probe and exits 3 on a wrong result; on any probe failure it prints the remedy and `return 1`, and --sqlite-binding-only does `check_sqlite_binding; exit $?` (lines 105-108). Proven empirically: with node_modules/better-sqlite3/build/Release/better_sqlite3.node moved aside, `bash scripts/postinstall-lint-deps.sh --sqlite-binding-only` printed \"FAIL: better-sqlite3 is installed but its native binding does not load.\" plus the npm>=12 remedy and returned RED_EXIT=1; after restoring the file the probe returned {\"x\":1} again.\n  \u2713 The declared trust is actually honoured by the npm in use: with package.json `allowScripts: {\"better-sqlite3\": true}` present, a fresh install on npm >= 12 produces a loadable binding (no \"install scripts blocked\" for better-sqlite3).: On this box (node v22.22.3 / npm 12.2.2) `npm install-scripts ls` lists only esbuild as blocked, not better-sqlite3, and `npm install-scripts approve --no-allow-scripts-pin --dry-run better-sqlite3` -> \"Nothing to approve; allowScripts unchanged.\" while the same command for esbuild -> \"Approved esbuild: added esbuild\", showing the entry is parsed and matched. The installed tree loads: `node -e 'new (require(\"better-sqlite3\"))(\":memory:\").prepare(\"select 1 as x\").get()'` -> PROBE {\"x\":1}, and `npm run check:sqlite-binding` -> \"OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})\" exit 0.\n  \u2713 The postinstall hook runs the same binding gate, so a plain `npm install` (not just the explicit check script) fails loudly when the binding is missing.: package.json:31 \"postinstall\": \"bash scripts/postinstall-lint-deps.sh\" and scripts/postinstall-lint-deps.sh:110-112 `check_sqlite_binding || exit 1` runs the identical gate before the TS-6 setup; the --sqlite-binding-only branch (lines 105-108) is the same function, so the red path demonstrated above (RED_EXIT=1 with the .node file hidden) is the path a plain install takes.\n  \u2717 Coverage FAILED \u2014 not passing: package.json declares the better-sqlite3 build script trust (allowScripts or equivalent) and documents the manual remedy; a CI step asserts new better-sqlite3(':memory:').prepare('select 1').get() works after install; documented remedy appears in README/CHANGELOG\npackage.json's allowScripts trust, the :memory: SELECT 1 probe and the README/CHANGELOG remedy are all real and verified on npm 12.2.2, but the required CI step was deliberately removed in commit e8343f1c and survives only as an unapplied patch, so the criterion's CI assertion is not delivered. [uncovered failure paths: failure mode 0 (The binding regression the task exists to catch is not asserted in CI: a fresh npm>=12 install that silently drops the better-sqlite3 binding still yields a green pipeline, because the only enforcement is the local postinstall hook and a manual `npm run check:sqlite-binding`.): detected_by is empty \u2014 uncovered failure path; failure mode 1 (The documented remedy's approval command is unverified against a real npm 12: `npm install-scripts approve --no-allow-scripts-pin better-sqlite3` is printed by the script and README, but only the --dry-run form was exercised here.): detected_by is empty \u2014 uncovered failure path]\n\nOverall: FAIL \u2717",
+  "evaluated_at": "2026-11-17T03:49:38.804169",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T03:49:38.844987+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 5137,
+        "truncated": false,
+        "source": "git show 8ac77df48ef3"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 17794,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DF-SPECLANG-7"
+  }
+}

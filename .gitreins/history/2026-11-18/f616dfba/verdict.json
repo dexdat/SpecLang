@@ -1,0 +1,125 @@
+{
+  "task_id": "README-6",
+  "task_title": "README spec-validation promise is true: generate_index --validate exits 0",
+  "task_criteria": [
+    "python3 scripts/generate_index.py --validate exits 0 with no Missing refs warning and python3 scripts/validate_refs.py prints All references valid and exits 0"
+  ],
+  "passed": false,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "land/2117",
+  "commit": "f268d34838067fa4493ca08f5ca013825aabd4ee",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "d69b6c8da018251b1eb2cc93b3d5dda1e687dbe42c6225c0afb8ee31fc6d3bad",
+  "working_tree_dirty_path_count": 0,
+  "items": [],
+  "merge_recommendation": "needs_review",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  17:06:23",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261118T220242.471972Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\nnpm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261118T220242.471972Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  17:06:23\n   Duration  27.51s (transform 4.48s, setup 1.29s, import 8.03s, tests 154.64s, environment 14ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261118T220242.471972Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": false,
+      "any_failed": true,
+      "summary": "INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: python3 scripts/generate_index.py --validate exits 0 with no Missing refs warning and python3 scripts/validate_refs.py prints All references valid and exits 0\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": false,
+          "output": "INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: python3 scripts/generate_index.py --validate exits 0 with no Missing refs warning and python3 scripts/validate_refs.py prints All references valid and exits 0\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+          "error": "",
+          "data": {
+            "verdict": "INCOMPLETE",
+            "items": [],
+            "summary": "Evaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+            "ungraded_criteria": [
+              "python3 scripts/generate_index.py --validate exits 0 with no Missing refs warning and python3 scripts/validate_refs.py prints All references valid and exits 0"
+            ],
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "ungraded_criteria": [
+        "python3 scripts/generate_index.py --validate exits 0 with no Missing refs warning and python3 scripts/validate_refs.py prints All references valid and exits 0"
+      ]
+    }
+  },
+  "ungraded_criteria": [
+    "python3 scripts/generate_index.py --validate exits 0 with no Missing refs warning and python3 scripts/validate_refs.py prints All references valid and exits 0"
+  ],
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [],
+    "summary": "",
+    "error": "no diff to review (clean tree, no commit anchor)"
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  17:06:23\n\nStage tier2: FAIL\n  INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: python3 scripts/generate_index.py --validate exits 0 with no Missing refs warning and python3 scripts/validate_refs.py prints All references valid and exits 0\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)\n\nOverall: FAIL \u2717",
+  "evaluated_at": "2026-11-18T22:07:01.173703",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-18T22:07:01.192388+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 3598,
+        "truncated": false,
+        "source": "git show f268d3483806"
+      }
+    ],
+    "task_id": "README-6"
+  }
+}

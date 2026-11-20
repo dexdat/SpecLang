@@ -1,0 +1,105 @@
+commit 09398055c6d4d48b647c13727d8a9607ead2b29b
+Author:     kara <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 00:49:28 2026 -0500
+Commit:     kara <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 00:55:11 2026 -0500
+
+    docs(gitreins): record evidence files, ref union and the 120s step-budget failure mode (DF-SPECLANG-12)
+    
+    Follow-up to e2340755 (the previous dispatch of this same task, which already
+    landed the config knobs and the runbook for this worktree). This commit adds only
+    what I re-verified against the installed tool myself, plus the operator knowledge
+    that explains a verdict reading FAIL.
+    
+    Verified in gitreins 0.21.0 source (pipx venv, site-packages/engine/):
+      * persist.py:100 DEFAULT_HISTORY_CONFIG -- enabled/path/storage/max_verdicts
+      * persist.py:218-223 config_schema._HISTORY -- the authoritative key set
+      * persist.py:261-265 entry dir = <UTC date>/sha256("{task_id}:{evaluated_at}")[:8]
+      * persist.py:154 HISTORY_REF = refs/gitreins/history (storage: git target)
+      * persist.py:283-309 writes verdict.json + summary.md, and the evidence
+        collector's commit.patch / worktree.patch next to them
+      * persist.py:951-973 _prune_old drops the OLDEST entries past max_verdicts
+        (<= 0 disables), which is what the config comment claims
+    
+    Doc additions (docs/gitreins-verdicts.md):
+      * the two evidence patch files are named -- the entry dir is the audit unit a
+        board closeout can quote, not just verdict.json;
+      * the ref is shared by every worktree while each checkout keeps its own
+        .gitreins/history/ dir, so the ref is the union (measured: three runs on the
+        ref for 2026-11-17, one on this checkout's disk);
+      * `pipeline.stages[].steps[].timeout` (default 120s) is what turns a completed
+        run into `passed: false` / DEGRADED on this repo's full vitest suite -- so a
+        DEGRADED verdict is not a persistence failure.
+    
+    End-to-end proof from this checkout (tier 1 only, no 25-minute judge burned):
+      gitreins task start PROBE-DF12 && gitreins task complete PROBE-DF12 --skip-tier2
+      -> Overall: PASS, "Verdict saved: 26195795" (that id is the history-ref commit,
+         NOT the entry dir), entry dir .gitreins/history/2026-11-17/01e5ab88/ with
+         verdict.json + summary.md + commit.patch + worktree.patch, verdict bound to
+         commit 3cb333b5 on wt/DF-SPECLANG-12, pass_class tier1-only.
+    
+    Limits, stated rather than papered over: `--skip-tier2` means no tier-2 judge
+    ran, so this record cannot satisfy a judge-gated merge. The unknown-key detector
+    was exercised IN-BAND only -- the harness blocks writing a scratch
+    .gitreins/config.yaml, so no deliberate-bogus-key arm was run; what was measured
+    is the same `gitreins config-validate` invocation warning on six pre-existing
+    keys while naming nothing under `history:`. And
+    `git ls-remote origin 'refs/gitreins/*'` is empty, so ref-carried evidence is
+    per-checkout until pushed explicitly.
+    
+    Addresses DF-SPECLANG-12.
+---
+ docs/gitreins-verdicts.md | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
+
+diff --git a/docs/gitreins-verdicts.md b/docs/gitreins-verdicts.md
+index 6b8860cb..70be7ce2 100644
+--- a/docs/gitreins-verdicts.md
++++ b/docs/gitreins-verdicts.md
+@@ -13,10 +13,15 @@ after a task completes. Task: DF-SPECLANG-12.
+     verdict.json      # task id, criteria, per-item PASS/FAIL + detail, pass_class,
+                       # commit, working-tree fingerprint, stages
+     summary.md        # human roll-up of the same run
++    commit.patch      # evidence: the graded commit's diff (when evidence collection runs)
++    worktree.patch    # evidence: the working-tree diff that was actually graded
+ ```
+ 
+ With `history.storage: git` (this repo) the same files are also committed to the
+-`refs/gitreins/history` ref, one commit per verdict.
++`refs/gitreins/history` ref, one commit per verdict. The ref is shared by every
++worktree of the repo while each checkout keeps its own `.gitreins/history/` dir,
++so the ref is the union: measured 2026-11-17 the ref carried three runs for that
++date and this checkout held one on disk.
+ 
+ ## Config keys (authoritative source: installed tool, `engine/persist.py`)
+ 
+@@ -30,9 +35,12 @@ all under the top-level `history:` section:
+ | `storage` | `git` = commit each verdict to the history ref; `filesystem` = files only | `git` |
+ | `max_verdicts` | retention guard: oldest entries pruned past this count (`<= 0` disables) | `1000` |
+ 
+-This repo sets all four explicitly. `gitreins config-validate` accepts the block:
+-it names an unknown key under `history:` (verified with a deliberate
+-`history.bogus_knob`) and stays silent on this one.
++This repo sets all four explicitly. `gitreins config-validate` reports no
++`history.*` warning: the same invocation still flags six unrelated, pre-existing
++unknown keys (`guards.assemble`, `guards.assemble_command`, `guards.build`,
++`guards.build_command`, `defaults.provider`, `defaults.api_key_env`), so the
++unknown-key detector demonstrably ran and named nothing in this block.
++`engine/config_schema.py:218` (`_HISTORY`) is the allow-list it checks against.
+ 
+ ## Why a run can be missing entirely
+ 
+@@ -44,6 +52,13 @@ needs a completed re-run, not a recovery step. For a fast, LLM-free record use
+ `--skip-tier2` (the verdict then records `pass_class: tier1-only`, which does not
+ satisfy a judge-gated merge).
+ 
++A run that *does* finish can still land `passed: false`: every tier-1 step has a
++per-step budget of `pipeline.stages[].steps[].timeout` seconds (default **120**),
++and this repo's full `npx vitest run` exceeds that, so the `tests` step is killed
++and the verdict is recorded `[DEGRADED — skipped: tier1(tests)]` rather than
++silently green. Raise that step's `timeout` if a `task complete` should cover the
++whole suite; a verdict that says DEGRADED is telling the truth.
++
+ ## Retention of the working-tree copy
+ 
+ `.gitreins/history/` stays gitignored. The durable copy is the

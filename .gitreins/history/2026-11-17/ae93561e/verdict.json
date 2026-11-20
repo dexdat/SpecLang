@@ -1,0 +1,298 @@
+{
+  "task_id": "README-20",
+  "task_title": "README-20: README.md no longer quotes stale dual-view compliance counts",
+  "task_criteria": [
+    "grep -c '598 of 603' README.md prints 0; the compliance sentence cites 'python3 scripts/check_compliance.py --report' and a date, and the live report value is not contradicted. AGENTS.md is deliberately NOT edited (owner rule: AGENTS.md edits are owner-gated). failure_condition = the stale literal 598 of 603 survives in README.md, or a number is quoted that the live report contradicts. proof = grep output, the new sentence, and the compliance report tail."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "tmp2",
+  "commit": "ad5f0ec93ae6fad9325ff6e818506dde949b40d9",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "28a5c7ccfcf80ba1aa2c6ab80124723f12edae34e7ef7d932313b575da2ead2d",
+  "working_tree_dirty_path_count": 2,
+  "items": [
+    {
+      "criterion": "grep -c '598 of 603' README.md prints 0; the compliance sentence cites 'python3 scripts/check_compliance.py --report' and a date, and the live report value is not contradicted. AGENTS.md is deliberately NOT edited (owner rule: AGENTS.md edits are owner-gated). failure_condition = the stale literal 598 of 603 survives in README.md, or a number is quoted that the live report contradicts. proof = grep output, the new sentence, and the compliance report tail.",
+      "status": "PASS",
+      "detail": "grep -c '598 of 603' README.md -> \"0\" (exit 1, no match). README.md:148 now reads: \"Dual-view compliance: 99.2% of non-exempt files follow the specs\u2192working-location pattern (the only non-compliant files are legacy `scripts/archive/` scripts with no spec source; run `python3 scripts/check_compliance.py --report` for live counts and the exempt list, last measured 2026-11-17)\" \u2014 cites the command and a date. Live report tail (python3 scripts/check_compliance.py --report, exit 0): \"**Compliance Rate**: 99.2%\", Compliant 600, Non-compliant 5, Exempt 210, Total (non-exempt) 605; 600/605 = 99.17% -> 99.2%, so the quoted percentage is NOT contradicted. AGENTS.md not edited: git show --stat ced0a6a1 -> \"README.md | 2 +-  1 file changed, 1 insertion(+), 1 deletion(-)\"; AGENTS.md:207 still carries the stale 598/603 snapshot, left alone per the owner-gated rule. [resolution 0.11; README.md, scripts/check_compliance.py, AGENTS.md]"
+    },
+    {
+      "criterion": "README.md quotes no hard count (compliant/non-exempt/exempt) that the live report contradicts \u2014 only the percentage, which the report confirms.",
+      "status": "PASS",
+      "detail": "README.md:148 quotes only \"99.2%\" plus a qualitative non-compliant class; no hard counts (no 600/605/210/178). grep -n '178 exempt\\|603\\|598\\|2026-08-31' README.md -> exit 1 (no matches). Live report: 600 compliant / 605 non-exempt / 210 exempt / 5 non-compliant; 600/605 = 99.17% rounds to the quoted 99.2%. The live exempt count (210) differs from the commit message's claim (162) and AGENTS.md's 178, but README no longer quotes any exempt number, so nothing in README is contradicted.",
+      "derived": true
+    },
+    {
+      "criterion": "AGENTS.md is left byte-identical by this change (owner-gated file), and the stale snapshot it still holds is not silently presented as current in README.",
+      "status": "PASS",
+      "detail": "git show --stat ced0a6a1 lists only README.md (1 insertion, 1 deletion); AGENTS.md is absent from the commit. AGENTS.md:207 still reads \"live audit 2026-08-31: 598 compliant / 603 non-exempt, 99.2%; ... 178 exempt\" \u2014 untouched as required. The commit message explicitly names the AGENTS.md gap as auditable rather than hidden, and README no longer asserts any count that would conflict with it.",
+      "derived": true
+    },
+    {
+      "criterion": "The cited command is a real, working entrypoint whose output matches the README sentence, and the stamped measurement date is honest.",
+      "status": "PASS",
+      "detail": "README.md:148 cites `python3 scripts/check_compliance.py --report`; running it verbatim exits 0 and prints \"**Compliance Rate**: 99.2%\" (scripts/check_compliance.py:main() dispatches --report to generate_report(), which formats stats['compliance_rate'] at 1 decimal). The stamped date 2026-11-17 equals the commit date: git log -1 --format=%ad --date=short ced0a6a1 -> 2026-11-17.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  01:03:07",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  01:03:07\n   Duration  34.33s (transform 29.97s, setup 7.14s, import 45.20s, tests 163.39s, environment 23ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 grep -c '598 of 603' README.md prints 0; the compliance sentence cites 'python3 scripts/check_compliance.py --report' and a date, and the live report value is not contradicted. AGENTS.md is deliberately NOT edited (owner rule: AGENTS.md edits are owner-gated). failure_condition = the stale literal 598 of 603 survives in README.md, or a number is quoted that the live report contradicts. proof = grep output, the new sentence, and the compliance report tail.: grep -c '598 of 603' README.md -> \"0\" (exit 1, no match). README.md:148 now reads: \"Dual-view compliance: 99.2% of non-exempt files follow the specs\u2192working-location pattern (the only non-compliant files are legacy `scripts/archive/` scripts with no spec source; run `python3 scripts/check_compliance.py --report` for live counts and the exempt list, last measured 2026-11-17)\" \u2014 cites the command and a date. Live report tail (python3 scripts/check_compliance.py --report, exit 0): \"**Compliance Rate**: 99.2%\", Compliant 600, Non-compliant 5, Exempt 210, Total (non-exempt) 605; 600/605 = 99.17% -> 99.2%, so the quoted percentage is NOT contradicted. AGENTS.md not edited: git show --stat ced0a6a1 -> \"README.md | 2 +-  1 file changed, 1 insertion(+), 1 deletion(-)\"; AGENTS.md:207 still carries the stale 598/603 snapshot, left alone per the owner-gated rule. [resolution 0.11; README.md, scripts/check_compliance.py, AGENTS.md]\n  \u2713 README.md quotes no hard count (compliant/non-exempt/exempt) that the live report contradicts \u2014 only the percentage, which the report confirms.: README.md:148 quotes only \"99.2%\" plus a qualitative non-compliant class; no hard counts (no 600/605/210/178). grep -n '178 exempt\\|603\\|598\\|2026-08-31' README.md -> exit 1 (no matches). Live report: 600 compliant / 605 non-exempt / 210 exempt / 5 non-compliant; 600/605 = 99.17% rounds to the quoted 99.2%. The live exempt count (210) differs from the commit message's claim (162) and AGENTS.md's 178, but README no longer quotes any exempt number, so nothing in README is contradicted.\n  \u2713 AGENTS.md is left byte-identical by this change (owner-gated file), and the stale snapshot it still holds is not silently presented as current in README.: git show --stat ced0a6a1 lists only README.md (1 insertion, 1 deletion); AGENTS.md is absent from the commit. AGENTS.md:207 still reads \"live audit 2026-08-31: 598 compliant / 603 non-exempt, 99.2%; ... 178 exempt\" \u2014 untouched as required. The commit message explicitly names the AGENTS.md gap as auditable rather than hidden, and README no longer asserts any count that would conflict with it.\n  \u2713 The cited command is a real, working entrypoint whose output matches the README sentence, and the stamped measurement date is honest.: README.md:148 cites `python3 scripts/check_compliance.py --report`; running it verbatim exits 0 and prints \"**Compliance Rate**: 99.2%\" (scripts/check_compliance.py:main() dispatches --report to generate_report(), which formats stats['compliance_rate'] at 1 decimal). The stamped date 2026-11-17 equals the commit date: git log -1 --format=%ad --date=short ced0a6a1 -> 2026-11-17.\nREADME.md:148 drops the stale '598 of 603' literal (grep -c prints 0), keeps only the 99.2% percentage which the live `python3 scripts/check_compliance.py --report` confirms (600/605), cites the command and the 2026-11-17 measurement date, and leaves the owner-gated AGENTS.md untouched. [uncovered failure paths: failure mode 0 (AGENTS.md:207 still advertises the stale 2026-08-31 snapshot (598 compliant / 603 non-exempt, 178 exempt) while README now says 99.2% measured 2026-11-17, so the two docs disagree on the audit date and exempt count): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 grep -c '598 of 603' README.md prints 0; the compliance sentence cites 'python3 scripts/check_compliance.py --report' and a date, and the live report value is not contradicted. AGENTS.md is deliberately NOT edited (owner rule: AGENTS.md edits are owner-gated). failure_condition = the stale literal 598 of 603 survives in README.md, or a number is quoted that the live report contradicts. proof = grep output, the new sentence, and the compliance report tail.: grep -c '598 of 603' README.md -> \"0\" (exit 1, no match). README.md:148 now reads: \"Dual-view compliance: 99.2% of non-exempt files follow the specs\u2192working-location pattern (the only non-compliant files are legacy `scripts/archive/` scripts with no spec source; run `python3 scripts/check_compliance.py --report` for live counts and the exempt list, last measured 2026-11-17)\" \u2014 cites the command and a date. Live report tail (python3 scripts/check_compliance.py --report, exit 0): \"**Compliance Rate**: 99.2%\", Compliant 600, Non-compliant 5, Exempt 210, Total (non-exempt) 605; 600/605 = 99.17% -> 99.2%, so the quoted percentage is NOT contradicted. AGENTS.md not edited: git show --stat ced0a6a1 -> \"README.md | 2 +-  1 file changed, 1 insertion(+), 1 deletion(-)\"; AGENTS.md:207 still carries the stale 598/603 snapshot, left alone per the owner-gated rule. [resolution 0.11; README.md, scripts/check_compliance.py, AGENTS.md]\n  \u2713 README.md quotes no hard count (compliant/non-exempt/exempt) that the live report contradicts \u2014 only the percentage, which the report confirms.: README.md:148 quotes only \"99.2%\" plus a qualitative non-compliant class; no hard counts (no 600/605/210/178). grep -n '178 exempt\\|603\\|598\\|2026-08-31' README.md -> exit 1 (no matches). Live report: 600 compliant / 605 non-exempt / 210 exempt / 5 non-compliant; 600/605 = 99.17% rounds to the quoted 99.2%. The live exempt count (210) differs from the commit message's claim (162) and AGENTS.md's 178, but README no longer quotes any exempt number, so nothing in README is contradicted.\n  \u2713 AGENTS.md is left byte-identical by this change (owner-gated file), and the stale snapshot it still holds is not silently presented as current in README.: git show --stat ced0a6a1 lists only README.md (1 insertion, 1 deletion); AGENTS.md is absent from the commit. AGENTS.md:207 still reads \"live audit 2026-08-31: 598 compliant / 603 non-exempt, 99.2%; ... 178 exempt\" \u2014 untouched as required. The commit message explicitly names the AGENTS.md gap as auditable rather than hidden, and README no longer asserts any count that would conflict with it.\n  \u2713 The cited command is a real, working entrypoint whose output matches the README sentence, and the stamped measurement date is honest.: README.md:148 cites `python3 scripts/check_compliance.py --report`; running it verbatim exits 0 and prints \"**Compliance Rate**: 99.2%\" (scripts/check_compliance.py:main() dispatches --report to generate_report(), which formats stats['compliance_rate'] at 1 decimal). The stamped date 2026-11-17 equals the commit date: git log -1 --format=%ad --date=short ced0a6a1 -> 2026-11-17.\nREADME.md:148 drops the stale '598 of 603' literal (grep -c prints 0), keeps only the 99.2% percentage which the live `python3 scripts/check_compliance.py --report` confirms (600/605), cites the command and the 2026-11-17 measurement date, and leaves the owner-gated AGENTS.md untouched. [uncovered failure paths: failure mode 0 (AGENTS.md:207 still advertises the stale 2026-08-31 snapshot (598 compliant / 603 non-exempt, 178 exempt) while README now says 99.2% measured 2026-11-17, so the two docs disagree on the audit date and exempt count): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "grep -c '598 of 603' README.md prints 0; the compliance sentence cites 'python3 scripts/check_compliance.py --report' and a date, and the live report value is not contradicted. AGENTS.md is deliberately NOT edited (owner rule: AGENTS.md edits are owner-gated). failure_condition = the stale literal 598 of 603 survives in README.md, or a number is quoted that the live report contradicts. proof = grep output, the new sentence, and the compliance report tail.",
+                "status": "PASS",
+                "detail": "grep -c '598 of 603' README.md -> \"0\" (exit 1, no match). README.md:148 now reads: \"Dual-view compliance: 99.2% of non-exempt files follow the specs\u2192working-location pattern (the only non-compliant files are legacy `scripts/archive/` scripts with no spec source; run `python3 scripts/check_compliance.py --report` for live counts and the exempt list, last measured 2026-11-17)\" \u2014 cites the command and a date. Live report tail (python3 scripts/check_compliance.py --report, exit 0): \"**Compliance Rate**: 99.2%\", Compliant 600, Non-compliant 5, Exempt 210, Total (non-exempt) 605; 600/605 = 99.17% -> 99.2%, so the quoted percentage is NOT contradicted. AGENTS.md not edited: git show --stat ced0a6a1 -> \"README.md | 2 +-  1 file changed, 1 insertion(+), 1 deletion(-)\"; AGENTS.md:207 still carries the stale 598/603 snapshot, left alone per the owner-gated rule. [resolution 0.11; README.md, scripts/check_compliance.py, AGENTS.md]",
+                "resolution_probability": 0.11,
+                "cited_path": "README.md, scripts/check_compliance.py, AGENTS.md"
+              },
+              {
+                "criterion": "README.md quotes no hard count (compliant/non-exempt/exempt) that the live report contradicts \u2014 only the percentage, which the report confirms.",
+                "status": "PASS",
+                "detail": "README.md:148 quotes only \"99.2%\" plus a qualitative non-compliant class; no hard counts (no 600/605/210/178). grep -n '178 exempt\\|603\\|598\\|2026-08-31' README.md -> exit 1 (no matches). Live report: 600 compliant / 605 non-exempt / 210 exempt / 5 non-compliant; 600/605 = 99.17% rounds to the quoted 99.2%. The live exempt count (210) differs from the commit message's claim (162) and AGENTS.md's 178, but README no longer quotes any exempt number, so nothing in README is contradicted.",
+                "derived": true
+              },
+              {
+                "criterion": "AGENTS.md is left byte-identical by this change (owner-gated file), and the stale snapshot it still holds is not silently presented as current in README.",
+                "status": "PASS",
+                "detail": "git show --stat ced0a6a1 lists only README.md (1 insertion, 1 deletion); AGENTS.md is absent from the commit. AGENTS.md:207 still reads \"live audit 2026-08-31: 598 compliant / 603 non-exempt, 99.2%; ... 178 exempt\" \u2014 untouched as required. The commit message explicitly names the AGENTS.md gap as auditable rather than hidden, and README no longer asserts any count that would conflict with it.",
+                "derived": true
+              },
+              {
+                "criterion": "The cited command is a real, working entrypoint whose output matches the README sentence, and the stamped measurement date is honest.",
+                "status": "PASS",
+                "detail": "README.md:148 cites `python3 scripts/check_compliance.py --report`; running it verbatim exits 0 and prints \"**Compliance Rate**: 99.2%\" (scripts/check_compliance.py:main() dispatches --report to generate_report(), which formats stats['compliance_rate'] at 1 decimal). The stamped date 2026-11-17 equals the commit date: git log -1 --format=%ad --date=short ced0a6a1 -> 2026-11-17.",
+                "derived": true
+              }
+            ],
+            "summary": "README.md:148 drops the stale '598 of 603' literal (grep -c prints 0), keeps only the 99.2% percentage which the live `python3 scripts/check_compliance.py --report` confirms (600/605), cites the command and the 2026-11-17 measurement date, and leaves the owner-gated AGENTS.md untouched. [uncovered failure paths: failure mode 0 (AGENTS.md:207 still advertises the stale 2026-08-31 snapshot (598 compliant / 603 non-exempt, 178 exempt) while README now says 99.2% measured 2026-11-17, so the two docs disagree on the audit date and exempt count): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"README-20\"}",
+          "exit_code": 0,
+          "output_sha": "26769b49a030fbeeb2d5e80813cd1b9968b27da05e2b860c1949255fa098b98e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && grep -c '598 of 603' README.md; echo \"exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "e088da915dc07dfc6c091ccacc9de3055116972edc927e82c35ba1beae45b62f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && grep -n -i 'compliance' README.md | head -50",
+          "exit_code": 0,
+          "output_sha": "1de5f95a994dbdfee54e2fc4001b0ed0db0ade1608bed369b3b3eca7ae9796a5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && ls scripts/check_compliance.py && wc -l scripts/check_compliance.py",
+          "exit_code": 0,
+          "output_sha": "152ba46d80d17bc05039c12a3b386c6a897f42529819b7b1f79bd9462c958157"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && python3 scripts/check_compliance.py --report 2>&1 | tail -40; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "c0b17e5b7411ce628eaaca01176dae907e9a3f5a2f6e2836c8f13b0dccad6b5b"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"scripts/check_compliance.py\"}",
+          "exit_code": 0,
+          "output_sha": "94d0fed33e3beebfaa51d884b77848c16fed292cd318cb58454c7bc46944dde0"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 20, \"offset\": 138, \"path\": \"README.md\"}",
+          "exit_code": 0,
+          "output_sha": "d297045b971ed0ba5256354afa328275f0d0dcb0e5855086ce320f5823a808f5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && git log --oneline -8 -- README.md AGENTS.md; echo \"---STATUS---\"; git status --porcelain",
+          "exit_code": 0,
+          "output_sha": "3addaa6cb0e461bf259279d36f010da08dd64ed3b690022163f1a1ec20dd790a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && git show --stat ced0a6a1; echo \"===DIFF===\"; git show ced0a6a1 -- README.md AGENTS.md",
+          "exit_code": 0,
+          "output_sha": "c6ca909f0b60d112c0f7dfb03fa16609a705685a2b5ba019e8eddfcd872cfc1b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && grep -n '598 of 603\\|598\\|603' README.md AGENTS.md 2>/dev/null; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "37a0a6287f2cf2f07021d06daa62fcaaac3d7f44347dd845d35f4a13896bbf8e"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: grep -c '598 of 603' README.md -> \\\"0\\\" (exit 1, no match). README.md:148 now reads: \\\"Dual-view compliance: 99.2% of non-exempt files follow the specs\\u2192working-location pattern (the only non-compliant files are legacy `scripts/archive/` scripts with no spec source; run `python3 scripts/check_compliance.py --report` for live counts and the exempt list, last measured 2026-11-17)\\\". Cites command + date. Live report (python3 scripts/check_compliance.py --report, exit 0) prints \\\"**Compliance Rate**: 99.2%\\\", Compliant 600 / Non-compliant 5 / Exempt 210 / Total non-exempt 605 -> 600/605 = 99.17% = 99.2%, so the quoted percentage is NOT contradicted. AGENTS.md untouched by commit ced0a6a1 (git show --stat: only README.md, 1 insertion 1 deletion); AGENTS.md:207 still carries the stale 598/603 snapshot, which is the owner-gated file left alone as required.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "d2de59b7103d32ac210cf33a4aaecdbd7619559c41b0c4a7d0dbb4d98a60631b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && echo \"--- any other stale counts in README ---\"; grep -n '178 exempt\\|603\\|598\\|2026-08-31' README.md; echo \"EXIT=$?\"; echo \"--- date sanity: commit date ---\"; git log -1 --format='%ad' --date=short ced0a6a1",
+          "exit_code": 0,
+          "output_sha": "ceea8e683323c5efb7d509baa9dbce484dfb2759c66e586134726e8c56ac758a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && python3 scripts/check_compliance.py --report 2>/dev/null | grep -E 'Compliance Rate|Compliant:|Non-compliant:|Exempt:|Total'; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "fda9e468e5cb2732fd4f94b64a2f01a029ef19aa04653aea5485eded4782de1c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && grep -rn '598 of 603' --include=*.md --include=*.ts --include=*.py . 2>/dev/null | head -20; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "1f66091a40dd55b0d58a491b79777c174257760b8a4b9f144ca96785c3663614"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && git ls-files .tmp/ | head; echo \"tracked_count=$(git ls-files .tmp/ | wc -l)\"; echo \"--- ignored? ---\"; git check-ignore -v .tmp/rev9-prefix/README.md; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "afd92ef184a6a5b8c243a67e3646793285a393a982223c6383593fd34e8c9e8d"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: README.md:148 quotes only the percentage (99.2%) plus a qualitative non-compliant class (\\\"legacy scripts/archive/ scripts with no spec source\\\") \\u2014 no hard counts (no \\\"600\\\", \\\"605\\\", \\\"210\\\", \\\"178\\\"). Live report: 600 compliant / 605 non-exempt / 210 exempt / 5 non-compliant. 600/605 = 99.17% -> rounds to 99.2%, matching the quoted figure exactly. The exempt count in the live report (210) differs from the commit message's claim (162) and from AGENTS.md's 178, but README no longer quotes any exempt number, so nothing in README is contradicted. grep -n '178 exempt\\\\|603\\\\|598\\\\|2026-08-31' README.md -> exit 1 (no matches).\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "34be19a0854bddce16c342b36963729d13a1150e34b1dbbc69d0a065e8b2949d"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: git show --stat ced0a6a1 -> \\\"README.md | 2 +- 1 file changed, 1 insertion(+), 1 deletion(-)\\\". AGENTS.md absent from the commit. AGENTS.md:207 still carries the stale snapshot (\\\"live audit 2026-08-31: 598 compliant / 603 non-exempt, 99.2%; ... 178 exempt\\\"), i.e. deliberately left untouched per the owner-gated rule. The commit message explicitly names the AGENTS.md gap as auditable rather than hidden.\", \"key\": \"verified_derived_1\"}",
+          "exit_code": 0,
+          "output_sha": "8d5ea8a7d99a7b2805ba1593445fbbd3ee2a8eb5e579e87824ee9e33a8d74145"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: README.md:148 cites the exact command `python3 scripts/check_compliance.py --report`. Running it verbatim (python3 scripts/check_compliance.py --report, exit 0) prints \\\"**Compliance Rate**: 99.2%\\\", Compliant 600, Non-compliant 5, Exempt 210, Total (non-exempt) 605. The cited command is the real, working entrypoint (scripts/check_compliance.py:main() handles --report via generate_report(), line ~330) and its output agrees with the README sentence. The stamped date 2026-11-17 equals the commit date (git log -1 --format=%ad --date=short ced0a6a1 -> 2026-11-17), so the \\\"last measured\\\" stamp is honest.\", \"key\": \"verified_derived_2\"}",
+          "exit_code": 0,
+          "output_sha": "bee630f96ae7c74f856a086e9fe341e39e55dd97a7d126f1290dc1a721e80723"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "medium",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 126,
+        "detection": "task marked complete with worker_summary contradicting the row's own acceptance_criteria link depth",
+        "detail": "The row's AC2 requires `sed -n '49,51p'` to show `../../docs/NORTH_STAR.md` etc., but the worker_summary states the links were repointed to `../../../` targets and that the row's two-level claim 'was wrong' \u2014 so the recorded completion does not satisfy the stated acceptance criteria as written."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 126,
+        "detection": "completion evidence cites a different path depth than the acceptance criteria's verification command",
+        "detail": "foreman_note verifies `test -e` for `../../../docs/NORTH_STAR.md` from `specs/examples.spec.dir/hello-world`, while AC1/AC2 specify `../../` from `examples/hello-world`; the two verification bases are not reconciled in the row."
+      }
+    ],
+    "summary": "The board row flips DOC-9 to complete, but its own recorded evidence (../../../ links) contradicts the acceptance criteria it was graded against (../../ links), leaving the completion claim unverified against the stated ACs."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  01:03:07\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 grep -c '598 of 603' README.md prints 0; the compliance sentence cites 'python3 scripts/check_compliance.py --report' and a date, and the live report value is not contradicted. AGENTS.md is deliberately NOT edited (owner rule: AGENTS.md edits are owner-gated). failure_condition = the stale literal 598 of 603 survives in README.md, or a number is quoted that the live report contradicts. proof = grep output, the new sentence, and the compliance report tail.: grep -c '598 of 603' README.md -> \"0\" (exit 1, no match). README.md:148 now reads: \"Dual-view compliance: 99.2% of non-exempt files follow the specs\u2192working-location pattern (the only non-compliant files are legacy `scripts/archive/` scripts with no spec source; run `python3 scripts/check_compliance.py --report` for live counts and the exempt list, last measured 2026-11-17)\" \u2014 cites the command and a date. Live report tail (python3 scripts/check_compliance.py --report, exit 0): \"**Compliance Rate**: 99.2%\", Compliant 600, Non-compliant 5, Exempt 210, Total (non-exempt) 605; 600/605 = 99.17% -> 99.2%, so the quoted percentage is NOT contradicted. AGENTS.md not edited: git show --stat ced0a6a1 -> \"README.md | 2 +-  1 file changed, 1 insertion(+), 1 deletion(-)\"; AGENTS.md:207 still carries the stale 598/603 snapshot, left alone per the owner-gated rule. [resolution 0.11; README.md, scripts/check_compliance.py, AGENTS.md]\n  \u2713 README.md quotes no hard count (compliant/non-exempt/exempt) that the live report contradicts \u2014 only the percentage, which the report confirms.: README.md:148 quotes only \"99.2%\" plus a qualitative non-compliant class; no hard counts (no 600/605/210/178). grep -n '178 exempt\\|603\\|598\\|2026-08-31' README.md -> exit 1 (no matches). Live report: 600 compliant / 605 non-exempt / 210 exempt / 5 non-compliant; 600/605 = 99.17% rounds to the quoted 99.2%. The live exempt count (210) differs from the commit message's claim (162) and AGENTS.md's 178, but README no longer quotes any exempt number, so nothing in README is contradicted.\n  \u2713 AGENTS.md is left byte-identical by this change (owner-gated file), and the stale snapshot it still holds is not silently presented as current in README.: git show --stat ced0a6a1 lists only README.md (1 insertion, 1 deletion); AGENTS.md is absent from the commit. AGENTS.md:207 still reads \"live audit 2026-08-31: 598 compliant / 603 non-exempt, 99.2%; ... 178 exempt\" \u2014 untouched as required. The commit message explicitly names the AGENTS.md gap as auditable rather than hidden, and README no longer asserts any count that would conflict with it.\n  \u2713 The cited command is a real, working entrypoint whose output matches the README sentence, and the stamped measurement date is honest.: README.md:148 cites `python3 scripts/check_compliance.py --report`; running it verbatim exits 0 and prints \"**Compliance Rate**: 99.2%\" (scripts/check_compliance.py:main() dispatches --report to generate_report(), which formats stats['compliance_rate'] at 1 decimal). The stamped date 2026-11-17 equals the commit date: git log -1 --format=%ad --date=short ced0a6a1 -> 2026-11-17.\nREADME.md:148 drops the stale '598 of 603' literal (grep -c prints 0), keeps only the 99.2% percentage which the live `python3 scripts/check_compliance.py --report` confirms (600/605), cites the command and the 2026-11-17 measurement date, and leaves the owner-gated AGENTS.md untouched. [uncovered failure paths: failure mode 0 (AGENTS.md:207 still advertises the stale 2026-08-31 snapshot (598 compliant / 603 non-exempt, 178 exempt) while README now says 99.2% measured 2026-11-17, so the two docs disagree on the audit date and exempt count): detected_by is empty \u2014 uncovered failure path]\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T06:04:17.497349",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T06:04:17.517191+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 2732,
+        "truncated": false,
+        "source": "git show ad5f0ec93ae6"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 32184,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "README-20"
+  }
+}

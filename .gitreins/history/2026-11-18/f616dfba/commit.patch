@@ -1,0 +1,59 @@
+commit f268d34838067fa4493ca08f5ca013825aabd4ee
+Merge: c1f9f3cb 315e016a
+Author:     kara <totalwindupflightsystems@gmail.com>
+AuthorDate: Wed Nov 18 17:04:19 2026 -0500
+Commit:     kara <totalwindupflightsystems@gmail.com>
+CommitDate: Wed Nov 18 17:04:19 2026 -0500
+
+    merge wt/README-6: spec reference graph repaired - generate_index --validate exits 0 with 0 missing refs (README-6)
+    
+    Harvested from the dead SpecLang-qa-2026-11-18-13-57-02 wave worker (commit
+    ed86e094, rebased to 315e016a onto c1f9f3cb). Gates on the branch: npm run
+    build rc=0; python3 scripts/generate_index.py --validate exit 0, Missing refs
+    0 (tolerance 0), 182 orphans warnings-only.
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+
+ specs/agent-support.spec.dir/human-only.spec.md    | 48 ++++++++++++++++++++++
+ specs/bootstrap.spec.md                            |  4 +-
+ specs/compiler.spec.dir/go.spec.md                 |  2 +-
+ specs/compiler.spec.dir/python.spec.md             |  2 +-
+ specs/config.spec.md                               |  6 +--
+ specs/mcp.spec.dir/openapi-generation.spec.md      |  2 +-
+ .../opencode-plugin.spec.dir/architecture.spec.md  |  2 +-
+ specs/opencode-plugin.spec.dir/checklist.spec.md   |  2 +-
+ .../opencode-plugin.spec.dir/configuration.spec.md |  2 +-
+ specs/opencode-plugin.spec.dir/convergence.spec.md |  2 +-
+ .../error-handling.spec.md                         |  2 +-
+ .../opencode-plugin.spec.dir/event-system.spec.md  |  2 +-
+ .../git-integration.spec.md                        |  2 +-
+ specs/opencode-plugin.spec.dir/mcp-client.spec.md  |  2 +-
+ .../ownership-guard.spec.md                        |  2 +-
+ .../plugin-lifecycle.spec.md                       |  2 +-
+ .../session-manager.spec.md                        |  2 +-
+ specs/opencode-plugin.spec.dir/tools.spec.md       |  2 +-
+ specs/ralph-loop.spec.md                           |  5 ++-
+ .../alpha.spec.dir/build-system.spec.md            | 36 ++++++++++++++++
+ .../alpha.spec.dir/pipeline-executor.spec.md       | 35 ++++++++++++++++
+ .../alpha.spec.dir/recovery-system.spec.md         | 35 ++++++++++++++++
+ .../alpha.spec.dir/test-integration.spec.md        | 36 ++++++++++++++++
+ specs/roadmap.spec.dir/alpha.spec.md               | 13 +++---
+ .../beta.spec.dir/external-testing.spec.md         | 36 ++++++++++++++++
+ .../beta.spec.dir/monitoring.spec.md               | 36 ++++++++++++++++
+ .../beta.spec.dir/performance-optimization.spec.md | 37 +++++++++++++++++
+ .../beta.spec.dir/scalability.spec.md              | 37 +++++++++++++++++
+ specs/roadmap.spec.dir/beta.spec.md                | 15 +++----
+ .../mvp.spec.dir/agent-session-manager.spec.md     | 36 ++++++++++++++++
+ .../mvp.spec.dir/agent-tools-api.spec.md           | 37 +++++++++++++++++
+ .../mvp.spec.dir/file-ownership.spec.md            | 35 ++++++++++++++++
+ .../mvp.spec.dir/multi-agent-coordination.spec.md  | 36 ++++++++++++++++
+ specs/roadmap.spec.dir/mvp.spec.md                 | 13 +++---
+ .../production.spec.dir/compliance.spec.md         | 37 +++++++++++++++++
+ .../enterprise-features.spec.md                    | 37 +++++++++++++++++
+ .../production.spec.dir/security.spec.md           | 37 +++++++++++++++++
+ .../production.spec.dir/support.spec.md            | 37 +++++++++++++++++
+ specs/roadmap.spec.dir/production.spec.md          | 13 +++---
+ specs/test-specs.spec.md                           |  2 +-
+ specs/ui.spec.md                                   | 26 ++++++------
+ specs/validation.spec.md                           |  2 +-
+ 42 files changed, 695 insertions(+), 62 deletions(-)

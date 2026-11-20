@@ -1,0 +1,563 @@
+{
+  "task_id": "DF-SPECLANG-6",
+  "task_title": "speclang stop crashes the serving process with uncaught ENOENT on daemon.pid",
+  "task_criteria": [
+    "stop shuts down cleanly and tolerates a missing/stale pid file | proof: start --port 39124, curl dashboard 200, ./bin/speclang stop, assert the start process exits 0 and its output contains no ENOENT trace; plus a unit test for pid-file-absent | failure_condition: the start process exits non-zero or prints Error: ENOENT"
+  ],
+  "passed": true,
+  "worktree": "/home/kara/worktrees/SpecLang-DF-SPECLANG-6",
+  "branch": "wt/DF-SPECLANG-6",
+  "commit": "ce347c39d266866e313a58b02ea7bf1af7299fce",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "9024d342e022c8ff6723547ea0842f53cd5cfff0a0131a277376c2398c7955e5",
+  "working_tree_dirty_path_count": 9,
+  "items": [
+    {
+      "criterion": "stop shuts down cleanly and tolerates a missing/stale pid file | proof: start --port 39124, curl dashboard 200, ./bin/speclang stop, assert the start process exits 0 and its output contains no ENOENT trace; plus a unit test for pid-file-absent | failure_condition: the start process exits non-zero or prints Error: ENOENT",
+      "status": "PASS",
+      "detail": "Reproduced the exact AC in /home/kara/worktrees/SpecLang-DF-SPECLANG-6: `node bin/speclang start --port 39124 -d $SB` printed '\u2705 SpecLang Daemon Started'; `curl -s -o /dev/null -w %{http_code} http://localhost:39124/` -> HTTP=200; `node bin/speclang stop -d $SB` -> '\u2705 Daemon stopped', stop_exit=0; `wait $SPID` -> START_EXIT=0; `grep -c ENOENT /tmp/df6start.log` -> 0 and `grep -n Error` -> no match (exit 1); pid file removed; second stop -> 'Daemon not running', exit 0. Race path also verified: SIGTERM + external `rm daemon.pid` before the handler unlinks -> START_EXIT=0, ENOENT count 0. Fix sites: bin/speclang:24-41 (readDaemonPid returns null on ENOENT, removeDaemonPidFile ignores ENOENT) used by stop at bin/speclang:260-278 and daemon stop at 358-374; specs/daemon.spec.dir/src/index.ts:56-88 (compiled identically at dist/src/daemon/index.js:66-88) guards the serving process's own unlink and adds a `shuttingDown` guard. Pre-fix code (git show HEAD~1:bin/speclang) had unguarded `fs.unlinkSync(pidFile)` in both places. Unit test for pid-file-absent: `TMPDIR=$PWD/.tmp npx vitest run tests/daemon/pid-file-enoent.test.ts` -> 'Test Files 1 passed (1) / Tests 8 passed (8)', including 'stop with no pid file is a clean no-op (exit 0)' and the spawn-based 'exits 0 with no ENOENT trace when `stop` wins the pid-file unlink race' (not skipped \u2014 dist/src/daemon/index.js exists)."
+    },
+    {
+      "criterion": "The serving process's own SIGTERM shutdown path tolerates the pid file already being gone (no uncaught ENOENT, exit 0) \u2014 the actual crash site",
+      "status": "PASS",
+      "detail": "specs/daemon.spec.dir/src/index.ts:56-88: `let shuttingDown` guard plus `try { fs.unlinkSync(pidFile) } catch (err) { if (err.code !== 'ENOENT') throw err }` inside a finally, then process.exit(0). Compiled output dist/src/daemon/index.js:66-88 matches. Live: `kill -TERM $SPID; rm -f $SB/.speclang/daemon.pid; wait $SPID` -> START_EXIT=0, 'ENOENT count: 0'.",
+      "derived": true
+    },
+    {
+      "criterion": "The CLI stop path is idempotent/re-runnable: second stop and stale/empty/garbage pid file exit 0 with no ENOENT/ERR_INVALID_ARG",
+      "status": "PASS",
+      "detail": "bin/speclang:260-278 and 358-374: readDaemonPid (ENOENT -> null, non-integer/<=0 -> null) then removeDaemonPidFile (ENOENT ignored). Live second stop -> 'Daemon not running', exit 0. Unit tests 'stopping twice is idempotent', 'an empty pid file is stale state, not a NaN kill', 'a garbage pid file is stale state, not a NaN kill', 'a stale pid for a dead process is removed with exit 0' all pass in the 8/8 vitest run.",
+      "derived": true
+    },
+    {
+      "criterion": "The fix is reachable from the shipped entrypoint (package.json bin -> ./bin/speclang) and the compiled dist/src/daemon/index.js used by `start` carries the guarded unlink",
+      "status": "PASS",
+      "detail": "package.json bin = {\"speclang\":\"./bin/speclang\"}; bin/speclang:70 requires ../dist/src/daemon/index.js, and dist/src/daemon/index.js:66-88 contains the guarded unlink (grep for 'shuttingDown' hits lines 68/70/72). End-to-end run through that entrypoint produced HTTP=200 and START_EXIT=0.",
+      "derived": true
+    },
+    {
+      "criterion": "Non-ENOENT failures are still surfaced (readDaemonPid rethrows non-ENOENT; removeDaemonPidFile rethrows non-ENOENT) rather than silently swallowed",
+      "status": "PASS",
+      "detail": "bin/speclang:27-28 `if (err.code === 'ENOENT') return null; throw err;` and bin/speclang:38-40 `if (err.code !== 'ENOENT') throw err;`. Verified live: pid file chmod 000 -> `node bin/speclang stop -d $SB` printed 'Error: EACCES: permission denied, open .../daemon.pid' at readDaemonPid (bin/speclang:27) and exited 1 \u2014 the error is not swallowed.",
+      "derived": true
+    },
+    {
+      "criterion": "The new unit test actually exercises the serving-process shutdown path (not skipped) and passes",
+      "status": "PASS",
+      "detail": "tests/daemon/pid-file-enoent.test.ts:161 uses describe.skipIf(!distBuilt); dist/src/daemon/index.js exists in this worktree, so the block ran. `TMPDIR=$PWD/.tmp npx vitest run tests/daemon/pid-file-enoent.test.ts` -> 'Test Files 1 passed (1) / Tests 8 passed (8)' (8 = 7 CLI tests + the spawn-based serving-process test).",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  10:49:37",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/worktrees/SpecLang-DF-SPECLANG-6/.gitreins/logs/guard-20261116T153149.199801Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/worktrees/SpecLang-DF-SPECLANG-6/.gitreins/logs/guard-20261116T153149.199801Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  10:49:37\n   Duration  47.77s (transform 11.52s, setup 1.73s, import 16.98s, tests 109.13s, environment 12ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/worktrees/SpecLang-DF-SPECLANG-6/.gitreins/logs/guard-20261116T153149.199801Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 stop shuts down cleanly and tolerates a missing/stale pid file | proof: start --port 39124, curl dashboard 200, ./bin/speclang stop, assert the start process exits 0 and its output contains no ENOENT trace; plus a unit test for pid-file-absent | failure_condition: the start process exits non-zero or prints Error: ENOENT: Reproduced the exact AC in /home/kara/worktrees/SpecLang-DF-SPECLANG-6: `node bin/speclang start --port 39124 -d $SB` printed '\u2705 SpecLang Daemon Started'; `curl -s -o /dev/null -w %{http_code} http://localhost:39124/` -> HTTP=200; `node bin/speclang stop -d $SB` -> '\u2705 Daemon stopped', stop_exit=0; `wait $SPID` -> START_EXIT=0; `grep -c ENOENT /tmp/df6start.log` -> 0 and `grep -n Error` -> no match (exit 1); pid file removed; second stop -> 'Daemon not running', exit 0. Race path also verified: SIGTERM + external `rm daemon.pid` before the handler unlinks -> START_EXIT=0, ENOENT count 0. Fix sites: bin/speclang:24-41 (readDaemonPid returns null on ENOENT, removeDaemonPidFile ignores ENOENT) used by stop at bin/speclang:260-278 and daemon stop at 358-374; specs/daemon.spec.dir/src/index.ts:56-88 (compiled identically at dist/src/daemon/index.js:66-88) guards the serving process's own unlink and adds a `shuttingDown` guard. Pre-fix code (git show HEAD~1:bin/speclang) had unguarded `fs.unlinkSync(pidFile)` in both places. Unit test for pid-file-absent: `TMPDIR=$PWD/.tmp npx vitest run tests/daemon/pid-file-enoent.test.ts` -> 'Test Files 1 passed (1) / Tests 8 passed (8)', including 'stop with no pid file is a clean no-op (exit 0)' and the spawn-based 'exits 0 with no ENOENT trace when `stop` wins the pid-file unlink race' (not skipped \u2014 dist/src/daemon/index.js exists).\n  \u2713 The serving process's own SIGTERM shutdown path tolerates the pid file already being gone (no uncaught ENOENT, exit 0) \u2014 the actual crash site: specs/daemon.spec.dir/src/index.ts:56-88: `let shuttingDown` guard plus `try { fs.unlinkSync(pidFile) } catch (err) { if (err.code !== 'ENOENT') throw err }` inside a finally, then process.exit(0). Compiled output dist/src/daemon/index.js:66-88 matches. Live: `kill -TERM $SPID; rm -f $SB/.speclang/daemon.pid; wait $SPID` -> START_EXIT=0, 'ENOENT count: 0'.\n  \u2713 The CLI stop path is idempotent/re-runnable: second stop and stale/empty/garbage pid file exit 0 with no ENOENT/ERR_INVALID_ARG: bin/speclang:260-278 and 358-374: readDaemonPid (ENOENT -> null, non-integer/<=0 -> null) then removeDaemonPidFile (ENOENT ignored). Live second stop -> 'Daemon not running', exit 0. Unit tests 'stopping twice is idempotent', 'an empty pid file is stale state, not a NaN kill', 'a garbage pid file is stale state, not a NaN kill', 'a stale pid for a dead process is removed with exit 0' all pass in the 8/8 vitest run.\n  \u2713 The fix is reachable from the shipped entrypoint (package.json bin -> ./bin/speclang) and the compiled dist/src/daemon/index.js used by `start` carries the guarded unlink: package.json bin = {\"speclang\":\"./bin/speclang\"}; bin/speclang:70 requires ../dist/src/daemon/index.js, and dist/src/daemon/index.js:66-88 contains the guarded unlink (grep for 'shuttingDown' hits lines 68/70/72). End-to-end run through that entrypoint produced HTTP=200 and START_EXIT=0.\n  \u2713 Non-ENOENT failures are still surfaced (readDaemonPid rethrows non-ENOENT; removeDaemonPidFile rethrows non-ENOENT) rather than silently swallowed: bin/speclang:27-28 `if (err.code === 'ENOENT') return null; throw err;` and bin/speclang:38-40 `if (err.code !== 'ENOENT') throw err;`. Verified live: pid file chmod 000 -> `node bin/speclang stop -d $SB` printed 'Error: EACCES: permission denied, open .../daemon.pid' at readDaemonPid (bin/speclang:27) and exited 1 \u2014 the error is not swallowed.\n  \u2713 The new unit test actually exercises the serving-process shutdown path (not skipped) and passes: tests/daemon/pid-file-enoent.test.ts:161 uses describe.skipIf(!distBuilt); dist/src/daemon/index.js exists in this worktree, so the block ran. `TMPDIR=$PWD/.tmp npx vitest run tests/daemon/pid-file-enoent.test.ts` -> 'Test Files 1 passed (1) / Tests 8 passed (8)' (8 = 7 CLI tests + the spawn-based serving-process test).\nThe reported crash is fixed and verified end-to-end: start --port 39124 serves HTTP 200, `./bin/speclang stop` exits 0, the serving process exits 0 with zero ENOENT in its output (including the unlink-race path), and the new pid-file-absent unit test suite passes 8/8. [uncovered failure paths: failure mode 0 (A second, unpatched stop implementation (daemonStopCommand in specs/daemon.spec.dir/src/daemon-cli.ts:69-118, mirrored at src/daemon/daemon-cli.ts and dist/src/daemon/daemon-cli.js) still does pathExists-then-readFile and unguarded fs.remove(pidFile); it is exported via configureDaemonCommand and wired into specs/cli.spec.dir/src/index.ts:504, but that CLI is not built (tsconfig excludes src/cli/**) nor shipped (package.json bin only exposes ./bin/speclang), so it is currently unreachable): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 stop shuts down cleanly and tolerates a missing/stale pid file | proof: start --port 39124, curl dashboard 200, ./bin/speclang stop, assert the start process exits 0 and its output contains no ENOENT trace; plus a unit test for pid-file-absent | failure_condition: the start process exits non-zero or prints Error: ENOENT: Reproduced the exact AC in /home/kara/worktrees/SpecLang-DF-SPECLANG-6: `node bin/speclang start --port 39124 -d $SB` printed '\u2705 SpecLang Daemon Started'; `curl -s -o /dev/null -w %{http_code} http://localhost:39124/` -> HTTP=200; `node bin/speclang stop -d $SB` -> '\u2705 Daemon stopped', stop_exit=0; `wait $SPID` -> START_EXIT=0; `grep -c ENOENT /tmp/df6start.log` -> 0 and `grep -n Error` -> no match (exit 1); pid file removed; second stop -> 'Daemon not running', exit 0. Race path also verified: SIGTERM + external `rm daemon.pid` before the handler unlinks -> START_EXIT=0, ENOENT count 0. Fix sites: bin/speclang:24-41 (readDaemonPid returns null on ENOENT, removeDaemonPidFile ignores ENOENT) used by stop at bin/speclang:260-278 and daemon stop at 358-374; specs/daemon.spec.dir/src/index.ts:56-88 (compiled identically at dist/src/daemon/index.js:66-88) guards the serving process's own unlink and adds a `shuttingDown` guard. Pre-fix code (git show HEAD~1:bin/speclang) had unguarded `fs.unlinkSync(pidFile)` in both places. Unit test for pid-file-absent: `TMPDIR=$PWD/.tmp npx vitest run tests/daemon/pid-file-enoent.test.ts` -> 'Test Files 1 passed (1) / Tests 8 passed (8)', including 'stop with no pid file is a clean no-op (exit 0)' and the spawn-based 'exits 0 with no ENOENT trace when `stop` wins the pid-file unlink race' (not skipped \u2014 dist/src/daemon/index.js exists).\n  \u2713 The serving process's own SIGTERM shutdown path tolerates the pid file already being gone (no uncaught ENOENT, exit 0) \u2014 the actual crash site: specs/daemon.spec.dir/src/index.ts:56-88: `let shuttingDown` guard plus `try { fs.unlinkSync(pidFile) } catch (err) { if (err.code !== 'ENOENT') throw err }` inside a finally, then process.exit(0). Compiled output dist/src/daemon/index.js:66-88 matches. Live: `kill -TERM $SPID; rm -f $SB/.speclang/daemon.pid; wait $SPID` -> START_EXIT=0, 'ENOENT count: 0'.\n\n\u2026 [1516 chars omitted \u2014 3 line(s)] \u2026\n  \u2713 The new unit test actually exercises the serving-process shutdown path (not skipped) and passes: tests/daemon/pid-file-enoent.test.ts:161 uses describe.skipIf(!distBuilt); dist/src/daemon/index.js exists in this worktree, so the block ran. `TMPDIR=$PWD/.tmp npx vitest run tests/daemon/pid-file-enoent.test.ts` -> 'Test Files 1 passed (1) / Tests 8 passed (8)' (8 = 7 CLI tests + the spawn-based serving-process test).\nThe reported crash is fixed and verified end-to-end: start --port 39124 serves HTTP 200, `./bin/speclang stop` exits 0, the serving process exits 0 with zero ENOENT in its output (including the unlink-race path), and the new pid-file-absent unit test suite passes 8/8. [uncovered failure paths: failure mode 0 (A second, unpatched stop implementation (daemonStopCommand in specs/daemon.spec.dir/src/daemon-cli.ts:69-118, mirrored at src/daemon/daemon-cli.ts and dist/src/daemon/daemon-cli.js) still does pathExists-then-readFile and unguarded fs.remove(pidFile); it is exported via configureDaemonCommand and wired into specs/cli.spec.dir/src/index.ts:504, but that CLI is not built (tsconfig excludes src/cli/**) nor shipped (package.json bin only exposes ./bin/speclang), so it is currently unreachable): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "stop shuts down cleanly and tolerates a missing/stale pid file | proof: start --port 39124, curl dashboard 200, ./bin/speclang stop, assert the start process exits 0 and its output contains no ENOENT trace; plus a unit test for pid-file-absent | failure_condition: the start process exits non-zero or prints Error: ENOENT",
+                "status": "PASS",
+                "detail": "Reproduced the exact AC in /home/kara/worktrees/SpecLang-DF-SPECLANG-6: `node bin/speclang start --port 39124 -d $SB` printed '\u2705 SpecLang Daemon Started'; `curl -s -o /dev/null -w %{http_code} http://localhost:39124/` -> HTTP=200; `node bin/speclang stop -d $SB` -> '\u2705 Daemon stopped', stop_exit=0; `wait $SPID` -> START_EXIT=0; `grep -c ENOENT /tmp/df6start.log` -> 0 and `grep -n Error` -> no match (exit 1); pid file removed; second stop -> 'Daemon not running', exit 0. Race path also verified: SIGTERM + external `rm daemon.pid` before the handler unlinks -> START_EXIT=0, ENOENT count 0. Fix sites: bin/speclang:24-41 (readDaemonPid returns null on ENOENT, removeDaemonPidFile ignores ENOENT) used by stop at bin/speclang:260-278 and daemon stop at 358-374; specs/daemon.spec.dir/src/index.ts:56-88 (compiled identically at dist/src/daemon/index.js:66-88) guards the serving process's own unlink and adds a `shuttingDown` guard. Pre-fix code (git show HEAD~1:bin/speclang) had unguarded `fs.unlinkSync(pidFile)` in both places. Unit test for pid-file-absent: `TMPDIR=$PWD/.tmp npx vitest run tests/daemon/pid-file-enoent.test.ts` -> 'Test Files 1 passed (1) / Tests 8 passed (8)', including 'stop with no pid file is a clean no-op (exit 0)' and the spawn-based 'exits 0 with no ENOENT trace when `stop` wins the pid-file unlink race' (not skipped \u2014 dist/src/daemon/index.js exists).",
+                "resolution_probability": 0.03
+              },
+              {
+                "criterion": "The serving process's own SIGTERM shutdown path tolerates the pid file already being gone (no uncaught ENOENT, exit 0) \u2014 the actual crash site",
+                "status": "PASS",
+                "detail": "specs/daemon.spec.dir/src/index.ts:56-88: `let shuttingDown` guard plus `try { fs.unlinkSync(pidFile) } catch (err) { if (err.code !== 'ENOENT') throw err }` inside a finally, then process.exit(0). Compiled output dist/src/daemon/index.js:66-88 matches. Live: `kill -TERM $SPID; rm -f $SB/.speclang/daemon.pid; wait $SPID` -> START_EXIT=0, 'ENOENT count: 0'.",
+                "derived": true
+              },
+              {
+                "criterion": "The CLI stop path is idempotent/re-runnable: second stop and stale/empty/garbage pid file exit 0 with no ENOENT/ERR_INVALID_ARG",
+                "status": "PASS",
+                "detail": "bin/speclang:260-278 and 358-374: readDaemonPid (ENOENT -> null, non-integer/<=0 -> null) then removeDaemonPidFile (ENOENT ignored). Live second stop -> 'Daemon not running', exit 0. Unit tests 'stopping twice is idempotent', 'an empty pid file is stale state, not a NaN kill', 'a garbage pid file is stale state, not a NaN kill', 'a stale pid for a dead process is removed with exit 0' all pass in the 8/8 vitest run.",
+                "derived": true
+              },
+              {
+                "criterion": "The fix is reachable from the shipped entrypoint (package.json bin -> ./bin/speclang) and the compiled dist/src/daemon/index.js used by `start` carries the guarded unlink",
+                "status": "PASS",
+                "detail": "package.json bin = {\"speclang\":\"./bin/speclang\"}; bin/speclang:70 requires ../dist/src/daemon/index.js, and dist/src/daemon/index.js:66-88 contains the guarded unlink (grep for 'shuttingDown' hits lines 68/70/72). End-to-end run through that entrypoint produced HTTP=200 and START_EXIT=0.",
+                "derived": true
+              },
+              {
+                "criterion": "Non-ENOENT failures are still surfaced (readDaemonPid rethrows non-ENOENT; removeDaemonPidFile rethrows non-ENOENT) rather than silently swallowed",
+                "status": "PASS",
+                "detail": "bin/speclang:27-28 `if (err.code === 'ENOENT') return null; throw err;` and bin/speclang:38-40 `if (err.code !== 'ENOENT') throw err;`. Verified live: pid file chmod 000 -> `node bin/speclang stop -d $SB` printed 'Error: EACCES: permission denied, open .../daemon.pid' at readDaemonPid (bin/speclang:27) and exited 1 \u2014 the error is not swallowed.",
+                "derived": true
+              },
+              {
+                "criterion": "The new unit test actually exercises the serving-process shutdown path (not skipped) and passes",
+                "status": "PASS",
+                "detail": "tests/daemon/pid-file-enoent.test.ts:161 uses describe.skipIf(!distBuilt); dist/src/daemon/index.js exists in this worktree, so the block ran. `TMPDIR=$PWD/.tmp npx vitest run tests/daemon/pid-file-enoent.test.ts` -> 'Test Files 1 passed (1) / Tests 8 passed (8)' (8 = 7 CLI tests + the spawn-based serving-process test).",
+                "derived": true
+              }
+            ],
+            "summary": "The reported crash is fixed and verified end-to-end: start --port 39124 serves HTTP 200, `./bin/speclang stop` exits 0, the serving process exits 0 with zero ENOENT in its output (including the unlink-race path), and the new pid-file-absent unit test suite passes 8/8. [uncovered failure paths: failure mode 0 (A second, unpatched stop implementation (daemonStopCommand in specs/daemon.spec.dir/src/daemon-cli.ts:69-118, mirrored at src/daemon/daemon-cli.ts and dist/src/daemon/daemon-cli.js) still does pathExists-then-readFile and unguarded fs.remove(pidFile); it is exported via configureDaemonCommand and wired into specs/cli.spec.dir/src/index.ts:504, but that CLI is not built (tsconfig excludes src/cli/**) nor shipped (package.json bin only exposes ./bin/speclang), so it is currently unreachable): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-6\"}",
+          "exit_code": 0,
+          "output_sha": "7e739af9272c8915dc189060ed64987857e1219e5c6a747a09c4637adbb8f663"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && cat .gitreins/config.yaml 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "ab2f187574d606ca0044f5e7374cc80847c6841c1c6b7e791ff83b4b928a6048"
+        },
+        {
+          "tool": "read_diff",
+          "command": "read_diff {}",
+          "exit_code": 0,
+          "output_sha": "d312ae8dc4b745ff9b5df1c322a95cb9374891479ab036817925d4df8cfa08ed"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; pwd; git log --oneline -3; git status --short | head -20",
+          "exit_code": 0,
+          "output_sha": "c09612cdc5128bd7e20672b7acd7f52afccab6fad2ba75ebc13fb0cafe2c76b8"
+        },
+        {
+          "tool": "run_command",
+          "command": "git log --oneline -3; echo ---; git show --stat HEAD",
+          "exit_code": 0,
+          "output_sha": "dd740df5e5009fcc58f12fa2de277c3610ac32ce61fbd6804c3494b23588fc49"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"bin/speclang\"}",
+          "exit_code": 0,
+          "output_sha": "65509950905c1664731ee8d0cacae336fc5634aae2a520f87b57f187d618cadf"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show HEAD -- bin/speclang specs/daemon.spec.dir/src/index.ts",
+          "exit_code": 0,
+          "output_sha": "52ba5b4a19414b6e729f367d8d2fe24630d2d840c59423655aafc90957c4f6aa"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/daemon/pid-file-enoent.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "b345c130a0eb369fb7b5532675c82fd2797e656a65d704798feab325d88353f6"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Task DF-SPECLANG-6. Criterion 1: stop clean + tolerate missing/stale pid file; proof = start --port 39124, curl dashboard 200, ./bin/speclang stop, start process exits 0, no ENOENT; plus unit test for pid-file-absent.\\nFiles: bin/speclang (readDaemonPid/removeDaemonPidFile), specs/daemon.spec.dir/src/index.ts (shutdown idempotent), tests/daemon/pid-file-enoent.test.ts.\\nNext: check dist build, run vitest on the new test, run the AC harness manually.\", \"key\": \"plan\"}",
+          "exit_code": 0,
+          "output_sha": "4584f2b7b09121c39748e4f118d14f61d8f6d486c3b049972cc6174188653122"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls dist/src/daemon/ 2>/dev/null | head; echo \"---\"; ls -la dist 2>/dev/null | head -5; echo \"--- package.json scripts\"; node -e \"console.log(JSON.stringify(require('./package.json').scripts,null,1))\"",
+          "exit_code": 0,
+          "output_sha": "1a329f8d33b4b1464b4de7ed13dc5227ca3c08a6b11f292538132ee9ba90b896"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; TMPDIR=$PWD/.tmp npx vitest run tests/daemon/pid-file-enoent.test.ts 2>&1 | tail -40",
+          "exit_code": -15,
+          "output_sha": "5109708f12b045d42df454148b0cc08df327d1a3bcd498e5148915a6444b538a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; TMPDIR=$PWD/.tmp timeout 600 npx vitest run tests/daemon/pid-file-enoent.test.ts > /tmp/df6.log 2>&1; echo \"EXIT=$?\"; tail -50 /tmp/df6.log",
+          "exit_code": -15,
+          "output_sha": "68eb65aba0b3d6f600b13bd1597e2dd17933bd291e8ea6bf875395c4ba3ae343"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; nohup bash -c 'TMPDIR=$PWD/.tmp npx vitest run tests/daemon/pid-file-enoent.test.ts > /tmp/df6.log 2>&1; echo \"EXIT=$?\" >> /tmp/df6.log' > /dev/null 2>&1 & echo started",
+          "exit_code": 0,
+          "output_sha": "1e6e602e3e64df73abf478728b31876777190090f0b9433944c9caf460d70010"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"specs/daemon.spec.dir/src/index.ts\"}",
+          "exit_code": 0,
+          "output_sha": "58038e747e433598105e4c92c712a7c8555b33f9cce56446efb216b37b1e0c44"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; grep -n \"daemon.pid\\|unlinkSync\\|SIGTERM\\|SIGINT\" dist/src/daemon/index.js | head -40",
+          "exit_code": 0,
+          "output_sha": "8a567f7e070a5b40e5545a8ba6128c9a3e8f1a4e431d6baa1cb52336dfff1f6c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; ls dist; echo ---; ls dist/src 2>/dev/null | head; echo ---; find dist -name \"index.js\" -path \"*daemon*\" | head; echo ---; cat tsconfig.json",
+          "exit_code": 1,
+          "output_sha": "c118f4907a4f0cd9cc4fbd9b8e09290b7e9085dd3022dae6f1f00537687a6e0e"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; ls -d dist 2>/dev/null; ls | head -40",
+          "exit_code": 0,
+          "output_sha": "886e4ea0a006d1d2e8452aeaab3212167b00ecf741ec5f88b8a120a976572d58"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; ls dist/src/daemon/ | grep -c . ; ls dist/src/daemon/index.js; grep -n \"daemon.pid\\|unlinkSync\\|SIGTERM\\|SIGINT\\|shuttingDown\" dist/src/daemon/index.js | head -30; echo \"=== log\"; tail -40 /tmp/df6.log 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "2793d22c6fd4cb7d64c860d51133afda75a3f5f66a7e70af4e525389c6955435"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; sed -n 55,100p dist/src/daemon/index.js; echo \"=== log size\"; ls -la /tmp/df6.log; cat /tmp/df6.log | tail -30",
+          "exit_code": 0,
+          "output_sha": "77c8f6aceec6df49e216fe7097946e02d64daa2b50a1b9a3b2e729fe381db44e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; ps aux | grep -c vitest; ls -la /tmp/df6.log; cat /tmp/df6.log",
+          "exit_code": 0,
+          "output_sha": "2e9f640578a3e522755f8fef8688c6062672374d18c081c185d630be229516b7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; sleep 25; ls -la /tmp/df6.log; cat /tmp/df6.log",
+          "exit_code": 0,
+          "output_sha": "3399485ea1449d1cc008247db9862bc10bb5e3986d1fa847759e5241db93bcb9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; ps aux | grep -E \"vitest|node\" | grep -v grep | head -20",
+          "exit_code": 0,
+          "output_sha": "cc12d244de676744014f3d140881bf5d814c5d73c30553081af1f536d5387732"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; ps aux | grep -E \"df6|pid-file-enoent\" | grep -v grep | head; echo \"---\"; ls -la /tmp/df6.log",
+          "exit_code": 0,
+          "output_sha": "d1a8c168ba17104303ead6a808765549a19c155949fea8cff43de7424711b4c2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; sleep 28; ls -la /tmp/df6.log; cat /tmp/df6.log",
+          "exit_code": 0,
+          "output_sha": "813e1f24bcb08e6be4c07213ef3b578bc06c189a479fce68a04b71a50afc6abf"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; sleep 29; ls -la /tmp/df6.log; cat /tmp/df6.log; ps aux | grep pid-file-enoent | grep -v grep | wc -l",
+          "exit_code": 0,
+          "output_sha": "cdd4f00c4bdcc9944d13d9b13b37334e700b7a2374f3f7060e6fac3d0bc00ad2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; sleep 29; ls -la /tmp/df6.log; cat /tmp/df6.log; ps aux | grep pid-file-enoent | grep -v grep | wc -l",
+          "exit_code": 0,
+          "output_sha": "37737a0f22d8af79144155de0be6bdeb84bc9f0f434d33f5712d9245af2fc762"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; sleep 29; wc -c /tmp/df6.log; cat /tmp/df6.log; ps aux | grep pid-file-enoent | grep -v grep | wc -l",
+          "exit_code": 0,
+          "output_sha": "45e96c5bd2a33d88f0eebbec15ca798d781b00bcd81f9204e76efcdc55044472"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; sleep 29; wc -c /tmp/df6.log; cat /tmp/df6.log; ps aux | grep pid-file-enoent | grep -v grep | wc -l",
+          "exit_code": 0,
+          "output_sha": "de77ddff7bf76328ef1b5565eaf6891e4cbbfae440016ff777ba28a3e5f3d139"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; sleep 29; wc -c /tmp/df6.log; cat /tmp/df6.log; ps aux | grep pid-file-enoent | grep -v grep | wc -l; date",
+          "exit_code": 0,
+          "output_sha": "33d0b98fa39fc02a9ae0f71ad556b3d65e9ff13f79511d318310a25b5415896b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; cat /tmp/df6.log | tr -d '\\000'",
+          "exit_code": 0,
+          "output_sha": "2f05c927301bdac848c86dcf3eed0017870ea451a4ae924596476b781c8381bd"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Ran `TMPDIR=$PWD/.tmp npx vitest run tests/daemon/pid-file-enoent.test.ts` in /home/kara/worktrees/SpecLang-DF-SPECLANG-6 -> \\\"Test Files 1 passed (1) / Tests 8 passed (8)\\\" (dist/src/daemon/index.js exists so the spawn-based serving-process test was NOT skipped).\", \"key\": \"test_run\"}",
+          "exit_code": 0,
+          "output_sha": "cfe97e0403a0be67268e04b68e956d6faeafbd96d1c7d54b60bf345edc8471a9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; SB=$(mktemp -d /tmp/df6ac-XXXX); mkdir -p $SB/.speclang; echo \"sandbox=$SB\"; node bin/speclang start --port 39124 -d $SB > /tmp/df6start.log 2>&1 & SPID=$!; echo \"startpid=$SPID\"; for i in $(seq 1 60); do if grep -q \"Daemon Started\" /tmp/df6start.log 2>/dev/null; then break; fi; sleep 0.5; done; echo \"--- start log\"; cat /tmp/df6start.log; echo \"--- curl\"; curl -s -o /dev/null -w \"HTTP=%{http_code}\\n\" http://localhost:39124/ ; echo \"--- pidfile\"; cat $SB/.speclang/daemon.pid; echo; echo \"--- stop\"; node bin/speclang stop -d $SB; echo \"stop_exit=$?\"; wait $SPID; echo \"START_EXIT=$?\"; echo \"--- final start log\"; cat /tmp/df6start.log; echo \"--- pidfile exists?\"; ls -la $SB/.speclang/; echo \"--- second stop\"; node bin/speclang stop -d $SB; echo \"second_stop_exit=$?\"; echo \"SB=$SB\" > /tmp/df6sb.txt",
+          "exit_code": 0,
+          "output_sha": "2d991688f8acb839711e417ea3870b986e4b387478c3be09324cf651501a0382"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; grep -c ENOENT /tmp/df6start.log; grep -n \"Error\" /tmp/df6start.log; echo \"grep_exit=$?\"; echo \"=== pre-fix behaviour check\"; git stash list | head -2; git show HEAD~1:bin/speclang | sed -n '/command..stop/,/^});/p' | head -40",
+          "exit_code": 0,
+          "output_sha": "6b16b8e4d243dd7ce41b53b21c6a3f85d3c854089a12e273dd0c0a4cb2767424"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; SB=$(mktemp -d /tmp/df6race-XXXX); mkdir -p $SB/.speclang; node bin/speclang start --port 39125 -d $SB > /tmp/df6race.log 2>&1 & SPID=$!; for i in $(seq 1 60); do grep -q \"Daemon Started\" /tmp/df6race.log 2>/dev/null && break; sleep 0.5; done; echo \"pidfile=$(cat $SB/.speclang/daemon.pid)\"; kill -TERM $SPID; rm -f $SB/.speclang/daemon.pid; wait $SPID; echo \"START_EXIT=$?\"; echo \"--- log tail\"; tail -8 /tmp/df6race.log; echo \"ENOENT count: $(grep -c ENOENT /tmp/df6race.log)\"; rm -rf $SB",
+          "exit_code": 0,
+          "output_sha": "a6edcac6e4ac339af2213dc82326b0cc7404990d4a282d82ab97cbc142ee194f"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"AC harness reproduced manually in /home/kara/worktrees/SpecLang-DF-SPECLANG-6:\\n- `node bin/speclang start --port 39124 -d $SB` -> banner \\\"SpecLang Daemon Started\\\"; `curl http://localhost:39124/` -> HTTP=200; pidfile contained start pid.\\n- `node bin/speclang stop -d $SB` -> \\\"\\u2705 Daemon stopped\\\", stop_exit=0; `wait $SPID` -> START_EXIT=0; start log has 0 ENOENT and no \\\"Error\\\"; pidfile removed; second stop -> \\\"Daemon not running\\\", exit 0.\\n- Race path: SIGTERM + external `rm daemon.pid` before shutdown handler unlinks -> START_EXIT=0, ENOENT count 0.\\n- Unit test: `npx vitest run tests/daemon/pid-file-enoent.test.ts` -> Test Files 1 passed (1), Tests 8 passed (8) (dist present, so spawn-based serving-process test ran).\\n- Pre-fix code (HEAD~1 bin/speclang) had `fs.unlinkSync(pidFile)` unguarded in both CLI stop and daemon shutdown -> the reported crash.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "b56afb2540c7817d373d479c66fd035607680f17620d9bc90945542d156d1f3a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; grep -rn \"daemon.pid\" --include=*.ts --include=*.js --include=speclang bin specs/daemon.spec.dir/src src 2>/dev/null | grep -v node_modules | head -20",
+          "exit_code": 0,
+          "output_sha": "3093e8033cce75ccc920e02953d8f701c2b6d21aa0b1407e47a22959ed643fe8"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 120, \"offset\": 30, \"path\": \"specs/daemon.spec.dir/src/daemon-cli.ts\"}",
+          "exit_code": 0,
+          "output_sha": "88999e4df4bb98639c6bbc3a774a265b978370d9725551713170c169052eec91"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; grep -rn \"daemonStopCommand\\|daemonStatusCommand\\|daemonStartCommand\" --include=*.ts --include=*.js . 2>/dev/null | grep -v node_modules | grep -v \"^./dist\" | head -20",
+          "exit_code": 0,
+          "output_sha": "c0ad461ca8242d1473b7e644b551d03724986d73261c94eff1dc68df56532b1a"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 45, \"offset\": 180, \"path\": \"specs/daemon.spec.dir/src/daemon-cli.ts\"}",
+          "exit_code": 0,
+          "output_sha": "81ec4099d74e032098449e5dcce0ecbd36d98f9ff2b0c10f9ae575182b841fb5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; grep -rn \"configureDaemonCommand\" --include=*.ts --include=*.js . 2>/dev/null | grep -v node_modules | head -10",
+          "exit_code": 0,
+          "output_sha": "b0b695500a1219841b9f1ed018b50945d1ee5d8c5a0c5b5841a669a8d753031f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; sed -n 1,40p specs/cli.spec.dir/src/index.ts; echo \"=== bin\"; ls -la bin/; echo \"=== package bin\"; node -e \"console.log(JSON.stringify(require('./package.json').bin))\"",
+          "exit_code": 0,
+          "output_sha": "88d6dc9b64502ee4f8427b12fa94371c4f4badc817f5f66fd0ab89293ce412ce"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; ls dist/src/cli 2>/dev/null | head; echo \"=== grep configureDaemonCommand in dist/src/cli\"; grep -rn \"configureDaemonCommand\" dist/src/cli/*.js 2>/dev/null | head -5; echo \"=== is there a bin entry for cli?\"; grep -rn \"dist/src/cli\" package.json bin/* 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "526e6377e40b233f50ac4badd0b26f3ccde320a620ca5ee2bda9835e40c6c362"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; grep -n \"include\\|exclude\\|rootDir\\|outDir\" tsconfig.json; echo \"=== dist top\"; ls dist | head; echo \"=== find cli index in dist\"; find dist -path \"*cli*\" -name \"index.js\" | head",
+          "exit_code": 0,
+          "output_sha": "ba49eeef714cd26b948be6b2548cd3aad7d6651d26960d835c9980b150488667"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; sed -n 30,60p tsconfig.json; echo \"=== dist/specs\"; ls dist/specs; echo \"=== dist/src\"; ls dist/src | head -20",
+          "exit_code": 0,
+          "output_sha": "c99ea232fdbb6dc9d8b824078bd78277ab451697f023381fa1ff3f76f1ca9e55"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; ls src/daemon 2>/dev/null | head; echo \"=== src/daemon/index.ts head\"; sed -n 1,30p src/daemon/index.ts 2>/dev/null; echo \"=== grep daemon-cli in src\"; grep -rn \"daemon-cli\" src/ 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "d750dcf88c14945628b23e87a19958cdfba9eca8d6963ff7668181c1bb0a9c66"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; diff src/daemon/index.ts specs/daemon.spec.dir/src/index.ts && echo \"IDENTICAL index.ts\"; echo \"=== daemon-cli diff\"; diff src/daemon/daemon-cli.ts specs/daemon.spec.dir/src/daemon-cli.ts && echo \"IDENTICAL daemon-cli.ts\"; echo \"=== dist daemon-cli stop\"; sed -n 60,110p dist/src/daemon/daemon-cli.js",
+          "exit_code": 0,
+          "output_sha": "e6646e184351cc202b3088e867b3aedc7e5b92a4603e049544829e697c7bfd53"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; grep -rn \"configureDaemonCommand\\|daemon-cli\" tests/ 2>/dev/null | head -10; echo \"=== tests referencing bin/speclang\"; grep -rln \"bin/speclang\\|bin\\\", \\\"speclang\" tests/ | head -10",
+          "exit_code": 0,
+          "output_sha": "744365a90a557269ed8b5e91cd043383160c76c9d9133d2c0921a6d44cb74f5f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; grep -rn \"daemon\" tests/cli.test.ts | head -20; echo \"=== arch002\"; grep -n \"stop\\|pid\" tests/daemon/arch002-background-daemon.test.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "cab2c074db8290ee30c75f8657b51c5af649502efc8748045a1534d0851085ca"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; sed -n 1,40p tests/daemon/arch002-background-daemon.test.ts; echo \"=== runCli def\"; sed -n 40,80p tests/daemon/arch002-background-daemon.test.ts",
+          "exit_code": 0,
+          "output_sha": "d927d4a8041429ac2237f503b16a6f54148673cc4159e104fbc4693d1b979103"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; grep -n \"daemon.pid\\|unlinkSync\\|SIGTERM\\|SIGINT\\|ENOENT\" bin/speclangd | head -30",
+          "exit_code": 0,
+          "output_sha": "8aa764a66f37bc58eefcb487c50b15f73ac5d24cb8baff9306c9064a832cf799"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; sed -n 30,60p bin/speclangd; echo \"=== 130-180\"; sed -n 130,180p bin/speclangd",
+          "exit_code": 0,
+          "output_sha": "37f6102a8d504d72be19ad209e643c7979b1ff315e2f9a7c6933ee23f883a79e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; grep -n \"PID_FILE =\" bin/speclangd; echo \"=== bin/speclang daemon start pid file?\"; sed -n 340,400p bin/speclang",
+          "exit_code": 0,
+          "output_sha": "b118d85d60ad6473a10dcb6dd375ad0fac9af92c3eff2be705df4eaa30600ceb"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Derived criteria:\\nd0: The serving process's own SIGTERM shutdown path tolerates the pid file already being gone (no uncaught ENOENT, exit 0) \\u2014 the actual crash site.\\nd1: The CLI `stop` path is idempotent/re-runnable: second stop and stale/empty/garbage pid file exit 0 with no ENOENT/ERR_INVALID_ARG.\\nd2: The fix is reachable from the shipped entrypoint (package.json bin -> ./bin/speclang) and the compiled dist/src/daemon/index.js used by `start` carries the guarded unlink.\\nd3: Non-ENOENT failures are still surfaced (readDaemonPid rethrows non-ENOENT; removeDaemonPidFile rethrows non-ENOENT) rather than silently swallowed.\\nd4: The new unit test actually exercises the serving-process shutdown path (not skipped) and passes.\\n\", \"key\": \"derived\"}",
+          "exit_code": 0,
+          "output_sha": "ff8245422e551f4416b72c39d4db46944bed036250eb57000ad59a4771a182b6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; SB=$(mktemp -d /tmp/df6perm-XXXX); mkdir -p $SB/.speclang; echo 999999 > $SB/.speclang/daemon.pid; chmod 000 $SB/.speclang/daemon.pid; node bin/speclang stop -d $SB; echo \"exit=$?\"; chmod 644 $SB/.speclang/daemon.pid; rm -rf $SB",
+          "exit_code": 0,
+          "output_sha": "005729bec782b3cdfcc52bc97e9d7df42c9dc83f841f037e68151f3f49fba251"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"d0 PASS: specs/daemon.spec.dir/src/index.ts:56-88 (compiled identically at dist/src/daemon/index.js:66-88) wraps fs.unlinkSync(pidFile) in try/catch ignoring only ENOENT, plus `shuttingDown` guard. Live proof: SIGTERM + external `rm daemon.pid` -> START_EXIT=0, ENOENT count 0 (/tmp/df6race.log).\\nd1 PASS: bin/speclang:260-278 (stop) and 356-374 (daemon stop) use readDaemonPid (ENOENT->null) + removeDaemonPidFile (ENOENT ignored). Live: second stop -> \\\"Daemon not running\\\", exit 0; unit tests \\\"stopping twice is idempotent\\\", \\\"empty pid file\\\", \\\"garbage pid file\\\" pass (8/8).\\nd2 PASS: package.json bin {\\\"speclang\\\":\\\"./bin/speclang\\\"}; dist/src/daemon/index.js:66-88 contains the guarded unlink; `node bin/speclang start --port 39124` + curl 200 + stop -> exit 0.\\nd3 PASS: bin/speclang:27-28 rethrows non-ENOENT from readFileSync (verified: chmod 000 pid file -> EACCES trace, exit 1, not swallowed); bin/speclang:38-40 removeDaemonPidFile rethrows non-ENOENT.\\nd4 PASS: dist/src/daemon/index.js exists so describe.skipIf(!distBuilt) did not skip; vitest run -> \\\"Tests 8 passed (8)\\\".\\n\", \"key\": \"verified_derived\"}",
+          "exit_code": 0,
+          "output_sha": "e85d325018a9c5683578bcd76760962eab2b26ac3874cbd03e886448af02796b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-6; grep -n \"readDaemonPid\\|removeDaemonPidFile\" bin/speclang",
+          "exit_code": 0,
+          "output_sha": "46297f629afac6533592f333385548e684525ca2f50583ce2749a815ed48abe2"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "medium",
+        "file": "_index.json",
+        "line": 0,
+        "detection": "generated index contains content_refs that do not resolve to any spec id in the same index",
+        "detail": "New entries reference `specs/scripts/nasa-style-check` and `specs/docs/nasa-se-playbook` (e.g. @specs/docs/nasa-se-playbook content_refs and @specs/scripts/nasa-style-check content_refs), but the specs map keys are `@specs/docs/nasa-se-playbook` and `@specs/scripts/nasa-style-check`; the bare `specs/...` form is not a key, so these refs are dangling."
+      },
+      {
+        "severity": "medium",
+        "file": "_index.json",
+        "line": 0,
+        "detection": "content_refs entry points at a spec id that is not present in the specs map",
+        "detail": "@specs/skills/nasa-spec-style content_refs lists `specs/docs/nasa-se-playbook`, but the only matching spec key is `@specs/docs/nasa-se-playbook`, so the reference is unresolved."
+      },
+      {
+        "severity": "low",
+        "file": "_index.json",
+        "line": 0,
+        "detection": "reverse dependency map (refs) and forward content_refs disagree for the same spec",
+        "detail": "@speclang/scripts-validate-refs content_refs still include `path/to/file#block-id`, `path/to/file`, `domain/path`, `specs/users#model` etc., while the refs section for `path/to/file` and `domain/path` only partially mirrors them (e.g. `specs/users#model` has no reverse entry), indicating the regenerated index is internally inconsistent."
+      },
+      {
+        "severity": "low",
+        "file": "_index.json",
+        "line": 0,
+        "detection": "spec removed from specs map but still listed in the orphan/unreferenced list",
+        "detail": "`@bugs/integration-test-template`, `@demo/hello-dir`, `@specs/docs/changelog`, `@examples/greeting-dir` are added to the trailing list (around line 14927+) yet their content_refs were emptied/removed and their reverse-ref entries deleted, so they are now unreferenced while still enumerated as specs."
+      }
+    ],
+    "summary": "The regenerated _index.json introduces new NASA playbook/style specs whose content_refs use bare `specs/...` ids that do not match the `@specs/...` keys in the same index, leaving dangling references."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  10:49:37\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 stop shuts down cleanly and tolerates a missing/stale pid file | proof: start --port 39124, curl dashboard 200, ./bin/speclang stop, assert the start process exits 0 and its output contains no ENOENT trace; plus a unit test for pid-file-absent | failure_condition: the start process exits non-zero or prints Error: ENOENT: Reproduced the exact AC in /home/kara/worktrees/SpecLang-DF-SPECLANG-6: `node bin/speclang start --port 39124 -d $SB` printed '\u2705 SpecLang Daemon Started'; `curl -s -o /dev/null -w %{http_code} http://localhost:39124/` -> HTTP=200; `node bin/speclang stop -d $SB` -> '\u2705 Daemon stopped', stop_exit=0; `wait $SPID` -> START_EXIT=0; `grep -c ENOENT /tmp/df6start.log` -> 0 and `grep -n Error` -> no match (exit 1); pid file removed; second stop -> 'Daemon not running', exit 0. Race path also verified: SIGTERM + external `rm daemon.pid` before the handler unlinks -> START_EXIT=0, ENOENT count 0. Fix sites: bin/speclang:24-41 (readDaemonPid returns null on ENOENT, removeDaemonPidFile ignores ENOENT) used by stop at bin/speclang:260-278 and daemon stop at 358-374; specs/daemon.spec.dir/src/index.ts:56-88 (compiled identically at dist/src/daemon/index.js:66-88) guards the serving process's own unlink and adds a `shuttingDown` guard. Pre-fix code (git show HEAD~1:bin/speclang) had unguarded `fs.unlinkSync(pidFile)` in both places. Unit test for pid-file-absent: `TMPDIR=$PWD/.tmp npx vitest run tests/daemon/pid-file-enoent.test.ts` -> 'Test Files 1 passed (1) / Tests 8 passed (8)', including 'stop with no pid file is a clean no-op (exit 0)' and the spawn-based 'exits 0 with no ENOENT trace when `stop` wins the pid-file unlink race' (not skipped \u2014 dist/src/daemon/index.js exists).\n  \u2713 The serving process's own SIGTERM shutdown path tolerates the pid file already being gone (no uncaught ENOENT, exit 0) \u2014 the actual crash site: specs/daemon.spec.dir/src/index.ts:56-88: `let shuttingDown` guard plus `try { fs.unlinkSync(pidFile) } catch (err) { if (err.code !== 'ENOENT') throw err }` inside a finally, then process.exit(0). Compiled output dist/src/daemon/index.js:66-88 matches. Live: `kill -TERM $SPID; rm -f $SB/.speclang/daemon.pid; wait $SPID` -> START_EXIT=0, 'ENOENT count: 0'.\n  \u2713 The CLI stop path is idempotent/re-runnable: second stop and stale/empty/garbage pid file exit 0 with no ENOENT/ERR_INVALID_ARG: bin/speclang:260-278 and 358-374: readDaemonPid (ENOENT -> null, non-integer/<=0 -> null) then removeDaemonPidFile (ENOENT ignored). Live second stop -> 'Daemon not running', exit 0. Unit tests 'stopping twice is idempotent', 'an empty pid file is stale state, not a NaN kill', 'a garbage pid file is stale state, not a NaN kill', 'a stale pid for a dead process is removed with exit 0' all pass in the 8/8 vitest run.\n  \u2713 The fix is reachable from the shipped entrypoint (package.json bin -> ./bin/speclang) and the compiled dist/src/daemon/index.js used by `start` carries the guarded unlink: package.json bin = {\"speclang\":\"./bin/speclang\"}; bin/speclang:70 requires ../dist/src/daemon/index.js, and dist/src/daemon/index.js:66-88 contains the guarded unlink (grep for 'shuttingDown' hits lines 68/70/72). End-to-end run through that entrypoint produced HTTP=200 and START_EXIT=0.\n  \u2713 Non-ENOENT failures are still surfaced (readDaemonPid rethrows non-ENOENT; removeDaemonPidFile rethrows non-ENOENT) rather than silently swallowed: bin/speclang:27-28 `if (err.code === 'ENOENT') return null; throw err;` and bin/speclang:38-40 `if (err.code !== 'ENOENT') throw err;`. Verified live: pid file chmod 000 -> `node bin/speclang stop -d $SB` printed 'Error: EACCES: permission denied, open .../daemon.pid' at readDaemonPid (bin/speclang:27) and exited 1 \u2014 the error is not swallowed.\n  \u2713 The new unit test actually exercises the serving-process shutdown path (not skipped) and passes: tests/daemon/pid-file-enoent.test.ts:161 uses describe.skipIf(!distBuilt); dist/src/daemon/index.js exists in this worktree, so the block ran. `TMPDIR=$PWD/.tmp npx vitest run tests/daemon/pid-file-enoent.test.ts` -> 'Test Files 1 passed (1) / Tests 8 passed (8)' (8 = 7 CLI tests + the spawn-based serving-process test).\nThe reported crash is fixed and verified end-to-end: start --port 39124 serves HTTP 200, `./bin/speclang stop` exits 0, the serving process exits 0 with zero ENOENT in its output (including the unlink-race path), and the new pid-file-absent unit test suite passes 8/8. [uncovered failure paths: failure mode 0 (A second, unpatched stop implementation (daemonStopCommand in specs/daemon.spec.dir/src/daemon-cli.ts:69-118, mirrored at src/daemon/daemon-cli.ts and dist/src/daemon/daemon-cli.js) still does pathExists-then-readFile and unguarded fs.remove(pidFile); it is exported via configureDaemonCommand and wired into specs/cli.spec.dir/src/index.ts:504, but that CLI is not built (tsconfig excludes src/cli/**) nor shipped (package.json bin only exposes ./bin/speclang), so it is currently unreachable): detected_by is empty \u2014 uncovered failure path]\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-16T15:56:38.441718",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-16T15:56:38.484121+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 14431,
+        "truncated": false,
+        "source": "git show ce347c39d266"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 205946,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DF-SPECLANG-6"
+  }
+}

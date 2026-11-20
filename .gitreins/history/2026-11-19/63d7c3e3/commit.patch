@@ -1,0 +1,281 @@
+commit 180d2b551c9a93db02e4d236988dd03f00474f9a
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Wed Nov 18 17:15:41 2026 -0500
+Commit:     kara <totalwindupflightsystems@gmail.com>
+CommitDate: Thu Nov 19 00:10:52 2026 -0500
+
+    docs: remove dead index generator and document metrics. Addresses CLN-002 and DOC-10.
+    
+    CLN-002: remove generate_index.py.handwritten after a recursive search of
+    Python, Markdown and shell files found no references. The canonical
+    python3 scripts/generate_index.py --generate exits 0 and its regenerated
+    index contains zero .tmp/ spec paths; restore _index.json after probing.
+    
+    DOC-10: document unauthenticated GET /metrics in both API HTTP transport
+    inventories with the exact exposition Content-Type and a reference to
+    docs/observability-spec.md section 9.1. Add /metrics and /events to the
+    getting-started route table and keep the auth summary consistent.
+    
+    Verification: npm ci --no-audit --no-fund; npm run build; full Vitest run
+    with worktree-local TMPDIR: 122 files passed, 4 skipped; 2022 tests passed,
+    58 skipped. API metrics mention count 2; getting-started count 1.
+    Vitest regenerates _index.json, so restore it again after the suite.
+    Use git restore --source=HEAD --worktree for the requested index restore
+    rather than git checkout; both restore the committed bytes.
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+---
+ GETTING-STARTED.md                        |   2 +
+ generate_index.py.handwritten             | 201 ------------------------------
+ specs/docs.spec.dir/docs/API_REFERENCE.md |   6 +-
+ 3 files changed, 5 insertions(+), 204 deletions(-)
+
+diff --git a/GETTING-STARTED.md b/GETTING-STARTED.md
+index 739c57f8..2244dd44 100644
+--- a/GETTING-STARTED.md
++++ b/GETTING-STARTED.md
+@@ -93,7 +93,9 @@ In `--remote` mode the server listens on:
+ |---|---|
+ | `GET /mcp` | SSE stream; the first event is `endpoint: /mcp/message?sessionId=<uuid>` |
+ | `POST /mcp/message` | JSON-RPC 2.0 requests (`initialize`, `tools/list`, `tools/call`) |
++| `GET /events` | SSE event feed (enabled unless `MCP_SSE_ENABLED=false`) |
+ | `GET /health` | liveness probe: `{"status":"ok","mode":"http"}` |
++| `GET /metrics` | Prometheus scrape endpoint (no auth); see `docs/observability-spec.md` §9.1 for metric families |
+ 
+ A session end to end:
+ 
+diff --git a/generate_index.py.handwritten b/generate_index.py.handwritten
+deleted file mode 100644
+index 5bce73c5..00000000
+--- a/generate_index.py.handwritten
++++ /dev/null
+@@ -1,201 +0,0 @@
+-#!/usr/bin/env python3
+-import os
+-import json
+-import yaml
+-import re
+-from datetime import datetime
+-
+-def parse_header(filepath):
+-    """Parse speclang header from file."""
+-    with open(filepath, 'r') as f:
+-        lines = f.readlines()
+-    
+-    header_lines = 0
+-    metadata = {}
+-    
+-    # Look for speclang-header line
+-    for i, line in enumerate(lines):
+-        if 'speclang-header' in line:
+-            # Extract line count: '# speclang-header lines:N'
+-            match = re.search(r'lines:\s*(\d+)', line)
+-            if match:
+-                header_lines = int(match.group(1))
+-                use_line_count = True
+-            else:
+-                # No line count specified, parse until we find ---
+-                use_line_count = False
+-                header_lines = 0  # We'll determine dynamically
+-            
+-            # Collect YAML content
+-            yaml_lines = []
+-            j = i + 1  # Start after speclang-header line
+-            
+-            if use_line_count:
+-                # Use specified line count (excluding speclang-header line itself)
+-                end_idx = min(j + header_lines - 1, len(lines))
+-                for k in range(j, end_idx):
+-                    line_text = lines[k].rstrip('\n')
+-                    if line_text.strip() == '---':
+-                        break
+-                    yaml_lines.append(line_text)
+-            else:
+-                # Parse until we find --- line
+-                for k in range(j, len(lines)):
+-                    line_text = lines[k].rstrip('\n')
+-                    if line_text.strip() == '---':
+-                        header_lines = k - i + 1  # Calculate actual header lines
+-                        break
+-                    yaml_lines.append(line_text)
+-            
+-            # Try to parse YAML
+-            if yaml_lines:
+-                yaml_text = '\n'.join(yaml_lines)
+-                
+-                # Try to parse as-is first
+-                try:
+-                    metadata = yaml.safe_load(yaml_text) or {}
+-                except yaml.YAMLError:
+-                    # Try to fix common YAML issues
+-                    # Quote @-prefixed scalars
+-                    fixed_yaml = re.sub(r'([\{\[ ])(@[^\s,\]\}]+)([,\]\}])', r'\1"\2"\3', yaml_text)
+-                    fixed_yaml = re.sub(r'([\{\[ ])(@[^\s,\]\}]+)(\s*)$', r'\1"\2"\3', fixed_yaml)
+-                    fixed_yaml = re.sub(r'^(\s*[a-zA-Z_-]+:\s*)(@[^\s]+)(\s*)$', r'\1"\2"\3', fixed_yaml, flags=re.MULTILINE)
+-                    
+-                    try:
+-                        metadata = yaml.safe_load(fixed_yaml) or {}
+-                    except yaml.YAMLError as e:
+-                        # Last resort: try to extract basic fields with regex
+-                        id_match = re.search(r'id:\s*(@[^\s]+)', yaml_text)
+-                        if id_match:
+-                            metadata['id'] = id_match.group(1)
+-                        
+-                        version_match = re.search(r'version:\s*([0-9.]+)', yaml_text)
+-                        if version_match:
+-                            metadata['version'] = version_match.group(1)
+-                        
+-                        # Try to extract tags
+-                        tags_match = re.search(r'tags:\s*\[([^\]]+)\]', yaml_text)
+-                        if tags_match:
+-                            tags_str = tags_match.group(1)
+-                            tags = [tag.strip() for tag in tags_str.split(',')]
+-                            metadata['tags'] = tags
+-
+-            
+-            # If we didn't determine header_lines dynamically (no --- found), estimate
+-            if not header_lines:
+-                header_lines = len(yaml_lines) + 2  # +1 for speclang-header, +1 for ---
+-            
+-            break
+-    
+-    return header_lines, metadata
+-
+-def get_spec_files(root_dir):
+-    """Find all spec files."""
+-    spec_extensions = ['.scl', '.spec.md', '.spec.yaml', '.spec']
+-    code_spec_pattern = re.compile(r'\.[a-z]+\.spec$')
+-    
+-    files = []
+-    for dirpath, dirnames, filenames in os.walk(root_dir):
+-        # Skip .git and backup directories
+-        dirnames[:] = [d for d in dirnames if d != '.git' and d != '.opencode' and d != '.backup_spec_files']
+-        
+-        # Skip backup directory entirely
+-        if '.backup_spec_files' in dirpath:
+-            continue
+-            
+-        for filename in filenames:
+-            filepath = os.path.join(dirpath, filename)
+-            relpath = os.path.relpath(filepath, root_dir)
+-            
+-            # Skip backup files
+-            if '.backup_spec_files' in relpath:
+-                continue
+-            
+-            # Check if it's a spec file
+-            is_spec = False
+-            for ext in spec_extensions:
+-                if filename.endswith(ext):
+-                    is_spec = True
+-                    break
+-            
+-            if not is_spec and code_spec_pattern.search(filename):
+-                is_spec = True
+-            
+-            if is_spec:
+-                files.append((relpath, filepath))
+-    
+-    print(f"Found {len(files)} spec files")
+-    for f in files[:10]:
+-        print(f"  {f[0]}")
+-    return files
+-
+-def main():
+-    root_dir = '.'
+-    spec_files = get_spec_files(root_dir)
+-    
+-    entries = []
+-    for relpath, filepath in spec_files:
+-        try:
+-            stat = os.stat(filepath)
+-            
+-            # Count lines
+-            with open(filepath, 'r') as f:
+-                lines = sum(1 for _ in f)
+-            
+-            # Parse header
+-            header_lines, metadata = parse_header(filepath)
+-            
+-            # Handle layer conversion (must be integer 0-10)
+-            layer_raw = metadata.get('layer', 0)
+-            if isinstance(layer_raw, str):
+-                if layer_raw.isdigit():
+-                    layer = int(layer_raw)
+-                elif layer_raw == 'meta':
+-                    layer = 0  # Convert 'meta' to 0
+-                else:
+-                    layer = 0  # Default for unknown strings
+-            elif isinstance(layer_raw, int):
+-                layer = layer_raw
+-            else:
+-                layer = 0
+-            
+-            # Ensure layer is within 0-10 range
+-            layer = max(0, min(layer, 10))
+-            
+-            # Build entry
+-            entry = {
+-                'path': relpath,
+-                'id': metadata.get('id', f'@unknown/{os.path.basename(relpath)}'),
+-                'version': metadata.get('version', '0.0.0'),
+-                'layer': layer,
+-                'project_level': metadata.get('project_level'),
+-                'agent_support': metadata.get('agent_support'),
+-                'tags': metadata.get('tags', []),
+-                'imports': metadata.get('imports', []),
+-                'short': metadata.get('short', os.path.basename(relpath)),
+-                'refs': metadata.get('refs', []),
+-                'lines': lines,
+-                'modified': datetime.fromtimestamp(stat.st_mtime).isoformat() + 'Z',
+-                'header_lines': header_lines,
+-                'status': metadata.get('status', 'draft'),
+-                'target': metadata.get('target'),
+-                'depends_on': metadata.get('depends_on', []),
+-                'children': metadata.get('children', [])
+-            }
+-            
+-            entries.append(entry)
+-        except Exception as e:
+-            print(f"Error processing {relpath}: {e}")
+-    
+-    # Sort by path
+-    entries.sort(key=lambda x: x['path'])
+-    
+-    # Write JSONL
+-    with open('_index.json', 'w') as f:
+-        for entry in entries:
+-            f.write(json.dumps(entry) + '\n')
+-    
+-    print(f"Created _index.json with {len(entries)} entries")
+-
+-if __name__ == '__main__':
+-    main()
+\ No newline at end of file
+diff --git a/specs/docs.spec.dir/docs/API_REFERENCE.md b/specs/docs.spec.dir/docs/API_REFERENCE.md
+index 1c0d29c2..9688eb4b 100644
+--- a/specs/docs.spec.dir/docs/API_REFERENCE.md
++++ b/specs/docs.spec.dir/docs/API_REFERENCE.md
+@@ -182,7 +182,7 @@ Model Context Protocol server exposing specs, locks, cascades, the command queue
+ | Mode | Command | Wire |
+ |---|---|---|
+ | stdio (default) | `speclang mcp start [-d <dir>]` | JSON-RPC on stdin/stdout; all startup diagnostics go to **stderr** |
+-| HTTP + SSE | `speclang mcp start --remote [--port 3000] [-d <dir>]` | `GET /mcp` opens the SSE stream, `POST /mcp/message` carries JSON-RPC, `GET /events` is the event feed (enabled unless `MCP_SSE_ENABLED=false`), `GET /health` returns `{"status":"ok","mode":"http"}` |
++| HTTP + SSE | `speclang mcp start --remote [--port 3000] [-d <dir>]` | `GET /mcp` opens the SSE stream, `POST /mcp/message` carries JSON-RPC, `GET /events` is the event feed (enabled unless `MCP_SSE_ENABLED=false`), `GET /health` returns `{"status":"ok","mode":"http"}`, `GET /metrics` returns Prometheus/OpenMetrics exposition (`Content-Type: text/plain; version=0.0.4; charset=utf-8`, no auth; see `docs/observability-spec.md` §9.1 for metric families) |
+ 
+ `-d/--dir` (default `.`) only sets the base directory: the database becomes `<dir>/.speclang/speclang.db` and the specs root `<dir>/specs`.
+ 
+@@ -197,11 +197,11 @@ The module also has its own entrypoint: `node dist/specs/mcp.spec.dir/src/server
+ **Transports actually implemented** (`src/mcp/server.ts`): exactly two.
+ 
+ - **stdio** — `startStdio()` (`server.ts:62`), `StdioServerTransport` (`server.ts:68`). Default; nothing may be printed to stdout except protocol frames.
+-- **HTTP + SSE** — `startHTTP(port)` (`server.ts:77`), express app with `GET /mcp` → `SSEServerTransport('/mcp/message', res)` (`server.ts:93-104`), `POST /mcp/message` → a hand-rolled JSON-RPC 2.0 dispatcher (`server.ts:107`, methods `initialize`, `tools/list`, `tools/call`, `resources/list`, `prompts/list`), `GET /events` → SSE event feed (`server.ts:204`), `GET /health` (`server.ts:215`). `app.listen(httpPort)` binds all interfaces (`server.ts:219`).
++- **HTTP + SSE** — `startHTTP(port)` (`server.ts:77`), express app with `GET /mcp` → `SSEServerTransport('/mcp/message', res)` (`server.ts:93-104`), `POST /mcp/message` → a hand-rolled JSON-RPC 2.0 dispatcher (`server.ts:107`, methods `initialize`, `tools/list`, `tools/call`, `resources/list`, `prompts/list`), `GET /events` → SSE event feed (`server.ts:205`), `GET /health` (`server.ts:216`), `GET /metrics` → Prometheus/OpenMetrics exposition (`server.ts:225`, `Content-Type: text/plain; version=0.0.4; charset=utf-8`, no auth; see `docs/observability-spec.md` §9.1 for metric families). `app.listen(httpPort)` binds all interfaces (`server.ts:233`).
+ 
+ `'socket'` appears in the config type (`types.ts`, `config.ts:83`) but **no socket transport exists** — do not plan around it. The transport is chosen by argv (`--http` / `--remote`), not by `MCP_SERVER_MODE`.
+ 
+-**Auth switch.** The CLI exposes `--auth none|basic|token` (default `none`) plus `--user/--pass/--token`; `none` disables auth entirely (`auth.enabled = options.auth !== 'none'`, `bin/speclang`). When enabled, middleware is mounted on the `/mcp` path only (`server.ts:88-90`), i.e. both `GET /mcp` and `POST /mcp/message`; `/events` and `/health` stay open. Token auth expects `Authorization: Bearer <key>` and accepts any key from `MCP_API_KEYS` (comma-separated) or the singular `token` value (`auth.ts:67-89`). Basic auth compares the exact `Basic base64(user:pass)` header (`auth.ts:51-62`). The two remaining types — `config_file` (htpasswd-style JSON, SHA-256) and `tls_client_cert` (peer-cert CN) — have no CLI flag; they are reachable only by constructing the config object.
++**Auth switch.** The CLI exposes `--auth none|basic|token` (default `none`) plus `--user/--pass/--token`; `none` disables auth entirely (`auth.enabled = options.auth !== 'none'`, `bin/speclang`). When enabled, middleware is mounted on the `/mcp` path only (`server.ts:88-90`), i.e. both `GET /mcp` and `POST /mcp/message`; `/events`, `/health` and `/metrics` stay open. Token auth expects `Authorization: Bearer <key>` and accepts any key from `MCP_API_KEYS` (comma-separated) or the singular `token` value (`auth.ts:67-89`). Basic auth compares the exact `Basic base64(user:pass)` header (`auth.ts:51-62`). The two remaining types — `config_file` (htpasswd-style JSON, SHA-256) and `tls_client_cert` (peer-cert CN) — have no CLI flag; they are reachable only by constructing the config object.
+ 
+ **Configuration keys (live set).** `loadConfig` (`src/mcp/config.ts:38`) applies `DEFAULT_CONFIG` (lines 10-33), then the object the entrypoint passes, then **environment variables last** — so an env var wins over the matching CLI flag.
+ 

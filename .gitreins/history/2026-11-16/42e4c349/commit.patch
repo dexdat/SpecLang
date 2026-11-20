@@ -1,0 +1,392 @@
+commit ce347c39d266866e313a58b02ea7bf1af7299fce
+Author:     kara <totalwindupflightsystems@gmail.com>
+AuthorDate: Mon Nov 16 10:31:48 2026 -0500
+Commit:     kara <totalwindupflightsystems@gmail.com>
+CommitDate: Mon Nov 16 10:31:48 2026 -0500
+
+    fix(cli): make daemon stop/status treat ENOENT on daemon.pid as a clean no-op (DF-SPECLANG-6)
+---
+ bin/speclang                         |  73 ++++++++----
+ specs/daemon.spec.dir/src/index.ts   |  19 +++-
+ tests/daemon/pid-file-enoent.test.ts | 207 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 274 insertions(+), 25 deletions(-)
+
+diff --git a/bin/speclang b/bin/speclang
+index 89d6863c..2a3285ae 100755
+--- a/bin/speclang
++++ b/bin/speclang
+@@ -16,6 +16,32 @@ const fs = require('fs');
+ // Version from package.json
+ const packageJson = require('../package.json');
+ 
++// DF-SPECLANG-6: `.speclang/daemon.pid` is shared state between the serving
++// process and this CLI. The daemon's own SIGTERM handler removes the file and
++// `speclang stop` removes it too, so whichever side is second must treat
++// "already gone" as a benign no-op instead of crashing with an uncaught ENOENT.
++// An unreadable/empty/garbage file is stale state, never a process to signal.
++function readDaemonPid(pidFile) {
++  let raw;
++  try {
++    raw = fs.readFileSync(pidFile, 'utf-8');
++  } catch (err) {
++    if (err.code === 'ENOENT') return null; // raced with another stop/shutdown
++    throw err;
++  }
++  const pid = parseInt(raw.trim(), 10);
++  return Number.isInteger(pid) && pid > 0 ? pid : null;
++}
++
++function removeDaemonPidFile(pidFile) {
++  try {
++    fs.unlinkSync(pidFile);
++  } catch (err) {
++    // Idempotent shutdown: a second unlink of the same pid file is not an error.
++    if (err.code !== 'ENOENT') throw err;
++  }
++}
++
+ const program = new Command();
+ 
+ program
+@@ -180,9 +206,9 @@ program
+     
+     // Check if daemon is running
+     const pidFile = path.join(projectDir, '.speclang', 'daemon.pid');
+-    if (fs.existsSync(pidFile)) {
+-      const pid = fs.readFileSync(pidFile, 'utf-8').trim();
+-      console.log(`   Daemon: Running (PID ${pid})`);
++    const daemonPid = readDaemonPid(pidFile);
++    if (daemonPid !== null) {
++      console.log(`   Daemon: Running (PID ${daemonPid})`);
+     } else {
+       console.log('   Daemon: Not running');
+     }
+@@ -230,22 +256,23 @@ program
+   .action(async (options) => {
+     const projectDir = path.resolve(options.dir);
+     const pidFile = path.join(projectDir, '.speclang', 'daemon.pid');
+-    
+-    if (!fs.existsSync(pidFile)) {
++
++    const pid = readDaemonPid(pidFile);
++    if (pid === null) {
++      // Already stopped (or a stale empty/garbage pid file): nothing to signal.
++      removeDaemonPidFile(pidFile);
+       console.log('Daemon not running');
+       return;
+     }
+-    
+-    const pid = parseInt(fs.readFileSync(pidFile, 'utf-8').trim());
+-    
++
+     try {
+       process.kill(pid, 'SIGTERM');
+-      fs.unlinkSync(pidFile);
++      removeDaemonPidFile(pidFile);
+       console.log('✅ Daemon stopped');
+     } catch (err) {
+       if (err.code === 'ESRCH') {
+         console.log('Daemon not running (stale PID file removed)');
+-        fs.unlinkSync(pidFile);
++        removeDaemonPidFile(pidFile);
+       } else {
+         throw err;
+       }
+@@ -327,22 +354,23 @@ daemon
+   .action(async () => {
+     const projectDir = process.cwd();
+     const pidFile = path.join(projectDir, '.speclang', 'daemon.pid');
+-    
+-    if (!fs.existsSync(pidFile)) {
++
++    const pid = readDaemonPid(pidFile);
++    if (pid === null) {
++      // Already stopped (or a stale empty/garbage pid file): nothing to signal.
++      removeDaemonPidFile(pidFile);
+       console.log('Daemon not running');
+       return;
+     }
+-    
+-    const pid = parseInt(fs.readFileSync(pidFile, 'utf-8').trim());
+-    
++
+     try {
+       process.kill(pid, 'SIGTERM');
+-      fs.unlinkSync(pidFile);
++      removeDaemonPidFile(pidFile);
+       console.log('✅ Daemon stopped');
+     } catch (err) {
+       if (err.code === 'ESRCH') {
+         console.log('Daemon not running (stale PID file removed)');
+-        fs.unlinkSync(pidFile);
++        removeDaemonPidFile(pidFile);
+       } else {
+         throw err;
+       }
+@@ -359,15 +387,16 @@ daemon
+     const stateFile = path.join(projectDir, '.speclang', 'daemon-state.json');
+     
+     let isRunning = false;
+-    let pid = null;
+-    
+-    if (fs.existsSync(pidFile)) {
+-      pid = parseInt(fs.readFileSync(pidFile, 'utf-8').trim());
++    let pid = readDaemonPid(pidFile);
++
++    if (pid !== null) {
+       try {
+         process.kill(pid, 0);
+         isRunning = true;
+       } catch {
+-        fs.unlinkSync(pidFile);
++        // Stale pid file for a process that is gone — remove it, tolerating a
++        // concurrent removal by the daemon's own shutdown handler.
++        removeDaemonPidFile(pidFile);
+       }
+     }
+     
+diff --git a/specs/daemon.spec.dir/src/index.ts b/specs/daemon.spec.dir/src/index.ts
+index 8d481f4a..2d6f92e9 100644
+--- a/specs/daemon.spec.dir/src/index.ts
++++ b/specs/daemon.spec.dir/src/index.ts
+@@ -53,11 +53,24 @@ export async function startDaemon(options: {
+   // Create and start daemon
+   const daemon = new Daemon();
+   
+-  // Handle graceful shutdown
++  // Handle graceful shutdown (idempotent: SIGINT+SIGTERM or a repeated signal
++  // must not run stop()/unlink twice).
++  let shuttingDown = false;
+   const shutdown = async () => {
++    if (shuttingDown) return;
++    shuttingDown = true;
+     console.log('\n\n🛑 Shutting down...');
+-    await daemon.stop();
+-    fs.unlinkSync(pidFile);
++    try {
++      await daemon.stop();
++    } finally {
++      // DF-SPECLANG-6: `speclang stop` unlinks this same pid file right after
++      // sending SIGTERM, so whoever unlinks second must not throw ENOENT.
++      try {
++        fs.unlinkSync(pidFile);
++      } catch (err) {
++        if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
++      }
++    }
+     process.exit(0);
+   };
+   
+diff --git a/tests/daemon/pid-file-enoent.test.ts b/tests/daemon/pid-file-enoent.test.ts
+new file mode 100644
+index 00000000..8825f5b5
+--- /dev/null
++++ b/tests/daemon/pid-file-enoent.test.ts
+@@ -0,0 +1,207 @@
++/**
++ * DF-SPECLANG-6: `.speclang/daemon.pid` ENOENT handling.
++ *
++ * Bug (reproduced pre-fix): `./bin/speclang stop` sends SIGTERM and then unlinks
++ * `.speclang/daemon.pid`. The serving process's own SIGTERM handler unlinks the
++ * same file, so whichever side loses that race crashed with an uncaught
++ * `Error: ENOENT: no such file or directory, unlink '.../daemon.pid'` and the
++ * "clean" shutdown exited 1. Two more pid-file holes existed on the CLI side:
++ *   - `readFileSync` after `existsSync` (file can vanish in between → ENOENT)
++ *   - empty/garbage pid file → `parseInt` yields NaN → `process.kill(NaN)` throws
++ *     `ERR_INVALID_ARG_TYPE` instead of a readable no-op.
++ *
++ * Contract pinned here:
++ *   - `stop` when the pid file is absent is a clean no-op (exit 0, no throw)
++ *   - `stop` twice is idempotent
++ *   - an empty/garbage pid file is treated as stale state, never as a process
++ *   - a stale pid for a dead process is removed with exit 0
++ *   - `daemon status` clears a stale pid file without throwing
++ *   - the serving process exits 0 with NO ENOENT trace when `stop` wins the
++ *     unlink race (the board AC harness, as a spawn-based unit test)
++ */
++
++import { describe, it, expect, beforeEach, afterEach } from "vitest";
++import { spawn, execFile, type ChildProcess } from "child_process";
++import * as fs from "fs-extra";
++import * as os from "os";
++import * as path from "path";
++
++const REPO_ROOT = path.resolve(__dirname, "..", "..");
++const SPECLANG = path.join(REPO_ROOT, "bin", "speclang");
++const DIST_DAEMON = path.join(REPO_ROOT, "dist", "src", "daemon", "index.js");
++const distBuilt = fs.existsSync(DIST_DAEMON);
++
++function runCli(
++  args: string[],
++  cwd: string,
++): Promise<{ stdout: string; stderr: string; exitCode: number }> {
++  return new Promise((resolve) => {
++    execFile(
++      "node",
++      [SPECLANG, ...args],
++      { cwd, env: { ...process.env, NODE_OPTIONS: "" }, timeout: 30_000 },
++      (err, stdout, stderr) => {
++        // execFile returns null on success (exit 0) — capture both shapes.
++        const exitCode =
++          err && typeof (err as any).code === "number" ? (err as any).code : 0;
++        resolve({
++          stdout: stdout?.toString() ?? "",
++          stderr: stderr?.toString() ?? "",
++          exitCode,
++        });
++      },
++    );
++  });
++}
++
++/** A pid that is guaranteed not to belong to a live process. */
++async function deadPid(): Promise<number> {
++  const child = spawn(process.execPath, ["-p", "0"], { env: { ...process.env, NODE_OPTIONS: "" } });
++  const pid = child.pid as number;
++  await new Promise<void>((resolve) => child.on("exit", () => resolve()));
++  return pid;
++}
++
++async function waitFor(predicate: () => boolean, timeoutMs: number, what: string) {
++  const start = Date.now();
++  while (Date.now() - start < timeoutMs) {
++    if (predicate()) return;
++    await new Promise((r) => setTimeout(r, 50));
++  }
++  throw new Error(`timeout after ${timeoutMs}ms waiting for ${what}`);
++}
++
++describe("DF-SPECLANG-6 daemon.pid ENOENT handling", () => {
++  let sandbox: string;
++  let liveChild: ChildProcess | null = null;
++
++  const pidFile = () => path.join(sandbox, ".speclang", "daemon.pid");
++  const writePid = (contents: string) => {
++    fs.mkdirpSync(path.join(sandbox, ".speclang"));
++    fs.writeFileSync(pidFile(), contents);
++  };
++  const noNodeError = (text: string) => {
++    expect(text).not.toMatch(/ENOENT/);
++    expect(text).not.toMatch(/ERR_INVALID_ARG/);
++  };
++
++  beforeEach(() => {
++    sandbox = fs.mkdtempSync(path.join(os.tmpdir(), "speclang-df6-"));
++    fs.mkdirpSync(path.join(sandbox, ".speclang"));
++  });
++
++  afterEach(async () => {
++    if (liveChild && liveChild.exitCode === null && liveChild.signalCode === null) {
++      liveChild.kill("SIGKILL");
++      await new Promise((r) => liveChild!.once("exit", () => r(null)));
++    }
++    liveChild = null;
++    fs.removeSync(sandbox);
++  });
++
++  it("stop with no pid file is a clean no-op (exit 0)", async () => {
++    const res = await runCli(["stop", "-d", sandbox], sandbox);
++    expect(res.exitCode).toBe(0);
++    expect(res.stdout).toMatch(/Daemon not running/);
++    noNodeError(res.stdout + res.stderr);
++  });
++
++  it("stopping twice is idempotent (no throw on the second stop)", async () => {
++    const first = await runCli(["stop", "-d", sandbox], sandbox);
++    const second = await runCli(["stop", "-d", sandbox], sandbox);
++    expect(first.exitCode).toBe(0);
++    expect(second.exitCode).toBe(0);
++    expect(second.stdout).toMatch(/Daemon not running/);
++    noNodeError(first.stdout + first.stderr + second.stdout + second.stderr);
++  });
++
++  it("an empty pid file is stale state, not a NaN kill", async () => {
++    writePid("");
++    const res = await runCli(["stop", "-d", sandbox], sandbox);
++    expect(res.exitCode).toBe(0);
++    expect(res.stdout).toMatch(/Daemon not running/);
++    noNodeError(res.stdout + res.stderr);
++  });
++
++  it("a garbage pid file is stale state, not a NaN kill", async () => {
++    writePid("not-a-pid");
++    const res = await runCli(["stop", "-d", sandbox], sandbox);
++    expect(res.exitCode).toBe(0);
++    expect(res.stdout).toMatch(/Daemon not running/);
++    noNodeError(res.stdout + res.stderr);
++  });
++
++  it("a stale pid for a dead process is removed with exit 0", async () => {
++    writePid(String(await deadPid()));
++    const res = await runCli(["stop", "-d", sandbox], sandbox);
++    expect(res.exitCode).toBe(0);
++    expect(res.stdout).toMatch(/stale PID file removed/);
++    expect(fs.existsSync(pidFile())).toBe(false);
++    noNodeError(res.stdout + res.stderr);
++  });
++
++  it("`daemon stop` (subcommand) is a clean no-op when not running", async () => {
++    const res = await runCli(["daemon", "stop"], sandbox);
++    expect(res.exitCode).toBe(0);
++    expect(res.stdout).toMatch(/Daemon not running/);
++    noNodeError(res.stdout + res.stderr);
++  });
++
++  it("`daemon status` removes a stale pid file without throwing", async () => {
++    writePid(String(await deadPid()));
++    const res = await runCli(["daemon", "status"], sandbox);
++    expect(res.exitCode).toBe(0);
++    expect(res.stdout).toMatch(/Daemon: Stopped/);
++    expect(fs.existsSync(pidFile())).toBe(false);
++    noNodeError(res.stdout + res.stderr);
++  });
++
++  describe.skipIf(!distBuilt)("serving process shutdown", () => {
++    it(
++      "exits 0 with no ENOENT trace when `stop` wins the pid-file unlink race",
++      async () => {
++        let out = "";
++        let err = "";
++        liveChild = spawn(
++          process.execPath,
++          [SPECLANG, "start", "--no-dashboard", "--port", "39191", "-d", sandbox],
++          { cwd: sandbox, env: { ...process.env, NODE_OPTIONS: "" } },
++        );
++        const child = liveChild;
++        child.stdout!.on("data", (d) => (out += d.toString()));
++        child.stderr!.on("data", (d) => (err += d.toString()));
++        const exited = new Promise<number | null>((resolve) =>
++          child.on("exit", (code) => resolve(code)),
++        );
++
++        await waitFor(
++          () => /Daemon Started/i.test(out) && fs.existsSync(pidFile()),
++          30_000,
++          "daemon start banner + pid file",
++        );
++        expect(fs.readFileSync(pidFile(), "utf-8").trim()).toBe(String(child.pid));
++
++        const stop = await runCli(["stop", "-d", sandbox], sandbox);
++        expect(stop).toMatchObject({ exitCode: 0 });
++        expect(stop.stdout).toMatch(/Daemon stopped/);
++        expect(fs.existsSync(pidFile())).toBe(false);
++
++        const exitCode = await Promise.race([
++          exited,
++          new Promise<never>((_, reject) =>
++            setTimeout(() => reject(new Error("serving process did not exit after stop")), 30_000),
++          ),
++        ]);
++        expect(exitCode).toBe(0);
++        expect(out + err).not.toMatch(/ENOENT/);
++        expect(out + err).not.toMatch(/Error:/);
++
++        // Second stop after shutdown: still a clean no-op.
++        const again = await runCli(["stop", "-d", sandbox], sandbox);
++        expect(again.exitCode).toBe(0);
++        expect(again.stdout).toMatch(/Daemon not running/);
++      },
++      60_000,
++    );
++  });
++});

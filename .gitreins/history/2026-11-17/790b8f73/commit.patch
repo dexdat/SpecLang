@@ -1,0 +1,15 @@
+commit 920986c69170f9453ea1adf67dca7078b37f9be1
+Merge: 7d583a29 99ea048d
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 00:24:46 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 00:24:46 2026 -0500
+
+    merge: DF-SPECLANG-4-R5 — document the first-spec header count rule and LLM provider setup (recovered stranded branch @99ea048d)
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+
+ README.md                                          |  29 +++
+ .../poc.spec.dir/troubleshooting.spec.md           | 238 ++++++++++++++++++++-
+ 2 files changed, 263 insertions(+), 4 deletions(-)
+

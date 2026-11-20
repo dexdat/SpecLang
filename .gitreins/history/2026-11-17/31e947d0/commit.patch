@@ -1,0 +1,671 @@
+commit 0b056957771c298eeedabb66d87beb9451e28185
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 04:06:45 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 04:12:24 2026 -0500
+
+    fix(ralph-loop): bootstrap the state schema on a fresh database (QA-SPECLANG-5-R3)
+    
+    Root cause proved: `LoopController.create()` opened the state DB with the
+    guarded opener and nothing else. better-sqlite3 creates the file and defers
+    every schema question to the first statement, so the loop ran against a 0-byte
+    database and died on its first query:
+    
+      $ cd <scratch> && npx tsx src/ralph-loop.ts <scratch>/speclang.db
+      Ralph Loop failed: SqliteError: no such table: tasks
+          at LoopController.getNextTask (src/ralph-loop.ts:69)
+      exit=1            (0-byte speclang.db left on disk)
+    
+    Two facts found while proving it, both load-bearing:
+    
+      * The default path is worse than the row: a fresh project has no `.speclang/`
+        at all, and the run died before any table question with
+        `TypeError: Cannot open database because the directory does not exist`.
+      * Reusing the canonical initialiser ALONE would NOT have fixed the row. That
+        initialiser (`migrate`, i.e. what `createDatabase()` runs) creates
+        `ralph_tasks` — a different table from the `tasks` the loop queries — and a
+        `steering_packets` whose JSON field is `content`, not the `payload` the loop
+        writes. This module's own `schema.sql` was executed by nothing in the repo,
+        and the loop's `loadSpecs()` filters `specs.layer`, a column the canonical
+        `specs` table does not carry.
+    
+    Fix, all idempotent, on the fresh path only:
+    
+      * create the directory holding the DB when it is missing (fresh-project
+        default path), skipping `:memory:` / `file:` URLs;
+      * run the canonical state initialiser `migrate()` — reused, not copied, so
+        there is no second copy of the state schema;
+      * apply this module's own task schema (RALPH_LOOP_SCHEMA_SQL) and two additive
+        column guards in the ALTER TABLE ADD COLUMN style migrations.ts already uses
+        for tables that predate a file: `steering_packets.payload` and `specs.layer`;
+      * report any bootstrap failure as RalphLoopStateInitError (code
+        RALPH_LOOP_INIT_FAILED) naming the file and the recovery step; a corrupt
+        file still reports the shared CorruptStateDatabaseError diagnostic unchanged.
+    
+    After (verified in this worktree):
+    
+      $ cd <scratch dir, no .speclang/> && npx tsx src/ralph-loop.ts
+      Ralph Loop state database ready at .speclang/speclang.db (schema version 8)
+      exit=124 (loop still running when the 12s timeout stopped it)
+      tables present: tasks,specs,steering_packets,schema_migrations,ralph_tasks
+      tasks columns: id,title,description,status,assigned_to,created_at,updated_at
+    
+    The DDL is compiled in rather than read from src/ralph-loop/schema.sql because
+    the published tarball ships dist/ only (the constraint src/db/migrations.ts
+    documents). tests/db/ralph-loop-fresh-state.test.ts pins the copy to that file by
+    applying schema.sql to its own database and diffing the resulting `tasks` table,
+    so the two cannot drift silently.
+    
+    Residuals, deliberately not fixed here (each is a design decision, not a
+    bootstrap fix):
+    
+      * src/ralph-loop/controller.ts (the module-dir LoopController) has the same
+        missing-bootstrap defect, but its spec dir ships stale compiled .js beside
+        the .ts and `index.ts` resolves './controller' to that stale .js, so a fix
+        to its TypeScript alone would be unprovable — it needs a regeneration pass.
+      * canonical `steering_packets.task_id` foreign-keys to `ralph_tasks`, while the
+        loop writes ids from its own `tasks` table: the failure path
+        (handleFailure) still cannot insert until the two ralph task models are
+        reconciled. The column itself now exists, so the statement prepares.
+      * migrate() logs "Applying migration N: ..." to stdout on first bootstrap, the
+        same as SpecLangDB.initialize() — library callers of LoopController.create()
+        see those lines once per fresh DB.
+    
+    Gates run in this worktree: npx tsc --noEmit (0, though tsconfig excludes
+    src/ralph-loop.ts, so the edited file was also typechecked directly —
+    tsc --ignoreConfig --noEmit ... specs/implementation.spec.dir/src/ralph-loop.ts
+    = 0); npx vitest run tests/db/ralph-loop-fresh-state.test.ts
+    tests/db/corrupt-state-db-surfaces.test.ts tests/db/corrupt-state-db.test.ts
+    tests/db/migrations.test.ts = 4 files, 27 tests passed. The new test file was
+    RED-proved by restoring the pre-fix file: 6 of 7 fail, quoting
+    `SqliteError: no such table: tasks` and `TypeError: Cannot open database
+    because the directory does not exist` verbatim.
+    
+    Committed with --no-verify as a NAMED exception authorised by this row's brief:
+    the repo pre-commit hook runs a multi-minute guard and the foreman runs the full
+    gate on the merged tree. No guard or judge verdict is claimed here — this commit
+    is unaudited by that chain.
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+---
+ specs/implementation.spec.dir/src/ralph-loop.ts | 198 +++++++++++++-
+ tests/db/ralph-loop-fresh-state.test.ts         | 334 ++++++++++++++++++++++++
+ 2 files changed, 528 insertions(+), 4 deletions(-)
+
+diff --git a/specs/implementation.spec.dir/src/ralph-loop.ts b/specs/implementation.spec.dir/src/ralph-loop.ts
+index 0ce062da..16e87e20 100644
+--- a/specs/implementation.spec.dir/src/ralph-loop.ts
++++ b/specs/implementation.spec.dir/src/ralph-loop.ts
+@@ -12,7 +12,12 @@ import Database from 'better-sqlite3';
+ // (Specifier note: through the src/db projection — this spec dir's own compiled
+ // index.js is stale and would shadow the guarded TypeScript source for .js
+ // specifiers.)
+-import { openStateDatabase, STATE_DB_CORRUPT_CODE } from '../../../src/db/index.js';
++import { openStateDatabase, withStateDatabase, STATE_DB_CORRUPT_CODE } from '../../../src/db/index.js';
++// QA-SPECLANG-5-R3: the canonical state-DB initialiser. It is the exact code
++// `createDatabase()` runs (src/db/index.ts -> SpecLangDB.initialize -> migrate),
++// so the loop never grows a second copy of the state schema.
++import { getCurrentVersion, migrate } from '../../../src/db/migrations.js';
++import { existsSync, mkdirSync } from 'fs';
+ import { readFile, writeFile } from 'fs/promises';
+ import { glob } from 'glob';
+ import { exec } from 'child_process';
+@@ -31,6 +36,166 @@ export interface Task {
+   updated_at: number;
+ }
+ 
++/**
++ * QA-SPECLANG-5-R3: the Ralph Loop's own task schema, compiled in.
++ *
++ * The loop reads `tasks` (title/description/status/assigned_to/updated_at) and
++ * writes `steering_packets` rows carrying a JSON `payload`. Neither column set
++ * is in the canonical state schema's ralph migration: `005_ralph.sql` creates
++ * `ralph_tasks` (with `description`, no `title`) and a `steering_packets` table
++ * whose field is `content`. And nothing in this repo ever executed this
++ * module's own `schema.sql`, so a state DB that some other command had not
++ * already prepared had no `tasks` table at all — the first
++ * `SELECT ... FROM tasks` in getNextTask died with
++ * `SqliteError: no such table: tasks`.
++ *
++ * The DDL is compiled in instead of read from `src/ralph-loop/schema.sql`
++ * because the published tarball ships `dist/` only (the same constraint
++ * src/db/migrations.ts documents), so a runtime read of a .sql file would fail
++ * for every consumer. It is pinned to that file by
++ * tests/db/ralph-loop-fresh-state.test.ts, which applies schema.sql to its own
++ * database and diffs the resulting `tasks` table against this DDL — change one
++ * without the other and the test fails loudly instead of drifting.
++ */
++export const RALPH_LOOP_SCHEMA_SQL = `
++CREATE TABLE IF NOT EXISTS tasks (
++  id TEXT PRIMARY KEY,
++  title TEXT NOT NULL,
++  description TEXT,
++  status TEXT NOT NULL DEFAULT 'pending',
++  assigned_to TEXT,
++  created_at INTEGER NOT NULL,
++  updated_at INTEGER NOT NULL
++);
++
++CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
++CREATE INDEX IF NOT EXISTS idx_tasks_assigned_to ON tasks(assigned_to);
++`;
++
++/** Stable, machine-checkable code for "the loop could not prepare its state DB". */
++export const RALPH_LOOP_INIT_FAILED_CODE = 'RALPH_LOOP_INIT_FAILED';
++
++/**
++ * Thrown when the loop cannot prepare its state database (unwritable path, a
++ * directory it may not create, a file that failed setup deeper than the opener's
++ * probe). The message names the file and the way out: the failure this replaces
++ * was a bare `SqliteError: no such table: tasks` that named neither.
++ */
++export class RalphLoopStateInitError extends Error {
++  /** Stable, machine-checkable error code (see RALPH_LOOP_INIT_FAILED_CODE). */
++  code: typeof RALPH_LOOP_INIT_FAILED_CODE;
++  /** The state database file the loop could not prepare. */
++  filePath: string;
++  /** The original error, kept for diagnostics. */
++  cause?: unknown;
++
++  constructor(filePath: string, cause?: unknown) {
++    super(
++      [
++        `The Ralph Loop could not prepare its state database: ${filePath}`,
++        `  ${String((cause as Error | undefined)?.message ?? cause)}`,
++        '',
++        'The loop needs a writable SQLite file at that path. Fix the directory',
++        'permissions (or point the loop at a writable path) and rerun. If the file is',
++        'unusable, back it up and delete it so the loop rebuilds it — the documented',
++        'recovery step is docs/troubleshooting.md -> "Emergency Recovery":',
++        `  rm -f ${filePath}`
++      ].join('\n')
++    );
++    this.name = 'RalphLoopStateInitError';
++    this.code = RALPH_LOOP_INIT_FAILED_CODE;
++    this.filePath = filePath;
++    this.cause = cause;
++    if (Error.captureStackTrace) {
++      Error.captureStackTrace(this, RalphLoopStateInitError);
++    }
++  }
++}
++
++/**
++ * Create the directory that holds the state database when it is missing.
++ *
++ * `tsx src/ralph-loop.ts` defaults to `.speclang/speclang.db`, and on a fresh
++ * project that directory does not exist: better-sqlite3 then refuses with
++ * `Cannot open database because the directory does not exist` before any schema
++ * question is even asked. Creating it is what "fresh project" needs; a path
++ * whose directory cannot be created surfaces as RalphLoopStateInitError.
++ */
++function ensureStateDirectory(dbPath: string): void {
++  if (dbPath === ':memory:' || dbPath.startsWith('file:')) {
++    return;
++  }
++  const dir = path.dirname(dbPath);
++  if (dir === '.' || dir === '' || existsSync(dir)) {
++    return;
++  }
++  mkdirSync(dir, { recursive: true });
++}
++
++/**
++ * Prepare a state database the Ralph Loop can actually run against.
++ *
++ * Two initialisers, in this order, both idempotent:
++ *
++ *  1. the canonical state schema (`migrate` — specs, sessions, events, commands,
++ *     locks, recovery, the ralph tables, the search indexes). The loop's Builder
++ *     and Verifier read `specs`, so creating only the task tables would leave it
++ *     half-initialised; reusing this initialiser is also what keeps the loop
++ *     from carrying a second copy of the state schema.
++ *  2. this module's own task schema (RALPH_LOOP_SCHEMA_SQL) plus the additive
++ *     guard for the one column the canonical ralph migration spells differently
++ *     (`steering_packets.payload`, which `handleFailure` writes).
++ *
++ * Runs under withStateDatabase() at the call site, so a file that is not a
++ * SQLite database reports the shared corruption diagnostic rather than a bare
++ * SqliteError from a prepared statement.
++ */
++export function bootstrapRalphLoopState(db: Database.Database, dbPath: string): void {
++  migrate(db);
++
++  db.exec(RALPH_LOOP_SCHEMA_SQL);
++
++  // Additive guards, not replacements: migration 5 already shipped
++  // `steering_packets` with `content`, and migrations.ts uses the same
++  // ALTER TABLE ADD COLUMN pattern for tables that predate a file. Adding a
++  // column keeps both readers working instead of dropping the canonical table.
++  //
++  //  - `steering_packets.payload`: handleFailure() writes it.
++  //  - `specs.layer`: loadSpecs() filters `WHERE layer >= 3`. The canonical
++  //    specs table carries tags/part but no layer, so without the column that
++  //    SELECT throws `no such column: layer` and the first real task would die
++  //    in the builder. Nullable and default-free on purpose: a spec with no
++  //    declared layer is not a layer 3+ spec, so the query returns no rows
++  //    instead of being handed an invented classification.
++  addColumnIfMissing(db, 'steering_packets', 'payload', 'TEXT');
++  addColumnIfMissing(db, 'specs', 'layer', 'INTEGER');
++
++  // stderr: the loop can run next to a stdio transport, and this line is the
++  // operator's only evidence that the fresh path bootstrapped rather than
++  // silently idling against an empty file.
++  console.error(`Ralph Loop state database ready at ${dbPath} (schema version ${getCurrentVersion(db)})`);
++}
++
++/**
++ * Add a nullable column to an existing table when it is missing.
++ *
++ * Both the table and the column are internal literals (no user input reaches the
++ * identifier position); the declaration is a fixed SQL fragment.
++ */
++function addColumnIfMissing(
++  db: Database.Database,
++  table: string,
++  column: string,
++  declaration: string
++): void {
++  const columns = (db.prepare(`PRAGMA table_info(${table})`).all() as Array<{ name: string }>).map(
++    (existing) => existing.name
++  );
++  if (!columns.includes(column)) {
++    db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${declaration}`);
++  }
++}
++
+ export class LoopController {
+   private db!: Database.Database;
+   private builder: BuilderAgent;
+@@ -47,8 +212,26 @@ export class LoopController {
+     // QA-SPECLANG-5-R2: guarded open — the loop used to die on a raw
+     // `SqliteError: file is not a database` the first time it prepared a
+     // statement against a corrupt `.speclang/speclang.db`.
+-    const db = openStateDatabase(dbPath);
+-    return new LoopController(db);
++    //
++    // QA-SPECLANG-5-R3: opening is not initialising. On a fresh project the
++    // directory and every table are missing, so the first statement the loop
++    // prepared died with `no such table: tasks` against a 0-byte file that
++    // openStateDatabase() had happily created. Create the directory, then run
++    // the schema bootstrap before the controller is handed out — a DB the loop
++    // cannot prepare is reported as RalphLoopStateInitError, never as a bare
++    // SqliteError from a query.
++    try {
++      ensureStateDirectory(dbPath);
++      const db = openStateDatabase(dbPath);
++      withStateDatabase(db, dbPath, () => bootstrapRalphLoopState(db, dbPath));
++      return new LoopController(db);
++    } catch (error) {
++      if ((error as { code?: string } | undefined)?.code === STATE_DB_CORRUPT_CODE) {
++        // The shared corruption diagnostic already names the file and the remedy.
++        throw error;
++      }
++      throw new RalphLoopStateInitError(dbPath, error);
++    }
+   }
+ 
+   async start() {
+@@ -260,6 +443,12 @@ export class VerifierAgent {
+  * QA-SPECLANG-5-R2: a corrupt state DB must stop the loop before the first task
+  * is read, and say what is wrong (which file, and the documented recovery step)
+  * instead of surfacing a raw SqliteError from a prepared statement.
++ *
++ * QA-SPECLANG-5-R3: a fresh project has no state DB at all, so create() now
++ * bootstraps the schema (canonical migrations + the loop's own task tables) and
++ * this entry starts the loop against it. Anything that still blocks the
++ * bootstrap is reported by RalphLoopStateInitError naming the file and the way
++ * out.
+  */
+ async function main(): Promise<void> {
+   const dbPath = process.argv[2] ?? '.speclang/speclang.db';
+@@ -268,7 +457,8 @@ async function main(): Promise<void> {
+     const controller = await LoopController.create(dbPath);
+     await controller.start();
+   } catch (error) {
+-    if ((error as { code?: string } | undefined)?.code === STATE_DB_CORRUPT_CODE) {
++    const code = (error as { code?: string } | undefined)?.code;
++    if (code === STATE_DB_CORRUPT_CODE || code === RALPH_LOOP_INIT_FAILED_CODE) {
+       console.error((error as Error).message);
+       process.exit(1);
+     }
+diff --git a/tests/db/ralph-loop-fresh-state.test.ts b/tests/db/ralph-loop-fresh-state.test.ts
+new file mode 100644
+index 00000000..8ba7c627
+--- /dev/null
++++ b/tests/db/ralph-loop-fresh-state.test.ts
+@@ -0,0 +1,334 @@
++/**
++ * QA-SPECLANG-5-R3: the Ralph Loop opened its state DB but never initialised it.
++ *
++ * Verified pre-fix state this file fails against — from a scratch directory with
++ * an existing parent dir and no schema:
++ *
++ *   $ npx tsx src/ralph-loop.ts <fresh>/speclang.db
++ *   Ralph Loop failed: SqliteError: no such table: tasks
++ *       at Database.prepare (.../better-sqlite3/lib/methods/wrappers.js:5:21)
++ *       at LoopController.getNextTask (.../ralph-loop.ts:69:33)
++ *   exit=1
++ *
++ * and with the DEFAULT path on a project that has no `.speclang/` at all it died
++ * even earlier, before any table question:
++ *
++ *   Ralph Loop failed: TypeError: Cannot open database because the directory
++ *   does not exist
++ *
++ * Root cause: `openStateDatabase()` creates the file (and better-sqlite3 defers
++ * every schema question to the first statement) but nothing ran a schema or
++ * migration on that path. The loop's own `schema.sql` was never executed by
++ * anything, and the canonical state migrations create `ralph_tasks` — a
++ * different table from the `tasks` the loop queries — so "the DB was created" and
++ * "the loop can run" were two different things.
++ *
++ * After the fix `LoopController.create()` creates the containing directory and
++ * runs the canonical initialiser (`migrate`, the same code `createDatabase()`
++ * runs) plus the loop's own task schema, so a fresh path is a working state DB.
++ */
++
++import { describe, it, expect, beforeEach, afterEach } from "vitest";
++import { spawn } from "node:child_process";
++import Database from "better-sqlite3";
++import {
++  existsSync,
++  mkdirSync,
++  mkdtempSync,
++  readFileSync,
++  rmSync,
++  writeFileSync,
++} from "node:fs";
++import { join } from "node:path";
++
++import {
++  LoopController,
++  RALPH_LOOP_SCHEMA_SQL,
++  RALPH_LOOP_INIT_FAILED_CODE,
++  RalphLoopStateInitError,
++} from "../../src/ralph-loop.js";
++
++const REPO_ROOT = process.cwd();
++const TSX = join(REPO_ROOT, "node_modules", ".bin", "tsx");
++const RALPH_ENTRY = join(REPO_ROOT, "src", "ralph-loop.ts");
++const CANONICAL_SCHEMA_SQL = join(REPO_ROOT, "src", "ralph-loop", "schema.sql");
++const DEFAULT_DB = join(".speclang", "speclang.db");
++
++/** Poll interval for "did the loop get its state DB ready?" */
++const POLL_MS = 100;
++
++function sleep(ms: number): Promise<void> {
++  return new Promise((resolve) => setTimeout(resolve, ms));
++}
++
++interface EntryRun {
++  stdout: string;
++  stderr: string;
++  /** Exit code when the process ended on its own; null when it was still running. */
++  exitCode: number | null;
++  /** True when the loop was still alive when the state DB became ready. */
++  stillRunning: boolean;
++}
++
++/**
++ * Start the real entry point, wait until it has bootstrapped its state DB (or
++ * died trying), then stop it.
++ *
++ * Polling beats a fixed sleep here: the loop is a daemon that never exits, so
++ * "it is still running and its DB is ready" is the success signal, and waiting
++ * for the readiness line keeps the test fast under load instead of burning a
++ * fixed timeout.
++ */
++async function runLoopUntilReady(projectDir: string, dbPath: string, waitMs = 30_000): Promise<EntryRun> {
++  const child = spawn(TSX, [RALPH_ENTRY], { cwd: projectDir, stdio: ["ignore", "pipe", "pipe"] });
++  let stdout = "";
++  let stderr = "";
++  child.stdout.on("data", (chunk: Buffer) => {
++    stdout += chunk.toString();
++  });
++  child.stderr.on("data", (chunk: Buffer) => {
++    stderr += chunk.toString();
++  });
++
++  let exitCode: number | null | undefined;
++  const exited = new Promise<void>((resolve) => {
++    child.on("exit", (code) => {
++      exitCode = code;
++      resolve();
++    });
++  });
++
++  const deadline = Date.now() + waitMs;
++  while (Date.now() < deadline) {
++    if (exitCode !== undefined) break;
++    if (existsSync(dbPath) && stderr.includes("Ralph Loop state database ready at")) break;
++    await sleep(POLL_MS);
++  }
++
++  const stillRunning = exitCode === undefined;
++  if (stillRunning) {
++    child.kill("SIGKILL");
++  }
++  await exited;
++  return { stdout, stderr, exitCode: exitCode ?? null, stillRunning };
++}
++
++/** Table names in a state DB, opened read-only so the assertion cannot create it. */
++function tableNames(dbPath: string): string[] {
++  const db = new Database(dbPath, { readonly: true });
++  try {
++    const rows = db
++      .prepare("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name")
++      .all() as Array<{ name: string }>;
++    return rows.map((row) => row.name);
++  } finally {
++    db.close();
++  }
++}
++
++/** Column shape of one table, as SQLite sees it (name, type, notnull, default, pk). */
++function tableShape(db: Database.Database, table: string): string[] {
++  const rows = db.prepare(`PRAGMA table_info(${table})`).all() as Array<{
++    name: string;
++    type: string;
++    notnull: number;
++    dflt_value: unknown;
++    pk: number;
++  }>;
++  return rows.map(
++    (row) => `${row.name}|${row.type}|${row.notnull}|${String(row.dflt_value)}|${row.pk}`
++  );
++}
++
++/** Index names on one table, excluding SQLite's implicit ones. */
++function indexNames(db: Database.Database, table: string): string[] {
++  const rows = db
++    .prepare(
++      "SELECT name FROM sqlite_master WHERE type = 'index' AND tbl_name = ? AND name NOT LIKE 'sqlite_%' ORDER BY name"
++    )
++    .all(table) as Array<{ name: string }>;
++  return rows.map((row) => row.name);
++}
++
++describe("Ralph Loop bootstraps a fresh state database (QA-SPECLANG-5-R3)", () => {
++  let dir: string;
++
++  beforeEach(() => {
++    mkdirSync(join(REPO_ROOT, ".tmp"), { recursive: true });
++    dir = mkdtempSync(join(REPO_ROOT, ".tmp", "ralph-fresh-"));
++  });
++
++  afterEach(() => {
++    rmSync(dir, { recursive: true, force: true });
++  });
++
++  it("creates the canonical state schema plus the loop's own tables on an absent file", async () => {
++    const dbPath = join(dir, "speclang.db");
++    expect(existsSync(dbPath)).toBe(false);
++
++    const controller = await LoopController.create(dbPath);
++    expect(controller).toBeDefined();
++
++    const tables = tableNames(dbPath);
++    // The table the failing query reads.
++    expect(tables).toContain("tasks");
++    // handleFailure() writes this one.
++    expect(tables).toContain("steering_packets");
++    // BuilderAgent/VerifierAgent read specs; creating only the task tables
++    // would leave the loop half-initialised on its first real task.
++    expect(tables).toContain("specs");
++    // The canonical initialiser ran, rather than a hand-rolled subset of it.
++    expect(tables).toContain("schema_migrations");
++
++    const db = new Database(dbPath, { readonly: true });
++    try {
++      const row = db.prepare("SELECT MAX(version) AS version FROM schema_migrations").get() as {
++        version: number | null;
++      };
++      expect(row.version).toBe(8);
++    } finally {
++      db.close();
++    }
++  });
++
++  it("every statement the loop prepares runs against the freshly created DB", async () => {
++    const dbPath = join(dir, "statements.db");
++    const controller = await LoopController.create(dbPath);
++
++    const db = new Database(dbPath);
++    try {
++      // The exact statements from getNextTask(), loadSpecs() and handleFailure().
++      db.prepare("SELECT * FROM tasks WHERE status = 'pending' ORDER BY created_at LIMIT 1").get();
++      expect(db.prepare("SELECT * FROM specs WHERE layer >= 3").all()).toEqual([]);
++      // The canonical migration spells this column `content`; the loop writes
++      // `payload`, so the additive guard has to be in place too. Prepared (not
++      // run): the canonical steering_packets also foreign-keys task_id to
++      // ralph_tasks, and reconciling that with the loop's own `tasks` ids is a
++      // schema-design decision, not a bootstrap fix — see the residual note in
++      // the commit body.
++      db.prepare(
++        "INSERT INTO steering_packets (task_id, type, payload, created_at) VALUES (?, ?, ?, ?)"
++      );
++
++      db.prepare(
++        `INSERT INTO tasks (id, title, description, status, assigned_to, created_at, updated_at)
++         VALUES (?, ?, ?, ?, ?, ?, ?)`
++      ).run("task-1", "code generation", "seeded", "pending", null, 1, 1);
++    } finally {
++      db.close();
++    }
++
++    // Read the seeded row back through the loop's own private query, so the
++    // assertion covers the code path the report named, not a copy of its SQL.
++    const next = await (
++      controller as unknown as { getNextTask: () => Promise<{ id: string } | null> }
++    ).getNextTask();
++    expect(next?.id).toBe("task-1");
++  });
++
++  it("creates a missing directory for an explicit DB path", async () => {
++    const dbPath = join(dir, "nested", "state", "speclang.db");
++    expect(existsSync(join(dir, "nested"))).toBe(false);
++
++    await LoopController.create(dbPath);
++
++    expect(existsSync(dbPath)).toBe(true);
++    expect(tableNames(dbPath)).toContain("tasks");
++  });
++
++  it("keeps the compiled-in task schema identical to src/ralph-loop/schema.sql", () => {
++    // Anti-drift: the DDL is compiled in (the published tarball ships dist/ only,
++    // so a runtime read of schema.sql would fail for consumers). Applying both to
++    // their own database is what keeps the copy honest.
++    const reference = new Database(":memory:");
++    const compiledIn = new Database(":memory:");
++    try {
++      reference.exec(readFileSync(CANONICAL_SCHEMA_SQL, "utf-8"));
++      compiledIn.exec(RALPH_LOOP_SCHEMA_SQL);
++
++      expect(tableShape(compiledIn, "tasks")).toEqual(tableShape(reference, "tasks"));
++      expect(indexNames(compiledIn, "tasks")).toEqual(indexNames(reference, "tasks"));
++    } finally {
++      reference.close();
++      compiledIn.close();
++    }
++  });
++
++  it("reports an actionable init failure instead of a bare SqliteError", async () => {
++    // A path whose parent component is a regular file: the directory cannot be
++    // created, so the loop must say which path is unusable and how to recover.
++    const blocker = join(dir, "blocker");
++    writeFileSync(blocker, "not a directory");
++    const dbPath = join(blocker, "speclang.db");
++
++    let caught: unknown;
++    try {
++      await LoopController.create(dbPath);
++    } catch (err) {
++      caught = err;
++    }
++
++    expect(caught).toBeInstanceOf(RalphLoopStateInitError);
++    const err = caught as RalphLoopStateInitError;
++    expect(err.name).toBe("RalphLoopStateInitError");
++    expect(err.code).toBe(RALPH_LOOP_INIT_FAILED_CODE);
++    expect(err.filePath).toBe(dbPath);
++    expect(err.message).toContain(dbPath);
++    expect(err.message).toContain('docs/troubleshooting.md -> "Emergency Recovery"');
++    expect(err.message).not.toMatch(/^SqliteError/);
++  });
++});
++
++describe("Ralph Loop entry point on a fresh project (QA-SPECLANG-5-R3)", () => {
++  let dir: string;
++
++  beforeEach(() => {
++    mkdirSync(join(REPO_ROOT, ".tmp"), { recursive: true });
++    dir = mkdtempSync(join(REPO_ROOT, ".tmp", "ralph-fresh-entry-"));
++  });
++
++  afterEach(() => {
++    rmSync(dir, { recursive: true, force: true });
++  });
++
++  it("has the TypeScript runner the entry point is exercised with", () => {
++    // tsx is a devDependency; without it this entry point cannot be started at
++    // all, so the gap has to be loud rather than skipped.
++    expect(existsSync(TSX)).toBe(true);
++    expect(existsSync(RALPH_ENTRY)).toBe(true);
++  });
++
++  it("bootstraps .speclang/speclang.db and keeps looping where it used to exit 1", async () => {
++    const projectDir = join(dir, "fresh-project");
++    // No .speclang/ at all — the default path of a fresh project.
++    mkdirSync(projectDir, { recursive: true });
++    const dbPath = join(projectDir, DEFAULT_DB);
++
++    const res = await runLoopUntilReady(projectDir, dbPath);
++
++    // The reported failure (and the directory-missing one it hid behind) is gone.
++    expect(res.stderr).not.toMatch(/SqliteError/);
++    expect(res.stderr).not.toMatch(/no such table/);
++    expect(res.stderr).not.toMatch(/directory does not exist/);
++    expect(res.exitCode).not.toBe(1);
++
++    // Still running when it was stopped == the loop started; pre-fix it exited 1
++    // within a second of startup.
++    expect(res.stillRunning).toBe(true);
++    expect(res.exitCode).toBeNull();
++    expect(res.stderr).toContain("Ralph Loop state database ready at");
++
++    expect(existsSync(dbPath)).toBe(true);
++
++    const tables = tableNames(dbPath);
++    expect(tables).toContain("tasks");
++    expect(tables).toContain("specs");
++
++    const db = new Database(dbPath, { readonly: true });
++    try {
++      expect(db.prepare("SELECT COUNT(*) AS n FROM tasks").get()).toEqual({ n: 0 });
++    } finally {
++      db.close();
++    }
++  }, 40_000);
++});

@@ -1,0 +1,60 @@
+commit ae7baab24c48cf482e21b99de42e1052a1913c02
+Author:     kara <totalwindupflightsystems@gmail.com>
+AuthorDate: Fri Nov 20 02:14:37 2026 -0500
+Commit:     kara <totalwindupflightsystems@gmail.com>
+CommitDate: Fri Nov 20 02:14:37 2026 -0500
+
+    gate: make both tier-1 test arms report the suite's real status
+    
+    Two arms claimed to gate the test suite and neither could fail on failures:
+    
+    - pipeline tier1 `tests` step ran `npx vitest run ... | tail -3`, so the step's
+      exit code was `tail`'s (always 0). On 2026-11-20 origin/main graded PASS with
+      20 failing tests in that run.
+    - guards.test_command piped through `grep -q 'Tests.*passed'`, which matches
+      vitest's summary line even when it reads "Tests  20 failed | 60 passed".
+    
+    Both now propagate vitest's own exit status; the step keeps a 20-line tail for
+    triage. Red-proofed in both directions: a deliberately failing test file made
+    the step exit 1 (REDPROOF_RC=1, "Tests  1 failed"), and the full suite is
+    currently green at 2122 tests / 0 failed in ~32s. `gitreins config-validate`
+    reports only the four pre-existing unknown-key warnings the file already
+    documents.
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+---
+ .gitreins/config.yaml | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/.gitreins/config.yaml b/.gitreins/config.yaml
+index 93cac298..544d41d5 100644
+--- a/.gitreins/config.yaml
++++ b/.gitreins/config.yaml
+@@ -3,8 +3,10 @@ guards:
+   lint: false
+   allow_skips: true
+   tests: true
+-  test_command: npx vitest run --passWithNoTests 2>&1 | grep -q 'Tests.*passed' &&
+-    exit 0 || exit 1
++  # Honest arm (2026-11-20): `grep -q 'Tests.*passed'` matched
++  # "Tests  20 failed | 60 passed", so failing runs passed this guard. Use
++  # vitest's own exit status.
++  test_command: npx vitest run --passWithNoTests
+   dead_code: false
+   skylos: false
+   lsp: true
+@@ -75,7 +77,13 @@ pipeline:
+       run: bash scripts/guard-build.sh
+     - id: tests
+       type: script
+-      run: npx vitest run --passWithNoTests 2>&1 | tail -3
++      # Honest gate (2026-11-20): the old `... | tail -3` reported the exit code
++      # of `tail`, so tier1 graded a suite with 20 failing tests as PASS. Keep
++      # the log tail for triage but propagate vitest's own status.
++      run: |
++        out=$(npx vitest run --passWithNoTests 2>&1); rc=$?
++        printf '%s\n' "$out" | tail -20
++        exit $rc
+   - id: tier2
+     type: ai_eval
+     "on":

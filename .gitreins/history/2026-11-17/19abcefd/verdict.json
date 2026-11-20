@@ -1,0 +1,353 @@
+{
+  "task_id": "GAP-005",
+  "task_title": "ralph-loop controller.ts copy has no exit path (GAP-004 fixed only ralph-loop.ts)",
+  "task_criteria": [
+    "src/ralph-loop/controller.ts carries the GAP-004 exit-path fix (grep -nE SIGTERM|isLauncherGone|maxIdlePolls matches) OR the file is deleted and grep -rn ralph-loop/controller src tests bin scripts returns 0 hits; then npx tsc --noEmit exits 0 and npx vitest run stays green."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "land/2117",
+  "commit": "6e69f3aef6033924e14fb624e4601ed21b3250fb",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "f92dd2ff6172eb5f594a8754f7bf25177ab3c04bd55a9cbf6c7e45a9e0026922",
+  "working_tree_dirty_path_count": 1,
+  "items": [
+    {
+      "criterion": "src/ralph-loop/controller.ts carries the GAP-004 exit-path fix (grep -nE SIGTERM|isLauncherGone|maxIdlePolls matches) OR the file is deleted and grep -rn ralph-loop/controller src tests bin scripts returns 0 hits; then npx tsc --noEmit exits 0 and npx vitest run stays green.",
+      "status": "PASS",
+      "detail": "Deletion arm satisfied. `ls -la src/ralph-loop/` shows only builder-agent.ts, index.ts, schema.sql, types.ts, verifier-agent.ts \u2014 controller.ts (and its spec-side source specs/ralph-loop.spec.dir/src/controller.ts) are gone (commit e7677809, merged ae5fc21f). `grep -rn \"ralph-loop/controller\" src tests bin scripts` produced no output, exit code 1 (0 hits). `npx tsc --noEmit` -> TSC_EXIT=0. `TMPDIR=$PWD/.tmp npx vitest run` -> 'Test Files 120 passed | 4 skipped (124)', 'Tests 1995 passed | 58 skipped (2053)', VITEST_EXIT=0. The new guard tests/db/ralph-loop-controller-copy.test.ts passes 6/6 in isolation. [resolution 0.02; src/ralph-loop/controller.ts]"
+    },
+    {
+      "criterion": "The deletion leaves no dangling reference: the ralph-loop barrel (specs/ralph-loop.spec.dir/src/index.ts) no longer re-exports the removed './controller' module, and no source file under src/, bin/ or scripts/ imports the removed module path.",
+      "status": "PASS",
+      "detail": "specs/ralph-loop.spec.dir/src/index.ts:27-33 replaces `export { LoopController } from './controller';` with a GAP-005 comment while still exporting builder-agent/verifier-agent/types. `grep -rn \"ralph-loop/controller\" src tests bin scripts` -> 0 hits (exit 1). Guard tests 'the ralph-loop barrel no longer re-exports LoopController' and 'no source file imports the removed module path' both pass (6/6 in tests/db/ralph-loop-controller-copy.test.ts).",
+      "derived": true
+    },
+    {
+      "criterion": "The surviving LoopController (specs/implementation.spec.dir/src/ralph-loop.ts, projected as src/ralph-loop.ts) still carries the GAP-004 exit path \u2014 SIGTERM/SIGINT/SIGHUP handling, isLauncherGone launcher-liveness check, and the maxIdlePolls idle bound \u2014 so removing the duplicate leaves exactly one controller and it is the one that can exit.",
+      "status": "PASS",
+      "detail": "src/ralph-loop.ts is a symlink to specs/implementation.spec.dir/src/ralph-loop.ts, which defines RALPH_LOOP_STOP_SIGNALS = ['SIGTERM','SIGINT','SIGHUP'] at :217, isLauncherGone() at :291, the maxIdlePolls field at :319, and exitDueOnIdlePoll()/launcherLost() at :452-468. `grep -rn \"class LoopController\" src/ specs/` shows the only .ts declaration is specs/implementation.spec.dir/src/ralph-loop.ts:305. Guard test 'exactly one LoopController is declared under src/, and it keeps the GAP-004 exit path' passes.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: \u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[1/1]\u23af",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T221229.439810Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\nnpm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T221229.439810Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "\n\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[1/1]\u23af\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T221229.439810Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 src/ralph-loop/controller.ts carries the GAP-004 exit-path fix (grep -nE SIGTERM|isLauncherGone|maxIdlePolls matches) OR the file is deleted and grep -rn ralph-loop/controller src tests bin scripts returns 0 hits; then npx tsc --noEmit exits 0 and npx vitest run stays green.: Deletion arm satisfied. `ls -la src/ralph-loop/` shows only builder-agent.ts, index.ts, schema.sql, types.ts, verifier-agent.ts \u2014 controller.ts (and its spec-side source specs/ralph-loop.spec.dir/src/controller.ts) are gone (commit e7677809, merged ae5fc21f). `grep -rn \"ralph-loop/controller\" src tests bin scripts` produced no output, exit code 1 (0 hits). `npx tsc --noEmit` -> TSC_EXIT=0. `TMPDIR=$PWD/.tmp npx vitest run` -> 'Test Files 120 passed | 4 skipped (124)', 'Tests 1995 passed | 58 skipped (2053)', VITEST_EXIT=0. The new guard tests/db/ralph-loop-controller-copy.test.ts passes 6/6 in isolation. [resolution 0.02; src/ralph-loop/controller.ts]\n  \u2713 The deletion leaves no dangling reference: the ralph-loop barrel (specs/ralph-loop.spec.dir/src/index.ts) no longer re-exports the removed './controller' module, and no source file under src/, bin/ or scripts/ imports the removed module path.: specs/ralph-loop.spec.dir/src/index.ts:27-33 replaces `export { LoopController } from './controller';` with a GAP-005 comment while still exporting builder-agent/verifier-agent/types. `grep -rn \"ralph-loop/controller\" src tests bin scripts` -> 0 hits (exit 1). Guard tests 'the ralph-loop barrel no longer re-exports LoopController' and 'no source file imports the removed module path' both pass (6/6 in tests/db/ralph-loop-controller-copy.test.ts).\n  \u2713 The surviving LoopController (specs/implementation.spec.dir/src/ralph-loop.ts, projected as src/ralph-loop.ts) still carries the GAP-004 exit path \u2014 SIGTERM/SIGINT/SIGHUP handling, isLauncherGone launcher-liveness check, and the maxIdlePolls idle bound \u2014 so removing the duplicate leaves exactly one controller and it is the one that can exit.: src/ralph-loop.ts is a symlink to specs/implementation.spec.dir/src/ralph-loop.ts, which defines RALPH_LOOP_STOP_SIGNALS = ['SIGTERM','SIGINT','SIGHUP'] at :217, isLauncherGone() at :291, the maxIdlePolls field at :319, and exitDueOnIdlePoll()/launcherLost() at :452-468. `grep -rn \"class LoopController\" src/ specs/` shows the only .ts declaration is specs/implementation.spec.dir/src/ralph-loop.ts:305. Guard test 'exactly one LoopController is declared under src/, and it keeps the GAP-004 exit path' passes.\nGAP-005 is delivered by deleting both halves of the duplicate LoopController (src/ralph-loop/controller.ts symlink and specs/ralph-loop.spec.dir/src/controller.ts), removing the barrel re-export, and adding a guard test; grep returns 0 hits, tsc --noEmit exits 0, and vitest is green (1995 passed, exit 0). [uncovered failure paths: failure mode 0 (Stale compiled artifacts dist/src/ralph-loop/controller.js and .d.ts still exist and still contain the exit-less controller; a consumer importing the built dist path would get the old no-exit copy): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 src/ralph-loop/controller.ts carries the GAP-004 exit-path fix (grep -nE SIGTERM|isLauncherGone|maxIdlePolls matches) OR the file is deleted and grep -rn ralph-loop/controller src tests bin scripts returns 0 hits; then npx tsc --noEmit exits 0 and npx vitest run stays green.: Deletion arm satisfied. `ls -la src/ralph-loop/` shows only builder-agent.ts, index.ts, schema.sql, types.ts, verifier-agent.ts \u2014 controller.ts (and its spec-side source specs/ralph-loop.spec.dir/src/controller.ts) are gone (commit e7677809, merged ae5fc21f). `grep -rn \"ralph-loop/controller\" src tests bin scripts` produced no output, exit code 1 (0 hits). `npx tsc --noEmit` -> TSC_EXIT=0. `TMPDIR=$PWD/.tmp npx vitest run` -> 'Test Files 120 passed | 4 skipped (124)', 'Tests 1995 passed | 58 skipped (2053)', VITEST_EXIT=0. The new guard tests/db/ralph-loop-controller-copy.test.ts passes 6/6 in isolation. [resolution 0.02; src/ralph-loop/controller.ts]\n  \u2713 The deletion leaves no dangling reference: the ralph-loop barrel (specs/ralph-loop.spec.dir/src/index.ts) no longer re-exports the removed './controller' module, and no source file under src/, bin/ or scripts/ imports the removed module path.: specs/ralph-loop.spec.dir/src/index.ts:27-33 replaces `export { LoopController } from './controller';` with a GAP-005 comment while still exporting builder-agent/verifier-agent/types. `grep -rn \"ralph-loop/controller\" src tests bin scripts` -> 0 hits (exit 1). Guard tests 'the ralph-loop barrel no longer re-exports LoopController' and 'no source file imports the removed module path' both pass (6/6 in tests/db/ralph-loop-controller-copy.test.ts).\n  \u2713 The surviving LoopController (specs/implementation.spec.dir/src/ralph-loop.ts, projected as src/ralph-loop.ts) still carries the GAP-004 exit path \u2014 SIGTERM/SIGINT/SIGHUP handling, isLauncherGone launcher-liveness check, and the maxIdlePolls idle bound \u2014 so removing the duplicate leaves exactly one controller and it is the one that can exit.: src/ralph-loop.ts is a symlink to specs/implementation.spec.dir/src/ralph-loop.ts, which defines RALPH_LOOP_STOP_SIGNALS = ['SIGTERM','SIGINT','SIGHUP'] at :217, isLauncherGone() at :291, the maxIdlePolls field at :319, and exitDueOnIdlePoll()/launcherLost() at :452-468. `grep -rn \"class LoopController\" src/ specs/` shows the only .ts declaration is specs/implementation.spec.dir/src/ralph-loop.ts:305. Guard test 'exactly one LoopController is declared under src/, and it keeps the GAP-004 exit path' passes.\nGAP-005 is delivered by deleting both halves of the duplicate LoopController (src/ralph-loop/controller.ts symlink and specs/ralph-loop.spec.dir/src/controller.ts), removing the barrel re-export, and adding a guard test; grep returns 0 hits, tsc --noEmit exits 0, and vitest is green (1995 passed, exit 0). [uncovered failure paths: failure mode 0 (Stale compiled artifacts dist/src/ralph-loop/controller.js and .d.ts still exist and still contain the exit-less controller; a consumer importing the built dist path would get the old no-exit copy): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "src/ralph-loop/controller.ts carries the GAP-004 exit-path fix (grep -nE SIGTERM|isLauncherGone|maxIdlePolls matches) OR the file is deleted and grep -rn ralph-loop/controller src tests bin scripts returns 0 hits; then npx tsc --noEmit exits 0 and npx vitest run stays green.",
+                "status": "PASS",
+                "detail": "Deletion arm satisfied. `ls -la src/ralph-loop/` shows only builder-agent.ts, index.ts, schema.sql, types.ts, verifier-agent.ts \u2014 controller.ts (and its spec-side source specs/ralph-loop.spec.dir/src/controller.ts) are gone (commit e7677809, merged ae5fc21f). `grep -rn \"ralph-loop/controller\" src tests bin scripts` produced no output, exit code 1 (0 hits). `npx tsc --noEmit` -> TSC_EXIT=0. `TMPDIR=$PWD/.tmp npx vitest run` -> 'Test Files 120 passed | 4 skipped (124)', 'Tests 1995 passed | 58 skipped (2053)', VITEST_EXIT=0. The new guard tests/db/ralph-loop-controller-copy.test.ts passes 6/6 in isolation. [resolution 0.02; src/ralph-loop/controller.ts]",
+                "resolution_probability": 0.02,
+                "cited_path": "src/ralph-loop/controller.ts"
+              },
+              {
+                "criterion": "The deletion leaves no dangling reference: the ralph-loop barrel (specs/ralph-loop.spec.dir/src/index.ts) no longer re-exports the removed './controller' module, and no source file under src/, bin/ or scripts/ imports the removed module path.",
+                "status": "PASS",
+                "detail": "specs/ralph-loop.spec.dir/src/index.ts:27-33 replaces `export { LoopController } from './controller';` with a GAP-005 comment while still exporting builder-agent/verifier-agent/types. `grep -rn \"ralph-loop/controller\" src tests bin scripts` -> 0 hits (exit 1). Guard tests 'the ralph-loop barrel no longer re-exports LoopController' and 'no source file imports the removed module path' both pass (6/6 in tests/db/ralph-loop-controller-copy.test.ts).",
+                "derived": true
+              },
+              {
+                "criterion": "The surviving LoopController (specs/implementation.spec.dir/src/ralph-loop.ts, projected as src/ralph-loop.ts) still carries the GAP-004 exit path \u2014 SIGTERM/SIGINT/SIGHUP handling, isLauncherGone launcher-liveness check, and the maxIdlePolls idle bound \u2014 so removing the duplicate leaves exactly one controller and it is the one that can exit.",
+                "status": "PASS",
+                "detail": "src/ralph-loop.ts is a symlink to specs/implementation.spec.dir/src/ralph-loop.ts, which defines RALPH_LOOP_STOP_SIGNALS = ['SIGTERM','SIGINT','SIGHUP'] at :217, isLauncherGone() at :291, the maxIdlePolls field at :319, and exitDueOnIdlePoll()/launcherLost() at :452-468. `grep -rn \"class LoopController\" src/ specs/` shows the only .ts declaration is specs/implementation.spec.dir/src/ralph-loop.ts:305. Guard test 'exactly one LoopController is declared under src/, and it keeps the GAP-004 exit path' passes.",
+                "derived": true
+              }
+            ],
+            "summary": "GAP-005 is delivered by deleting both halves of the duplicate LoopController (src/ralph-loop/controller.ts symlink and specs/ralph-loop.spec.dir/src/controller.ts), removing the barrel re-export, and adding a guard test; grep returns 0 hits, tsc --noEmit exits 0, and vitest is green (1995 passed, exit 0). [uncovered failure paths: failure mode 0 (Stale compiled artifacts dist/src/ralph-loop/controller.js and .d.ts still exist and still contain the exit-less controller; a consumer importing the built dist path would get the old no-exit copy): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"GAP-005\"}",
+          "exit_code": 0,
+          "output_sha": "c67f4323b779a1f57b961734ab78e8783ab5ed913260fbd5f22d9a068382ebc4"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la; echo \"---\"; ls src/ralph-loop/ 2>/dev/null; echo \"---\"; cat .gitreins/config.yaml 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "a36153d2f470c516081289bc5f14c093822121a7238ffaf09d810485bf144679"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la src/ralph-loop/ 2>/dev/null; echo \"=== grep controller ===\"; grep -rn \"ralph-loop/controller\" src tests bin scripts 2>/dev/null; echo \"exit=$?\"",
+          "exit_code": 0,
+          "output_sha": "99043351665871fac1a77f132741bfe369717430c5931c57e278a7a423801acf"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; pwd; git log --oneline -15",
+          "exit_code": 128,
+          "output_sha": "7fac28cc928fe51335b195a7b916a4f16a21176866ac922bf3e7d5c150147179"
+        },
+        {
+          "tool": "run_command",
+          "command": "git log --oneline -20; echo \"=== status ===\"; git status --short | head -20",
+          "exit_code": 0,
+          "output_sha": "82ad5093e70d6d5d7e9844828bd3c5319142c23790b4870f36006efd0ac92f27"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"controller\" src/ralph-loop/ specs/ralph-loop.spec.dir/ 2>/dev/null | head -40; echo \"=== find controller files ===\"; find . -name \"controller*\" -not -path \"./node_modules/*\" -not -path \"./.git/*\" -not -path \"./.tmp/*\" 2>/dev/null | head -40",
+          "exit_code": 0,
+          "output_sha": "d82f8de5bdd96b10721f8754e4e4bc2eded36b510fb3efd8c9eec3cc6010524c"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show --stat e7677809; echo \"=== full diff ===\"; git show e7677809 | head -200",
+          "exit_code": 0,
+          "output_sha": "660c767b3442deb2cba7f0a0580df97e5786cf4ccbb2bc75730a7c331a5f223d"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show --stat ae5fc21f; echo \"=== merge diff vs first parent ===\"; git diff ae5fc21f^1 ae5fc21f --stat",
+          "exit_code": 0,
+          "output_sha": "15c8a0211376817fecec2e5ac37ff3f08ffe47fb0e1f4845fe73d6eb5f48b3f8"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show e7677809 --stat --format=\"\"; echo \"=== test file ===\"; cat tests/db/ralph-loop-controller-copy.test.ts",
+          "exit_code": 0,
+          "output_sha": "6b5ce2ead0a91df6a80cbbf7116798ce55bd214c1faa3ada4b439346d0f60690"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show e7677809 -- tests/db/corrupt-state-db-surfaces.test.ts; echo \"=== tsconfig ===\"; cat tsconfig.json",
+          "exit_code": 0,
+          "output_sha": "c4ffe460155013fc8478ee1f991e71464d8b225d8d1c0a49edb6a3234b8b08cc"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 1,120p tests/db/ralph-loop-controller-copy.test.ts",
+          "exit_code": 0,
+          "output_sha": "d474127de52d5fe44f76d6993d6c015e0c9037962f1a9e32c3e0044a974844bd"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show e7677809 -- tests/db/corrupt-state-db-surfaces.test.ts | tail -30; echo \"=== barrel ===\"; cat specs/ralph-loop.spec.dir/src/index.ts",
+          "exit_code": 0,
+          "output_sha": "dd562e2596f5e6bbd56d137e54470deeaf5ef8e0b5f078689b7fc0984b5e2305"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 30,60p tests/db/ralph-loop-controller-copy.test.ts; echo \"=== 120-160 ===\"; sed -n 120,160p tests/db/ralph-loop-controller-copy.test.ts",
+          "exit_code": 0,
+          "output_sha": "5bbba5ef4b76eb00966666a1e865cafac0dfb0e18521e73b263a066517b26dc0"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"ralph-loop/controller\" src tests bin scripts 2>/dev/null; echo \"grep_exit=$?\"; echo \"=== broader ===\"; grep -rn \"ralph-loop/controller\" --include=\"*.ts\" --include=\"*.js\" --include=\"*.json\" --include=\"*.md\" . 2>/dev/null | grep -v node_modules | grep -v \"^./.tmp\" | grep -v \"^./dist\" | head -20",
+          "exit_code": 0,
+          "output_sha": "d4b9d21dec4ea00b308b16508dafa45dcedfe088955cea43e8a50f31ca5d3a15"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -nE \"SIGTERM|isLauncherGone|maxIdlePolls\" specs/implementation.spec.dir/src/ralph-loop.ts | head -20; echo \"=== class decls under src ===\"; grep -rn \"class LoopController\" src/ specs/ 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "ba24d7f5d33f66172c6b53bb1784a09e8d56569a60108036dcaca43cff842344"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls node_modules/.bin/tsc node_modules/.bin/vitest 2>&1 | head; echo \"=== package.json scripts ===\"; node -e \"const p=require('./package.json'); console.log(JSON.stringify(p.scripts,null,2))\"",
+          "exit_code": 0,
+          "output_sha": "1c8c72b174f96c85ff43f2b6175870e0a5aaf8b94d1b94a68447fd35b2ac35a8"
+        },
+        {
+          "tool": "run_command",
+          "command": "npx tsc --noEmit; echo \"TSC_EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "c6772220d48e6f5eac34830ef63669d9ac8370b292ca6cd98c6497a679f44d2a"
+        },
+        {
+          "tool": "run_command",
+          "command": "TMPDIR=$PWD/.tmp npx vitest run 2>&1 | tail -40; echo \"VITEST_PIPE_EXIT=${PIPESTATUS[0]}\"",
+          "exit_code": -15,
+          "output_sha": "bf9023d51fdffe5913dbe35c520d72ab6538e24c6dc5e6b626e3865f71d68748"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && (TMPDIR=$PWD/.tmp npx vitest run > /tmp/vitest_gap005.log 2>&1; echo \"VITEST_EXIT=$?\" >> /tmp/vitest_gap005.log) & sleep 25; echo started",
+          "exit_code": 0,
+          "output_sha": "e7c22b4a467c60a1bb1de2d59cf16cba81b3c025b5154ae3effe70485d116e57"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 28; tail -5 /tmp/vitest_gap005.log 2>/dev/null; echo \"---\"; grep -c \"\" /tmp/vitest_gap005.log 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "6e647970ad7dcc1ad26071d659ccc5d2c0eb69604eee34f18efeaeaab5f94344"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat /tmp/vitest_gap005.log",
+          "exit_code": 0,
+          "output_sha": "a3f8c846c0cfd4cda81c2a4004dfbc34aabdf5f5a6476fd10856a527314b179a"
+        },
+        {
+          "tool": "run_command",
+          "command": "TMPDIR=$PWD/.tmp npx vitest run tests/db/ralph-loop-controller-copy.test.ts 2>&1 | tail -20",
+          "exit_code": 0,
+          "output_sha": "24a01eea1d768e50e5e1e126fdc91d75b3e1d997caf90a6b732f069ad211deb6"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: src/ralph-loop/controller.ts deleted (ls src/ralph-loop/ shows only builder-agent.ts, index.ts, schema.sql, types.ts, verifier-agent.ts; specs/ralph-loop.spec.dir/src/controller.ts also gone). `grep -rn \\\"ralph-loop/controller\\\" src tests bin scripts` -> no output, exit 1 (0 hits). Barrel specs/ralph-loop.spec.dir/src/index.ts no longer re-exports LoopController. `npx tsc --noEmit` -> TSC_EXIT=0. `TMPDIR=$PWD/.tmp npx vitest run` -> \\\"Test Files 120 passed | 4 skipped (124)\\\", \\\"Tests 1995 passed | 58 skipped (2053)\\\", VITEST_EXIT=0. New guard tests/db/ralph-loop-controller-copy.test.ts 6/6 passed. Live controller specs/implementation.spec.dir/src/ralph-loop.ts:217 SIGTERM, :291 isLauncherGone, :319 maxIdlePolls.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "c7af04c7c5a752e60cf3457306628382ece2e359021d6cc027fe7b8128739de5"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"The deletion leaves no dangling reference: the ralph-loop barrel (specs/ralph-loop.spec.dir/src/index.ts) no longer re-exports the removed './controller' module, and no source file under src/, bin/ or scripts/ imports the removed module path.\", \"key\": \"derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "700265428c39219cf1fd9227376f5838c7897222ff138e35dd0386f5d299f129"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: specs/ralph-loop.spec.dir/src/index.ts lines 27-33 replace `export { LoopController } from './controller';` with a GAP-005 comment; barrel still exports builder-agent/verifier-agent/types. `grep -rn \\\"ralph-loop/controller\\\" src tests bin scripts` -> 0 hits (exit 1). Guard test tests/db/ralph-loop-controller-copy.test.ts \\\"the ralph-loop barrel no longer re-exports LoopController\\\" and \\\"no source file imports the removed module path\\\" both pass (6/6 in that file).\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "f65dd16b0bbbfae8c1ad28f6a37430e182f277039175b11ce86f2d623c8775fd"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"The surviving LoopController (specs/implementation.spec.dir/src/ralph-loop.ts, projected as src/ralph-loop.ts) still carries the GAP-004 exit path \\u2014 SIGTERM/SIGINT/SIGHUP handling, isLauncherGone launcher-liveness check, and the maxIdlePolls idle bound \\u2014 so removing the duplicate leaves exactly one controller and it is the one that can exit.\", \"key\": \"derived_1\"}",
+          "exit_code": 0,
+          "output_sha": "2e4ce3ca2f1d3f03b8d3735587375ef3672107299bc525ecf018025eed17e348"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 210,220p specs/implementation.spec.dir/src/ralph-loop.ts; echo \"...\"; sed -n 285,300p specs/implementation.spec.dir/src/ralph-loop.ts; echo \"...\"; sed -n 450,470p specs/implementation.spec.dir/src/ralph-loop.ts; echo \"=== symlink ===\"; ls -la src/ralph-loop.ts",
+          "exit_code": 0,
+          "output_sha": "eff2f3f184a5dfd621fa0a93cf7b34ac3c5823f32a0791afb661b18a12595ab0"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: src/ralph-loop.ts is a symlink to specs/implementation.spec.dir/src/ralph-loop.ts, which carries the GAP-004 exit path: RALPH_LOOP_STOP_SIGNALS = ['SIGTERM','SIGINT','SIGHUP'] at :217, isLauncherGone() at :291, maxIdlePolls field at :319 and exitDueOnIdlePoll()/launcherLost() at :452-468. Guard test \\\"exactly one LoopController is declared under src/, and it keeps the GAP-004 exit path\\\" passes (6/6 in tests/db/ralph-loop-controller-copy.test.ts).\", \"key\": \"verified_derived_1\"}",
+          "exit_code": 0,
+          "output_sha": "5b45996627338156d8b0f8e01ec1751f2d81e752ff84c16d2720f03f9e1e29f5"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 98,
+        "detection": "board row field renamed: acceptance_criteria -> acceptance on README-9 while sibling rows (README-6, README-7, README-8, README-10, README-12) use `acceptance`",
+        "detail": "The pre-image README-9 row carried `\"acceptance_criteria\"` and the post-image carries `\"acceptance\"`; the surrounding README-* rows in the same file use `acceptance`, so this edit aligns the key, but it is a silent schema change on a row whose acceptance text is unchanged."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 98,
+        "detection": "board row gains worker_status=dispatched + worktree/branch/sessions but no dispatched_at timestamp, unlike GAP-004 which records dispatched_at",
+        "detail": "README-9's new fields are `worker_status:\"dispatched\"`, `worktree`, `branch`, `sessions` with no `dispatched_at`, whereas the GAP-004 row in the same file pairs `worker_status:\"complete\"` with `dispatched_at`/`completed_at`."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 98,
+        "detection": "foreman_note cites README line numbers (647-648, 686) that contradict the row's own title/reasoning (412-414, 450) without reconciling them",
+        "detail": "README-9's title and reasoning assert the stale claims are at README:412-414 and README:450, while the newly added foreman_note says 'README:647-648 claim compilation errors and README:686 claims type conflicts' \u2014 the row now carries two different line citations for the same defect and the acceptance greps are line-agnostic, so a worker cannot tell which is authoritative."
+      }
+    ],
+    "summary": "The diff only mutates board bookkeeping rows (README-9 and QA-SPECLANG-010 dispatch state); no code changes, with minor schema/timestamp drift and an unreconciled line-number contradiction inside README-9's own note."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: \u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[1/1]\u23af\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 src/ralph-loop/controller.ts carries the GAP-004 exit-path fix (grep -nE SIGTERM|isLauncherGone|maxIdlePolls matches) OR the file is deleted and grep -rn ralph-loop/controller src tests bin scripts returns 0 hits; then npx tsc --noEmit exits 0 and npx vitest run stays green.: Deletion arm satisfied. `ls -la src/ralph-loop/` shows only builder-agent.ts, index.ts, schema.sql, types.ts, verifier-agent.ts \u2014 controller.ts (and its spec-side source specs/ralph-loop.spec.dir/src/controller.ts) are gone (commit e7677809, merged ae5fc21f). `grep -rn \"ralph-loop/controller\" src tests bin scripts` produced no output, exit code 1 (0 hits). `npx tsc --noEmit` -> TSC_EXIT=0. `TMPDIR=$PWD/.tmp npx vitest run` -> 'Test Files 120 passed | 4 skipped (124)', 'Tests 1995 passed | 58 skipped (2053)', VITEST_EXIT=0. The new guard tests/db/ralph-loop-controller-copy.test.ts passes 6/6 in isolation. [resolution 0.02; src/ralph-loop/controller.ts]\n  \u2713 The deletion leaves no dangling reference: the ralph-loop barrel (specs/ralph-loop.spec.dir/src/index.ts) no longer re-exports the removed './controller' module, and no source file under src/, bin/ or scripts/ imports the removed module path.: specs/ralph-loop.spec.dir/src/index.ts:27-33 replaces `export { LoopController } from './controller';` with a GAP-005 comment while still exporting builder-agent/verifier-agent/types. `grep -rn \"ralph-loop/controller\" src tests bin scripts` -> 0 hits (exit 1). Guard tests 'the ralph-loop barrel no longer re-exports LoopController' and 'no source file imports the removed module path' both pass (6/6 in tests/db/ralph-loop-controller-copy.test.ts).\n  \u2713 The surviving LoopController (specs/implementation.spec.dir/src/ralph-loop.ts, projected as src/ralph-loop.ts) still carries the GAP-004 exit path \u2014 SIGTERM/SIGINT/SIGHUP handling, isLauncherGone launcher-liveness check, and the maxIdlePolls idle bound \u2014 so removing the duplicate leaves exactly one controller and it is the one that can exit.: src/ralph-loop.ts is a symlink to specs/implementation.spec.dir/src/ralph-loop.ts, which defines RALPH_LOOP_STOP_SIGNALS = ['SIGTERM','SIGINT','SIGHUP'] at :217, isLauncherGone() at :291, the maxIdlePolls field at :319, and exitDueOnIdlePoll()/launcherLost() at :452-468. `grep -rn \"class LoopController\" src/ specs/` shows the only .ts declaration is specs/implementation.spec.dir/src/ralph-loop.ts:305. Guard test 'exactly one LoopController is declared under src/, and it keeps the GAP-004 exit path' passes.\nGAP-005 is delivered by deleting both halves of the duplicate LoopController (src/ralph-loop/controller.ts symlink and specs/ralph-loop.spec.dir/src/controller.ts), removing the barrel re-export, and adding a guard test; grep returns 0 hits, tsc --noEmit exits 0, and vitest is green (1995 passed, exit 0). [uncovered failure paths: failure mode 0 (Stale compiled artifacts dist/src/ralph-loop/controller.js and .d.ts still exist and still contain the exit-less controller; a consumer importing the built dist path would get the old no-exit copy): detected_by is empty \u2014 uncovered failure path]\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T23:53:05.773459",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T23:53:05.805101+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 49415,
+        "truncated": false,
+        "source": "git show 6e69f3aef603"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 49505,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "GAP-005"
+  }
+}

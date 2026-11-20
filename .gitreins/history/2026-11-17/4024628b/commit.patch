@@ -1,0 +1,50 @@
+commit 8f7b9b362a5e293af3593bbd444d3001294d6570
+Author:     kara <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 16:23:18 2026 -0500
+Commit:     kara <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 16:23:18 2026 -0500
+
+    test(ci): pin the tier1 build stage to the dependency-aware guard-build wrapper (DF-SPECLANG-013)
+    
+    The AC4 assertion pinned the literal 'npm run build' build_command, so landing the dependency-aware arm turned a green gate red. It now asserts both config arms route through scripts/guard-build.sh AND that the wrapper still runs npm run build — a config that points at a script which never compiles must not pass.
+    
+    Addresses DF-SPECLANG-013.
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+---
+ tests/ci/ci005-precommit-hook.test.ts | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/tests/ci/ci005-precommit-hook.test.ts b/tests/ci/ci005-precommit-hook.test.ts
+index f94e924b..f0b86407 100644
+--- a/tests/ci/ci005-precommit-hook.test.ts
++++ b/tests/ci/ci005-precommit-hook.test.ts
+@@ -177,14 +177,25 @@ describe("CI-005: pre-commit hook hardening", () => {
+   }, 60_000);
+ 
+   it("AC4: gitreins config has Tier 1 build step in the pipeline", () => {
+-    // The pipeline stage runs `npm run build` (tsc) so a stale cascade
+-    // or type error cannot slip through a commit.
++    // The pipeline stage runs the dependency-aware build arm
++    // (scripts/guard-build.sh → `npm run build` when node_modules exists, a
++    // named GITREINS_SKIP when it does not: DF-SPECLANG-013), so a stale
++    // cascade or type error cannot slip through a commit.
+     const cfg = readFileSync(
+       join(REPO_ROOT, ".gitreins", "config.yaml"),
+       "utf8",
+     );
+-    expect(cfg).toMatch(/build_command:\s*npm run build/);
++    expect(cfg).toMatch(/build_command:\s*bash scripts\/guard-build\.sh/);
++    expect(cfg).toMatch(/run:\s*bash scripts\/guard-build\.sh/);
+     expect(cfg).toMatch(/test_mode:\s*diff/);
++    // The wrapper itself is what actually compiles: a config that points at a
++    // script which does not run tsc would pass the match above and prove
++    // nothing (verify the specific thing, never a proxy).
++    const wrapper = readFileSync(
++      join(REPO_ROOT, "scripts", "guard-build.sh"),
++      "utf8",
++    );
++    expect(wrapper).toMatch(/npm run build/);
+   });
+ 
+   it("AC5: .gitleaks.toml has explicit sk-/ghp_ rules (closing the gitleaks v8 gap)", () => {

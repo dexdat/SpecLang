@@ -1,0 +1,85 @@
+{
+  "task_id": "DOC-6",
+  "task_title": "docs/traceability-doctrine.md defines the nine trace fields and carries a real worked example discoverable by grep",
+  "task_criteria": [
+    "The traceability contract exists and is grounded in this repo. PROOF: test -e docs/traceability-doctrine.md; grep -R -n 'ch:trace row=' docs/ README.md finds a hit in docs/; each of row, spec, wave, test, evidence, witness, verdict, commit, memory is defined; every cited sha resolves via git cat-file -e and every cited path exists. FAILIF: the file is missing, the marker example is absent, or a cited sha/path does not resolve."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "tmp2",
+  "commit": "ec444d46f2fbadfe388043c89da64c4831d209e0",
+  "pass_class": "tier1-only",
+  "tier2_skipped": true,
+  "working_tree_content_fingerprint": "5521e873200cd5da3ca1ae406b501705e2e882ef501ce332580e95b723ef796f",
+  "working_tree_dirty_path_count": 2,
+  "items": [],
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  02:14:04",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T063905.840202Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T063905.840202Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  02:14:04\n   Duration  43.74s (transform 30.08s, setup 6.92s, import 45.37s, tests 195.29s, environment 26ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T063905.840202Z.log"
+          }
+        }
+      ]
+    }
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  02:14:04\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T07:14:48.561943",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T07:14:48.603408+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 461,
+        "truncated": false,
+        "source": "git show ec444d46f2fb"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 26469,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DOC-6"
+  }
+}

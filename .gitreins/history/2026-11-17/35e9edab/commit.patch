@@ -1,0 +1,78 @@
+commit 99a68a4fb08b1d2255ecf5043071b3c04bc68b82
+Author:     kara <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 02:54:41 2026 -0500
+Commit:     kara <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 02:57:13 2026 -0500
+
+    docs(readme): correct spec counts to 450 .spec.md / 452 incl .scl
+    
+    The README carried 447 .spec.md / 449 incl .scl in four count locations
+    while the tree holds 450 .spec.md files plus 2 .scl specs. Every edited
+    figure was derived from commands run in this worktree:
+    
+      find specs -name '*.spec.md' | wc -l            -> 450
+      find specs -name '*.scl'     | wc -l            -> 2
+      node bin/speclang status                        -> Specs: 452 (450 .spec.md + 2 .scl)
+    
+    Locations corrected:
+      159  Current Status "What Works" bullet
+      494  File Structure tree comment
+      540  "What Works vs What Doesn't" spec-validation bullet
+      634  Footer status line
+    
+    Line 355 (Quick Start step 2) documented an output line the validator
+    does not print. `python3 scripts/validate_autonomous.py --project`
+    emits one "Validation Report" block per spec, each PASSED, with no
+    aggregate "N specs validated" summary, so the stale count is replaced
+    by the real output shape and a pointer to `node bin/speclang status`.
+---
+ README.md | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/README.md b/README.md
+index 38ccfaad..0536fc3f 100644
+--- a/README.md
++++ b/README.md
+@@ -156,7 +156,7 @@ For programmatic access, see:
+ ## Current Status: Reality-Based Alpha
+ 
+ **✅ What Works:**
+-- 447 .spec.md files (449 incl .scl) with proper headers and references
++- 450 .spec.md files (452 incl .scl) with proper headers and references
+ - Reference validation (all specs resolve correctly)
+ - Autonomous validation (scores specs for agent readiness)
+ - Hello World example (compiles and runs)
+@@ -352,7 +352,8 @@ python3 scripts/validate_refs.py
+ 
+ # 2. Run autonomous validation
+ python3 scripts/validate_autonomous.py --project
+-# Output: 449 specs validated
++# Output: one Validation Report block per spec, each PASSED
++# (for the live spec count, run: node bin/speclang status)
+ 
+ # 3. Try Hello World example
+ npx tsc --noEmit
+@@ -491,7 +492,7 @@ npx tsx specs/examples.spec.dir/hello-world/src/hello-world.ts
+ ### File Structure
+ 
+ ```
+-specs/                    # Source of truth (447 .spec.md files, 449 incl .scl)
++specs/                    # Source of truth (450 .spec.md files, 452 incl .scl)
+ ├── project.scl          # Layer 0 - North Star
+ ├── core.spec.md         # Layer 1 - Core concepts
+ ├── cascade.spec.md      # Layer 1 - Cascade system
+@@ -537,7 +538,7 @@ scripts/                 # Tools
+ 
+ ### ✅ Working
+ 
+-- **Spec validation**: All 449 specs have valid headers and references
++- **Spec validation**: All 452 specs have valid headers and references
+ - **Reference resolution**: `validate_refs.py` confirms 100% accuracy
+ - **Autonomous validation**: Scores specs for agent readiness (0.75-1.05 confidence)
+ - **Hello World**: Compiles successfully (proof of concept)
+@@ -631,4 +632,4 @@ ISC
+ **Status**: Alpha - One working example, solid foundation, much more to build.
+ 
+ **Last Updated**: 2026-08-30
+-**Specs**: 447 .spec.md (449 incl .scl) | **Examples**: 1 working | **Tests**: 1826 passing | 58 skipped
++**Specs**: 450 .spec.md (452 incl .scl) | **Examples**: 1 working | **Tests**: 1826 passing | 58 skipped

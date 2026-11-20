@@ -1,0 +1,82 @@
+{
+  "task_id": "NEVER-DONE",
+  "task_title": "NEVER-DONE \u2014 perpetual 12-point audit",
+  "task_criteria": [
+    "must exit 0 with 0 open rows failing (6 open rows fail today: NEVER-DONE, QA-SPECLANG-1, QA-SPECLANG-4, QA-SPECLANG-5-R4, QA-SPECLANG-3-R5, QA-SPECLANG-5-R5)"
+  ],
+  "passed": false,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "land/2117",
+  "commit": "180d2b551c9a93db02e4d236988dd03f00474f9a",
+  "pass_class": "tier1-only",
+  "tier2_skipped": true,
+  "working_tree_content_fingerprint": "ca2368df13d2ce6c6b76bcdb4859ffc7b447ef530fb146bca6b5a52fafc85701",
+  "working_tree_dirty_path_count": 0,
+  "items": [],
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": false,
+      "any_failed": true,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  ~ tests: Command timed out after 120s (step budget)",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261118T221341.200792Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\nnpm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261118T221341.200792Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": false,
+          "output": "",
+          "error": "Command timed out after 120s (step budget)",
+          "data": {
+            "timed_out": true,
+            "timeout_s": 120
+          }
+        }
+      ],
+      "degraded": true,
+      "skipped_steps": [
+        "tests"
+      ],
+      "degradation_reason": "skipped at runtime \u2014 tests: timed out after 120s (step budget)"
+    }
+  },
+  "summary": "Stage tier1: FAIL (DEGRADED - skipped checks)\n  WARNING: coverage is unknown \u2014 tests did not run (skipped at runtime \u2014 tests: timed out after 120s (step budget)); run `gitreins guard` for the full gate\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  ~ tests: Command timed out after 120s (step budget)\n\nOverall: FAIL \u2717 [DEGRADED \u2014 skipped: tier1(tests)=skipped at runtime \u2014 tests: timed out after 120s (step budget)]",
+  "evaluated_at": "2026-11-19T05:21:53.133221",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-19T05:21:53.290806+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 15387,
+        "truncated": false,
+        "source": "git show 180d2b551c9a"
+      }
+    ],
+    "task_id": "NEVER-DONE"
+  }
+}

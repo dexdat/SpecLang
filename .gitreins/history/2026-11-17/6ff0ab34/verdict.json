@@ -1,0 +1,387 @@
+{
+  "task_id": "README-21",
+  "task_title": "README example tree from project.scl is fabricated",
+  "task_criteria": [
+    "Every path and every @ref shown in the README example-tree block derived from project.scl resolves: the block is regenerated from the real refs in specs/project.scl or trimmed to entries that exist; the per-path existence loop over the block paths prints no MISSING line and every @ref shown in the block appears in specs/project.scl."
+  ],
+  "passed": false,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "land/2117",
+  "commit": "6cb46524990d6aad58308789a3a1e165b99ca4ba",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "c4323e364c038caf0c7f0bca6279930e2f227345411e979a0f470b371c44da98",
+  "working_tree_dirty_path_count": 1,
+  "items": [
+    {
+      "criterion": "Every path and every @ref shown in the README example-tree block derived from project.scl resolves: the block is regenerated from the real refs in specs/project.scl or trimmed to entries that exist; the per-path existence loop over the block paths prints no MISSING line and every @ref shown in the block appears in specs/project.scl.",
+      "status": "PASS",
+      "detail": "README.md:262-292 is the block. A script over it (regex @ref:([\\w\\-/]+) and \u2192\\s*(\\S+)) reports: refs count 23, paths count 23, \"MISSING paths: []\" (every os.path.exists(p) True, incl. specs/mcp.spec.dir/openapi-generation.spec.md and specs/mcp.spec.dir/openapi-generation-cli.ts.spec), \"refs not in project.scl: []\", \"declared not shown: []\" \u2014 exact set equality with the 23 @ref entries at specs/project.scl:124-146. Root id @northstar/speclang matches specs/project.scl:2. The previously fabricated entries are gone: grep -nE \"speclang/(auth|database)\" README.md returns no match inside the block (only the unrelated illustrative cascade-output line 361). Fix landed in commit 3f56fae1. Test suite run: `npx vitest run --passWithNoTests` exit=1, \"Test Files 2 failed | 119 passed | 4 skipped (125)\", \"Tests 2 failed | 1998 passed | 58 skipped (2058)\"; both failures are unrelated to this docs change and pass in isolation \u2014 `npx vitest run tests/db.test.ts` -> \"Tests 35 passed (35)\" (the full-run failure was \"SqliteError: disk I/O error\" at specs/sqlite.spec.dir/src/index.ts:188) and `npx vitest run tests/examples/hello-world-verification.test.ts` -> \"Tests 7 passed (7)\" (full-run failure was a dist/ mtime race in a concurrently-running test)."
+    },
+    {
+      "criterion": "The layer label on each group in the README block equals the `layer:` value declared in the header of the spec file that ref resolves to, and the per-group ref counts match the number of entries listed.",
+      "status": "PASS",
+      "detail": "Script parsed `^layer:` from each of the 23 resolved spec files: L0=11 (core, skills, test-specs, workflow, opencode, directory-structure, dynamic-split, deployment, mcp-daemon, git-history, symlinks), L1=8 (daemon, agent-protocol, pipeline, file-naming, cascade, headers, sqlite, mcp), L2=1 (mcp-openapi-generation), L5=2 (recovery, tools), L10=1 (mcp-openapi-generation-cli). README.md:264-291 labels \"(11 refs)\", \"(8 refs)\", \"(1 ref)\", \"(2 refs)\", \"(1 ref)\" and list exactly those entries; declaration order within each group also matches specs/project.scl:124-146.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": false,
+      "any_failed": true,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  ~ tests: Command timed out after 120s (step budget)",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T220708.509103Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\nnpm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T220708.509103Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": false,
+          "output": "",
+          "error": "Command timed out after 120s (step budget)",
+          "data": {
+            "timed_out": true,
+            "timeout_s": 120
+          }
+        }
+      ],
+      "degraded": true,
+      "skipped_steps": [
+        "tests"
+      ],
+      "degradation_reason": "skipped at runtime \u2014 tests: timed out after 120s (step budget)"
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 Every path and every @ref shown in the README example-tree block derived from project.scl resolves: the block is regenerated from the real refs in specs/project.scl or trimmed to entries that exist; the per-path existence loop over the block paths prints no MISSING line and every @ref shown in the block appears in specs/project.scl.: README.md:262-292 is the block. A script over it (regex @ref:([\\w\\-/]+) and \u2192\\s*(\\S+)) reports: refs count 23, paths count 23, \"MISSING paths: []\" (every os.path.exists(p) True, incl. specs/mcp.spec.dir/openapi-generation.spec.md and specs/mcp.spec.dir/openapi-generation-cli.ts.spec), \"refs not in project.scl: []\", \"declared not shown: []\" \u2014 exact set equality with the 23 @ref entries at specs/project.scl:124-146. Root id @northstar/speclang matches specs/project.scl:2. The previously fabricated entries are gone: grep -nE \"speclang/(auth|database)\" README.md returns no match inside the block (only the unrelated illustrative cascade-output line 361). Fix landed in commit 3f56fae1. Test suite run: `npx vitest run --passWithNoTests` exit=1, \"Test Files 2 failed | 119 passed | 4 skipped (125)\", \"Tests 2 failed | 1998 passed | 58 skipped (2058)\"; both failures are unrelated to this docs change and pass in isolation \u2014 `npx vitest run tests/db.test.ts` -> \"Tests 35 passed (35)\" (the full-run failure was \"SqliteError: disk I/O error\" at specs/sqlite.spec.dir/src/index.ts:188) and `npx vitest run tests/examples/hello-world-verification.test.ts` -> \"Tests 7 passed (7)\" (full-run failure was a dist/ mtime race in a concurrently-running test).\n  \u2713 The layer label on each group in the README block equals the `layer:` value declared in the header of the spec file that ref resolves to, and the per-group ref counts match the number of entries listed.: Script parsed `^layer:` from each of the 23 resolved spec files: L0=11 (core, skills, test-specs, workflow, opencode, directory-structure, dynamic-split, deployment, mcp-daemon, git-history, symlinks), L1=8 (daemon, agent-protocol, pipeline, file-naming, cascade, headers, sqlite, mcp), L2=1 (mcp-openapi-generation), L5=2 (recovery, tools), L10=1 (mcp-openapi-generation-cli). README.md:264-291 labels \"(11 refs)\", \"(8 refs)\", \"(1 ref)\", \"(2 refs)\", \"(1 ref)\" and list exactly those entries; declaration order within each group also matches specs/project.scl:124-146.\nThe README example-tree block at README.md:262-292 is now a faithful regeneration of specs/project.scl's 23 refs \u2014 all 23 paths exist, all 23 refs are declared, and the layer grouping matches each target spec's own header.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 Every path and every @ref shown in the README example-tree block derived from project.scl resolves: the block is regenerated from the real refs in specs/project.scl or trimmed to entries that exist; the per-path existence loop over the block paths prints no MISSING line and every @ref shown in the block appears in specs/project.scl.: README.md:262-292 is the block. A script over it (regex @ref:([\\w\\-/]+) and \u2192\\s*(\\S+)) reports: refs count 23, paths count 23, \"MISSING paths: []\" (every os.path.exists(p) True, incl. specs/mcp.spec.dir/openapi-generation.spec.md and specs/mcp.spec.dir/openapi-generation-cli.ts.spec), \"refs not in project.scl: []\", \"declared not shown: []\" \u2014 exact set equality with the 23 @ref entries at specs/project.scl:124-146. Root id @northstar/speclang matches specs/project.scl:2. The previously fabricated entries are gone: grep -nE \"speclang/(auth|database)\" README.md returns no match inside the block (only the unrelated illustrative cascade-output line 361). Fix landed in commit 3f56fae1. Test suite run: `npx vitest run --passWithNoTests` exit=1, \"Test Files 2 failed | 119 passed | 4 skipped (125)\", \"Tests 2 failed | 1998 passed | 58 skipped (2058)\"; both failures are unrelated to this docs change and pass in isolation \u2014 `npx vitest run tests/db.test.ts` -> \"Tests 35 passed (35)\" (the full-run failure was \"SqliteError: disk I/O error\" at specs/sqlite.spec.dir/src/index.ts:188) and `npx vitest run tests/examples/hello-world-verification.test.ts` -> \"Tests 7 passed (7)\" (full-run failure was a dist/ mtime race in a concurrently-running test).\n  \u2713 The layer label on each group in the README block equals the `layer:` value declared in the header of the spec file that ref resolves to, and the per-group ref counts match the number of entries listed.: Script parsed `^layer:` from each of the 23 resolved spec files: L0=11 (core, skills, test-specs, workflow, opencode, directory-structure, dynamic-split, deployment, mcp-daemon, git-history, symlinks), L1=8 (daemon, agent-protocol, pipeline, file-naming, cascade, headers, sqlite, mcp), L2=1 (mcp-openapi-generation), L5=2 (recovery, tools), L10=1 (mcp-openapi-generation-cli). README.md:264-291 labels \"(11 refs)\", \"(8 refs)\", \"(1 ref)\", \"(2 refs)\", \"(1 ref)\" and list exactly those entries; declaration order within each group also matches specs/project.scl:124-146.\nThe README example-tree block at README.md:262-292 is now a faithful regeneration of specs/project.scl's 23 refs \u2014 all 23 paths exist, all 23 refs are declared, and the layer grouping matches each target spec's own header.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "Every path and every @ref shown in the README example-tree block derived from project.scl resolves: the block is regenerated from the real refs in specs/project.scl or trimmed to entries that exist; the per-path existence loop over the block paths prints no MISSING line and every @ref shown in the block appears in specs/project.scl.",
+                "status": "PASS",
+                "detail": "README.md:262-292 is the block. A script over it (regex @ref:([\\w\\-/]+) and \u2192\\s*(\\S+)) reports: refs count 23, paths count 23, \"MISSING paths: []\" (every os.path.exists(p) True, incl. specs/mcp.spec.dir/openapi-generation.spec.md and specs/mcp.spec.dir/openapi-generation-cli.ts.spec), \"refs not in project.scl: []\", \"declared not shown: []\" \u2014 exact set equality with the 23 @ref entries at specs/project.scl:124-146. Root id @northstar/speclang matches specs/project.scl:2. The previously fabricated entries are gone: grep -nE \"speclang/(auth|database)\" README.md returns no match inside the block (only the unrelated illustrative cascade-output line 361). Fix landed in commit 3f56fae1. Test suite run: `npx vitest run --passWithNoTests` exit=1, \"Test Files 2 failed | 119 passed | 4 skipped (125)\", \"Tests 2 failed | 1998 passed | 58 skipped (2058)\"; both failures are unrelated to this docs change and pass in isolation \u2014 `npx vitest run tests/db.test.ts` -> \"Tests 35 passed (35)\" (the full-run failure was \"SqliteError: disk I/O error\" at specs/sqlite.spec.dir/src/index.ts:188) and `npx vitest run tests/examples/hello-world-verification.test.ts` -> \"Tests 7 passed (7)\" (full-run failure was a dist/ mtime race in a concurrently-running test).",
+                "resolution_probability": 0.0
+              },
+              {
+                "criterion": "The layer label on each group in the README block equals the `layer:` value declared in the header of the spec file that ref resolves to, and the per-group ref counts match the number of entries listed.",
+                "status": "PASS",
+                "detail": "Script parsed `^layer:` from each of the 23 resolved spec files: L0=11 (core, skills, test-specs, workflow, opencode, directory-structure, dynamic-split, deployment, mcp-daemon, git-history, symlinks), L1=8 (daemon, agent-protocol, pipeline, file-naming, cascade, headers, sqlite, mcp), L2=1 (mcp-openapi-generation), L5=2 (recovery, tools), L10=1 (mcp-openapi-generation-cli). README.md:264-291 labels \"(11 refs)\", \"(8 refs)\", \"(1 ref)\", \"(2 refs)\", \"(1 ref)\" and list exactly those entries; declaration order within each group also matches specs/project.scl:124-146.",
+                "derived": true
+              }
+            ],
+            "summary": "The README example-tree block at README.md:262-292 is now a faithful regeneration of specs/project.scl's 23 refs \u2014 all 23 paths exist, all 23 refs are declared, and the layer grouping matches each target spec's own header.",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"README-21\"}",
+          "exit_code": 0,
+          "output_sha": "c2a85c84245ec701a4bc446e65204b6f1f23c9ae891f94d6ac4ee5d5bd75e856"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la; cat .gitreins/config.yaml 2>/dev/null | head -60",
+          "exit_code": 0,
+          "output_sha": "a140632b84b49dffaafd8b82fee9bf6b76a56750cfbe04bbb2fabf40bd1fd6c3"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"test_command\\|guards:\" -A5 .gitreins/config.yaml | head -40",
+          "exit_code": 0,
+          "output_sha": "09e16b03c781a68cd0ffc9c0496a17df27c14653bec9a2bbde69221321335cc1"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"project.scl\" README.md | head -40",
+          "exit_code": 0,
+          "output_sha": "465bee0e4a7916e0c50fd550c2516bd0aa4de0db27e0894dfe6390598012a36a"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 120, \"offset\": 240, \"path\": \"README.md\"}",
+          "exit_code": 0,
+          "output_sha": "6935fc19bc21a46b1128a2e947185d9612a8876012757efc61687ac69c404923"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls specs/ | head -40; echo ---; wc -l specs/project.scl",
+          "exit_code": 0,
+          "output_sha": "d4f64dadc94f6533527cca630ee48e06f793d473e6df4b02dc4405991f5750c7"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"@ref\" specs/project.scl",
+          "exit_code": 0,
+          "output_sha": "d2eab7ddc171e5eef718c0fbd449a2b012b557a1bc6fcde3bfc477684aa5a084"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; pwd; sed -n '255,300p' README.md | sed -n '1,50p' > /tmp/block.txt; python3 - <<'EOF'\nimport re,os\nlines=open('README.md').read().split('\\n')\n# find block start\nstart=None\nfor i,l in enumerate(lines):\n    if l.startswith('specs/project.scl  (Layer 0'):\n        start=i;break\nend=None\nfor j in range(start,len(lines)):\n    if lines[j].strip()=='```':\n        end=j;break\nprint(\"block lines\",start+1,end+1)\nblock=lines[start:end]\nrefs=[]\npaths=[]\nfor l in block:\n    m=re.search(r'@ref:([\\w\\-/]+)',l)\n    if m: refs.append(m.group(1))\n    m2=re.search(r'\u2192\\s*(\\S+)',l)\n    if m2: paths.append(m2.group(1))\nprint(\"refs count\",len(refs))\nprint(\"paths count\",len(paths))\nmissing=[p for p in paths if not os.path.exists(p)]\nprint(\"MISSING paths:\",missing)\nsrc=open('specs/project.scl').read()\ndeclared=set(re.findall(r'@ref:([\\w\\-/]+)',src))\nnotdecl=[r for r in refs if r not in declared]\nprint(\"refs not in project.scl:\",notdecl)\nprint(\"declared not shown:\",sorted(declared-set(refs)))\nEOF",
+          "exit_code": 1,
+          "output_sha": "95e3034f65ba30bf56222fe643ac63aee3fe9c94925b91a2d78556150444cb03"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; ls README.md",
+          "exit_code": 0,
+          "output_sha": "21232f196b3c059af9dc063f002cd6dbf89b2339f2ed7c685d35a0cb925a9b44"
+        },
+        {
+          "tool": "run_command",
+          "command": "python3 - <<'EOF'\nimport re,os\nlines=open('README.md').read().split('\\n')\nstart=None\nfor i,l in enumerate(lines):\n    if l.startswith('specs/project.scl  (Layer 0'):\n        start=i;break\nend=None\nfor j in range(start,len(lines)):\n    if lines[j].strip()=='```':\n        end=j;break\nprint(\"block lines\",start+1,end+1)\nblock=lines[start:end]\nrefs=[];paths=[]\nfor l in block:\n    m=re.search(r'@ref:([\\w\\-/]+)',l)\n    if m: refs.append(m.group(1))\n    m2=re.search(r'\u2192\\s*(\\S+)',l)\n    if m2: paths.append(m2.group(1))\nprint(\"refs count\",len(refs),\"paths count\",len(paths))\nmissing=[p for p in paths if not os.path.exists(p)]\nprint(\"MISSING paths:\",missing)\nsrc=open('specs/project.scl').read()\ndeclared=set(re.findall(r'@ref:([\\w\\-/]+)',src))\nprint(\"refs not in project.scl:\",[r for r in refs if r not in declared])\nprint(\"declared not shown:\",sorted(declared-set(refs)))\nEOF",
+          "exit_code": 0,
+          "output_sha": "c92d8d9c019cfc37cfd0bdd7b05571f16e3eed0c9abff090540b1831d63007e2"
+        },
+        {
+          "tool": "run_command",
+          "command": "python3 - <<'EOF'\nimport re,os\nlines=open('README.md').read().split('\\n')\nblock=lines[261:291]\nrefs=[];paths=[]\nfor l in block:\n    m=re.search(r'@ref:([\\w\\-/]+)',l)\n    if m: refs.append(m.group(1))\n    m2=re.search(r'\u2192\\s*(\\S+)',l)\n    if m2: paths.append(m2.group(1))\nfor r,p in zip(refs,paths):\n    print(f\"{r:45s} {p:55s} exists={os.path.exists(p)}\")\nEOF",
+          "exit_code": 0,
+          "output_sha": "47999745525af9f685ad640859d91f3e3b719acd2dc5cf3d346943a8948ef7ae"
+        },
+        {
+          "tool": "run_command",
+          "command": "for f in specs/core.spec.md specs/skills.spec.md specs/test-specs.spec.md specs/workflow.spec.md specs/opencode.spec.md specs/directory-structure.spec.md specs/dynamic-split.spec.md specs/deployment.spec.md specs/mcp-daemon.spec.md specs/git-history.spec.md specs/symlinks.spec.md specs/daemon.spec.md specs/agent-protocol.spec.md specs/pipeline.spec.md specs/file-naming.spec.md specs/cascade.spec.md specs/headers.spec.md specs/sqlite.spec.md specs/mcp.spec.md specs/mcp.spec.dir/openapi-generation.spec.md specs/recovery.spec.md specs/tools.spec.md specs/mcp.spec.dir/openapi-generation-cli.ts.spec; do echo \"== $f\"; grep -m3 -iE \"^\\s*(layer|@layer)|layer:\" \"$f\" | head -3; done",
+          "exit_code": 0,
+          "output_sha": "78b3bbf83784da830e7e26be0f7276f395d411de2579e62402fa1e63a5c24c1a"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"id:\" specs/project.scl | head -5; echo ---; grep -n \"northstar/speclang\" specs/project.scl | head -5; echo ---; grep -rn \"northstar/speclang\" --include=*.md --include=*.scl --include=*.ts . 2>/dev/null | grep -v node_modules | head -10",
+          "exit_code": 0,
+          "output_sha": "d95eb4279a72d5dbc2edca524ad47d7e4cdb1c70ce72698b23e15858f09acd43"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n '1,20p' specs/project.scl; echo ...; sed -n '115,150p' specs/project.scl",
+          "exit_code": 0,
+          "output_sha": "05608f4621f4905034318a82c92cea6a60f3b17da3ce8f14a07d680dfaeb271c"
+        },
+        {
+          "tool": "run_command",
+          "command": "git log --oneline -8 -- README.md; echo ---; git log -3 --format='%H %s' -- specs/project.scl",
+          "exit_code": 0,
+          "output_sha": "f4f18417458c8de28a8517fda7227ac9797affc8d9e81bf636ae448633e451f5"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show 3f56fae1 --stat; git show 3f56fae1 -- README.md | head -120",
+          "exit_code": 0,
+          "output_sha": "2fb05eafad75d51c74f6a59ffcc3199a86022ae0cb7a02d0b84b49066a50e806"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls scripts/ | head -40; echo ---; grep -rln \"README\" tests/ 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "218db7dd9321565a1e52e049b34b5d39e611c4b8532baa3d499c5cd737d7306a"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"README\" tests/layers.test.ts | head -20; echo ===; grep -rn \"README\" tests/npm12-remedy-doc.test.ts | head -10",
+          "exit_code": 0,
+          "output_sha": "9b244b89e92beb37db3c07552f6dcf20c4356b94486ae7a7913c9a0920097216"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"project.scl\" tests/ scripts/ src/ 2>/dev/null | grep -v node_modules | head -20",
+          "exit_code": 0,
+          "output_sha": "96988a0375428826100fa87a3c5d12eb63a9e7b45ca591e3b3ac870371b1d379"
+        },
+        {
+          "tool": "run_command",
+          "command": "timeout 900 npx vitest run --passWithNoTests 2>&1 | tail -25",
+          "exit_code": 0,
+          "output_sha": "bf7dd3d14b368ae5ed22a738064ae6e4fd06290b26ef86b1c6dfb3bf36f7872c"
+        },
+        {
+          "tool": "run_command",
+          "command": "timeout 900 npx vitest run --passWithNoTests 2>&1 | grep -E \"Test Files|Tests |FAIL \" | head -20",
+          "exit_code": -15,
+          "output_sha": "2e063c5fd78182d7b57bdae1a7f5d49f27a764c491effe1883a7ce1d4232c192"
+        },
+        {
+          "tool": "run_command",
+          "command": "timeout 1200 npx vitest run --passWithNoTests > /tmp/vitest.log 2>&1; echo \"exit=$?\"; grep -E \"Test Files|Tests  |FAIL \" /tmp/vitest.log | head -20",
+          "exit_code": 0,
+          "output_sha": "eff88e5108957f3554bf46e671edb072f925bb508872e30c4431fc7813d1ae04"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"FAIL\\|AssertionError\\|Error:\" /tmp/vitest.log | head -30",
+          "exit_code": 0,
+          "output_sha": "14bb97549adfd68e4b621bf423562bb11eb388650b64774512d58983f5734329"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n '1,60p' /tmp/vitest.log",
+          "exit_code": 0,
+          "output_sha": "2e19c5fc6152788416cb837e44ee74575f2e4e37a4eca0671cf84c81f1c3d74e"
+        },
+        {
+          "tool": "run_command",
+          "command": "git status --porcelain | head -20; echo ---; git diff --stat | head",
+          "exit_code": 0,
+          "output_sha": "5d3a3f84a18336f7462f3ada0bcc4967096cb9c6d3e016c7948223301e7a04d6"
+        },
+        {
+          "tool": "run_command",
+          "command": "timeout 300 npx vitest run tests/db.test.ts 2>&1 | grep -E \"Test Files|Tests  |FAIL|SqliteError\" | head",
+          "exit_code": 0,
+          "output_sha": "1fd2a04fa8b3a5543050fb7a4476481dd1ac3514260bc8c2d2021851b1a14e7e"
+        },
+        {
+          "tool": "run_command",
+          "command": "timeout 300 npx vitest run tests/examples/hello-world-verification.test.ts 2>&1 | grep -E \"Test Files|Tests  |FAIL|AssertionError\" | head",
+          "exit_code": 0,
+          "output_sha": "3ebba36598ee198f6b77264f5171cc1d2fda69a5f966636008660d11c3457308"
+        },
+        {
+          "tool": "run_command",
+          "command": "python3 - <<'EOF'\nimport re,os\nlines=open('README.md').read().split('\\n')\nblock=lines[261:291]\nrefs=[];paths=[]\nfor l in block:\n    m=re.search(r'@ref:([\\w\\-/]+)',l)\n    if m: refs.append(m.group(1))\n    m2=re.search(r'\u2192\\s*(\\S+)',l)\n    if m2: paths.append(m2.group(1))\nsrc=open('specs/project.scl').read()\ndeclared=re.findall(r'@ref:([\\w\\-/]+)',src)\nprint(\"declared order:\",declared)\nprint(\"block order   :\",refs)\nprint(\"same order:\",declared==refs)\n# layer grouping check\nlayers={}\nfor r,p in zip(refs,paths):\n    txt=open(p).read()\n    m=re.search(r'^layer:\\s*(\\d+)',txt,re.M)\n    layers.setdefault(int(m.group(1)),[]).append(r)\nfor k in sorted(layers): print(\"layer\",k,len(layers[k]),layers[k])\nEOF",
+          "exit_code": 0,
+          "output_sha": "0dfae5c3c0360fa94c43e64fa385e940839a1547e09110dd77a0f77e0b7f2f19"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"src/auth\\|src/db\\|speclang/auth\\|speclang/database\\|auth/implementation\\|auth/impl\" README.md | head -20",
+          "exit_code": 0,
+          "output_sha": "28eb38ea6de4cd13f6b7d352469ccc45b0e21d4f218bea4d03c27fa24caa99f9"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 40, \"offset\": 340, \"path\": \"README.md\"}",
+          "exit_code": 0,
+          "output_sha": "77ba366ff994f42404883692bbccb85a9413c79e13be42a8390c5f89548f8817"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: README.md:262-292 example-tree block. Script over the block: 23 refs, 23 paths, MISSING paths: [] (all os.path.exists True), refs not in project.scl: [], declared-not-shown: [] (exact set equality with the 23 @ref entries at specs/project.scl:124-146). Layer grouping verified against each target spec's own `layer:` header: L0=11, L1=8, L2=1, L5=2, L10=1, matching the block's \\\"(11 refs)/(8 refs)/(1 ref)/(2 refs)/(1 ref)\\\" labels; declaration order preserved within each group. Root id @northstar/speclang matches specs/project.scl:2. Old fabricated refs (speclang/auth, speclang/database) and paths (specs/auth/implementation.spec.md, src/auth/handler.ts, src/db/client.ts) are gone from the block (grep -nE \\\"speclang/(auth|database)\\\" README.md -> no match in block; only unrelated illustrative cascade-output line 361). Fix landed in commit 3f56fae1. Test suite: `npx vitest run --passWithNoTests` exit=1 with 2 failures (tests/db.test.ts \\\"SqliteError: disk I/O error\\\"; tests/examples/hello-world-verification.test.ts dist/ mtime race) \\u2014 both unrelated to README and both pass in isolation (35/35 and 7/7).\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "da0df62824537c40b5cee3bdfa1df260c8f700125fda5be18e3ff929b77ab99c"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"The layer label on each group in the README block equals the `layer:` value declared in the header of the spec file that ref resolves to, and the per-group ref counts match the number of entries listed.\", \"key\": \"derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "725cc38f5da2c4e764befc5b7143fe0a6753d43c30fbfffc3703d25a208484cd"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: script read each of the 23 resolved spec files and parsed `^layer:`: L0=11 (core, skills, test-specs, workflow, opencode, directory-structure, dynamic-split, deployment, mcp-daemon, git-history, symlinks), L1=8 (daemon, agent-protocol, pipeline, file-naming, cascade, headers, sqlite, mcp), L2=1 (mcp-openapi-generation), L5=2 (recovery, tools), L10=1 (mcp-openapi-generation-cli). README.md:264-291 labels say \\\"(11 refs)\\\", \\\"(8 refs)\\\", \\\"(1 ref)\\\", \\\"(2 refs)\\\", \\\"(1 ref)\\\" and list exactly those entries \\u2014 no mismatch. Declaration order within each group also matches specs/project.scl:124-146.\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "ae54b20423c9ac626e790b904ecfe09567aa6ea80c8d53dc96e7d1e073b15c82"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Derived criteria proposed: (0) layer labels/counts in the block match the layer each target spec declares in its own header. No further derived criteria needed \\u2014 the change is a docs-only regeneration of one fenced block.\", \"key\": \"derived_list\"}",
+          "exit_code": 0,
+          "output_sha": "4e89fb3fc72473fb64ee5915f32da0bf7a029202ed1ee0fd023ae616cf80207c"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "medium",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 0,
+        "detection": "row marked status=complete while retaining deferred=true and a defer_reason that says the premise is not reproducible",
+        "detail": "QA-SPECLANG-009 is set to status \"complete\" with completed_at, yet the same row still carries \"deferred\":true and defer_reason \"PREMISE NOT REPRODUCIBLE at HEAD ef9b12b9 ... Needs a fresh reproduction before any dispatch\", so the row simultaneously claims closure and an unresolved deferral."
+      },
+      {
+        "severity": "medium",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 0,
+        "detection": "completed row's worker_summary/ci_result are nulled while the completion event claims landed work",
+        "detail": "The new QA-SPECLANG-009 line sets \"worker_summary\":null and \"ci_result\":null even though the paired task_completed event (id 470) records commit 11c368ec and guard PASS, dropping the evidence fields the previous revision of the row carried."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/events.jsonl",
+        "line": 0,
+        "detection": "timestamp format drift within a single append-only event log",
+        "detail": "New events 468-471 use \"2026-11-17 16:56:20.000000\" (space separator, no Z) while every surrounding event uses ISO-8601 \"2026-11-17T18:24:47Z\", and events 472-473 in the same append use a third form \"2026-11-17 22:07:03.524643\"."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/events.jsonl",
+        "line": 0,
+        "detection": "event ids 468-471 are rewritten in place rather than appended",
+        "detail": "The diff replaces existing ids 468-471 (previously task_completed for DF-SPECLANG-013/QA-SPECLANG-009/UX-005/DF-SPECLANG-5-R4) with different event types and payloads, so an append-only log now has mutated history entries instead of new ids."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 0,
+        "detection": "new row QA-SPECLANG-009-R2 is filed with status=pending but no dispatch/owner wiring",
+        "detail": "The added row has worker_status, commit_hash, guard_result, ci_result, worker_summary and foreman_note all null and dispatched_at absent, so nothing in the diff schedules or claims the re-judge it asks for."
+      }
+    ],
+    "summary": "The change is board bookkeeping: it closes UX-005/DF-SPECLANG-5-R4/QA-SPECLANG-009 and files a re-judge row, but QA-SPECLANG-009 is marked complete while still carrying deferred=true with a 'premise not reproducible' reason and nulled evidence fields, and the event log mixes three timestamp formats and rewrites existing event ids."
+  },
+  "summary": "Stage tier1: FAIL (DEGRADED - skipped checks)\n  WARNING: coverage is unknown \u2014 tests did not run (skipped at runtime \u2014 tests: timed out after 120s (step budget)); run `gitreins guard` for the full gate\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  ~ tests: Command timed out after 120s (step budget)\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 Every path and every @ref shown in the README example-tree block derived from project.scl resolves: the block is regenerated from the real refs in specs/project.scl or trimmed to entries that exist; the per-path existence loop over the block paths prints no MISSING line and every @ref shown in the block appears in specs/project.scl.: README.md:262-292 is the block. A script over it (regex @ref:([\\w\\-/]+) and \u2192\\s*(\\S+)) reports: refs count 23, paths count 23, \"MISSING paths: []\" (every os.path.exists(p) True, incl. specs/mcp.spec.dir/openapi-generation.spec.md and specs/mcp.spec.dir/openapi-generation-cli.ts.spec), \"refs not in project.scl: []\", \"declared not shown: []\" \u2014 exact set equality with the 23 @ref entries at specs/project.scl:124-146. Root id @northstar/speclang matches specs/project.scl:2. The previously fabricated entries are gone: grep -nE \"speclang/(auth|database)\" README.md returns no match inside the block (only the unrelated illustrative cascade-output line 361). Fix landed in commit 3f56fae1. Test suite run: `npx vitest run --passWithNoTests` exit=1, \"Test Files 2 failed | 119 passed | 4 skipped (125)\", \"Tests 2 failed | 1998 passed | 58 skipped (2058)\"; both failures are unrelated to this docs change and pass in isolation \u2014 `npx vitest run tests/db.test.ts` -> \"Tests 35 passed (35)\" (the full-run failure was \"SqliteError: disk I/O error\" at specs/sqlite.spec.dir/src/index.ts:188) and `npx vitest run tests/examples/hello-world-verification.test.ts` -> \"Tests 7 passed (7)\" (full-run failure was a dist/ mtime race in a concurrently-running test).\n  \u2713 The layer label on each group in the README block equals the `layer:` value declared in the header of the spec file that ref resolves to, and the per-group ref counts match the number of entries listed.: Script parsed `^layer:` from each of the 23 resolved spec files: L0=11 (core, skills, test-specs, workflow, opencode, directory-structure, dynamic-split, deployment, mcp-daemon, git-history, symlinks), L1=8 (daemon, agent-protocol, pipeline, file-naming, cascade, headers, sqlite, mcp), L2=1 (mcp-openapi-generation), L5=2 (recovery, tools), L10=1 (mcp-openapi-generation-cli). README.md:264-291 labels \"(11 refs)\", \"(8 refs)\", \"(1 ref)\", \"(2 refs)\", \"(1 ref)\" and list exactly those entries; declaration order within each group also matches specs/project.scl:124-146.\nThe README example-tree block at README.md:262-292 is now a faithful regeneration of specs/project.scl's 23 refs \u2014 all 23 paths exist, all 23 refs are declared, and the layer grouping matches each target spec's own header.\n\nOverall: FAIL \u2717 [DEGRADED \u2014 skipped: tier1(tests)=skipped at runtime \u2014 tests: timed out after 120s (step budget)]",
+  "evaluated_at": "2026-11-17T22:12:22.763236",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T22:12:22.798155+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 93697,
+        "truncated": false,
+        "source": "git show 6cb46524990d"
+      }
+    ],
+    "task_id": "README-21"
+  }
+}

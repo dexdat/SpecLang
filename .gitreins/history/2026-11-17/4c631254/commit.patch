@@ -1,0 +1,86 @@
+commit b0958d699a5d0a43fcba286a47d7a56bbcfcdf5b
+Author:     kara <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 16:45:37 2026 -0500
+Commit:     kara <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 16:45:48 2026 -0500
+
+    docs(driver): link the Agent Driver guide from README and GETTING-STARTED and correct the @kind/fence rule (UX-005 judge fix)
+    
+    Judge verdict 836c944f failed one criterion: the guide had zero inbound links,
+    so the audience it names (an agent session told to use SpecLang) could not find
+    it. Added to README's Documentation list and the GETTING-STARTED "For AI Agents"
+    ladder.
+    
+    Also corrected a documented claim after probing it: section 5 said non-code
+    kinds are skipped, but a fenced @kind:endpoint block emits a file (measured:
+    "Generated: 1 files", ping.ts 201 bytes, with a tagged fence; "Generated: 0
+    files" with an untagged fence). The fence decides, not the @kind.
+    
+    Addresses UX-005.
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+---
+ GETTING-STARTED.md   |  3 ++-
+ README.md            |  1 +
+ docs/AGENT_DRIVER.md | 15 +++++++++++----
+ 3 files changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/GETTING-STARTED.md b/GETTING-STARTED.md
+index 02a7a5d8..739c57f8 100644
+--- a/GETTING-STARTED.md
++++ b/GETTING-STARTED.md
+@@ -205,7 +205,8 @@ If you're an AI agent working with SpecLang:
+ 2. **Check** `specs/_index.md` for file listings
+ 3. **Follow** `@ref:` links in headers for dependencies
+ 4. **Use** SQLite database queries when available
+-5. **Remember**: One file, one commit, perfect history
++5. **Drive the build** through the agent-driver loop — `docs/AGENT_DRIVER.md` (seed a baseline prompt; the cascade expands and builds it; the driver fails closed on hollow output)
++6. **Remember**: One file, one commit, perfect history
+ 
+ ### Agent Rules for Creating Specs
+ 
+diff --git a/README.md b/README.md
+index 8bcb2f1d..9ec4012b 100644
+--- a/README.md
++++ b/README.md
+@@ -739,6 +739,7 @@ scripts/                 # Tools
+ 
+ ## Documentation
+ 
++- `docs/AGENT_DRIVER.md` - **Driving SpecLang from another coding agent** (the default usage path: seed a baseline prompt, let the cascade expand and build it)
+ - `docs/CONFIGURATION.md` - Every environment variable SpecLang reads, with defaults and source anchors
+ - `docs/CASCADE_DEMO.md` - Working example walkthrough
+ - `specs/cascade-protocol.spec.md` - Full protocol specification
+diff --git a/docs/AGENT_DRIVER.md b/docs/AGENT_DRIVER.md
+index 0f6dba4e..a2f0b9df 100644
+--- a/docs/AGENT_DRIVER.md
++++ b/docs/AGENT_DRIVER.md
+@@ -237,9 +237,16 @@ parser and generator actually behave (`src/cascade/index.ts`):
+    is ignored; a block with no fence is skipped (a warning, not an error).
+ 3. **What the body says is what lands on disk** — the cascade does not summarise
+    or repair it. Keep each block a complete, self-contained module.
+-4. **`@kind` decides whether a file appears.** `code` and `test` (with a fence)
+-   produce files; other kinds (`endpoint`, `operation`, `doc`, …) are descriptive
+-   and are skipped. The driver lists every skipped block under `warnings[]`.
++4. **A fenced block produces a file; the `@kind` does not filter it.** Any block
++   whose header matches `### @block::<name> @kind:<kind>` and that is followed by
++   a language-tagged fence (`ts`, `typescript`, `speclang`) is written to disk —
++   including `endpoint`, `operation` and `doc` blocks. Measured: an
++   `@kind:endpoint` block with a tagged fence emits one ~200-byte `<name>.ts`
++   ("Generated: 1 files"), while the same block with an untagged fence emits
++   nothing ("Generated: 0 files", §7 probe 1). A block with no fence is skipped
++   with a warning, and unfenced blocks are what the driver lists under
++   `warnings[]`. Use `code`/`test` for anything a reader should see generated,
++   and leave descriptive kinds unfenced on purpose.
+ 5. **Test blocks go where vitest can see them** (§2). Otherwise the loop reports
+    a vacuous convergence and the driver stops you.
+ 6. **`id` must start with `@`** (`id: "@agent-driver/baseline"`); the validator's
+@@ -286,7 +293,7 @@ exit non-zero** — that is the point of the driver.
+ 
+ | Probe | Observed result |
+ |---|---|
+-| Seed whose blocks are all `@kind:endpoint` / unfenced | `speclang cascade` exits **0** with `Generated: 0 files`, `Converged: Yes` and a warning; the driver exits **1**: `cascade reported no artifacts (exit 0 with zero files is a no-op, not a pass)` |
++| Seed whose blocks are all unfenced | `speclang cascade` exits **0** with `Generated: 0 files`, `Converged: Yes` and a warning; the driver exits **1**: `cascade reported no artifacts (exit 0 with zero files is a no-op, not a pass)` (an `@kind:endpoint` block is NOT skipped if it carries a tagged fence — it emits a file, §5 rule 4) |
+ | Seed with a `@kind:code` block whose code fence is empty | the cascade writes a **181-byte banner-only** artifact; the driver exits **1**: `artifact carries only the generated banner, no body` |
+ | Seed with a `@kind:test` block placed outside `tests/**` | cascade prints `[Cascade] Tests: 0/0 passed`, `Converged: Yes`; the driver exits **1**: `test block(s) were generated but 0 tests executed — "converged" is vacuous; place the seed so <seed-dir>/../generated lands inside vitest's include (tests/**)` |
+ | Second cascade run produces different bytes | the driver exits **1**: `cascade is not reproducible: …` |

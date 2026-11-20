@@ -1,0 +1,85 @@
+{
+  "task_id": "PERF-001",
+  "task_title": "tests/cli.test.ts resolves the repo-local tsx binary directly instead of paying an npx resolution on every CLI spawn",
+  "task_criteria": [
+    "The npx tax is gone and the suite stays green. PROOF: tests/cli.test.ts invokes the repo-local tsx binary (no npx spawn in the spawn path) and the cli test file runs at least 2x faster than the 38.90s npx baseline, with the full suite green. FAILIF: an npx spawn remains on the CLI spawn path."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "tmp2",
+  "commit": "ec444d46f2fbadfe388043c89da64c4831d209e0",
+  "pass_class": "tier1-only",
+  "tier2_skipped": true,
+  "working_tree_content_fingerprint": "5521e873200cd5da3ca1ae406b501705e2e882ef501ce332580e95b723ef796f",
+  "working_tree_dirty_path_count": 2,
+  "items": [],
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  02:14:50",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T063905.840202Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T063905.840202Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  02:14:50\n   Duration  43.28s (transform 27.66s, setup 6.41s, import 42.72s, tests 172.19s, environment 33ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T063905.840202Z.log"
+          }
+        }
+      ]
+    }
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  02:14:50\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T07:15:33.910806",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T07:15:33.957299+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 461,
+        "truncated": false,
+        "source": "git show ec444d46f2fb"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 26469,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "PERF-001"
+  }
+}

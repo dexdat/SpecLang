@@ -1,0 +1,493 @@
+commit a417027945766f008aabe12111441d9bb8283ce3
+Author:     kara <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 00:46:29 2026 -0500
+Commit:     kara <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 00:49:28 2026 -0500
+
+    fix(cli): make `speclang new` emit a runnable project, not a machine-bound stub (UX-003)
+    
+    A scaffolded project declared devDependencies { "speclang": "file:/home/kara/SpecLang" }
+    and no bin, so a stranger's `npm install` pointed at one machine's checkout and the
+    documented next steps (speclang validate / generate) resolved to nothing.
+    
+    What changed (bin/speclang, the hand-written CLI source):
+    - the generated package.json no longer carries the absolute `file:` dependency; the
+      scaffold has no third-party dependencies at all
+    - `speclang new` now emits scripts/speclang.cjs, a runtime-resolving shim: $SPECLANG_CLI
+      override, then node_modules/speclang, then node_modules/.bin/speclang, then the CLI
+      that generated the project; it fails loudly with the exact path when an override is wrong
+    - generated npm scripts (validate/generate/start/build/test/dev) and the "Next steps"
+      text now call the shim, and the text says `npm install` is optional
+    
+    Verification (real output):
+    - npm run build -> exit 0
+    - tests/cli/new-project-runnable.test.ts -> 8 passed (new test: shim resolution order,
+      override rejection, generated scripts, no absolute path in the scaffold)
+    - live: `speclang new demo` in a temp dir -> npm install --no-audit --no-fund exit 0 ->
+      `node scripts/speclang.cjs validate` exit 0 with "Validation Summary: 1 files / Passed: 1"
+---
+ bin/speclang                           | 226 ++++++++++++++++++++++++++++++---
+ tests/cli/new-project-runnable.test.ts | 200 +++++++++++++++++++++++++++++
+ 2 files changed, 405 insertions(+), 21 deletions(-)
+
+diff --git a/bin/speclang b/bin/speclang
+index d75899d8..1eb9ec0e 100755
+--- a/bin/speclang
++++ b/bin/speclang
+@@ -1511,35 +1511,215 @@ This is a new speclang project.
+         console.log('   ✓ Created initial spec');
+       }
+       
+-      // Create package.json (also for --bare, so every scaffold gets a
+-      // working CLI). SL-GAP-014: the generated project previously had no
+-      // CLI anywhere — `npm install` installed nothing, `speclang validate`
+-      // was "command not found", and the test script recursively re-invoked
+-      // `npm test`. Fix: a file: devDependency pointing at THIS repo (the
+-      // `speclang` npm registry package is an unrelated project, SL-GAP-002).
+-      // bin/speclang lives at <repo>/bin/speclang, so the repo root is
+-      // __dirname/.. — npm install then links node_modules/.bin/speclang via
+-      // the repo's bin entry with no PATH tricks and no registry lookup. The
+-      // installed CLI runs under node_modules/speclang/package.json
+-      // ("type": "commonjs") regardless of this scaffold's "type".
++      // Create package.json + the local CLI shim (also for --bare, so every
++      // scaffold is runnable). UX-003: the scaffold used to declare
++      // devDependencies {"speclang": "file:<this machine's checkout>"} — an
++      // absolute path that exists only on the machine that ran `speclang new`
++      // (npm install then dies with ENOENT for every other user, and even here
++      // it installed this whole repo just to obtain one bin), with scripts
++      // calling a bare `speclang` that resolved only if the CLI happened to be
++      // on PATH. The npm registry cannot fill the gap: the published `speclang`
++      // package is an unrelated project (SL-GAP-002) and this repo's 1.0.0 is
++      // not published there, so a "^1.0.0" dependency would fail with ETARGET.
++      // Instead the scaffold ships scripts/speclang.cjs, which resolves a real
++      // CLI at runtime — $SPECLANG_CLI, then node_modules/speclang, then
++      // node_modules/.bin/speclang, then the CLI that generated this project —
++      // and the npm scripts below call it, so `npm run validate` works with
++      // zero installs and no PATH tricks.
+       {
+-        const speclangRepoRoot = path.resolve(__dirname, '..');
++        const generatorCli = __filename;
+         const packageJson = {
+           name: name,
+           version: '0.1.0',
+           type: 'module',
+           scripts: {
+-            build: 'speclang generate',
+-            test: 'speclang validate',
+-            dev: 'speclang start'
++            speclang: 'node scripts/speclang.cjs',
++            validate: 'node scripts/speclang.cjs validate',
++            generate: 'node scripts/speclang.cjs generate',
++            start: 'node scripts/speclang.cjs start',
++            build: 'node scripts/speclang.cjs generate',
++            test: 'node scripts/speclang.cjs validate',
++            dev: 'node scripts/speclang.cjs start'
+           },
+           dependencies: {},
+-          devDependencies: {
+-            speclang: `file:${speclangRepoRoot}`
+-          }
++          devDependencies: {}
+         };
+         fs.writeFileSync(path.join(projectPath, 'package.json'), JSON.stringify(packageJson, null, 2));
+         console.log('   ✓ Created package.json');
++
++        const SPECLANG_SHIM = `#!/usr/bin/env node
++/**
++ * SpecLang CLI shim - generated by "speclang new".
++ *
++ * This project does not install SpecLang from the npm registry: the published
++ * "speclang" package is an unrelated project and this CLI is not published
++ * there. Instead of a machine-specific "file:" dependency, this script
++ * delegates to a SpecLang CLI resolved at runtime, first match wins:
++ *
++ *   1. $SPECLANG_CLI                  explicit override (always wins)
++ *   2. node_modules/speclang          a real install of this CLI, e.g.
++ *      npm install --save-dev https://github.com/dexdat/SpecLang
++ *   3. node_modules/.bin/speclang     a linked or globally installed CLI
++ *   4. the CLI that generated this project (the fallback recorded below)
++ *
++ * Usage:
++ *   node scripts/speclang.cjs <command> [args...]
++ *   npm run validate | npm run generate | npm run start
++ */
++'use strict';
++
++const { spawnSync } = require('node:child_process');
++const { existsSync, realpathSync } = require('node:fs');
++const { createRequire } = require('node:module');
++const path = require('node:path');
++
++// The CLI that scaffolded this project. Machine-specific on purpose: it is the
++// last-resort fallback and it is overridable with $SPECLANG_CLI.
++const GENERATOR_CLI = ${JSON.stringify(generatorCli)};
++
++const SELF = (() => {
++  try {
++    return realpathSync(__filename);
++  } catch (_) {
++    return __filename;
++  }
++})();
++
++function installedCli() {
++  try {
++    const fromProject = createRequire(path.join(__dirname, '..', 'package.json'));
++    const pkgPath = fromProject.resolve('speclang/package.json');
++    const pkg = fromProject(pkgPath);
++    const bin = typeof pkg.bin === 'string' ? pkg.bin : pkg.bin && pkg.bin.speclang;
++    if (bin) return path.resolve(path.dirname(pkgPath), bin);
++  } catch (_) {
++    // not installed in this project
++  }
++  const linked = path.join(__dirname, '..', 'node_modules', '.bin', 'speclang');
++  return existsSync(linked) ? linked : null;
++}
++
++function resolveCli() {
++  const explicit = String(process.env.SPECLANG_CLI || '').trim();
++  if (explicit) {
++    if (!existsSync(explicit)) {
++      console.error('speclang shim: $SPECLANG_CLI points at a path that does not exist:');
++      console.error('  ' + explicit);
++      process.exit(127);
++    }
++    return explicit;
++  }
++  for (const candidate of [installedCli(), GENERATOR_CLI]) {
++    if (!candidate || !existsSync(candidate)) continue;
++    // Never resolve back to this shim (a self-referential node_modules/.bin
++    // link would recurse forever).
++    try {
++      if (realpathSync(candidate) === SELF) continue;
++    } catch (_) {
++      continue;
++    }
++    return candidate;
++  }
++  return null;
++}
++
++const args = process.argv.slice(2);
++const cli = resolveCli();
++
++if (!cli) {
++  console.error('speclang shim: no SpecLang CLI found.');
++  console.error('  The CLI that generated this project is gone:');
++  console.error('    ' + GENERATOR_CLI);
++  console.error('  Point this project at a SpecLang CLI:');
++  console.error('    SPECLANG_CLI=/path/to/SpecLang/bin/speclang npm run validate');
++  console.error('    or: npm install --save-dev https://github.com/dexdat/SpecLang');
++  process.exit(127);
++}
++
++// A source checkout of the CLI needs its TypeScript build before commands like
++// "validate" work. Say so here: the CLI's own advice ("npm run build") would
++// re-enter this project's scripts instead of building the CLI.
++const cliRoot = path.resolve(path.dirname(cli), '..');
++const informational = args.length === 0 || ['--version', '-V', '--help', '-h'].includes(args[0]);
++if (!informational && !existsSync(path.join(cliRoot, 'dist'))) {
++  console.error('speclang shim: the CLI at ' + cli + ' has no dist/ build yet.');
++  console.error('  Build it once in that checkout, or set $SPECLANG_CLI to a built CLI:');
++  console.error('    (cd ' + cliRoot + ' && npm install && npm run build)');
++}
++
++const result = spawnSync(process.execPath, [cli].concat(args), {
++  stdio: 'inherit',
++  cwd: process.cwd(),
++  env: process.env,
++});
++
++if (result.error) {
++  console.error('speclang shim: failed to run ' + cli + ': ' + result.error.message);
++  process.exit(1);
++}
++process.exit(result.status === null ? 1 : result.status);
++`;
++        fs.mkdirSync(path.join(projectPath, 'scripts'), { recursive: true });
++        const shimPath = path.join(projectPath, 'scripts', 'speclang.cjs');
++        fs.writeFileSync(shimPath, SPECLANG_SHIM);
++        fs.chmodSync(shimPath, 0o755);
++        console.log('   ✓ Created scripts/speclang.cjs');
++
++        // The scaffold's own README documents the commands that actually work.
++        // UX-003: the old next-steps text advertised bare `speclang validate`
++        // after an `npm install` that installed nothing usable.
++        const readme = `# ${name}
++
++Scaffolded by \`speclang new\`. Specs are the source of truth; code is generated from them.
++
++## Layout
++
++${options.bare ? '' : '- `specs/main.spec.md` — the starter spec\n'}- \`specs/\` — specs (source of truth)
++- \`src/\` — generated code
++- \`tests/\`
++- \`.speclangrc\` — project configuration
++- \`scripts/speclang.cjs\` — local CLI shim (see below)
++
++## Commands
++
++\`\`\`bash
++npm run validate    # validate every spec under specs/
++npm run generate    # generate code from specs
++npm run start       # start the SpecLang daemon
++npm run speclang -- <command> [args...]   # any other CLI command
++
++node scripts/speclang.cjs --version      # same thing without npm
++\`\`\`
++
++\`npm install\` is optional: this project has no third-party dependencies. The
++npm scripts never call a bare \`speclang\`, so nothing has to be on \`PATH\`.
++
++## Which SpecLang CLI is used
++
++\`scripts/speclang.cjs\` resolves the CLI at runtime, first match wins:
++
++1. \`$SPECLANG_CLI\` — explicit override
++2. \`node_modules/speclang\` — a real install, e.g.
++   \`npm install --save-dev https://github.com/dexdat/SpecLang\`
++3. \`node_modules/.bin/speclang\` — a linked or globally installed CLI
++4. the CLI that generated this project: \`${generatorCli}\`
++
++Use a different CLI without touching the project:
++
++\`\`\`bash
++SPECLANG_CLI=/path/to/SpecLang/bin/speclang npm run validate
++\`\`\`
++
++Why not a dependency? The \`speclang\` package on npm is an unrelated project,
++so a \`file:\` or registry dependency here would either point at a path that
++exists on one machine only or install the wrong code. The shim keeps the
++project portable: point it at any SpecLang checkout or install.
++
++If the resolved CLI reports "SpecLang not built", that checkout needs its
++TypeScript build once (\`npm run build\` inside the SpecLang checkout itself).
++`;
++        fs.writeFileSync(path.join(projectPath, 'README.md'), readme);
++        console.log('   ✓ Created README.md');
+       }
+       
+       // Initialize git if requested and not in existing repo
+@@ -1558,9 +1738,13 @@ This is a new speclang project.
+       console.log('');
+       console.log('Next steps:');
+       console.log(`   cd ${targetDir}`);
+-      console.log('   npm install');
+-      console.log('   speclang validate');
+-      console.log('   speclang generate');
++      console.log('   npm run validate    # validate specs (no install needed)');
++      console.log('   npm run generate    # generate code from specs');
++      console.log('');
++      console.log('The project has no third-party dependencies, so `npm install` is optional.');
++      console.log('SpecLang is reached through scripts/speclang.cjs:');
++      console.log('   node scripts/speclang.cjs <command>');
++      console.log('   SPECLANG_CLI=/path/to/SpecLang/bin/speclang overrides it.');
+       console.log('');
+       
+     } catch (err) {
+diff --git a/tests/cli/new-project-runnable.test.ts b/tests/cli/new-project-runnable.test.ts
+new file mode 100644
+index 00000000..001e1709
+--- /dev/null
++++ b/tests/cli/new-project-runnable.test.ts
+@@ -0,0 +1,200 @@
++/**
++ * UX-003 regression: a project created by `speclang new` must be runnable.
++ *
++ * Before the fix the scaffold declared
++ *   devDependencies: { "speclang": "file:<the checkout that ran `speclang new`>" }
++ * — an absolute path that exists on exactly one machine (npm install then dies
++ * with ENOENT for every other user) — and its npm scripts called a bare
++ * `speclang`, which resolved only if the CLI happened to be on PATH. Following
++ * the printed next steps (npm install; speclang validate) left a stranger with
++ * no working CLI at all.
++ *
++ * The scaffold now ships scripts/speclang.cjs, which resolves a real CLI at
++ * runtime ($SPECLANG_CLI -> node_modules/speclang -> node_modules/.bin/speclang
++ * -> the CLI that generated the project) and every npm script calls the shim.
++ *
++ * These tests assert the CONTRACT of the emitted files, not their prose, and
++ * they deliberately do not run `npm install` (zero third-party deps => nothing
++ * to install) so they stay offline and fast.
++ */
++import { describe, it, expect, beforeEach, afterEach } from "vitest";
++import { execFileSync } from "child_process";
++import { mkdtempSync, readFileSync, rmSync, existsSync, statSync } from "fs";
++import { join } from "path";
++import { tmpdir } from "os";
++
++const REPO_ROOT = process.cwd();
++const CLI = join(REPO_ROOT, "bin/speclang");
++const CLI_VERSION: string = JSON.parse(
++  readFileSync(join(REPO_ROOT, "package.json"), "utf-8"),
++).version;
++
++function scaffold(cwd: string, name: string, extra: string[] = []): string {
++  return execFileSync(
++    process.execPath,
++    [CLI, "new", name, "--no-git", "--dir", join(cwd, name), ...extra],
++    { cwd, encoding: "utf-8" },
++  );
++}
++
++function read(projectPath: string, file: string): string {
++  return readFileSync(join(projectPath, file), "utf-8");
++}
++
++function escapeRegExp(value: string): string {
++  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
++}
++
++describe("new scaffolding -> runnable project (UX-003)", () => {
++  let testDir: string;
++  let projectPath: string;
++
++  beforeEach(() => {
++    testDir = mkdtempSync(join(tmpdir(), "speclang-new-runnable-"));
++    projectPath = join(testDir, "demo");
++    scaffold(testDir, "demo");
++  });
++
++  afterEach(() => {
++    if (testDir && existsSync(testDir)) {
++      rmSync(testDir, { recursive: true, force: true });
++    }
++  });
++
++  it("does not pin the CLI to the machine that scaffolded the project", () => {
++    const pkgText = read(projectPath, "package.json");
++    const pkg = JSON.parse(pkgText) as {
++      dependencies: Record<string, string>;
++      devDependencies: Record<string, string>;
++    };
++
++    // No file: dependency, and no absolute path anywhere in the manifest.
++    expect(pkgText).not.toContain("file:");
++    expect(pkgText).not.toContain(REPO_ROOT);
++    expect(pkg.devDependencies).toEqual({});
++    expect(pkg.dependencies).toEqual({});
++  });
++
++  it("declares npm scripts that resolve without a global speclang on PATH", () => {
++    const pkg = JSON.parse(read(projectPath, "package.json")) as {
++      scripts: Record<string, string>;
++    };
++
++    const expected: Record<string, string> = {
++      speclang: "node scripts/speclang.cjs",
++      validate: "node scripts/speclang.cjs validate",
++      generate: "node scripts/speclang.cjs generate",
++      start: "node scripts/speclang.cjs start",
++      build: "node scripts/speclang.cjs generate",
++      test: "node scripts/speclang.cjs validate",
++      dev: "node scripts/speclang.cjs start",
++    };
++    expect(pkg.scripts).toEqual(expected);
++
++    // No script may call a bare `speclang` — that only worked with a global
++    // install, and `test` used to recurse into `npm test`.
++    for (const [name, command] of Object.entries(pkg.scripts)) {
++      expect(command.startsWith("speclang "), `script ${name} calls bare speclang`).toBe(false);
++    }
++  });
++
++  it("ships an executable shim that runs the real CLI", () => {
++    const shimPath = join(projectPath, "scripts", "speclang.cjs");
++    expect(existsSync(shimPath)).toBe(true);
++    expect(statSync(shimPath).mode & 0o111).not.toBe(0);
++
++    const out = execFileSync(process.execPath, [shimPath, "--version"], {
++      cwd: projectPath,
++      encoding: "utf-8",
++    });
++    expect(out.trim()).toBe(CLI_VERSION);
++  });
++
++  it("honours the SPECLANG_CLI override in both directions", () => {
++    const shimPath = join(projectPath, "scripts", "speclang.cjs");
++
++    // Positive: an explicit CLI wins.
++    const overridden = execFileSync(process.execPath, [shimPath, "--version"], {
++      cwd: projectPath,
++      encoding: "utf-8",
++      env: { ...process.env, SPECLANG_CLI: CLI },
++    });
++    expect(overridden.trim()).toBe(CLI_VERSION);
++
++    // Negative: a bogus override fails loudly instead of silently falling back
++    // to some other CLI.
++    let failure: { status?: number; stderr?: string } | undefined;
++    try {
++      execFileSync(process.execPath, [shimPath, "--version"], {
++        cwd: projectPath,
++        encoding: "utf-8",
++        env: { ...process.env, SPECLANG_CLI: join(testDir, "does-not-exist") },
++      });
++    } catch (err) {
++      failure = err as { status?: number; stderr?: string };
++    }
++    expect(failure, "a bogus SPECLANG_CLI must not exit 0").toBeDefined();
++    expect(failure?.status).toBe(127);
++    expect(String(failure?.stderr)).toContain("SPECLANG_CLI");
++  });
++
++  it("keeps the one machine-specific path inside the overridable fallback only", () => {
++    const shim = read(projectPath, "scripts/speclang.cjs");
++    const recorded = shim.match(new RegExp(escapeRegExp(CLI), "g")) ?? [];
++
++    // Exactly one occurrence: the GENERATOR_CLI fallback, which
++    // $SPECLANG_CLI overrides (asserted above).
++    expect(recorded).toHaveLength(1);
++    expect(shim).toContain('const GENERATOR_CLI = ');
++    expect(shim).toContain("process.env.SPECLANG_CLI");
++
++    // The generated manifest carries no machine-specific path at all.
++    expect(read(projectPath, "package.json")).not.toContain(REPO_ROOT);
++  });
++
++  it("documents the commands that actually work", () => {
++    const readme = read(projectPath, "README.md");
++
++    expect(readme).toContain("npm run validate");
++    expect(readme).toContain("npm run generate");
++    expect(readme).toContain("scripts/speclang.cjs");
++    expect(readme).toContain("SPECLANG_CLI");
++    // It must not send the reader down the broken path: no file: dependency
++    // (mentioning the pattern while explaining why it is wrong is fine).
++    expect(readme).not.toMatch(/file:\//);
++  });
++
++  it("prints next steps that match the shipped scripts", () => {
++    const stdout = execFileSync(
++      process.execPath,
++      [CLI, "new", "demo-next", "--no-git", "--dir", join(testDir, "demo-next")],
++      { cwd: testDir, encoding: "utf-8" },
++    );
++
++    expect(stdout).toContain("npm run validate");
++    expect(stdout).toContain("npm run generate");
++    expect(stdout).toContain("scripts/speclang.cjs");
++  });
++
++  it("gives --bare projects the same runnable shim", () => {
++    const bareName = "bare1";
++    scaffold(testDir, bareName, ["--bare"]);
++    const barePath = join(testDir, bareName);
++
++    expect(existsSync(join(barePath, "scripts", "speclang.cjs"))).toBe(true);
++    expect(existsSync(join(barePath, "package.json"))).toBe(true);
++    expect(existsSync(join(barePath, "README.md"))).toBe(true);
++
++    const pkg = JSON.parse(read(barePath, "package.json")) as {
++      scripts: Record<string, string>;
++    };
++    expect(pkg.scripts.validate).toBe("node scripts/speclang.cjs validate");
++
++    const out = execFileSync(
++      process.execPath,
++      [join(barePath, "scripts", "speclang.cjs"), "--version"],
++      { cwd: barePath, encoding: "utf-8" },
++    );
++    expect(out.trim()).toBe(CLI_VERSION);
++  });
++});

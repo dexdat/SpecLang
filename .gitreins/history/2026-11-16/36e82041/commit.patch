@@ -1,0 +1,29 @@
+commit 56d6ca2cfc3c48fa6dbbce57fea3ab9c878f8a66
+Author:     kara <totalwindupflightsystems@gmail.com>
+AuthorDate: Mon Nov 16 10:01:10 2026 -0500
+Commit:     kara <totalwindupflightsystems@gmail.com>
+CommitDate: Mon Nov 16 10:01:10 2026 -0500
+
+    docs(layers): repoint four dead relative links to existing tracked docs (DOC-8)
+---
+ specs/docs.spec.dir/layers.md | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/specs/docs.spec.dir/layers.md b/specs/docs.spec.dir/layers.md
+index fdb149f8..dcd5d550 100644
+--- a/specs/docs.spec.dir/layers.md
++++ b/specs/docs.spec.dir/layers.md
+@@ -167,7 +167,7 @@ const valid = validateLayerDependency(Layer.CODE_MAPPING, Layer.BUSINESS_LOGIC);
+ 
+ ## See Also
+ 
+-- [SpecLang Headers](headers.md) – Layer field in universal headers
+-- [Spec Format](spec-format.md) – Layer system in spec structure
+-- [Cascade System](cascade.md) – How layers trigger cascade
+-- [Validation Rules](validation.md) – Layer validation rules
+\ No newline at end of file
++- [SpecLang Headers](MASTER_GUIDE.md) – Layer field in universal headers
++- [Spec Format](MASTER_GUIDE.md) – Layer system in spec structure
++- [Cascade System](CASCADE_DEMO.md) – How layers trigger cascade
++- [Validation Rules](validation_report.txt) – Layer validation rules
+\ No newline at end of file

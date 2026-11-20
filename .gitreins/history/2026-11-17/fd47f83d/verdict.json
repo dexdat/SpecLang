@@ -1,0 +1,427 @@
+{
+  "task_id": "DOC-9",
+  "task_title": "DOC-9: the three dead relative links in specs/examples.spec.dir/hello-world/README.md resolve to real targets",
+  "task_criteria": [
+    "From specs/examples.spec.dir/hello-world, 'for p in ../../../docs/NORTH_STAR.md ../../../specs/core.spec.md ../../../specs/speclang.spec.md; do test -e \"$p\" || echo MISSING \"$p\"; done' prints no MISSING line, and every relative link in that README resolves. failure_condition = any MISSING line, or a link target that does not exist, or the file still uses the one-level-short ../docs form. proof = the pasted loop output plus git show --stat of the commit."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "tmp2",
+  "commit": "a417027945766f008aabe12111441d9bb8283ce3",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "2bbf87a37625b9e28d0ded23b20e100b43023403ac3393e29ba801c7cf73bf89",
+  "working_tree_dirty_path_count": 2,
+  "items": [
+    {
+      "criterion": "From specs/examples.spec.dir/hello-world, 'for p in ../../../docs/NORTH_STAR.md ../../../specs/core.spec.md ../../../specs/speclang.spec.md; do test -e \"$p\" || echo MISSING \"$p\"; done' prints no MISSING line, and every relative link in that README resolves. failure_condition = any MISSING line, or a link target that does not exist, or the file still uses the one-level-short ../docs form. proof = the pasted loop output plus git show --stat of the commit.",
+      "status": "PASS",
+      "detail": "Loop run from specs/examples.spec.dir/hello-world printed NO MISSING line (empty output, exit 0). All three targets exist: `ls -la` shows ../../../docs/NORTH_STAR.md -> ../specs/docs.spec.dir/docs/NORTH_STAR.md (symlink, realpath /home/kara/SpecLang/specs/docs.spec.dir/docs/NORTH_STAR.md), ../../../specs/core.spec.md (2355 bytes), ../../../specs/speclang.spec.md (2844 bytes). A Python link-extractor over README.md found exactly 3 markdown links, all OK: '../../../docs/NORTH_STAR.md', '../../../specs/core.spec.md', '../../../specs/speclang.spec.md'. `grep -n '](' README.md` returns only lines 49-51, all using ../../../ \u2014 the one-level-short ../docs form is gone. The old form was genuinely dead: at parent commit 494ec5bd all three `../` paths print MISSING. `git show --stat 4455371a` -> 'specs/examples.spec.dir/hello-world/README.md | 6 +++---, 1 file changed, 3 insertions(+), 3 deletions(-)'; `git show --name-only` confirms it is the only file touched. LSP diagnostics: 0 findings. [resolution 0.01; ../../../docs/NORTH_STAR.md, ../../../specs/core.spec.md, ../../../specs/speclang.spec.md]"
+    },
+    {
+      "criterion": "The fix is committed to git history (not left as an uncommitted working-tree edit), and the working tree has no pending modification to the README.",
+      "status": "PASS",
+      "detail": "`git status --porcelain -- specs/examples.spec.dir/hello-world/README.md` is empty (no pending edit; only .coding-hermes board jsonl files are dirty). `git log --oneline -1 -- <README>` -> 4455371a 'docs(examples): repoint three dead relative links to their real targets (DOC-9)'. `git merge-base --is-ancestor 4455371a HEAD` -> 'YES ancestor of HEAD'. `git diff HEAD -- <README>` is empty.",
+      "derived": true
+    },
+    {
+      "criterion": "The fix does not regress the other relative references in the same README (the `examples/hello-world/index.ts` run command and the `src/hello-world.ts` structure entry both resolve from the repo root / example dir).",
+      "status": "PASS",
+      "detail": "`test -e examples/hello-world/index.ts` -> OK (symlink -> ../../specs/examples.spec.dir/hello-world/src/hello-world.ts); `test -e specs/examples.spec.dir/hello-world/src/hello-world.ts` -> OK. The diff (git show 4455371a) rewrote only lines 49-51 (the three Learn More links) and left the run-command (README.md:19,22) and structure references (README.md:33,35) untouched.",
+      "derived": true
+    },
+    {
+      "criterion": "The repo's own test suite is not broken by this change: the only failing test is pre-existing and unrelated to a markdown-only edit.",
+      "status": "PASS",
+      "detail": "`npx vitest run --passWithNoTests` -> 'Test Files 1 failed | 106 passed | 4 skipped (111)'; 'Tests 1 failed | 1911 passed | 58 skipped (1970)'. The single failure is tests/e2e/spec-to-code.test.ts:341 `expect(packageJson.devDependencies?.speclang).toMatch(/^file:/)` -> 'TypeError: .toMatch() expects to receive a string, but got undefined'. It is not attributable to DOC-9: (a) 4455371a touches only the README (git show --name-only -> 1 file); (b) the assertion already exists at DOC-9's parent 652dda73 (`git show 4455371a^:tests/e2e/spec-to-code.test.ts | grep` -> line 341); (c) bin/speclang was modified after DOC-9 by a4170279 (UX-003), which owns this failure. A markdown link fix cannot affect a `speclang new` scaffold assertion.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  00:51:00",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  00:51:00\n   Duration  47.74s (transform 16.91s, setup 3.71s, import 23.78s, tests 158.99s, environment 15ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 From specs/examples.spec.dir/hello-world, 'for p in ../../../docs/NORTH_STAR.md ../../../specs/core.spec.md ../../../specs/speclang.spec.md; do test -e \"$p\" || echo MISSING \"$p\"; done' prints no MISSING line, and every relative link in that README resolves. failure_condition = any MISSING line, or a link target that does not exist, or the file still uses the one-level-short ../docs form. proof = the pasted loop output plus git show --stat of the commit.: Loop run from specs/examples.spec.dir/hello-world printed NO MISSING line (empty output, exit 0). All three targets exist: `ls -la` shows ../../../docs/NORTH_STAR.md -> ../specs/docs.spec.dir/docs/NORTH_STAR.md (symlink, realpath /home/kara/SpecLang/specs/docs.spec.dir/docs/NORTH_STAR.md), ../../../specs/core.spec.md (2355 bytes), ../../../specs/speclang.spec.md (2844 bytes). A Python link-extractor over README.md found exactly 3 markdown links, all OK: '../../../docs/NORTH_STAR.md', '../../../specs/core.spec.md', '../../../specs/speclang.spec.md'. `grep -n '](' README.md` returns only lines 49-51, all using ../../../ \u2014 the one-level-short ../docs form is gone. The old form was genuinely dead: at parent commit 494ec5bd all three `../` paths print MISSING. `git show --stat 4455371a` -> 'specs/examples.spec.dir/hello-world/README.md | 6 +++---, 1 file changed, 3 insertions(+), 3 deletions(-)'; `git show --name-only` confirms it is the only file touched. LSP diagnostics: 0 findings. [resolution 0.01; ../../../docs/NORTH_STAR.md, ../../../specs/core.spec.md, ../../../specs/speclang.spec.md]\n  \u2713 The fix is committed to git history (not left as an uncommitted working-tree edit), and the working tree has no pending modification to the README.: `git status --porcelain -- specs/examples.spec.dir/hello-world/README.md` is empty (no pending edit; only .coding-hermes board jsonl files are dirty). `git log --oneline -1 -- <README>` -> 4455371a 'docs(examples): repoint three dead relative links to their real targets (DOC-9)'. `git merge-base --is-ancestor 4455371a HEAD` -> 'YES ancestor of HEAD'. `git diff HEAD -- <README>` is empty.\n  \u2713 The fix does not regress the other relative references in the same README (the `examples/hello-world/index.ts` run command and the `src/hello-world.ts` structure entry both resolve from the repo root / example dir).: `test -e examples/hello-world/index.ts` -> OK (symlink -> ../../specs/examples.spec.dir/hello-world/src/hello-world.ts); `test -e specs/examples.spec.dir/hello-world/src/hello-world.ts` -> OK. The diff (git show 4455371a) rewrote only lines 49-51 (the three Learn More links) and left the run-command (README.md:19,22) and structure references (README.md:33,35) untouched.\n  \u2713 The repo's own test suite is not broken by this change: the only failing test is pre-existing and unrelated to a markdown-only edit.: `npx vitest run --passWithNoTests` -> 'Test Files 1 failed | 106 passed | 4 skipped (111)'; 'Tests 1 failed | 1911 passed | 58 skipped (1970)'. The single failure is tests/e2e/spec-to-code.test.ts:341 `expect(packageJson.devDependencies?.speclang).toMatch(/^file:/)` -> 'TypeError: .toMatch() expects to receive a string, but got undefined'. It is not attributable to DOC-9: (a) 4455371a touches only the README (git show --name-only -> 1 file); (b) the assertion already exists at DOC-9's parent 652dda73 (`git show 4455371a^:tests/e2e/spec-to-code.test.ts | grep` -> line 341); (c) bin/speclang was modified after DOC-9 by a4170279 (UX-003), which owns this failure. A markdown link fix cannot affect a `speclang new` scaffold assertion.\nDOC-9 is delivered: the three Learn More links in specs/examples.spec.dir/hello-world/README.md were repointed from the dead one-level-short ../docs form to ../../../, the required loop prints no MISSING line, all three targets (and every relative link in the file) resolve, and the change is committed as 4455371a touching only that README; the one failing vitest test is a pre-existing UX-003 scaffold assertion unrelated to this markdown-only edit.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 From specs/examples.spec.dir/hello-world, 'for p in ../../../docs/NORTH_STAR.md ../../../specs/core.spec.md ../../../specs/speclang.spec.md; do test -e \"$p\" || echo MISSING \"$p\"; done' prints no MISSING line, and every relative link in that README resolves. failure_condition = any MISSING line, or a link target that does not exist, or the file still uses the one-level-short ../docs form. proof = the pasted loop output plus git show --stat of the commit.: Loop run from specs/examples.spec.dir/hello-world printed NO MISSING line (empty output, exit 0). All three targets exist: `ls -la` shows ../../../docs/NORTH_STAR.md -> ../specs/docs.spec.dir/docs/NORTH_STAR.md (symlink, realpath /home/kara/SpecLang/specs/docs.spec.dir/docs/NORTH_STAR.md), ../../../specs/core.spec.md (2355 bytes), ../../../specs/speclang.spec.md (2844 bytes). A Python link-extractor over README.md found exactly 3 markdown links, all OK: '../../../docs/NORTH_STAR.md', '../../../specs/core.spec.md', '../../../specs/speclang.spec.md'. `grep -n '](' README.md` returns only lines 49-51, all using ../../../ \u2014 the one-level-short ../docs form is gone. The old form was genuinely dead: at parent commit 494ec5bd all three `../` paths print MISSING. `git show --stat 4455371a` -> 'specs/examples.spec.dir/hello-world/README.md | 6 +++---, 1 file changed, 3 insertions(+), 3 deletions(-)'; `git show --name-only` confirms it is the only file touched. LSP diagnostics: 0 findings. [resolution 0.01; ../../../docs/NORTH_STAR.md, ../../../specs/core.spec.md, ../../../specs/speclang.spec.md]\n  \u2713 The fix is committed to git history (not left as an uncommitted working-tree edit), and the working tree has no pending modification to the README.: `git status --porcelain -- specs/examples.spec.dir/hello-world/README.md` is empty (no pending edit; only .coding-hermes board jsonl files are dirty). `git log --oneline -1 -- <README>` -> 4455371a 'docs(examples): repoint three dead relative links to their real targets (DOC-9)'. `git merge-base --is-ancestor 4455371a HEAD` -> 'YES ancestor of HEAD'. `git diff HEAD -- <README>` is empty.\n\n\u2026 [594 chars omitted \u2014 1 line(s)] \u2026\n  \u2713 The repo's own test suite is not broken by this change: the only failing test is pre-existing and unrelated to a markdown-only edit.: `npx vitest run --passWithNoTests` -> 'Test Files 1 failed | 106 passed | 4 skipped (111)'; 'Tests 1 failed | 1911 passed | 58 skipped (1970)'. The single failure is tests/e2e/spec-to-code.test.ts:341 `expect(packageJson.devDependencies?.speclang).toMatch(/^file:/)` -> 'TypeError: .toMatch() expects to receive a string, but got undefined'. It is not attributable to DOC-9: (a) 4455371a touches only the README (git show --name-only -> 1 file); (b) the assertion already exists at DOC-9's parent 652dda73 (`git show 4455371a^:tests/e2e/spec-to-code.test.ts | grep` -> line 341); (c) bin/speclang was modified after DOC-9 by a4170279 (UX-003), which owns this failure. A markdown link fix cannot affect a `speclang new` scaffold assertion.\nDOC-9 is delivered: the three Learn More links in specs/examples.spec.dir/hello-world/README.md were repointed from the dead one-level-short ../docs form to ../../../, the required loop prints no MISSING line, all three targets (and every relative link in the file) resolve, and the change is committed as 4455371a touching only that README; the one failing vitest test is a pre-existing UX-003 scaffold assertion unrelated to this markdown-only edit.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "From specs/examples.spec.dir/hello-world, 'for p in ../../../docs/NORTH_STAR.md ../../../specs/core.spec.md ../../../specs/speclang.spec.md; do test -e \"$p\" || echo MISSING \"$p\"; done' prints no MISSING line, and every relative link in that README resolves. failure_condition = any MISSING line, or a link target that does not exist, or the file still uses the one-level-short ../docs form. proof = the pasted loop output plus git show --stat of the commit.",
+                "status": "PASS",
+                "detail": "Loop run from specs/examples.spec.dir/hello-world printed NO MISSING line (empty output, exit 0). All three targets exist: `ls -la` shows ../../../docs/NORTH_STAR.md -> ../specs/docs.spec.dir/docs/NORTH_STAR.md (symlink, realpath /home/kara/SpecLang/specs/docs.spec.dir/docs/NORTH_STAR.md), ../../../specs/core.spec.md (2355 bytes), ../../../specs/speclang.spec.md (2844 bytes). A Python link-extractor over README.md found exactly 3 markdown links, all OK: '../../../docs/NORTH_STAR.md', '../../../specs/core.spec.md', '../../../specs/speclang.spec.md'. `grep -n '](' README.md` returns only lines 49-51, all using ../../../ \u2014 the one-level-short ../docs form is gone. The old form was genuinely dead: at parent commit 494ec5bd all three `../` paths print MISSING. `git show --stat 4455371a` -> 'specs/examples.spec.dir/hello-world/README.md | 6 +++---, 1 file changed, 3 insertions(+), 3 deletions(-)'; `git show --name-only` confirms it is the only file touched. LSP diagnostics: 0 findings. [resolution 0.01; ../../../docs/NORTH_STAR.md, ../../../specs/core.spec.md, ../../../specs/speclang.spec.md]",
+                "resolution_probability": 0.01,
+                "cited_path": "../../../docs/NORTH_STAR.md, ../../../specs/core.spec.md, ../../../specs/speclang.spec.md"
+              },
+              {
+                "criterion": "The fix is committed to git history (not left as an uncommitted working-tree edit), and the working tree has no pending modification to the README.",
+                "status": "PASS",
+                "detail": "`git status --porcelain -- specs/examples.spec.dir/hello-world/README.md` is empty (no pending edit; only .coding-hermes board jsonl files are dirty). `git log --oneline -1 -- <README>` -> 4455371a 'docs(examples): repoint three dead relative links to their real targets (DOC-9)'. `git merge-base --is-ancestor 4455371a HEAD` -> 'YES ancestor of HEAD'. `git diff HEAD -- <README>` is empty.",
+                "derived": true
+              },
+              {
+                "criterion": "The fix does not regress the other relative references in the same README (the `examples/hello-world/index.ts` run command and the `src/hello-world.ts` structure entry both resolve from the repo root / example dir).",
+                "status": "PASS",
+                "detail": "`test -e examples/hello-world/index.ts` -> OK (symlink -> ../../specs/examples.spec.dir/hello-world/src/hello-world.ts); `test -e specs/examples.spec.dir/hello-world/src/hello-world.ts` -> OK. The diff (git show 4455371a) rewrote only lines 49-51 (the three Learn More links) and left the run-command (README.md:19,22) and structure references (README.md:33,35) untouched.",
+                "derived": true
+              },
+              {
+                "criterion": "The repo's own test suite is not broken by this change: the only failing test is pre-existing and unrelated to a markdown-only edit.",
+                "status": "PASS",
+                "detail": "`npx vitest run --passWithNoTests` -> 'Test Files 1 failed | 106 passed | 4 skipped (111)'; 'Tests 1 failed | 1911 passed | 58 skipped (1970)'. The single failure is tests/e2e/spec-to-code.test.ts:341 `expect(packageJson.devDependencies?.speclang).toMatch(/^file:/)` -> 'TypeError: .toMatch() expects to receive a string, but got undefined'. It is not attributable to DOC-9: (a) 4455371a touches only the README (git show --name-only -> 1 file); (b) the assertion already exists at DOC-9's parent 652dda73 (`git show 4455371a^:tests/e2e/spec-to-code.test.ts | grep` -> line 341); (c) bin/speclang was modified after DOC-9 by a4170279 (UX-003), which owns this failure. A markdown link fix cannot affect a `speclang new` scaffold assertion.",
+                "derived": true
+              }
+            ],
+            "summary": "DOC-9 is delivered: the three Learn More links in specs/examples.spec.dir/hello-world/README.md were repointed from the dead one-level-short ../docs form to ../../../, the required loop prints no MISSING line, all three targets (and every relative link in the file) resolve, and the change is committed as 4455371a touching only that README; the one failing vitest test is a pre-existing UX-003 scaffold assertion unrelated to this markdown-only edit.",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DOC-9\"}",
+          "exit_code": 0,
+          "output_sha": "735a0fb6a72bdf63612e790b283e9403b4b134cbd182a02288fcb141f2f26a3a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /workspace 2>/dev/null || cd .; pwd; ls",
+          "exit_code": 0,
+          "output_sha": "14d6c2e28776ac7938f0a73cbf197bae9bb2f86dffd719dbf059fba2a2da3a69"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls specs/examples.spec.dir/hello-world/ && echo \"---README---\" && cat specs/examples.spec.dir/hello-world/README.md",
+          "exit_code": 0,
+          "output_sha": "9c2e376d67822b7bdd234bf202a8d49dcf7e2751f2c0ed41869440aaf5112d79"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang/specs/examples.spec.dir/hello-world && for p in ../../../docs/NORTH_STAR.md ../../../specs/core.spec.md ../../../specs/speclang.spec.md; do test -e \"$p\" || echo MISSING \"$p\"; done; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "6fbb4d37971c6d322a05369cba047ffa87c22e0e8abfa302b14b4f46bdf2bc4a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang/specs/examples.spec.dir/hello-world && ls -la ../../../docs/NORTH_STAR.md ../../../specs/core.spec.md ../../../specs/speclang.spec.md 2>&1; echo \"---realpath---\"; realpath ../../../docs/NORTH_STAR.md ../../../specs/core.spec.md ../../../specs/speclang.spec.md 2>&1",
+          "exit_code": 0,
+          "output_sha": "6f073b313861ece4ec3ccae0965e4499ead2199b7494a75ad6eda6871fd436cb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git log --oneline -15 -- specs/examples.spec.dir/hello-world/README.md; echo \"===STAT===\"; git log -3 --stat -- specs/examples.spec.dir/hello-world/README.md",
+          "exit_code": 0,
+          "output_sha": "d5923c13dccd915cca161bb850d9908640905962b16972801221f2c4b77fa96a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git show 4455371a -- specs/examples.spec.dir/hello-world/README.md",
+          "exit_code": 0,
+          "output_sha": "3933598b069070a559766ee206ab7a7f99e9d1c51977fb473b26be0f57fe3f61"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && echo \"=== grep for one-level-short form in README ===\"; grep -n '\\.\\./docs\\|\\.\\./specs' specs/examples.spec.dir/hello-world/README.md; echo \"=== all markdown links in README ===\"; grep -n '](' specs/examples.spec.dir/hello-world/README.md",
+          "exit_code": 0,
+          "output_sha": "2e8f71cebcf9c4ee9715500286d3111fe146ebac7942b22d7277073e82f60e52"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang/specs/examples.spec.dir/hello-world && python3 - <<'EOF'\nimport re, os\ntxt = open('README.md').read()\nlinks = re.findall(r'\\]\\(([^)]+)\\)', txt)\nprint(\"links found:\", links)\nfor l in links:\n    if l.startswith(('http://','https://','#','mailto:')):\n        print(\"SKIP(external/anchor)\", l); continue\n    target = l.split('#')[0]\n    ok = os.path.exists(target)\n    print((\"OK   \" if ok else \"DEAD \"), l, \"->\", os.path.realpath(target) if ok else \"MISSING\")\nEOF",
+          "exit_code": 0,
+          "output_sha": "0c60a55c94abeae29b87a3b88e03ce982533a94d05e7b2c8e148d79c38b986bb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls scripts/ | head -50; echo \"=== find link checker ===\"; find . -path ./node_modules -prune -o -name '*link*' -print 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "303fca716d29318e13ad95108dea5ea4a6915e4d7f7f3747f68c05c6709bafd2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && find . -path ./node_modules -prune -o -name 'link-anchor-check*' -print 2>/dev/null; echo \"=== search ===\"; grep -rn \"link-anchor-check\" --include=*.py --include=*.yaml --include=*.yml --include=*.json --include=*.md -l . 2>/dev/null | grep -v node_modules | head -20",
+          "exit_code": 0,
+          "output_sha": "0db2c42d63d3c98a85abb45abcd979f461335748f2a3dc1e163aedac379d1750"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && cat .gitreins/config.yaml 2>/dev/null | head -60; echo \"=== gitreins dir ===\"; ls -a .gitreins 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "d303ba63e465c7fd7c4591fd89eeaa6cbdf147feb42a1ad80dcfe5fecc381684"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n -A 30 \"DOC-9\" .gitreins/tasks.yaml | head -60",
+          "exit_code": 0,
+          "output_sha": "043f7632fdcf1255edfc6c55beb9a8a594f009dd65675ce5d07b7fe9e076769d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && timeout 900 npx vitest run --passWithNoTests 2>&1 | tail -15; echo \"EXIT_CODE=$?\"",
+          "exit_code": 0,
+          "output_sha": "0fa4f71caca09be894dbe82ce97bd42991b0016aca0acacc5b39d337369650b0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && timeout 900 npx vitest run --passWithNoTests 2>&1 | grep -E \"FAIL|\u2717|\u00d7\" | head -20",
+          "exit_code": -15,
+          "output_sha": "99404385e096df6b3c0966a5a89afc28b040b3c029f4948c680d9f8aecaffcfb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git status --porcelain; echo \"=== HEAD ===\"; git log --oneline -1; echo \"=== is README change in HEAD? ===\"; git log --oneline -1 -- specs/examples.spec.dir/hello-world/README.md; echo \"=== diff HEAD for README ===\"; git diff HEAD -- specs/examples.spec.dir/hello-world/README.md | head",
+          "exit_code": 0,
+          "output_sha": "762d9d2c5bed57f84819e67eaee6c8b06c1385a006a0620632e6d5900fbef6aa"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && timeout 600 npx vitest run --passWithNoTests --reporter=basic 2>&1 | grep -iE \"failed|FAIL \" | head -20",
+          "exit_code": 0,
+          "output_sha": "737e873f28c08f5a51c22e02c700485e8f72e194717bd879def8db10f085b780"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && timeout 600 npx vitest run --passWithNoTests 2>&1 | grep -E \"^ *(FAIL|\u276f|\u00d7)|Test Files|Tests \" | head -30",
+          "exit_code": -15,
+          "output_sha": "6d2a4f044ebac0d6e0b389f4d7a08fd96802eb918bc86e269a28f87449444b98"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && timeout 600 npx vitest run --passWithNoTests > /tmp/vitest_out.txt 2>&1; echo \"EXIT=$?\"; grep -nE \"FAIL|Test Files|Tests  \" /tmp/vitest_out.txt | head -20",
+          "exit_code": -15,
+          "output_sha": "235035295594d1acb04a0cb15c2b89083507381bd1681a4aff3e9634c2dbcf46"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && nohup npx vitest run --passWithNoTests > /tmp/vitest_out.txt 2>&1 & echo \"started pid $!\"",
+          "exit_code": 0,
+          "output_sha": "1a361da443b9f1d77d494f7f7b8d08b757f935c47c8d3bf15192b99c8624ac78"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n '300,360p' /tmp/vitest_out.txt 2>/dev/null; echo \"=== wait ===\"; sleep 25; grep -nE \"FAIL|Test Files|Tests  \" /tmp/vitest_out.txt | head -20",
+          "exit_code": 0,
+          "output_sha": "8752345f7b36e328e8d01cf2f17a3723867de0bbe8e2177d8c9ab910acf4af83"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 25; cd /home/kara/SpecLang && wc -l /tmp/vitest_out.txt; grep -nE \"FAIL|Test Files|Tests  \" /tmp/vitest_out.txt | head -20",
+          "exit_code": 0,
+          "output_sha": "9204828481f2f98c49091871a6c4ef848f2017266ca626bff600d49c5c9b85c0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -a -nE \"FAIL|Test Files|Tests  \" /tmp/vitest_out.txt | head -20; echo \"=== tail ===\"; tail -c 2000 /tmp/vitest_out.txt | tr -d '\\000'",
+          "exit_code": 0,
+          "output_sha": "b70491fd2d258896b9ea3aa8456addce6d4b59447bdf3e4e547d03026aea4adc"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && echo \"=== files touched by DOC-9 commit ===\"; git show --stat --name-only 4455371a | tail -5; echo \"=== does DOC-9 commit touch any test or code? ===\"; git show --name-only --format=\"\" 4455371a",
+          "exit_code": 0,
+          "output_sha": "d85da9a227e587f00a31182d1820497e99ac8d794c84ed6344f54bf6422902b9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git log --oneline -3 -- tests/e2e/spec-to-code.test.ts; echo \"=== blame failing line ===\"; git log -1 --format=\"%h %s\" -L 341,341:tests/e2e/spec-to-code.test.ts 2>/dev/null | head -5",
+          "exit_code": 0,
+          "output_sha": "092beb95c5f4cac521adc680abc9f31e1d331bb653765e1cdaf52a2e2604e880"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && echo \"=== README at parent of DOC-9 (494ec5bd) ===\"; git show 494ec5bd:specs/examples.spec.dir/hello-world/README.md | grep -n '](' ; echo \"=== verify old form was dead ===\"; cd specs/examples.spec.dir/hello-world && for p in ../docs/NORTH_STAR.md ../specs/core.spec.md ../specs/speclang.spec.md; do test -e \"$p\" && echo \"EXISTS $p\" || echo \"MISSING $p\"; done",
+          "exit_code": 0,
+          "output_sha": "feba4a9605b2926352b4fdaed09bd02298822338041cbc496101656192ea87fa"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && echo \"=== examples/hello-world contents ===\"; ls -la examples/hello-world/ 2>&1; echo \"=== does examples/hello-world/index.ts resolve? ===\"; test -e examples/hello-world/index.ts && echo \"EXISTS\" || echo \"MISSING\"; echo \"=== src dir in hello-world ===\"; ls -la specs/examples.spec.dir/hello-world/src/",
+          "exit_code": 0,
+          "output_sha": "a042be3291ce85ad44cdbe186241c9b2951ab016cf59fa559fbc3a3a34acb41c"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: Loop from specs/examples.spec.dir/hello-world prints NO MISSING line (exit 0, empty output). All 3 targets exist: ../../../docs/NORTH_STAR.md -> specs/docs.spec.dir/docs/NORTH_STAR.md (symlink, resolves), ../../../specs/core.spec.md (2355 bytes), ../../../specs/speclang.spec.md (2844 bytes). Python link-extraction over README.md found exactly 3 markdown links, all OK. grep '](' shows only lines 49-51, all using ../../../ \\u2014 no one-level-short ../docs form remains. Old form verified dead at parent commit 494ec5bd: all 3 MISSING. Commit 4455371a \\\"docs(examples): repoint three dead relative links to their real targets (DOC-9)\\\" touches ONLY specs/examples.spec.dir/hello-world/README.md (1 file, 3 insertions, 3 deletions).\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "81467d5c83d97aa8acd142ebd4bf187d094783f559e42aad9538d731c9ddf2fb"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"The fix is committed to git history (not left as an uncommitted working-tree edit), and the working tree has no pending modification to the README.\", \"key\": \"derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "ce5afc08c80f3165926ae51b9e6368acbfc6e9a3e5373feff5a168e1139bd96a"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"The fix does not regress the other relative references in the same README (the `examples/hello-world/index.ts` run command and the `src/hello-world.ts` structure entry both resolve from the repo root / example dir).\", \"key\": \"derived_1\"}",
+          "exit_code": 0,
+          "output_sha": "796bd4afdb70593076e78452f3b313d9a03fd2e16e39af7611384e230b85c807"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"The repo's own test suite is not broken by this change: the only failing test is pre-existing and unrelated to a markdown-only edit.\", \"key\": \"derived_2\"}",
+          "exit_code": 0,
+          "output_sha": "a7f9198210a63bd917d587150c3f168d902d1df091db24f651ba79f93d0a0b28"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && echo \"=== derived_0: committed? ===\"; git status --porcelain -- specs/examples.spec.dir/hello-world/README.md; echo \"(empty above = no pending edit)\"; git log --oneline -1 -- specs/examples.spec.dir/hello-world/README.md; echo \"=== is 4455371a an ancestor of HEAD? ===\"; git merge-base --is-ancestor 4455371a HEAD && echo \"YES ancestor of HEAD\" || echo \"NO\"",
+          "exit_code": 0,
+          "output_sha": "530fe39c2df333e089823ef00ebdb61f90a1c2d3cd9a3a1073cb2fc8703b7a28"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && echo \"=== derived_1: other refs in README ===\"; test -e examples/hello-world/index.ts && echo \"OK examples/hello-world/index.ts\" || echo \"DEAD examples/hello-world/index.ts\"; test -e specs/examples.spec.dir/hello-world/src/hello-world.ts && echo \"OK src/hello-world.ts\" || echo \"DEAD src/hello-world.ts\"; echo \"=== README body refs (non-link) ===\"; grep -n 'examples/hello-world\\|src/hello-world\\|specs/hello-world' specs/examples.spec.dir/hello-world/README.md",
+          "exit_code": 0,
+          "output_sha": "8bea1144fa5b7041d5434c68f80709e031c7ee6849b058845817bc557f934915"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: git status --porcelain for the README is empty (no pending edit); git log -1 shows 4455371a as the last commit touching it; `git merge-base --is-ancestor 4455371a HEAD` -> \\\"YES ancestor of HEAD\\\". The fix is committed, not a dangling working-tree edit.\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "ea96b3f0a1f6ae39541984777f6975546f9cbbcbd262bfa17c68f7ff86963b67"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: README body's other relative references resolve \\u2014 `test -e examples/hello-world/index.ts` -> OK (symlink to ../../specs/examples.spec.dir/hello-world/src/hello-world.ts), `test -e specs/examples.spec.dir/hello-world/src/hello-world.ts` -> OK. The change only rewrote the 3 Learn More links (git show 4455371a: 3 insertions, 3 deletions, lines 49-51) and left the run-command/structure references untouched.\", \"key\": \"verified_derived_1\"}",
+          "exit_code": 0,
+          "output_sha": "25981a4ecab0c86a3919b86960b74570edeb66fbed2eee6e4af28fb709e8b180"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git stash list | head -3; echo \"=== check failing test at DOC-9 parent 494ec5bd ===\"; git log --oneline -1 494ec5bd; echo \"=== does 494ec5bd contain the failing test line? ===\"; git show 494ec5bd:tests/e2e/spec-to-code.test.ts 2>/dev/null | sed -n '335,345p'",
+          "exit_code": 0,
+          "output_sha": "71a28f7e54780e1fb1386d90c98ac353466f6671c254cf2da20fffb5a0462c00"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && echo \"=== parent of 4455371a ===\"; git log --oneline -1 4455371a^; echo \"=== does parent contain failing assertion? ===\"; git show 4455371a^:tests/e2e/spec-to-code.test.ts 2>/dev/null | grep -n \"devDependencies?.speclang\" ; echo \"=== was bin/speclang changed after DOC-9? ===\"; git log --oneline 4455371a..HEAD -- bin/speclang | head",
+          "exit_code": 0,
+          "output_sha": "a1f33b7f809a815a9902d52f8a760c60b841db0544cd491bd7c58ab9151012c4"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS (unrelated pre-existing failure): `npx vitest run --passWithNoTests` -> \\\"Test Files 1 failed | 106 passed | 4 skipped (111)\\\"; \\\"Tests 1 failed | 1911 passed | 58 skipped (1970)\\\". The single failure is tests/e2e/spec-to-code.test.ts:341 `expect(packageJson.devDependencies?.speclang).toMatch(/^file:/)` \\u2014 \\\"TypeError: .toMatch() expects to receive a string, but got undefined\\\". It is NOT caused by DOC-9: (a) DOC-9 commit 4455371a touches only specs/examples.spec.dir/hello-world/README.md (git show --name-only -> 1 file); (b) the assertion already exists at DOC-9's parent 652dda73 (git show 4455371a^:tests/e2e/spec-to-code.test.ts | grep -> line 341); (c) bin/speclang was modified after DOC-9 by a4170279 (UX-003), which owns this failure. A markdown-only link fix cannot affect a `speclang new` scaffold assertion.\", \"key\": \"verified_derived_2\"}",
+          "exit_code": 0,
+          "output_sha": "c08dd3d1e4757f26822353733a3eca0271230d88ae6f36366d780c863250831c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && echo \"=== FINAL PROOF: loop output ===\"; cd specs/examples.spec.dir/hello-world && for p in ../../../docs/NORTH_STAR.md ../../../specs/core.spec.md ../../../specs/speclang.spec.md; do test -e \"$p\" || echo MISSING \"$p\"; done; echo \"(end of loop output \u2014 no MISSING lines above)\"; echo; echo \"=== FINAL PROOF: git show --stat ===\"; cd /home/kara/SpecLang && git show --stat 4455371a | tail -4",
+          "exit_code": 0,
+          "output_sha": "30f4813321c1e6fa9c6cf031f1c24736c0f438cdbd664ddb4118b0df81deb36f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && echo \"=== any other hello-world README? ===\"; git ls-files | grep -i \"hello-world.*README\\|README.*hello-world\"; echo \"=== any remaining one-level-short form repo-wide in that dir ===\"; grep -rn '](\\.\\./docs/\\|](\\.\\./specs/' specs/examples.spec.dir/ 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "c03366ac7dcd0fd4e0375d84e748b2fc3f66f1c35d94b944be393dc053b38462"
+        },
+        {
+          "tool": "read_lsp_diagnostics",
+          "command": "read_lsp_diagnostics {}",
+          "exit_code": 0,
+          "output_sha": "ef420cbeebd549fc8c5438d6ea41a3e521fa58e29563c4cae80f491b9bfe2143"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && echo \"=== examples/README.md symlink? ===\"; ls -la examples/README.md 2>&1; echo \"=== resolve its links from examples/ ===\"; cd examples && for p in ../docs/NORTH_STAR.md ../specs/core.spec.md ../specs/speclang.spec.md ../specs/headers.spec.md; do test -e \"$p\" && echo \"OK $p\" || echo \"DEAD $p\"; done",
+          "exit_code": 0,
+          "output_sha": "a257635709257b5182469262887ecd477a195bf0aacea0d94753d28ca32edb51"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [],
+    "summary": "The diff only touches the coding-hermes board bookkeeping files (events.jsonl and tasks.jsonl), adding a task_updated event and stamping worktree/branch/session/status fields on existing rows; no application code, config, or tests are affected, so there is nothing to flag."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  00:51:00\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 From specs/examples.spec.dir/hello-world, 'for p in ../../../docs/NORTH_STAR.md ../../../specs/core.spec.md ../../../specs/speclang.spec.md; do test -e \"$p\" || echo MISSING \"$p\"; done' prints no MISSING line, and every relative link in that README resolves. failure_condition = any MISSING line, or a link target that does not exist, or the file still uses the one-level-short ../docs form. proof = the pasted loop output plus git show --stat of the commit.: Loop run from specs/examples.spec.dir/hello-world printed NO MISSING line (empty output, exit 0). All three targets exist: `ls -la` shows ../../../docs/NORTH_STAR.md -> ../specs/docs.spec.dir/docs/NORTH_STAR.md (symlink, realpath /home/kara/SpecLang/specs/docs.spec.dir/docs/NORTH_STAR.md), ../../../specs/core.spec.md (2355 bytes), ../../../specs/speclang.spec.md (2844 bytes). A Python link-extractor over README.md found exactly 3 markdown links, all OK: '../../../docs/NORTH_STAR.md', '../../../specs/core.spec.md', '../../../specs/speclang.spec.md'. `grep -n '](' README.md` returns only lines 49-51, all using ../../../ \u2014 the one-level-short ../docs form is gone. The old form was genuinely dead: at parent commit 494ec5bd all three `../` paths print MISSING. `git show --stat 4455371a` -> 'specs/examples.spec.dir/hello-world/README.md | 6 +++---, 1 file changed, 3 insertions(+), 3 deletions(-)'; `git show --name-only` confirms it is the only file touched. LSP diagnostics: 0 findings. [resolution 0.01; ../../../docs/NORTH_STAR.md, ../../../specs/core.spec.md, ../../../specs/speclang.spec.md]\n  \u2713 The fix is committed to git history (not left as an uncommitted working-tree edit), and the working tree has no pending modification to the README.: `git status --porcelain -- specs/examples.spec.dir/hello-world/README.md` is empty (no pending edit; only .coding-hermes board jsonl files are dirty). `git log --oneline -1 -- <README>` -> 4455371a 'docs(examples): repoint three dead relative links to their real targets (DOC-9)'. `git merge-base --is-ancestor 4455371a HEAD` -> 'YES ancestor of HEAD'. `git diff HEAD -- <README>` is empty.\n  \u2713 The fix does not regress the other relative references in the same README (the `examples/hello-world/index.ts` run command and the `src/hello-world.ts` structure entry both resolve from the repo root / example dir).: `test -e examples/hello-world/index.ts` -> OK (symlink -> ../../specs/examples.spec.dir/hello-world/src/hello-world.ts); `test -e specs/examples.spec.dir/hello-world/src/hello-world.ts` -> OK. The diff (git show 4455371a) rewrote only lines 49-51 (the three Learn More links) and left the run-command (README.md:19,22) and structure references (README.md:33,35) untouched.\n  \u2713 The repo's own test suite is not broken by this change: the only failing test is pre-existing and unrelated to a markdown-only edit.: `npx vitest run --passWithNoTests` -> 'Test Files 1 failed | 106 passed | 4 skipped (111)'; 'Tests 1 failed | 1911 passed | 58 skipped (1970)'. The single failure is tests/e2e/spec-to-code.test.ts:341 `expect(packageJson.devDependencies?.speclang).toMatch(/^file:/)` -> 'TypeError: .toMatch() expects to receive a string, but got undefined'. It is not attributable to DOC-9: (a) 4455371a touches only the README (git show --name-only -> 1 file); (b) the assertion already exists at DOC-9's parent 652dda73 (`git show 4455371a^:tests/e2e/spec-to-code.test.ts | grep` -> line 341); (c) bin/speclang was modified after DOC-9 by a4170279 (UX-003), which owns this failure. A markdown link fix cannot affect a `speclang new` scaffold assertion.\nDOC-9 is delivered: the three Learn More links in specs/examples.spec.dir/hello-world/README.md were repointed from the dead one-level-short ../docs form to ../../../, the required loop prints no MISSING line, all three targets (and every relative link in the file) resolve, and the change is committed as 4455371a touching only that README; the one failing vitest test is a pre-existing UX-003 scaffold assertion unrelated to this markdown-only edit.\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T05:55:56.390943",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T05:55:56.421975+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 21071,
+        "truncated": false,
+        "source": "git show a41702794576"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 107656,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DOC-9"
+  }
+}

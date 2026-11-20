@@ -1,0 +1,11 @@
+commit ec444d46f2fbadfe388043c89da64c4831d209e0
+Merge: a6d5ba14 ac8d8360
+Author:     kara <totalwindupflightsystems@gmail.com>
+AuthorDate: Tue Nov 17 02:10:11 2026 -0500
+Commit:     kara <totalwindupflightsystems@gmail.com>
+CommitDate: Tue Nov 17 02:10:11 2026 -0500
+
+    merge DOC-6: repository-local traceability contract (wt/DOC-6 @ac8d8360)
+
+ docs/traceability-doctrine.md | 372 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 372 insertions(+)

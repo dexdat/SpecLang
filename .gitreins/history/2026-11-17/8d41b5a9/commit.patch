@@ -1,0 +1,90 @@
+commit 7d583a29e1c047ff6daa0c972cefb2e72b6f4eaf
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Mon Nov 16 23:09:07 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Mon Nov 16 23:09:07 2026 -0500
+
+    chore(evidence): make the DF-SPECLANG-7 evidence file tree-true
+    
+    The file committed in d2982ec2 recorded allowScripts + the binding probe as the
+    whole fix. gitreins verdict 553a7017 (tier1 PASS, tier2 FAIL/INCOMPLETE) proves the
+    CI leg is missing: ci.yml still has no 'npm run check:sqlite-binding' step.
+    
+    It also records the empirical block: applying the staged patch and pushing branch
+    ci-sqlite-binding-probe was rejected by GitHub for lack of the workflow scope
+    (token scopes: gist, read:org, repo), plus the unblock recipe. Same finding the
+    sibling tick filed on the board; board rows are left to that tick.
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+---
+ .../DF-SPECLANG-7-closeout-2026-11-17.json         | 57 +++++++++++-----------
+ 1 file changed, 29 insertions(+), 28 deletions(-)
+
+diff --git a/.coding-hermes/evidence/DF-SPECLANG-7-closeout-2026-11-17.json b/.coding-hermes/evidence/DF-SPECLANG-7-closeout-2026-11-17.json
+index 6d784ecf..fd9850b5 100644
+--- a/.coding-hermes/evidence/DF-SPECLANG-7-closeout-2026-11-17.json
++++ b/.coding-hermes/evidence/DF-SPECLANG-7-closeout-2026-11-17.json
+@@ -1,34 +1,35 @@
+ {
+   "row": "DF-SPECLANG-7",
+-  "title": "P2 — fresh npm install on npm >=12 leaves better-sqlite3 without its native binding",
+-  "closing_tick": "speclang-foreman-2026-11-17-03-02-59",
+-  "landed_fix": {
+-    "commit": "6cb184b4",
+-    "subject": "fix(install): trust and verify the better-sqlite3 binding on npm >= 12",
+-    "files": [
+-      ".github/workflows/ci.yml",
+-      "CHANGELOG.md",
+-      "README.md",
+-      "package.json",
+-      "scripts/postinstall-lint-deps.sh"
+-    ]
++  "title": "P2 — fresh npm install on npm >= 12 leaves better-sqlite3 without its native binding",
++  "state": "blocked — CI staging leg cannot land from this host (credential scope)",
++  "supersedes": "The earlier revision of this file (written and committed in tick speclang-foreman-2026-11-17-03-02-59 before the judge ran) over-stated closure: it recorded allowScripts + binding probe as the whole fix. The gitreins judge (verdict 553a7017) proved one acceptance leg is missing, so the row is blocked, not complete.",
++  "what_is_actually_true_at_HEAD": {
++    "allowScripts": "package.json declares allowScripts.better-sqlite3 = true",
++    "gate_exists": "package.json exposes check:sqlite-binding -> scripts/postinstall-lint-deps.sh --sqlite-binding-only (real require + in-memory SELECT 1, npm-version-aware remedy, returns 1 on failure)",
++    "gate_passes": "npm run check:sqlite-binding at HEAD -> 'OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})', exit 0 (re-verified by this tick)",
++    "red_path": "judge exercised the failure path in a scratch tree with an empty node_modules/better-sqlite3 -> REAL_EXIT=1 with FAIL + remedy text",
++    "docs": "README.md:36-89 and CHANGELOG.md:11-27 document the npm >=12 allowScripts behaviour, the warning text, the command and the remedy"
+   },
+-  "foreman_verification_this_tick": {
+-    "package_json_allowScripts": {
+-      "cmd": "jq '{allowScripts}' package.json",
+-      "result": "{\"allowScripts\": {\"better-sqlite3\": true}}",
+-      "verdict": "PASS"
+-    },
+-    "binding_probe": {
+-      "cmd": "timeout 120 npm run check:sqlite-binding",
+-      "exit": 0,
+-      "tail": "OK: better-sqlite3 native binding loads (SELECT 1 -> {\"x\":1})",
+-      "verdict": "PASS"
+-    },
+-    "head": "8ac77df4 (post-fix; contains 6cb184b4 in ancestry)"
++  "what_is_missing": {
++    "ci_step": ".github/workflows/ci.yml has no step running `npm run check:sqlite-binding`; the only install step is `npm ci` at ci.yml:50",
++    "history": "the step existed in 6cb184b4 (ci.yml:52-61) and was removed in e8343f1c because the push credential cannot update workflow files; it survives only as .coding-hermes/pending/ci-sqlite-binding-step.patch",
++    "consequence": "a fresh install that silently loses the binding still goes CI-green — exactly the regression this row exists to prevent"
+   },
+-  "not_reverified_this_tick": [
+-    "fresh empty-directory `npm install <tarball>` under real npm 12 (the worker's commit message documents this leg with npm 12.2.2 + better-sqlite3@12.11.1; this tick did not re-run it, so the fresh-install leg rests on that evidence plus the in-tree detection gate)."
++  "blocking_evidence": {
++    "gitreins_task": "DF-SPECLANG-7 (gitreins task create/start/complete run in this tick)",
++    "judge_run": "verdict saved 553a7017, stage tier1 PASS, stage tier2 FAIL/INCOMPLETE",
++    "push_probe": {
++      "branch": "ci-sqlite-binding-probe (local only, patch applied + committed as ee26b123; guard Tier 1 DEGRADED PASS, tests full PASS)",
++      "result": "GitHub rejected the push: 'refusing to allow an OAuth App to create or update workflow `.github/workflows/ci.yml` without `workflow` scope'",
++      "token_scopes": "gist, read:org, repo (gh auth status, account totalwindupflightsystems)"
++    }
++  },
++  "unblock_recipe": [
++    "Use a credential carrying the `workflow` scope (owner action).",
++    "git apply .coding-hermes/pending/ci-sqlite-binding-step.patch",
++    "push, confirm the CI run executes the new step, then re-grade: update the board row commit_hash to the workflow commit, then gitreins task start DF-SPECLANG-7 && gitreins task complete DF-SPECLANG-7"
+   ],
+-  "note": "Row was in_progress with commit_hash null because the dispatching tick ended before bookkeeping; the code fix is present in origin/main."
++  "not_reverified": [
++    "A real fresh empty-directory tarball install under npm 12 (blocked earlier by the owner: the scratch install probe was refused and must not be retried)."
++  ]
+ }

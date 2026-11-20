@@ -1,0 +1,38 @@
+commit 6430f3701330128ab73830b82de7fc2bf06a51a9
+Author:     kara <totalwindupflightsystems@gmail.com>
+AuthorDate: Mon Nov 16 08:48:03 2026 -0500
+Commit:     kara <totalwindupflightsystems@gmail.com>
+CommitDate: Mon Nov 16 08:48:03 2026 -0500
+
+    fix(deps): pin minimatch API used by ownership registries. Addresses DF-SPECLANG-2-R4.
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+---
+ package-lock.json | 1 +
+ package.json      | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/package-lock.json b/package-lock.json
+index d950ca89..9248d151 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -17,6 +17,7 @@
+         "express": "^5.2.1",
+         "fs-extra": "^11.4.0",
+         "glob": "^13.0.6",
++        "minimatch": "^10.2.5",
+         "simple-git": "^3.36.0",
+         "yaml": "^2.8.2"
+       },
+diff --git a/package.json b/package.json
+index 40d9852c..de363553 100644
+--- a/package.json
++++ b/package.json
+@@ -60,6 +60,7 @@
+     "express": "^5.2.1",
+     "fs-extra": "^11.4.0",
+     "glob": "^13.0.6",
++    "minimatch": "^10.2.5",
+     "simple-git": "^3.36.0",
+     "yaml": "^2.8.2"
+   },

@@ -1,0 +1,407 @@
+{
+  "task_id": "DF-SPECLANG-4-R4",
+  "task_title": "MCP SSE query references a processed column absent from the events schema",
+  "task_criteria": [
+    "src/mcp/sse.ts must not query a nonexistent column: add the processed column via migration (default 0, with index) or change the query to a column that exists, so the SSE poll loop cannot throw SQLITE_ERROR. A test must cover the poll query against a freshly migrated DB."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4",
+  "branch": "wt/DF-SPECLANG-4-R4",
+  "commit": "0ed92385535f6c387cea492ce3b40afae4c92678",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "67ffee14e2ac4d14fbe39075147b10b476801e9d934c5dfcdbf32b4404b48230",
+  "working_tree_dirty_path_count": 10,
+  "items": [
+    {
+      "criterion": "src/mcp/sse.ts must not query a nonexistent column: add the processed column via migration (default 0, with index) or change the query to a column that exists, so the SSE poll loop cannot throw SQLITE_ERROR. A test must cover the poll query against a freshly migrated DB.",
+      "status": "PASS",
+      "detail": "The query is kept and the schema now provides the column: src/mcp/sse.ts:236 still runs `SELECT * FROM events WHERE timestamp > ? AND processed = 0 ORDER BY timestamp LIMIT 10`, and migration v2 `add_events_processed` at specs/sqlite.spec.dir/src/migrations.ts:174-183 executes `ALTER TABLE events ADD COLUMN processed INTEGER NOT NULL DEFAULT 0;` plus `CREATE INDEX IF NOT EXISTS idx_events_processed_timestamp ON events(processed, timestamp);` (default 0 + index, as required). src/db/migrations.ts is a symlink to that file (`ls -la`: `src/db/migrations.ts -> ../../specs/sqlite.spec.dir/src/migrations.ts`), and the compiled artifacts specs/sqlite.spec.dir/src/migrations.js:164-168 and dist/specs/sqlite.spec.dir/src/migrations.js:164-168 carry the same block, so the runtime path actually loads it. The migration flows through the existing gate `if (migration.version > currentVersion)` (migrations.ts:196-215), so both fresh and existing v1 DBs get the column. Test coverage: tests/mcp.test.ts:184-227 \"polls unprocessed events after a fresh database migration\" opens a fresh SpecLangDB, calls db.initialize(), asserts `SELECT id, processed FROM events` does not throw (line 188-189), inserts two events, sets one to processed=1, drives the private pollChanges() via pollSSEManager (lastPollTime=0), and asserts exactly one write containing src/changed.ts and not src/created.ts. Command evidence: `npx vitest run tests/mcp.test.ts tests/db.test.ts` -> \"Test Files  2 passed (2) / Tests  68 passed (68)\"; targeted run `npx vitest run tests/mcp.test.ts -t \"polls unprocessed events\"` -> \"Tests  1 passed | 32 skipped (33)\". RED proof I produced myself: deleting the version-2 block from specs/sqlite.spec.dir/src/migrations.js makes the new test fail with `SqliteError: no such column: processed` at tests/mcp.test.ts:188 (restored afterwards; `git status --porcelain specs/ tests/` clean). Full suite `npx vitest run` -> \"Test Files  1 failed | 98 passed | 4 skipped (103) / Tests  1828 passed | 65 skipped (1893)\", the single failure being tests/ci/ci005-precommit-hook.test.ts (\"Hook not found: .../.git/hooks/pre-commit\") which is unrelated to this change. `npx tsc --noEmit` exit 0. [resolution 0.22; src/mcp/sse.ts]"
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  10:21:35",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4/.gitreins/logs/guard-20261116T152024.646209Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4/.gitreins/logs/guard-20261116T152024.646209Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  10:21:35\n   Duration  41.14s (transform 9.09s, setup 1.36s, import 13.05s, tests 96.75s, environment 11ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4/.gitreins/logs/guard-20261116T152024.646209Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 src/mcp/sse.ts must not query a nonexistent column: add the processed column via migration (default 0, with index) or change the query to a column that exists, so the SSE poll loop cannot throw SQLITE_ERROR. A test must cover the poll query against a freshly migrated DB.: The query is kept and the schema now provides the column: src/mcp/sse.ts:236 still runs `SELECT * FROM events WHERE timestamp > ? AND processed = 0 ORDER BY timestamp LIMIT 10`, and migration v2 `add_events_processed` at specs/sqlite.spec.dir/src/migrations.ts:174-183 executes `ALTER TABLE events ADD COLUMN processed INTEGER NOT NULL DEFAULT 0;` plus `CREATE INDEX IF NOT EXISTS idx_events_processed_timestamp ON events(processed, timestamp);` (default 0 + index, as required). src/db/migrations.ts is a symlink to that file (`ls -la`: `src/db/migrations.ts -> ../../specs/sqlite.spec.dir/src/migrations.ts`), and the compiled artifacts specs/sqlite.spec.dir/src/migrations.js:164-168 and dist/specs/sqlite.spec.dir/src/migrations.js:164-168 carry the same block, so the runtime path actually loads it. The migration flows through the existing gate `if (migration.version > currentVersion)` (migrations.ts:196-215), so both fresh and existing v1 DBs get the column. Test coverage: tests/mcp.test.ts:184-227 \"polls unprocessed events after a fresh database migration\" opens a fresh SpecLangDB, calls db.initialize(), asserts `SELECT id, processed FROM events` does not throw (line 188-189), inserts two events, sets one to processed=1, drives the private pollChanges() via pollSSEManager (lastPollTime=0), and asserts exactly one write containing src/changed.ts and not src/created.ts. Command evidence: `npx vitest run tests/mcp.test.ts tests/db.test.ts` -> \"Test Files  2 passed (2) / Tests  68 passed (68)\"; targeted run `npx vitest run tests/mcp.test.ts -t \"polls unprocessed events\"` -> \"Tests  1 passed | 32 skipped (33)\". RED proof I produced myself: deleting the version-2 block from specs/sqlite.spec.dir/src/migrations.js makes the new test fail with `SqliteError: no such column: processed` at tests/mcp.test.ts:188 (restored afterwards; `git status --porcelain specs/ tests/` clean). Full suite `npx vitest run` -> \"Test Files  1 failed | 98 passed | 4 skipped (103) / Tests  1828 passed | 65 skipped (1893)\", the single failure being tests/ci/ci005-precommit-hook.test.ts (\"Hook not found: .../.git/hooks/pre-commit\") which is unrelated to this change. `npx tsc --noEmit` exit 0. [resolution 0.22; src/mcp/sse.ts]\nThe events.processed column is added by migration v2 (default 0, indexed) in the file the runtime and tests actually load, and a new test drives the SSE poll against a freshly migrated DB and passes (68/68 in the touched suites, 1828 passing overall with one unrelated pre-commit-hook failure).",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 src/mcp/sse.ts must not query a nonexistent column: add the processed column via migration (default 0, with index) or change the query to a column that exists, so the SSE poll loop cannot throw SQLITE_ERROR. A test must cover the poll query against a freshly migrated DB.: The query is kept and the schema now provides the column: src/mcp/sse.ts:236 still runs `SELECT * FROM events WHERE timestamp > ? AND processed = 0 ORDER BY timestamp LIMIT 10`, and migration v2 `add_events_processed` at specs/sqlite.spec.dir/src/migrations.ts:174-183 executes `ALTER TABLE events ADD COLUMN processed INTEGER NOT NULL DEFAULT 0;` plus `CREATE INDEX IF NOT EXISTS idx_events_processed_timestamp ON events(processed, timestamp);` (default 0 + index, as required). src/db/migrations.ts is a symlink to that file (`ls -la`: `src/db/migrations.ts -> ../../specs/sqlite.spec.dir/src/migrations.ts`), and the compiled artifacts specs/sqlite.spec.dir/src/migrations.js:164-168 and dist/specs/sqlite.spec.dir/src/migrations.js:164-168 carry the same block, so the runtime path actually loads it. The migration flows through the existing gate `if (migration.version > currentVersion)` (migrations.ts:196-215), so both fresh and existing v1 DBs get the column. Test coverage: tests/mcp.test.ts:184-227 \"polls unprocessed events after a fresh database migration\" opens a fresh SpecLangDB, calls db.initialize(), asserts `SELECT id, processed FROM events` does not throw (line 188-189), inserts two events, sets one to processed=1, drives the private pollChanges() via pollSSEManager (lastPollTime=0), and asserts exactly one write containing src/changed.ts and not src/created.ts. Command evidence: `npx vitest run tests/mcp.test.ts tests/db.test.ts` -> \"Test Files  2 passed (2) / Tests  68 passed (68)\"; targeted run `npx vitest run tests/mcp.test.ts -t \"polls unprocessed events\"` -> \"Tests  1 passed | 32 skipped (33)\". RED proof I produced myself: deleting the version-2 block from specs/sqlite.spec.dir/src/migrations.js makes the new test fail with `SqliteError: no such column: processed` at tests/mcp.test.ts:188 (restored afterwards; `git status --porcelain specs/ tests/` clean). Full suite `npx vitest run` -> \"Test Files  1 failed | 98 passed | 4 skipped (103) / Tests  1828 passed | 65 skipped (1893)\", the single failure being tests/ci/ci005-precommit-hook.test.ts (\"Hook not found: .../.git/hooks/pre-commit\") which is unrelated to this change. `npx tsc --noEmit` exit 0. [resolution 0.22; src/mcp/sse.ts]\nThe events.processed column is added by migration v2 (default 0, indexed) in the file the runtime and tests actually load, and a new test drives the SSE poll against a freshly migrated DB and passes (68/68 in the touched suites, 1828 passing overall with one unrelated pre-commit-hook failure).",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "src/mcp/sse.ts must not query a nonexistent column: add the processed column via migration (default 0, with index) or change the query to a column that exists, so the SSE poll loop cannot throw SQLITE_ERROR. A test must cover the poll query against a freshly migrated DB.",
+                "status": "PASS",
+                "detail": "The query is kept and the schema now provides the column: src/mcp/sse.ts:236 still runs `SELECT * FROM events WHERE timestamp > ? AND processed = 0 ORDER BY timestamp LIMIT 10`, and migration v2 `add_events_processed` at specs/sqlite.spec.dir/src/migrations.ts:174-183 executes `ALTER TABLE events ADD COLUMN processed INTEGER NOT NULL DEFAULT 0;` plus `CREATE INDEX IF NOT EXISTS idx_events_processed_timestamp ON events(processed, timestamp);` (default 0 + index, as required). src/db/migrations.ts is a symlink to that file (`ls -la`: `src/db/migrations.ts -> ../../specs/sqlite.spec.dir/src/migrations.ts`), and the compiled artifacts specs/sqlite.spec.dir/src/migrations.js:164-168 and dist/specs/sqlite.spec.dir/src/migrations.js:164-168 carry the same block, so the runtime path actually loads it. The migration flows through the existing gate `if (migration.version > currentVersion)` (migrations.ts:196-215), so both fresh and existing v1 DBs get the column. Test coverage: tests/mcp.test.ts:184-227 \"polls unprocessed events after a fresh database migration\" opens a fresh SpecLangDB, calls db.initialize(), asserts `SELECT id, processed FROM events` does not throw (line 188-189), inserts two events, sets one to processed=1, drives the private pollChanges() via pollSSEManager (lastPollTime=0), and asserts exactly one write containing src/changed.ts and not src/created.ts. Command evidence: `npx vitest run tests/mcp.test.ts tests/db.test.ts` -> \"Test Files  2 passed (2) / Tests  68 passed (68)\"; targeted run `npx vitest run tests/mcp.test.ts -t \"polls unprocessed events\"` -> \"Tests  1 passed | 32 skipped (33)\". RED proof I produced myself: deleting the version-2 block from specs/sqlite.spec.dir/src/migrations.js makes the new test fail with `SqliteError: no such column: processed` at tests/mcp.test.ts:188 (restored afterwards; `git status --porcelain specs/ tests/` clean). Full suite `npx vitest run` -> \"Test Files  1 failed | 98 passed | 4 skipped (103) / Tests  1828 passed | 65 skipped (1893)\", the single failure being tests/ci/ci005-precommit-hook.test.ts (\"Hook not found: .../.git/hooks/pre-commit\") which is unrelated to this change. `npx tsc --noEmit` exit 0. [resolution 0.22; src/mcp/sse.ts]",
+                "resolution_probability": 0.22,
+                "cited_path": "src/mcp/sse.ts"
+              }
+            ],
+            "summary": "The events.processed column is added by migration v2 (default 0, indexed) in the file the runtime and tests actually load, and a new test drives the SSE poll against a freshly migrated DB and passes (68/68 in the touched suites, 1828 passing overall with one unrelated pre-commit-hook failure).",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-4-R4\"}",
+          "exit_code": 0,
+          "output_sha": "85c036191107fe2d68a142b1a3862dbba1d6d73017303a107aac73885700d085"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && cat .gitreins/config.yaml 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "bfd22c591cdef99ff2cd8fb8db471b55b350c0926641788a0badd8e7371ec186"
+        },
+        {
+          "tool": "read_diff",
+          "command": "read_diff {}",
+          "exit_code": 0,
+          "output_sha": "48a519731991b32102bb88a1ec40798bb90d211341986391fee4262c963ca925"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; pwd; ls src/mcp/ 2>/dev/null; ls specs/ 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "a83a9f7ea50268027481fd99c14e0fe3ddb1120cea02e7c9e3111fd8e7e05938"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; ls; ls src/mcp 2>/dev/null; ls specs 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "83df7422a5ea286d847d874bd3ce4841e597d6da6b356e979919164c8cbf4692"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"src/mcp/sse.ts\"}",
+          "exit_code": 0,
+          "output_sha": "432946cb1a064bfae31162a4cf10b1a98610498d148f53df5fc543c4305d73e7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && git log --oneline -3 && git show --stat HEAD",
+          "exit_code": 0,
+          "output_sha": "134c0ab1528bae0a16d9bfd1a4b904e7d04ef53b849b5e3fb5b71fca3aac5df3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && git show HEAD -- specs/sqlite.spec.dir/src/migrations.ts specs/sqlite.spec.dir/src/migrations.js tests/db.test.ts",
+          "exit_code": 0,
+          "output_sha": "488301b16a3e664b3221c5778119e51e8cb6c7d1dd2e70f7ee616dcad8f549fa"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && git show HEAD -- tests/mcp.test.ts",
+          "exit_code": 0,
+          "output_sha": "21e1f53b57ce60dcc218f29ddb2b2396e2fdad7de08f3bad718135e2163bc114"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && sed -n 1,80p tests/mcp.test.ts && echo ---- && grep -n \"pollSSEManager\\|SSE_TEST_CONFIG\\|tempDir\" tests/mcp.test.ts | head -40",
+          "exit_code": 0,
+          "output_sha": "cb892926836acc9c93d6156386d65f298ec2caf3cd3319f19bcfb0af851eed6c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && sed -n 1,120p specs/sqlite.spec.dir/src/migrations.ts",
+          "exit_code": 0,
+          "output_sha": "f461fcc1163ad271cdb40140455a0503e49808b26060075f9acd7f2c4893aa70"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && sed -n 120,400p specs/sqlite.spec.dir/src/migrations.ts",
+          "exit_code": 0,
+          "output_sha": "f501da703d29645f61a864ef9866579526a0805ae046118946a036e111447045"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && ls src/db/ && sed -n 1,60p src/db/index.ts 2>/dev/null; echo ====; grep -rn \"insertEvent\" src/db/*.ts | head",
+          "exit_code": 0,
+          "output_sha": "1b4af3f8521ee22d22befb2c9049a42ba0bc360d58d795e2d5934a9e5a1a0ef4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && sed -n 240,290p src/db/index.ts; echo ====; grep -n \"processed\" -r src/ specs/sqlite.spec.dir/src/ tests/ | head -40",
+          "exit_code": 0,
+          "output_sha": "7bf8be10216c9ba3f203dc5b4d77ea7708620c6425733c22b8a3e057e5682abf"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && cat vitest.config.ts; echo ====; cat package.json | head -40",
+          "exit_code": 0,
+          "output_sha": "5203e02b3c15ab5fc5d4babf85f2346ed9e33bcb26e80e87e2ec721304c052ca"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && ls src/db/ specs/sqlite.spec.dir/src/ && cat src/db/migrations.ts | head -20 && echo \"=== diff src vs specs migrations\" && diff src/db/migrations.ts specs/sqlite.spec.dir/src/migrations.ts && echo SAME",
+          "exit_code": 0,
+          "output_sha": "11d56d889a5dfb0ad56b19bc5a94a5791f3aa22a2de9fb2d98d283818aca76df"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && cat tsconfig.json; echo ====; ls dist 2>/dev/null | head; echo ====; grep -rn \"migrations\" src/db/index.ts | head",
+          "exit_code": 0,
+          "output_sha": "14ff6a4905076f96a4aaedb6746aebe6703af64262f9e93254e2e5316764f033"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && ls -la src/db/migrations.ts specs/sqlite.spec.dir/src/migrations.ts && git status --porcelain | head && git log --oneline -1 -- src/db/migrations.ts",
+          "exit_code": 0,
+          "output_sha": "6492bf5c72283a271a020f771a1b466552c3eb7a5aa6b1d4b97f9e79f6a2a197"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && grep -n \"processed\" dist/specs/sqlite.spec.dir/src/migrations.js dist/src/db/migrations.js 2>/dev/null | head; echo ====; ls dist/src/db 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "53c0fdee617d9e63d93301c4f1843ac3d97e44cdafd7001e07df595c2d351adc"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && npx vitest run tests/mcp.test.ts tests/db.test.ts 2>&1 | tail -30",
+          "exit_code": 0,
+          "output_sha": "9f86d890eb76c1479bd81c3fb9e9073eac9c33460efdefe0c6a00f775c9c10e9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && npx vitest run tests/mcp.test.ts -t \"polls unprocessed events\" --reporter=verbose 2>&1 | tail -20",
+          "exit_code": 0,
+          "output_sha": "68723eb5e84873570cc0bd93521765b6d154614cfe95e4cabb1829d4965fa72f"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"src/mcp/sse.ts:236 query `SELECT * FROM events WHERE timestamp > ? AND processed = 0 ORDER BY timestamp LIMIT 10`.\\nMigration v2 add_events_processed in specs/sqlite.spec.dir/src/migrations.ts:174-183 (src/db/migrations.ts is a symlink to it). Compiled .js also updated (specs/.../migrations.js:164-168, dist/...).\\nTest: tests/mcp.test.ts:184 \\\"polls unprocessed events after a fresh database migration\\\" \\u2014 fresh SpecLangDB, initialize(), SELECT processed, insert 2 events, mark one processed, pollChanges via pollSSEManager, asserts 1 write containing src/changed.ts.\\nRan: npx vitest run tests/mcp.test.ts tests/db.test.ts -> 2 files passed, 68 tests passed.\\n\", \"key\": \"explore\"}",
+          "exit_code": 0,
+          "output_sha": "b0ebe7afd3cc9e026b9741c75969871265186b98b16402ead9b31363282dda05"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && cp specs/sqlite.spec.dir/src/migrations.ts /tmp/mig.bak && python3 - <<'EOF'\nimport re\np='specs/sqlite.spec.dir/src/migrations.ts'\ns=open(p).read()\ni=s.index(\"  {\\n    version: 2,\")\nj=s.index(\"];\", i)\ns2=s[:i]+s[j:]\nopen(p,'w').write(s2)\nEOF\ngrep -n \"version: 2\" specs/sqlite.spec.dir/src/migrations.ts; npx vitest run tests/mcp.test.ts -t \"polls unprocessed events\" 2>&1 | tail -25; cp /tmp/mig.bak specs/sqlite.spec.dir/src/migrations.ts; git status --porcelain specs/",
+          "exit_code": 0,
+          "output_sha": "46bcac6d92f1bbf7e9550dd013c6e2111864b5fbf291e409172948a5cbdca35d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && cp specs/sqlite.spec.dir/src/migrations.js /tmp/migjs.bak && python3 - <<'EOF'\np='specs/sqlite.spec.dir/src/migrations.js'\ns=open(p).read()\ni=s.index(\"    {\\n        version: 2,\")\nj=s.index(\"];\", i)\ns2=s[:i]+s[j:]\nopen(p,'w').write(s2)\nEOF\ngrep -n \"version: 2\" specs/sqlite.spec.dir/src/migrations.js; npx vitest run tests/mcp.test.ts -t \"polls unprocessed events\" 2>&1 | tail -30; cp /tmp/migjs.bak specs/sqlite.spec.dir/src/migrations.js; git status --porcelain specs/",
+          "exit_code": 0,
+          "output_sha": "811357d37be8dee64ebd7881b04a9ad91a691bcee5802579759743826c29dc17"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && git status --porcelain specs/ tests/ && echo CLEAN && npx vitest run tests/mcp.test.ts tests/db.test.ts 2>&1 | tail -8",
+          "exit_code": 0,
+          "output_sha": "020984314b51c5519ad78df3ccb64e14c0185fc099b9bcac88d69bb939bfb689"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && grep -rn \"createSSEManager\\|new SSEManager\" src/ specs/mcp.spec.dir/src/ --include=*.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "7834eb8e1e2d1cc615c06ca524f3962fd7be1b2de81268398722fb5365fd0655"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && sed -n 180,215p specs/mcp.spec.dir/src/server.ts; echo ====; grep -n \"initialize\\|new SpecLangDB\" specs/mcp.spec.dir/src/server.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "596f3bcb1513ffcf8ac623f5709cccf1b6ca236cf54a7a29a832f2a0c16cafea"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && sed -n 60,110p src/db/index.ts",
+          "exit_code": 0,
+          "output_sha": "fbb045dc4d158ec5423a89fb64138533d49eaa78a24684a05d916f46f1843abc"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && grep -n \"this.db\\b\\|initialize()\\|SpecLangDB\" specs/mcp.spec.dir/src/server.ts | head -30",
+          "exit_code": 0,
+          "output_sha": "377c7c06edbf125efeb002572952d6b0c07af2fedae4753d4353e16d8aa2bbd0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && sed -n 40,70p specs/mcp.spec.dir/src/server.ts; echo ====; grep -n \"export function createDatabase\" -A 12 specs/sqlite.spec.dir/src/index.ts",
+          "exit_code": 0,
+          "output_sha": "76fc3795ed69d51600123d34253742da025fe3e0a887824597756008de37fbc7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && grep -rn \"getVersion\" src/db/index.ts specs/sqlite.spec.dir/src/index.ts | head; echo ====; grep -rn \"toBe(1)\\|applied).toBe(1)\\|currentVersion).toBe(1)\" tests/db.test.ts | head -20",
+          "exit_code": 0,
+          "output_sha": "737844dd436a11649a357d03b6199307cc8d40a79915a4eb87bffc4fccc741a6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && npx tsc --noEmit 2>&1 | tail -10; echo \"tsc exit: $?\"",
+          "exit_code": 0,
+          "output_sha": "e094bcf85612c1616943628a794adbd1bcceca043d10e40d8afb08c9261207c6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && sed -n 460,475p src/db/index.ts; echo ====; grep -rn \"getVersion()\" tests/ | head",
+          "exit_code": 0,
+          "output_sha": "2b4e4c686ef45d9b16d2bcef3f99736792a8af718e379a8ebdd386ac6c157f99"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && npx vitest run 2>&1 | tail -25",
+          "exit_code": -15,
+          "output_sha": "eddc3a1b1ac07fb59aa9f15d396dd53036f4fb1eac55356fbcfea2f5d23bb0d9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && timeout 600 npx vitest run --reporter=dot 2>&1 | tail -40",
+          "exit_code": -15,
+          "output_sha": "1fc7c7030c5d0b7e2a8fe063cdd9be4a1b6d6dc8f7cce6a460e2b8f4d9fc35f0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && (timeout 900 npx vitest run --reporter=dot > /tmp/fullrun.log 2>&1; echo \"EXIT:$?\" >> /tmp/fullrun.log) & sleep 25; echo started",
+          "exit_code": 0,
+          "output_sha": "5b5fa83388e6faae67770e719425937d478a331606f52738e8fd7bc9dbec686a"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 20; tail -5 /tmp/fullrun.log; wc -l /tmp/fullrun.log",
+          "exit_code": 0,
+          "output_sha": "fb03a3dcac66111241a9c968a836297bece225fd9c424cbe6e11b10fc9ac3266"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 25; tail -20 /tmp/fullrun.log",
+          "exit_code": 0,
+          "output_sha": "e117ff7b94e44724e84d5e80f1c901037ad272bc9bd5833b9cfff4d8af7c5ee2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && grep -n \"EXIT:\" /tmp/fullrun.log; git stash list | head -2; git status --porcelain specs/ tests/ src/ | head",
+          "exit_code": 0,
+          "output_sha": "8d87b427d7effc5cb83fd6fd189926e29e1b53b9024b4923bfc1fe62dfd90e74"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Criterion 1 verification:\\n- src/mcp/sse.ts:236 keeps `processed = 0` query; migration v2 add_events_processed at specs/sqlite.spec.dir/src/migrations.ts:174-183 (ALTER TABLE events ADD COLUMN processed INTEGER NOT NULL DEFAULT 0 + CREATE INDEX idx_events_processed_timestamp ON events(processed, timestamp)). src/db/migrations.ts is a symlink to that file; compiled specs/.../migrations.js:164-168 and dist/... also updated.\\n- Migration gate: migrate() applies version > currentVersion (migrations.ts:196-215) so existing v1 DBs upgrade too.\\n- Test tests/mcp.test.ts:184-227 \\\"polls unprocessed events after a fresh database migration\\\": fresh SpecLangDB + initialize(), SELECT id, processed FROM events, insert 2 events, mark one processed=1, drive pollChanges via pollSSEManager, assert 1 write containing src/changed.ts and not src/created.ts.\\n- Ran: npx vitest run tests/mcp.test.ts tests/db.test.ts -> \\\"Test Files 2 passed (2) / Tests 68 passed (68)\\\".\\n- RED proof: removing migration v2 from specs/sqlite.spec.dir/src/migrations.js -> FAIL \\\"SqliteError: no such column: processed\\\" at tests/mcp.test.ts:188. Restored; git status clean.\\n- Full suite: npx vitest run -> \\\"Test Files 1 failed | 98 passed | 4 skipped (103); Tests 1828 passed | 65 skipped (1893)\\\"; only failure tests/ci/ci005-precommit-hook.test.ts (missing .git/hooks/pre-commit in worktree, unrelated).\\n- tsc --noEmit exit 0.\\n- Reachability: specs/mcp.spec.dir/src/server.ts:203 createSSEManager(this.db, ...) with db from createDatabase() which calls initialize() (specs/sqlite.spec.dir/src/index.ts:489-497).\\n\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "db5c9a6beab37a6cacfd70436def8d487e3954d65e52d7b11bb74b9bbf3af53f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/worktrees/SpecLang-DF-SPECLANG-4-R4 && grep -n \"EXIT\" /tmp/fullrun.log | tail -3; tail -3 /tmp/fullrun.log",
+          "exit_code": 0,
+          "output_sha": "faec9f3cff3343da154b76c90c36a11c2fecbb344771501bad90774e53b9783a"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "medium",
+        "file": "_index.json",
+        "line": 0,
+        "detection": "generated index artifact contains internally inconsistent data: a spec id is renamed but its old id remains referenced elsewhere in the same file",
+        "detail": "The spec `@unknown/index.spec.md` is renamed to `@specs/agents/implementation` (and `specs/agent-protocol---` to `specs/agent-protocol`), yet the `content_refs`/reverse-ref maps still carry stale entries such as `\"specs/agent-protocol---\"` being dropped while `@bugs/integration-test-template` is moved into the orphaned list, showing the regenerated index mixes old and new id spaces."
+      },
+      {
+        "severity": "low",
+        "file": ".vfs/graph/edges.jsonl",
+        "line": 0,
+        "detection": "graph edge file mixes two incompatible node-id conventions for the same source file",
+        "detail": "Newly added edges use bare relative targets like `\"to\":\"src/daemon/src/config.rs\"` and `\"to\":\"pkg:std::path::Path\"` while the rest of the file uses `pkg:`/`local:` prefixes and `local:`-relative paths, so the same file (`src/daemon/src/watcher.rs`) now has both `pkg:std` and `pkg:std::path::Path` style edges."
+      },
+      {
+        "severity": "low",
+        "file": ".vfs/graph/edges.jsonl",
+        "line": 0,
+        "detection": "new `tested_by` edges are emitted with `provenance:ast_exact` and confidence 1.0 for heuristic test-to-source relationships",
+        "detail": "Edges such as `{\"from\":\"tests/validation/rules.test.ts\",\"to\":\"pkg:vitest\",\"rel\":\"tested_by\",\"provenance\":\"ast_exact\",\"confidence\":1.0}` mark a test-framework import as an exact `tested_by` relation, conflating import edges with test-coverage edges at full confidence."
+      }
+    ],
+    "summary": ""
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  10:21:35\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 src/mcp/sse.ts must not query a nonexistent column: add the processed column via migration (default 0, with index) or change the query to a column that exists, so the SSE poll loop cannot throw SQLITE_ERROR. A test must cover the poll query against a freshly migrated DB.: The query is kept and the schema now provides the column: src/mcp/sse.ts:236 still runs `SELECT * FROM events WHERE timestamp > ? AND processed = 0 ORDER BY timestamp LIMIT 10`, and migration v2 `add_events_processed` at specs/sqlite.spec.dir/src/migrations.ts:174-183 executes `ALTER TABLE events ADD COLUMN processed INTEGER NOT NULL DEFAULT 0;` plus `CREATE INDEX IF NOT EXISTS idx_events_processed_timestamp ON events(processed, timestamp);` (default 0 + index, as required). src/db/migrations.ts is a symlink to that file (`ls -la`: `src/db/migrations.ts -> ../../specs/sqlite.spec.dir/src/migrations.ts`), and the compiled artifacts specs/sqlite.spec.dir/src/migrations.js:164-168 and dist/specs/sqlite.spec.dir/src/migrations.js:164-168 carry the same block, so the runtime path actually loads it. The migration flows through the existing gate `if (migration.version > currentVersion)` (migrations.ts:196-215), so both fresh and existing v1 DBs get the column. Test coverage: tests/mcp.test.ts:184-227 \"polls unprocessed events after a fresh database migration\" opens a fresh SpecLangDB, calls db.initialize(), asserts `SELECT id, processed FROM events` does not throw (line 188-189), inserts two events, sets one to processed=1, drives the private pollChanges() via pollSSEManager (lastPollTime=0), and asserts exactly one write containing src/changed.ts and not src/created.ts. Command evidence: `npx vitest run tests/mcp.test.ts tests/db.test.ts` -> \"Test Files  2 passed (2) / Tests  68 passed (68)\"; targeted run `npx vitest run tests/mcp.test.ts -t \"polls unprocessed events\"` -> \"Tests  1 passed | 32 skipped (33)\". RED proof I produced myself: deleting the version-2 block from specs/sqlite.spec.dir/src/migrations.js makes the new test fail with `SqliteError: no such column: processed` at tests/mcp.test.ts:188 (restored afterwards; `git status --porcelain specs/ tests/` clean). Full suite `npx vitest run` -> \"Test Files  1 failed | 98 passed | 4 skipped (103) / Tests  1828 passed | 65 skipped (1893)\", the single failure being tests/ci/ci005-precommit-hook.test.ts (\"Hook not found: .../.git/hooks/pre-commit\") which is unrelated to this change. `npx tsc --noEmit` exit 0. [resolution 0.22; src/mcp/sse.ts]\nThe events.processed column is added by migration v2 (default 0, indexed) in the file the runtime and tests actually load, and a new test drives the SSE poll against a freshly migrated DB and passes (68/68 in the touched suites, 1828 passing overall with one unrelated pre-commit-hook failure).\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-16T15:26:00.988207",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-16T15:26:01.040417+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 15137,
+        "truncated": false,
+        "source": "git show 0ed92385535f"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 262176,
+        "truncated": true,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DF-SPECLANG-4-R4"
+  }
+}

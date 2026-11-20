@@ -1,0 +1,21 @@
+commit 249e61f965ed7f91aa87297f29957f62e576bf46
+Merge: e22cf39b d1860d0c
+Author:     kara <totalwindupflightsystems@gmail.com>
+AuthorDate: Fri Nov 20 05:14:10 2026 -0500
+Commit:     kara <totalwindupflightsystems@gmail.com>
+CommitDate: Fri Nov 20 05:14:10 2026 -0500
+
+    merge wt/DF-SPECLANG-022: start bind verification + MCP claim truthfulness (DF-SPECLANG-022)
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+
+ GETTING-STARTED.md                         |   7 +-
+ README.md                                  |   6 +-
+ bin/speclang                               |  15 +-
+ specs/daemon.spec.dir/architecture.spec.md |  29 +++
+ specs/daemon.spec.dir/src/dashboard.ts     | 140 ++++++++++++
+ specs/daemon.spec.dir/src/index.ts         | 100 ++++++++-
+ src/daemon/dashboard.ts                    |   1 +
+ tests/cli/start-bind-truthfulness.test.ts  | 346 +++++++++++++++++++++++++++++
+ tests/daemon-dashboard-bind.test.ts        | 154 +++++++++++++
+ 9 files changed, 780 insertions(+), 18 deletions(-)

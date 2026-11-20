@@ -1,0 +1,253 @@
+commit e570bfcfacab7414ac14a84adb8667d66e32e252
+Author:     kara <totalwindupflightsystems@gmail.com>
+AuthorDate: Mon Nov 16 10:23:43 2026 -0500
+Commit:     kara <totalwindupflightsystems@gmail.com>
+CommitDate: Mon Nov 16 10:23:43 2026 -0500
+
+    fix(cli): validate --format json emits every spec report and prints no banner on stdout (DF-SPECLANG-9)
+    
+    Two defects from dogfood, both reproduced here before the change:
+    
+    1. A spec that fails to PARSE was dropped from `.reports[]` while the run
+       exited 1 — `totalFiles` said 2, `reports` had 1, and the array held zero
+       errors, so a machine consumer counting reports saw a clean run.
+       `validateCommand`'s catch block only incremented `totalErrors`; it now
+       pushes a `parseFailureReport()` entry for the file (rule
+       `@validation/parse`, level error, message carrying the parse error) so
+       reports.length === totalFiles in every outcome.
+    
+    2. The human banner "📋 Validating specs..." was printed to STDOUT before the
+       JSON payload, so `speclang validate --format json | jq .` could not parse.
+       `--format json` now routes the banner (and `check`'s "🔍 Checking specs...")
+       to STDERR; text mode is unchanged.
+    
+    Also fixes the same stdout-purity class in `check --format json`.
+    
+    Evidence (this worktree):
+    - pre-fix fixture (2 spec files, one unparsable): totalFiles=2,
+      reports=1, reports-with-errors=0, rc=1, stdout began "📋 Validat..."
+    - post-fix same fixture: reports=2, reports-with-errors=1, rc=1,
+      stdout begins "{" and parses with jq
+    - real repo: 452 spec files (450 *.spec.md + 2 *.scl) -> reports=452,
+      totalFiles=452, rc=0. The NASA playbook spec that used to fail now
+      parses (fixed in ebdfe1be, README-18), so the in-tree error count is 0;
+      the drop defect is pinned by the new fixture test instead.
+    - text mode: per-file error still on stderr and exit 1 on the fixture
+      (AC3); repo-wide text run exits 0 because no spec currently fails.
+    
+    Tests: tests/cli.test.ts "validate --format json report integrity" — asserts
+    stdout parses with plain JSON.parse (no banner-tolerant helper), report count
+    equals spec file count, the failing spec is present with its error, exit 1,
+    and the text-mode stderr path. Verified RED against the pre-fix tree
+    (SyntaxError: "📋 Validat..." is not valid JSON) and green after.
+    
+    Co-Authored-By: Alexis Okuwa <wojonstech@gmail.com>
+---
+ bin/speclang                         | 21 +++++++---
+ specs/validation.spec.dir/src/cli.ts | 35 +++++++++++++++-
+ tests/cli.test.ts                    | 79 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 128 insertions(+), 7 deletions(-)
+
+diff --git a/bin/speclang b/bin/speclang
+index 89d6863c..d45a11d3 100755
+--- a/bin/speclang
++++ b/bin/speclang
+@@ -414,8 +414,13 @@ program
+   .option('-f, --format <format>', 'Output format (text, json)', 'text')
+   .action(async (files, options) => {
+     const projectDir = path.resolve(options.dir);
+-    
+-    console.log('📋 Validating specs...');
++    const format = options.format || 'text';
++    // Machine formats own STDOUT: a human banner printed before the payload
++    // makes `speclang validate --format json | jq .` fail to parse
++    // (DF-SPECLANG-9).
++    const banner = format === 'json' ? console.error : console.log;
++
++    banner('📋 Validating specs...');
+     
+     try {
+       const { validateCommand } = require('../dist/src/validation/cli.js');
+@@ -424,7 +429,7 @@ program
+         projectDir,
+         strict: options.strict || false,
+         verbose: options.verbose || false,
+-        format: options.format || 'text'
++        format
+       });
+       process.exitCode = result.success ? 0 : 1;
+     } catch (err) {
+@@ -450,8 +455,12 @@ program
+   .option('-m, --maturity <level>', 'Check max layer for maturity level (POC, MVP, ALPHA, BETA, PRODUCTION)')
+   .action(async (files, options) => {
+     const projectDir = path.resolve(options.dir);
+-    
+-    console.log('🔍 Checking specs...');
++    const format = options.format || 'text';
++    // Same rule as `validate`: JSON owns STDOUT, humans get the banner on
++    // STDERR (DF-SPECLANG-9).
++    const banner = format === 'json' ? console.error : console.log;
++
++    banner('🔍 Checking specs...');
+     
+     // Import the layer validation module
+     let layerOptions = {};
+@@ -491,7 +500,7 @@ program
+         projectDir,
+         strict: options.strict || false,
+         verbose: options.verbose || false,
+-        format: options.format || 'text'
++        format
+       });
+       process.exitCode = result.success ? 0 : 1;
+     } catch (err) {
+diff --git a/specs/validation.spec.dir/src/cli.ts b/specs/validation.spec.dir/src/cli.ts
+index 4515275a..fcaa0110 100644
+--- a/specs/validation.spec.dir/src/cli.ts
++++ b/specs/validation.spec.dir/src/cli.ts
+@@ -9,6 +9,7 @@ import * as fs from 'fs';
+ import { parseSpec } from '../parser/header';
+ import { ValidationEngine } from './engine';
+ import { ValidationReporter } from './reporter';
++import type { ValidationReport } from './types';
+ 
+ export interface ValidateOptions {
+   files: string[];
+@@ -28,6 +29,33 @@ export interface ValidateResult {
+   reports?: any[];
+ }
+ 
++/**
++ * Report for a spec file that failed BEFORE validation could run (parseSpec
++ * threw — malformed speclang-header, bad lines: declaration, playbook error).
++ *
++ * Such a file is a validated-and-failed spec, not a skipped one: omitting it
++ * from `reports` made a machine consumer counting reports see a clean array
++ * (and `reports.length` disagree with `totalFiles`) while the process exited 1
++ * (DF-SPECLANG-9).
++ */
++function parseFailureReport(file: string, error: unknown): ValidationReport {
++  const message = error instanceof Error ? error.message : String(error);
++  return {
++    file,
++    errors: [
++      {
++        rule: '@validation/parse',
++        level: 'error',
++        location: { file, line: 'header' },
++        message: `Failed to parse spec: ${message}`,
++      },
++    ],
++    warnings: [],
++    passed: false,
++    timestamp: new Date(),
++  };
++}
++
+ export async function validateCommand(options: ValidateOptions): Promise<ValidateResult> {
+   const {
+     files,
+@@ -107,7 +135,12 @@ export async function validateCommand(options: ValidateOptions): Promise<Validat
+       }
+     } catch (error) {
+       console.error(`Error validating ${file}:`, (error as Error).message);
+-      totalErrors++;
++      // Keep the failing spec in the report array so `--format json`
++      // consumers see it (and reports.length === totalFiles) instead of a
++      // silently short, all-clean array (DF-SPECLANG-9).
++      const report = parseFailureReport(file, error);
++      reports.push(report);
++      totalErrors += report.errors.length;
+     }
+   }
+ 
+diff --git a/tests/cli.test.ts b/tests/cli.test.ts
+index 56a98287..4e5eb829 100644
+--- a/tests/cli.test.ts
++++ b/tests/cli.test.ts
+@@ -377,6 +377,85 @@ describe("CLI Commands", () => {
+     });
+   });
+ 
++  describe("validate --format json report integrity", () => {
++    // DF-SPECLANG-9: a spec that fails to PARSE used to be dropped from
++    // `reports` (a consumer counting reports saw a clean array while the
++    // process exited 1) and a human banner was printed to STDOUT ahead of the
++    // JSON payload (so `... --format json | jq .` could not parse). Both are
++    // asserted here WITHOUT the banner-tolerant parseJsonFromOutput helper:
++    // stdout on its own must be valid JSON.
++    const jsonBase = ".speclang/tmp/validate-json-reports";
++    const mixedDir = path.join(jsonBase, "mixed");
++
++    beforeAll(() => {
++      fs.rmSync(jsonBase, { recursive: true, force: true });
++      fs.mkdirSync(path.join(mixedDir, "specs"), { recursive: true });
++      // Parse failure: missing required `version` field → parseSpec throws.
++      fs.writeFileSync(
++        path.join(mixedDir, "specs", "broken.spec.md"),
++        '# speclang-header lines:6\nid: "@test/json-broken"\nlayer: 1\ntags: [x]\n---\n',
++      );
++      // Parses and validates clean — the next-door control.
++      fs.writeFileSync(
++        path.join(mixedDir, "specs", "valid.spec.md"),
++        '# speclang-header lines:6\nid: "@test/json-valid"\nversion: 1.0.0\nlayer: 1\ntags: [test]\n---\n',
++      );
++    });
++
++    afterAll(() => {
++      fs.rmSync(jsonBase, { recursive: true, force: true });
++    });
++
++    it("emits pure JSON on stdout with one report per spec file, failing spec included", { timeout: 20000, retry: 2 }, async () => {
++      let stdout = "";
++      let code = 0;
++      try {
++        ({ stdout } = await execAsync(
++          `${CLI_BIN} validate -d ${mixedDir} --format json`,
++        ));
++      } catch (result: unknown) {
++        const failed = result as { stdout: string; code?: number };
++        stdout = failed.stdout;
++        code = failed.code ?? 1;
++      }
++
++      // AC2: stdout alone is JSON — no banner line to strip first.
++      const parsed = JSON.parse(stdout) as {
++        totalFiles: number;
++        reports: Array<{
++          file: string;
++          passed: boolean;
++          errors: Array<{ rule: string; message: string }>;
++        }>;
++      };
++
++      // AC1 invariant: nothing silently dropped — 2 spec files → 2 reports.
++      expect(parsed.totalFiles).toBe(2);
++      expect(parsed.reports).toHaveLength(2);
++
++      const failing = parsed.reports.filter(
++        (r) => (r.errors?.length ?? 0) > 0,
++      );
++      expect(failing).toHaveLength(1);
++      expect(failing[0].file).toContain("broken.spec.md");
++      expect(failing[0].passed).toBe(false);
++      expect(failing[0].errors[0].message).toMatch(/version/i);
++
++      // The failure must be visible in the exit code too, not only in the array.
++      expect(code).toBe(1);
++    });
++
++    it("still reports the per-file error on stderr in text mode", { timeout: 15000, retry: 2 }, async () => {
++      try {
++        await execAsync(`${CLI_BIN} validate -d ${mixedDir}`);
++        expect(true).toBe(false); // exit code must be non-zero
++      } catch (result: unknown) {
++        const { stderr } = result as { stdout: string; stderr: string };
++        expect(stderr).toContain("broken.spec.md");
++      }
++    });
++  });
++
+   describe("index", () => {
+     it("should show index stats", { timeout: 15000, retry: 2 }, async () => {
+       const { stdout } = await cliExec(`${CLI} index`);

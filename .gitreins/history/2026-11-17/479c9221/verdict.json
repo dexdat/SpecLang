@@ -1,0 +1,628 @@
+{
+  "task_id": "DF-SPECLANG-013",
+  "task_title": "GitReins tier1 build arm must not grade a missing dependency as FAIL",
+  "task_criteria": [
+    "1. scripts/guard-build.sh exists and, run in a tree with no node_modules, prints 'GITREINS_SKIP: build=dependencies not installed' and exits 0. 2. Run in a tree WITH node_modules, it runs npm run build and propagates npm's exit code. 3. .gitreins/config.yaml routes both guards.build_command and pipeline stage id 'build' through scripts/guard-build.sh."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "land/2117",
+  "commit": "8f7b9b362a5e293af3593bbd444d3001294d6570",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "37bf267b93c295d7f471d0c2a3434904c4a3d38fddd0f5ce2f347df41ebd7e3a",
+  "working_tree_dirty_path_count": 0,
+  "items": [
+    {
+      "criterion": "1. scripts/guard-build.sh exists and, run in a tree with no node_modules, prints 'GITREINS_SKIP: build=dependencies not installed' and exits 0. 2. Run in a tree WITH node_modules, it runs npm run build and propagates npm's exit code. 3. .gitreins/config.yaml routes both guards.build_command and pipeline stage id 'build' through scripts/guard-build.sh.",
+      "status": "PASS",
+      "detail": "All three sub-requirements verified by execution, not inspection. (1) scripts/guard-build.sh exists (2387 bytes, mode -rwxrwxr-x). Run in an isolated tree with no node_modules (/tmp/gb-nonm, script copied to scripts/): stdout was 'skipped: dependencies not installed (node_modules absent \u2014 run npm ci)' followed by 'GITREINS_SKIP: build=dependencies not installed (node_modules absent \u2014 run npm ci)', rc=0; `grep -c 'GITREINS_SKIP: build=dependencies not installed'` returned 1 (EXACT_STRING_PRESENT). (2) WITH node_modules, in the real repo: `bash scripts/guard-build.sh` -> 'build ok \u2014 npm run build exited 0', EXIT_CODE=0. Exit-code propagation proven in /tmp/gb-fail (node_modules dir present, package.json build=\"exit 7\"): output 'build FAILED \u2014 npm run build exited 7', EXIT_CODE=7 \u2014 npm's own rc is propagated, not swallowed (scripts/guard-build.sh:52-60 captures rc then `exit \"$rc\"`). (3) .gitreins/config.yaml:22 `build_command: bash scripts/guard-build.sh` under `guards:` (line 1), and .gitreins/config.yaml:67 `run: bash scripts/guard-build.sh` under `pipeline:` (line 51) step `id: build` (line 61) \u2014 both live YAML keys, not comments. Test evidence: `npx vitest run tests/ci/ci005-precommit-hook.test.ts` -> 'Test Files 1 passed (1) / Tests 7 passed (7)', EXIT_CODE=0; AC4 at tests/ci/ci005-precommit-hook.test.ts:180-199 asserts both config routes and that the wrapper body contains `npm run build`. [resolution 0.00; scripts/guard-build.sh]"
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: \u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[1/1]\u23af",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T212318.683079Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\nnpm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T212318.683079Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "\n\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[1/1]\u23af\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T212318.683079Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 1. scripts/guard-build.sh exists and, run in a tree with no node_modules, prints 'GITREINS_SKIP: build=dependencies not installed' and exits 0. 2. Run in a tree WITH node_modules, it runs npm run build and propagates npm's exit code. 3. .gitreins/config.yaml routes both guards.build_command and pipeline stage id 'build' through scripts/guard-build.sh.: All three sub-requirements verified by execution, not inspection. (1) scripts/guard-build.sh exists (2387 bytes, mode -rwxrwxr-x). Run in an isolated tree with no node_modules (/tmp/gb-nonm, script copied to scripts/): stdout was 'skipped: dependencies not installed (node_modules absent \u2014 run npm ci)' followed by 'GITREINS_SKIP: build=dependencies not installed (node_modules absent \u2014 run npm ci)', rc=0; `grep -c 'GITREINS_SKIP: build=dependencies not installed'` returned 1 (EXACT_STRING_PRESENT). (2) WITH node_modules, in the real repo: `bash scripts/guard-build.sh` -> 'build ok \u2014 npm run build exited 0', EXIT_CODE=0. Exit-code propagation proven in /tmp/gb-fail (node_modules dir present, package.json build=\"exit 7\"): output 'build FAILED \u2014 npm run build exited 7', EXIT_CODE=7 \u2014 npm's own rc is propagated, not swallowed (scripts/guard-build.sh:52-60 captures rc then `exit \"$rc\"`). (3) .gitreins/config.yaml:22 `build_command: bash scripts/guard-build.sh` under `guards:` (line 1), and .gitreins/config.yaml:67 `run: bash scripts/guard-build.sh` under `pipeline:` (line 51) step `id: build` (line 61) \u2014 both live YAML keys, not comments. Test evidence: `npx vitest run tests/ci/ci005-precommit-hook.test.ts` -> 'Test Files 1 passed (1) / Tests 7 passed (7)', EXIT_CODE=0; AC4 at tests/ci/ci005-precommit-hook.test.ts:180-199 asserts both config routes and that the wrapper body contains `npm run build`. [resolution 0.00; scripts/guard-build.sh]\nscripts/guard-build.sh exists and was executed in all three states (no node_modules -> GITREINS_SKIP + exit 0; node_modules + success -> exit 0; node_modules + failing build -> exit 7 propagated), and .gitreins/config.yaml routes both guards.build_command (line 22) and pipeline step id 'build' (line 67) through it, with the covering test suite green (7/7 passed). [uncovered failure paths: failure mode 0 (The GITREINS_SKIP line is the SECOND line of output, not the first; the script's own header comment (scripts/guard-build.sh:24-26) states the judge console renders only the first non-blank line after '<glyph> build:', so the console shows 'skipped: dependencies not installed...' rather than the machine-readable GITREINS_SKIP token. The skip is still recorded correctly if the engine scans full stdout, but a first-line-only renderer would not surface the skip token.): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 1. scripts/guard-build.sh exists and, run in a tree with no node_modules, prints 'GITREINS_SKIP: build=dependencies not installed' and exits 0. 2. Run in a tree WITH node_modules, it runs npm run build and propagates npm's exit code. 3. .gitreins/config.yaml routes both guards.build_command and pipeline stage id 'build' through scripts/guard-build.sh.: All three sub-requirements verified by execution, not inspection. (1) scripts/guard-build.sh exists (2387 bytes, mode -rwxrwxr-x). Run in an isolated tree with no node_modules (/tmp/gb-nonm, script copied to scripts/): stdout was 'skipped: dependencies not installed (node_modules absent \u2014 run npm ci)' followed by 'GITREINS_SKIP: build=dependencies not installed (node_modules absent \u2014 run npm ci)', rc=0; `grep -c 'GITREINS_SKIP: build=dependencies not installed'` returned 1 (EXACT_STRING_PRESENT). (2) WITH node_modules, in the real repo: `bash scripts/guard-build.sh` -> 'build ok \u2014 npm run build exited 0', EXIT_CODE=0. Exit-code propagation proven in /tmp/gb-fail (node_modules dir present, package.json build=\"exit 7\"): output 'build FAILED \u2014 npm run build exited 7', EXIT_CODE=7 \u2014 npm's own rc is propagated, not swallowed (scripts/guard-build.sh:52-60 captures rc then `exit \"$rc\"`). (3) .gitreins/config.yaml:22 `build_command: bash scripts/guard-build.sh` under `guards:` (line 1), and .gitreins/config.yaml:67 `run: bash scripts/guard-build.sh` under `pipeline:` (line 51) step `id: build` (line 61) \u2014 both live YAML keys, not comments. Test evidence: `npx vitest run tests/ci/ci005-precommit-hook.test.ts` -> 'Test Files 1 passed (1) / Tests 7 passed (7)', EXIT_CODE=0; AC4 at tests/ci/ci005-precommit-hook.test.ts:180-199 asserts both config routes and that the wrapper body contains `npm run build`. [resolution 0.00; scripts/guard-build.sh]\nscripts/guard-build.sh exists and was executed in all three states (no node_modules -> GITREINS_SKIP + exit 0; node_modules + success -> exit 0; node_modules + failing build -> exit 7 propagated), and .gitreins/config.yaml routes both guards.build_command (line 22) and pipeline step id 'build' (line 67) through it, with the covering test suite green (7/7 passed). [uncovered failure paths: failure mode 0 (The GITREINS_SKIP line is the SECOND line of output, not the first; the script's own header comment (scripts/guard-build.sh:24-26) states the judge console renders only the first non-blank line after '<glyph> build:', so the console shows 'skipped: dependencies not installed...' rather than the machine-readable GITREINS_SKIP token. The skip is still recorded correctly if the engine scans full stdout, but a first-line-only renderer would not surface the skip token.): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "1. scripts/guard-build.sh exists and, run in a tree with no node_modules, prints 'GITREINS_SKIP: build=dependencies not installed' and exits 0. 2. Run in a tree WITH node_modules, it runs npm run build and propagates npm's exit code. 3. .gitreins/config.yaml routes both guards.build_command and pipeline stage id 'build' through scripts/guard-build.sh.",
+                "status": "PASS",
+                "detail": "All three sub-requirements verified by execution, not inspection. (1) scripts/guard-build.sh exists (2387 bytes, mode -rwxrwxr-x). Run in an isolated tree with no node_modules (/tmp/gb-nonm, script copied to scripts/): stdout was 'skipped: dependencies not installed (node_modules absent \u2014 run npm ci)' followed by 'GITREINS_SKIP: build=dependencies not installed (node_modules absent \u2014 run npm ci)', rc=0; `grep -c 'GITREINS_SKIP: build=dependencies not installed'` returned 1 (EXACT_STRING_PRESENT). (2) WITH node_modules, in the real repo: `bash scripts/guard-build.sh` -> 'build ok \u2014 npm run build exited 0', EXIT_CODE=0. Exit-code propagation proven in /tmp/gb-fail (node_modules dir present, package.json build=\"exit 7\"): output 'build FAILED \u2014 npm run build exited 7', EXIT_CODE=7 \u2014 npm's own rc is propagated, not swallowed (scripts/guard-build.sh:52-60 captures rc then `exit \"$rc\"`). (3) .gitreins/config.yaml:22 `build_command: bash scripts/guard-build.sh` under `guards:` (line 1), and .gitreins/config.yaml:67 `run: bash scripts/guard-build.sh` under `pipeline:` (line 51) step `id: build` (line 61) \u2014 both live YAML keys, not comments. Test evidence: `npx vitest run tests/ci/ci005-precommit-hook.test.ts` -> 'Test Files 1 passed (1) / Tests 7 passed (7)', EXIT_CODE=0; AC4 at tests/ci/ci005-precommit-hook.test.ts:180-199 asserts both config routes and that the wrapper body contains `npm run build`. [resolution 0.00; scripts/guard-build.sh]",
+                "resolution_probability": 0.0,
+                "cited_path": "scripts/guard-build.sh"
+              }
+            ],
+            "summary": "scripts/guard-build.sh exists and was executed in all three states (no node_modules -> GITREINS_SKIP + exit 0; node_modules + success -> exit 0; node_modules + failing build -> exit 7 propagated), and .gitreins/config.yaml routes both guards.build_command (line 22) and pipeline step id 'build' (line 67) through it, with the covering test suite green (7/7 passed). [uncovered failure paths: failure mode 0 (The GITREINS_SKIP line is the SECOND line of output, not the first; the script's own header comment (scripts/guard-build.sh:24-26) states the judge console renders only the first non-blank line after '<glyph> build:', so the console shows 'skipped: dependencies not installed...' rather than the machine-readable GITREINS_SKIP token. The skip is still recorded correctly if the engine scans full stdout, but a first-line-only renderer would not surface the skip token.): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "degraded": true,
+      "skipped_steps": [
+        "build"
+      ],
+      "degradation_reason": "skipped at runtime \u2014 build: dependencies not installed' and exits 0. 2. Run in a tree WITH node_modules, it runs npm run build and propagates npm's exit code. 3. .gitreins/config.yaml routes both guards.build_command and pipeline stage id 'build' through scripts/guard-build.sh.: All three sub-requirements verified by execution, not inspection. (1) scripts/guard-build.sh exists (2387 bytes, mode -rwxrwxr-x). Run in an isolated tree with no node_modules (/tmp/gb-nonm, script copied to scripts/): stdout was 'skipped: dependencies not installed (node_modules absent \u2014 run npm ci)' followed by 'GITREINS_SKIP: build=dependencies not installed (node_modules absent \u2014 run npm ci)', rc=0; `grep -c 'GITREINS_SKIP: build=dependencies not installed'` returned 1 (EXACT_STRING_PRESENT). (2) WITH node_modules, in the real repo: `bash scripts/guard-build.sh` -> 'build ok \u2014 npm run build exited 0', EXIT_CODE=0. Exit-code propagation proven in /tmp/gb-fail (node_modules dir present, package.json build=\"exit 7\"): output 'build FAILED \u2014 npm run build exited 7', EXIT_CODE=7 \u2014 npm's own rc is propagated, not swallowed (scripts/guard-build.sh:52-60 captures rc then `exit \"$rc\"`). (3) .gitreins/config.yaml:22 `build_command: bash scripts/guard-build.sh` under `guards:` (line 1), and .gitreins/config.yaml:67 `run: bash scripts/guard-build.sh` under `pipeline:` (line 51) step `id: build` (line 61) \u2014 both live YAML keys, not comments. Test evidence: `npx vitest run tests/ci/ci005-precommit-hook.test.ts` -> 'Test Files 1 passed (1) / Tests 7 passed (7)', EXIT_CODE=0; AC4 at tests/ci/ci005-precommit-hook.test.ts:180-199 asserts both config routes and that the wrapper body contains `npm run build`. [resolution 0.00; scripts/guard-build.sh]",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-013\"}",
+          "exit_code": 0,
+          "output_sha": "340ab3bc186556caf340418f8a50d98b2af75ce40b64c1b667a664ca83205052"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la; echo \"---\"; ls scripts/ 2>/dev/null; echo \"---\"; cat .gitreins/config.yaml 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "57c9ec5db3ac3dc91ded6f74cdc6c0e4b587ffd8e24852545cf1083e322211dc"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la scripts/ 2>&1 | head -50; echo \"=== guard-build.sh ===\"; cat scripts/guard-build.sh 2>&1",
+          "exit_code": 0,
+          "output_sha": "976d9bc52a3bcd19ad2723009c64e6fa586799419a409f54ce4c2577429e04e8"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"build_command\" -r .gitreins/ 2>/dev/null | head -20; echo \"=== config head ===\"; head -80 .gitreins/config.yaml",
+          "exit_code": 0,
+          "output_sha": "ac45e2eaf4013f4a2f3397e9ef2b63f4b75a07d9d2f38695932e5c0356932d2f"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 1,40p .gitreins/config.yaml",
+          "exit_code": 0,
+          "output_sha": "817d18ef2bc79435de62c84c923fba82a5bc9e911c75f350e2cf9a2da6058023"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp && rm -rf gbtest && mkdir -p gbtest/scripts && cp \"$OLDPWD/scripts/guard-build.sh\" gbtest/scripts/ 2>/dev/null || cp /workspace/scripts/guard-build.sh gbtest/scripts/; ls -la gbtest/scripts; echo \"=== run no node_modules ===\"; bash gbtest/scripts/guard-build.sh; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "917abf4b33aad62a635ee425d7a48a7d09db3c7920d49a1299fe0295e0726270"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/gbtest && mkdir -p node_modules && cat > package.json <<'EOF'\n{\"name\":\"t\",\"version\":\"1.0.0\",\"scripts\":{\"build\":\"node -e \\\"console.log('built ok')\\\"\"}}\nEOF\necho \"=== success case ===\"; bash scripts/guard-build.sh; echo \"EXIT=$?\"\ncat > package.json <<'EOF'\n{\"name\":\"t\",\"version\":\"1.0.0\",\"scripts\":{\"build\":\"node -e \\\"console.error('boom'); process.exit(7)\\\"\"}}\nEOF\necho \"=== failure case (expect exit 7) ===\"; bash scripts/guard-build.sh; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "19bd8581169a69b3980d3eb998c196d5639599ec9faeccfe505f2f69813716f7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /workspace 2>/dev/null || cd \"$(git rev-parse --show-toplevel)\"; pwd; echo \"=== git log for guard-build.sh ===\"; git log --oneline -5 -- scripts/guard-build.sh; echo \"=== is it tracked? ===\"; git ls-files scripts/guard-build.sh; echo \"=== last commit diff ===\"; git show --stat HEAD",
+          "exit_code": 0,
+          "output_sha": "dd1ae9bef60f068dce2ce7046db43163413ed2df1c813d2b090fed275949b3c7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && cat tests/ci/ci005-precommit-hook.test.ts",
+          "exit_code": 0,
+          "output_sha": "d5f1cee19d93f954bbb6a4607c4c08633675e9f8caac3f7be3930e9dadaee802"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git show a3a994bd --stat; echo \"=== full script with line numbers ===\"; cat -n scripts/guard-build.sh",
+          "exit_code": 0,
+          "output_sha": "29504a5d5a06175432359e04fad97e104b0f1e000af3af2eafeb5e3e706b680b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n 60,140p tests/ci/ci005-precommit-hook.test.ts",
+          "exit_code": 0,
+          "output_sha": "63e0934c9ffbb097ebd654621b422af6407e88a9e5f5c331d3799450d075ba16"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git show HEAD -- tests/ci/ci005-precommit-hook.test.ts",
+          "exit_code": 0,
+          "output_sha": "977a827c74a0c2a57074d47a7a9479008e263f2163b5b54ce74d293811811943"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls node_modules >/dev/null 2>&1 && echo \"node_modules present\" || echo \"node_modules ABSENT\"; timeout 600 npx vitest run tests/ci/ci005-precommit-hook.test.ts 2>&1 | tail -30; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "f7fe0aabffa7ac769edcb54ac560816d6d8ff0edd24738bf7d159553e2628c52"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"GITREINS_SKIP\" --include=*.py --include=*.ts --include=*.sh --include=*.md . 2>/dev/null | grep -v node_modules | grep -v \"^./dist/\" | head -30",
+          "exit_code": 0,
+          "output_sha": "110ec68d50e125d6cd23e1154ed0dfd214b93aaa6c2e324c2f7b304ca5956527"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"GITREINS_SKIP\\|skipped_steps\\|allow_skips\" --include=*.py . 2>/dev/null | grep -v node_modules | head -30; echo \"=== engine dir ===\"; ls engine 2>/dev/null | head; echo \"=== find pipeline.py ===\"; find . -name \"pipeline.py\" -not -path \"*/node_modules/*\" | head",
+          "exit_code": 0,
+          "output_sha": "2d6512d5bd19a1e4b93737a033e38acbcc086233040effe80f119542cb51b98d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n 1,25p scripts/guard-build.sh; echo \"=== config-validate ===\"; timeout 120 gitreins config-validate 2>&1 | head -40",
+          "exit_code": 0,
+          "output_sha": "f7be84f06d1f694993b55bc94bed25ce2a0bfdfcb107fbb5bbf0a6eb0a5924cc"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && which gitreins; python3 -c \"import gitreins,os;print(os.path.dirname(gitreins.__file__))\" 2>/dev/null; pip show gitreins 2>/dev/null | head -5",
+          "exit_code": 0,
+          "output_sha": "94b549e41745a658c669995d8bec94f7219bca495d8c45b34aabd8b232a80a3b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"guard-build\" --include=* -l . 2>/dev/null | grep -v node_modules | grep -v \"^./.git/\" | head -20",
+          "exit_code": 0,
+          "output_sha": "9d91f65907a1addbbc5864ac18ecf9d1cd2b6556616b05808c3c7263f48acfc1"
+        },
+        {
+          "tool": "run_command",
+          "command": "python3 -c \"import gitreins,os;print(os.path.dirname(gitreins.__file__))\"; P=$(python3 -c \"import gitreins,os;print(os.path.dirname(gitreins.__file__))\"); grep -rn \"GITREINS_SKIP\" \"$P\" | head -20",
+          "exit_code": 0,
+          "output_sha": "98baaa4846ed638b3e894b82051a302ccdd34f21b08fef30e7bc6a08684ea2ac"
+        },
+        {
+          "tool": "run_command",
+          "command": "head -3 /home/kara/.local/bin/gitreins; echo \"---\"; grep -rn \"GITREINS_SKIP\" /home/kara/.local/lib/python*/site-packages/gitreins/ 2>/dev/null | head -20; echo \"--- pipx/venv? ---\"; ls -d /home/kara/.local/pipx/venvs/*/lib/python*/site-packages/gitreins 2>/dev/null",
+          "exit_code": 2,
+          "output_sha": "4f22d83f870844b0dcebc07da47eef66b8b9b4e8cfb85a5227c9cbe8ae0d6596"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib; ls $P; grep -rn \"GITREINS_SKIP\" $P/python*/site-packages/gitreins/ 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "724efcadb1e5ba10523b821b916fc465b487e8a3fadb9cc8ed8903c1fc0c30b9"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; ls $P | head -20; echo \"=== grep SKIP ===\"; grep -rn \"GITREINS_SKIP\" $P 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "73e12030715b1b74810acab1b9bcbaec774fc09ee423622862975dd58bc73038"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; sed -n 100,200p $P/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "a0ced159a32de19fbdd9763390fbdb2422f59459861b55267bed3b7336b0d893"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"parse_skip_sentinels\\|skipped_steps\\|SKIP_SENTINEL\" $P/engine/pipeline.py | head -30",
+          "exit_code": 0,
+          "output_sha": "1db0191fd55715d38a4320811d1eb9b1214cb187dd29f511efc5fed53c2ebf77"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; sed -n 400,470p $P/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "d02c57ffecf54c149658247dc331f8d00e198ea19086038a14f9f1d460471008"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; sed -n 150,170p $P/engine/pipeline.py; echo \"=== _record_runtime_skips call sites ===\"; grep -n \"_record_runtime_skips\" $P/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "c759f8ac435543e1bd5e6054819bda55d7de1b84ae62bf4f9be3842fb7e0f8ac"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; sed -n 700,760p $P/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "6bec6c2cc7bb7a522be4bf80607cdde6259e7627bbc3c9bf3157bf3b55c37d5b"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"def _run_script_step\" -A 80 $P/engine/pipeline.py | head -110",
+          "exit_code": 0,
+          "output_sha": "489301b012d92f0c12f51dbd139194fc6d7a4cbf8dfdd3e880ddf82ddfcc6ae3"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; sed -n 981,1030p $P/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "cd0cd7482d3f08b0993498a63b55e309b93cbacee8f0a3981ac21b009484eb30"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"def _is_degraded_guard_pass\" -A 40 $P/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "94bce168bb34e013248524178d03eb82e76a2e1bfcde1a52fefc0f45cfff34e3"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"def _run_parallel_stage\" -A 60 $P/engine/pipeline.py | head -80",
+          "exit_code": 0,
+          "output_sha": "68d1669c2ea8eadccf22aad2d538e0d19a21f656dfe51319c3aea574d92023bc"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"def _run_step\" -A 40 $P/engine/pipeline.py | head -60",
+          "exit_code": 0,
+          "output_sha": "c1750b08ac4ed81e2434b25d4a873af021a1b8896911afb74da27dcaf21857e7"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; sed -n 1030,1120p $P/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "094167845bd998d8c8cb3ffbadbbac4e4ef7a5fdccc6ae603263d629fbb5033a"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; sed -n 1060,1085p $P/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "53597b8bac2e106bba3b298b433331745f3b869751ef7bf18c1c9185f82aac81"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"def _format_steps\" -A 40 $P/engine/pipeline.py",
+          "exit_code": 1,
+          "output_sha": "cadfb642c884a824e2f188f8f68b081558aff2766e36133d6f83e58c061b3c6c"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -rn \"_format_steps\" $P/engine/*.py | head; echo \"---\"; grep -rn \"def _format_steps\" -A 35 $P/engine/ 2>/dev/null | head -50",
+          "exit_code": 0,
+          "output_sha": "a7e463a60632d75c7430b7b35eb11b03369486354b95916405dbde1d1d51c7fb"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -rn \"format_steps\\|glyph\" $P/engine/ 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "a649d28201bdb951adfe995b172259a925bfde724d71acb2ba9917b6185fefe8"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -rn \"build:\" $P/engine/pipeline.py | head -20; echo \"=== _summarize_stage ===\"; grep -n \"def _summarize_stage\" -A 30 $P/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "28f7b0781816ceb90abaa20da719234e967f85bb0cc909dda1479690664dfa90"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; sed -n 1666,1700p $P/engine/pipeline.py; echo \"=== _step_skip_reason ===\"; grep -n \"def _step_skip_reason\" -A 30 $P/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "79de551ac555f1f89b12b767a108b4867e84442840baa3ddb8202a590b6cd469"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"def _tier1_skipped_steps\" -A 40 $P/engine/worktree_manager.py",
+          "exit_code": 0,
+          "output_sha": "ac5376fb5c64ae75361a257a6bf391a3c86abb3846ec56dcf2ec5984bca41408"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -rn \"_tier1_skipped_steps\" $P/engine/*.py | head",
+          "exit_code": 0,
+          "output_sha": "465212393da24299f66a6ec41f74b86f9afe8ec33a64bef324e18f01b00b6a99"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; sed -n 975,1045p $P/engine/worktree_manager.py",
+          "exit_code": 0,
+          "output_sha": "25b6f92bd6a95bbabdb34a598310453fcbc60b41611cc94f09a5b27091b0260c"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"def _refuse_tier1_only\" -A 40 $P/engine/worktree_manager.py",
+          "exit_code": 0,
+          "output_sha": "3959dbb9436509b8925f54af75725a5d55eedce311d5a70be72aa3d79708e5f6"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"def pass_class\" -A 40 $P/engine/gate.py",
+          "exit_code": 0,
+          "output_sha": "1e7cefc543fad786e1bf8e9e9a302709aefa25284c584c04715336b2d863f259"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"def _tier2_evidence\" -A 40 $P/engine/gate.py",
+          "exit_code": 0,
+          "output_sha": "1296d86cc87fe501e80e4ffe6d793b6b1d6815dba46f400e83e82b0f0665c62a"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"def _compile_results\" -A 60 $P/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "c3dfdb7d857411a42d2c4a9ed6e97832a0ccf6dff1e1b010428a3c6e145b0d95"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -rn \"pass_class\" $P/engine/pipeline.py $P/engine/judge.py $P/engine/persist.py | head -20",
+          "exit_code": 0,
+          "output_sha": "3aae4c37c3916811f970af9738f93005f3a1b4d064f5584d96626991b0f7c942"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; sed -n 1055,1090p $P/engine/persist.py",
+          "exit_code": 0,
+          "output_sha": "191cbd1b0f1b677f373ee48054a2f8b95ddb4a77b5f40ff4ce06cb0769a503de"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"def _field\" -A 25 $P/engine/gate.py",
+          "exit_code": 0,
+          "output_sha": "637fa6e1227b61389ce61a2fe052734898bd90356a4739691d38f40e68024e9d"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"def to_dict\" -A 30 $P/engine/pipeline.py | head -70",
+          "exit_code": 0,
+          "output_sha": "4aa08547ba266268a748df194917c04d10204895d43bd96cfd6e363934274139"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"def _run_ai_eval\" -A 120 $P/engine/pipeline.py | grep -n \"data\\|verdict\\|StepResult\" | head -40",
+          "exit_code": 0,
+          "output_sha": "446cad9ba21d3bbc369104face345d63fd3197b61a60f0223c33016b66f089ff"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; sed -n 1210,1300p $P/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "4df8c638a35bd12a2c765dc50f629cadeb23732b1fa3de1a63313eb7079f9c7f"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; sed -n 1255,1290p $P/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "983c5019232028b45096f26c6ecdd6d9337803a0ab903698dc7d1549c9147828"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"def _bound_step_evidence\" -A 30 $P/engine/pipeline.py",
+          "exit_code": 1,
+          "output_sha": "725e7c904fefcfd5fdaa773afe58d08645db6edac2030a7163b520147c32a42d"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -rn \"_bound_step_evidence\" $P/engine/*.py | head; echo \"---\"; grep -rn \"def _bound_step_evidence\" -A 30 $P/engine/ | head -40",
+          "exit_code": 0,
+          "output_sha": "4df37f2b75bf27a001bc180bc65b12b549d9a677beccc15f6426ea7b841bfff8"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; sed -n 1,60p $P/engine/evidence_bounds.py; echo \"=== MAX ===\"; grep -n \"MAX_EVIDENCE_CHARS\" $P/engine/evidence_bounds.py | head",
+          "exit_code": 0,
+          "output_sha": "d68baa3b84c6453b92886297fe50945754a24a8cae1dadd2bc5fe9a156d1fe55"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; sed -n 140,250p $P/engine/evidence_bounds.py",
+          "exit_code": 0,
+          "output_sha": "d599e46aa5271e1e43798664de21202ee4f9ab867ad31aa7ea30ceb454929de9"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; sed -n 185,215p $P/engine/evidence_bounds.py",
+          "exit_code": 0,
+          "output_sha": "3bd7495e016008626fca85765564224b51dbc8c9b8a60a5bf037107cf60ca5d8"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"def _marker_for\" -A 40 $P/engine/evidence_bounds.py",
+          "exit_code": 0,
+          "output_sha": "5db1bf51dd44ca4efa47164b427bafc08c1f9936f7bfb49cf55b6fc8d954fd43"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"def _omission_marker\" -A 30 $P/engine/evidence_bounds.py",
+          "exit_code": 0,
+          "output_sha": "9229057dd63ea9586f8b41960e4765072f5c97a1524cb1feb32c1f15cbdf8d54"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; sed -n 60,96p $P/engine/evidence_bounds.py",
+          "exit_code": 0,
+          "output_sha": "7066f0e288f6c9ad5d5e695c4f96d716d9be8fc83727929162a94d9cee52cb7b"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"def _first_nonblank_line\" -A 20 $P/engine/pipeline.py",
+          "exit_code": 1,
+          "output_sha": "ba73eafaab4f9e84baf8bf4b10dc43d40d6dd24f346350dc34e9412005c94d96"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -rn \"_first_nonblank_line\" $P/engine/*.py | head; grep -rn \"def _first_nonblank_line\" -A 20 $P/engine/ | head -30",
+          "exit_code": 0,
+          "output_sha": "8beda65416b5639598ed7d9540898f384f9bb4a35f66225962c32ebdb9b03ef7"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"def _run_commit_audit\" -A 60 $P/engine/pipeline.py | grep -n \"StepResult\\|data=\" | head -20",
+          "exit_code": 0,
+          "output_sha": "fde8f6b9500b518bcabcaf3f6dfced10b55723942fc2eca19cb54f7f00305dc5"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; sed -n 1370,1400p $P/engine/pipeline.py",
+          "exit_code": 0,
+          "output_sha": "c142fae4fbc53cd9c26ba16720fcfa42ef823798c9dafca46b6453d2222b7a0d"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && echo \"---\" && ls -la scripts/ 2>/dev/null | head -50",
+          "exit_code": 0,
+          "output_sha": "0fc5deb891fd55b4b2b561dd0d4f5e1b355f85e71e3c1b94e8c5db94ab04a0e2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat .gitreins/config.yaml 2>/dev/null | head -100",
+          "exit_code": 0,
+          "output_sha": "39560b14aebc90223a1abbebb53dbcec30f3b6cbdd30f5c0a87ace23d98e76d9"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la scripts/guard-build.sh 2>&1; echo \"=== CONTENT ===\"; cat scripts/guard-build.sh 2>&1",
+          "exit_code": 0,
+          "output_sha": "41d83110cefdd2da34381c9cf573603f3aa9497ff006d5abfff8dc50eecfd36c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; git -C . log --oneline -5 2>&1; echo \"=== diff of last commit ===\"; git show --stat HEAD 2>&1 | head -30",
+          "exit_code": 0,
+          "output_sha": "cf04093ddfa2dc2f2467f6c1ea2d1e5c4d2d5a1a78f32e2193a9579293a16e06"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd \"$(pwd)\" && pwd && ls -d node_modules 2>&1; echo \"=== package.json build script ===\"; grep -A3 '\"scripts\"' package.json | head -20",
+          "exit_code": 0,
+          "output_sha": "e7f6e4466128c35b769411b372422ea56b4a12d0545c575fe65b9140f0b0f3df"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd \"$(pwd)\" && bash scripts/guard-build.sh; echo \"EXIT_CODE=$?\"",
+          "exit_code": 0,
+          "output_sha": "42ed0500ac4821b3e778ce033330038456ad2e4e74f6488224c35b0c351aaa5f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && rm -rf /tmp/gb-nonm && mkdir -p /tmp/gb-nonm/scripts && cp scripts/guard-build.sh /tmp/gb-nonm/scripts/ && cd /tmp/gb-nonm && ls -la && echo \"=== RUN (no node_modules) ===\" && bash scripts/guard-build.sh; echo \"EXIT_CODE=$?\"",
+          "exit_code": 0,
+          "output_sha": "54c4c2e7af46ab5c7de7b4904c1eb0a95c3a69ffba72eec1830f44adfc53d32c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && rm -rf /tmp/gb-fail && mkdir -p /tmp/gb-fail/scripts /tmp/gb-fail/node_modules && cp scripts/guard-build.sh /tmp/gb-fail/scripts/ && cat > /tmp/gb-fail/package.json <<'EOF'\n{\"name\":\"fake\",\"version\":\"1.0.0\",\"scripts\":{\"build\":\"exit 7\"}}\nEOF\ncd /tmp/gb-fail && echo \"=== RUN (node_modules present, build fails rc=7) ===\" && bash scripts/guard-build.sh; echo \"EXIT_CODE=$?\"",
+          "exit_code": 0,
+          "output_sha": "8d65fe9e156a7e1dab3367ccf80788bf9144d090bc2c0d31200c44da6eacbf9e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && echo \"=== grep guard-build across repo ===\" && grep -rn \"guard-build\" --include=*.yaml --include=*.yml --include=*.ts --include=*.sh --include=*.md . 2>/dev/null | grep -v node_modules | grep -v '\\.tmp/' | head -20",
+          "exit_code": 0,
+          "output_sha": "81891e6121a7de045e39e87e92936c72ec5775898dac2df6998270b054c442b5"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n '1,80p' tests/ci/ci005-precommit-hook.test.ts",
+          "exit_code": 0,
+          "output_sha": "59eb0d450f0ab5ce199bc1ce955e80d79e47daf50129d27845ad7f4f1840a5b0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n '170,215p' tests/ci/ci005-precommit-hook.test.ts",
+          "exit_code": 0,
+          "output_sha": "60cc047819c162dfdcf493f3feead6042d6e1a8184d990a302ea99972ab8bda6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && npx vitest run tests/ci/ci005-precommit-hook.test.ts 2>&1 | tail -25; echo \"EXIT_CODE=$?\"",
+          "exit_code": 0,
+          "output_sha": "65f3ae86f504576f2d43e7184ca9381b784046a0d7f60ed96978657d08caaced"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: all three sub-requirements verified empirically.\\n(1) scripts/guard-build.sh exists (2387 bytes, mode -rwxrwxr-x). Run in isolated tree /tmp/gb-nonm with NO node_modules: stdout = \\\"skipped: dependencies not installed (node_modules absent \\u2014 run npm ci)\\\" then \\\"GITREINS_SKIP: build=dependencies not installed (node_modules absent \\u2014 run npm ci)\\\", EXIT_CODE=0. The required substring 'GITREINS_SKIP: build=dependencies not installed' is present verbatim.\\n(2) WITH node_modules: in real repo /home/kara/SpecLang, `bash scripts/guard-build.sh` -> \\\"build ok \\u2014 npm run build exited 0\\\", EXIT_CODE=0. Failure propagation proven in /tmp/gb-fail (fake package.json build=\\\"exit 7\\\", node_modules dir present): output \\\"build FAILED \\u2014 npm run build exited 7\\\", EXIT_CODE=7 \\u2014 npm's own rc propagated, not swallowed.\\n(3) .gitreins/config.yaml:22 `build_command: bash scripts/guard-build.sh` (under guards:) and .gitreins/config.yaml:67 `run: bash scripts/guard-build.sh` (pipeline stage id 'build', tier1). Both are live YAML keys, not comments.\\nTest evidence: `npx vitest run tests/ci/ci005-precommit-hook.test.ts` -> \\\"Test Files 1 passed (1) / Tests 7 passed (7)\\\", EXIT_CODE=0; AC4 at tests/ci/ci005-precommit-hook.test.ts:180-199 asserts both config routes and that the wrapper contains `npm run build`.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "6d57ee7b4c5c5ad7ae8b6a9a8683f8c3da5b6727284bea42f5aed820a3888d0e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/gb-nonm && bash scripts/guard-build.sh 2>&1 | head -1; echo \"--- first line above ---\"; cd /home/kara/SpecLang && grep -rn \"GITREINS_SKIP\" --include=*.py . 2>/dev/null | grep -v node_modules | head -10",
+          "exit_code": 0,
+          "output_sha": "eb4b328728958e3e905083867ce9330897e99e0eb93909a79e6d1cfc509e8823"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"GITREINS_SKIP\" . 2>/dev/null | grep -v node_modules | grep -v '\\.tmp/' | grep -v '\\.git/' | head -20",
+          "exit_code": 0,
+          "output_sha": "b09191d46340425e967e7a9cb49bc12b78af7f45d7ddf3516a4517f7d1bd5e51"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls node_modules/gitreins 2>/dev/null | head; echo \"---\"; find / -name \"pipeline.py\" -path \"*gitreins*\" 2>/dev/null | head -3",
+          "exit_code": -15,
+          "output_sha": "f884af8bb34667a0d60fb0b572aed7d3e825953c29c0bd5182f126206f062293"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/gb-nonm && out=$(bash scripts/guard-build.sh); rc=$?; echo \"rc=$rc\"; echo \"$out\" | grep -c 'GITREINS_SKIP: build=dependencies not installed' && echo \"EXACT_STRING_PRESENT\"; echo \"=== config key placement ===\"; cd /home/kara/SpecLang && grep -n \"build_command\\|^guards:\\|^pipeline:\\|id: build\\|run: bash scripts/guard-build.sh\" .gitreins/config.yaml",
+          "exit_code": 0,
+          "output_sha": "2890cd77341d499b1d268e5e6b255ba132378831835e48d8b4dd1a48fed09629"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [],
+    "summary": "The diff only tightens an existing test to assert the new guard-build.sh wrapper and its npm run build content, with no logic, wiring, or convention defects evidenced."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: \u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[1/1]\u23af\n\nStage tier2: PASS (DEGRADED - skipped checks)\n  WARNING: coverage is unknown \u2014 build did not run (skipped at runtime \u2014 build: dependencies not installed' and exits 0. 2. Run in a tree WITH node_modules, it runs npm run build and propagates npm's exit code. 3. .gitreins/config.yaml routes both guards.build_command and pipeline stage id 'build' through scripts/guard-build.sh.: All three sub-requirements verified by execution, not inspection. (1) scripts/guard-build.sh exists (2387 bytes, mode -rwxrwxr-x). Run in an isolated tree with no node_modules (/tmp/gb-nonm, script copied to scripts/): stdout was 'skipped: dependencies not installed (node_modules absent \u2014 run npm ci)' followed by 'GITREINS_SKIP: build=dependencies not installed (node_modules absent \u2014 run npm ci)', rc=0; `grep -c 'GITREINS_SKIP: build=dependencies not installed'` returned 1 (EXACT_STRING_PRESENT). (2) WITH node_modules, in the real repo: `bash scripts/guard-build.sh` -> 'build ok \u2014 npm run build exited 0', EXIT_CODE=0. Exit-code propagation proven in /tmp/gb-fail (node_modules dir present, package.json build=\"exit 7\"): output 'build FAILED \u2014 npm run build exited 7', EXIT_CODE=7 \u2014 npm's own rc is propagated, not swallowed (scripts/guard-build.sh:52-60 captures rc then `exit \"$rc\"`). (3) .gitreins/config.yaml:22 `build_command: bash scripts/guard-build.sh` under `guards:` (line 1), and .gitreins/config.yaml:67 `run: bash scripts/guard-build.sh` under `pipeline:` (line 51) step `id: build` (line 61) \u2014 both live YAML keys, not comments. Test evidence: `npx vitest run tests/ci/ci005-precommit-hook.test.ts` -> 'Test Files 1 passed (1) / Tests 7 passed (7)', EXIT_CODE=0; AC4 at tests/ci/ci005-precommit-hook.test.ts:180-199 asserts both config routes and that the wrapper body contains `npm run build`. [resolution 0.00; scripts/guard-build.sh]); run `gitreins guard` for the full gate\n  COMPLETE\n  \u2713 1. scripts/guard-build.sh exists and, run in a tree with no node_modules, prints 'GITREINS_SKIP: build=dependencies not installed' and exits 0. 2. Run in a tree WITH node_modules, it runs npm run build and propagates npm's exit code. 3. .gitreins/config.yaml routes both guards.build_command and pipeline stage id 'build' through scripts/guard-build.sh.: All three sub-requirements verified by execution, not inspection. (1) scripts/guard-build.sh exists (2387 bytes, mode -rwxrwxr-x). Run in an isolated tree with no node_modules (/tmp/gb-nonm, script copied to scripts/): stdout was 'skipped: dependencies not installed (node_modules absent \u2014 run npm ci)' followed by 'GITREINS_SKIP: build=dependencies not installed (node_modules absent \u2014 run npm ci)', rc=0; `grep -c 'GITREINS_SKIP: build=dependencies not installed'` returned 1 (EXACT_STRING_PRESENT). (2) WITH node_modules, in the real repo: `bash scripts/guard-build.sh` -> 'build ok \u2014 npm run build exited 0', EXIT_CODE=0. Exit-code propagation proven in /tmp/gb-fail (node_modules dir present, package.json build=\"exit 7\"): output 'build FAILED \u2014 npm run build exited 7', EXIT_CODE=7 \u2014 npm's own rc is propagated, not swallowed (scripts/guard-build.sh:52-60 captures rc then `exit \"$rc\"`). (3) .gitreins/config.yaml:22 `build_command: bash scripts/guard-build.sh` under `guards:` (line 1), and .gitreins/config.yaml:67 `run: bash scripts/guard-build.sh` under `pipeline:` (line 51) step `id: build` (line 61) \u2014 both live YAML keys, not comments. Test evidence: `npx vitest run tests/ci/ci005-precommit-hook.test.ts` -> 'Test Files 1 passed (1) / Tests 7 passed (7)', EXIT_CODE=0; AC4 at tests/ci/ci005-precommit-hook.test.ts:180-199 asserts both config routes and that the wrapper body contains `npm run build`. [resolution 0.00; scripts/guard-build.sh]\nscripts/guard-build.sh exists and was executed in all three states (no node_modules -> GITREINS_SKIP + exit 0; node_modules + success -> exit 0; node_modules + failing build -> exit 7 propagated), and .gitreins/config.yaml routes both guards.build_command (line 22) and pipeline step id 'build' (line 67) through it, with the covering test suite green (7/7 passed). [uncovered failure paths: failure mode 0 (The GITREINS_SKIP line is the SECOND line of output, not the first; the script's own header comment (scripts/guard-build.sh:24-26) states the judge console renders only the first non-blank line after '<glyph> build:', so the console shows 'skipped: dependencies not installed...' rather than the machine-readable GITREINS_SKIP token. The skip is still recorded correctly if the engine scans full stdout, but a first-line-only renderer would not surface the skip token.): detected_by is empty \u2014 uncovered failure path]\n\nOverall: PASS \u2713 [DEGRADED \u2014 skipped: tier2(build)=skipped at runtime \u2014 build: dependencies not installed' and exits 0. 2. Run in a tree WITH node_modules, it runs npm run build and propagates npm's exit code. 3. .gitreins/config.yaml routes both guards.bui\u2026]",
+  "evaluated_at": "2026-11-17T21:27:22.741380",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T21:27:22.758052+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 2500,
+        "truncated": false,
+        "source": "git show 8f7b9b362a5e"
+      }
+    ],
+    "task_id": "DF-SPECLANG-013"
+  }
+}

@@ -1,0 +1,668 @@
+{
+  "task_id": "DF-SPECLANG-12",
+  "task_title": "DF-SPECLANG-12: persist gitreins verdicts so board closeout can bind an evidence run",
+  "task_criteria": [
+    "history.enabled true plus history.storage git and max_verdicts in .gitreins/config.yaml, documented in docs/gitreins-verdicts.md, and a run's verdict is discoverable after task complete. failure_condition = config keys absent or not recognised by gitreins 0.21.0, or no discoverable verdict after a completed run. proof = the config diff, the gitreins-0.21.0 METADATA/engine config citing storage/max_verdicts, and a run id from .gitreins/history."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "tmp2",
+  "commit": "f4b557eed1b01fc380d8536f14ad52d7cac1269d",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "c33a65727cfd626ba5f1192b7d46eec76fc14de065c5ee529a4268e4477ac3e3",
+  "working_tree_dirty_path_count": 0,
+  "items": [
+    {
+      "criterion": "history.enabled true plus history.storage git and max_verdicts in .gitreins/config.yaml, documented in docs/gitreins-verdicts.md, and a run's verdict is discoverable after task complete. failure_condition = config keys absent or not recognised by gitreins 0.21.0, or no discoverable verdict after a completed run. proof = the config diff, the gitreins-0.21.0 METADATA/engine config citing storage/max_verdicts, and a run id from .gitreins/history.",
+      "status": "PASS",
+      "detail": "All three proof elements present. (1) CONFIG DIFF: `.gitreins/config.yaml:38-45` has `history:` / `enabled: true` / `storage: git` / `max_verdicts: 1000`; `git log -p -- .gitreins/config.yaml` shows commit d1490384 added `+  storage: git` and `+  max_verdicts: 1000`, and commit e9922bc8 flipped `-  enabled: false` -> `+  enabled: true`. (2) RECOGNISED BY 0.21.0: `gitreins --version` -> `gitreins 0.21.0` (pipx venv /home/kara/.local/share/pipx/venvs/gitreins). engine/config_schema.py:218-223 `_HISTORY = {enabled: KeySpec(\"bool\"), path: KeySpec(\"str\"), storage: KeySpec(\"str\"), max_verdicts: KeySpec(\"any\")}`, registered at line 264 `\"history\": _HISTORY`; engine/persist.py:100 `DEFAULT_HISTORY_CONFIG = {enabled, path, storage, max_verdicts}`; storage consumed at persist.py:220 (`storage_mode`) and max_verdicts at persist.py:952 (`_prune_old`). Runtime probe: `load_history_config('/home/kara/SpecLang')` -> `{'enabled': True, 'path': '.gitreins/history', 'storage': 'git', 'max_verdicts': 1000}`, `VerdictPersister.enabled=True storage_mode=git`. `gitreins config-validate` exits 0 and emits exactly six unrelated warnings (guards.assemble, guards.assemble_command, guards.build, guards.build_command, defaults.provider, defaults.api_key_env) and ZERO `history.*` warnings \u2014 the unknown-key detector ran and named nothing in this block. `gitreins report --json` emits `\"producer\":{\"name\":\"gitreins\",\"version\":\"0.21.0\"}` and `\"metadata\":{...,\"storage\":\"git\"}`. (3) DISCOVERABLE RUN ID: `.gitreins/history/2026-11-16/579b2445/` contains verdict.json + summary.md + commit.patch + worktree.patch; `jq '{task_id,passed,pass_class,commit}'` -> `{\"task_id\":\"DF-SPECLANG-2-R4\",\"passed\":true,\"pass_class\":\"judged\",\"commit\":\"6430f3701330128ab73830b82de7fc2bf06a51a9\"}`. `gitreins report -n 6` lists completed tasks DOC-9, README-20, UX-003, DOC-7 as PASS. DOCS: docs/gitreins-verdicts.md:26-40 documents all four keys in a table with defaults, plus a runbook (lines 76-100) whose every command I ran verbatim and which returned the claimed results. Tests: `npx vitest run --passWithNoTests` -> `Test Files 107 passed | 4 skipped (111)`, `Tests 1912 passed | 58 skipped (1970)`, EXIT=0. [resolution 0.09; docs/gitreins-verdicts.md]"
+    },
+    {
+      "criterion": "The three history keys are consumed by the installed gitreins 0.21.0 engine at runtime, not merely present in YAML \u2014 VerdictPersister reads enabled/storage/max_verdicts from this repo's config.",
+      "status": "PASS",
+      "detail": "engine/persist.py:108-127 `load_history_config` merges `.gitreins/config.yaml`'s history section over `DEFAULT_HISTORY_CONFIG` (line 122-126: `for key in merged: if key in config: merged[key] = config[key]`). Consumption points: persist.py:220 `storage_mode` property, persist.py:254 `if not self.enabled`, persist.py:313/346/549 `if self.storage_mode == \"git\"`, persist.py:952 `max_v = self.config.get(\"max_verdicts\", 1000)`. Runtime probe against this worktree returned `enabled: True storage: git dir: /home/kara/SpecLang/.gitreins/history`, proving the YAML values reach the engine rather than falling back to defaults.",
+      "derived": true
+    },
+    {
+      "criterion": "The documented discovery path actually works verbatim \u2014 every runbook command in docs/gitreins-verdicts.md returns the claimed result.",
+      "status": "PASS",
+      "detail": "Ran each runbook command in /home/kara/SpecLang: (1) `gitreins report -n 6` -> lists DOC-9/README-20/UX-003/DOC-7 PASS plus `Storage: git (/home/kara/SpecLang/.gitreins/history)`; (2) `gitreins report --json` -> schema-valid evidence doc, exit 0; (3) `find .gitreins/history -name verdict.json | sort | tail -3` -> three paths; (4) `jq '{task_id, passed, pass_class, tier2_skipped, commit}' .gitreins/history/2026-11-17/94482854/verdict.json` -> `{\"task_id\":\"UX-003\",\"passed\":true,\"pass_class\":\"judged\",\"tier2_skipped\":false,\"commit\":\"ad5f0ec...\"}`; (5) `git log refs/gitreins/history --format='%h %s' -3` -> `dd892ba6 verdict: UX-003 \u2014 PASS`, `92b22474 verdict: README-20 \u2014 PASS`, `34ebf809 verdict: DOC-7 \u2014 PASS`; `git show refs/gitreins/history:.gitreins/history/2026-11-16/579b2445/verdict.json` -> the DF-SPECLANG-2-R4 record. No runbook step failed.",
+      "derived": true
+    },
+    {
+      "criterion": "The doc's citations of the installed tool are accurate (no fabricated file/line references), since the criterion's proof explicitly requires the gitreins-0.21.0 engine config citing storage/max_verdicts.",
+      "status": "PASS",
+      "detail": "docs/gitreins-verdicts.md:26-28 cites `engine/persist.py` `DEFAULT_HISTORY_CONFIG` and `engine/config_schema.py::_HISTORY`; line 43 cites `engine/config_schema.py:218` (`_HISTORY`). Verified in the real 0.21.0 install: `engine/persist.py:100 DEFAULT_HISTORY_CONFIG = {` and `engine/config_schema.py:218 _HISTORY: dict[str, KeySpec] = {` with `enabled`/`path`/`storage`/`max_verdicts` at lines 219-222, registered at line 264. Both files exist in /home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages/engine/. The doc's claim that `gitreins config-validate` flags six unrelated keys and no `history.*` key reproduces exactly (exit 0, six WARN lines, none history.*).",
+      "derived": true
+    },
+    {
+      "criterion": "The durable (storage: git) copy is real \u2014 a verdict is recoverable from refs/gitreins/history, not only from the gitignored working tree, so closeout evidence survives working-tree cleanup.",
+      "status": "PASS",
+      "detail": "`git show-ref | grep gitreins` -> `dd892ba631fdfa70133675ca85590bbf93066286 refs/gitreins/history`. `git ls-tree refs/gitreins/history:.gitreins/history/2026-11-16/` lists `579b2445` among eight run dirs. `git show refs/gitreins/history:.gitreins/history/2026-11-17/94482854/verdict.json` returns `{'task_id': 'UX-003', 'passed': True, 'pass_class': 'judged', 'commit': 'ad5f0ec...'}`. The documented decision is consistent with the repo: `.gitignore:83` ignores `.gitreins/history/` and `git ls-files .gitreins/history` returns empty, exactly as docs/gitreins-verdicts.md:62-73 states.",
+      "derived": true
+    },
+    {
+      "criterion": "The change does not regress the repo's test suite.",
+      "status": "PASS",
+      "detail": "`npx vitest run --passWithNoTests` in /home/kara/SpecLang -> `Test Files  107 passed | 4 skipped (111)`, `Tests  1912 passed | 58 skipped (1970)`, `EXIT=0`. Targeted `npx vitest run tests/config.test.ts` -> `Test Files 1 passed (1)`, `Tests 6 passed (6)`, exit 0. Note: no test in tests/ references gitreins-verdicts/history.storage/max_verdicts \u2014 the change is config+docs only, so the suite is a regression guard rather than a direct test of the new keys.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  01:07:45",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  01:07:45\n   Duration  22.87s (transform 14.47s, setup 3.88s, import 22.86s, tests 104.54s, environment 15ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261117T030056.608234Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 history.enabled true plus history.storage git and max_verdicts in .gitreins/config.yaml, documented in docs/gitreins-verdicts.md, and a run's verdict is discoverable after task complete. failure_condition = config keys absent or not recognised by gitreins 0.21.0, or no discoverable verdict after a completed run. proof = the config diff, the gitreins-0.21.0 METADATA/engine config citing storage/max_verdicts, and a run id from .gitreins/history.: All three proof elements present. (1) CONFIG DIFF: `.gitreins/config.yaml:38-45` has `history:` / `enabled: true` / `storage: git` / `max_verdicts: 1000`; `git log -p -- .gitreins/config.yaml` shows commit d1490384 added `+  storage: git` and `+  max_verdicts: 1000`, and commit e9922bc8 flipped `-  enabled: false` -> `+  enabled: true`. (2) RECOGNISED BY 0.21.0: `gitreins --version` -> `gitreins 0.21.0` (pipx venv /home/kara/.local/share/pipx/venvs/gitreins). engine/config_schema.py:218-223 `_HISTORY = {enabled: KeySpec(\"bool\"), path: KeySpec(\"str\"), storage: KeySpec(\"str\"), max_verdicts: KeySpec(\"any\")}`, registered at line 264 `\"history\": _HISTORY`; engine/persist.py:100 `DEFAULT_HISTORY_CONFIG = {enabled, path, storage, max_verdicts}`; storage consumed at persist.py:220 (`storage_mode`) and max_verdicts at persist.py:952 (`_prune_old`). Runtime probe: `load_history_config('/home/kara/SpecLang')` -> `{'enabled': True, 'path': '.gitreins/history', 'storage': 'git', 'max_verdicts': 1000}`, `VerdictPersister.enabled=True storage_mode=git`. `gitreins config-validate` exits 0 and emits exactly six unrelated warnings (guards.assemble, guards.assemble_command, guards.build, guards.build_command, defaults.provider, defaults.api_key_env) and ZERO `history.*` warnings \u2014 the unknown-key detector ran and named nothing in this block. `gitreins report --json` emits `\"producer\":{\"name\":\"gitreins\",\"version\":\"0.21.0\"}` and `\"metadata\":{...,\"storage\":\"git\"}`. (3) DISCOVERABLE RUN ID: `.gitreins/history/2026-11-16/579b2445/` contains verdict.json + summary.md + commit.patch + worktree.patch; `jq '{task_id,passed,pass_class,commit}'` -> `{\"task_id\":\"DF-SPECLANG-2-R4\",\"passed\":true,\"pass_class\":\"judged\",\"commit\":\"6430f3701330128ab73830b82de7fc2bf06a51a9\"}`. `gitreins report -n 6` lists completed tasks DOC-9, README-20, UX-003, DOC-7 as PASS. DOCS: docs/gitreins-verdicts.md:26-40 documents all four keys in a table with defaults, plus a runbook (lines 76-100) whose every command I ran verbatim and which returned the claimed results. Tests: `npx vitest run --passWithNoTests` -> `Test Files 107 passed | 4 skipped (111)`, `Tests 1912 passed | 58 skipped (1970)`, EXIT=0. [resolution 0.09; docs/gitreins-verdicts.md]\n  \u2713 The three history keys are consumed by the installed gitreins 0.21.0 engine at runtime, not merely present in YAML \u2014 VerdictPersister reads enabled/storage/max_verdicts from this repo's config.: engine/persist.py:108-127 `load_history_config` merges `.gitreins/config.yaml`'s history section over `DEFAULT_HISTORY_CONFIG` (line 122-126: `for key in merged: if key in config: merged[key] = config[key]`). Consumption points: persist.py:220 `storage_mode` property, persist.py:254 `if not self.enabled`, persist.py:313/346/549 `if self.storage_mode == \"git\"`, persist.py:952 `max_v = self.config.get(\"max_verdicts\", 1000)`. Runtime probe against this worktree returned `enabled: True storage: git dir: /home/kara/SpecLang/.gitreins/history`, proving the YAML values reach the engine rather than falling back to defaults.\n  \u2713 The documented discovery path actually works verbatim \u2014 every runbook command in docs/gitreins-verdicts.md returns the claimed result.: Ran each runbook command in /home/kara/SpecLang: (1) `gitreins report -n 6` -> lists DOC-9/README-20/UX-003/DOC-7 PASS plus `Storage: git (/home/kara/SpecLang/.gitreins/history)`; (2) `gitreins report --json` -> schema-valid evidence doc, exit 0; (3) `find .gitreins/history -name verdict.json | sort | tail -3` -> three paths; (4) `jq '{task_id, passed, pass_class, tier2_skipped, commit}' .gitreins/history/2026-11-17/94482854/verdict.json` -> `{\"task_id\":\"UX-003\",\"passed\":true,\"pass_class\":\"judged\",\"tier2_skipped\":false,\"commit\":\"ad5f0ec...\"}`; (5) `git log refs/gitreins/history --format='%h %s' -3` -> `dd892ba6 verdict: UX-003 \u2014 PASS`, `92b22474 verdict: README-20 \u2014 PASS`, `34ebf809 verdict: DOC-7 \u2014 PASS`; `git show refs/gitreins/history:.gitreins/history/2026-11-16/579b2445/verdict.json` -> the DF-SPECLANG-2-R4 record. No runbook step failed.\n  \u2713 The doc's citations of the installed tool are accurate (no fabricated file/line references), since the criterion's proof explicitly requires the gitreins-0.21.0 engine config citing storage/max_verdicts.: docs/gitreins-verdicts.md:26-28 cites `engine/persist.py` `DEFAULT_HISTORY_CONFIG` and `engine/config_schema.py::_HISTORY`; line 43 cites `engine/config_schema.py:218` (`_HISTORY`). Verified in the real 0.21.0 install: `engine/persist.py:100 DEFAULT_HISTORY_CONFIG = {` and `engine/config_schema.py:218 _HISTORY: dict[str, KeySpec] = {` with `enabled`/`path`/`storage`/`max_verdicts` at lines 219-222, registered at line 264. Both files exist in /home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages/engine/. The doc's claim that `gitreins config-validate` flags six unrelated keys and no `history.*` key reproduces exactly (exit 0, six WARN lines, none history.*).\n  \u2713 The durable (storage: git) copy is real \u2014 a verdict is recoverable from refs/gitreins/history, not only from the gitignored working tree, so closeout evidence survives working-tree cleanup.: `git show-ref | grep gitreins` -> `dd892ba631fdfa70133675ca85590bbf93066286 refs/gitreins/history`. `git ls-tree refs/gitreins/history:.gitreins/history/2026-11-16/` lists `579b2445` among eight run dirs. `git show refs/gitreins/history:.gitreins/history/2026-11-17/94482854/verdict.json` returns `{'task_id': 'UX-003', 'passed': True, 'pass_class': 'judged', 'commit': 'ad5f0ec...'}`. The documented decision is consistent with the repo: `.gitignore:83` ignores `.gitreins/history/` and `git ls-files .gitreins/history` returns empty, exactly as docs/gitreins-verdicts.md:62-73 states.\n  \u2713 The change does not regress the repo's test suite.: `npx vitest run --passWithNoTests` in /home/kara/SpecLang -> `Test Files  107 passed | 4 skipped (111)`, `Tests  1912 passed | 58 skipped (1970)`, `EXIT=0`. Targeted `npx vitest run tests/config.test.ts` -> `Test Files 1 passed (1)`, `Tests 6 passed (6)`, exit 0. Note: no test in tests/ references gitreins-verdicts/history.storage/max_verdicts \u2014 the change is config+docs only, so the suite is a regression guard rather than a direct test of the new keys.\nThe config keys are present, genuinely recognised and consumed by gitreins 0.21.0 (config-validate clean for history.*, runtime probe returns storage=git/max_verdicts=1000), documented accurately in docs/gitreins-verdicts.md with a runbook that works verbatim, and completed runs are discoverable both on disk (run id 579b2445, 94482854) and on the refs/gitreins/history ref, with the full suite green at 1912 passed / EXIT=0. [uncovered failure paths: failure mode 0 (A judge run killed by an outer wrapper timeout (or Ctrl-C / provider hang) writes no verdict at all, so a board closeout still has no evidence run to bind \u2014 the exact symptom this task set out to fix for UX-002.): detected_by is empty \u2014 uncovered failure path; failure mode 1 (The tier-1 `tests` step is killed by the default 120s per-step budget on this repo's full vitest run, so a completed run records `passed: false` / `[DEGRADED \u2014 skipped: tier1(tests)]` rather than a green verdict.): detected_by is empty \u2014 uncovered failure path; failure mode 2 (The durable evidence ref lives outside refs/heads/, so a plain `git push` does not carry it and a fresh clone has no verdict history \u2014 evidence is per-checkout unless pushed explicitly.): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n\n\u2026 [6692 chars omitted \u2014 6 line(s)] \u2026\nThe config keys are present, genuinely recognised and consumed by gitreins 0.21.0 (config-validate clean for history.*, runtime probe returns storage=git/max_verdicts=1000), documented accurately in docs/gitreins-verdicts.md with a runbook that works verbatim, and completed runs are discoverable both on disk (run id 579b2445, 94482854) and on the refs/gitreins/history ref, with the full suite green at 1912 passed / EXIT=0. [uncovered failure paths: failure mode 0 (A judge run killed by an outer wrapper timeout (or Ctrl-C / provider hang) writes no verdict at all, so a board closeout still has no evidence run to bind \u2014 the exact symptom this task set out to fix for UX-002.): detected_by is empty \u2014 uncovered failure path; failure mode 1 (The tier-1 `tests` step is killed by the default 120s per-step budget on this repo's full vitest run, so a completed run records `passed: false` / `[DEGRADED \u2014 skipped: tier1(tests)]` rather than a green verdict.): detected_by is empty \u2014 uncovered failure path; failure mode 2 (The durable evidence ref lives outside refs/heads/, so a plain `git push` does not carry it and a fresh clone has no verdict history \u2014 evidence is per-checkout unless pushed explicitly.): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "history.enabled true plus history.storage git and max_verdicts in .gitreins/config.yaml, documented in docs/gitreins-verdicts.md, and a run's verdict is discoverable after task complete. failure_condition = config keys absent or not recognised by gitreins 0.21.0, or no discoverable verdict after a completed run. proof = the config diff, the gitreins-0.21.0 METADATA/engine config citing storage/max_verdicts, and a run id from .gitreins/history.",
+                "status": "PASS",
+                "detail": "All three proof elements present. (1) CONFIG DIFF: `.gitreins/config.yaml:38-45` has `history:` / `enabled: true` / `storage: git` / `max_verdicts: 1000`; `git log -p -- .gitreins/config.yaml` shows commit d1490384 added `+  storage: git` and `+  max_verdicts: 1000`, and commit e9922bc8 flipped `-  enabled: false` -> `+  enabled: true`. (2) RECOGNISED BY 0.21.0: `gitreins --version` -> `gitreins 0.21.0` (pipx venv /home/kara/.local/share/pipx/venvs/gitreins). engine/config_schema.py:218-223 `_HISTORY = {enabled: KeySpec(\"bool\"), path: KeySpec(\"str\"), storage: KeySpec(\"str\"), max_verdicts: KeySpec(\"any\")}`, registered at line 264 `\"history\": _HISTORY`; engine/persist.py:100 `DEFAULT_HISTORY_CONFIG = {enabled, path, storage, max_verdicts}`; storage consumed at persist.py:220 (`storage_mode`) and max_verdicts at persist.py:952 (`_prune_old`). Runtime probe: `load_history_config('/home/kara/SpecLang')` -> `{'enabled': True, 'path': '.gitreins/history', 'storage': 'git', 'max_verdicts': 1000}`, `VerdictPersister.enabled=True storage_mode=git`. `gitreins config-validate` exits 0 and emits exactly six unrelated warnings (guards.assemble, guards.assemble_command, guards.build, guards.build_command, defaults.provider, defaults.api_key_env) and ZERO `history.*` warnings \u2014 the unknown-key detector ran and named nothing in this block. `gitreins report --json` emits `\"producer\":{\"name\":\"gitreins\",\"version\":\"0.21.0\"}` and `\"metadata\":{...,\"storage\":\"git\"}`. (3) DISCOVERABLE RUN ID: `.gitreins/history/2026-11-16/579b2445/` contains verdict.json + summary.md + commit.patch + worktree.patch; `jq '{task_id,passed,pass_class,commit}'` -> `{\"task_id\":\"DF-SPECLANG-2-R4\",\"passed\":true,\"pass_class\":\"judged\",\"commit\":\"6430f3701330128ab73830b82de7fc2bf06a51a9\"}`. `gitreins report -n 6` lists completed tasks DOC-9, README-20, UX-003, DOC-7 as PASS. DOCS: docs/gitreins-verdicts.md:26-40 documents all four keys in a table with defaults, plus a runbook (lines 76-100) whose every command I ran verbatim and which returned the claimed results. Tests: `npx vitest run --passWithNoTests` -> `Test Files 107 passed | 4 skipped (111)`, `Tests 1912 passed | 58 skipped (1970)`, EXIT=0. [resolution 0.09; docs/gitreins-verdicts.md]",
+                "resolution_probability": 0.09,
+                "cited_path": "docs/gitreins-verdicts.md"
+              },
+              {
+                "criterion": "The three history keys are consumed by the installed gitreins 0.21.0 engine at runtime, not merely present in YAML \u2014 VerdictPersister reads enabled/storage/max_verdicts from this repo's config.",
+                "status": "PASS",
+                "detail": "engine/persist.py:108-127 `load_history_config` merges `.gitreins/config.yaml`'s history section over `DEFAULT_HISTORY_CONFIG` (line 122-126: `for key in merged: if key in config: merged[key] = config[key]`). Consumption points: persist.py:220 `storage_mode` property, persist.py:254 `if not self.enabled`, persist.py:313/346/549 `if self.storage_mode == \"git\"`, persist.py:952 `max_v = self.config.get(\"max_verdicts\", 1000)`. Runtime probe against this worktree returned `enabled: True storage: git dir: /home/kara/SpecLang/.gitreins/history`, proving the YAML values reach the engine rather than falling back to defaults.",
+                "derived": true
+              },
+              {
+                "criterion": "The documented discovery path actually works verbatim \u2014 every runbook command in docs/gitreins-verdicts.md returns the claimed result.",
+                "status": "PASS",
+                "detail": "Ran each runbook command in /home/kara/SpecLang: (1) `gitreins report -n 6` -> lists DOC-9/README-20/UX-003/DOC-7 PASS plus `Storage: git (/home/kara/SpecLang/.gitreins/history)`; (2) `gitreins report --json` -> schema-valid evidence doc, exit 0; (3) `find .gitreins/history -name verdict.json | sort | tail -3` -> three paths; (4) `jq '{task_id, passed, pass_class, tier2_skipped, commit}' .gitreins/history/2026-11-17/94482854/verdict.json` -> `{\"task_id\":\"UX-003\",\"passed\":true,\"pass_class\":\"judged\",\"tier2_skipped\":false,\"commit\":\"ad5f0ec...\"}`; (5) `git log refs/gitreins/history --format='%h %s' -3` -> `dd892ba6 verdict: UX-003 \u2014 PASS`, `92b22474 verdict: README-20 \u2014 PASS`, `34ebf809 verdict: DOC-7 \u2014 PASS`; `git show refs/gitreins/history:.gitreins/history/2026-11-16/579b2445/verdict.json` -> the DF-SPECLANG-2-R4 record. No runbook step failed.",
+                "derived": true
+              },
+              {
+                "criterion": "The doc's citations of the installed tool are accurate (no fabricated file/line references), since the criterion's proof explicitly requires the gitreins-0.21.0 engine config citing storage/max_verdicts.",
+                "status": "PASS",
+                "detail": "docs/gitreins-verdicts.md:26-28 cites `engine/persist.py` `DEFAULT_HISTORY_CONFIG` and `engine/config_schema.py::_HISTORY`; line 43 cites `engine/config_schema.py:218` (`_HISTORY`). Verified in the real 0.21.0 install: `engine/persist.py:100 DEFAULT_HISTORY_CONFIG = {` and `engine/config_schema.py:218 _HISTORY: dict[str, KeySpec] = {` with `enabled`/`path`/`storage`/`max_verdicts` at lines 219-222, registered at line 264. Both files exist in /home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages/engine/. The doc's claim that `gitreins config-validate` flags six unrelated keys and no `history.*` key reproduces exactly (exit 0, six WARN lines, none history.*).",
+                "derived": true
+              },
+              {
+                "criterion": "The durable (storage: git) copy is real \u2014 a verdict is recoverable from refs/gitreins/history, not only from the gitignored working tree, so closeout evidence survives working-tree cleanup.",
+                "status": "PASS",
+                "detail": "`git show-ref | grep gitreins` -> `dd892ba631fdfa70133675ca85590bbf93066286 refs/gitreins/history`. `git ls-tree refs/gitreins/history:.gitreins/history/2026-11-16/` lists `579b2445` among eight run dirs. `git show refs/gitreins/history:.gitreins/history/2026-11-17/94482854/verdict.json` returns `{'task_id': 'UX-003', 'passed': True, 'pass_class': 'judged', 'commit': 'ad5f0ec...'}`. The documented decision is consistent with the repo: `.gitignore:83` ignores `.gitreins/history/` and `git ls-files .gitreins/history` returns empty, exactly as docs/gitreins-verdicts.md:62-73 states.",
+                "derived": true
+              },
+              {
+                "criterion": "The change does not regress the repo's test suite.",
+                "status": "PASS",
+                "detail": "`npx vitest run --passWithNoTests` in /home/kara/SpecLang -> `Test Files  107 passed | 4 skipped (111)`, `Tests  1912 passed | 58 skipped (1970)`, `EXIT=0`. Targeted `npx vitest run tests/config.test.ts` -> `Test Files 1 passed (1)`, `Tests 6 passed (6)`, exit 0. Note: no test in tests/ references gitreins-verdicts/history.storage/max_verdicts \u2014 the change is config+docs only, so the suite is a regression guard rather than a direct test of the new keys.",
+                "derived": true
+              }
+            ],
+            "summary": "The config keys are present, genuinely recognised and consumed by gitreins 0.21.0 (config-validate clean for history.*, runtime probe returns storage=git/max_verdicts=1000), documented accurately in docs/gitreins-verdicts.md with a runbook that works verbatim, and completed runs are discoverable both on disk (run id 579b2445, 94482854) and on the refs/gitreins/history ref, with the full suite green at 1912 passed / EXIT=0. [uncovered failure paths: failure mode 0 (A judge run killed by an outer wrapper timeout (or Ctrl-C / provider hang) writes no verdict at all, so a board closeout still has no evidence run to bind \u2014 the exact symptom this task set out to fix for UX-002.): detected_by is empty \u2014 uncovered failure path; failure mode 1 (The tier-1 `tests` step is killed by the default 120s per-step budget on this repo's full vitest run, so a completed run records `passed: false` / `[DEGRADED \u2014 skipped: tier1(tests)]` rather than a green verdict.): detected_by is empty \u2014 uncovered failure path; failure mode 2 (The durable evidence ref lives outside refs/heads/, so a plain `git push` does not carry it and a fresh clone has no verdict history \u2014 evidence is per-checkout unless pushed explicitly.): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-12\"}",
+          "exit_code": 0,
+          "output_sha": "95278f86171dca247fc5d43bbc51a7947d22bc4ca07b72039e4fe0ac23a7e142"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la; cat .gitreins/config.yaml 2>/dev/null || echo \"NO .gitreins/config.yaml\"",
+          "exit_code": 0,
+          "output_sha": "12e34686e6936f1ba10437201b492fc7cfb3f4c8d8fe5c414442f80182ef5b65"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat .gitreins/config.yaml | head -80; echo \"=== HISTORY DIR ===\"; ls -la .gitreins/; echo \"=== history ===\"; ls -la .gitreins/history 2>/dev/null | head -30",
+          "exit_code": 0,
+          "output_sha": "6408e26ad4de4c280b90fc4f93fa365361ac82cd1d90344261f8edef41a8879d"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls docs/ | head -50; echo \"=== verdicts doc ===\"; cat docs/gitreins-verdicts.md 2>/dev/null || echo \"MISSING docs/gitreins-verdicts.md\"",
+          "exit_code": 0,
+          "output_sha": "30f5aafb2a0ec72f5dd5793b650442dff2b146534928e3c7fe98e778daf5d6ac"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara 2>/dev/null; which gitreins; gitreins --version 2>&1 | head -5; echo \"=== pip show ===\"; pip show gitreins 2>/dev/null | head -10",
+          "exit_code": 0,
+          "output_sha": "275840d8d530c517b8762bf1486b8a9521263b16909f90f01096683b7c46696c"
+        },
+        {
+          "tool": "run_command",
+          "command": "find .gitreins/history -name verdict.json | sort | tail -10; echo \"=== count ===\"; find .gitreins/history -name verdict.json | wc -l",
+          "exit_code": 0,
+          "output_sha": "9fbe6dd285f8a45eb56ee23e88778ec4e1a1379d6a0ca115dc19ca9b1e09a095"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/lib/python3.14/site-packages/gitreins; ls $P; echo \"=== persist ===\"; grep -n \"DEFAULT_HISTORY_CONFIG\" -A 20 $P/engine/persist.py | head -40",
+          "exit_code": 0,
+          "output_sha": "fd80da9ec34f5d1eb85665653d1961ac71b1d7a1b753d9208a6c98d961701e12"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/lib/python3.14/site-packages/gitreins; grep -rn \"max_verdicts\" $P --include=*.py | head -20; echo \"=== storage ===\"; grep -rn \"\\\"storage\\\"\\|'storage'\" $P --include=*.py | head -20",
+          "exit_code": 0,
+          "output_sha": "a1ec46cf70b9073d22a3b1ed96cbecc289059a9ed4821cf90a30731b87e39b64"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/lib/python3.14/site-packages/gitreins; wc -l $P/cli.py; sed -n '1,120p' $P/cli.py",
+          "exit_code": 0,
+          "output_sha": "63d0a59d0516c22418a05048ae2eb0bf45b328c5b6c0bb54e984b760c254aac6"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/lib/python3.14/site-packages/gitreins; sed -n '280,360p' $P/cli.py",
+          "exit_code": 0,
+          "output_sha": "cde87a24017156276c5930e73bcb80c54050a061ec09bc5564ba7ed9ad36b2a7"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/lib/python3.14/site-packages/gitreins; ls -la $P; echo \"=== engine pkg ===\"; python3 -c \"import engine, os; print(os.path.dirname(engine.__file__))\" 2>&1",
+          "exit_code": 1,
+          "output_sha": "7066ba6df4834e0d9bf035896b154f4584f0f4f72ba8dade3aaac3d00e4cef7d"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/lib/python3.14/site-packages/gitreins; grep -n \"history\" $P/cli.py | head -40",
+          "exit_code": 0,
+          "output_sha": "b197f10f9309937b0504364342bd267b3489678cf365297f0b10a0a07e100d89"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/lib/python3.14/site-packages/gitreins; sed -n '790,900p' $P/cli.py",
+          "exit_code": 0,
+          "output_sha": "d3f17c4a9726407c345e45a1ef312aa6e084a93f379462123312cc1e0e0cb98d"
+        },
+        {
+          "tool": "run_command",
+          "command": "P=/home/kara/.local/lib/python3.14/site-packages/gitreins; sed -n '630,680p' $P/cli.py; echo \"=== head of file imports/version ===\"; sed -n '120,180p' $P/cli.py",
+          "exit_code": 0,
+          "output_sha": "db2fd68e9d8d73a58e3c6472b34482bac1d2ccd56a55c11092915dc9c62eea20"
+        },
+        {
+          "tool": "run_command",
+          "command": "find / -name \"persist.py\" -path \"*engine*\" 2>/dev/null | head -20; echo \"=== engine dirs ===\"; find / -maxdepth 8 -type d -name engine -path \"*gitreins*\" 2>/dev/null | head; echo \"=== entry point ===\"; cat /home/kara/.local/bin/gitreins 2>/dev/null | head -20",
+          "exit_code": -15,
+          "output_sha": "098e596f58a06595ee5191799b7d2fee727d1993849350f09c726ae46ddb9ea0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/.local/lib/python3.14/site-packages; ls -d gitreins* 2>/dev/null; cat gitreins-*.dist-info/RECORD 2>/dev/null | head -30; echo \"=== entry points ===\"; cat gitreins-*.dist-info/entry_points.txt 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "b2e8b863498b26bb2aab8de917e7ed4d218c7e32356d0a72f042456fe4a1c33c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/.local/lib/python3.14/site-packages; grep -n \"DEFAULT_HISTORY_CONFIG\" -A 15 engine/persist.py; echo \"=== storage usage ===\"; grep -n \"storage\\|max_verdicts\\|enabled\" engine/persist.py | head -40",
+          "exit_code": 0,
+          "output_sha": "41aca352bd6e7cfeab3970e0e87f4a7df0eb047d695639436f2172e3fd8da27e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/.local/lib/python3.14/site-packages; grep -rn \"max_verdicts\\|storage\" engine/config.py engine/config_schema.py 2>/dev/null | head -20; echo \"=== config_schema exists? ===\"; ls engine/ | head -40",
+          "exit_code": 0,
+          "output_sha": "9726d9cfe91868e17ef0217c9c0b6acbcf3f23af0afef242a4c7252c38273e1c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/.local/lib/python3.14/site-packages && python3 -c \"\nfrom engine.persist import load_history_config, VerdictPersister\nc = load_history_config('/home/kara')\nprint('merged config:', c)\np = VerdictPersister('/home/kara')\nprint('enabled:', p.enabled, 'storage_mode:', p.storage_mode, 'history_dir:', p.history_dir)\n\" 2>&1",
+          "exit_code": 0,
+          "output_sha": "98c4d0970b35a2fd1f37655b33a48eae333a2ef91a320ccc8ede09df86692e65"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara && gitreins report -n 5 2>&1 | head -40",
+          "exit_code": 0,
+          "output_sha": "317236175fd09ba33bbd58c1cb547518a2d92af5663d610afc2e39f4ea3344fa"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara && for f in $(find .gitreins/history -name verdict.json | sort | tail -6); do echo \"--- $f\"; python3 -c \"\nimport json,sys\nd=json.load(open('$f'))\nprint({k:d.get(k) for k in ('task_id','passed','pass_class','commit','evaluated_at')})\n\" 2>&1; done",
+          "exit_code": 0,
+          "output_sha": "c9df833045272895409e34852983c5b07c10f44feae9275f8f3c133922539a6d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara && git log refs/gitreins/history --format='%h %s' -5 2>&1; echo \"=== ref exists? ===\"; git show-ref | grep gitreins",
+          "exit_code": 1,
+          "output_sha": "1bacd3d4ab1351d657e5d78df35e050f42b3b399c124451d4cb0982b5dd4e67f"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; git rev-parse --show-toplevel 2>&1; git status --short 2>&1 | head",
+          "exit_code": 0,
+          "output_sha": "05ad2518c240380249f311ed4eababdc6e3d0d15f2fc66ab1e8fea7b79494597"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && cat .gitreins/config.yaml | sed -n '1,60p'; echo \"=== history dir ===\"; ls -la .gitreins/history 2>&1 | head -20",
+          "exit_code": 0,
+          "output_sha": "fa71a88f3df60a106cd7426953da2a008cb04b9048e9bf4055b53b42f2475396"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls docs/gitreins-verdicts.md 2>&1; echo \"=== ref ===\"; git show-ref | grep gitreins; echo \"=== log ===\"; git log refs/gitreins/history --format='%h %s' -5 2>&1",
+          "exit_code": 0,
+          "output_sha": "cd7903a6aee66a64fc054d6f157fd65c29f70bab9aa95342a93acf1219a9e540"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && python3 -c \"\nimport sys; sys.path.insert(0,'/home/kara/.local/lib/python3.14/site-packages')\nfrom engine.persist import load_history_config, VerdictPersister\nprint('merged:', load_history_config('/home/kara/SpecLang'))\np=VerdictPersister('/home/kara/SpecLang')\nprint('enabled:',p.enabled,'storage:',p.storage_mode,'dir:',p.history_dir)\n\" 2>&1",
+          "exit_code": 0,
+          "output_sha": "5a2beeb902a1abcc99e875c6045b2d882663813b607d0a300a8cc82a1982beb9"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && gitreins report -n 6 2>&1 | head -40",
+          "exit_code": 0,
+          "output_sha": "663091d5defc123c12bf3cf20199ab025f77e578f7970807c71e0c7f040e1da2"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && for f in $(find .gitreins/history -name verdict.json | sort | tail -4); do echo \"--- $f\"; python3 -c \"\nimport json\nd=json.load(open('$f'))\nprint({k:d.get(k) for k in ('task_id','passed','pass_class','commit','evaluated_at')})\n\"; done; echo \"=== ref show ===\"; git show refs/gitreins/history:.gitreins/history/2026-11-17/$(git log refs/gitreins/history --format='%s' -1 >/dev/null; echo) 2>/dev/null | head -3",
+          "exit_code": 0,
+          "output_sha": "bd98311b7f7446b61c54f0b5261553e915fbe9774838d4bbed0f3f1c90f19759"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"config_schema\\|engine/persist.py\\|DEFAULT_HISTORY_CONFIG\" docs/gitreins-verdicts.md; echo \"=== does config_schema exist in installed pkg? ===\"; ls /home/kara/.local/lib/python3.14/site-packages/engine/config_schema.py 2>&1",
+          "exit_code": 2,
+          "output_sha": "48425fa325df790f7c444243c636efbcf072accbe49f001c1263c7e5f392bc8a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n '26,60p' docs/gitreins-verdicts.md",
+          "exit_code": 0,
+          "output_sha": "c1555a7f4bb9e2f6b84f554f5aa9f4ea4ca526f9bc126318ed0a1d693598adbc"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && gitreins config-validate 2>&1 | head -30; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "ef1f9def1ab496197b38b1a99f457d0ace28b5c3576c3e2c9dfbce84679993a4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/.local/lib/python3.14/site-packages && grep -rn \"_HISTORY\\|config-validate\\|config_validate\" engine/*.py gitreins/cli.py | head -20",
+          "exit_code": 0,
+          "output_sha": "fb0f2d6f7333cf3b8708c8002e4f6fdf6f2a915a94b381880df8a6e07636a29c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/.local/lib/python3.14/site-packages && grep -rn \"history\" engine/config.py | head -20; echo \"=== validate fn ===\"; grep -rn \"unknown key\" engine/*.py gitreins/cli.py | head",
+          "exit_code": 0,
+          "output_sha": "4b07575672eb693de3468db254b963e0ff58664807f51da2e5e6b28c35e10e81"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/.local/lib/python3.14/site-packages && grep -rln \"unknown key\" . --include=*.py 2>/dev/null | head; echo \"=== gitreins_mcp ===\"; ls gitreins_mcp | head",
+          "exit_code": 0,
+          "output_sha": "8608c4e6e16394ab6ab7484f84d937fdd4f98ed7fbac095679824c94bab8f488"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/.local/lib/python3.14/site-packages && grep -rn \"config-validate\\|config_validate\" . --include=*.py 2>/dev/null | head -10",
+          "exit_code": 0,
+          "output_sha": "4a94742dd70d46515e3497aa8223d901d0d7be251c1d929ea58f84cdbb242d22"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat /home/kara/.local/bin/gitreins; echo \"=== which -a ===\"; which -a gitreins; echo \"=== pipx? ===\"; ls /home/kara/.local/pipx/venvs 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "7cd3cfea7014cdecf90f841f008f9274cd466a79190f5e69dfda4d798b9639cb"
+        },
+        {
+          "tool": "run_command",
+          "command": "V=/home/kara/.local/share/pipx/venvs/gitreins; ls $V/lib/*/site-packages/ | head -20; echo \"=== version ===\"; $V/bin/python -c \"import engine.version as v; print(v.__version__)\" 2>&1",
+          "exit_code": 0,
+          "output_sha": "9ecf5fcb669cd36008001c3b015417e3c25033aeea2feb8b42181430b86e1ea1"
+        },
+        {
+          "tool": "run_command",
+          "command": "V=/home/kara/.local/share/pipx/venvs/gitreins; SP=$(ls -d $V/lib/*/site-packages); echo $SP; ls $SP/engine/; echo \"=== config_schema ===\"; ls $SP/engine/config_schema.py 2>&1",
+          "exit_code": 0,
+          "output_sha": "4a38294b78d3b22ace82212c5c117533b6226d47c677cd6ad048fa43bb93fe9b"
+        },
+        {
+          "tool": "run_command",
+          "command": "SP=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; sed -n '210,235p' $SP/engine/config_schema.py; echo \"=== _HISTORY refs ===\"; grep -n \"_HISTORY\" $SP/engine/config_schema.py",
+          "exit_code": 0,
+          "output_sha": "9311c3d2805730c3ab6f3f240906e2363c64bafa13cef0bb3935212bd9dd1ce6"
+        },
+        {
+          "tool": "run_command",
+          "command": "SP=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; grep -n \"DEFAULT_HISTORY_CONFIG\" -A 10 $SP/engine/persist.py; echo \"=== storage/max_verdicts consumption ===\"; grep -n \"storage_mode\\|max_verdicts\\|self.enabled\" $SP/engine/persist.py | head -20",
+          "exit_code": 0,
+          "output_sha": "a489f1d5fcc9cf2c27c6ed184f8eada3f558e44ef5d060d5db93d0ed22e22059"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS (in progress): \\n- .gitreins/config.yaml lines 38-46: history.enabled: true, storage: git, max_verdicts: 1000 (plus path default).\\n- docs/gitreins-verdicts.md exists, documents all four keys in a table (lines 26-40), runbook for discovering a verdict.\\n- gitreins 0.21.0 (pipx venv /home/kara/.local/share/pipx/venvs/gitreins) engine/config_schema.py:218 `_HISTORY` allow-list = {enabled, path, storage, max_verdicts}; registered at line 264 \\\"history\\\": _HISTORY.\\n- engine/persist.py:100 DEFAULT_HISTORY_CONFIG = {enabled, path, storage, max_verdicts}; storage_mode property line 220; max_verdicts consumed line 952.\\n- `gitreins config-validate` exit 0, emits 6 unrelated warnings, ZERO history.* warnings -> keys recognised.\\n- Discoverable verdicts: `gitreins report -n 6` shows DOC-9/README-20/UX-003/DOC-7 PASS; run ids e.g. .gitreins/history/2026-11-17/94482854/verdict.json (UX-003, passed true, pass_class judged, commit ad5f0ec).\\n- refs/gitreins/history ref exists (dd892ba6 \\\"verdict: UX-003 \\u2014 PASS\\\").\\nNOTE: worktree root is /home/kara/SpecLang (not /home/kara).\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "7e80df0ce5d2e0689abe553bda49daf70600f04c644f47846d82abe5dc4f91d0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && /home/kara/.local/bin/gitreins report --json 2>&1 | head -30; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "f8134bc449a20aee230f1b39a30bf721529b209b7f11b72f53d789f7af30731f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git log --oneline -3 -- .gitreins/config.yaml docs/gitreins-verdicts.md; echo \"=== diff of history block introduction ===\"; git log -p --follow -- .gitreins/config.yaml 2>/dev/null | grep -n \"history:\" -A 12 | head -40",
+          "exit_code": 0,
+          "output_sha": "f1c84b2d998282c4a0b1bba68e034defeb5db9dbb7b69f30e1c80e1026e6b93e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"gitreins/history\\|gitreins\" .gitignore | head; echo \"=== is history dir tracked? ===\"; git ls-files .gitreins/history | head -3; echo \"(empty = untracked, as documented)\"",
+          "exit_code": 0,
+          "output_sha": "448fc8b7d095d9da603eeed72be30239200c5c6e3a909afd634c9d7a27e6c7bf"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git show refs/gitreins/history:.gitreins/history/2026-11-17/94482854/verdict.json 2>&1 | python3 -c \"\nimport json,sys\nd=json.load(sys.stdin)\nprint({k:d.get(k) for k in ('task_id','passed','pass_class','commit')})\n\" 2>&1",
+          "exit_code": 0,
+          "output_sha": "27892417facaaffdf3b0b3761457a341e04fcda12c6b28e17db79cfa65cca248"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && timeout 600 npx vitest run --passWithNoTests 2>&1 | tail -15",
+          "exit_code": -15,
+          "output_sha": "b1c23ed933c3b95411ddd62690cb19b5354b11da9bcf73b48f05f951cc767680"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && nohup npx vitest run --passWithNoTests > /tmp/vitest_df12.log 2>&1 &\necho \"started pid $!\"",
+          "exit_code": 0,
+          "output_sha": "3434f6670a4c51aeaa2b20a7f70ad0deff250ab2ad1c48cd7fb0735e7f2478ab"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rn \"gitreins-verdicts\\|history.storage\\|max_verdicts\" --include=*.md --include=*.js --include=*.ts --include=*.json -l . 2>/dev/null | grep -v node_modules | grep -v \"^./.tmp\" | head -20",
+          "exit_code": 0,
+          "output_sha": "7a99d412f2c4730398390f46680b8ca2584f79b3911c56dddf078e380b03fffe"
+        },
+        {
+          "tool": "run_command",
+          "command": "SP=/home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages; sed -n '95,106p' $SP/engine/persist.py; echo \"=== doc claims persist.py:100 ===\"; grep -n \"persist.py:100\\|persist.py\" /home/kara/SpecLang/docs/gitreins-verdicts.md",
+          "exit_code": 0,
+          "output_sha": "90c6d3591e2f713af57370d1bf9d1130bf363ea5a036434d0d09066c5e4046a8"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && sed -n '60,110p' docs/gitreins-verdicts.md",
+          "exit_code": 0,
+          "output_sha": "25cfd785519f83bcf29efd77b923f7061f8cc1d022b3849326bed0beea34e9e3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && echo \"=== step 3 ===\"; find .gitreins/history -name verdict.json | sort | tail -3; echo \"=== step 4 jq ===\"; jq '{task_id, passed, pass_class, tier2_skipped, commit}' .gitreins/history/2026-11-17/94482854/verdict.json 2>&1; echo \"=== step 5 ===\"; git log refs/gitreins/history --format='%h %s' -3",
+          "exit_code": 0,
+          "output_sha": "f4c3118a7ceb870fc5c0ceb0b6c63baa4bc9aff673bfd152cb0c026b2dbdafe6"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 25; tail -20 /tmp/vitest_df12.log 2>&1; echo \"=== running? ===\"; pgrep -f vitest >/dev/null && echo YES || echo NO",
+          "exit_code": 0,
+          "output_sha": "1a31881e7febdea19524062eef74c609c1cf095bdb36b6852f576f095bbbf63a"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 28; tail -25 /tmp/vitest_df12.log 2>&1; echo \"=== running? ===\"; pgrep -f vitest >/dev/null && echo YES || echo NO",
+          "exit_code": 0,
+          "output_sha": "836ebd5a6859a3bf728275a076a72972e896c32ce85e44d326697524ca3d5ed1"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; wc -c /tmp/vitest_df12.log; tail -25 /tmp/vitest_df12.log 2>&1; pgrep -f vitest >/dev/null && echo RUNNING || echo DONE",
+          "exit_code": 0,
+          "output_sha": "30e97bb931fdfc0512aacce868bef10afa1f91acbb2253ca540b40474af69180"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git show --stat d1490384 2>&1 | head -20; echo \"=== 92e35636 ===\"; git show --stat 92e35636 2>&1 | head -20",
+          "exit_code": 0,
+          "output_sha": "092beb715148ca838c7b43188abf7c634f9b653832f4f2eb4f382bb11ffb2cea"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -n \"DF-SPECLANG-12\" .coding-hermes/board/tasks.jsonl 2>/dev/null | head -3 | cut -c1-600",
+          "exit_code": 0,
+          "output_sha": "351e8776f8a36e883aaab715db562382374dbf9b53f96ed5875ef055c2138c76"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && python3 -c \"\nimport json\nfor line in open('.coding-hermes/board/tasks.jsonl'):\n    line=line.strip()\n    if not line: continue\n    try: d=json.loads(line)\n    except: continue\n    if d.get('id')=='DF-SPECLANG-12':\n        print(json.dumps(d, indent=1)[:2500])\n\"",
+          "exit_code": 0,
+          "output_sha": "a4108998f635f604134c34ef630d5309ac9aa6a66f238e89dd9e18c595bbe703"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -c \"DF-SPECLANG-12\" .coding-hermes/board/events.jsonl 2>/dev/null; grep \"DF-SPECLANG-12\" .coding-hermes/board/events.jsonl 2>/dev/null | tail -3 | cut -c1-400",
+          "exit_code": 0,
+          "output_sha": "6c6a328879b4a4272c7953a50312b907419169a08abbbb6e04fa3b9884f44dbf"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && python3 -c \"\nimport json\nfor line in open('.coding-hermes/board/tasks.jsonl'):\n    line=line.strip()\n    if not line: continue\n    try: d=json.loads(line)\n    except: continue\n    if d.get('id')=='DF-SPECLANG-12':\n        print(d.get('foreman_note'))\n\"",
+          "exit_code": 0,
+          "output_sha": "9f91910531e8e8125f9513499d183f96d521004027f5a311d9897d1d6d4beb3b"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 20; wc -c /tmp/vitest_df12.log; tail -20 /tmp/vitest_df12.log; pgrep -f vitest >/dev/null && echo RUNNING || echo DONE",
+          "exit_code": 0,
+          "output_sha": "5433c5510546018e5374d743e755838807a4b6b9deb0961b03a20e9c2ca4c1a1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls -la .gitreins/history/2026-11-16/579b2445/ 2>&1; echo \"=== verdict ===\"; jq '{task_id, passed, pass_class, commit}' .gitreins/history/2026-11-16/579b2445/verdict.json 2>&1",
+          "exit_code": 0,
+          "output_sha": "86a22a8563b44a4b8b1228965896b7811b35c1da36b862b95fefe12c74c253a0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git show refs/gitreins/history:.gitreins/history/2026-11-16/579b2445/verdict.json 2>&1 | head -5; echo \"=== ref tree 11-16 ===\"; git ls-tree refs/gitreins/history:.gitreins/history/2026-11-16/ 2>&1 | head",
+          "exit_code": 0,
+          "output_sha": "dd7f583894fec94b32b2cbf957237df0b5013bbfb90b2c4a30ab49c76eba82f9"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; wc -c /tmp/vitest_df12.log; tail -20 /tmp/vitest_df12.log; pgrep -f vitest >/dev/null && echo RUNNING || echo DONE",
+          "exit_code": 0,
+          "output_sha": "ceee734e51b2222b8fe60c9a5e91cd5c274269df6c8bbf18be1430fe28139e5a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && ls tests/ 2>/dev/null | grep -i \"gitreins\\|history\\|verdict\\|config\" | head -20",
+          "exit_code": 0,
+          "output_sha": "81b0525b425ee4a202a7091e348da2e7494468eb9a362c5f886497aa10cab11e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && grep -rln \"gitreins-verdicts\\|history.storage\\|max_verdicts\\|gitreins/history\" tests/ 2>/dev/null | head -10",
+          "exit_code": 0,
+          "output_sha": "abdc11297ffb4cd623b09703cf61b057fd8e1915e310eb5297570145cd048f5c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && timeout 120 npx vitest run tests/config.test.ts 2>&1 | tail -12",
+          "exit_code": 0,
+          "output_sha": "fcd639b3ebfd740229861ee951f0c3e367c3b5e83c46535339c7da765c0cd474"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 25; wc -c /tmp/vitest_df12.log; tail -20 /tmp/vitest_df12.log; pgrep -f vitest >/dev/null && echo RUNNING || echo DONE",
+          "exit_code": 0,
+          "output_sha": "d2c5acdd19075f3a40b0f94261653bc991c65dbbf2f3b751eabe4eeb22592180"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: config keys present + recognised + verdict discoverable.\\n- config diff: commit d1490384 added `storage: git` + `max_verdicts: 1000` under history:; commit e9922bc8 flipped enabled: false -> true.\\n- gitreins 0.21.0 (pipx venv) engine/config_schema.py:218 _HISTORY = {enabled, path, storage, max_verdicts}, registered line 264; engine/persist.py:100 DEFAULT_HISTORY_CONFIG same 4 keys; storage_mode line 220; max_verdicts consumed line 952.\\n- `gitreins config-validate` exit 0, 6 unrelated warnings, ZERO history.* warnings.\\n- `gitreins report --json` -> producer.version 0.21.0, metadata.storage \\\"git\\\", 10 verdicts.\\n- Run ids: .gitreins/history/2026-11-16/579b2445/ (DF-SPECLANG-2-R4, passed true, judged, commit 6430f37) with verdict.json+summary.md+commit.patch+worktree.patch; also 2026-11-17/94482854 (UX-003).\\n- refs/gitreins/history ref holds the same records (git show refs/gitreins/history:.gitreins/history/2026-11-16/579b2445/verdict.json works).\\n- docs/gitreins-verdicts.md documents all 4 keys + runbook; every runbook command verified working verbatim.\\n- tests: tests/config.test.ts 6 passed. No test references this change (config+docs only).\\n- Board row DF-SPECLANG-12 still status \\\"pending\\\" with foreman_note PARTIAL (AC1-3 satisfied, AC5 docs now landed; AC4 max_iterations>=200 out of scope of this criterion).\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "d2db183783140257731a36a5ffad3b9ea073ba39d2c7c2fb8a392b690a61dc88"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; wc -c /tmp/vitest_df12.log; tail -25 /tmp/vitest_df12.log; pgrep -f vitest >/dev/null && echo RUNNING || echo DONE",
+          "exit_code": 0,
+          "output_sha": "3c7abcb6fc1c6ef0a92252c6ac0034d23ec9c9c03eac6c9cd6e328c19b48b8ee"
+        },
+        {
+          "tool": "run_command",
+          "command": "ps -eo pid,etime,pcpu,args | grep -i vitest | grep -v grep | head -5",
+          "exit_code": 0,
+          "output_sha": "2c66faecfdb2534aac19c28e7836c60f37b503d468d14958c60b2144c1727ae1"
+        },
+        {
+          "tool": "run_command",
+          "command": "wc -c /tmp/vitest_df12.log; tail -30 /tmp/vitest_df12.log",
+          "exit_code": 0,
+          "output_sha": "2c0c47c35e69516b0e8fd6148e8e4dbd5f061f19d3302ead5295032eaf87d1bb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && setsid nohup bash -c 'npx vitest run --passWithNoTests > /tmp/vitest_df12b.log 2>&1; echo \"EXIT=$?\" >> /tmp/vitest_df12b.log' < /dev/null > /dev/null 2>&1 & disown; sleep 2; echo launched",
+          "exit_code": 0,
+          "output_sha": "aeb4c8433b67be4077489753711d8390ae0d1c28a7742795ed3ba2ca7c97755b"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; wc -c /tmp/vitest_df12b.log 2>/dev/null; tail -20 /tmp/vitest_df12b.log 2>/dev/null; pgrep -f \"vitest run --passWithNoTests\" >/dev/null && echo RUNNING || echo DONE",
+          "exit_code": 0,
+          "output_sha": "120f1b2222f7882cffb10353b4cda031217087ee31779b30ae03fdcd2e3a093d"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; tail -25 /tmp/vitest_df12b.log 2>/dev/null; pgrep -f \"vitest run --passWithNoTests\" >/dev/null && echo RUNNING || echo DONE",
+          "exit_code": 0,
+          "output_sha": "22cc0297765209d1001799f8489aad735e25826265aaa78227f40b7994a2f5d5"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"TEST EVIDENCE: `npx vitest run --passWithNoTests` in /home/kara/SpecLang\\n  Test Files  107 passed | 4 skipped (111)\\n  Tests  1912 passed | 58 skipped (1970)\\n  EXIT=0\\nAlso tests/config.test.ts: 6 passed (6), exit 0.\\nNo test in tests/ references gitreins-verdicts/history.storage/max_verdicts (change is config+docs only).\", \"key\": \"tests\"}",
+          "exit_code": 0,
+          "output_sha": "acb916a9e07bd0ef99051e2c9964bfacd256f1c9b8a6c1be9d3c35509c2ed00e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/SpecLang && git status --short | head; echo \"=== config history block final ===\"; grep -n \"history:\" -A 8 .gitreins/config.yaml",
+          "exit_code": 0,
+          "output_sha": "e3ab11434b95fb51efd7afe8ae359ab3a8d366fedd6c24192d39cb5d71ca4480"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"DERIVED CRITERIA (proposed before grading):\\n\\nderived_0: The three history keys are consumed by the installed gitreins 0.21.0 engine at runtime, not merely present in YAML \\u2014 i.e. VerdictPersister reads enabled/storage/max_verdicts from this repo's config.\\n  PASS: engine/persist.py:100 DEFAULT_HISTORY_CONFIG; load_history_config merges config.yaml over defaults (lines 108-127); storage_mode property line 220; max_verdicts consumed line 952 (_prune_old). Runtime probe in /home/kara/SpecLang: merged={'enabled': True, 'path': '.gitreins/history', 'storage': 'git', 'max_verdicts': 1000}; enabled=True storage=git dir=/home/kara/SpecLang/.gitreins/history.\\n\\nderived_1: The documented discovery path actually works verbatim \\u2014 every runbook command in docs/gitreins-verdicts.md returns the claimed result.\\n  PASS: `gitreins report -n 6` lists DOC-9/README-20/UX-003/DOC-7 PASS + \\\"Storage: git\\\"; `gitreins report --json` emits schema evidence doc with metadata.storage \\\"git\\\", producer.version 0.21.0, exit 0; `find .gitreins/history -name verdict.json | sort | tail` returns paths; `jq '{task_id,passed,pass_class,tier2_skipped,commit}'` on 94482854 returns UX-003/true/judged/false/ad5f0ec; `git log refs/gitreins/history` returns \\\"verdict: UX-003 \\u2014 PASS\\\"; `git show refs/gitreins/history:.gitreins/history/2026-11-16/579b2445/verdict.json` returns the record.\\n\\nderived_2: The doc's citations of the installed tool are accurate (no fabricated file/line references), since the criterion's proof explicitly requires \\\"the gitreins-0.21.0 METADATA/engine config citing storage/max_verdicts\\\".\\n  PASS: docs cite engine/persist.py DEFAULT_HISTORY_CONFIG (real, line 100) and engine/config_schema.py::_HISTORY at line 218 (real: _HISTORY at 218-223 with enabled/path/storage/max_verdicts, registered line 264). Both exist in the pipx 0.21.0 venv. The doc's \\\"six unrelated warnings, no history.* warning\\\" claim reproduces exactly under `gitreins config-validate` (exit 0).\\n\\nderived_3: The durable (storage: git) copy is real \\u2014 a verdict is recoverable from refs/gitreins/history, not only from the gitignored working tree, so closeout evidence survives working-tree cleanup.\\n  PASS: `git show-ref | grep gitreins` -> dd892ba6... refs/gitreins/history; `git ls-tree refs/gitreins/history:.gitreins/history/2026-11-16/` lists 579b2445; `git show refs/gitreins/history:.gitreins/history/2026-11-17/94482854/verdict.json` returns UX-003 passed true. .gitignore:83 ignores .gitreins/history/ and `git ls-files .gitreins/history` is empty, matching the documented decision.\\n\\nderived_4: The change does not regress the repo's test suite / build.\\n  PASS: `npx vitest run --passWithNoTests` -> Test Files 107 passed | 4 skipped (111); Tests 1912 passed | 58 skipped (1970); EXIT=0. tests/config.test.ts 6 passed.\", \"key\": \"derived\"}",
+          "exit_code": 0,
+          "output_sha": "ae78d815ace9ef949aaa8a24944c1c55eeda5473d85dc9d2728cd4d06523cb58"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "high",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 141,
+        "detection": "task marked status=complete while its own acceptance_criteria items AC4 and AC5 are recorded as STILL OPEN in the same row's foreman_note",
+        "detail": "The new row sets \"status\":\"complete\" and adds evidence run 94482854, but the retained foreman_note still says \"STILL OPEN: AC4 (evaluator.max_iterations 100 -> >=200 ...) and AC5 (docs note on the evidence-binding path)\", and the new premise-check text only claims persistence evidence (AC1-AC3), never AC4/AC5."
+      },
+      {
+        "severity": "medium",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 141,
+        "detection": "closure evidence run_id does not match the run the note says proves the row",
+        "detail": "The evidence entry cites run_id 94482854, which the foreman_note attributes to UX-003 (\"94482854 UX-003\"), not to a DF-SPECLANG-12 run; the note explicitly says \"A separate DF-SPECLANG-12 tier-2 run was still evaluating at closeout\"."
+      }
+    ],
+    "summary": "The board row DF-SPECLANG-12 is flipped to complete with evidence that does not cover its own still-open acceptance criteria AC4/AC5, and the cited evidence run id belongs to a different task."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: npm notice run speclang@1.0.0 build\n  \u2713 tests: Start at  01:07:45\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 history.enabled true plus history.storage git and max_verdicts in .gitreins/config.yaml, documented in docs/gitreins-verdicts.md, and a run's verdict is discoverable after task complete. failure_condition = config keys absent or not recognised by gitreins 0.21.0, or no discoverable verdict after a completed run. proof = the config diff, the gitreins-0.21.0 METADATA/engine config citing storage/max_verdicts, and a run id from .gitreins/history.: All three proof elements present. (1) CONFIG DIFF: `.gitreins/config.yaml:38-45` has `history:` / `enabled: true` / `storage: git` / `max_verdicts: 1000`; `git log -p -- .gitreins/config.yaml` shows commit d1490384 added `+  storage: git` and `+  max_verdicts: 1000`, and commit e9922bc8 flipped `-  enabled: false` -> `+  enabled: true`. (2) RECOGNISED BY 0.21.0: `gitreins --version` -> `gitreins 0.21.0` (pipx venv /home/kara/.local/share/pipx/venvs/gitreins). engine/config_schema.py:218-223 `_HISTORY = {enabled: KeySpec(\"bool\"), path: KeySpec(\"str\"), storage: KeySpec(\"str\"), max_verdicts: KeySpec(\"any\")}`, registered at line 264 `\"history\": _HISTORY`; engine/persist.py:100 `DEFAULT_HISTORY_CONFIG = {enabled, path, storage, max_verdicts}`; storage consumed at persist.py:220 (`storage_mode`) and max_verdicts at persist.py:952 (`_prune_old`). Runtime probe: `load_history_config('/home/kara/SpecLang')` -> `{'enabled': True, 'path': '.gitreins/history', 'storage': 'git', 'max_verdicts': 1000}`, `VerdictPersister.enabled=True storage_mode=git`. `gitreins config-validate` exits 0 and emits exactly six unrelated warnings (guards.assemble, guards.assemble_command, guards.build, guards.build_command, defaults.provider, defaults.api_key_env) and ZERO `history.*` warnings \u2014 the unknown-key detector ran and named nothing in this block. `gitreins report --json` emits `\"producer\":{\"name\":\"gitreins\",\"version\":\"0.21.0\"}` and `\"metadata\":{...,\"storage\":\"git\"}`. (3) DISCOVERABLE RUN ID: `.gitreins/history/2026-11-16/579b2445/` contains verdict.json + summary.md + commit.patch + worktree.patch; `jq '{task_id,passed,pass_class,commit}'` -> `{\"task_id\":\"DF-SPECLANG-2-R4\",\"passed\":true,\"pass_class\":\"judged\",\"commit\":\"6430f3701330128ab73830b82de7fc2bf06a51a9\"}`. `gitreins report -n 6` lists completed tasks DOC-9, README-20, UX-003, DOC-7 as PASS. DOCS: docs/gitreins-verdicts.md:26-40 documents all four keys in a table with defaults, plus a runbook (lines 76-100) whose every command I ran verbatim and which returned the claimed results. Tests: `npx vitest run --passWithNoTests` -> `Test Files 107 passed | 4 skipped (111)`, `Tests 1912 passed | 58 skipped (1970)`, EXIT=0. [resolution 0.09; docs/gitreins-verdicts.md]\n  \u2713 The three history keys are consumed by the installed gitreins 0.21.0 engine at runtime, not merely present in YAML \u2014 VerdictPersister reads enabled/storage/max_verdicts from this repo's config.: engine/persist.py:108-127 `load_history_config` merges `.gitreins/config.yaml`'s history section over `DEFAULT_HISTORY_CONFIG` (line 122-126: `for key in merged: if key in config: merged[key] = config[key]`). Consumption points: persist.py:220 `storage_mode` property, persist.py:254 `if not self.enabled`, persist.py:313/346/549 `if self.storage_mode == \"git\"`, persist.py:952 `max_v = self.config.get(\"max_verdicts\", 1000)`. Runtime probe against this worktree returned `enabled: True storage: git dir: /home/kara/SpecLang/.gitreins/history`, proving the YAML values reach the engine rather than falling back to defaults.\n  \u2713 The documented discovery path actually works verbatim \u2014 every runbook command in docs/gitreins-verdicts.md returns the claimed result.: Ran each runbook command in /home/kara/SpecLang: (1) `gitreins report -n 6` -> lists DOC-9/README-20/UX-003/DOC-7 PASS plus `Storage: git (/home/kara/SpecLang/.gitreins/history)`; (2) `gitreins report --json` -> schema-valid evidence doc, exit 0; (3) `find .gitreins/history -name verdict.json | sort | tail -3` -> three paths; (4) `jq '{task_id, passed, pass_class, tier2_skipped, commit}' .gitreins/history/2026-11-17/94482854/verdict.json` -> `{\"task_id\":\"UX-003\",\"passed\":true,\"pass_class\":\"judged\",\"tier2_skipped\":false,\"commit\":\"ad5f0ec...\"}`; (5) `git log refs/gitreins/history --format='%h %s' -3` -> `dd892ba6 verdict: UX-003 \u2014 PASS`, `92b22474 verdict: README-20 \u2014 PASS`, `34ebf809 verdict: DOC-7 \u2014 PASS`; `git show refs/gitreins/history:.gitreins/history/2026-11-16/579b2445/verdict.json` -> the DF-SPECLANG-2-R4 record. No runbook step failed.\n  \u2713 The doc's citations of the installed tool are accurate (no fabricated file/line references), since the criterion's proof explicitly requires the gitreins-0.21.0 engine config citing storage/max_verdicts.: docs/gitreins-verdicts.md:26-28 cites `engine/persist.py` `DEFAULT_HISTORY_CONFIG` and `engine/config_schema.py::_HISTORY`; line 43 cites `engine/config_schema.py:218` (`_HISTORY`). Verified in the real 0.21.0 install: `engine/persist.py:100 DEFAULT_HISTORY_CONFIG = {` and `engine/config_schema.py:218 _HISTORY: dict[str, KeySpec] = {` with `enabled`/`path`/`storage`/`max_verdicts` at lines 219-222, registered at line 264. Both files exist in /home/kara/.local/share/pipx/venvs/gitreins/lib/python3.14/site-packages/engine/. The doc's claim that `gitreins config-validate` flags six unrelated keys and no `history.*` key reproduces exactly (exit 0, six WARN lines, none history.*).\n  \u2713 The durable (storage: git) copy is real \u2014 a verdict is recoverable from refs/gitreins/history, not only from the gitignored working tree, so closeout evidence survives working-tree cleanup.: `git show-ref | grep gitreins` -> `dd892ba631fdfa70133675ca85590bbf93066286 refs/gitreins/history`. `git ls-tree refs/gitreins/history:.gitreins/history/2026-11-16/` lists `579b2445` among eight run dirs. `git show refs/gitreins/history:.gitreins/history/2026-11-17/94482854/verdict.json` returns `{'task_id': 'UX-003', 'passed': True, 'pass_class': 'judged', 'commit': 'ad5f0ec...'}`. The documented decision is consistent with the repo: `.gitignore:83` ignores `.gitreins/history/` and `git ls-files .gitreins/history` returns empty, exactly as docs/gitreins-verdicts.md:62-73 states.\n  \u2713 The change does not regress the repo's test suite.: `npx vitest run --passWithNoTests` in /home/kara/SpecLang -> `Test Files  107 passed | 4 skipped (111)`, `Tests  1912 passed | 58 skipped (1970)`, `EXIT=0`. Targeted `npx vitest run tests/config.test.ts` -> `Test Files 1 passed (1)`, `Tests 6 passed (6)`, exit 0. Note: no test in tests/ references gitreins-verdicts/history.storage/max_verdicts \u2014 the change is config+docs only, so the suite is a regression guard rather than a direct test of the new keys.\nThe config keys are present, genuinely recognised and consumed by gitreins 0.21.0 (config-validate clean for history.*, runtime probe returns storage=git/max_verdicts=1000), documented accurately in docs/gitreins-verdicts.md with a runbook that works verbatim, and completed runs are discoverable both on disk (run id 579b2445, 94482854) and on the refs/gitreins/history ref, with the full suite green at 1912 passed / EXIT=0. [uncovered failure paths: failure mode 0 (A judge run killed by an outer wrapper timeout (or Ctrl-C / provider hang) writes no verdict at all, so a board closeout still has no evidence run to bind \u2014 the exact symptom this task set out to fix for UX-002.): detected_by is empty \u2014 uncovered failure path; failure mode 1 (The tier-1 `tests` step is killed by the default 120s per-step budget on this repo's full vitest run, so a completed run records `passed: false` / `[DEGRADED \u2014 skipped: tier1(tests)]` rather than a green verdict.): detected_by is empty \u2014 uncovered failure path; failure mode 2 (The durable evidence ref lives outside refs/heads/, so a plain `git push` does not carry it and a fresh clone has no verdict history \u2014 evidence is per-checkout unless pushed explicitly.): detected_by is empty \u2014 uncovered failure path]\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-17T06:15:27.604990",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-17T06:15:27.663478+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 21104,
+        "truncated": false,
+        "source": "git show f4b557eed1b0"
+      }
+    ],
+    "task_id": "DF-SPECLANG-12"
+  }
+}

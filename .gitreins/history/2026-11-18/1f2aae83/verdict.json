@@ -1,0 +1,392 @@
+{
+  "task_id": "README-9",
+  "task_title": "README compile-health claims are stale",
+  "task_criteria": [
+    "README.md no longer states that src/db and src/auth have compilation errors or type conflicts; every claim in the corrected sections is backed by a command whose output is quoted (npx tsc --noEmit rc=0, npm run build rc=0); the correction is limited to README.md"
+  ],
+  "passed": true,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "land/2117",
+  "commit": "63df954e84d693134ca34e330391b1a9f38f490f",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "b5f0e3e108990d00e49f8e17c6cab99cbdeb67e63fc1b510a1581fc83e560d0a",
+  "working_tree_dirty_path_count": 0,
+  "items": [
+    {
+      "criterion": "README.md no longer states that src/db and src/auth have compilation errors or type conflicts; every claim in the corrected sections is backed by a command whose output is quoted (npx tsc --noEmit rc=0, npm run build rc=0); the correction is limited to README.md",
+      "status": "PASS",
+      "detail": "Stale claims removed: `grep -n -i \"compilation error|type conflict|type conflicts|Has compilation|@types/glob\" README.md` returns only line 713 (\"already enables `skipLibCheck`\") \u2014 the old \"\u26a0\ufe0f Has compilation errors\" lines for src/db and src/auth and the \"Works with --skipLibCheck, has type conflicts\" bullet are gone. README.md:668-673 now reads \"src/examples/auth.ts # Auth example (not a src/auth/ directory)\", \"src/db/ # Existing source directory\", \"... # Other source paths omitted\"; README.md:731 states \"TypeScript compilation: `npx tsc --noEmit` and `npm run build` both exit with `rc=0`\"; the roadmap item \"Fix TypeScript type conflicts - @types/glob issues\" is removed (README.md:774-778). Quoted evidence block at README.md:693-716 contains the commands and their output: `ls -d src/db src/auth` \u2192 \"ls: cannot access 'src/auth': No such file or directory / src/db / rc=2\", `ls -1 src/examples/auth.ts src/examples/hello-world.ts` \u2192 both paths, `npx tsc --noEmit` \u2192 rc=0, `npm run build` \u2192 rc=0. Reproduced live on this tree: `npx tsc --noEmit` \u2192 tsc_rc=0; `npm run build` \u2192 build_rc=0 (node v22.22.3 / npm 12.2.2); `ls -d src/db src/auth` \u2192 \"ls: cannot access 'src/auth': No such file or directory / src/db / rc=2\" (byte-identical to the quote). Scope: `git diff-tree --no-commit-id --name-only -r ff042925` \u2192 README.md only; `git status --porcelain` empty. Suite run (`npx vitest run --passWithNoTests`, the gitreins test_command): \"Test Files 1 failed | 119 passed | 4 skipped (124)\", \"Tests 1 failed | 1994 passed | 58 skipped (2053)\" \u2014 the single failure is tests/db.test.ts:465 \"Hook timed out in 30000ms\", an environmental timeout in a docs-only change. [resolution 0.20; README.md]"
+    },
+    {
+      "criterion": "The quoted evidence block is reproducible: running the exact commands in README.md:698-707 on the current tree yields the same output/exit codes (src/auth absent, src/db present, src/examples/auth.ts present, tsc rc=0, build rc=0).",
+      "status": "PASS",
+      "detail": "Ran each quoted command verbatim: `ls -d src/db src/auth; printf 'rc=%s\\n' \"$?\"` \u2192 \"ls: cannot access 'src/auth': No such file or directory / src/db / rc=2\" (matches README.md:699-702); `ls -1 src/examples/auth.ts src/examples/hello-world.ts` \u2192 both paths printed, rc=0 (matches README.md:703-705); `npx tsc --noEmit` \u2192 tsc_rc=0 (README.md:706-707); `npm run build` \u2192 build_rc=0 (README.md:708-709).",
+      "derived": true
+    },
+    {
+      "criterion": "The new \"TypeScript compilation: rc=0\" claim is scoped honestly \u2014 README states the tsconfig scope/exclusions so the claim is not overstated as \"every file type-checks\".",
+      "status": "PASS",
+      "detail": "README.md:711-715: \"Both TypeScript commands succeed using the repository's `tsconfig.json`, which already enables `skipLibCheck` and excludes some source paths. These results prove the configured typecheck and build pass, not that every file or dependency declaration is checked, or that runtime behavior is correct.\" tsconfig.json confirms `\"skipLibCheck\": true` and an exclude list covering src/cli/**, src/mcp/**, src/indexer/**, src/parser/**, src/codegen/**, src/generated/**, src/lsp/**, src/dashboard/**, src/ralph-loop/** \u2014 the caveat matches the actual config.",
+      "derived": true
+    },
+    {
+      "criterion": "The correction is limited to README.md \u2014 no source, config, or tsconfig change was made to make the claim true.",
+      "status": "PASS",
+      "detail": "`git diff-tree --no-commit-id --name-only -r ff042925` \u2192 \"README.md\" (1 file changed, 33 insertions, 9 deletions). `git status --porcelain` is empty, so no uncommitted source/tsconfig edits were used to make the claim true; tsconfig.json and package.json are untouched by the commit.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: \u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[1/1]\u23af",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261118T000426.610742Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\nnpm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261118T000426.610742Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "\n\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[1/1]\u23af\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261118T000426.610742Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 README.md no longer states that src/db and src/auth have compilation errors or type conflicts; every claim in the corrected sections is backed by a command whose output is quoted (npx tsc --noEmit rc=0, npm run build rc=0); the correction is limited to README.md: Stale claims removed: `grep -n -i \"compilation error|type conflict|type conflicts|Has compilation|@types/glob\" README.md` returns only line 713 (\"already enables `skipLibCheck`\") \u2014 the old \"\u26a0\ufe0f Has compilation errors\" lines for src/db and src/auth and the \"Works with --skipLibCheck, has type conflicts\" bullet are gone. README.md:668-673 now reads \"src/examples/auth.ts # Auth example (not a src/auth/ directory)\", \"src/db/ # Existing source directory\", \"... # Other source paths omitted\"; README.md:731 states \"TypeScript compilation: `npx tsc --noEmit` and `npm run build` both exit with `rc=0`\"; the roadmap item \"Fix TypeScript type conflicts - @types/glob issues\" is removed (README.md:774-778). Quoted evidence block at README.md:693-716 contains the commands and their output: `ls -d src/db src/auth` \u2192 \"ls: cannot access 'src/auth': No such file or directory / src/db / rc=2\", `ls -1 src/examples/auth.ts src/examples/hello-world.ts` \u2192 both paths, `npx tsc --noEmit` \u2192 rc=0, `npm run build` \u2192 rc=0. Reproduced live on this tree: `npx tsc --noEmit` \u2192 tsc_rc=0; `npm run build` \u2192 build_rc=0 (node v22.22.3 / npm 12.2.2); `ls -d src/db src/auth` \u2192 \"ls: cannot access 'src/auth': No such file or directory / src/db / rc=2\" (byte-identical to the quote). Scope: `git diff-tree --no-commit-id --name-only -r ff042925` \u2192 README.md only; `git status --porcelain` empty. Suite run (`npx vitest run --passWithNoTests`, the gitreins test_command): \"Test Files 1 failed | 119 passed | 4 skipped (124)\", \"Tests 1 failed | 1994 passed | 58 skipped (2053)\" \u2014 the single failure is tests/db.test.ts:465 \"Hook timed out in 30000ms\", an environmental timeout in a docs-only change. [resolution 0.20; README.md]\n  \u2713 The quoted evidence block is reproducible: running the exact commands in README.md:698-707 on the current tree yields the same output/exit codes (src/auth absent, src/db present, src/examples/auth.ts present, tsc rc=0, build rc=0).: Ran each quoted command verbatim: `ls -d src/db src/auth; printf 'rc=%s\\n' \"$?\"` \u2192 \"ls: cannot access 'src/auth': No such file or directory / src/db / rc=2\" (matches README.md:699-702); `ls -1 src/examples/auth.ts src/examples/hello-world.ts` \u2192 both paths printed, rc=0 (matches README.md:703-705); `npx tsc --noEmit` \u2192 tsc_rc=0 (README.md:706-707); `npm run build` \u2192 build_rc=0 (README.md:708-709).\n  \u2713 The new \"TypeScript compilation: rc=0\" claim is scoped honestly \u2014 README states the tsconfig scope/exclusions so the claim is not overstated as \"every file type-checks\".: README.md:711-715: \"Both TypeScript commands succeed using the repository's `tsconfig.json`, which already enables `skipLibCheck` and excludes some source paths. These results prove the configured typecheck and build pass, not that every file or dependency declaration is checked, or that runtime behavior is correct.\" tsconfig.json confirms `\"skipLibCheck\": true` and an exclude list covering src/cli/**, src/mcp/**, src/indexer/**, src/parser/**, src/codegen/**, src/generated/**, src/lsp/**, src/dashboard/**, src/ralph-loop/** \u2014 the caveat matches the actual config.\n  \u2713 The correction is limited to README.md \u2014 no source, config, or tsconfig change was made to make the claim true.: `git diff-tree --no-commit-id --name-only -r ff042925` \u2192 \"README.md\" (1 file changed, 33 insertions, 9 deletions). `git status --porcelain` is empty, so no uncommitted source/tsconfig edits were used to make the claim true; tsconfig.json and package.json are untouched by the commit.\nThe README correction is accurate and reproducible \u2014 the stale src/db/src/auth compilation-error and type-conflict claims are gone, the quoted tsc/build rc=0 evidence reproduces exactly on this tree, and the commit touches only README.md. [uncovered failure paths: failure mode 0 (The rc=0 typecheck/build claim silently depends on tsconfig exclusions (src/cli, src/mcp, src/indexer, src/parser, src/codegen, src/generated, src/lsp, src/dashboard, src/ralph-loop), so a future regression in an excluded path would not contradict the README): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 README.md no longer states that src/db and src/auth have compilation errors or type conflicts; every claim in the corrected sections is backed by a command whose output is quoted (npx tsc --noEmit rc=0, npm run build rc=0); the correction is limited to README.md: Stale claims removed: `grep -n -i \"compilation error|type conflict|type conflicts|Has compilation|@types/glob\" README.md` returns only line 713 (\"already enables `skipLibCheck`\") \u2014 the old \"\u26a0\ufe0f Has compilation errors\" lines for src/db and src/auth and the \"Works with --skipLibCheck, has type conflicts\" bullet are gone. README.md:668-673 now reads \"src/examples/auth.ts # Auth example (not a src/auth/ directory)\", \"src/db/ # Existing source directory\", \"... # Other source paths omitted\"; README.md:731 states \"TypeScript compilation: `npx tsc --noEmit` and `npm run build` both exit with `rc=0`\"; the roadmap item \"Fix TypeScript type conflicts - @types/glob issues\" is removed (README.md:774-778). Quoted evidence block at README.md:693-716 contains the commands and their output: `ls -d src/db src/auth` \u2192 \"ls: cannot access 'src/auth': No such file or directory / src/db / rc=2\", `ls -1 src/examples/auth.ts src/examples/hello-world.ts` \u2192 both paths, `npx tsc --noEmit` \u2192 rc=0, `npm run build` \u2192 rc=0. Reproduced live on this tree: `npx tsc --noEmit` \u2192 tsc_rc=0; `npm run build` \u2192 build_rc=0 (node v22.22.3 / npm 12.2.2); `ls -d src/db src/auth` \u2192 \"ls: cannot access 'src/auth': No such file or directory / src/db / rc=2\" (byte-identical to the quote). Scope: `git diff-tree --no-commit-id --name-only -r ff042925` \u2192 README.md only; `git status --porcelain` empty. Suite run (`npx vitest run --passWithNoTests`, the gitreins test_command): \"Test Files 1 failed | 119 passed | 4 skipped (124)\", \"Tests 1 failed | 1994 passed | 58 skipped (2053)\" \u2014 the single failure is tests/db.test.ts:465 \"Hook timed out in 30000ms\", an environmental timeout in a docs-only change. [resolution 0.20; README.md]\n\n\u2026 [1383 chars omitted \u2014 2 line(s)] \u2026\n  \u2713 The correction is limited to README.md \u2014 no source, config, or tsconfig change was made to make the claim true.: `git diff-tree --no-commit-id --name-only -r ff042925` \u2192 \"README.md\" (1 file changed, 33 insertions, 9 deletions). `git status --porcelain` is empty, so no uncommitted source/tsconfig edits were used to make the claim true; tsconfig.json and package.json are untouched by the commit.\nThe README correction is accurate and reproducible \u2014 the stale src/db/src/auth compilation-error and type-conflict claims are gone, the quoted tsc/build rc=0 evidence reproduces exactly on this tree, and the commit touches only README.md. [uncovered failure paths: failure mode 0 (The rc=0 typecheck/build claim silently depends on tsconfig exclusions (src/cli, src/mcp, src/indexer, src/parser, src/codegen, src/generated, src/lsp, src/dashboard, src/ralph-loop), so a future regression in an excluded path would not contradict the README): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "README.md no longer states that src/db and src/auth have compilation errors or type conflicts; every claim in the corrected sections is backed by a command whose output is quoted (npx tsc --noEmit rc=0, npm run build rc=0); the correction is limited to README.md",
+                "status": "PASS",
+                "detail": "Stale claims removed: `grep -n -i \"compilation error|type conflict|type conflicts|Has compilation|@types/glob\" README.md` returns only line 713 (\"already enables `skipLibCheck`\") \u2014 the old \"\u26a0\ufe0f Has compilation errors\" lines for src/db and src/auth and the \"Works with --skipLibCheck, has type conflicts\" bullet are gone. README.md:668-673 now reads \"src/examples/auth.ts # Auth example (not a src/auth/ directory)\", \"src/db/ # Existing source directory\", \"... # Other source paths omitted\"; README.md:731 states \"TypeScript compilation: `npx tsc --noEmit` and `npm run build` both exit with `rc=0`\"; the roadmap item \"Fix TypeScript type conflicts - @types/glob issues\" is removed (README.md:774-778). Quoted evidence block at README.md:693-716 contains the commands and their output: `ls -d src/db src/auth` \u2192 \"ls: cannot access 'src/auth': No such file or directory / src/db / rc=2\", `ls -1 src/examples/auth.ts src/examples/hello-world.ts` \u2192 both paths, `npx tsc --noEmit` \u2192 rc=0, `npm run build` \u2192 rc=0. Reproduced live on this tree: `npx tsc --noEmit` \u2192 tsc_rc=0; `npm run build` \u2192 build_rc=0 (node v22.22.3 / npm 12.2.2); `ls -d src/db src/auth` \u2192 \"ls: cannot access 'src/auth': No such file or directory / src/db / rc=2\" (byte-identical to the quote). Scope: `git diff-tree --no-commit-id --name-only -r ff042925` \u2192 README.md only; `git status --porcelain` empty. Suite run (`npx vitest run --passWithNoTests`, the gitreins test_command): \"Test Files 1 failed | 119 passed | 4 skipped (124)\", \"Tests 1 failed | 1994 passed | 58 skipped (2053)\" \u2014 the single failure is tests/db.test.ts:465 \"Hook timed out in 30000ms\", an environmental timeout in a docs-only change. [resolution 0.20; README.md]",
+                "resolution_probability": 0.2,
+                "cited_path": "README.md"
+              },
+              {
+                "criterion": "The quoted evidence block is reproducible: running the exact commands in README.md:698-707 on the current tree yields the same output/exit codes (src/auth absent, src/db present, src/examples/auth.ts present, tsc rc=0, build rc=0).",
+                "status": "PASS",
+                "detail": "Ran each quoted command verbatim: `ls -d src/db src/auth; printf 'rc=%s\\n' \"$?\"` \u2192 \"ls: cannot access 'src/auth': No such file or directory / src/db / rc=2\" (matches README.md:699-702); `ls -1 src/examples/auth.ts src/examples/hello-world.ts` \u2192 both paths printed, rc=0 (matches README.md:703-705); `npx tsc --noEmit` \u2192 tsc_rc=0 (README.md:706-707); `npm run build` \u2192 build_rc=0 (README.md:708-709).",
+                "derived": true
+              },
+              {
+                "criterion": "The new \"TypeScript compilation: rc=0\" claim is scoped honestly \u2014 README states the tsconfig scope/exclusions so the claim is not overstated as \"every file type-checks\".",
+                "status": "PASS",
+                "detail": "README.md:711-715: \"Both TypeScript commands succeed using the repository's `tsconfig.json`, which already enables `skipLibCheck` and excludes some source paths. These results prove the configured typecheck and build pass, not that every file or dependency declaration is checked, or that runtime behavior is correct.\" tsconfig.json confirms `\"skipLibCheck\": true` and an exclude list covering src/cli/**, src/mcp/**, src/indexer/**, src/parser/**, src/codegen/**, src/generated/**, src/lsp/**, src/dashboard/**, src/ralph-loop/** \u2014 the caveat matches the actual config.",
+                "derived": true
+              },
+              {
+                "criterion": "The correction is limited to README.md \u2014 no source, config, or tsconfig change was made to make the claim true.",
+                "status": "PASS",
+                "detail": "`git diff-tree --no-commit-id --name-only -r ff042925` \u2192 \"README.md\" (1 file changed, 33 insertions, 9 deletions). `git status --porcelain` is empty, so no uncommitted source/tsconfig edits were used to make the claim true; tsconfig.json and package.json are untouched by the commit.",
+                "derived": true
+              }
+            ],
+            "summary": "The README correction is accurate and reproducible \u2014 the stale src/db/src/auth compilation-error and type-conflict claims are gone, the quoted tsc/build rc=0 evidence reproduces exactly on this tree, and the commit touches only README.md. [uncovered failure paths: failure mode 0 (The rc=0 typecheck/build claim silently depends on tsconfig exclusions (src/cli, src/mcp, src/indexer, src/parser, src/codegen, src/generated, src/lsp, src/dashboard, src/ralph-loop), so a future regression in an excluded path would not contradict the README): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"README-9\"}",
+          "exit_code": 0,
+          "output_sha": "eed37629f4fca8c84260eb91a5d4b70f18a6315a2cbe63f860640af9f3d5c962"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && git log --oneline -15 && echo \"---STATUS---\" && git status --porcelain",
+          "exit_code": 0,
+          "output_sha": "394f30e0f6a8dbb2ca76642ae4157d1c4cb0ed4d9a52ca069ed38e5152bb4ef1"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && git show --stat ff042925 && echo \"===DIFF===\" && git show ff042925",
+          "exit_code": 0,
+          "output_sha": "f90ab8ce2eaf415a46684b674fc36b17265567f15ae7fe4f1099274c2e64dc76"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && git show ff042925 -- README.md | head -200",
+          "exit_code": 0,
+          "output_sha": "670b66046b41e9a9cead536eb78c2b958c85e42a0023f6696a9506eac6e474ef"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && sed -n '640,730p' README.md",
+          "exit_code": 0,
+          "output_sha": "5115e845dce6408ec770f93f1728b8ab4ff2109a2f958c2adf8bfedd95e1c1be"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && ls -d src/db src/auth 2>&1; echo \"rc=$?\"; echo \"---\"; ls -1 src/examples/auth.ts src/examples/hello-world.ts 2>&1; echo \"rc=$?\"; echo \"---src listing---\"; ls -1 src | head -40",
+          "exit_code": 0,
+          "output_sha": "0a190175693d8a17f571764ec7a11b7424f85790be774da03e0821fa7d88d303"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && grep -n -i \"compilation error\\|type conflict\\|type conflicts\\|Has compilation\\|skipLibCheck\\|@types/glob\" README.md",
+          "exit_code": 0,
+          "output_sha": "4d1f8bc48de4b15efc6b40ad11e80b0d5d21fcdd3be5aa4bf628414f64bec7b3"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && cat tsconfig.json && echo \"===PKG SCRIPTS===\" && node -e \"const p=require('./package.json');console.log(JSON.stringify(p.scripts,null,2))\"",
+          "exit_code": 0,
+          "output_sha": "fd6708aefd37d87a1338dc8404c5f0c7a8c43a8b164e8202bba085f4dd7ab9cf"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && ls node_modules 2>/dev/null | head -3; echo \"node_modules_rc=$?\"; node --version; npm --version",
+          "exit_code": 0,
+          "output_sha": "d31208c91795fbae84bbeccef0a5d3d346e9ba15617e6170950d9dbe4f2c5fa7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && npx tsc --noEmit; echo \"tsc_rc=$?\"",
+          "exit_code": 0,
+          "output_sha": "dac0b9b04217c7d0d89839aee2b1678bef3d06e81f5d4fb6796cf9b2c6459865"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && npm run build 2>&1 | tail -20; echo \"build_rc=${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "dadc82deda34083239ee698e0ce96bfc77826c6dba3a7d403e3152e8b9a1f796"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && npm run build > /tmp/build.log 2>&1; echo \"build_rc=$?\"; tail -20 /tmp/build.log",
+          "exit_code": 0,
+          "output_sha": "f3f711617c40c266ea29c6d85ad2ecc103a767b4a81f235e7df4f8839526f48f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && git show --stat ff042925 --format=\"\" && echo \"=== files changed in commit ===\" && git diff-tree --no-commit-id --name-only -r ff042925",
+          "exit_code": 0,
+          "output_sha": "6555fce734bde56941298253aa32d45bab027604ae1ac7be82e4e96d80546d43"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && grep -n -i \"src/db\\|src/auth\\|src/examples/auth\" README.md",
+          "exit_code": 0,
+          "output_sha": "b57abdfde49318ec3aaa4cc39dc44bab4970e0f1016464af0426043c626d3980"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && sed -n '340,375p' README.md",
+          "exit_code": 0,
+          "output_sha": "7fa8918578712c4e6f239e5c425fbe65700342ac53034269bd841bd7b35a3d85"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && sed -n '480,505p' README.md",
+          "exit_code": 0,
+          "output_sha": "b743bf830cf0f9299d3b79239526d85e8acdac99c7dc8a13c996d7dde808216f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && ls -1 src/examples/ && echo \"=== db ===\" && ls -1 src/db | head -20",
+          "exit_code": 0,
+          "output_sha": "0ba48c19bcd00e12401d1d63496d16d40c6d88b48d0636b1661e05bb95988eb6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && grep -n -i \"compil\\|type error\\|typecheck\\|type-check\\|does not compile\\|fails to compile\\|broken\" README.md | head -40",
+          "exit_code": 0,
+          "output_sha": "30a4f542b7dd90d17852bcd9e84e65c275cc3396cb4e1c4544d22b52f0a1f12a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && sed -n '600,640p' README.md",
+          "exit_code": 0,
+          "output_sha": "d84b99b5d96455e653cac7606500e910e1e057ff874c67c611b6f64eda163e34"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && cat .gitreins/config.yaml 2>/dev/null | head -40",
+          "exit_code": 0,
+          "output_sha": "26a8c86931d8aca4c8be8d45718d488a8ea170a6e1bcf3b1fe79e996ae968aa7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && grep -rn \"README-9\" --include=*.jsonl --include=*.md --include=*.yaml . 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "a144f33dc33aa87a1c3aa44f20ae9a258ff6a57762f0c79c97f88b3899499dc4"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && sed -n '330,370p' .gitreins/tasks.yaml",
+          "exit_code": 0,
+          "output_sha": "e7a21d08eda9f1bcddab6540e78c589104d582fed2216cc451214cc44601f856"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Task README-9. Commit ff042925 (docs: correct README compile-health claims) touches only README.md (git diff-tree --name-only -> README.md).\\nVerified:\\n- grep -n -i \\\"compilation error|type conflict|Has compilation|@types/glob\\\" README.md -> only line 713 (skipLibCheck mention). Stale claims gone.\\n- README.md:668-673 tree now: src/examples/auth.ts, hello-world.ts, src/db \\\"Existing source directory\\\", \\\"...\\\" omitted.\\n- README.md:693-716 \\\"TypeScript Build Verification\\\" quotes: ls -d src/db src/auth (rc=2, src/auth missing), ls -1 src/examples/auth.ts src/examples/hello-world.ts, npx tsc --noEmit rc=0, npm run build rc=0.\\n- README.md:731 Working section: TypeScript compilation rc=0 claim; Partially Working no longer lists type conflicts; roadmap item \\\"Fix TypeScript type conflicts\\\" removed (README.md:774-778).\\n- Reproduced: npx tsc --noEmit -> tsc_rc=0; npm run build -> build_rc=0 (node v22.22.3 / npm 12.2.2).\\n- ls -d src/db src/auth -> \\\"ls: cannot access 'src/auth'\\\", src/db, rc=2 (matches quoted block).\\n- ls -1 src/examples/auth.ts src/examples/hello-world.ts -> both exist, rc=0 (matches quoted block).\\n- tsconfig.json has skipLibCheck:true and excludes src/cli, src/mcp, src/indexer, src/parser, src/codegen, src/generated, src/lsp, src/dashboard, src/ralph-loop -> README caveat at 712-715 accurate.\\n- README.md:634 pre-existing tsc rc=0 claim (README-4 commit f00274e2) also true.\\n- README.md:361 \\\"src/auth/handler.ts\\\" is inside a sample cascade transcript (illustrative), not a compile-health claim.\\n\", \"key\": \"checked\"}",
+          "exit_code": 0,
+          "output_sha": "854c26f04b83924f387fc9476241033e92ed15085df8351943fe191b2c26b88d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && sed -n '725,790p' README.md",
+          "exit_code": 0,
+          "output_sha": "f0ad89b324a22e568c95f65f3938edee242fdba365251378c3c94ebdfa717fc0"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && timeout 900 npx vitest run --passWithNoTests 2>&1 | tail -15; echo \"vitest_rc=${PIPESTATUS[0]}\"",
+          "exit_code": -15,
+          "output_sha": "28bcbd706cb7fdf97c195a6f1fc695aab1eba5bad539285753798c2b08abb818"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && (timeout 600 npx vitest run --passWithNoTests > /tmp/vitest.log 2>&1; echo \"vitest_rc=$?\" >> /tmp/vitest.log) & sleep 25; echo started",
+          "exit_code": 0,
+          "output_sha": "b6945c9a75d039fcf9e14fede3d6b6ad120ab7ea6c848fb8c1a07e2eb108ca39"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 25; tail -20 /tmp/vitest.log",
+          "exit_code": 0,
+          "output_sha": "0d3aa6ef89f1f700d1faf13b463dc2564705b4ab463d67b1651f0f4b40a64f35"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 28; grep -E \"Test Files|Tests |vitest_rc\" /tmp/vitest.log | tail -10",
+          "exit_code": 0,
+          "output_sha": "dcd0770ffb56db4ae04e77cd72bb0f5f5d64fc94076b4356a372496e40f8ed87"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n -A 30 \"Failed Tests 1\" /tmp/vitest.log | head -60; echo \"=== rc ===\"; grep -n \"vitest_rc\" /tmp/vitest.log",
+          "exit_code": 1,
+          "output_sha": "96474d1b52731d8c4147d83a5c36e71222674c39999a31baebbd848bb36dc5f7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd . && git status --porcelain | head -20; echo \"---\"; git diff --stat",
+          "exit_code": 0,
+          "output_sha": "fa03898ed5c6c56b0be86e9ba431020f308c2e60b375d0be3f6014683ee7accd"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: README.md no longer states src/db / src/auth have compilation errors or type conflicts.\\n- grep -n -i \\\"compilation error|type conflict|type conflicts|Has compilation|@types/glob\\\" README.md -> only hit is line 713 (\\\"already enables `skipLibCheck`\\\"), no stale claim.\\n- README.md:668-673 tree: \\\"src/examples/auth.ts # Auth example (not a src/auth/ directory)\\\", \\\"src/db/ # Existing source directory\\\", \\\"...\\\" omitted.\\n- README.md:731 Working: \\\"TypeScript compilation: npx tsc --noEmit and npm run build both exit with rc=0 ... (see TypeScript Build Verification)\\\".\\n- README.md:735-738 Partially Working no longer lists \\\"TypeScript compilation ... has type conflicts\\\".\\n- README.md:774-778 roadmap item \\\"Fix TypeScript type conflicts - @types/glob issues\\\" removed.\\n- README.md:693-716 quoted commands: ls -d src/db src/auth (rc=2, src/auth missing), ls -1 src/examples/auth.ts src/examples/hello-world.ts, npx tsc --noEmit rc=0, npm run build rc=0.\\nReproduced live: `npx tsc --noEmit` -> tsc_rc=0; `npm run build` -> build_rc=0 (node v22.22.3/npm 12.2.2). `ls -d src/db src/auth` -> \\\"ls: cannot access 'src/auth': No such file or directory / src/db / rc=2\\\" exactly as quoted. `ls -1 src/examples/auth.ts src/examples/hello-world.ts` -> both listed, rc=0. tsconfig.json confirms skipLibCheck:true and excludes src/cli, src/mcp, src/indexer, src/parser, src/codegen, src/generated, src/lsp, src/dashboard, src/ralph-loop, so the README caveat at 712-715 is accurate.\\nScope: `git diff-tree --no-commit-id --name-only -r ff042925` -> README.md only; `git status --porcelain` clean.\\nTest suite (gitreins test_command `npx vitest run --passWithNoTests`): Test Files 1 failed | 119 passed | 4 skipped (124); Tests 1 failed | 1994 passed | 58 skipped (2053). The single failure is tests/db.test.ts:465 \\\"Hook timed out in 30000ms\\\" (environmental timeout, unrelated to a docs-only change).\\n\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "fe917e8476c1f51950e1a1ac8b5509834872c1929e822b770ea21533e67cdc41"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Derived criteria for README-9:\\n0. The quoted evidence block is reproducible: running the exact commands in README.md:698-707 on the current tree yields the same output/exit codes (src/auth absent, src/db present, src/examples/auth.ts present, tsc rc=0, build rc=0).\\n1. The new \\\"TypeScript compilation: rc=0\\\" claim is scoped honestly \\u2014 README states the tsconfig scope/exclusions so the claim is not overstated as \\\"every file type-checks\\\".\\n2. The correction is limited to README.md \\u2014 no source, config, or tsconfig change was made to make the claim true.\\n\", \"key\": \"derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "847dce951e3e24841d53bad5767404782f95912e2fb40d775c6ff4ff509c11f0"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: derived 0 (quoted evidence reproducible). Ran the exact commands from README.md:698-707 on the current tree:\\n- `ls -d src/db src/auth; printf 'rc=%s\\\\n' \\\"$?\\\"` -> \\\"ls: cannot access 'src/auth': No such file or directory / src/db / rc=2\\\" (identical to README.md:699-702).\\n- `ls -1 src/examples/auth.ts src/examples/hello-world.ts` -> both paths printed, rc=0 (identical to README.md:703-705).\\n- `npx tsc --noEmit` -> tsc_rc=0 (README.md:706-707).\\n- `npm run build` -> build_rc=0 (README.md:708-709).\\n\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "a64813c8e11ff117073669c725d41f2eaa5fd4f1b100e8a5ce6f9cbe47f42a28"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: derived 1 (claim scoped honestly). README.md:711-715: \\\"Both TypeScript commands succeed using the repository's `tsconfig.json`, which already enables `skipLibCheck` and excludes some source paths. These results prove the configured typecheck and build pass, not that every file or dependency declaration is checked, or that runtime behavior is correct.\\\" tsconfig.json confirms skipLibCheck:true and exclude list (src/cli/**, src/mcp/**, src/indexer/**, src/parser/**, src/codegen/**, src/generated/**, src/lsp/**, src/dashboard/**, src/ralph-loop/**), so the caveat matches the config rather than overstating coverage.\\n\", \"key\": \"verified_derived_1\"}",
+          "exit_code": 0,
+          "output_sha": "4021d9fbb31de15762c79c07961b09d10d4cd046aa41160fd56d9c3fa01e1e9e"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: derived 2 (correction limited to README.md). `git diff-tree --no-commit-id --name-only -r ff042925` -> \\\"README.md\\\" (single file; 33 insertions, 9 deletions). `git status --porcelain` on the working tree is empty, so no uncommitted source/tsconfig edits were used to make the claim true. tsconfig.json and package.json are untouched by the commit.\\n\", \"key\": \"verified_derived_2\"}",
+          "exit_code": 0,
+          "output_sha": "1f56dfa524f6c6fba7b1c02064e94557ccfe8ba79a0767f679cdc498079c1952"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 0,
+        "detection": "row marked complete while its own foreman_note still says 'Not closed'",
+        "detail": "GAP-005 is flipped to status complete with worker_status complete, but the retained foreman_note text still reads 'Not closed: next tick runs gitreins task complete GAP-005 with the raised caps', leaving the row self-contradictory."
+      },
+      {
+        "severity": "low",
+        "file": ".coding-hermes/board/tasks.jsonl",
+        "line": 0,
+        "detection": "completed row keeps deferred:true and a stale defer_reason",
+        "detail": "QA-SPECLANG-009's row is not touched here, but GAP-005's completion leaves the sibling pattern visible: the completed GAP-005 row retains 'deferred':true with defer_reason 'PREMISE NOT REPRODUCIBLE ... re-dispatch loop stopped', which contradicts the merged fix at ae5fc21f recorded in the same row."
+      }
+    ],
+    "summary": "Board-only bookkeeping change; the GAP-005 closure is consistent with the merged commit and passing verdict, but the row retains stale 'not closed' and 'deferred' text that contradicts its new complete status."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: \u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[1/1]\u23af\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 README.md no longer states that src/db and src/auth have compilation errors or type conflicts; every claim in the corrected sections is backed by a command whose output is quoted (npx tsc --noEmit rc=0, npm run build rc=0); the correction is limited to README.md: Stale claims removed: `grep -n -i \"compilation error|type conflict|type conflicts|Has compilation|@types/glob\" README.md` returns only line 713 (\"already enables `skipLibCheck`\") \u2014 the old \"\u26a0\ufe0f Has compilation errors\" lines for src/db and src/auth and the \"Works with --skipLibCheck, has type conflicts\" bullet are gone. README.md:668-673 now reads \"src/examples/auth.ts # Auth example (not a src/auth/ directory)\", \"src/db/ # Existing source directory\", \"... # Other source paths omitted\"; README.md:731 states \"TypeScript compilation: `npx tsc --noEmit` and `npm run build` both exit with `rc=0`\"; the roadmap item \"Fix TypeScript type conflicts - @types/glob issues\" is removed (README.md:774-778). Quoted evidence block at README.md:693-716 contains the commands and their output: `ls -d src/db src/auth` \u2192 \"ls: cannot access 'src/auth': No such file or directory / src/db / rc=2\", `ls -1 src/examples/auth.ts src/examples/hello-world.ts` \u2192 both paths, `npx tsc --noEmit` \u2192 rc=0, `npm run build` \u2192 rc=0. Reproduced live on this tree: `npx tsc --noEmit` \u2192 tsc_rc=0; `npm run build` \u2192 build_rc=0 (node v22.22.3 / npm 12.2.2); `ls -d src/db src/auth` \u2192 \"ls: cannot access 'src/auth': No such file or directory / src/db / rc=2\" (byte-identical to the quote). Scope: `git diff-tree --no-commit-id --name-only -r ff042925` \u2192 README.md only; `git status --porcelain` empty. Suite run (`npx vitest run --passWithNoTests`, the gitreins test_command): \"Test Files 1 failed | 119 passed | 4 skipped (124)\", \"Tests 1 failed | 1994 passed | 58 skipped (2053)\" \u2014 the single failure is tests/db.test.ts:465 \"Hook timed out in 30000ms\", an environmental timeout in a docs-only change. [resolution 0.20; README.md]\n  \u2713 The quoted evidence block is reproducible: running the exact commands in README.md:698-707 on the current tree yields the same output/exit codes (src/auth absent, src/db present, src/examples/auth.ts present, tsc rc=0, build rc=0).: Ran each quoted command verbatim: `ls -d src/db src/auth; printf 'rc=%s\\n' \"$?\"` \u2192 \"ls: cannot access 'src/auth': No such file or directory / src/db / rc=2\" (matches README.md:699-702); `ls -1 src/examples/auth.ts src/examples/hello-world.ts` \u2192 both paths printed, rc=0 (matches README.md:703-705); `npx tsc --noEmit` \u2192 tsc_rc=0 (README.md:706-707); `npm run build` \u2192 build_rc=0 (README.md:708-709).\n  \u2713 The new \"TypeScript compilation: rc=0\" claim is scoped honestly \u2014 README states the tsconfig scope/exclusions so the claim is not overstated as \"every file type-checks\".: README.md:711-715: \"Both TypeScript commands succeed using the repository's `tsconfig.json`, which already enables `skipLibCheck` and excludes some source paths. These results prove the configured typecheck and build pass, not that every file or dependency declaration is checked, or that runtime behavior is correct.\" tsconfig.json confirms `\"skipLibCheck\": true` and an exclude list covering src/cli/**, src/mcp/**, src/indexer/**, src/parser/**, src/codegen/**, src/generated/**, src/lsp/**, src/dashboard/**, src/ralph-loop/** \u2014 the caveat matches the actual config.\n  \u2713 The correction is limited to README.md \u2014 no source, config, or tsconfig change was made to make the claim true.: `git diff-tree --no-commit-id --name-only -r ff042925` \u2192 \"README.md\" (1 file changed, 33 insertions, 9 deletions). `git status --porcelain` is empty, so no uncommitted source/tsconfig edits were used to make the claim true; tsconfig.json and package.json are untouched by the commit.\nThe README correction is accurate and reproducible \u2014 the stale src/db/src/auth compilation-error and type-conflict claims are gone, the quoted tsc/build rc=0 evidence reproduces exactly on this tree, and the commit touches only README.md. [uncovered failure paths: failure mode 0 (The rc=0 typecheck/build claim silently depends on tsconfig exclusions (src/cli, src/mcp, src/indexer, src/parser, src/codegen, src/generated, src/lsp, src/dashboard, src/ralph-loop), so a future regression in an excluded path would not contradict the README): detected_by is empty \u2014 uncovered failure path]\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-18T00:09:23.584783",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-18T00:09:23.630047+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 58493,
+        "truncated": false,
+        "source": "git show 63df954e84d6"
+      }
+    ],
+    "task_id": "README-9"
+  }
+}

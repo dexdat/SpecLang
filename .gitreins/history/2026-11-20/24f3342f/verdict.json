@@ -1,0 +1,539 @@
+{
+  "task_id": "DF-SPECLANG-022",
+  "task_title": "speclang start must not claim a dashboard on an occupied port and must report MCP truthfully",
+  "task_criteria": [
+    "With port 3000 occupied, node scripts/speclang.cjs start either exits non-zero naming EADDRINUSE or binds+announces a different free port; the announced /api/status answers 200; mcp status after start reports running (or banner+docs stop claiming MCP is part of start); speclang stop still stops what start launched"
+  ],
+  "passed": true,
+  "worktree": "/home/kara/SpecLang",
+  "branch": "land/2117",
+  "commit": "249e61f965ed7f91aa87297f29957f62e576bf46",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "362aa2d924ced6875447ee6028962c4e812b7c236c907564009be5d3737dd950",
+  "working_tree_dirty_path_count": 1,
+  "items": [
+    {
+      "criterion": "With port 3000 occupied, node scripts/speclang.cjs start either exits non-zero naming EADDRINUSE or binds+announces a different free port; the announced /api/status answers 200; mcp status after start reports running (or banner+docs stop claiming MCP is part of start); speclang stop still stops what start launched",
+      "status": "PASS",
+      "detail": "(The CLI is bin/speclang; no scripts/speclang.cjs exists in the repo root \u2014 the criterion's path names the same entrypoint.) Occupied port: bin/speclang:351 prints only 'Dashboard: binding port ...' (no URL); startDaemon (specs/daemon.spec.dir/src/index.ts:170-187, compiled in dist/src/daemon/index.js:175-187) awaits listenDashboard, and on EADDRINUSE calls abortStart (removes .speclang/daemon.pid) and process.exit(1) naming the port and EADDRINUSE; probeDashboard (specs/daemon.spec.dir/src/dashboard.ts:79-139) additionally rejects a 401 stranger or foreign PID before any announcement. Healthy start: URL printed only after bind+probe (index.ts:212) and /api/status answers 200 (index.ts:114-116). MCP truth: banner prints 'MCP: not started \u2014 run `speclang mcp start`' (index.ts:219), help text changed to 'file watcher + dashboard' (bin/speclang:335), README.md:121,169,789 and GETTING-STARTED.md:26-27,120-121 no longer claim start runs MCP, and `mcp status` reports 'Status: Not running' (bin/speclang:1613) consistently. Stop: bin/speclang:556-583 SIGTERMs the pid from .speclang/daemon.pid. Test evidence: `TMPDIR=$PWD/.tmp npx vitest run tests/daemon-dashboard-bind.test.ts tests/cli/start-bind-truthfulness.test.ts` exit 0, 'Test Files 2 passed (2), Tests 11 passed (11)' \u2014 covering occupied-port exit/EADDRINUSE/no-banner, 401-stranger non-adoption, announced /api/status 200, MCP truth, and fast stop; full suite `npx vitest run` finished EXIT_CODE=0, 'Test Files 129 passed | 4 skipped (133), Tests 2082 passed | 58 skipped (2140)'."
+    },
+    {
+      "criterion": "derived: the dashboard URL is announced only after the bind is verified (no pre-bind URL claim on any start path)",
+      "status": "PASS",
+      "detail": "bin/speclang:351 prints 'Dashboard: binding port ...' instead of a URL; the URL is printed only in startDaemon after listenDashboard resolved AND probeDashboard confirmed this process's PID (specs/daemon.spec.dir/src/index.ts:170-212; dist/src/daemon/index.js:175-212 matches).",
+      "derived": true
+    },
+    {
+      "criterion": "derived: a failed start leaves no stale daemon state (pid file removed, status reports not running)",
+      "status": "PASS",
+      "detail": "abortStart (specs/daemon.spec.dir/src/index.ts:88-103) stops the daemon if started and unlinks .speclang/daemon.pid on bind failure, probe failure, and daemon.start() failure; tests/cli/start-bind-truthfulness.test.ts:232-235 asserts daemon.pid absent and `status` reports 'Daemon: Not running' after a failed start \u2014 passed in the recorded run.",
+      "derived": true
+    },
+    {
+      "criterion": "derived: the compiled dist/ artifact that bin/speclang actually loads contains the fix",
+      "status": "PASS",
+      "detail": "bin/speclang:355 requires ../dist/src/daemon/index.js; grep of dist/src/daemon/index.js shows listenDashboard/probeDashboard/EADDRINUSE handling at lines 175-194 and 'MCP: not started' at line 219; src/daemon/dashboard.ts is a symlink to specs/daemon.spec.dir/src/dashboard.ts.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: npm notice run speclang@1.0.0 npx",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261120T095453.384511Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\nnpm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261120T095453.384511Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 npx\nnpm notice run 'vitest' run --passWithNoTests\n\n RUN  v4.1.11 /home/kara/SpecLang\n\nspeclang shim: $SPECLANG_CLI points at a path that does not exist:\n  /home/kara/SpecLang/.tmp/speclang-new-runnable-krIxAH/does-not-exist\nError: --to <level> is required\n\u274c Unknown target level: INVALID_LEVEL\n\u274c Downgrade must go to a lower level\n\u274c Spec file not found: /home/kara/SpecLang/.tmp/speclang-test-downgrade/specs/nonexistent-file.spec.md\n\u274c No specs directory found. Run from a speclang project.\n\u274c Block not found: nonexistent-block-that-does-not-exist\nerror: missing required argument 'block-id'\nSourcemap for \"/home/kara/SpecLang/specs/project-layout.spec.dir/src/templates.js\" points to missing source files\n\n Test Files  129 passed | 4 skipped (133)\n      Tests  2082 passed | 58 skipped (2140)\n   Start at  05:14:25\n   Duration  56.71s (transform 20.53s, setup 4.95s, import 32.21s, tests 284.82s, environment 20ms)\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/SpecLang/.gitreins/logs/guard-20261120T095453.384511Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 With port 3000 occupied, node scripts/speclang.cjs start either exits non-zero naming EADDRINUSE or binds+announces a different free port; the announced /api/status answers 200; mcp status after start reports running (or banner+docs stop claiming MCP is part of start); speclang stop still stops what start launched: (The CLI is bin/speclang; no scripts/speclang.cjs exists in the repo root \u2014 the criterion's path names the same entrypoint.) Occupied port: bin/speclang:351 prints only 'Dashboard: binding port ...' (no URL); startDaemon (specs/daemon.spec.dir/src/index.ts:170-187, compiled in dist/src/daemon/index.js:175-187) awaits listenDashboard, and on EADDRINUSE calls abortStart (removes .speclang/daemon.pid) and process.exit(1) naming the port and EADDRINUSE; probeDashboard (specs/daemon.spec.dir/src/dashboard.ts:79-139) additionally rejects a 401 stranger or foreign PID before any announcement. Healthy start: URL printed only after bind+probe (index.ts:212) and /api/status answers 200 (index.ts:114-116). MCP truth: banner prints 'MCP: not started \u2014 run `speclang mcp start`' (index.ts:219), help text changed to 'file watcher + dashboard' (bin/speclang:335), README.md:121,169,789 and GETTING-STARTED.md:26-27,120-121 no longer claim start runs MCP, and `mcp status` reports 'Status: Not running' (bin/speclang:1613) consistently. Stop: bin/speclang:556-583 SIGTERMs the pid from .speclang/daemon.pid. Test evidence: `TMPDIR=$PWD/.tmp npx vitest run tests/daemon-dashboard-bind.test.ts tests/cli/start-bind-truthfulness.test.ts` exit 0, 'Test Files 2 passed (2), Tests 11 passed (11)' \u2014 covering occupied-port exit/EADDRINUSE/no-banner, 401-stranger non-adoption, announced /api/status 200, MCP truth, and fast stop; full suite `npx vitest run` finished EXIT_CODE=0, 'Test Files 129 passed | 4 skipped (133), Tests 2082 passed | 58 skipped (2140)'.\n  \u2713 derived: the dashboard URL is announced only after the bind is verified (no pre-bind URL claim on any start path): bin/speclang:351 prints 'Dashboard: binding port ...' instead of a URL; the URL is printed only in startDaemon after listenDashboard resolved AND probeDashboard confirmed this process's PID (specs/daemon.spec.dir/src/index.ts:170-212; dist/src/daemon/index.js:175-212 matches).\n  \u2713 derived: a failed start leaves no stale daemon state (pid file removed, status reports not running): abortStart (specs/daemon.spec.dir/src/index.ts:88-103) stops the daemon if started and unlinks .speclang/daemon.pid on bind failure, probe failure, and daemon.start() failure; tests/cli/start-bind-truthfulness.test.ts:232-235 asserts daemon.pid absent and `status` reports 'Daemon: Not running' after a failed start \u2014 passed in the recorded run.\n  \u2713 derived: the compiled dist/ artifact that bin/speclang actually loads contains the fix: bin/speclang:355 requires ../dist/src/daemon/index.js; grep of dist/src/daemon/index.js shows listenDashboard/probeDashboard/EADDRINUSE handling at lines 175-194 and 'MCP: not started' at line 219; src/daemon/dashboard.ts is a symlink to specs/daemon.spec.dir/src/dashboard.ts.\nDF-SPECLANG-022 is delivered: start now awaits and self-probes the dashboard bind (exit 1 naming EADDRINUSE on an occupied port, no false URL/banner, no stale pid file), the announced /api/status answers 200, banner+help+README+GETTING-STARTED stopped claiming MCP is part of start, stop still tears the daemon down, and both the targeted 11 tests and the full 2082-test suite pass; the only residual issue is a pre-existing, out-of-scope mcp.pid gap that makes `mcp status` always report Not running even after a real `mcp start`. [uncovered failure paths: failure mode 0 (`speclang mcp status` can never report 'Running' because `mcp start` (bin/speclang:1524-1576 via dist/specs/mcp.spec.dir/src/server.js) never writes .speclang/mcp.pid \u2014 the only writers are unused specs/cli.spec.dir helpers): detected_by is empty \u2014 uncovered failure path]",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 With port 3000 occupied, node scripts/speclang.cjs start either exits non-zero naming EADDRINUSE or binds+announces a different free port; the announced /api/status answers 200; mcp status after start reports running (or banner+docs stop claiming MCP is part of start); speclang stop still stops what start launched: (The CLI is bin/speclang; no scripts/speclang.cjs exists in the repo root \u2014 the criterion's path names the same entrypoint.) Occupied port: bin/speclang:351 prints only 'Dashboard: binding port ...' (no URL); startDaemon (specs/daemon.spec.dir/src/index.ts:170-187, compiled in dist/src/daemon/index.js:175-187) awaits listenDashboard, and on EADDRINUSE calls abortStart (removes .speclang/daemon.pid) and process.exit(1) naming the port and EADDRINUSE; probeDashboard (specs/daemon.spec.dir/src/dashboard.ts:79-139) additionally rejects a 401 stranger or foreign PID before any announcement. Healthy start: URL printed only after bind+probe (index.ts:212) and /api/status answers 200 (index.ts:114-116). MCP truth: banner prints 'MCP: not started \u2014 run `speclang mcp start`' (index.ts:219), help text changed to 'file watcher + dashboard' (bin/speclang:335), README.md:121,169,789 and GETTING-STARTED.md:26-27,120-121 no longer claim start runs MCP, and `mcp status` reports 'Status: Not running' (bin/speclang:1613) consistently. Stop: bin/speclang:556-583 SIGTERMs the pid from .speclang/daemon.pid. Test evidence: `TMPDIR=$PWD/.tmp npx vitest run tests/daemon-dashboard-bind.test.ts tests/cli/start-bind-truthfulness.test.ts` exit 0, 'Test Files 2 passed (2), Tests 11 passed (11)' \u2014 covering occupied-port exit/EADDRINUSE/no-banner, 401-stranger non-adoption, announced /api/status 200, MCP truth, and fast stop; full suite `npx vitest run` finished EXIT_CODE=0, 'Test Files 129 passed | 4 skipped (133), Tests 2082 passed | 58 skipped (2140)'.\n  \u2713 derived: the dashboard URL is announced only after the bind is verified (no pre-bind URL claim on any start path): bin/speclang:351 prints 'Dashboard: binding port ...' instead of a URL; the URL is printed only in startDaemon after listenDashboard resolved AND probeDashboard confirmed this process's PID (specs/daemon.spec.dir/src/index.ts:170-212; dist/src/daemon/index.js:175-212 matches).\n  \u2713 derived: a failed start leaves no stale daemon state (pid file removed, status reports not running): abortStart (specs/daemon.spec.dir/src/index.ts:88-103) stops the daemon if started and unlinks .speclang/daemon.pid on bind failure, probe failure, and daemon.start() failure; tests/cli/start-bind-truthfulness.test.ts:232-235 asserts daemon.pid absent and `status` reports 'Daemon: Not running' after a failed start \u2014 passed in the recorded run.\n  \u2713 derived: the compiled dist/ artifact that bin/speclang actually loads contains the fix: bin/speclang:355 requires ../dist/src/daemon/index.js; grep of dist/src/daemon/index.js shows listenDashboard/probeDashboard/EADDRINUSE handling at lines 175-194 and 'MCP: not started' at line 219; src/daemon/dashboard.ts is a symlink to specs/daemon.spec.dir/src/dashboard.ts.\nDF-SPECLANG-022 is delivered: start now awaits and self-probes the dashboard bind (exit 1 naming EADDRINUSE on an occupied port, no false URL/banner, no stale pid file), the announced /api/status answers 200, banner+help+README+GETTING-STARTED stopped claiming MCP is part of start, stop still tears the daemon down, and both the targeted 11 tests and the full 2082-test suite pass; the only residual issue is a pre-existing, out-of-scope mcp.pid gap that makes `mcp status` always report Not running even after a real `mcp start`. [uncovered failure paths: failure mode 0 (`speclang mcp status` can never report 'Running' because `mcp start` (bin/speclang:1524-1576 via dist/specs/mcp.spec.dir/src/server.js) never writes .speclang/mcp.pid \u2014 the only writers are unused specs/cli.spec.dir helpers): detected_by is empty \u2014 uncovered failure path]",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "With port 3000 occupied, node scripts/speclang.cjs start either exits non-zero naming EADDRINUSE or binds+announces a different free port; the announced /api/status answers 200; mcp status after start reports running (or banner+docs stop claiming MCP is part of start); speclang stop still stops what start launched",
+                "status": "PASS",
+                "detail": "(The CLI is bin/speclang; no scripts/speclang.cjs exists in the repo root \u2014 the criterion's path names the same entrypoint.) Occupied port: bin/speclang:351 prints only 'Dashboard: binding port ...' (no URL); startDaemon (specs/daemon.spec.dir/src/index.ts:170-187, compiled in dist/src/daemon/index.js:175-187) awaits listenDashboard, and on EADDRINUSE calls abortStart (removes .speclang/daemon.pid) and process.exit(1) naming the port and EADDRINUSE; probeDashboard (specs/daemon.spec.dir/src/dashboard.ts:79-139) additionally rejects a 401 stranger or foreign PID before any announcement. Healthy start: URL printed only after bind+probe (index.ts:212) and /api/status answers 200 (index.ts:114-116). MCP truth: banner prints 'MCP: not started \u2014 run `speclang mcp start`' (index.ts:219), help text changed to 'file watcher + dashboard' (bin/speclang:335), README.md:121,169,789 and GETTING-STARTED.md:26-27,120-121 no longer claim start runs MCP, and `mcp status` reports 'Status: Not running' (bin/speclang:1613) consistently. Stop: bin/speclang:556-583 SIGTERMs the pid from .speclang/daemon.pid. Test evidence: `TMPDIR=$PWD/.tmp npx vitest run tests/daemon-dashboard-bind.test.ts tests/cli/start-bind-truthfulness.test.ts` exit 0, 'Test Files 2 passed (2), Tests 11 passed (11)' \u2014 covering occupied-port exit/EADDRINUSE/no-banner, 401-stranger non-adoption, announced /api/status 200, MCP truth, and fast stop; full suite `npx vitest run` finished EXIT_CODE=0, 'Test Files 129 passed | 4 skipped (133), Tests 2082 passed | 58 skipped (2140)'.",
+                "resolution_probability": 0.11
+              },
+              {
+                "criterion": "derived: the dashboard URL is announced only after the bind is verified (no pre-bind URL claim on any start path)",
+                "status": "PASS",
+                "detail": "bin/speclang:351 prints 'Dashboard: binding port ...' instead of a URL; the URL is printed only in startDaemon after listenDashboard resolved AND probeDashboard confirmed this process's PID (specs/daemon.spec.dir/src/index.ts:170-212; dist/src/daemon/index.js:175-212 matches).",
+                "derived": true
+              },
+              {
+                "criterion": "derived: a failed start leaves no stale daemon state (pid file removed, status reports not running)",
+                "status": "PASS",
+                "detail": "abortStart (specs/daemon.spec.dir/src/index.ts:88-103) stops the daemon if started and unlinks .speclang/daemon.pid on bind failure, probe failure, and daemon.start() failure; tests/cli/start-bind-truthfulness.test.ts:232-235 asserts daemon.pid absent and `status` reports 'Daemon: Not running' after a failed start \u2014 passed in the recorded run.",
+                "derived": true
+              },
+              {
+                "criterion": "derived: the compiled dist/ artifact that bin/speclang actually loads contains the fix",
+                "status": "PASS",
+                "detail": "bin/speclang:355 requires ../dist/src/daemon/index.js; grep of dist/src/daemon/index.js shows listenDashboard/probeDashboard/EADDRINUSE handling at lines 175-194 and 'MCP: not started' at line 219; src/daemon/dashboard.ts is a symlink to specs/daemon.spec.dir/src/dashboard.ts.",
+                "derived": true
+              }
+            ],
+            "summary": "DF-SPECLANG-022 is delivered: start now awaits and self-probes the dashboard bind (exit 1 naming EADDRINUSE on an occupied port, no false URL/banner, no stale pid file), the announced /api/status answers 200, banner+help+README+GETTING-STARTED stopped claiming MCP is part of start, stop still tears the daemon down, and both the targeted 11 tests and the full 2082-test suite pass; the only residual issue is a pre-existing, out-of-scope mcp.pid gap that makes `mcp status` always report Not running even after a real `mcp start`. [uncovered failure paths: failure mode 0 (`speclang mcp status` can never report 'Running' because `mcp start` (bin/speclang:1524-1576 via dist/specs/mcp.spec.dir/src/server.js) never writes .speclang/mcp.pid \u2014 the only writers are unused specs/cli.spec.dir helpers): detected_by is empty \u2014 uncovered failure path]",
+            "provenance": {
+              "model": "accounts/fireworks/models/kimi-k3",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "accounts/fireworks/models/kimi-k3",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-022\"}",
+          "exit_code": 0,
+          "output_sha": "4c9f8d43ab1c41ea0403abf89e81e854a0d895846f3e344112a631b49eeaace9"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"scripts/speclang.cjs\"}",
+          "exit_code": 1,
+          "output_sha": "1605b557517d9dd598a77c74f7bbee1cf6e38199e67a5f760252a7247372155a"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls; echo ---; ls scripts 2>/dev/null; echo ---; ls bin 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "0f03a77ad31186fdc473c07ceb108eaf0fb9808fbac8c9634e5399080a72ac53"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"bin/speclang\"}",
+          "exit_code": 0,
+          "output_sha": "1be6b028c00201df38eba3d845ff8a1fba72d57b16bb9159b3cabd7ba00b775f"
+        },
+        {
+          "tool": "run_command",
+          "command": "find . -name 'speclang.cjs' -not -path './node_modules/*' 2>/dev/null; echo ---; git log --oneline -5",
+          "exit_code": 0,
+          "output_sha": "c59e4a754ddf671279ac4b2bb1bafede260f6fab2d08e5163b0b563efe35cf9c"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show --stat d1860d0c | head -30; echo ===; git show d1860d0c -- bin/speclang | head -200",
+          "exit_code": 0,
+          "output_sha": "1ceca83c8e790af76ea334f8617969abacfc879af3e69da559e03616ac05e133"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"specs/daemon.spec.dir/src/dashboard.ts\"}",
+          "exit_code": 0,
+          "output_sha": "cf388d81e97cd4b3914a935cf75a7319a3d10cb6bfa957dd5fd3e05a532b0ad2"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"specs/daemon.spec.dir/src/index.ts\"}",
+          "exit_code": 0,
+          "output_sha": "978be059f0e71ceb61dacf3413effb55c05b74593570b44b69e7af3761e52de3"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la src/daemon/ | head -30; echo ===; ls -la dist/src/daemon/ 2>/dev/null | head -30",
+          "exit_code": 0,
+          "output_sha": "ecc9bc6d1a318f94b9b7bcded8574e0fb83e27f61edba91700347f1057378489"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/cli/start-bind-truthfulness.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "a5da11919e4b6cc8d4ee6d64c99b1e5be10e16d717df19f8e6d9c777d412346f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat .gitreins/config.yaml 2>/dev/null; echo ===; grep -E '\"(test|build)\"' package.json",
+          "exit_code": 0,
+          "output_sha": "3a5b3bca116bafc86e68e0306be3de30ec9a680cb3e2ee09fd8d4a6326e97a14"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/daemon-dashboard-bind.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "f3d31489bb1102b6a8cbbcf960979094eaabc07cfaa52104ce7fdd93755fec1d"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n 'EADDRINUSE\\|listenDashboard\\|probeDashboard\\|MCP: not started\\|Dashboard: http' dist/src/daemon/index.js | head -20; echo ===; grep -n 'binding port\\|file watcher + dashboard' bin/speclang | head",
+          "exit_code": 0,
+          "output_sha": "d27e0b8c3ed759c16af3ee1825544e4e669821a8de6be739db17f2bf9ee7cc9d"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn 'watcher + MCP\\|MCP server' README.md GETTING-STARTED.md | head -20",
+          "exit_code": 0,
+          "output_sha": "f6ec801b96f8fa628da76ef581fb9faadbf994f896a6919d3729f15362fb02bb"
+        },
+        {
+          "tool": "run_command",
+          "command": "TMPDIR=$PWD/.tmp npx vitest run tests/daemon-dashboard-bind.test.ts tests/cli/start-bind-truthfulness.test.ts 2>&1 | tail -30",
+          "exit_code": 0,
+          "output_sha": "2a97f8a9be657d613f4c661eb8bd20cbc44a49d8ffbdad252249c47c6e2466fd"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"command('stop'\\|command('mcp'\" bin/speclang",
+          "exit_code": 0,
+          "output_sha": "4754b570e99ef5d2dd8be5d4a664a68a974bd96c999a5d28ffdfe70fd5c83ece"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 120, \"offset\": 550, \"path\": \"bin/speclang\"}",
+          "exit_code": 0,
+          "output_sha": "3e53038a7577de14cb83a475d242f47b71768b78146eea97d756742583a4eadc"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 130, \"offset\": 1515, \"path\": \"bin/speclang\"}",
+          "exit_code": 0,
+          "output_sha": "b45e34d9f8d27a71776fba822f5acb77ae15a54301bbaf272468bb718376ac44"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n 'mcp.pid\\|mcp.port' -r dist/specs/mcp.spec.dir/src/index.js 2>/dev/null | head; echo ===; grep -rn 'mcp\\.pid' src/ specs/mcp.spec.dir/src/ 2>/dev/null | grep -v node_modules | head",
+          "exit_code": 0,
+          "output_sha": "bf04f0267b3e042a1361d4b3ca49bc4785afc38bfd9e32cc5a602ece44a5c832"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rln 'mcp.pid' --include='*.ts' --include='*.js' src specs dist bin 2>/dev/null | grep -v node_modules | head; echo ===; grep -rn 'mcp\\.pid' bin/speclang | head",
+          "exit_code": 0,
+          "output_sha": "79b86922c531cb89ec83ec941dd4ecb99644e4b8cce374ce2abd5568b9a56d65"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n 'mcp.pid\\|mcp\\.port\\|writeFileSync\\|writeFile' specs/cli.spec.dir/src/server.ts | head -20; echo ===; grep -n 'mcp.pid' specs/cli.spec.dir/src/mcp.ts | head",
+          "exit_code": 0,
+          "output_sha": "850dda36e4b919df33a642816f0e559b9a71eee6efe9be2001ee38f7f74c92dc"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn 'mcp.pid\\|mcp\\.port' dist/src/mcp/ dist/specs/ 2>/dev/null | head; echo ===; ls dist/specs/mcp.spec.dir/src/ 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "26524c94ad435e9b73beef79814380ca07f5bb3957d6d7182c852d94c39d63df"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn 'mcp\\.pid\\|mcp\\.port' dist/ 2>/dev/null | grep -v '\\.map' | head",
+          "exit_code": 0,
+          "output_sha": "1ac7e50d92ee43c988433cff4311e66d12e4362bb41a62203a6ce81d57ebcbe5"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n 'startHTTP\\|startStdio' dist/specs/mcp.spec.dir/src/index.js | head; echo ===; grep -rn 'writeFileSync\\|pid' dist/specs/mcp.spec.dir/src/index.js | head -20",
+          "exit_code": 0,
+          "output_sha": "50df590fd1f226215abaf63b5d9d8d71a139fa2fe3c5e2a3feace5a228a82831"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rln 'startHTTP' dist/ 2>/dev/null | grep -v '\\.map' | head; echo ===; grep -rln 'class MCPServer' dist/ 2>/dev/null | grep -v '\\.map' | head",
+          "exit_code": 0,
+          "output_sha": "16c0c95223edeae73beb2b736bdc0a059f969aaca106bb2a1b8e3498c986e392"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n 'mcp\\.pid\\|mcp\\.port\\|writeFileSync\\|PID_FILE' dist/specs/mcp.spec.dir/src/server.js | head -20",
+          "exit_code": 0,
+          "output_sha": "ef7a8b433a6e11393d564fa5e7bfcdda5f5bdf157cdd7e94d3fda9511e191023"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n 'startHTTP\\|startStdio\\|listen\\|pid' dist/specs/mcp.spec.dir/src/server.js | head -30",
+          "exit_code": 0,
+          "output_sha": "c31de5fa3042b50f07e68f096d68c3719052f9ce8f2c9e80ced812cc3e2a382f"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn 'mcp\\.pid' specs/cli.spec.dir/src/mcp.ts specs/cli.spec.dir/src/server.ts | head; echo ===; sed -n '20,70p' specs/cli.spec.dir/src/server.ts",
+          "exit_code": 0,
+          "output_sha": "1ed349c0e08b5eeaa4563a9ab411acffff75c35f367955b0e9cabb629c8d4e57"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn 'writePid\\|startHTTP' specs/cli.spec.dir/src/server.ts | head; echo ===; grep -rn 'cli.spec.dir/src/server\\|cli.spec.dir/src/mcp' bin/speclang dist/src/cli 2>/dev/null | grep -v '\\.map' | head",
+          "exit_code": 0,
+          "output_sha": "a331f03ddad2cfe0108ef2d84cadb74ad92937c433d5488769e8adeca8a8b705"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"from './server'\\|require.*cli.spec.dir\" specs/cli.spec.dir/src/*.ts bin/speclang src/cli/*.ts 2>/dev/null | grep -v '\\.map' | head; echo ===; sed -n '100,160p' specs/cli.spec.dir/src/server.ts",
+          "exit_code": 0,
+          "output_sha": "0a770c2dff96befa91615b5839990bdcf0633f3ccf719dd6d1edbe4aec00805c"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"mcp.spec.dir/src/index\" bin/speclang | head -3; grep -n 'exports' dist/specs/mcp.spec.dir/src/index.js | head -5; echo ===; grep -rn 'mcp\\.pid' dist/specs/cli.spec.dir/src/*.js 2>/dev/null | head -3; ls dist/specs/cli.spec.dir/src/ 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "7a7a2b8b92e7808756dbd404c3b1bb505b167d962886b3eff2829daf6a614e03"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn 'mcp\\.pid\\|mcp\\.port' tests/ --include='*.ts' | grep -v start-bind-truthfulness | head; echo ===; grep -rn 'mcp.*status\\|Status: Not running\\|Status: Running' tests/mcp/*.ts 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "a9a5ead97fbb005c2bbba5496c99fc1020eb9459576f5bd6a7ed7c7f40e92458"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n 'writePid\\|mcp\\.pid\\|startHTTP\\|startStdio' specs/mcp.spec.dir/src/server.ts | head -20; echo ===; grep -rn 'mcp\\.pid' specs/mcp.spec.dir/src/*.ts | head",
+          "exit_code": 0,
+          "output_sha": "f80a33e01ee97af87ca80fbf843988129cf74c0eb5d03dc0fdc2749c2a8004a2"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn 'mcp\\.pid\\|mcp\\.port' src/ specs/ --include='*.ts' | grep -v node_modules | head; echo ===; grep -rn 'writePid' specs/cli.spec.dir/src/mcp.ts | head",
+          "exit_code": 0,
+          "output_sha": "de7c79392b64637b33fbfdbf1f48240f98ac4438853c7f2ec52292ec22cf0f9b"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n '150,230p' specs/cli.spec.dir/src/mcp.ts",
+          "exit_code": 0,
+          "output_sha": "e5c312d55668685a56b147736032c33d5dcf223c860d5e2b828647614d968098"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn 'mcpServeCommand\\|mcpStatusCommand' src/ specs/cli.spec.dir/src/index.ts bin/ 2>/dev/null | grep -v '\\.map\\|mcp.ts:' | head",
+          "exit_code": 0,
+          "output_sha": "29313e69f04ec63399c8e4a69e72a8483bb24ba4dfbab0b07962295fe6432575"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn 'mcpServeCommand\\|mcpStatusCommand' . --include='*.ts' --include='*.js' 2>/dev/null | grep -v node_modules | grep -v '\\.map' | grep -v 'specs/cli.spec.dir/src/mcp.ts' | head",
+          "exit_code": 0,
+          "output_sha": "e6e7458316e3e512a226e5a8ee337b89376c8f4631983c90b975417bdf69863f"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"mcp.pid\\|mcp\\.port\" docs/ README.md GETTING-STARTED.md 2>/dev/null | head; echo ===; grep -rn 'mcp start' README.md GETTING-STARTED.md | head",
+          "exit_code": 0,
+          "output_sha": "e2d1c6c7baa17cb22cb4afaf4d2fc1339112614c27616ab3689d4d6e27e36823"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n '100,130p' GETTING-STARTED.md",
+          "exit_code": 0,
+          "output_sha": "0448f1463af146d9c11c633fa3df18f988bff27e23b2cac6c046f66b6cae195a"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n 'mcp' README.md | sed -n '1,30p'",
+          "exit_code": 0,
+          "output_sha": "ae69259f881e7149a33eda49235569a22acf6ec5f8a5107c9d68750917262311"
+        },
+        {
+          "tool": "run_command",
+          "command": "TMPDIR=$PWD/.tmp npx vitest run 2>&1 | tail -15",
+          "exit_code": -15,
+          "output_sha": "c8a209da5cadb304422ef23d310a42ac3456d4d3997c348c0aba4af703966c1f"
+        },
+        {
+          "tool": "run_command",
+          "command": "TMPDIR=$PWD/.tmp timeout 280 npx vitest run 2>&1 | tail -12",
+          "exit_code": -15,
+          "output_sha": "c2fe828de8e8a5d5e436e3b9307accfbb8c8cd0a0092b8d1178f0717243c9e93"
+        },
+        {
+          "tool": "run_command",
+          "command": "TMPDIR=$PWD/.tmp nohup npx vitest run > /tmp/vitest-full.log 2>&1 &\necho started; sleep 25; tail -3 /tmp/vitest-full.log",
+          "exit_code": 0,
+          "output_sha": "1964fd778fdc71ead9f8dae8bfb2d7dc3ddf9c9601399d2688eef39329178cf0"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 28; tail -5 /tmp/vitest-full.log; echo ===; grep -c '\u2713\\|\u00d7' /tmp/vitest-full.log 2>/dev/null",
+          "exit_code": 1,
+          "output_sha": "98a07ba13a8121ec7abcf7f57b737682a5979bc1d23faf96a906cd0812907f50"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 28; ps aux | grep -c '[v]itest'; tail -3 /tmp/vitest-full.log",
+          "exit_code": 0,
+          "output_sha": "2e4165912b7e7008266057207a450d0bda30ff57b36aa2b06253930e67232a30"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; ps aux | grep -c '[v]itest'; tail -c 2000 /tmp/vitest-full.log",
+          "exit_code": 0,
+          "output_sha": "9ce72a2a8c6d13f1fa6a936337d1e50ca2821c681865f22e1c2029512961aca3"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; ps aux | grep '[v]itest' | head -3; echo ===; tail -c 1500 /tmp/vitest-full.log",
+          "exit_code": 0,
+          "output_sha": "39636c27f9fbd845292b93a1d8c57e3ccaf657a7cb63296e50617f8f76460f51"
+        },
+        {
+          "tool": "run_command",
+          "command": "ps aux | grep -E '[n]ode.*vitest|[n]px' | head -5; echo ===; ls -la /tmp/vitest-full.log; date",
+          "exit_code": 0,
+          "output_sha": "3a4d0066b7f6fb51a09cd601c12e433cea5e7477f77b1ec8f8808d7147964a32"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat /tmp/vitest-full.log; echo ===EXIT-MARKER; nohup bash -c 'TMPDIR=$PWD/.tmp npx vitest run; echo \"EXIT_CODE=$?\" >> /tmp/vitest-full.log' >> /tmp/vitest-full.log 2>&1 & echo bg-started",
+          "exit_code": 0,
+          "output_sha": "5daa5fedefdd1fc2a61ffb93cc371bd47bf3b3c1144b3366bb104d47b381517f"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -c 'EXIT_CODE' /tmp/vitest-full.log; tail -c 400 /tmp/vitest-full.log",
+          "exit_code": 0,
+          "output_sha": "fe6391b58ed574d83c3ee42b897f32ba30dac88867263442b9e2b680623f679f"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 29; grep -c 'EXIT_CODE' /tmp/vitest-full.log; ps aux | grep -c '[v]itest'; tail -c 300 /tmp/vitest-full.log",
+          "exit_code": 0,
+          "output_sha": "d3606ec7bc6742f9292bfed1d8dbcb1a31b5d313c7e53230bc92016de1daa2bf"
+        },
+        {
+          "tool": "run_command",
+          "command": "ps aux | grep '[v]itest' ; ps aux | grep '[n]ode' | head -5",
+          "exit_code": 0,
+          "output_sha": "f9ccc73030fd3a2017d51f677c68ff12d4c3d3dca808b2782843a438983e9530"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -c 'EXIT_CODE' /tmp/vitest-full.log; tail -c 600 /tmp/vitest-full.log",
+          "exit_code": 0,
+          "output_sha": "2487db6ff197e4887488279df1f25724e7cfdc12e4a870ce8538591c9bec72f9"
+        },
+        {
+          "tool": "run_command",
+          "command": "wc -c /tmp/vitest-full.log; grep -n 'RUN\\|Test Files\\|Tests ' /tmp/vitest-full.log | tail -10",
+          "exit_code": 0,
+          "output_sha": "6be6521730f83c97902dc602e96d3639aa6c2c87663ac0535fe485c8c1370696"
+        },
+        {
+          "tool": "run_command",
+          "command": "setsid bash -c 'cd /home/kara/SpecLang && TMPDIR=$PWD/.tmp npx vitest run > /tmp/vitest-full2.log 2>&1; echo \"EXIT_CODE=$?\" >> /tmp/vitest-full2.log' < /dev/null > /dev/null 2>&1 & disown; echo launched; sleep 20; wc -c /tmp/vitest-full2.log 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "ba05782c49b6f7a3c80bf4699e521a3654cf8f1b81e9cf37ecabd362790ca5f5"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 28; wc -c /tmp/vitest-full2.log; grep -c EXIT_CODE /tmp/vitest-full2.log; ps aux | grep '[v]itest' | wc -l",
+          "exit_code": 0,
+          "output_sha": "8b8704282937a40e1623ece31e43d6b8be7ef30f60789ab68175d03f695052af"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat /tmp/vitest-full2.log",
+          "exit_code": 0,
+          "output_sha": "3eaec6f07de72172cb2b73e7f2099911fb8c74a675023595124ee7ec5145f0b4"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n 'start\\|MCP\\|dashboard' specs/daemon.spec.dir/architecture.spec.md | head -20",
+          "exit_code": 0,
+          "output_sha": "2c7c26553acfb6268ef11ac1780b1e58078e94f185c074dcd2a715b139079d9d"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: Occupied port -> bin/speclang:351 prints only \\\"binding port...\\\" (no URL); specs/daemon.spec.dir/src/index.ts:170-187 awaits listenDashboard, on EADDRINUSE aborts (removes pid file) and process.exit(1) naming port+EADDRINUSE; probeDashboard (dashboard.ts:79-139) rejects 401 strangers; healthy start announces URL only after bind+probe (index.ts:212) and /api/status answers 200 (index.ts:114-116); banner says \\\"MCP: not started\\\" (index.ts:219) matching mcp status \\\"Not running\\\" (bin/speclang:1613); stop kills pid from .speclang/daemon.pid (bin/speclang:556-583). Tests: `TMPDIR=$PWD/.tmp npx vitest run tests/daemon-dashboard-bind.test.ts tests/cli/start-bind-truthfulness.test.ts` exit 0, 11 passed; full suite `npx vitest run` EXIT_CODE=0, 2082 passed | 58 skipped (2140). Docs: README.md:121,169,789 and GETTING-STARTED.md:26-27,120-121 no longer claim start runs MCP.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "748c136ba409e28009d5bdbfd30c9d873f0265a66fd1a3729a27535aae739bb3"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: bin/speclang:351 prints \\\"Dashboard: binding port ...\\\" instead of the URL; the URL is printed only in startDaemon after listenDashboard resolved AND probeDashboard confirmed this PID (specs/daemon.spec.dir/src/index.ts:170-212; compiled dist/src/daemon/index.js:175-212 matches).\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "494edc8ac0ca6db816cdc663c998a691d02c8b1ab643e2c68f5ce995462b6987"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: abortStart (specs/daemon.spec.dir/src/index.ts:88-103) stops the daemon if started and unlinks .speclang/daemon.pid on bind failure, probe failure, and daemon.start() failure; test asserts daemon.pid absent and `status` reports \\\"Daemon: Not running\\\" after failed start (tests/cli/start-bind-truthfulness.test.ts:232-235) \\u2014 passed in run.\", \"key\": \"verified_derived_1\"}",
+          "exit_code": 0,
+          "output_sha": "17fd038817ea7b4a56d223801aab5cfc4e6406b2ca94ad5b81a814cfbf83ff38"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: bin/speclang loads ../dist/src/daemon/index.js (bin/speclang:355); dist built 05:14 contains listenDashboard/probeDashboard/EADDRINUSE/MCP-not-started strings (grep dist/src/daemon/index.js lines 175-219); src/daemon/dashboard.ts symlinks to specs/daemon.spec.dir/src/dashboard.ts.\", \"key\": \"verified_derived_2\"}",
+          "exit_code": 0,
+          "output_sha": "3e6fd01f646635c6c67340b3ad489cb584a1d38b69029ad95129c207c71fcddb"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "kara",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "kara",
+    "self_review": true,
+    "findings": [],
+    "summary": "",
+    "error": "no diff to review (clean tree, no commit anchor)"
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: npm notice run speclang@1.0.0 npx\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 With port 3000 occupied, node scripts/speclang.cjs start either exits non-zero naming EADDRINUSE or binds+announces a different free port; the announced /api/status answers 200; mcp status after start reports running (or banner+docs stop claiming MCP is part of start); speclang stop still stops what start launched: (The CLI is bin/speclang; no scripts/speclang.cjs exists in the repo root \u2014 the criterion's path names the same entrypoint.) Occupied port: bin/speclang:351 prints only 'Dashboard: binding port ...' (no URL); startDaemon (specs/daemon.spec.dir/src/index.ts:170-187, compiled in dist/src/daemon/index.js:175-187) awaits listenDashboard, and on EADDRINUSE calls abortStart (removes .speclang/daemon.pid) and process.exit(1) naming the port and EADDRINUSE; probeDashboard (specs/daemon.spec.dir/src/dashboard.ts:79-139) additionally rejects a 401 stranger or foreign PID before any announcement. Healthy start: URL printed only after bind+probe (index.ts:212) and /api/status answers 200 (index.ts:114-116). MCP truth: banner prints 'MCP: not started \u2014 run `speclang mcp start`' (index.ts:219), help text changed to 'file watcher + dashboard' (bin/speclang:335), README.md:121,169,789 and GETTING-STARTED.md:26-27,120-121 no longer claim start runs MCP, and `mcp status` reports 'Status: Not running' (bin/speclang:1613) consistently. Stop: bin/speclang:556-583 SIGTERMs the pid from .speclang/daemon.pid. Test evidence: `TMPDIR=$PWD/.tmp npx vitest run tests/daemon-dashboard-bind.test.ts tests/cli/start-bind-truthfulness.test.ts` exit 0, 'Test Files 2 passed (2), Tests 11 passed (11)' \u2014 covering occupied-port exit/EADDRINUSE/no-banner, 401-stranger non-adoption, announced /api/status 200, MCP truth, and fast stop; full suite `npx vitest run` finished EXIT_CODE=0, 'Test Files 129 passed | 4 skipped (133), Tests 2082 passed | 58 skipped (2140)'.\n  \u2713 derived: the dashboard URL is announced only after the bind is verified (no pre-bind URL claim on any start path): bin/speclang:351 prints 'Dashboard: binding port ...' instead of a URL; the URL is printed only in startDaemon after listenDashboard resolved AND probeDashboard confirmed this process's PID (specs/daemon.spec.dir/src/index.ts:170-212; dist/src/daemon/index.js:175-212 matches).\n  \u2713 derived: a failed start leaves no stale daemon state (pid file removed, status reports not running): abortStart (specs/daemon.spec.dir/src/index.ts:88-103) stops the daemon if started and unlinks .speclang/daemon.pid on bind failure, probe failure, and daemon.start() failure; tests/cli/start-bind-truthfulness.test.ts:232-235 asserts daemon.pid absent and `status` reports 'Daemon: Not running' after a failed start \u2014 passed in the recorded run.\n  \u2713 derived: the compiled dist/ artifact that bin/speclang actually loads contains the fix: bin/speclang:355 requires ../dist/src/daemon/index.js; grep of dist/src/daemon/index.js shows listenDashboard/probeDashboard/EADDRINUSE handling at lines 175-194 and 'MCP: not started' at line 219; src/daemon/dashboard.ts is a symlink to specs/daemon.spec.dir/src/dashboard.ts.\nDF-SPECLANG-022 is delivered: start now awaits and self-probes the dashboard bind (exit 1 naming EADDRINUSE on an occupied port, no false URL/banner, no stale pid file), the announced /api/status answers 200, banner+help+README+GETTING-STARTED stopped claiming MCP is part of start, stop still tears the daemon down, and both the targeted 11 tests and the full 2082-test suite pass; the only residual issue is a pre-existing, out-of-scope mcp.pid gap that makes `mcp status` always report Not running even after a real `mcp start`. [uncovered failure paths: failure mode 0 (`speclang mcp status` can never report 'Running' because `mcp start` (bin/speclang:1524-1576 via dist/specs/mcp.spec.dir/src/server.js) never writes .speclang/mcp.pid \u2014 the only writers are unused specs/cli.spec.dir helpers): detected_by is empty \u2014 uncovered failure path]\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-20T10:25:01.383703",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-20T10:25:01.427871+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 1012,
+        "truncated": false,
+        "source": "git show 249e61f965ed"
+      }
+    ],
+    "task_id": "DF-SPECLANG-022"
+  }
+}
