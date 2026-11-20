@@ -1,0 +1,44 @@
+commit ea3e51c589a166c6b03dce49d53349132530c88b
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Fri Nov 20 10:11:09 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Fri Nov 20 10:11:43 2026 -0500
+
+    fix(daemon): guard DF-024 output accounting behind detector existence
+    
+    this.convergence is constructed in start() after config.load(); a directly
+    constructed Daemon (OBS-3 daemon-prom tests, embedders) has no detector, so
+    the unconditional reportPipelineOutputs call crashed every pipeline with
+    'reading recordOutputs of null' and turned successes into pipeline errors.
+    Skip accounting when the detector is absent (pre-024 behavior); started
+    daemons keep full input/output accounting.
+    
+    Full suite: 129 files / 2095 tests green; build clean. Regression introduced
+    by the harvested DF-024 WIP baseline (06a98f87); caught by the README-CLUSTER-R3
+    tier1 judge and attributed against base 94e2b921 (daemon-prom tests green there).
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+---
+ specs/daemon.spec.dir/src/daemon.ts | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/specs/daemon.spec.dir/src/daemon.ts b/specs/daemon.spec.dir/src/daemon.ts
+index 3ba2039e..1e5e8917 100644
+--- a/specs/daemon.spec.dir/src/daemon.ts
++++ b/specs/daemon.spec.dir/src/daemon.ts
+@@ -436,7 +436,14 @@ export class Daemon extends EventEmitter {
+         throw error;
+       }
+ 
+-      this.reportPipelineOutputs(beforeOutputs, pipelineResult?.success === true);
++      // DF-SPECLANG-024: attribute what this convergence pass WROTE — but only
++      // when the detector exists. this.convergence is constructed in start()
++      // (after config.load()), so a directly-constructed Daemon (tests, embedders)
++      // has no detector; skipping accounting there matches the pre-024 behavior
++      // instead of crashing every pipeline on "reading 'recordOutputs' of null".
++      if (this.convergence) {
++        this.reportPipelineOutputs(beforeOutputs, pipelineResult?.success === true);
++      }
+ 
+       if (pipelineResult.success) {
+         this.pipelineFailures = 0;
