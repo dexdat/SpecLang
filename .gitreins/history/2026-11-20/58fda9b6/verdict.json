@@ -1,0 +1,125 @@
+{
+  "task_id": "PERF-2",
+  "task_title": "Reclaim a young empty CLI completion lock instead of waiting the 60s deadline",
+  "task_criteria": [
+    "AC-1: with a fresh 0-byte .speclang/cli-completion.json.lock present, node bin/speclang validate <spec> exits 0 in under 3000ms and does not print 'Timed out waiting for CLI completion lock'. AC-2: tests/cli/completion.test.ts still passes, including the dead-PID reclaim case. AC-3: no change to command exit codes or stdout contract."
+  ],
+  "passed": false,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "ffdb075b341587df17bde2a479afa1827d51ab5c",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "49bb267315b0cde21821d6dbd7655fe38b7f97bdd51b9e5f7a86aafb4de388da",
+  "working_tree_dirty_path_count": 4,
+  "items": [],
+  "merge_recommendation": "needs_review",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: RUN  v4.1.11 /home/kara/speclang",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T075134.482497Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\n\n> speclang@1.0.0 build\n> tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T075134.482497Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "\n RUN  v4.1.11 /home/kara/speclang\n\nspeclang shim: $SPECLANG_CLI points at a path that does not exist:\n  /home/kara/speclang/.tmp/speclang-new-runnable-O0Mor1/does-not-exist\nError: --to <level> is required\n\u274c Unknown target level: INVALID_LEVEL\n\u274c Downgrade must go to a lower level\n\u274c Spec file not found: /home/kara/speclang/.tmp/speclang-test-downgrade/specs/nonexistent-file.spec.md\n\u274c No specs directory found. Run from a speclang project.\n\u274c Block not found: nonexistent-block-that-does-not-exist\nerror: missing required argument 'block-id'\nSourcemap for \"/home/kara/speclang/specs/project-layout.spec.dir/src/templates.js\" points to missing source files\n\n Test Files  127 passed | 4 skipped (131)\n      Tests  2071 passed | 58 skipped (2129)\n   Start at  02:55:52\n   Duration  65.72s (transform 17.93s, setup 5.56s, import 34.61s, tests 293.24s, environment 57ms)\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T075134.482497Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": false,
+      "any_failed": true,
+      "summary": "INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: AC-1: with a fresh 0-byte .speclang/cli-completion.json.lock present, node bin/speclang validate <spec> exits 0 in under 3000ms and does not print 'Timed out waiting for CLI completion lock'. AC-2: tests/cli/completion.test.ts still passes, including the dead-PID reclaim case. AC-3: no change to command exit codes or stdout contract.\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": false,
+          "output": "INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: AC-1: with a fresh 0-byte .speclang/cli-completion.json.lock present, node bin/speclang validate <spec> exits 0 in under 3000ms and does not print 'Timed out waiting for CLI completion lock'. AC-2: tests/cli/completion.test.ts still passes, including the dead-PID reclaim case. AC-3: no change to command exit codes or stdout contract.\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+          "error": "",
+          "data": {
+            "verdict": "INCOMPLETE",
+            "items": [],
+            "summary": "Evaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+            "ungraded_criteria": [
+              "AC-1: with a fresh 0-byte .speclang/cli-completion.json.lock present, node bin/speclang validate <spec> exits 0 in under 3000ms and does not print 'Timed out waiting for CLI completion lock'. AC-2: tests/cli/completion.test.ts still passes, including the dead-PID reclaim case. AC-3: no change to command exit codes or stdout contract."
+            ],
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "ungraded_criteria": [
+        "AC-1: with a fresh 0-byte .speclang/cli-completion.json.lock present, node bin/speclang validate <spec> exits 0 in under 3000ms and does not print 'Timed out waiting for CLI completion lock'. AC-2: tests/cli/completion.test.ts still passes, including the dead-PID reclaim case. AC-3: no change to command exit codes or stdout contract."
+      ]
+    }
+  },
+  "ungraded_criteria": [
+    "AC-1: with a fresh 0-byte .speclang/cli-completion.json.lock present, node bin/speclang validate <spec> exits 0 in under 3000ms and does not print 'Timed out waiting for CLI completion lock'. AC-2: tests/cli/completion.test.ts still passes, including the dead-PID reclaim case. AC-3: no change to command exit codes or stdout contract."
+  ],
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [],
+    "summary": "",
+    "error": "LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)"
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: RUN  v4.1.11 /home/kara/speclang\n\nStage tier2: FAIL\n  INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: AC-1: with a fresh 0-byte .speclang/cli-completion.json.lock present, node bin/speclang validate <spec> exits 0 in under 3000ms and does not print 'Timed out waiting for CLI completion lock'. AC-2: tests/cli/completion.test.ts still passes, including the dead-PID reclaim case. AC-3: no change to command exit codes or stdout contract.\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)\n\nOverall: FAIL \u2717",
+  "evaluated_at": "2026-11-20T07:57:16.692294",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-20T07:57:16.753159+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 37816,
+        "truncated": false,
+        "source": "git show ffdb075b3415"
+      }
+    ],
+    "task_id": "PERF-2"
+  }
+}
