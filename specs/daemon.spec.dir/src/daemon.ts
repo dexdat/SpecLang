@@ -470,7 +470,16 @@ export class Daemon extends EventEmitter {
    * that writes files without saying so is still counted and a stage that
    * rewrites a file with identical bytes is not.
    */
-  private reportPipelineOutputs(before: OutputSnapshot, complete: boolean): ConvergenceResult {
+  private reportPipelineOutputs(before: OutputSnapshot, complete: boolean): ConvergenceResult | null {
+    // The detector is built in start(); in production executePipeline() is only
+    // reached from its 'converged' handler, but a daemon driven without start()
+    // (unit seams, embedded use) has none — missing accounting must not turn a
+    // finished pipeline into a TypeError.
+    if (!this.convergence) {
+      console.warn('[Daemon] No convergence detector — pipeline outputs were not accounted');
+      return null;
+    }
+
     // Same tree and same exclusions as the "before" snapshot: the pair must
     // describe one project under one rule set.
     const after = snapshotProjectFiles(before.root, {

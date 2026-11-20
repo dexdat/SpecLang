@@ -156,7 +156,6 @@ export class ConvergenceDetector extends EventEmitter {
 
     const result = this.buildResult();
     this.logOutputs(result.duration, options);
-    this.emit('outputs', result);
     return result;
   }
 
@@ -292,8 +291,11 @@ export class ConvergenceDetector extends EventEmitter {
       // "Cascade complete! Files: N" line belongs to recordOutputs(), where N
       // is what the pass actually wrote. Printing it here is what made a
       // zero-output save announce "Cascade complete! Files: 1".
+      //
+      // This line therefore makes NO output claim: the only outputs it could
+      // name are the ones nobody has written yet.
       console.log(
-        `[Convergence] Cascade settled — inputs: ${result.inputFiles}, outputs: ${result.outputsCount}, Duration: ${result.duration}ms`,
+        `[Convergence] Cascade settled — inputs: ${result.inputFiles}, outputs pending the on_converge pipeline, Duration: ${result.duration}ms`,
       );
       this.emit('converged', result);
     }
