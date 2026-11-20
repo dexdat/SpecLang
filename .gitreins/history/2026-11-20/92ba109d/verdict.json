@@ -1,0 +1,204 @@
+{
+  "task_id": "DOC-10",
+  "task_title": "document the shipped GET /metrics endpoint",
+  "task_criteria": [
+    "docs/API_REFERENCE.md documents the shipped GET /metrics scrape endpoint and GETTING-STARTED.md mentions /metrics."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "5cd4ca7126ded9bb82b0cde9bca394fcb948180d",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "45b24c76a046bce98a58f81d9d95ab5032bf584c79cd64c3f49b0433668c2c80",
+  "working_tree_dirty_path_count": 6,
+  "items": [
+    {
+      "criterion": "docs/API_REFERENCE.md documents the shipped GET /metrics scrape endpoint and GETTING-STARTED.md mentions /metrics.",
+      "status": "PASS",
+      "detail": "docs/API_REFERENCE.md:185 documents `GET /metrics` in the HTTP+SSE mode table (Prometheus/OpenMetrics exposition, `Content-Type: text/plain; version=0.0.4; charset=utf-8`, no auth) and docs/API_REFERENCE.md:200 repeats it with the source pin `server.ts:225`; this matches the shipped endpoint at src/mcp/server.ts:225-231 (`app.get('/metrics', ...)` returning renderMetrics() with PROMETHEUS_CONTENT_TYPE = 'text/plain; version=0.0.4; charset=utf-8' per src/mcp/metrics.ts:26) and the no-auth claim matches server.ts:88-90 mounting auth only on /mcp. GETTING-STARTED.md:98 mentions `GET /metrics` in its remote-mode route table ('Prometheus scrape endpoint (no auth)'). The cross-referenced docs/observability-spec.md \u00a79.1 exists (line 306). Docs-only change; no test run applicable. [resolution 0.29; docs/API_REFERENCE.md, GETTING-STARTED.md]"
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  01:41:26",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T062200.397773Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\n\n> speclang@1.0.0 build\n> tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T062200.397773Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  01:41:26\n   Duration  68.10s (transform 22.44s, setup 6.59s, import 43.92s, tests 270.94s, environment 31ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T062200.397773Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 docs/API_REFERENCE.md documents the shipped GET /metrics scrape endpoint and GETTING-STARTED.md mentions /metrics.: docs/API_REFERENCE.md:185 documents `GET /metrics` in the HTTP+SSE mode table (Prometheus/OpenMetrics exposition, `Content-Type: text/plain; version=0.0.4; charset=utf-8`, no auth) and docs/API_REFERENCE.md:200 repeats it with the source pin `server.ts:225`; this matches the shipped endpoint at src/mcp/server.ts:225-231 (`app.get('/metrics', ...)` returning renderMetrics() with PROMETHEUS_CONTENT_TYPE = 'text/plain; version=0.0.4; charset=utf-8' per src/mcp/metrics.ts:26) and the no-auth claim matches server.ts:88-90 mounting auth only on /mcp. GETTING-STARTED.md:98 mentions `GET /metrics` in its remote-mode route table ('Prometheus scrape endpoint (no auth)'). The cross-referenced docs/observability-spec.md \u00a79.1 exists (line 306). Docs-only change; no test run applicable. [resolution 0.29; docs/API_REFERENCE.md, GETTING-STARTED.md]\nBoth documents cover the shipped GET /metrics endpoint accurately: API_REFERENCE.md describes it twice with correct content type and auth behavior matching src/mcp/server.ts:225, and GETTING-STARTED.md:98 lists it in the route table.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 docs/API_REFERENCE.md documents the shipped GET /metrics scrape endpoint and GETTING-STARTED.md mentions /metrics.: docs/API_REFERENCE.md:185 documents `GET /metrics` in the HTTP+SSE mode table (Prometheus/OpenMetrics exposition, `Content-Type: text/plain; version=0.0.4; charset=utf-8`, no auth) and docs/API_REFERENCE.md:200 repeats it with the source pin `server.ts:225`; this matches the shipped endpoint at src/mcp/server.ts:225-231 (`app.get('/metrics', ...)` returning renderMetrics() with PROMETHEUS_CONTENT_TYPE = 'text/plain; version=0.0.4; charset=utf-8' per src/mcp/metrics.ts:26) and the no-auth claim matches server.ts:88-90 mounting auth only on /mcp. GETTING-STARTED.md:98 mentions `GET /metrics` in its remote-mode route table ('Prometheus scrape endpoint (no auth)'). The cross-referenced docs/observability-spec.md \u00a79.1 exists (line 306). Docs-only change; no test run applicable. [resolution 0.29; docs/API_REFERENCE.md, GETTING-STARTED.md]\nBoth documents cover the shipped GET /metrics endpoint accurately: API_REFERENCE.md describes it twice with correct content type and auth behavior matching src/mcp/server.ts:225, and GETTING-STARTED.md:98 lists it in the route table.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "docs/API_REFERENCE.md documents the shipped GET /metrics scrape endpoint and GETTING-STARTED.md mentions /metrics.",
+                "status": "PASS",
+                "detail": "docs/API_REFERENCE.md:185 documents `GET /metrics` in the HTTP+SSE mode table (Prometheus/OpenMetrics exposition, `Content-Type: text/plain; version=0.0.4; charset=utf-8`, no auth) and docs/API_REFERENCE.md:200 repeats it with the source pin `server.ts:225`; this matches the shipped endpoint at src/mcp/server.ts:225-231 (`app.get('/metrics', ...)` returning renderMetrics() with PROMETHEUS_CONTENT_TYPE = 'text/plain; version=0.0.4; charset=utf-8' per src/mcp/metrics.ts:26) and the no-auth claim matches server.ts:88-90 mounting auth only on /mcp. GETTING-STARTED.md:98 mentions `GET /metrics` in its remote-mode route table ('Prometheus scrape endpoint (no auth)'). The cross-referenced docs/observability-spec.md \u00a79.1 exists (line 306). Docs-only change; no test run applicable. [resolution 0.29; docs/API_REFERENCE.md, GETTING-STARTED.md]",
+                "resolution_probability": 0.29,
+                "cited_path": "docs/API_REFERENCE.md, GETTING-STARTED.md"
+              }
+            ],
+            "summary": "Both documents cover the shipped GET /metrics endpoint accurately: API_REFERENCE.md describes it twice with correct content type and auth behavior matching src/mcp/server.ts:225, and GETTING-STARTED.md:98 lists it in the route table.",
+            "provenance": {
+              "model": "accounts/fireworks/models/kimi-k3",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "accounts/fireworks/models/kimi-k3",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DOC-10\"}",
+          "exit_code": 0,
+          "output_sha": "c571699599170d67c9b9d382454f552834cb031f994e38b0716bb0a85c6d9228"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && ls docs/ 2>/dev/null; ls GETTING-STARTED.md 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "ef7886e6b0b9f39acbb1f064b5a72a25c4a7d6afa676ff67fef8f3ec08988f29"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"file_glob\": \"docs/API_REFERENCE.md\", \"regex\": \"/metrics\"}",
+          "exit_code": 0,
+          "output_sha": "bb6cdc377f35371bfaf9396cf1f5dd9348d615cfa418e9a5e600e5925e4253d0"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"file_glob\": \"GETTING-STARTED.md\", \"regex\": \"/metrics\"}",
+          "exit_code": 0,
+          "output_sha": "2dcf403f83b118bdc8b5828de56cd0116487c8adcfd0c32c4e034e29f20198bb"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n -i \"metrics\" docs/API_REFERENCE.md | head -30; echo \"---\"; wc -l docs/API_REFERENCE.md",
+          "exit_code": 0,
+          "output_sha": "80493b456a73d32e3c051d53e8a1335bf677c1cb14c58328ae621da4f418b261"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"file_glob\": \"src/**/*.ts\", \"regex\": \"/metrics\"}",
+          "exit_code": 0,
+          "output_sha": "bb6cdc377f35371bfaf9396cf1f5dd9348d615cfa418e9a5e600e5925e4253d0"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"metrics\" src/mcp/server.ts | head -20; echo \"---\"; grep -rn \"'/metrics'\\|\\\"/metrics\\\"\\|/metrics\" src --include=\"*.ts\" -l | head",
+          "exit_code": 0,
+          "output_sha": "5b5c6351edcaecea706e78084547a04babecb2b295d1bf30698d68ad36103cbc"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 30, \"offset\": 215, \"path\": \"src/mcp/server.ts\"}",
+          "exit_code": 0,
+          "output_sha": "fe8fee80fbb9abd43b850596ddcec3815b57bd7df4aebd4edd196260aafd0930"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 25, \"offset\": 85, \"path\": \"GETTING-STARTED.md\"}",
+          "exit_code": 0,
+          "output_sha": "3d8f4aadc5ce947ef54cb5690d0b55842c8555215325077b71b7e2e1454e4c78"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 35, \"offset\": 175, \"path\": \"docs/API_REFERENCE.md\"}",
+          "exit_code": 0,
+          "output_sha": "bbaf4c42ee2d6d478ebbe051bd663040a0e42547beb378d6e466578421254374"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"PROMETHEUS_CONTENT_TYPE\" src/mcp/metrics.ts | head -5; echo \"---\"; grep -n \"9.1\\|metric families\" docs/observability-spec.md | head -10",
+          "exit_code": 0,
+          "output_sha": "6526d4904c851299c69a0ea7811231067762d5b72454212e437085b4692bf2ab"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: docs/API_REFERENCE.md:185 and :200 document GET /metrics (Prometheus/OpenMetrics exposition, Content-Type text/plain; version=0.0.4; charset=utf-8, no auth, server.ts:225) matching the shipped endpoint at src/mcp/server.ts:225-231 and PROMETHEUS_CONTENT_TYPE at src/mcp/metrics.ts:26. GETTING-STARTED.md:98 mentions GET /metrics in its remote-mode route table. Cross-ref docs/observability-spec.md \\u00a79.1 exists (line 306). Docs-only change; no test suite applicable.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "74dbcd3e5a0bcab9821d319ce52f757d001fcea27f3df9f1f039677ccddcd96d"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [],
+    "summary": "",
+    "error": "unparseable reviewer reply: no parseable JSON object in reply: ''"
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  01:41:26\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 docs/API_REFERENCE.md documents the shipped GET /metrics scrape endpoint and GETTING-STARTED.md mentions /metrics.: docs/API_REFERENCE.md:185 documents `GET /metrics` in the HTTP+SSE mode table (Prometheus/OpenMetrics exposition, `Content-Type: text/plain; version=0.0.4; charset=utf-8`, no auth) and docs/API_REFERENCE.md:200 repeats it with the source pin `server.ts:225`; this matches the shipped endpoint at src/mcp/server.ts:225-231 (`app.get('/metrics', ...)` returning renderMetrics() with PROMETHEUS_CONTENT_TYPE = 'text/plain; version=0.0.4; charset=utf-8' per src/mcp/metrics.ts:26) and the no-auth claim matches server.ts:88-90 mounting auth only on /mcp. GETTING-STARTED.md:98 mentions `GET /metrics` in its remote-mode route table ('Prometheus scrape endpoint (no auth)'). The cross-referenced docs/observability-spec.md \u00a79.1 exists (line 306). Docs-only change; no test run applicable. [resolution 0.29; docs/API_REFERENCE.md, GETTING-STARTED.md]\nBoth documents cover the shipped GET /metrics endpoint accurately: API_REFERENCE.md describes it twice with correct content type and auth behavior matching src/mcp/server.ts:225, and GETTING-STARTED.md:98 lists it in the route table.\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-20T06:44:59.893661",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-20T06:44:59.961458+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 180067,
+        "truncated": false,
+        "source": "git show 5cd4ca7126de"
+      }
+    ],
+    "task_id": "DOC-10"
+  }
+}
