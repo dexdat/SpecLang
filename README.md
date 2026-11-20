@@ -568,39 +568,43 @@ match on the file path, not a strict scope — so `tests/db` also picks up the r
 
 `vitest.config.ts` collects `tests/**/*.test.ts` and `tests/**/*.test.tsx`, with
 `tests/global-setup.ts` and `tests/setup-tmpdir.ts` redirecting `TMPDIR` to the gitignored `.tmp/`.
-`tests/` holds 121 test files; vitest collects 120 of them (the Playwright `*.spec.ts` files under
-`tests/e2e/` have no runner — see below), 36 at the top of `tests/` (`tests/parser.test.ts`,
-`tests/config.test.ts`, …) plus these directories:
+`tests/` holds 124 test files and vitest collects all 124 of them — both numbers measured on the
+tree at this commit, the first with `find tests \( -name '*.test.ts' -o -name '*.test.tsx' \) | wc -l`
+and the second with `npx vitest list --filesOnly | wc -l`. 36 sit at the top of `tests/`
+(`tests/parser.test.ts`, `tests/config.test.ts`, …) plus these directories:
 
 | directory | what it covers | files |
 |---|---|---|
+| `tests/agent-driver/` | agent-driver loop (fails closed on empty cascade output) | 1 |
 | `tests/cli/` | CLI command surface (`bin/speclang` end to end) | 10 |
 | `tests/daemon/` | file-watcher daemon | 10 |
 | `tests/dashboard/` | dashboard hooks and React components (React mocked, node env) | 16 |
-| `tests/db/` | SQLite layer, migrations | 7 |
+| `tests/db/` | SQLite layer, migrations | 8 |
 | `tests/cascade/`, `tests/cascade_new/` | cascade execution | 6 + 3 |
 | `tests/maturity/` | maturity levels, criteria, MVP validator | 5 |
 | `tests/mcp/` | MCP server, tools and bin-path resolution | 4 |
 | `tests/autonomous/` | autonomous validation runs and confidence scoring | 4 |
 | `tests/codegen/` | TypeScript and Go code generation | 3 |
-| `tests/validation/` | validation engine, rules, parse-and-validate | 3 |
+| `tests/validation/` | validation engine, rules, parse-and-validate | 4 |
 | `tests/performance/` | performance checks for cascade, daemon and MCP | 3 |
 | `tests/ci/` | CI self-checks (pre-commit hook, coverage run) | 2 |
 | `tests/meta/` | spec-index generator and repo bootstrap | 2 |
 | `tests/stdlib/` | standard-library spec functions and types | 2 |
 | `tests/agents/`, `tests/examples/`, `tests/transition/`, `tests/workflow/` | agent communication, hello-world example, spec transitions, conversation workflow | 1 each |
-| `tests/e2e/` | end-to-end cascade run (`spec-to-code.test.ts` only — see below) | 1 |
+| `tests/e2e/` | cascade run driven in-process (`spec-to-code.test.ts`) — no browser E2E, see below | 1 |
 
 `tests/mocks/` holds shared fixtures (`fixtures.ts`, `mcp-server.ts`, …) and no test files of its own.
 
-### `tests/e2e` is not a Playwright entry point here
+### Browser E2E is not implemented here
 
-Four files in `tests/e2e/` are Playwright specs (`@playwright/test`: `dashboard.spec.ts`,
-`monitoring.spec.ts`, `cascade-control.spec.ts`, `spec-editing.spec.ts`) and **cannot run in this
-repo as cloned**: `@playwright/test` is not a dependency (absent from `package.json` and from
-`node_modules`) and `vitest.config.ts` excludes `tests/e2e/**/*.spec.ts`. Only the vitest-native
-`tests/e2e/spec-to-code.test.ts` is collected — `npx vitest run tests/e2e` reports
-`1 passed (1)`, 9 tests.
+There is **no browser end-to-end suite in this repo**. Nothing in the tree opens a browser: there
+are no browser-driver specs, no browser-automation package is a dependency (absent from
+`package.json` and from `node_modules`), and no script launches a browser. `tests/e2e/` exists for
+a single vitest-native file, `tests/e2e/spec-to-code.test.ts`, which drives the cascade in-process
+— `npx vitest run tests/e2e` reports `1 passed (1)`.
+
+`vitest.config.ts` still carries `exclude: ['tests/e2e/**/*.spec.ts']`. That entry is the path a
+browser suite would use, so it is reserved rather than load-bearing: no such file is tracked.
 
 ### Test-run side effects
 
