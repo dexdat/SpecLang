@@ -19,6 +19,11 @@ import { LockManager } from './locks';
 import { SessionStore } from './session-store';
 import { writeDaemonPromMetrics } from './daemon-prom';
 import {
+  snapshotProjectFiles,
+  diffOutputSnapshots,
+} from './outputs';
+import type { OutputSnapshot } from './outputs';
+import {
   FileEvent,
   DaemonCommand,
   DaemonCommandKind,
@@ -414,21 +419,37 @@ export class Daemon extends EventEmitter {
       
       console.log('[Daemon] Executing pipeline...');
       const executor = new PipelineExecutor({ verbose: true });
-      
-      const result = await executor.execute(convergenceResult);
-      
-      if (result.success) {
+
+      // DF-SPECLANG-024: fingerprint the project tree BEFORE the pipeline runs.
+      // The convergence count is what this pass WROTE, and the only witness to
+      // that is the filesystem — the watcher events that triggered the pass are
+      // inputs (the spec the user saved), not outputs.
+      const beforeOutputs = snapshotProjectFiles(process.cwd(), this.outputSnapshotOptions());
+
+      let pipelineResult: any;
+      try {
+        pipelineResult = await executor.execute(convergenceResult);
+      } catch (error) {
+        // A throwing stage may still have written files; attribute them, then
+        // let the outer handler record the failure exactly as before.
+        this.reportPipelineOutputs(beforeOutputs, false);
+        throw error;
+      }
+
+      this.reportPipelineOutputs(beforeOutputs, pipelineResult?.success === true);
+
+      if (pipelineResult.success) {
         this.pipelineFailures = 0;
         await this.publishMetrics();
         console.log('[Daemon] Pipeline succeeded!');
-        this.emit('pipeline_success', result);
+        this.emit('pipeline_success', pipelineResult);
       } else {
         this.pipelineFailures++;
         this.pipelineErrors++;
         await this.publishMetrics();
-        console.error(`[Daemon] Pipeline failed (consecutive failure ${this.pipelineFailures}):`, result.error);
+        console.error(`[Daemon] Pipeline failed (consecutive failure ${this.pipelineFailures}):`, pipelineResult.error);
         console.error('[Daemon] Cascade NOT complete — pipeline did not succeed.');
-        this.emit('pipeline_failed', result.error);
+        this.emit('pipeline_failed', pipelineResult.error);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
@@ -439,6 +460,43 @@ export class Daemon extends EventEmitter {
       console.error('[Daemon] Cascade NOT complete — pipeline did not succeed.');
       this.emit('pipeline_failed', errorMessage);
     }
+  }
+
+  /**
+   * DF-SPECLANG-024: attribute what this convergence pass WROTE and hand it to
+   * the detector, which owns the user-visible count and the completion line.
+   *
+   * The diff is taken from the project tree, not from stage output, so a stage
+   * that writes files without saying so is still counted and a stage that
+   * rewrites a file with identical bytes is not.
+   */
+  private reportPipelineOutputs(before: OutputSnapshot, complete: boolean): ConvergenceResult {
+    // Same tree and same exclusions as the "before" snapshot: the pair must
+    // describe one project under one rule set.
+    const after = snapshotProjectFiles(before.root, {
+      ignoreDirectories: before.ignoreDirectories,
+      ignoreFilePatterns: before.ignoreFilePatterns,
+    });
+    const wrote = diffOutputSnapshots(before, after);
+    return this.convergence.recordOutputs(wrote, {
+      complete,
+      incomplete: before.truncated || after.truncated,
+    });
+  }
+
+  /**
+   * DF-SPECLANG-024: the exclusions the output snapshot uses.
+   *
+   * Only the FILE-shaped entries of the project's own `watch.ignore` list apply
+   * (`*.log` and friends) — those are the paths the daemon already treats as
+   * project noise, so a log redirected into the project while a cascade runs is
+   * not counted as generated code. Directory-shaped patterns (`generated/`) are
+   * deliberately NOT applied: a project may generate into a directory with that
+   * name, and excluding it would under-count the very thing being measured.
+   */
+  private outputSnapshotOptions(): { ignoreFilePatterns: string[] } {
+    const ignore = this.config?.get()?.watch?.ignore ?? [];
+    return { ignoreFilePatterns: ignore.filter((pattern) => !pattern.includes('/')) };
   }
 }
 
