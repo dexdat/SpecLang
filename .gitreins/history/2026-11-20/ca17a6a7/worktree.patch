@@ -1,0 +1,12 @@
+diff --git a/.coding-hermes/board/events.jsonl b/.coding-hermes/board/events.jsonl
+index 8aa6e710..8f17dea8 100644
+--- a/.coding-hermes/board/events.jsonl
++++ b/.coding-hermes/board/events.jsonl
+@@ -507,3 +507,7 @@
+ {"id":506,"timestamp":"2026-11-20 07:57:39.458742","event_type":"task_completed","task_id":"README-4","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+ {"id":507,"timestamp":"2026-11-20 07:57:39.635419","event_type":"task_completed","task_id":"README-25","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+ {"id":508,"timestamp":"2026-11-20 08:00:54.092665","event_type":"task_completed","task_id":"README-5","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
++{"id":509,"timestamp":"2026-11-20 09:31:13.011788","event_type":"task_updated","task_id":"DF-SPECLANG-020","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
++{"id":510,"timestamp":"2026-11-20 09:32:51.996258","event_type":"task_updated","task_id":"QA-SPECLANG-010","actor":"foreman","detail":"{\"status\":\"pending\"}","tick_number":null}
++{"id":511,"timestamp":"2026-11-20 09:33:47.257029","event_type":"task_completed","task_id":"README-2","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
++{"id":512,"timestamp":"2026-11-20 09:33:47.397634","event_type":"task_completed","task_id":"README-21","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}

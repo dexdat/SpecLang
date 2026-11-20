@@ -1,0 +1,421 @@
+{
+  "task_id": "DF-SPECLANG-020",
+  "task_title": "speclang new scaffolds no build.yaml so first save always pipeline-fails",
+  "task_criteria": [
+    "Scaffold from bin/speclang new writes a build.yaml whose pipeline.on_converge generates code; clean-box repro at HEAD: appending a spec block within 90s produces a file under src/generated, converge log has no 'Pipeline failed' / 'Cascade NOT complete', validate exits 0, new completes under 2s"
+  ],
+  "passed": true,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "ef301d553841015dbba9347dc5ec8741d526f573",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "4281515e2bf47d4c7f3f4d99d460d289e8ebac7c6e93090ee16493729cf7d8ff",
+  "working_tree_dirty_path_count": 5,
+  "items": [
+    {
+      "criterion": "Scaffold from bin/speclang new writes a build.yaml whose pipeline.on_converge generates code; clean-box repro at HEAD: appending a spec block within 90s produces a file under src/generated, converge log has no 'Pipeline failed' / 'Cascade NOT complete', validate exits 0, new completes under 2s",
+      "status": "PASS",
+      "detail": "bin/speclang:1986-1996 writes build.yaml with pipeline.on_converge: [{name: generate, run: \"node scripts/speclang.cjs generate\"}]. Live clean-box repro at HEAD (ef301d5) in /tmp/df020-repro: `node bin/speclang new demo --no-git` completed in 0.04s (<2s) and printed '\u2713 Created build.yaml'; daemon started (`node scripts/speclang.cjs start --no-dashboard`), spec block appended to specs/main.spec.md, and ~57s later (<90s) daemon.log showed '[Pipeline] Loaded config from build.yaml' -> '[StageExecutor] Running command: node scripts/speclang.cjs generate' -> 'Pipeline succeeded!' with src/generated/main.spec-main.ts, main.spec-extra.ts, main.spec-extra2.ts written; `grep -c 'Pipeline failed\\|Cascade NOT complete' daemon.log` = 0; `node scripts/speclang.cjs validate` exited 0. Test run: `TMPDIR=$PWD/.tmp npx vitest run tests/cli/new-project-runnable.test.ts` exit 0, 'Test Files 1 passed (1), Tests 10 passed (10)', including 'ships a build.yaml whose on_converge generates code (DF-SPECLANG-020)' which loads the emitted file through PipelineConfigManager and asserts stages[0].run === 'node scripts/speclang.cjs generate'. [resolution 0.07; build.yaml]"
+    },
+    {
+      "criterion": "Reachability/seam: the build.yaml written by `speclang new` is the file the daemon's PipelineExecutor loads (default path build.yaml in project cwd) and its stage command is runnable in the scaffolded project without install or PATH",
+      "status": "PASS",
+      "detail": "src/pipeline/config.ts:31 defaults configPath to 'build.yaml'; src/pipeline/executor.ts:28 uses options.configPath (undefined) and src/daemon/daemon.ts:416 constructs `new PipelineExecutor({ verbose: true })` with no configPath, so the daemon loads exactly the project-root build.yaml the scaffold writes (bin/speclang:1995). Repro daemon.log line '[Pipeline] Loaded config from build.yaml' followed by the generate stage SUCCESS confirms the seam end-to-end; the stage runs through scripts/speclang.cjs, which resolved the generator CLI with no install and no global speclang (generate exit 0 in the repro).",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: npm notice run speclang@1.0.0 npx",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T094919.521515Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\nnpm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T094919.521515Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 npx\nnpm notice run 'vitest' run --passWithNoTests\n\n RUN  v4.1.11 /home/kara/speclang\n\nError: --to <level> is required\n\u274c Unknown target level: INVALID_LEVEL\n\u274c Downgrade must go to a lower level\n\u274c Spec file not found: /home/kara/speclang/.tmp/speclang-test-downgrade/specs/nonexistent-file.spec.md\nspeclang shim: $SPECLANG_CLI points at a path that does not exist:\n  /home/kara/speclang/.tmp/speclang-new-runnable-dxpphv/does-not-exist\n\u274c No specs directory found. Run from a speclang project.\n\u274c Block not found: nonexistent-block-that-does-not-exist\nerror: missing required argument 'block-id'\nSourcemap for \"/home/kara/speclang/specs/project-layout.spec.dir/src/templates.js\" points to missing source files\n\n Test Files  127 passed | 4 skipped (131)\n      Tests  2073 passed | 58 skipped (2131)\n   Start at  04:50:24\n   Duration  36.07s (transform 9.15s, setup 2.28s, import 14.93s, tests 219.23s, environment 15ms)\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T094919.521515Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 Scaffold from bin/speclang new writes a build.yaml whose pipeline.on_converge generates code; clean-box repro at HEAD: appending a spec block within 90s produces a file under src/generated, converge log has no 'Pipeline failed' / 'Cascade NOT complete', validate exits 0, new completes under 2s: bin/speclang:1986-1996 writes build.yaml with pipeline.on_converge: [{name: generate, run: \"node scripts/speclang.cjs generate\"}]. Live clean-box repro at HEAD (ef301d5) in /tmp/df020-repro: `node bin/speclang new demo --no-git` completed in 0.04s (<2s) and printed '\u2713 Created build.yaml'; daemon started (`node scripts/speclang.cjs start --no-dashboard`), spec block appended to specs/main.spec.md, and ~57s later (<90s) daemon.log showed '[Pipeline] Loaded config from build.yaml' -> '[StageExecutor] Running command: node scripts/speclang.cjs generate' -> 'Pipeline succeeded!' with src/generated/main.spec-main.ts, main.spec-extra.ts, main.spec-extra2.ts written; `grep -c 'Pipeline failed\\|Cascade NOT complete' daemon.log` = 0; `node scripts/speclang.cjs validate` exited 0. Test run: `TMPDIR=$PWD/.tmp npx vitest run tests/cli/new-project-runnable.test.ts` exit 0, 'Test Files 1 passed (1), Tests 10 passed (10)', including 'ships a build.yaml whose on_converge generates code (DF-SPECLANG-020)' which loads the emitted file through PipelineConfigManager and asserts stages[0].run === 'node scripts/speclang.cjs generate'. [resolution 0.07; build.yaml]\n  \u2713 Reachability/seam: the build.yaml written by `speclang new` is the file the daemon's PipelineExecutor loads (default path build.yaml in project cwd) and its stage command is runnable in the scaffolded project without install or PATH: src/pipeline/config.ts:31 defaults configPath to 'build.yaml'; src/pipeline/executor.ts:28 uses options.configPath (undefined) and src/daemon/daemon.ts:416 constructs `new PipelineExecutor({ verbose: true })` with no configPath, so the daemon loads exactly the project-root build.yaml the scaffold writes (bin/speclang:1995). Repro daemon.log line '[Pipeline] Loaded config from build.yaml' followed by the generate stage SUCCESS confirms the seam end-to-end; the stage runs through scripts/speclang.cjs, which resolved the generator CLI with no install and no global speclang (generate exit 0 in the repro).\nThe fix writes a build.yaml with a working generate stage from `speclang new`, and a live clean-box repro at HEAD confirmed the full loop: scaffold in 0.04s, spec append produced src/generated files in ~57s with no pipeline-failure log lines, validate exited 0, and the targeted vitest file passes 10/10.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 Scaffold from bin/speclang new writes a build.yaml whose pipeline.on_converge generates code; clean-box repro at HEAD: appending a spec block within 90s produces a file under src/generated, converge log has no 'Pipeline failed' / 'Cascade NOT complete', validate exits 0, new completes under 2s: bin/speclang:1986-1996 writes build.yaml with pipeline.on_converge: [{name: generate, run: \"node scripts/speclang.cjs generate\"}]. Live clean-box repro at HEAD (ef301d5) in /tmp/df020-repro: `node bin/speclang new demo --no-git` completed in 0.04s (<2s) and printed '\u2713 Created build.yaml'; daemon started (`node scripts/speclang.cjs start --no-dashboard`), spec block appended to specs/main.spec.md, and ~57s later (<90s) daemon.log showed '[Pipeline] Loaded config from build.yaml' -> '[StageExecutor] Running command: node scripts/speclang.cjs generate' -> 'Pipeline succeeded!' with src/generated/main.spec-main.ts, main.spec-extra.ts, main.spec-extra2.ts written; `grep -c 'Pipeline failed\\|Cascade NOT complete' daemon.log` = 0; `node scripts/speclang.cjs validate` exited 0. Test run: `TMPDIR=$PWD/.tmp npx vitest run tests/cli/new-project-runnable.test.ts` exit 0, 'Test Files 1 passed (1), Tests 10 passed (10)', including 'ships a build.yaml whose on_converge generates code (DF-SPECLANG-020)' which loads the emitted file through PipelineConfigManager and asserts stages[0].run === 'node scripts/speclang.cjs generate'. [resolution 0.07; build.yaml]\n  \u2713 Reachability/seam: the build.yaml written by `speclang new` is the file the daemon's PipelineExecutor loads (default path build.yaml in project cwd) and its stage command is runnable in the scaffolded project without install or PATH: src/pipeline/config.ts:31 defaults configPath to 'build.yaml'; src/pipeline/executor.ts:28 uses options.configPath (undefined) and src/daemon/daemon.ts:416 constructs `new PipelineExecutor({ verbose: true })` with no configPath, so the daemon loads exactly the project-root build.yaml the scaffold writes (bin/speclang:1995). Repro daemon.log line '[Pipeline] Loaded config from build.yaml' followed by the generate stage SUCCESS confirms the seam end-to-end; the stage runs through scripts/speclang.cjs, which resolved the generator CLI with no install and no global speclang (generate exit 0 in the repro).\nThe fix writes a build.yaml with a working generate stage from `speclang new`, and a live clean-box repro at HEAD confirmed the full loop: scaffold in 0.04s, spec append produced src/generated files in ~57s with no pipeline-failure log lines, validate exited 0, and the targeted vitest file passes 10/10.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "Scaffold from bin/speclang new writes a build.yaml whose pipeline.on_converge generates code; clean-box repro at HEAD: appending a spec block within 90s produces a file under src/generated, converge log has no 'Pipeline failed' / 'Cascade NOT complete', validate exits 0, new completes under 2s",
+                "status": "PASS",
+                "detail": "bin/speclang:1986-1996 writes build.yaml with pipeline.on_converge: [{name: generate, run: \"node scripts/speclang.cjs generate\"}]. Live clean-box repro at HEAD (ef301d5) in /tmp/df020-repro: `node bin/speclang new demo --no-git` completed in 0.04s (<2s) and printed '\u2713 Created build.yaml'; daemon started (`node scripts/speclang.cjs start --no-dashboard`), spec block appended to specs/main.spec.md, and ~57s later (<90s) daemon.log showed '[Pipeline] Loaded config from build.yaml' -> '[StageExecutor] Running command: node scripts/speclang.cjs generate' -> 'Pipeline succeeded!' with src/generated/main.spec-main.ts, main.spec-extra.ts, main.spec-extra2.ts written; `grep -c 'Pipeline failed\\|Cascade NOT complete' daemon.log` = 0; `node scripts/speclang.cjs validate` exited 0. Test run: `TMPDIR=$PWD/.tmp npx vitest run tests/cli/new-project-runnable.test.ts` exit 0, 'Test Files 1 passed (1), Tests 10 passed (10)', including 'ships a build.yaml whose on_converge generates code (DF-SPECLANG-020)' which loads the emitted file through PipelineConfigManager and asserts stages[0].run === 'node scripts/speclang.cjs generate'. [resolution 0.07; build.yaml]",
+                "resolution_probability": 0.07,
+                "cited_path": "build.yaml"
+              },
+              {
+                "criterion": "Reachability/seam: the build.yaml written by `speclang new` is the file the daemon's PipelineExecutor loads (default path build.yaml in project cwd) and its stage command is runnable in the scaffolded project without install or PATH",
+                "status": "PASS",
+                "detail": "src/pipeline/config.ts:31 defaults configPath to 'build.yaml'; src/pipeline/executor.ts:28 uses options.configPath (undefined) and src/daemon/daemon.ts:416 constructs `new PipelineExecutor({ verbose: true })` with no configPath, so the daemon loads exactly the project-root build.yaml the scaffold writes (bin/speclang:1995). Repro daemon.log line '[Pipeline] Loaded config from build.yaml' followed by the generate stage SUCCESS confirms the seam end-to-end; the stage runs through scripts/speclang.cjs, which resolved the generator CLI with no install and no global speclang (generate exit 0 in the repro).",
+                "derived": true
+              }
+            ],
+            "summary": "The fix writes a build.yaml with a working generate stage from `speclang new`, and a live clean-box repro at HEAD confirmed the full loop: scaffold in 0.04s, spec append produced src/generated files in ~57s with no pipeline-failure log lines, validate exited 0, and the targeted vitest file passes 10/10.",
+            "provenance": {
+              "model": "accounts/fireworks/models/kimi-k3",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "accounts/fireworks/models/kimi-k3",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DF-SPECLANG-020\"}",
+          "exit_code": 0,
+          "output_sha": "9c194200b69063c8b88af6b66f6850634cf198391fc4b5d90b0fd56935698dc3"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"bin/speclang\"}",
+          "exit_code": 0,
+          "output_sha": "877ebf75dab82f1cdcc5d695ea8428ca1f8b2a460d50827b1381bba1e3e9218a"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"file_glob\": \"bin/speclang\", \"regex\": \"command\\\\('new'|build\\\\.yaml|on_converge\"}",
+          "exit_code": 0,
+          "output_sha": "70f469fda8920f3eb8f29caf97e6fa5a7fe38a4c180136efcc4f23b9cc3f8985"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/cli/new-project-runnable.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "d76c5a199d12d0ee8fa8d2e39bc4b9256e40f9d8e5319a47100a41cfcefa6a82"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 250, \"offset\": 1850, \"path\": \"bin/speclang\"}",
+          "exit_code": 0,
+          "output_sha": "a5bc68fb08e1fbfc7a85c033922abc9b9f4fcb172770e42a85bc918eea6af11d"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"file_glob\": \"bin/speclang\", \"regex\": \"\\\\.command\\\\('new\"}",
+          "exit_code": 0,
+          "output_sha": "769dbead0f61da6e0bc8b29314cba8a8fb1609aa4994cbf8d27b7031c77d1e9a"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"file_glob\": \"src/pipeline/config.ts\", \"regex\": \"on_converge|getPipelineStages|build\\\\.yaml\"}",
+          "exit_code": 0,
+          "output_sha": "bb6cdc377f35371bfaf9396cf1f5dd9348d615cfa418e9a5e600e5925e4253d0"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 120, \"offset\": 1644, \"path\": \"bin/speclang\"}",
+          "exit_code": 0,
+          "output_sha": "a689f37a87076ad81e96c851ef2b6faeb6b814440daaf3a78466b986abd99cb3"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"file_glob\": \"src/pipeline/*.ts\", \"regex\": \"class PipelineConfigManager|on_converge|getPipelineStages\"}",
+          "exit_code": 0,
+          "output_sha": "bb6cdc377f35371bfaf9396cf1f5dd9348d615cfa418e9a5e600e5925e4253d0"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"regex\": \"PipelineConfigManager\"}",
+          "exit_code": 0,
+          "output_sha": "6babdd5c0f0bc7b6930e2bf42131caabf5ab29c5d1eace4b1b24e7c187cbfb27"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"src/pipeline/config.ts\"}",
+          "exit_code": 0,
+          "output_sha": "90bfc4fe253e684ad51afcb180a4bb3aa7348073a6dca8335246ab1ac427b9af"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"file_glob\": \"src/**/*.ts\", \"regex\": \"Pipeline failed|Cascade NOT complete\"}",
+          "exit_code": 0,
+          "output_sha": "bb6cdc377f35371bfaf9396cf1f5dd9348d615cfa418e9a5e600e5925e4253d0"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"file_glob\": \"src/**/*.ts\", \"regex\": \"loadPipelineConfig|PipelineExecutor|runPipeline\"}",
+          "exit_code": 0,
+          "output_sha": "bb6cdc377f35371bfaf9396cf1f5dd9348d615cfa418e9a5e600e5925e4253d0"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"regex\": \"Pipeline failed|Cascade NOT complete\"}",
+          "exit_code": 0,
+          "output_sha": "570b01ff110e08e3f82e86b47f8f20ab8670e83484f39e0288316762e4e07d6e"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"file_glob\": \"src/**\", \"regex\": \"loadPipelineConfig|PipelineExecutor\"}",
+          "exit_code": 0,
+          "output_sha": "bb6cdc377f35371bfaf9396cf1f5dd9348d615cfa418e9a5e600e5925e4253d0"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"file_glob\": \"src/daemon/**\", \"regex\": \"Pipeline failed|Cascade NOT complete|loadPipelineConfig\"}",
+          "exit_code": 0,
+          "output_sha": "bb6cdc377f35371bfaf9396cf1f5dd9348d615cfa418e9a5e600e5925e4253d0"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls src/daemon/ 2>/dev/null; ls dist/src/daemon/ 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "ff190f3088df482c05f64b083860ddd474cbcc8d4b8bc50c847cec59c9387268"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"file_glob\": \"src/daemon/daemon.ts\", \"regex\": \"pipeline|Pipeline\"}",
+          "exit_code": 0,
+          "output_sha": "bb6cdc377f35371bfaf9396cf1f5dd9348d615cfa418e9a5e600e5925e4253d0"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"file_glob\": \"src/**\", \"regex\": \"Pipeline failed|Cascade NOT complete|on_converge\"}",
+          "exit_code": 0,
+          "output_sha": "bb6cdc377f35371bfaf9396cf1f5dd9348d615cfa418e9a5e600e5925e4253d0"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"Pipeline failed\\|Cascade NOT complete\" src/ dist/src/ 2>/dev/null | head -20; echo ---; grep -rln \"on_converge\" src/ | head",
+          "exit_code": 0,
+          "output_sha": "80b0cb2ec8f413641316d49ae74b3f5c216b2fb7ec28a97d03e9eb989694ec0d"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"on_converge\\|loadPipelineConfig\\|PipelineExecutor\" src/daemon/daemon.ts | head -20; echo ---; grep -n \"pipeline\" src/daemon/daemon.ts | head -30",
+          "exit_code": 0,
+          "output_sha": "0da428c174f488b0dd5e91566aa78cfe7e174911129a337c2c30f928b844ee88"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 70, \"offset\": 380, \"path\": \"src/daemon/daemon.ts\"}",
+          "exit_code": 0,
+          "output_sha": "30b0d30ef0a02457bb4b0d1f97e356f5fa75483cf350b07e85656341edddba51"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 80, \"offset\": 1, \"path\": \"src/pipeline/executor.ts\"}",
+          "exit_code": 0,
+          "output_sha": "2d43b5ec849cbeb9d43e497087ae6348c1379f819f0958c5dd59b12f41b6cdd7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat .gitreins/config.yaml 2>/dev/null; echo ---; grep -n '\"test\"\\|\"scripts\"' -A 15 package.json | head -30",
+          "exit_code": 0,
+          "output_sha": "6db539f8a4b523955c32b3f12dfab6d0e4f409516331a3cfd48a8c3146857c2b"
+        },
+        {
+          "tool": "run_command",
+          "command": "mkdir -p .tmp && TMPDIR=$PWD/.tmp npx vitest run tests/cli/new-project-runnable.test.ts 2>&1 | tail -25",
+          "exit_code": 0,
+          "output_sha": "05f464cb409ada515643ebf72ad59fcd7b6a61344831a2457501231dada4740f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp && rm -rf df020-repro && mkdir df020-repro && cd df020-repro && time node /home/kara/speclang/bin/speclang new demo --no-git --dir demo 2>&1 | tail -20 && ls demo/",
+          "exit_code": 0,
+          "output_sha": "e942e7dc40d13065b81c709497fae9f58a85ac31a7a7d7a707814ca1cb607f7b"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/df020-repro/demo && cat build.yaml && echo === && node scripts/speclang.cjs validate; echo \"validate exit: $?\"",
+          "exit_code": 0,
+          "output_sha": "d1ce0b63ea8b839f9f17233813acb1cb33b56d80510efab096c50436e7851e7c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/df020-repro/demo && node scripts/speclang.cjs generate 2>&1 | tail -15; echo \"generate exit: $?\"; ls -R src/ 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "7f0221c9a149c8674eed37d4b0710035c71ad5d793fe64d4bc14a60e2236078a"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/df020-repro/demo && rm -rf src/generated && (node scripts/speclang.cjs start --no-dashboard -p 3999 > daemon.log 2>&1 & echo $! > daemon.pid) && sleep 6 && cat daemon.log | tail -20",
+          "exit_code": 0,
+          "output_sha": "7809e8bd90435aa719eb8acc0d4935cd3ee2b57772e043679e809fd44b740cd6"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/df020-repro/demo && cat >> specs/main.spec.md <<'EOF'\n\n### @block::extra @kind:code\n```speclang\n// extra block appended in repro\n```\nEOF\nsleep 45; tail -40 daemon.log; echo ===; ls -R src/ 2>/dev/null",
+          "exit_code": -15,
+          "output_sha": "70988dcdbb94a5ede3003adcc43cd6913fed834578f0f265a8e90140239b2fa7"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/df020-repro/demo && sleep 20; tail -40 daemon.log; echo ===; ls -R src/ 2>/dev/null; echo ===; ps -p $(cat daemon.pid) > /dev/null && echo \"daemon alive\" || echo \"daemon dead\"",
+          "exit_code": 0,
+          "output_sha": "52b2a5edccf2a3555759730e30a57c256de0d67db67375fb35e77ba487220eec"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/df020-repro/demo && setsid nohup node scripts/speclang.cjs start --no-dashboard -p 3999 > daemon.log 2>&1 < /dev/null & echo $! > daemon.pid; sleep 6; tail -5 daemon.log; ps -p $(cat daemon.pid) >/dev/null && echo alive",
+          "exit_code": 0,
+          "output_sha": "32d6510ae52ec02cb75f415c7eb5388cddeafc8ef8d3869c8076e8b77ab7ba9e"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/df020-repro/demo && ls -la; cat daemon.pid; ps aux | grep -i speclang | grep -v grep | head",
+          "exit_code": 0,
+          "output_sha": "04b2cb88db8251536379d0ed3c46e855926516740d50633e8e7ce4d0300c822f"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/df020-repro/demo && cat daemon.log; echo ===; cat >> specs/main.spec.md <<'EOF'\n\n### @block::extra2 @kind:code\n```speclang\n// second extra block appended in repro\n```\nEOF\ndate +%s > append.time; echo appended",
+          "exit_code": 0,
+          "output_sha": "30ca1397f52388e6d4857646d829b02afcc5229b13853b80fcc722a224e91639"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/df020-repro/demo && sleep 25 && tail -30 daemon.log && echo === && ls -R src/ generated/ 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "9ab6d3f48ba4f3511e5e1d804fa466ea9456a75f527398345ad60fe247d15d26"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/df020-repro/demo && sleep 25 && tail -25 daemon.log && echo === && ls -R src/ generated/ 2>/dev/null && echo \"elapsed since append: $(( $(date +%s) - $(cat append.time) ))s\"",
+          "exit_code": 0,
+          "output_sha": "6b2e47e9822fd45c4ca60218fa5653c16d1df6d1de5acc33ee054c8c6c285bab"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp/df020-repro/demo && grep -c \"Pipeline failed\\|Cascade NOT complete\" daemon.log; echo \"grep-exit:$?\"; node scripts/speclang.cjs validate > /dev/null 2>&1; echo \"validate exit: $?\"; kill $(cat daemon.pid) 2>/dev/null; pkill -f \"df020-repro\" 2>/dev/null; sleep 1; cd /tmp && rm -rf df020-repro; echo cleaned",
+          "exit_code": -15,
+          "output_sha": "91c2279bea66444774b62632c2964bebe2ea6f5731bb81013419fca549f18316"
+        },
+        {
+          "tool": "run_command",
+          "command": "rm -rf /tmp/df020-repro; ls /tmp/df020-repro 2>&1; pgrep -f df020-repro || echo \"no leftover processes\"",
+          "exit_code": 0,
+          "output_sha": "a33d8b5fa3e0989e65a3f8ed247c2ec75bf8bd8d9b1612dc5443207a129022c7"
+        },
+        {
+          "tool": "run_command",
+          "command": "ps -p 2543409 -o pid,cmd 2>/dev/null; pgrep -af \"speclang.cjs start.*3999\" || echo \"no repro daemon left\"",
+          "exit_code": 0,
+          "output_sha": "e4ae7cd1e491bb7f05e8cecf2c71d6cd5f67bc728a0dec07458d74c6ac4e0709"
+        },
+        {
+          "tool": "run_command",
+          "command": "kill 2518260 2>/dev/null; sleep 1; pgrep -af \"speclang.cjs start.*3999|df020\" | grep -v pgrep || echo \"all repro processes gone\"",
+          "exit_code": 0,
+          "output_sha": "0a9da6c7cb3af57b6d6c8a77aaa763f31170cbf2ebac1d7b042ff7732363ee07"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && git status --short | head; git stash list | head -3",
+          "exit_code": 0,
+          "output_sha": "e91f41dfde1eadd46d21c08759d76f20cf0e288612088f6a77d60f2bb604f570"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && rm -f daemon.pid && git status --short | head -8",
+          "exit_code": 0,
+          "output_sha": "8bed8ac47bb72fa02df8b289ea5796759f11f8847639b6d67af20e7435a1ab72"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: bin/speclang:1986-1996 writes build.yaml with pipeline.on_converge generate stage (\\\"node scripts/speclang.cjs generate\\\"). Live clean-box repro in /tmp: `speclang new` completed in 0.04s (<2s), wrote build.yaml; daemon started, spec block appended, within ~57s (<90s) pipeline ran generate stage successfully producing src/generated/main.spec-main.ts, main.spec-extra.ts, main.spec-extra2.ts; daemon.log grep for 'Pipeline failed|Cascade NOT complete' = 0 matches; `node scripts/speclang.cjs validate` exited 0. Test suite: TMPDIR=$PWD/.tmp npx vitest run tests/cli/new-project-runnable.test.ts -> exit 0, 10 passed (10), including 'ships a build.yaml whose on_converge generates code (DF-SPECLANG-020)' which loads the file through PipelineConfigManager and asserts stage name/run.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "1a156d3422fd1c1d0ecd77c2468011f27a1a01af9f1beb56164110205abc1c1f"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Reachability/seam: the build.yaml written by `speclang new` must be the file the daemon's PipelineExecutor actually loads (default path build.yaml in project cwd) and its stage command must be runnable in the scaffolded project without install/PATH.\", \"key\": \"derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "2e9930f68877d1db70160a86f6240a4a4d3c77568ba5f60111f564ec973ee75a"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: src/pipeline/config.ts:31 configPath defaults to 'build.yaml'; src/pipeline/executor.ts:28 news PipelineConfigManager(options.configPath) and src/daemon/daemon.ts:416 constructs PipelineExecutor({verbose:true}) with no configPath, so the daemon loads the project-root build.yaml the scaffold writes (bin/speclang:1995). Live repro confirmed the seam: daemon log shows '[Pipeline] Loaded config from build.yaml' then '[StageExecutor] Running command: node scripts/speclang.cjs generate' -> SUCCESS, files written under src/generated. The stage command works with no install and no PATH entry because scripts/speclang.cjs falls back to the generator CLI (verified in repro: generate exit 0).\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "c422e38606249ae07c24f13a169dfcf1cd0f36a91cf82d772653783671d0ae68"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [],
+    "summary": "The diff only appends four well-formed event records to an append-only JSONL board log, matching the existing schema exactly; no code or wiring changes to review."
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: npm notice run speclang@1.0.0 npx\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 Scaffold from bin/speclang new writes a build.yaml whose pipeline.on_converge generates code; clean-box repro at HEAD: appending a spec block within 90s produces a file under src/generated, converge log has no 'Pipeline failed' / 'Cascade NOT complete', validate exits 0, new completes under 2s: bin/speclang:1986-1996 writes build.yaml with pipeline.on_converge: [{name: generate, run: \"node scripts/speclang.cjs generate\"}]. Live clean-box repro at HEAD (ef301d5) in /tmp/df020-repro: `node bin/speclang new demo --no-git` completed in 0.04s (<2s) and printed '\u2713 Created build.yaml'; daemon started (`node scripts/speclang.cjs start --no-dashboard`), spec block appended to specs/main.spec.md, and ~57s later (<90s) daemon.log showed '[Pipeline] Loaded config from build.yaml' -> '[StageExecutor] Running command: node scripts/speclang.cjs generate' -> 'Pipeline succeeded!' with src/generated/main.spec-main.ts, main.spec-extra.ts, main.spec-extra2.ts written; `grep -c 'Pipeline failed\\|Cascade NOT complete' daemon.log` = 0; `node scripts/speclang.cjs validate` exited 0. Test run: `TMPDIR=$PWD/.tmp npx vitest run tests/cli/new-project-runnable.test.ts` exit 0, 'Test Files 1 passed (1), Tests 10 passed (10)', including 'ships a build.yaml whose on_converge generates code (DF-SPECLANG-020)' which loads the emitted file through PipelineConfigManager and asserts stages[0].run === 'node scripts/speclang.cjs generate'. [resolution 0.07; build.yaml]\n  \u2713 Reachability/seam: the build.yaml written by `speclang new` is the file the daemon's PipelineExecutor loads (default path build.yaml in project cwd) and its stage command is runnable in the scaffolded project without install or PATH: src/pipeline/config.ts:31 defaults configPath to 'build.yaml'; src/pipeline/executor.ts:28 uses options.configPath (undefined) and src/daemon/daemon.ts:416 constructs `new PipelineExecutor({ verbose: true })` with no configPath, so the daemon loads exactly the project-root build.yaml the scaffold writes (bin/speclang:1995). Repro daemon.log line '[Pipeline] Loaded config from build.yaml' followed by the generate stage SUCCESS confirms the seam end-to-end; the stage runs through scripts/speclang.cjs, which resolved the generator CLI with no install and no global speclang (generate exit 0 in the repro).\nThe fix writes a build.yaml with a working generate stage from `speclang new`, and a live clean-box repro at HEAD confirmed the full loop: scaffold in 0.04s, spec append produced src/generated files in ~57s with no pipeline-failure log lines, validate exited 0, and the targeted vitest file passes 10/10.\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-20T09:56:16.383301",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-20T09:56:16.425101+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 8203,
+        "truncated": false,
+        "source": "git show ef301d553841"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 1475,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DF-SPECLANG-020"
+  }
+}
