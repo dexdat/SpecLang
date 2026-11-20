@@ -1,0 +1,177 @@
+{
+  "task_id": "DOC-4",
+  "task_title": "README Agent Roles table names a nonexistent agent and omits two shipped ones",
+  "task_criteria": [
+    "Proof: (1) `awk '/^### Agent Roles/{f=1} /^### File Structure/{f=0} f' README.md | grep -oE '@speclang-[a-z-]+' | tr -d '@' | sort -u | while read -r a; do test -f \".opencode/agents/$a.md\" || echo \"MISSING $a\"; done` prints no MISSING lines; (2) `grep -ci 'speclang-test-writer' README.md` prints 0; (3) `grep -c '@speclang-simulator-verify' README.md` prints at least 1 and the Agent Roles table has a row naming @speclang-simulator; (4) the file-structure tree's \"Agent definitions\" line reads 6 definitions (excluding the agents README.md), matching `ls .opencode/agents/ | grep -c '\\.md$'` minus the README. failure_condition: any agent named in the Agent Roles table resolves to no file under .opencode/agents/, either simulator agent is missing from the table, the nonexistent @speclang-test-writer agent is still named, or the roles count still reads 5."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/worktrees/speclang-DOC-4",
+  "branch": "wt/DOC-4",
+  "commit": "5cd4ca7126ded9bb82b0cde9bca394fcb948180d",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "9c54a2ce1961fe27bc62a8c78f979e6ada22067930e2d58de8ea198e0b1e5573",
+  "working_tree_dirty_path_count": 1,
+  "items": [
+    {
+      "criterion": "Proof: (1) `awk '/^### Agent Roles/{f=1} /^### File Structure/{f=0} f' README.md | grep -oE '@speclang-[a-z-]+' | tr -d '@' | sort -u | while read -r a; do test -f \".opencode/agents/$a.md\" || echo \"MISSING $a\"; done` prints no MISSING lines; (2) `grep -ci 'speclang-test-writer' README.md` prints 0; (3) `grep -c '@speclang-simulator-verify' README.md` prints at least 1 and the Agent Roles table has a row naming @speclang-simulator; (4) the file-structure tree's \"Agent definitions\" line reads 6 definitions (excluding the agents README.md), matching `ls .opencode/agents/ | grep -c '\\.md$'` minus the README. failure_condition: any agent named in the Agent Roles table resolves to no file under .opencode/agents/, either simulator agent is missing from the table, the nonexistent @speclang-test-writer agent is still named, or the roles count still reads 5.",
+      "status": "PASS",
+      "detail": "(1) command returned exit 0, no MISSING lines \u2014 all 6 agents (coordinator, spec-writer, code-gen, verifier, simulator, simulator-verify) have files under .opencode/agents/. (2) grep -ci 'speclang-test-writer' README.md = 0. (3) grep -c '@speclang-simulator-verify' = 1; table shows both @speclang-simulator and @speclang-simulator-verify rows. (4) README.md:758 reads 'Agent definitions: 6 definitions in .opencode/agents/ (excluding its README.md)' and ls .opencode/agents/ shows 7 .md files total minus README.md = 6, matching. No failure_condition met."
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  01:42:35",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\nnpm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  01:42:35\n   Duration  68.75s (transform 24.64s, setup 7.49s, import 43.05s, tests 286.65s, environment 33ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 Proof: (1) `awk '/^### Agent Roles/{f=1} /^### File Structure/{f=0} f' README.md | grep -oE '@speclang-[a-z-]+' | tr -d '@' | sort -u | while read -r a; do test -f \".opencode/agents/$a.md\" || echo \"MISSING $a\"; done` prints no MISSING lines; (2) `grep -ci 'speclang-test-writer' README.md` prints 0; (3) `grep -c '@speclang-simulator-verify' README.md` prints at least 1 and the Agent Roles table has a row naming @speclang-simulator; (4) the file-structure tree's \"Agent definitions\" line reads 6 definitions (excluding the agents README.md), matching `ls .opencode/agents/ | grep -c '\\.md$'` minus the README. failure_condition: any agent named in the Agent Roles table resolves to no file under .opencode/agents/, either simulator agent is missing from the table, the nonexistent @speclang-test-writer agent is still named, or the roles count still reads 5.: (1) command returned exit 0, no MISSING lines \u2014 all 6 agents (coordinator, spec-writer, code-gen, verifier, simulator, simulator-verify) have files under .opencode/agents/. (2) grep -ci 'speclang-test-writer' README.md = 0. (3) grep -c '@speclang-simulator-verify' = 1; table shows both @speclang-simulator and @speclang-simulator-verify rows. (4) README.md:758 reads 'Agent definitions: 6 definitions in .opencode/agents/ (excluding its README.md)' and ls .opencode/agents/ shows 7 .md files total minus README.md = 6, matching. No failure_condition met.\nREADME Agent Roles table now lists all 6 shipped agents with matching .md files, no mention of nonexistent @speclang-test-writer, and agent definitions count reads 6 as required.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 Proof: (1) `awk '/^### Agent Roles/{f=1} /^### File Structure/{f=0} f' README.md | grep -oE '@speclang-[a-z-]+' | tr -d '@' | sort -u | while read -r a; do test -f \".opencode/agents/$a.md\" || echo \"MISSING $a\"; done` prints no MISSING lines; (2) `grep -ci 'speclang-test-writer' README.md` prints 0; (3) `grep -c '@speclang-simulator-verify' README.md` prints at least 1 and the Agent Roles table has a row naming @speclang-simulator; (4) the file-structure tree's \"Agent definitions\" line reads 6 definitions (excluding the agents README.md), matching `ls .opencode/agents/ | grep -c '\\.md$'` minus the README. failure_condition: any agent named in the Agent Roles table resolves to no file under .opencode/agents/, either simulator agent is missing from the table, the nonexistent @speclang-test-writer agent is still named, or the roles count still reads 5.: (1) command returned exit 0, no MISSING lines \u2014 all 6 agents (coordinator, spec-writer, code-gen, verifier, simulator, simulator-verify) have files under .opencode/agents/. (2) grep -ci 'speclang-test-writer' README.md = 0. (3) grep -c '@speclang-simulator-verify' = 1; table shows both @speclang-simulator and @speclang-simulator-verify rows. (4) README.md:758 reads 'Agent definitions: 6 definitions in .opencode/agents/ (excluding its README.md)' and ls .opencode/agents/ shows 7 .md files total minus README.md = 6, matching. No failure_condition met.\nREADME Agent Roles table now lists all 6 shipped agents with matching .md files, no mention of nonexistent @speclang-test-writer, and agent definitions count reads 6 as required.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "Proof: (1) `awk '/^### Agent Roles/{f=1} /^### File Structure/{f=0} f' README.md | grep -oE '@speclang-[a-z-]+' | tr -d '@' | sort -u | while read -r a; do test -f \".opencode/agents/$a.md\" || echo \"MISSING $a\"; done` prints no MISSING lines; (2) `grep -ci 'speclang-test-writer' README.md` prints 0; (3) `grep -c '@speclang-simulator-verify' README.md` prints at least 1 and the Agent Roles table has a row naming @speclang-simulator; (4) the file-structure tree's \"Agent definitions\" line reads 6 definitions (excluding the agents README.md), matching `ls .opencode/agents/ | grep -c '\\.md$'` minus the README. failure_condition: any agent named in the Agent Roles table resolves to no file under .opencode/agents/, either simulator agent is missing from the table, the nonexistent @speclang-test-writer agent is still named, or the roles count still reads 5.",
+                "status": "PASS",
+                "detail": "(1) command returned exit 0, no MISSING lines \u2014 all 6 agents (coordinator, spec-writer, code-gen, verifier, simulator, simulator-verify) have files under .opencode/agents/. (2) grep -ci 'speclang-test-writer' README.md = 0. (3) grep -c '@speclang-simulator-verify' = 1; table shows both @speclang-simulator and @speclang-simulator-verify rows. (4) README.md:758 reads 'Agent definitions: 6 definitions in .opencode/agents/ (excluding its README.md)' and ls .opencode/agents/ shows 7 .md files total minus README.md = 6, matching. No failure_condition met."
+              }
+            ],
+            "summary": "README Agent Roles table now lists all 6 shipped agents with matching .md files, no mention of nonexistent @speclang-test-writer, and agent definitions count reads 6 as required.",
+            "provenance": {
+              "model": "glm-5.3-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "glm-5.3-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"DOC-4\"}",
+          "exit_code": 0,
+          "output_sha": "4a7704e740ccf18add0f4bad3a527cbca44a057f612ebae504773cefe3343978"
+        },
+        {
+          "tool": "run_command",
+          "command": "awk '/^### Agent Roles/{f=1} /^### File Structure/{f=0} f' README.md | grep -oE '@speclang-[a-z-]+' | tr -d '@' | sort -u | while read -r a; do test -f \".opencode/agents/$a.md\" || echo \"MISSING $a\"; done; echo \"---exit: $?---\"",
+          "exit_code": 0,
+          "output_sha": "3104a5fd4dbe62f622901f1adca7ad542602d6f3f1bce7942bcc959c2244f93e"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -ci 'speclang-test-writer' README.md; echo \"---exit---\"; grep -c '@speclang-simulator-verify' README.md; echo \"---exit---\"; ls .opencode/agents/ | grep -c '\\.md$'",
+          "exit_code": 0,
+          "output_sha": "153104ad3f991c6f46ca61f6230940ad7d618990b15f0793aa7954b8eeefb896"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls .opencode/agents/; echo \"---\"; awk '/^### Agent Roles/{f=1} /^### File Structure/{f=0} f' README.md",
+          "exit_code": 0,
+          "output_sha": "4f65fe28cc1f6fb3a78b57b622b0509488fd6584db0f106b7808052ede2485c0"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n -i 'agent definition' README.md; echo \"---\"; grep -n '^### File Structure' -A 40 README.md | head -60",
+          "exit_code": 0,
+          "output_sha": "f3aab1fd99e1abdb29d6c59ea8c56f770711366bbebec90af93c694e29ae9ce9"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn 'speclang-test-writer' . --include='*' -l 2>/dev/null | head -20; echo \"---\"; grep -c 'speclang-test-writer' README.md .opencode/agents/*.md 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "247a2b61bf30494ee2bcc94a56fbc777d29d9a28eecd045b74f58481ef3cfb6c"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: (1) awk-extraction Agent-Roles loop printed no MISSING lines (exit 0, empty output); all 6 agents in table resolve to files. (2) grep -ci 'speclang-test-writer' README.md = 0. (3) grep -c '@speclang-simulator-verify' README.md = 1; table has rows for both @speclang-simulator and @speclang-simulator-verify. (4) README.md:758 'Agent definitions: 6 definitions in .opencode/agents/ (excluding its README.md)' matches ls count 7 .md files minus README = 6.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "3fec95839cdf06f6fbecd56fa65c7657ea2242900807e7d379b779ca9b9e5846"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [],
+    "summary": "",
+    "error": "unparseable reviewer reply: no parseable JSON object in reply: ''"
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  01:42:35\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 Proof: (1) `awk '/^### Agent Roles/{f=1} /^### File Structure/{f=0} f' README.md | grep -oE '@speclang-[a-z-]+' | tr -d '@' | sort -u | while read -r a; do test -f \".opencode/agents/$a.md\" || echo \"MISSING $a\"; done` prints no MISSING lines; (2) `grep -ci 'speclang-test-writer' README.md` prints 0; (3) `grep -c '@speclang-simulator-verify' README.md` prints at least 1 and the Agent Roles table has a row naming @speclang-simulator; (4) the file-structure tree's \"Agent definitions\" line reads 6 definitions (excluding the agents README.md), matching `ls .opencode/agents/ | grep -c '\\.md$'` minus the README. failure_condition: any agent named in the Agent Roles table resolves to no file under .opencode/agents/, either simulator agent is missing from the table, the nonexistent @speclang-test-writer agent is still named, or the roles count still reads 5.: (1) command returned exit 0, no MISSING lines \u2014 all 6 agents (coordinator, spec-writer, code-gen, verifier, simulator, simulator-verify) have files under .opencode/agents/. (2) grep -ci 'speclang-test-writer' README.md = 0. (3) grep -c '@speclang-simulator-verify' = 1; table shows both @speclang-simulator and @speclang-simulator-verify rows. (4) README.md:758 reads 'Agent definitions: 6 definitions in .opencode/agents/ (excluding its README.md)' and ls .opencode/agents/ shows 7 .md files total minus README.md = 6, matching. No failure_condition met.\nREADME Agent Roles table now lists all 6 shipped agents with matching .md files, no mention of nonexistent @speclang-test-writer, and agent definitions count reads 6 as required.\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-20T06:44:15.677798",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-20T06:44:15.747095+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 180067,
+        "truncated": false,
+        "source": "git show 5cd4ca7126de"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 235751,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DOC-4"
+  }
+}
