@@ -1,0 +1,85 @@
+{
+  "task_id": "DOCS-RECHECK-1120",
+  "task_title": "Re-verify the README doc-audit findings against the shipped README",
+  "task_criteria": [
+    "AC-1: README-4's three named gaps are each re-checked with a command whose output is recorded: npm run lint is documented, no 449-specs aggregate line exists, Last Updated is not stale. AC-2: README-25's stale pinned counts are shown to be gone (no absolute test/spec/graph counts remain) and the README defers each count to the command that produces it. AC-3: the evidence file .coding-hermes/evidence/speclang-dogfood-2026-11-20-07-03-30.md is committed and its claims match what the commands printed."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "ca05edef203db5bbbd8babf9f4819fedee799b51",
+  "pass_class": "tier1-only",
+  "tier2_skipped": true,
+  "working_tree_content_fingerprint": "255e7f697f7451a4c840d8eb7204ab9fc5db3c7bf4763423f5324f7d608725d5",
+  "working_tree_dirty_path_count": 6,
+  "items": [],
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: RUN  v4.1.11 /home/kara/speclang",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T075134.482497Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\n\n> speclang@1.0.0 build\n> tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T075134.482497Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "\n RUN  v4.1.11 /home/kara/speclang\n\nspeclang shim: $SPECLANG_CLI points at a path that does not exist:\n  /home/kara/speclang/.tmp/speclang-new-runnable-E9a3Xu/does-not-exist\nError: --to <level> is required\n\u274c Unknown target level: INVALID_LEVEL\n\u274c Downgrade must go to a lower level\n\u274c Spec file not found: /home/kara/speclang/.tmp/speclang-test-downgrade/specs/nonexistent-file.spec.md\n\u274c No specs directory found. Run from a speclang project.\n\u274c Block not found: nonexistent-block-that-does-not-exist\nerror: missing required argument 'block-id'\nSourcemap for \"/home/kara/speclang/specs/project-layout.spec.dir/src/templates.js\" points to missing source files\n\n Test Files  127 passed | 4 skipped (131)\n      Tests  2070 passed | 58 skipped (2128)\n   Start at  02:52:45\n   Duration  62.19s (transform 21.78s, setup 6.36s, import 39.35s, tests 288.55s, environment 34ms)\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T075134.482497Z.log"
+          }
+        }
+      ]
+    }
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: RUN  v4.1.11 /home/kara/speclang\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-20T07:53:48.148275",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-20T07:53:48.227568+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 6977,
+        "truncated": false,
+        "source": "git show ca05edef203d"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 36918,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DOCS-RECHECK-1120"
+  }
+}
