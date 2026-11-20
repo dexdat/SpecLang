@@ -1,0 +1,264 @@
+{
+  "task_id": "OBS-3",
+  "task_title": "speclangd prometheus textfile for up/status/errors",
+  "task_criteria": [
+    "The daemon writes a Prometheus textfile daemon.prom covering up, status and error outcomes, and npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts exits 0."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "5cd4ca7126ded9bb82b0cde9bca394fcb948180d",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "45b24c76a046bce98a58f81d9d95ab5032bf584c79cd64c3f49b0433668c2c80",
+  "working_tree_dirty_path_count": 6,
+  "items": [
+    {
+      "criterion": "The daemon writes a Prometheus textfile daemon.prom covering up, status and error outcomes, and npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts exits 0.",
+      "status": "PASS",
+      "detail": "src/daemon/daemon-prom.ts:21-42 renders speclang_daemon_up, speclang_daemon_status (idle/cascading/converged/paused/error codes), speclang_daemon_last_event_timestamp_seconds and speclang_daemon_errors_total; writeDaemonPromMetrics (src/daemon/daemon-prom.ts:48-72) atomically writes .speclang/daemon.prom. The daemon publishes on start (specs/daemon.spec.dir/src/daemon.ts:158), stop (:182), file events (:214), pipeline failure (:427-428) and pipeline exception (:436-437) via publishMetrics (:285-297). Test command run fresh: `npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts` exit_code=0, output 'Test Files 2 passed (2), Tests 13 passed (13)'. [resolution 0.00; tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts]"
+    },
+    {
+      "criterion": "The textfile writer is reachable from the shipped CLI entrypoint (bin/speclang start), not only from the spec-dir sources",
+      "status": "PASS",
+      "detail": "bin/speclang:265 requires ../dist/src/daemon/index.js; dist/src/daemon/daemon.js:25 requires ./daemon-prom and :247 calls writeDaemonPromMetrics with the same publishMetrics call sites as the source. The CLI lifecycle test (tests/daemon/daemon-prom.test.ts:96-148) spawned `node bin/speclang start --no-dashboard` and observed daemon.prom with up=1 on start, timestamp advancing on a watched cascade, and up=0 after SIGTERM \u2014 passed in the vitest run (exit_code=0).",
+      "derived": true
+    },
+    {
+      "criterion": "A metrics-write failure must not turn a pipeline success into a failure (telemetry failure path)",
+      "status": "PASS",
+      "detail": "publishMetrics wraps the write in try/catch and warns (specs/daemon.spec.dir/src/daemon.ts:285-297); tests/daemon/daemon-prom-outcomes.test.ts:51-67 mocks writeDaemonPromMetrics to reject and asserts pipeline_success still fires, pipeline_failed does not, and console.warn receives '[Daemon] Failed to write .speclang/daemon.prom:' \u2014 passed in the vitest run (13 passed, exit_code=0).",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  01:30:20",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T062200.397773Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\n\n> speclang@1.0.0 build\n> tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T062200.397773Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  01:30:20\n   Duration  56.41s (transform 21.44s, setup 6.10s, import 40.20s, tests 240.77s, environment 42ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T062200.397773Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 The daemon writes a Prometheus textfile daemon.prom covering up, status and error outcomes, and npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts exits 0.: src/daemon/daemon-prom.ts:21-42 renders speclang_daemon_up, speclang_daemon_status (idle/cascading/converged/paused/error codes), speclang_daemon_last_event_timestamp_seconds and speclang_daemon_errors_total; writeDaemonPromMetrics (src/daemon/daemon-prom.ts:48-72) atomically writes .speclang/daemon.prom. The daemon publishes on start (specs/daemon.spec.dir/src/daemon.ts:158), stop (:182), file events (:214), pipeline failure (:427-428) and pipeline exception (:436-437) via publishMetrics (:285-297). Test command run fresh: `npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts` exit_code=0, output 'Test Files 2 passed (2), Tests 13 passed (13)'. [resolution 0.00; tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts]\n  \u2713 The textfile writer is reachable from the shipped CLI entrypoint (bin/speclang start), not only from the spec-dir sources: bin/speclang:265 requires ../dist/src/daemon/index.js; dist/src/daemon/daemon.js:25 requires ./daemon-prom and :247 calls writeDaemonPromMetrics with the same publishMetrics call sites as the source. The CLI lifecycle test (tests/daemon/daemon-prom.test.ts:96-148) spawned `node bin/speclang start --no-dashboard` and observed daemon.prom with up=1 on start, timestamp advancing on a watched cascade, and up=0 after SIGTERM \u2014 passed in the vitest run (exit_code=0).\n  \u2713 A metrics-write failure must not turn a pipeline success into a failure (telemetry failure path): publishMetrics wraps the write in try/catch and warns (specs/daemon.spec.dir/src/daemon.ts:285-297); tests/daemon/daemon-prom-outcomes.test.ts:51-67 mocks writeDaemonPromMetrics to reject and asserts pipeline_success still fires, pipeline_failed does not, and console.warn receives '[Daemon] Failed to write .speclang/daemon.prom:' \u2014 passed in the vitest run (13 passed, exit_code=0).\nThe daemon writes an atomic .speclang/daemon.prom with up/status/last-event/errors_total series, wired through the compiled CLI path, and the mandated vitest command exits 0 with 13/13 tests passing.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 The daemon writes a Prometheus textfile daemon.prom covering up, status and error outcomes, and npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts exits 0.: src/daemon/daemon-prom.ts:21-42 renders speclang_daemon_up, speclang_daemon_status (idle/cascading/converged/paused/error codes), speclang_daemon_last_event_timestamp_seconds and speclang_daemon_errors_total; writeDaemonPromMetrics (src/daemon/daemon-prom.ts:48-72) atomically writes .speclang/daemon.prom. The daemon publishes on start (specs/daemon.spec.dir/src/daemon.ts:158), stop (:182), file events (:214), pipeline failure (:427-428) and pipeline exception (:436-437) via publishMetrics (:285-297). Test command run fresh: `npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts` exit_code=0, output 'Test Files 2 passed (2), Tests 13 passed (13)'. [resolution 0.00; tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts]\n  \u2713 The textfile writer is reachable from the shipped CLI entrypoint (bin/speclang start), not only from the spec-dir sources: bin/speclang:265 requires ../dist/src/daemon/index.js; dist/src/daemon/daemon.js:25 requires ./daemon-prom and :247 calls writeDaemonPromMetrics with the same publishMetrics call sites as the source. The CLI lifecycle test (tests/daemon/daemon-prom.test.ts:96-148) spawned `node bin/speclang start --no-dashboard` and observed daemon.prom with up=1 on start, timestamp advancing on a watched cascade, and up=0 after SIGTERM \u2014 passed in the vitest run (exit_code=0).\n  \u2713 A metrics-write failure must not turn a pipeline success into a failure (telemetry failure path): publishMetrics wraps the write in try/catch and warns (specs/daemon.spec.dir/src/daemon.ts:285-297); tests/daemon/daemon-prom-outcomes.test.ts:51-67 mocks writeDaemonPromMetrics to reject and asserts pipeline_success still fires, pipeline_failed does not, and console.warn receives '[Daemon] Failed to write .speclang/daemon.prom:' \u2014 passed in the vitest run (13 passed, exit_code=0).\nThe daemon writes an atomic .speclang/daemon.prom with up/status/last-event/errors_total series, wired through the compiled CLI path, and the mandated vitest command exits 0 with 13/13 tests passing.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "The daemon writes a Prometheus textfile daemon.prom covering up, status and error outcomes, and npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts exits 0.",
+                "status": "PASS",
+                "detail": "src/daemon/daemon-prom.ts:21-42 renders speclang_daemon_up, speclang_daemon_status (idle/cascading/converged/paused/error codes), speclang_daemon_last_event_timestamp_seconds and speclang_daemon_errors_total; writeDaemonPromMetrics (src/daemon/daemon-prom.ts:48-72) atomically writes .speclang/daemon.prom. The daemon publishes on start (specs/daemon.spec.dir/src/daemon.ts:158), stop (:182), file events (:214), pipeline failure (:427-428) and pipeline exception (:436-437) via publishMetrics (:285-297). Test command run fresh: `npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts` exit_code=0, output 'Test Files 2 passed (2), Tests 13 passed (13)'. [resolution 0.00; tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts]",
+                "resolution_probability": 0.0,
+                "cited_path": "tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts"
+              },
+              {
+                "criterion": "The textfile writer is reachable from the shipped CLI entrypoint (bin/speclang start), not only from the spec-dir sources",
+                "status": "PASS",
+                "detail": "bin/speclang:265 requires ../dist/src/daemon/index.js; dist/src/daemon/daemon.js:25 requires ./daemon-prom and :247 calls writeDaemonPromMetrics with the same publishMetrics call sites as the source. The CLI lifecycle test (tests/daemon/daemon-prom.test.ts:96-148) spawned `node bin/speclang start --no-dashboard` and observed daemon.prom with up=1 on start, timestamp advancing on a watched cascade, and up=0 after SIGTERM \u2014 passed in the vitest run (exit_code=0).",
+                "derived": true
+              },
+              {
+                "criterion": "A metrics-write failure must not turn a pipeline success into a failure (telemetry failure path)",
+                "status": "PASS",
+                "detail": "publishMetrics wraps the write in try/catch and warns (specs/daemon.spec.dir/src/daemon.ts:285-297); tests/daemon/daemon-prom-outcomes.test.ts:51-67 mocks writeDaemonPromMetrics to reject and asserts pipeline_success still fires, pipeline_failed does not, and console.warn receives '[Daemon] Failed to write .speclang/daemon.prom:' \u2014 passed in the vitest run (13 passed, exit_code=0).",
+                "derived": true
+              }
+            ],
+            "summary": "The daemon writes an atomic .speclang/daemon.prom with up/status/last-event/errors_total series, wired through the compiled CLI path, and the mandated vitest command exits 0 with 13/13 tests passing.",
+            "provenance": {
+              "model": "accounts/fireworks/models/kimi-k3",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "accounts/fireworks/models/kimi-k3",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"OBS-3\"}",
+          "exit_code": 0,
+          "output_sha": "d37f0a2cde3c607775f495bf07f6a22e51848ad32d7f90d4b013a331b6d73c31"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && cat .gitreins/config.yaml 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "ec80d356631f1116710c343f9b605c25df850ca69632eddf12b2b67233d2b353"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls tests/daemon/ 2>/dev/null; ls src/daemon/ 2>/dev/null; find . -path ./node_modules -prune -o -name \"*daemon-prom*\" -print 2>/dev/null | head -20",
+          "exit_code": 0,
+          "output_sha": "bc841bdaeaa37b0ab47c7a243d7baf69ab2314058b109fe9ef9fa8801c25621e"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"src/daemon/daemon-prom.ts\"}",
+          "exit_code": 0,
+          "output_sha": "f42eb5f45543d7c91c0dcad7f4268e25442de142c2ae07d761bd1882642b1945"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/daemon/daemon-prom.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "b99377897ae24990e2b46b5104050d0831711c496e545a68b2697d2bb763d775"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/daemon/daemon-prom-outcomes.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "7385a9c4fa8b6876b2d841cf67c136e1026ec65395bcb8dcb7e048eee9c165ee"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"file_glob\": \"src/**/*.ts\", \"regex\": \"writeDaemonPromMetrics|renderDaemonProm|daemon-prom\"}",
+          "exit_code": 0,
+          "output_sha": "bb6cdc377f35371bfaf9396cf1f5dd9348d615cfa418e9a5e600e5925e4253d0"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"regex\": \"writeDaemonPromMetrics\"}",
+          "exit_code": 0,
+          "output_sha": "6b59677ab9b69f6c776efb9016221b47545100b91748899e31e031b87736752c"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 120, \"offset\": 240, \"path\": \"specs/daemon.spec.dir/src/daemon.ts\"}",
+          "exit_code": 0,
+          "output_sha": "6d6eed9584120f44375787bae4ff40d1ff61fcbcd4d7a009d05e56b169e090cf"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls bin/ && head -30 bin/speclang 2>/dev/null; ls dist/src/daemon/ 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "4ec629f425318cf4efc330d044fcb3f7416c22c9f946f0233ff4cce4db9d3ef3"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"daemon\" bin/speclang | head -20; echo ---; grep -rn \"daemon-prom\\|writeDaemonPromMetrics\" dist/src/daemon/*.js bin/speclang 2>/dev/null | head -10",
+          "exit_code": 0,
+          "output_sha": "fbb472169ae84a6575dad4af0768362c38bbca3abe500e60b189f8ba9a67bde8"
+        },
+        {
+          "tool": "run_command",
+          "command": "npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts 2>&1 | tail -30",
+          "exit_code": 0,
+          "output_sha": "5917549cbaaa38e8fb0d20fd737350f39db540d846b9c0338052d8466ba51854"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"publishMetrics\\|pipelineErrors\" specs/daemon.spec.dir/src/daemon.ts | head -30; echo ===; grep -n \"publishMetrics\\|pipelineErrors\" dist/src/daemon/daemon.js | head -30",
+          "exit_code": 0,
+          "output_sha": "e1baa639a3841d88873d959d719f399dda19df79621848bd3af9736449ae5e08"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 140, \"offset\": 90, \"path\": \"specs/daemon.spec.dir/src/daemon.ts\"}",
+          "exit_code": 0,
+          "output_sha": "0a36366c6ab6dadda4b86d712fb720b0f7583e486d4572611ee51a3c94e7265e"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"limit\": 50, \"offset\": 405, \"path\": \"specs/daemon.spec.dir/src/daemon.ts\"}",
+          "exit_code": 0,
+          "output_sha": "f016c1ca0c3fa1d8326ec06da34449187b2781ffd99ebea79b62f719389cb463"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: src/daemon/daemon-prom.ts:21-42 renders speclang_daemon_up/status/last_event_timestamp_seconds/errors_total; writeDaemonPromMetrics (line 48) writes .speclang/daemon.prom atomically. Wired into daemon at specs/daemon.spec.dir/src/daemon.ts:285-297 (publishMetrics) with call sites on start (158), stop (182), file events (214), pipeline failure (427-428) and exception (436-437); compiled dist/src/daemon/daemon.js:244-251 mirrors it and bin/speclang:265 loads dist daemon. Test run: `npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts` exit_code=0, \\\"Test Files 2 passed (2), Tests 13 passed (13)\\\".\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "b33da09fb8799cf4f2384d5cd7d3cb8f33272ec65ee78869e0f523db43c780a2"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: bin/speclang:265 requires ../dist/src/daemon/index.js; dist/src/daemon/daemon.js:25 requires ./daemon-prom and line 247 calls writeDaemonPromMetrics; the CLI lifecycle test in tests/daemon/daemon-prom.test.ts:96-148 spawned `node bin/speclang start --no-dashboard` and observed daemon.prom written with up=1 on start, timestamp advance on cascade, up=0 on SIGTERM stop \\u2014 and the vitest run exited 0.\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "a131924aa3ad7fbaeac4850e576c20032b75d272cae449f48e006d2364f63b6d"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: publishMetrics wraps the write in try/catch and warns (specs/daemon.spec.dir/src/daemon.ts:285-297); daemon-prom-outcomes.test.ts:51-67 asserts a rejected write leaves pipeline_success emitted and warns with '[Daemon] Failed to write .speclang/daemon.prom:' \\u2014 passed in the vitest run (13 passed).\", \"key\": \"verified_derived_1\"}",
+          "exit_code": 0,
+          "output_sha": "47f01fd94379235fae517c83bb631a30fe5f6da3d1c66cc708a4b9379211e4ac"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [],
+    "summary": "",
+    "error": "unparseable reviewer reply: no parseable JSON object in reply: ''"
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  01:30:20\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 The daemon writes a Prometheus textfile daemon.prom covering up, status and error outcomes, and npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts exits 0.: src/daemon/daemon-prom.ts:21-42 renders speclang_daemon_up, speclang_daemon_status (idle/cascading/converged/paused/error codes), speclang_daemon_last_event_timestamp_seconds and speclang_daemon_errors_total; writeDaemonPromMetrics (src/daemon/daemon-prom.ts:48-72) atomically writes .speclang/daemon.prom. The daemon publishes on start (specs/daemon.spec.dir/src/daemon.ts:158), stop (:182), file events (:214), pipeline failure (:427-428) and pipeline exception (:436-437) via publishMetrics (:285-297). Test command run fresh: `npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts` exit_code=0, output 'Test Files 2 passed (2), Tests 13 passed (13)'. [resolution 0.00; tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts]\n  \u2713 The textfile writer is reachable from the shipped CLI entrypoint (bin/speclang start), not only from the spec-dir sources: bin/speclang:265 requires ../dist/src/daemon/index.js; dist/src/daemon/daemon.js:25 requires ./daemon-prom and :247 calls writeDaemonPromMetrics with the same publishMetrics call sites as the source. The CLI lifecycle test (tests/daemon/daemon-prom.test.ts:96-148) spawned `node bin/speclang start --no-dashboard` and observed daemon.prom with up=1 on start, timestamp advancing on a watched cascade, and up=0 after SIGTERM \u2014 passed in the vitest run (exit_code=0).\n  \u2713 A metrics-write failure must not turn a pipeline success into a failure (telemetry failure path): publishMetrics wraps the write in try/catch and warns (specs/daemon.spec.dir/src/daemon.ts:285-297); tests/daemon/daemon-prom-outcomes.test.ts:51-67 mocks writeDaemonPromMetrics to reject and asserts pipeline_success still fires, pipeline_failed does not, and console.warn receives '[Daemon] Failed to write .speclang/daemon.prom:' \u2014 passed in the vitest run (13 passed, exit_code=0).\nThe daemon writes an atomic .speclang/daemon.prom with up/status/last-event/errors_total series, wired through the compiled CLI path, and the mandated vitest command exits 0 with 13/13 tests passing.\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-20T06:33:57.459812",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-20T06:33:57.515100+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 180067,
+        "truncated": false,
+        "source": "git show 5cd4ca7126de"
+      }
+    ],
+    "task_id": "OBS-3"
+  }
+}
