@@ -172,6 +172,25 @@ describe('OBS-4 CLI completion records', () => {
     expect(existsSync(lock)).toBe(false);
   });
 
+  it('reclaims a fresh 0-byte lock instead of waiting out the completion deadline', () => {
+    const root = project();
+    mkdirSync(join(root, '.speclang'), { recursive: true });
+    const lock = join(root, '.speclang/cli-completion.json.lock');
+    writeFileSync(lock, '');
+    const spec = resolve('specs/examples.spec.dir/hello-world.spec.md');
+    const started = Date.now();
+    const result = run(root, 'validate', spec);
+    const elapsed = Date.now() - started;
+    expect(result.status).toBe(0);
+    expect(result.stderr).not.toContain('Timed out waiting for CLI completion lock');
+    expect(result.stderr).not.toContain('could not record');
+    expect(elapsed).toBeLessThan(3_000);
+    expect(records(root).validate).toEqual({
+      lane: 'validate', exitCode: 0, durationMs: expect.any(Number), runCount: 1,
+    });
+    expect(existsSync(lock)).toBe(false);
+  });
+
   it('reclaims an unreadable lock once it is older than the staleness window', () => {
     const root = project();
     mkdirSync(join(root, '.speclang'), { recursive: true });
@@ -196,10 +215,17 @@ describe('OBS-4 CLI completion records', () => {
     let waiter: ReturnType<typeof spawn> | undefined;
     try {
       writeFileSync(lock, String(holder.pid));
+      const started = Date.now();
       waiter = spawn(process.execPath, [cli, 'validate'], { cwd: root, stdio: 'ignore' });
+      // Longer than the re-read window a useless body gets, and far below the
+      // 60s deadline: a live owner must still be waited out, not reclaimed.
       await new Promise(resolve => setTimeout(resolve, 1_500));
+      expect(Date.now() - started).toBeGreaterThanOrEqual(1_400);
+      expect(holder.exitCode).toBeNull();
+      expect(() => process.kill(holder.pid!, 0)).not.toThrow();
       expect(waiter.exitCode).toBeNull();
       expect(readFileSync(lock, 'utf8')).toBe(String(holder.pid));
+      expect(existsSync(lock)).toBe(true);
       expect(existsSync(join(root, '.speclang/cli-completion.json'))).toBe(false);
     } finally {
       waiter?.kill('SIGKILL');

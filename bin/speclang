@@ -18,34 +18,65 @@ const fs = require('fs');
 // so usage errors and missing builds are observable without compiled modules.
 const MAX_LOCK_RECLAIMS = 8;
 const LOCK_STALE_MS = 5 * 60_000;
+// A writer holds this lock only between openSync and writeSync, so an empty or
+// half-written body means either that microsecond-wide window or a 0-byte victim
+// of a SIGKILL. Re-read across a short window before calling the lock a skeleton.
+const LOCK_BODY_GRACE_MS = 400;
+const LOCK_BODY_POLL_MS = 20;
 
-// Classify an existing lock as 'stale' (safe to remove), 'contended' (a writer
-// may still own it) or 'gone'. A recorded PID is authoritative: EPERM means the
-// process exists under another uid, ESRCH means it is dead. Without a usable
-// PID (an older lock, or one truncated by a crash mid-write) age is the only
-// signal left, so a young unreadable lock keeps the old bounded wait.
-function lockOwnerState(lock) {
+// One read of the lock file, reduced to what the classifier needs: it vanished,
+// it names an owner PID, or the body is unusable.
+function readLockOwner(lock) {
   let body;
   try {
     body = fs.readFileSync(lock, 'utf8').trim();
   } catch (err) {
-    return err.code === 'ENOENT' ? 'gone' : 'contended';
+    return err.code === 'ENOENT' ? { state: 'gone' } : { state: 'unreadable' };
   }
-  const pid = /^[1-9][0-9]{0,9}$/.test(body) ? Number(body) : 0;
-  if (pid > 0 && pid !== process.pid) {
-    try {
-      process.kill(pid, 0);
-      return 'contended';
-    } catch (err) {
-      if (err.code !== 'ESRCH') return 'contended';
-      return 'stale';
-    }
-  }
-  if (pid === process.pid) return 'contended';
+  if (!/^[1-9][0-9]{0,9}$/.test(body)) return { state: 'unreadable' };
+  return { state: 'owner', pid: Number(body) };
+}
+
+// Age in ms, or the two cases where a number is not available.
+function lockAge(lock) {
   try {
-    return Date.now() - fs.statSync(lock).mtimeMs > LOCK_STALE_MS ? 'stale' : 'contended';
+    return Date.now() - fs.statSync(lock).mtimeMs;
   } catch (err) {
-    return err.code === 'ENOENT' ? 'gone' : 'contended';
+    return err.code === 'ENOENT' ? 'gone' : 'unknown';
+  }
+}
+
+// Classify an existing lock as 'stale' (safe to remove), 'contended' (a writer
+// may still own it) or 'gone'. A recorded PID is authoritative: EPERM means the
+// process exists under another uid, ESRCH means it is dead. A body that does not
+// parse as a PID gets a short re-read window so a writer that is mid-write is
+// seen rather than reclaimed; if the body is still unusable afterwards nobody is
+// going to finish writing it, so the lock is a skeleton and waiting out the 60s
+// deadline would only burn the command's runtime. Age stays the deciding signal
+// for an unreadable lock that already outlived the staleness window.
+function lockOwnerState(lock) {
+  let owner = readLockOwner(lock);
+  if (owner.state === 'unreadable') {
+    const age = lockAge(lock);
+    if (age === 'gone') return 'gone';
+    if (age === 'unknown') return 'contended';
+    if (age > LOCK_STALE_MS) return 'stale';
+    const sleeper = new Int32Array(new SharedArrayBuffer(4));
+    const graceDeadline = performance.now() + LOCK_BODY_GRACE_MS;
+    while (owner.state === 'unreadable' && performance.now() < graceDeadline) {
+      Atomics.wait(sleeper, 0, 0, LOCK_BODY_POLL_MS);
+      owner = readLockOwner(lock);
+    }
+    if (owner.state === 'unreadable') return 'stale';
+  }
+  if (owner.state === 'gone') return 'gone';
+  if (owner.pid === process.pid) return 'contended';
+  try {
+    process.kill(owner.pid, 0);
+    return 'contended';
+  } catch (err) {
+    if (err.code !== 'ESRCH') return 'contended';
+    return 'stale';
   }
 }
 
