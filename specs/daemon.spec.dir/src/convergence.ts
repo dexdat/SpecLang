@@ -37,7 +37,18 @@ export class ConvergenceDetector extends EventEmitter {
   private quietPeriodMs: number;
   private maxDepth: number;
   private cascadeStartTime: number;
-  private filesChangedCount: number;
+  /**
+   * DF-SPECLANG-021: DISTINCT paths touched by this cascade — not a count of
+   * convergence events. One logical file routinely produces several events
+   * (added, then modified, then re-verified), so an event counter reported a
+   * 3-file change as `Files: 9` and downstream agents read that as the size of
+   * the change. The size of this set is what every surface reports.
+   *
+   * `event.oldPath` is deliberately not added: the watcher emits no rename
+   * events (it decomposes a rename into Delete + Create on the real paths), so
+   * `path` is the complete set of files this cascade has touched.
+   */
+  private filesChangedPaths: Set<string>;
   private currentDepth: number;
   private converged: boolean;
   /** DF-SPECLANG-4: true from the first file event until the cascade settles. */
@@ -53,7 +64,7 @@ export class ConvergenceDetector extends EventEmitter {
     this.maxDepth = config.convergence.maxDepth;
     this.lastEventTime = Date.now();
     this.cascadeStartTime = Date.now();
-    this.filesChangedCount = 0;
+    this.filesChangedPaths = new Set();
     this.currentDepth = 0;
     this.converged = true;
     this.cascadePending = false;
@@ -69,7 +80,7 @@ export class ConvergenceDetector extends EventEmitter {
    */
   onEvent(event: FileEvent): void {
     this.lastEventTime = Date.now();
-    this.filesChangedCount++;
+    this.filesChangedPaths.add(event.path);
     this.converged = false;
     this.cascadePending = true;
     
@@ -82,7 +93,7 @@ export class ConvergenceDetector extends EventEmitter {
     
     this.emit('event', event);
     console.log(`[Convergence] Event received: ${event.kind} - ${event.path}`);
-    console.log(`[Convergence] Files changed: ${this.filesChangedCount}, Depth: ${this.currentDepth}`);
+    console.log(`[Convergence] Files changed: ${this.filesChangedPaths.size}, Depth: ${this.currentDepth}`);
   }
 
   /**
@@ -119,7 +130,7 @@ export class ConvergenceDetector extends EventEmitter {
     return {
       converged: this.isConverged(),
       lifecycle: this.getCascadeLifecycle(),
-      filesChanged: this.filesChangedCount,
+      filesChanged: this.filesChangedPaths.size,
       currentDepth: this.currentDepth,
       timeRemaining: this.timeRemaining(),
       quietPeriod: this.quietPeriodMs,
@@ -144,7 +155,7 @@ export class ConvergenceDetector extends EventEmitter {
     
     const result: ConvergenceResult = {
       converged: this.isConverged(),
-      filesChanged: this.filesChangedCount,
+      filesChanged: this.filesChangedPaths.size,
       duration,
       cascadeDepth: this.currentDepth,
       timestamp: Date.now(),
@@ -175,7 +186,7 @@ export class ConvergenceDetector extends EventEmitter {
    * normally.
    */
   reset(): void {
-    this.filesChangedCount = 0;
+    this.filesChangedPaths.clear();
     this.currentDepth = 0;
     this.converged = false;
     // DF-SPECLANG-4: a reset DISCARDS pending work (abort path). Clearing the
@@ -428,7 +439,7 @@ export class ConvergenceDetector extends EventEmitter {
     
     const result: ConvergenceResult = {
       converged: true,
-      filesChanged: this.filesChangedCount,
+      filesChanged: this.filesChangedPaths.size,
       duration: Date.now() - this.cascadeStartTime,
       cascadeDepth: this.currentDepth,
       timestamp: Date.now(),
