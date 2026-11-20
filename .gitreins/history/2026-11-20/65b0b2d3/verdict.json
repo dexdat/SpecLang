@@ -1,0 +1,138 @@
+{
+  "task_id": "OBS-7",
+  "task_title": "daemon pipeline executor import path resolution",
+  "task_criteria": [
+    "getPipelineExecutorCandidates in src/daemon/daemon.ts resolves the pipeline executor for src/, specs/daemon.spec.dir/ and dist/ layouts; npx vitest run tests/daemon-executor-OBS-7.test.ts exits 0 with every test passing."
+  ],
+  "passed": false,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "4a80b494ab4333a2df3dec9ecddd8941e9fd45a4",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "45b24c76a046bce98a58f81d9d95ab5032bf584c79cd64c3f49b0433668c2c80",
+  "working_tree_dirty_path_count": 7,
+  "items": [],
+  "merge_recommendation": "needs_review",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": false,
+      "any_failed": true,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  ~ tests: Command timed out after 120s (step budget)",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261119T032610.266945Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\n\n> speclang@1.0.0 build\n> tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261119T032610.266945Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": false,
+          "output": "",
+          "error": "Command timed out after 120s (step budget)",
+          "data": {
+            "timed_out": true,
+            "timeout_s": 120
+          }
+        }
+      ],
+      "degraded": true,
+      "skipped_steps": [
+        "tests"
+      ],
+      "degradation_reason": "skipped at runtime \u2014 tests: timed out after 120s (step budget)"
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": false,
+      "any_failed": true,
+      "summary": "INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: getPipelineExecutorCandidates in src/daemon/daemon.ts resolves the pipeline executor for src/, specs/daemon.spec.dir/ and dist/ layouts; npx vitest run tests/daemon-executor-OBS-7.test.ts exits 0 with every test passing.\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": false,
+          "output": "INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: getPipelineExecutorCandidates in src/daemon/daemon.ts resolves the pipeline executor for src/, specs/daemon.spec.dir/ and dist/ layouts; npx vitest run tests/daemon-executor-OBS-7.test.ts exits 0 with every test passing.\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+          "error": "",
+          "data": {
+            "verdict": "INCOMPLETE",
+            "items": [],
+            "summary": "Evaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+            "ungraded_criteria": [
+              "getPipelineExecutorCandidates in src/daemon/daemon.ts resolves the pipeline executor for src/, specs/daemon.spec.dir/ and dist/ layouts; npx vitest run tests/daemon-executor-OBS-7.test.ts exits 0 with every test passing."
+            ],
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "ungraded_criteria": [
+        "getPipelineExecutorCandidates in src/daemon/daemon.ts resolves the pipeline executor for src/, specs/daemon.spec.dir/ and dist/ layouts; npx vitest run tests/daemon-executor-OBS-7.test.ts exits 0 with every test passing."
+      ]
+    }
+  },
+  "ungraded_criteria": [
+    "getPipelineExecutorCandidates in src/daemon/daemon.ts resolves the pipeline executor for src/, specs/daemon.spec.dir/ and dist/ layouts; npx vitest run tests/daemon-executor-OBS-7.test.ts exits 0 with every test passing."
+  ],
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [],
+    "summary": "",
+    "error": "LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)"
+  },
+  "summary": "Stage tier1: FAIL (DEGRADED - skipped checks)\n  WARNING: coverage is unknown \u2014 tests did not run (skipped at runtime \u2014 tests: timed out after 120s (step budget)); run `gitreins guard` for the full gate\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  ~ tests: Command timed out after 120s (step budget)\n\nStage tier2: FAIL\n  INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: getPipelineExecutorCandidates in src/daemon/daemon.ts resolves the pipeline executor for src/, specs/daemon.spec.dir/ and dist/ layouts; npx vitest run tests/daemon-executor-OBS-7.test.ts exits 0 with every test passing.\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)\n\nOverall: FAIL \u2717 [DEGRADED \u2014 skipped: tier1(tests)=skipped at runtime \u2014 tests: timed out after 120s (step budget)]",
+  "evaluated_at": "2026-11-20T06:20:08.044313",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-20T06:20:08.074903+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 2150,
+        "truncated": false,
+        "source": "git show 4a80b494ab43"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 179032,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "OBS-7"
+  }
+}
