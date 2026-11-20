@@ -490,3 +490,11 @@
 {"id":489,"timestamp":"2026-11-18 14:25:49.348843","event_type":"task_created","task_id":"DOC-10","actor":"foreman","detail":"{\"id\":\"DOC-10\",\"status\":\"pending\"}","tick_number":null}
 {"id":490,"timestamp":"2026-11-18 14:42:06.083404","event_type":"task_updated","task_id":"OBS-6","actor":"foreman","detail":"{\"status\":\"pending\"}","tick_number":null}
 {"id":491,"timestamp":"2026-11-19 03:21:21.328489","event_type":"task_created","task_id":"LAND-001","actor":"foreman","detail":"{\"id\":\"LAND-001\",\"status\":\"pending\"}","tick_number":null}
+{"id":492,"timestamp":"2026-11-20 06:49:45.241926","event_type":"task_completed","task_id":"DOC-4","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":493,"timestamp":"2026-11-20 06:51:33.835511","event_type":"task_completed","task_id":"OBS-3","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":494,"timestamp":"2026-11-20 06:51:33.885535","event_type":"task_completed","task_id":"OBS-4","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":495,"timestamp":"2026-11-20 06:51:33.939147","event_type":"task_completed","task_id":"OBS-7","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":496,"timestamp":"2026-11-20 06:51:33.993053","event_type":"task_completed","task_id":"CLN-002","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":497,"timestamp":"2026-11-20 06:51:34.050531","event_type":"task_completed","task_id":"DOC-10","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":498,"timestamp":"2026-11-20 06:51:34.099101","event_type":"task_completed","task_id":"LAND-001","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":499,"timestamp":"2026-11-20 06:54:11.881962","event_type":"task_created","task_id":"JUDGE-1","actor":"foreman","detail":"{\"id\":\"JUDGE-1\",\"status\":\"pending\"}","tick_number":null}
