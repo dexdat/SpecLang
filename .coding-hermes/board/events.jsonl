@@ -507,3 +507,4 @@
 {"id":506,"timestamp":"2026-11-20 07:57:39.458742","event_type":"task_completed","task_id":"README-4","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":507,"timestamp":"2026-11-20 07:57:39.635419","event_type":"task_completed","task_id":"README-25","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":508,"timestamp":"2026-11-20 08:00:54.092665","event_type":"task_completed","task_id":"README-5","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":509,"timestamp":"2026-11-20 09:29:39.696087","event_type":"task_updated","task_id":"QA-SPECLANG-3","actor":"pm","detail":"{\"status\":\"pending\",\"deferred\":true,\"defer_review_by\":\"2026-11-27\",\"note\":\"PM-VERIFY items 1-2 PASS at 15f827cd: rm -rf dist && npm test exit 0 (2071/58); build+test exit 0. Item 3 AGENTS.md:58 owner-gated, defer extended\"}","tick_number":null}
