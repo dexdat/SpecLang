@@ -84,6 +84,19 @@ function freePort(): Promise<number> {
   });
 }
 
+/**
+ * A pid that really existed and is really gone: spawn a trivial process, reap
+ * it synchronously, then hand its pid to the test. This is the stale-pidfile
+ * shape (SIGKILL, crash before the unlink), not a fabricated number.
+ */
+function deadPid(): number {
+  const dead = spawnSync(process.execPath, ["-e", "0"], { timeout: 30_000 });
+  const pid = dead.pid;
+  expect(pid, "the probe process must have a pid").toBeGreaterThan(0);
+  expect(isAlive(pid!), "the probe process must already be reaped").toBe(false);
+  return pid!;
+}
+
 describe("speclang mcp pidfile lifecycle (DF-SPECLANG-026)", () => {
   let scratch: string;
   let dir: string;
@@ -147,11 +160,8 @@ describe("speclang mcp pidfile lifecycle (DF-SPECLANG-026)", () => {
   it("reports Not running for a stale pid (dead process) and drops the file", async () => {
     const pidFile = join(dir, ".speclang", "mcp.pid");
 
-    // A pid that really existed and is really gone: spawn a trivial process,
-    // reap it synchronously, then hand its pid to the CLI.
-    const dead = spawnSync(process.execPath, ["-e", "0"], { timeout: 30_000 });
-    expect(dead.pid).toBeGreaterThan(0);
-    expect(isAlive(dead.pid)).toBe(false);
+    // A pid that really existed and is really gone (see deadPid).
+    const dead = { pid: deadPid() };
 
     writeFileSync(pidFile, String(dead.pid));
 
@@ -209,5 +219,87 @@ describe("speclang mcp pidfile lifecycle (DF-SPECLANG-026)", () => {
     const status = runCli(["mcp", "status", "-d", dir]);
     expect(status.status).toBe(1);
     expect(status.stdout).not.toContain("Status: Running");
+  }, 60_000);
+
+  it("stop on a stale pid file clears the claim instead of failing", async () => {
+    const pidFile = join(dir, ".speclang", "mcp.pid");
+    const portFile = join(dir, ".speclang", "mcp.port");
+
+    writeFileSync(pidFile, String(deadPid()));
+    // A port left next to a pid whose process is gone is stale too — `stop`
+    // must not leave it behind for the next `status` to print.
+    writeFileSync(portFile, "3000");
+
+    const stopped = runCli(["mcp", "stop", "-d", dir]);
+    expect(stopped.status, stopped.stderr).toBe(0);
+    expect(stopped.stdout).toContain("MCP server not running (stale PID file removed)");
+    expect(existsSync(pidFile)).toBe(false);
+    expect(existsSync(portFile)).toBe(false);
+
+    // Idempotent: the second stop has nothing to clear and still exits 0.
+    const again = runCli(["mcp", "stop", "-d", dir]);
+    expect(again.status, again.stderr).toBe(0);
+    expect(again.stdout).toContain("MCP server not running");
+  }, 60_000);
+
+  it("an unreadable pid file is stale state, never a process to signal", async () => {
+    const pidFile = join(dir, ".speclang", "mcp.pid");
+    writeFileSync(pidFile, "not-a-pid\n");
+
+    const status = runCli(["mcp", "status", "-d", dir]);
+    expect(status.status, status.stderr).toBe(0);
+    expect(status.stdout).toContain("Status: Not running (unreadable PID file removed)");
+    expect(status.stdout, "garbage must never be reported as Running").not.toContain("Status: Running");
+    expect(existsSync(pidFile)).toBe(false);
+
+    // Same file, `stop` side: nothing to signal, so nothing may be killed and
+    // no uncaught error may escape (a thrown action would exit non-zero).
+    writeFileSync(pidFile, "");
+    const stopped = runCli(["mcp", "stop", "-d", dir]);
+    expect(stopped.status, stopped.stderr).toBe(0);
+    expect(stopped.stdout).toContain("MCP server not running (unreadable PID file removed)");
+    expect(existsSync(pidFile)).toBe(false);
+  }, 60_000);
+
+  it("stdio start drops a port file left by an earlier HTTP run", async () => {
+    const pidFile = join(dir, ".speclang", "mcp.pid");
+    const portFile = join(dir, ".speclang", "mcp.port");
+    // Stale port with no live claim, as after a killed `--remote` server.
+    writeFileSync(portFile, "3000");
+
+    const { log } = startMcp();
+    await waitFor(() => existsSync(pidFile), `mcp.pid to be written (stderr: ${log()})`);
+
+    // A stdio server binds no port: reporting the previous run's port next to
+    // this run's pid would be a second silent lie in the same report line.
+    expect(existsSync(portFile), "stale port file survived a stdio start").toBe(false);
+    const status = runCli(["mcp", "status", "-d", dir]);
+    expect(status.stdout).toContain("Status: Running (PID ");
+    expect(status.stdout).not.toContain("Port:");
+  }, 60_000);
+
+  it("the lifecycle repeats: start, stop, start publishes the new live pid", async () => {
+    const pidFile = join(dir, ".speclang", "mcp.pid");
+
+    const first = startMcp();
+    await waitFor(() => existsSync(pidFile), "first mcp.pid");
+    const firstPid = Number(readFileSync(pidFile, "utf-8").trim());
+    expect(firstPid).toBe(first.child.pid);
+
+    expect(runCli(["mcp", "stop", "-d", dir]).stdout).toContain("MCP server stopped");
+    expect(existsSync(pidFile)).toBe(false);
+    await waitFor(() => !isAlive(firstPid), `first server ${firstPid} to exit`);
+
+    // The release path must have left the state dir usable: a second start has
+    // to claim the same file again and be reported by pid, not by a leftover.
+    const second = startMcp();
+    await waitFor(() => existsSync(pidFile), `second mcp.pid (stderr: ${second.log()})`);
+    const secondPid = Number(readFileSync(pidFile, "utf-8").trim());
+    expect(secondPid).toBe(second.child.pid);
+    expect(secondPid).not.toBe(firstPid);
+    expect(isAlive(secondPid)).toBe(true);
+
+    const status = runCli(["mcp", "status", "-d", dir]);
+    expect(status.stdout).toContain(`Status: Running (PID ${secondPid})`);
   }, 60_000);
 });
