@@ -194,12 +194,6 @@
       "reason": "source-only projection: only the source specs/lenses.spec.dir/src/mermaid.ts exists \u2014 the layer has no compiled sibling for it"
     },
     {
-      "module": "specs/mcp.spec.dir/src/server.js",
-      "require": "./metrics.js",
-      "proof": "source-only",
-      "reason": "source-only projection: only the source specs/mcp.spec.dir/src/metrics.ts exists \u2014 the layer has no compiled sibling for it"
-    },
-    {
       "module": "specs/mcp.spec.dir/src/tools/specs.js",
       "require": "../../indexer/index.js",
       "line": 271,
@@ -214,24 +208,6 @@
       "proof": "runtime-projection",
       "runtimeModule": "src/types/poc.ts",
       "reason": "This source is projected into the compiled tree at its src/ coordinate, where the require resolves to src/types/poc.ts (tracked symlink, compiled by `npm run build`); from the spec-dir coordinate the same specifier points at a directory that only exists in that projection. Rewriting it to a spec-dir path would make the source fail to compile where it actually lives."
-    },
-    {
-      "module": "specs/pipeline.spec.dir/src/executor.js",
-      "require": "./metrics-ledger",
-      "proof": "source-only",
-      "reason": "source-only projection: only the source specs/pipeline.spec.dir/src/metrics-ledger.ts exists \u2014 the layer has no compiled sibling for it"
-    },
-    {
-      "module": "specs/pipeline.spec.dir/src/index.js",
-      "require": "./metrics-ledger",
-      "proof": "source-only",
-      "reason": "source-only projection: only the source specs/pipeline.spec.dir/src/metrics-ledger.ts exists \u2014 the layer has no compiled sibling for it"
-    },
-    {
-      "module": "specs/pipeline.spec.dir/src/recovery.js",
-      "require": "./metrics-ledger",
-      "proof": "source-only",
-      "reason": "source-only projection: only the source specs/pipeline.spec.dir/src/metrics-ledger.ts exists \u2014 the layer has no compiled sibling for it"
     },
     {
       "module": "specs/speclangd.ts.spec.dir/src/speclangd.js",

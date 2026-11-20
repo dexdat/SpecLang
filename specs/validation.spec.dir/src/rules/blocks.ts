@@ -91,13 +91,13 @@ export const blocksRule: ValidationRule = {
       }
       seenIds.add(block.id);
 
-      // ID must follow format @block::name
-      if (!block.id.startsWith('@block::')) {
+      // ID must follow format @block:name
+      if (!block.id.startsWith('@block:')) {
         results.push(createError(
           '@validation/blocks',
           { file: spec.filepath, line: block.line },
-          `Block ID must start with @block:: ${block.id}`,
-          'Format: @block::domain/name'
+          `Block ID must start with @block: ${block.id}`,
+          'Format: @block:domain/name'
         ));
       }
 
@@ -122,8 +122,8 @@ export const blocksRule: ValidationRule = {
         ));
       }
 
-      // Check block ID format (after @block::)
-      const blockIdPart = block.id.replace(/^@block::/, '');
+      // Check block ID format (after @block:)
+      const blockIdPart = block.id.replace(/^@block:/, '');
       if (!blockIdPart || blockIdPart.includes(' ')) {
         results.push(createError(
           '@validation/blocks',
@@ -145,11 +145,11 @@ export function validateBlock(block: { id: string; kind: string; content: string
   const results: ValidationResult[] = [];
 
   // Check ID format
-  if (!block.id.startsWith('@block::')) {
+  if (!block.id.startsWith('@block:')) {
     results.push(createError(
       '@validation/blocks',
       { file: filepath, line: block.line },
-      `Block ID must start with @block:: ${block.id}`,
+      `Block ID must start with @block: ${block.id}`,
     ));
   }
 
