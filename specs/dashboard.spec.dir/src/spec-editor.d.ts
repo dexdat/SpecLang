@@ -42,16 +42,18 @@ export interface SpecEditorOptions {
  * - saveSpec: Save spec with validation
  */
 export declare function useSpecEditor(options?: SpecEditorOptions): {
-    state: any;
-    createNewSpec: any;
-    editSpec: any;
-    addBlock: any;
-    autocompleteRef: any;
-    validateRef: any;
-    saveSpec: any;
-    updateContent: any;
-    setEditorRef: any;
-    insertAtCursor: any;
+    state: SpecEditorState;
+    createNewSpec: () => Promise<void>;
+    editSpec: (specId: string) => Promise<void>;
+    addBlock: () => Promise<void>;
+    autocompleteRef: (partial: string) => Promise<string[]>;
+    validateRef: (ref: string) => Promise<boolean>;
+    saveSpec: () => Promise<void>;
+    updateContent: (content: string) => void;
+    setEditorRef: (editor: {
+        insertText: (text: string) => void;
+    } | null) => void;
+    insertAtCursor: (text: string) => void;
 };
 export default useSpecEditor;
 //# sourceMappingURL=spec-editor.d.ts.map

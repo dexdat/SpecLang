@@ -258,23 +258,29 @@ function findSpecFiles(rootDir) {
         let entries;
         try {
             entries = fs.readdirSync(dir, { withFileTypes: false });
-        } catch {
+        }
+        catch {
             return;
         }
+        // readdirSync(..., withFileTypes:false) returns string[], but we need the
+        // Dirent type to know whether entries are directories. Re-stat cheaply.
         for (const name of entries) {
             const full = path.join(dir, name);
             let stat;
             try {
                 stat = fs.statSync(full);
-            } catch {
+            }
+            catch {
                 continue;
             }
             if (stat.isDirectory()) {
+                // Skip nested node_modules-style content if any ever shows up here.
                 if (name === 'node_modules' || name.startsWith('.')) {
                     continue;
                 }
                 walk(full);
-            } else if (stat.isFile() && name.endsWith('.spec.md')) {
+            }
+            else if (stat.isFile() && name.endsWith('.spec.md')) {
                 results.push(full);
             }
         }
@@ -282,7 +288,6 @@ function findSpecFiles(rootDir) {
     walk(rootDir);
     return results;
 }
-
 /**
  * Pick the first spec whose name (filename stem, minus `.spec.md`) contains
  * any of the given search tokens, case-insensitively. Returns absolute path
@@ -302,13 +307,91 @@ function pickSpecByName(specsDir, tokens) {
     }
     return null;
 }
-
 /**
  * Handle extend feature intent
+ *
+ * Searches `specs/` for a `.spec.md` whose filename matches any entity the
+ * user mentioned (case-insensitive substring). If found, appends a new
+ * "Extension" section anchored at the bottom of the file. Otherwise creates
+ * a fresh `<entity>.spec.md` so the cascade has something to operate on.
  */
 async function handleExtendFeature(entities, projectPath) {
-    // TODO: Find relevant spec and extend it
-    return `I'll add "${entities.join(', ')}" to the relevant spec and trigger the cascade.`;
+    const specsDir = path.join(projectPath, 'specs');
+    if (entities.length === 0) {
+        return 'I need a feature name to extend. Try: "add password reset" or "extend the auth spec".';
+    }
+    // Use the longest entity as the primary search term — "password reset"
+    // beats "password" if both come back from the regex entity extractor.
+    const tokens = [...entities].sort((a, b) => b.length - a.length);
+    const target = pickSpecByName(specsDir, tokens);
+    if (target) {
+        const extensionBlock = [
+            '',
+            `## Extension: ${new Date().toISOString().slice(0, 10)}`,
+            '',
+            `Added via conversation: ${entities.join(', ')}`,
+            '',
+            `- ${new Date().toISOString()}: intent=extend_feature entities=${JSON.stringify(entities)}`,
+            ''
+        ].join('\n');
+        let content;
+        try {
+            content = fs.readFileSync(target, 'utf-8');
+        }
+        catch (err) {
+            return `Found spec ${target} but failed to read it: ${err.message}`;
+        }
+        fs.writeFileSync(target, content + extensionBlock);
+        return `Extended existing spec: ${path.relative(projectPath, target)}\nAppended a dated "Extension" section referencing: ${entities.join(', ')}.\nThe cascade will pick this up on the next convergence.`;
+    }
+    // No matching spec — create one so the feature has a home and downstream
+    // cascade stages have a real target. Use the longest entity as the slug,
+    // falling back to a sanitised concatenation if nothing useful survived.
+    const slug = tokens[0]
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || 'new-feature';
+    const newSpecPath = path.join(specsDir, `${slug}.spec.md`);
+    if (!fs.existsSync(specsDir)) {
+        fs.mkdirSync(specsDir, { recursive: true });
+    }
+    const header = [
+        `# speclang-header lines:7`,
+        `id: "@specs/${slug}"`,
+        `version: 0.1.0`,
+        `layer: 5`,
+        `project_level: Alpha`,
+        `agent_support: agent_autonomous`,
+        `tags: [feature, generated]`,
+        `short: ${tokens[0]}`,
+        '---',
+        ''
+    ].join('\n');
+    const body = [
+        `# ${tokens[0]}`,
+        '',
+        `This spec was created from a conversation intent ("extend feature").`,
+        '',
+        `Requested entities: ${entities.join(', ')}`,
+        '',
+        '## Purpose',
+        '',
+        `Add support for: ${entities.join(', ')}.`,
+        '',
+        '## Acceptance Criteria',
+        '',
+        `- Implements: ${entities.join(', ')}`,
+        '- Covered by tests',
+        '- Documented in CHANGELOG.md',
+        ''
+    ].join('\n');
+    try {
+        fs.writeFileSync(newSpecPath, header + body);
+    }
+    catch (err) {
+        return `Failed to create new spec at ${newSpecPath}: ${err.message}`;
+    }
+    return `No matching spec found for "${entities.join(', ')}".\nCreated new spec: ${path.relative(projectPath, newSpecPath)}\nThe cascade will expand this into implementation on the next convergence.`;
 }
 /**
  * Handle modify config intent
@@ -327,18 +410,24 @@ async function handleModifyConfig(entities, projectPath) {
     if (entities.length === 0) {
         return 'Which setting would you like to change? Try: "use postgres", "use sqlite", or "port=5432".';
     }
+    // Load + parse the existing config. `.speclangrc` is JSON; if it is malformed
+    // we surface the parse error instead of clobbering the file.
     let raw;
     try {
         raw = fs.readFileSync(configPath, 'utf-8');
-    } catch (err) {
+    }
+    catch (err) {
         return `Failed to read .speclangrc: ${err.message}`;
     }
     let config;
     try {
         config = JSON.parse(raw);
-    } catch (err) {
+    }
+    catch (err) {
         return `.speclangrc is not valid JSON: ${err.message}`;
     }
+    // Known database providers — normalise the spelling the spec/cascade uses
+    // (e.g. "postgres" → "postgresql") so downstream stages see one name.
     const DB_ALIASES = {
         sqlite: 'sqlite',
         postgres: 'postgresql',
@@ -351,16 +440,19 @@ async function handleModifyConfig(entities, projectPath) {
     const unrecognized = [];
     for (const entity of entities) {
         const lower = entity.toLowerCase().trim();
+        // Database provider: "use postgres", "switch to sqlite", etc.
         if (DB_ALIASES[lower]) {
             config['db'] = DB_ALIASES[lower];
             applied.push(`db → ${DB_ALIASES[lower]}`);
             continue;
         }
+        // Generic key=value override for arbitrary top-level fields, e.g.
+        // "port=5432", "host=localhost". Keys are case-insensitive.
         const kvMatch = entity.match(/^([a-zA-Z_][a-zA-Z0-9_.]*)\s*=\s*(.+)$/);
         if (kvMatch) {
-            const key = kvMatch[1];
-            const value = kvMatch[2];
+            const [, key, value] = kvMatch;
             const trimmed = value.trim();
+            // Coerce numeric values so `.speclangrc` stays clean JSON.
             const num = Number(trimmed);
             config[key.toLowerCase()] = trimmed !== '' && !isNaN(num) ? num : trimmed;
             applied.push(`${key} → ${trimmed}`);
@@ -371,9 +463,12 @@ async function handleModifyConfig(entities, projectPath) {
     if (applied.length === 0) {
         return `I didn't recognise any settings in: "${entities.join(', ')}".\nTry "use postgres", "use sqlite", or "key=value" (e.g. "port=5432").`;
     }
+    // Persist the updated config. Pretty-printed with a trailing newline to
+    // match the format `speclang init` writes.
     try {
         fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n');
-    } catch (err) {
+    }
+    catch (err) {
         return `Failed to write .speclangrc: ${err.message}`;
     }
     const lines = [`Updated .speclangrc:`];
@@ -419,6 +514,7 @@ async function handleFixIssue(entities, description, projectPath) {
     if (entities.length === 0) {
         return 'Which area is the issue in? Try: "fix the auth login bug" or "fix the database error".';
     }
+    // Longest entity first so "rate limiting" wins over "rate".
     const tokens = [...entities].sort((a, b) => b.length - a.length);
     const target = pickSpecByName(specsDir, tokens);
     if (!target) {
@@ -428,10 +524,13 @@ async function handleFixIssue(entities, description, projectPath) {
             `Once a matching spec exists I'll read it and propose a fix.`
         ].join('\n');
     }
+    // Read the matched spec so we can quote the section that is most likely
+    // implicated — the one whose heading mentions any of the entities.
     let content;
     try {
         content = fs.readFileSync(target, 'utf-8');
-    } catch (err) {
+    }
+    catch (err) {
         return `Found spec ${target} but failed to read it: ${err.message}`;
     }
     const lowerEntities = tokens.map((t) => t.toLowerCase());
@@ -459,14 +558,11 @@ async function handleFixIssue(entities, description, projectPath) {
         for (const h of matchingHeadings.slice(0, 5)) {
             out.push(`  - ${h.replace(/^#+\s*/, '')}`);
         }
-    } else {
+    }
+    else {
         out.push(``, `(No section headings mention "${entities.join(', ')}" directly — the spec may need a new block for this issue.)`);
     }
-    out.push(
-        ``,
-        `Next step: add an "@block" describing the expected behaviour and let the cascade regenerate the affected code.`,
-        `Reported issue: ${new Date().toISOString()} entities=${JSON.stringify(entities)}`
-    );
+    out.push(``, `Next step: add an "@block" describing the expected behaviour and let the cascade regenerate the affected code.`, `Reported issue: ${new Date().toISOString()} entities=${JSON.stringify(entities)}`);
     return out.join('\n');
 }
 /**

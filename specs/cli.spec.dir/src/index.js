@@ -15,8 +15,11 @@ const server_js_1 = require("./commands/server.js");
 const index_js_1 = require("./commands/index.js");
 const cascade_js_1 = require("./commands/cascade.js");
 const guard_js_1 = require("./commands/guard.js");
+const mcp_js_1 = require("./commands/mcp.js");
 const meta_js_1 = require("./commands/meta.js");
 const autonomous_js_1 = require("./commands/autonomous.js");
+const maturity_js_1 = require("./commands/maturity.js");
+const index_js_2 = require("../../../src/daemon/index.js");
 const program = new commander_1.Command();
 program
     .name('speclang')
@@ -106,6 +109,7 @@ program
     .option('--fix', 'Attempt to fix errors')
     .option('--json', 'JSON output')
     .option('--verbose', 'Show warnings')
+    .option('--type <type>', 'Validation type (basic, language-blocks, autonomous)', 'basic')
     .action(async (options) => {
     await (0, validate_js_1.validateCommand)(options);
 });
@@ -162,9 +166,20 @@ cascade
 cascade
     .command('trigger <spec-id>')
     .description('Trigger cascade for a spec')
+    .option('--thinking <mapping>', 'Thinking levels by agent or phase (agent:level,...)')
+    .option('--metrics', 'Print per-phase token-breakdown after cascade')
     .option('--json', 'JSON output')
     .action(async (specId, options) => {
-    await (0, cascade_js_1.cascadeCommand)('trigger', specId, options);
+    let thinking;
+    if (options.thinking) {
+        const { parseThinkingOverrides } = await import('cascade.spec.dir/src/provider-adapter.js');
+        thinking = parseThinkingOverrides(options.thinking);
+    }
+    const opts = {
+        ...options,
+        thinking,
+    };
+    await (0, cascade_js_1.cascadeCommand)('trigger', specId, opts);
 });
 cascade
     .command('abort')
@@ -172,6 +187,45 @@ cascade
     .option('--json', 'JSON output')
     .action(async (options) => {
     await (0, cascade_js_1.cascadeCommand)('abort', undefined, options);
+});
+// ============================================================================
+// AGENT COMMAND
+// ============================================================================
+program
+    .command('agent [agent]')
+    .description('Run a cascade agent for a trigger')
+    .requiredOption('--trigger <path>', 'Trigger path used for agent selection')
+    .option('--thinking <level>', 'Thinking level (none, low, medium, high)', 'medium')
+    .option('--params <json>', 'Agent parameters as JSON')
+    .option('--provider <provider>', 'LLM provider')
+    .option('--model <model>', 'Provider model name')
+    .option('--base-url <url>', 'Provider API base URL')
+    .option('--api-key <key>', 'Provider API key')
+    .option('--dry-run', 'Map the request without calling the provider')
+    .option('--json', 'JSON output')
+    .action(async (agent, options) => {
+    const { runAgent } = await import('cascade.spec.dir/src/agent.js');
+    let params;
+    if (options.params) {
+        params = JSON.parse(options.params);
+    }
+    const result = await runAgent({
+        agent,
+        trigger: options.trigger,
+        thinking: options.thinking,
+        params,
+        provider: options.provider,
+        model: options.model,
+        baseUrl: options.baseUrl,
+        apiKey: options.apiKey,
+        dryRun: options.dryRun || false,
+    });
+    if (options.json || result.dryRun) {
+        console.log(JSON.stringify(result, null, 2));
+    }
+    else if (result.content) {
+        console.log(result.content);
+    }
 });
 // ============================================================================
 // GUARD COMMAND
@@ -220,6 +274,70 @@ guard
     .option('--json', 'JSON output')
     .action(async (options) => {
     await (0, guard_js_1.guardCommand)('stats', undefined, options);
+});
+// ============================================================================
+// MCP COMMAND
+// ============================================================================
+const mcp = program
+    .command('mcp')
+    .description('MCP server operations');
+mcp
+    .command('start')
+    .description('Start MCP server')
+    .option('--remote', 'Start in remote (HTTP) mode')
+    .option('--port <n>', 'Port number for remote mode', parseInt, 3000)
+    .option('--auth <type>', 'Auth type (none, basic, token)', 'none')
+    .option('--user <name>', 'Username for basic auth')
+    .option('--pass <password>', 'Password for basic auth')
+    .option('--token <token>', 'Token for token auth')
+    .option('--config <path>', 'Config file path')
+    .option('--json', 'JSON output')
+    .action(async (options) => {
+    await (0, mcp_js_1.mcpCommand)('start', options);
+});
+mcp
+    .command('serve')
+    .description('Serve MCP server in daemon mode')
+    .option('--config <path>', 'Config file path')
+    .option('--json', 'JSON output')
+    .action(async (options) => {
+    await (0, mcp_js_1.mcpCommand)('serve', options);
+});
+mcp
+    .command('status')
+    .description('Show MCP server status')
+    .option('--json', 'JSON output')
+    .action(async (options) => {
+    await (0, mcp_js_1.mcpCommand)('status', options);
+});
+mcp
+    .command('stop')
+    .description('Stop MCP server')
+    .option('--json', 'JSON output')
+    .action(async (options) => {
+    await (0, mcp_js_1.mcpCommand)('stop', options);
+});
+mcp
+    .command('test')
+    .description('Test subcommand')
+    .option('--json', 'JSON output')
+    .action(async (options) => {
+    console.log('test subcommand');
+});
+mcp
+    .command('generate-openapi')
+    .description('Generate MCP server from OpenAPI spec')
+    .requiredOption('-i, --input <path>', 'Path or URL to OpenAPI spec (YAML/JSON)')
+    .requiredOption('-o, --output <dir>', 'Output directory for generated MCP project')
+    .option('-t, --transport <mode>', 'Transport mode (stdio, web, streamable-http)', 'stdio')
+    .option('-p, --port <number>', 'Port for web-based transports', '3000')
+    .option('-n, --server-name <name>', 'Name of MCP server')
+    .option('-b, --base-url <url>', 'Base URL for API requests')
+    .option('--force', 'Overwrite existing files')
+    .option('--register', 'Automatically register with SpecLang MCP server')
+    .option('--json', 'JSON output')
+    .action(async (options) => {
+    await (0, mcp_js_1.mcpCommand)('generate-openapi', options);
 });
 // ============================================================================
 // META COMMAND
@@ -303,6 +421,27 @@ autonomous
     .action(async (options) => {
     await (0, autonomous_js_1.autonomousVerifyCommand)(options);
 });
+// ============================================================================
+// MATURITY COMMAND
+// ============================================================================
+program
+    .command('maturity [spec]')
+    .description('Show maturity level info or validate a spec')
+    .option('--level <level>', 'Show info for specific level')
+    .option('--json', 'JSON output')
+    .option('--verbose', 'Show detailed criteria')
+    .action(async (spec, options) => {
+    await (0, maturity_js_1.maturityCommand)({
+        spec,
+        level: options.level,
+        json: options.json,
+        verbose: options.verbose,
+    });
+});
+// ============================================================================
+// DAEMON COMMAND
+// ============================================================================
+(0, index_js_2.configureDaemonCommand)(program);
 // ============================================================================
 // PARSE AND EXECUTE
 // ============================================================================

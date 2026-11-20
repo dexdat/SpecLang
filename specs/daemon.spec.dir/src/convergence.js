@@ -6,39 +6,6 @@
  *
  * Detects when the cascade has settled (no events for quiet period)
  */
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConvergenceDetector = void 0;
 const events_1 = require("events");
@@ -46,14 +13,43 @@ const child_process_1 = require("child_process");
 const util_1 = require("util");
 const types_1 = require("./types");
 const execAsync = (0, util_1.promisify)(child_process_1.exec);
+/** DF-SPECLANG-024: how many output paths a single log line names before eliding. */
+const MAX_LISTED_OUTPUTS = 10;
 class ConvergenceDetector extends events_1.EventEmitter {
     lastEventTime;
     quietPeriodMs;
     maxDepth;
     cascadeStartTime;
+    /**
+     * DF-SPECLANG-021 / DF-SPECLANG-024: INPUTS — the distinct spec/source paths
+     * the watcher reported for this cascade. One logical file routinely produces
+     * several events (added, then modified, then re-verified), so this set is
+     * deduped by path. It is a DIAGNOSTIC: an input is not an output, and nothing
+     * the user sees as "files changed" may be derived from it (that is exactly
+     * how a zero-output save came to report `Files: 1` — the edited spec is a
+     * watcher event).
+     *
+     * `event.oldPath` is deliberately not added: the watcher emits no rename
+     * events (it decomposes a rename into Delete + Create on the real paths), so
+     * `path` is the complete set of files this cascade has touched.
+     */
+    inputPaths;
+    /**
+     * DF-SPECLANG-024: OUTPUTS — the distinct project files this convergence
+     * pass actually WROTE, reported by the writer (the daemon's pipeline) via
+     * `recordOutputs()`. This set is the single source of truth for the
+     * user-visible changed-file count.
+     */
+    outputPaths;
+    /**
+     * DF-SPECLANG-024: the accounting symbol every surface reports — the number
+     * of OUTPUT files written by this pass (`outputPaths.size`), never the number
+     * of watcher events and never the number of inputs.
+     */
     filesChangedCount;
     currentDepth;
     converged;
+    /** DF-SPECLANG-4: true from the first file event until the cascade settles. */
     cascadePending;
     checkTimer;
     agentStatuses;
@@ -65,6 +61,8 @@ class ConvergenceDetector extends events_1.EventEmitter {
         this.maxDepth = config.convergence.maxDepth;
         this.lastEventTime = Date.now();
         this.cascadeStartTime = Date.now();
+        this.inputPaths = new Set();
+        this.outputPaths = new Set();
         this.filesChangedCount = 0;
         this.currentDepth = 0;
         this.converged = true;
@@ -79,17 +77,95 @@ class ConvergenceDetector extends events_1.EventEmitter {
      */
     onEvent(event) {
         this.lastEventTime = Date.now();
-        this.filesChangedCount++;
         this.converged = false;
         this.cascadePending = true;
         // If this is the first event in a new cascade
         if (this.currentDepth === 0) {
             this.cascadeStartTime = Date.now();
+            // DF-SPECLANG-024: a new cascade is a new PASS — it begins with zero
+            // outputs written and its own set of inputs. Carrying either over from
+            // the previous pass is what made the reported number depend on history
+            // instead of on what this pass did.
+            this.inputPaths = new Set();
+            this.outputPaths = new Set();
+            this.filesChangedCount = 0;
         }
+        // DF-SPECLANG-024: track the path as an INPUT. Recording it as a changed
+        // file is the original defect: the spec the user just saved is not a file
+        // the cascade produced.
+        this.inputPaths.add(event.path);
         this.currentDepth++;
         this.emit('event', event);
         console.log(`[Convergence] Event received: ${event.kind} - ${event.path}`);
-        console.log(`[Convergence] Files changed: ${this.filesChangedCount}, Depth: ${this.currentDepth}`);
+        console.log(`[Convergence] Inputs: ${this.inputPaths.size}, Outputs: ${this.filesChangedCount}, Depth: ${this.currentDepth}`);
+    }
+    /**
+     * DF-SPECLANG-024: record the OUTPUT files this convergence pass wrote.
+     *
+     * Called by the component that actually writes (the daemon, right after the
+     * on_converge pipeline returns), because only the writer knows what it
+     * produced. The detector never infers outputs from watcher events.
+     *
+     * @param outputs project-relative paths the pass created or rewrote with new
+     *                content. Must not contain inputs (a spec/source file the
+     *                user edited) — those are tracked separately.
+     * @param options.complete   false when the pipeline failed: the files listed
+     *                           are what was written before it stopped.
+     * @param options.incomplete true when the writer could not enumerate every
+     *                           output (e.g. the project tree exceeded the
+     *                           snapshot cap) — the count is a lower bound and
+     *                           the summary says so instead of guessing.
+     */
+    recordOutputs(outputs, options = {}) {
+        for (const output of outputs) {
+            const normalized = output.replace(/^\.\//, '');
+            if (normalized)
+                this.outputPaths.add(normalized);
+        }
+        this.filesChangedCount = this.outputPaths.size;
+        const result = this.buildResult();
+        this.logOutputs(result.duration, options);
+        return result;
+    }
+    /**
+     * DF-SPECLANG-024: the ONE place a completion line is printed, so every
+     * settle path reports the same shape (files-changed count + the paths).
+     */
+    logOutputs(duration, options = {}) {
+        const suffix = options.incomplete
+            ? ' (lower bound: project tree exceeded the output snapshot cap)'
+            : '';
+        if (options.complete === false) {
+            console.log(`[Convergence] Outputs written before the pipeline stopped — Files: ${this.filesChangedCount}, Duration: ${duration}ms${suffix}`);
+        }
+        else {
+            console.log(`[Convergence] Cascade complete! Files: ${this.filesChangedCount}, Duration: ${duration}ms${suffix}`);
+        }
+        if (this.filesChangedCount === 0) {
+            console.log('[Convergence] Outputs: 0 — this cascade wrote no generated files');
+            return;
+        }
+        const listed = [...this.outputPaths].slice(0, MAX_LISTED_OUTPUTS);
+        const remaining = this.filesChangedCount - listed.length;
+        console.log(`[Convergence] Outputs: ${this.filesChangedCount} — ${listed.join(', ')}${remaining > 0 ? ` and ${remaining} more` : ''}`);
+    }
+    /**
+     * DF-SPECLANG-024: the single place a ConvergenceResult is shaped, so the
+     * status payload, the settle event and the completion summary can never
+     * disagree about what `filesChanged` means.
+     */
+    buildResult(extra = {}) {
+        return {
+            converged: this.isConverged(),
+            filesChanged: this.filesChangedCount,
+            outputs: [...this.outputPaths],
+            outputsCount: this.filesChangedCount,
+            inputFiles: this.inputPaths.size,
+            duration: Date.now() - this.cascadeStartTime,
+            cascadeDepth: this.currentDepth,
+            timestamp: Date.now(),
+            ...extra,
+        };
     }
     /**
      * Check if the system has converged (quiet for configured period)
@@ -116,7 +192,10 @@ class ConvergenceDetector extends events_1.EventEmitter {
         return {
             converged: this.isConverged(),
             lifecycle: this.getCascadeLifecycle(),
+            // DF-SPECLANG-024: outputs written, never watcher events.
             filesChanged: this.filesChangedCount,
+            inputFiles: this.inputPaths.size,
+            outputs: [...this.outputPaths],
             currentDepth: this.currentDepth,
             timeRemaining: this.timeRemaining(),
             quietPeriod: this.quietPeriodMs,
@@ -136,14 +215,7 @@ class ConvergenceDetector extends events_1.EventEmitter {
      * Get convergence result
      */
     getConvergenceResult() {
-        const duration = Date.now() - this.cascadeStartTime;
-        const result = {
-            converged: this.isConverged(),
-            filesChanged: this.filesChangedCount,
-            duration,
-            cascadeDepth: this.currentDepth,
-            timestamp: Date.now(),
-        };
+        const result = this.buildResult();
         if (result.converged) {
             this.converged = true;
             // DF-SPECLANG-4: the queue is drained — the cascade is over, so the
@@ -152,8 +224,16 @@ class ConvergenceDetector extends events_1.EventEmitter {
             // the path that also un-converged the detector (status -> 'cascading').
             this.cascadePending = false;
             this.currentDepth = 0;
+            // DF-SPECLANG-024: settling is NOT completion — the on_converge pipeline
+            // has not run yet, so no file has been written at this point. The
+            // "Cascade complete! Files: N" line belongs to recordOutputs(), where N
+            // is what the pass actually wrote. Printing it here is what made a
+            // zero-output save announce "Cascade complete! Files: 1".
+            //
+            // This line therefore makes NO output claim: the only outputs it could
+            // name are the ones nobody has written yet.
+            console.log(`[Convergence] Cascade settled — inputs: ${result.inputFiles}, outputs pending the on_converge pipeline, Duration: ${result.duration}ms`);
             this.emit('converged', result);
-            console.log(`[Convergence] Cascade complete! Files: ${result.filesChanged}, Duration: ${duration}ms`);
         }
         return result;
     }
@@ -167,6 +247,8 @@ class ConvergenceDetector extends events_1.EventEmitter {
      * normally.
      */
     reset() {
+        this.inputPaths.clear();
+        this.outputPaths.clear();
         this.filesChangedCount = 0;
         this.currentDepth = 0;
         this.converged = false;
@@ -286,8 +368,8 @@ class ConvergenceDetector extends events_1.EventEmitter {
         console.log('[Convergence] Running tests...');
         const startTime = Date.now();
         try {
-            const { exec } = await Promise.resolve().then(() => __importStar(require('child_process')));
-            const { promisify } = await Promise.resolve().then(() => __importStar(require('util')));
+            const { exec } = await import('child_process');
+            const { promisify } = await import('util');
             const execAsync = promisify(exec);
             // Try to run tests - this is a placeholder
             // In real implementation, this would run actual test commands
@@ -321,8 +403,8 @@ class ConvergenceDetector extends events_1.EventEmitter {
         }
         console.log('[Convergence] Committing changes...');
         try {
-            const { exec } = await Promise.resolve().then(() => __importStar(require('child_process')));
-            const { promisify } = await Promise.resolve().then(() => __importStar(require('util')));
+            const { exec } = await import('child_process');
+            const { promisify } = await import('util');
             const execAsync = promisify(exec);
             await execAsync('git add -A');
             const { stdout } = await execAsync('git commit -m "Auto: Cascade convergence" || echo "nothing to commit"');
@@ -386,18 +468,12 @@ class ConvergenceDetector extends events_1.EventEmitter {
             commitSha = await this.commitChanges() ?? undefined;
             console.log('[Convergence] Commit complete:', commitSha);
         }
-        const result = {
-            converged: true,
-            filesChanged: this.filesChangedCount,
-            duration: Date.now() - this.cascadeStartTime,
-            cascadeDepth: this.currentDepth,
-            timestamp: Date.now(),
-            testResults,
-            commitSha,
-        };
-        // Step 5: Notify user
+        // DF-SPECLANG-024: same accounting as the settle path — `filesChanged` is
+        // the number of OUTPUT files this pass wrote, and the completion line names
+        // them. A /finalize with nothing generated therefore reads "Files: 0".
+        const result = this.buildResult({ testResults, commitSha });
+        this.logOutputs(result.duration);
         this.emit('converged', result);
-        console.log(`[Convergence] Cascade complete! Files: ${result.filesChanged}, Duration: ${result.duration}ms`);
         return result;
     }
     /**

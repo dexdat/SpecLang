@@ -45,23 +45,25 @@ export interface GitIntegrationOptions {
  * - resolveConflict: Handle merge conflicts
  */
 export declare function useGitIntegration(options?: GitIntegrationOptions): {
-    status: any;
-    stagedFiles: any;
-    isLoading: any;
-    error: any;
-    refreshStatus: any;
-    stageFile: any;
-    unstageFile: any;
-    toggleFile: any;
-    stageAll: any;
-    unstageAll: any;
-    commit: any;
-    getHistory: any;
-    showDiff: any;
-    revert: any;
-    createBranch: any;
-    switchBranch: any;
-    resolveConflict: any;
+    status: GitStatus;
+    stagedFiles: Set<string>;
+    isLoading: boolean;
+    error: string;
+    refreshStatus: () => Promise<void>;
+    stageFile: (file: string) => void;
+    unstageFile: (file: string) => void;
+    toggleFile: (file: string) => void;
+    stageAll: () => void;
+    unstageAll: () => void;
+    commit: (message: string) => Promise<void>;
+    getHistory: (filter?: {
+        speclangOnly?: boolean;
+    }) => Promise<GitCommit[]>;
+    showDiff: (commitSha: string) => Promise<GitDiff | null>;
+    revert: (commitSha: string) => Promise<void>;
+    createBranch: (name: string) => Promise<void>;
+    switchBranch: (name: string) => Promise<void>;
+    resolveConflict: (file: string, resolution: 'ours' | 'theirs' | 'manual', content?: string) => Promise<void>;
 };
 export default useGitIntegration;
 //# sourceMappingURL=git-integration.d.ts.map

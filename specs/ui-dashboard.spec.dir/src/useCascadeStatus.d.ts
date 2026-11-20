@@ -13,9 +13,9 @@ interface UseCascadeStatusReturn {
 }
 export declare const useCascadeStatus: () => UseCascadeStatusReturn;
 export declare const useAgentStatus: (agentId?: string) => {
-    agents: any;
-    loading: any;
+    agents: AgentStatus[];
+    loading: boolean;
 };
-export declare const useFileWatcherStatus: () => any;
+export declare const useFileWatcherStatus: () => FileWatcherStatus;
 export {};
 //# sourceMappingURL=useCascadeStatus.d.ts.map

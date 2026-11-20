@@ -56,7 +56,7 @@ class OpenAPIToolHandler {
         try {
             let specContent;
             if (spec.startsWith('http://') || spec.startsWith('https://')) {
-                const https = await Promise.resolve().then(() => __importStar(require('https')));
+                const https = await import('https');
                 specContent = await new Promise((resolve, reject) => {
                     https.get(spec, (res) => {
                         let data = '';

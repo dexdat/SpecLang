@@ -7,7 +7,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.JSONQueries = exports.GraphQueries = exports.VectorSearch = exports.FullTextSearch = exports.SpecLangDB = void 0;
+exports.JSONQueries = exports.GraphQueries = exports.VectorSearch = exports.FullTextSearch = exports.SpecLangDB = exports.CorruptStateDatabaseError = exports.STATE_DB_CORRUPT_CODE = void 0;
+exports.isNotADatabaseError = isNotADatabaseError;
+exports.stateDatabaseCorruptionMessage = stateDatabaseCorruptionMessage;
+exports.openStateDatabase = openStateDatabase;
+exports.withStateDatabase = withStateDatabase;
 exports.createDatabase = createDatabase;
 const better_sqlite3_1 = __importDefault(require("better-sqlite3"));
 const migrations_js_1 = require("./migrations.js");
@@ -16,6 +20,130 @@ Object.defineProperty(exports, "FullTextSearch", { enumerable: true, get: functi
 Object.defineProperty(exports, "VectorSearch", { enumerable: true, get: function () { return search_js_1.VectorSearch; } });
 Object.defineProperty(exports, "GraphQueries", { enumerable: true, get: function () { return search_js_1.GraphQueries; } });
 Object.defineProperty(exports, "JSONQueries", { enumerable: true, get: function () { return search_js_1.JSONQueries; } });
+/**
+ * QA-SPECLANG-5: a state database that is not a SQLite database at all used to
+ * be accepted silently. better-sqlite3 defers reading the file header until the
+ * first statement is prepared, so a corrupt `.speclang/speclang.db` either died
+ * later with a raw `SqliteError: file is not a database` (no path, no remedy) or
+ * — for commands that never opened it, such as `speclang status` — produced a
+ * normal-looking report backed by nothing.
+ *
+ * Everything below is the single guarded open path for the state DB, so every
+ * consumer inherits the same loud, actionable failure instead of a no-op.
+ */
+exports.STATE_DB_CORRUPT_CODE = 'STATE_DB_CORRUPT';
+/** SQLite result codes that mean "this file is not a database we can read". */
+const NOT_A_DATABASE_CODES = ['SQLITE_NOTADB'];
+/**
+ * Thrown when the state database file exists but cannot be read as SQLite.
+ */
+class CorruptStateDatabaseError extends Error {
+    /** Stable, machine-checkable error code (see STATE_DB_CORRUPT_CODE). */
+    code;
+    /** The state database file that could not be read. */
+    filePath;
+    /** SQLite's own result code for the failure (e.g. SQLITE_NOTADB), when known. */
+    sqliteCode;
+    /** The original better-sqlite3 error, kept for diagnostics. */
+    cause;
+    constructor(filePath, cause) {
+        super(stateDatabaseCorruptionMessage(filePath));
+        this.name = 'CorruptStateDatabaseError';
+        this.code = exports.STATE_DB_CORRUPT_CODE;
+        this.filePath = filePath;
+        this.sqliteCode = cause?.code;
+        this.cause = cause;
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, CorruptStateDatabaseError);
+        }
+    }
+}
+exports.CorruptStateDatabaseError = CorruptStateDatabaseError;
+/**
+ * True when a better-sqlite3 error says the file is not a SQLite database.
+ */
+function isNotADatabaseError(err) {
+    const code = err?.code;
+    const message = String(err?.message ?? '');
+    return ((typeof code === 'string' && NOT_A_DATABASE_CODES.includes(code)) ||
+        /file is not a database/i.test(message));
+}
+/**
+ * The user-facing diagnostic for a corrupt state DB: what is wrong, which file,
+ * and the documented way out (docs/troubleshooting.md -> Emergency Recovery).
+ *
+ * The CLI (bin/speclang) prints this same text from its own copy because it runs
+ * before `npm run build` and cannot import TypeScript; tests/db/corrupt-state-db
+ * pins both copies to one wording so they cannot drift apart.
+ */
+function stateDatabaseCorruptionMessage(filePath) {
+    return [
+        `The SpecLang state database is corrupt or not a SQLite database: ${filePath}`,
+        'SpecLang cannot read this project\'s state from that file, so it refuses to continue',
+        'rather than report a status that unreadable state does not back.',
+        '',
+        'Recovery: back the file up if you need it as evidence, then delete it so SpecLang',
+        'rebuilds a fresh database on the next run. The full fresh-start procedure is in',
+        'docs/troubleshooting.md -> "Emergency Recovery":',
+        `  rm -f ${filePath}`
+    ].join('\n');
+}
+/**
+ * Open the state database and prove it is readable before handing it out.
+ *
+ * A missing file is fresh state (better-sqlite3 creates it) — only a file that
+ * exists and is not a database raises CorruptStateDatabaseError.
+ */
+function openStateDatabase(path) {
+    let db;
+    try {
+        db = new better_sqlite3_1.default(path);
+        // The constructor does not read the file header; this statement does.
+        db.pragma('user_version');
+        return db;
+    }
+    catch (err) {
+        if (db) {
+            try {
+                db.close();
+            }
+            catch {
+                // An unreadable file has no handle worth closing.
+            }
+        }
+        if (isNotADatabaseError(err)) {
+            throw new CorruptStateDatabaseError(path, err);
+        }
+        throw err;
+    }
+}
+/**
+ * Run `setup` against an already-opened state database, translating a deeper
+ * not-a-database failure into the same CorruptStateDatabaseError diagnostic.
+ *
+ * The open probe reads the file header only; a consumer that bootstraps its own
+ * schema (or its own pragmas) reads further and can still meet a file that is
+ * not a database. One shared helper keeps that failure loud and identical for
+ * every consumer — SpecLangDB, the standalone MCP server, the Ralph Loop —
+ * instead of each one leaking a bare SqliteError.
+ */
+function withStateDatabase(db, filePath, setup) {
+    try {
+        return setup();
+    }
+    catch (err) {
+        try {
+            db.close();
+        }
+        catch {
+            // An unreadable file has no handle worth closing.
+        }
+        if (isNotADatabaseError(err)) {
+            throw new CorruptStateDatabaseError(filePath, err);
+        }
+        throw err;
+    }
+}
 /**
  * Main database class for SpecLang
  */
@@ -29,10 +157,14 @@ class SpecLangDB {
     json;
     constructor(config) {
         this.config = config;
-        // Initialize database
-        this.db = new better_sqlite3_1.default(config.path);
-        // Configure database
-        this.configure();
+        // Initialize database — QA-SPECLANG-5: the single guarded open path. A file
+        // that is not a SQLite database raises CorruptStateDatabaseError here, so no
+        // command can go on to report state it could not read.
+        this.db = openStateDatabase(config.path);
+        // Configure database. A file that survived the open probe can still be
+        // damaged deeper in (these pragmas read the header/btree pages), so the same
+        // diagnostic applies instead of leaking a bare SqliteError.
+        withStateDatabase(this.db, config.path, () => this.configure());
         // Initialize search modules
         this.fts = new search_js_1.FullTextSearch(this.db);
         this.vectors = new search_js_1.VectorSearch(this.db);
@@ -58,7 +190,8 @@ class SpecLangDB {
      */
     initialize() {
         const result = (0, migrations_js_1.migrate)(this.db);
-        console.log(`Database initialized at version ${result.currentVersion}`);
+        // stderr: this fires inside MCP stdio mode where stdout is the JSON-RPC transport
+        console.error(`Database initialized at version ${result.currentVersion}`);
         return {
             applied: result.applied,
             version: result.currentVersion

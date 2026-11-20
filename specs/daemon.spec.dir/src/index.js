@@ -18,34 +18,13 @@ var __createBinding = (this && this.__createBinding) || (Object.create ? (functi
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
 }));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
 var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDaemon = exports.createDaemon = exports.Daemon = void 0;
+exports.probeDashboard = exports.listenDashboard = exports.getDaemon = exports.createDaemon = exports.Daemon = exports.configureDaemonCommand = void 0;
 exports.startDaemon = startDaemon;
+const dashboard_1 = require("./dashboard");
 __exportStar(require("./types"), exports);
 __exportStar(require("./config"), exports);
 __exportStar(require("./watcher"), exports);
@@ -56,18 +35,24 @@ __exportStar(require("./ipc"), exports);
 __exportStar(require("./locks"), exports);
 __exportStar(require("./deadlock"), exports);
 __exportStar(require("./lock_client"), exports);
+__exportStar(require("./session-store"), exports);
+var daemon_cli_1 = require("./daemon-cli");
+Object.defineProperty(exports, "configureDaemonCommand", { enumerable: true, get: function () { return daemon_cli_1.configureDaemonCommand; } });
 var daemon_1 = require("./daemon");
 Object.defineProperty(exports, "Daemon", { enumerable: true, get: function () { return daemon_1.Daemon; } });
 Object.defineProperty(exports, "createDaemon", { enumerable: true, get: function () { return daemon_1.createDaemon; } });
 Object.defineProperty(exports, "getDaemon", { enumerable: true, get: function () { return daemon_1.getDaemon; } });
+var dashboard_2 = require("./dashboard");
+Object.defineProperty(exports, "listenDashboard", { enumerable: true, get: function () { return dashboard_2.listenDashboard; } });
+Object.defineProperty(exports, "probeDashboard", { enumerable: true, get: function () { return dashboard_2.probeDashboard; } });
 /**
  * Start the daemon with the given options
  * This is the main entry point for the CLI
  */
 async function startDaemon(options) {
-    const { Daemon } = await Promise.resolve().then(() => __importStar(require('./daemon')));
-    const fs = await Promise.resolve().then(() => __importStar(require('fs')));
-    const path = await Promise.resolve().then(() => __importStar(require('path')));
+    const { Daemon } = await import('./daemon.js');
+    const fs = await import('fs');
+    const path = await import('path');
     const { projectDir, port, dashboard } = options;
     console.log('\n🚀 SpecLang Daemon Starting...\n');
     console.log(`   Project: ${projectDir}`);
@@ -82,20 +67,63 @@ async function startDaemon(options) {
     fs.writeFileSync(pidFile, process.pid.toString());
     // Create and start daemon
     const daemon = new Daemon();
-    // Handle graceful shutdown
+    // Handle graceful shutdown (idempotent: SIGINT+SIGTERM or a repeated signal
+    // must not run stop()/unlink twice).
+    let shuttingDown = false;
     const shutdown = async () => {
+        if (shuttingDown)
+            return;
+        shuttingDown = true;
         console.log('\n\n🛑 Shutting down...');
-        await daemon.stop();
-        fs.unlinkSync(pidFile);
+        try {
+            await daemon.stop();
+        }
+        finally {
+            // DF-SPECLANG-6: `speclang stop` unlinks this same pid file right after
+            // sending SIGTERM, so whoever unlinks second must not throw ENOENT.
+            try {
+                fs.unlinkSync(pidFile);
+            }
+            catch (err) {
+                if (err.code !== 'ENOENT')
+                    throw err;
+            }
+        }
         process.exit(0);
     };
     process.on('SIGINT', shutdown);
     process.on('SIGTERM', shutdown);
-    // Start daemon
-    await daemon.start();
+    // DF-SPECLANG-022: every early-exit path must release the daemon and the PID
+    // file, otherwise `status` keeps reporting a daemon that is already gone.
+    // The dashboard is bound before `daemon.start()`, so most aborts happen with
+    // the daemon not running at all — stop() must only be called once it has.
+    let daemonStarted = false;
+    const abortStart = async () => {
+        if (daemonStarted) {
+            try {
+                await daemon.stop();
+            }
+            catch (err) {
+                console.error('[Daemon] stop during abort failed:', err);
+            }
+            daemonStarted = false;
+        }
+        try {
+            fs.unlinkSync(pidFile);
+        }
+        catch (err) {
+            if (err.code !== 'ENOENT')
+                throw err;
+        }
+    };
+    // DF-SPECLANG-022: bind and verify the dashboard BEFORE the watcher starts, so
+    // an occupied port fails fast and never leaves a half-started daemon (or a
+    // banner) behind. `dashboardPort` is only set once the announced endpoint is
+    // proven to be this process.
+    let dashboardPort = null;
     // Start dashboard if enabled
     if (dashboard) {
-        const express = (await Promise.resolve().then(() => __importStar(require('express')))).default;
+        const express = (await import('express')).default;
         const app = express();
         // Health check endpoint
         app.get('/health', (_req, res) => {
@@ -139,12 +167,56 @@ async function startDaemon(options) {
         </html>
       `);
         });
-        app.listen(port, () => {
-            console.log(`\n📊 Dashboard: http://localhost:${port}\n`);
-        });
+        // DF-SPECLANG-022: await the bind. `app.listen(port, cb)` used to swallow
+        // EADDRINUSE, so the daemon printed "Started" and a dashboard URL while the
+        // port belonged to somebody else.
+        let binding;
+        try {
+            binding = await (0, dashboard_1.listenDashboard)(app, port);
+        }
+        catch (err) {
+            const code = err.code;
+            await abortStart();
+            console.error(`\n❌ Dashboard port ${port} could not be bound (${code || 'error'}: ${err.message})`);
+            if (code === 'EADDRINUSE') {
+                console.error(`   Port ${port} is already in use by another process (EADDRINUSE).`);
+            }
+            console.error('   Refusing to announce a dashboard this process does not serve.');
+            process.exit(1);
+        }
+        // A successful bind is not proof the ANNOUNCED url reaches us: on Linux a
+        // wildcard bind can succeed while another process holds 127.0.0.1:<port>,
+        // so ask the announced endpoint who it is before printing anything.
+        const announcePort = binding.port;
+        const probe = await (0, dashboard_1.probeDashboard)(announcePort);
+        if (!probe.ok) {
+            await abortStart();
+            console.error(`\n❌ Dashboard port ${announcePort} is already in use by another process (EADDRINUSE)`);
+            console.error(`   ${probe.detail}`);
+            console.error('   Refusing to announce a dashboard this process does not serve.');
+            process.exit(1);
+        }
+        dashboardPort = announcePort;
+    }
+    // Start daemon
+    try {
+        await daemon.start();
+    }
+    catch (err) {
+        await abortStart();
+        console.error(`\n❌ Daemon failed to start: ${err.message}`);
+        process.exit(1);
+    }
+    daemonStarted = true;
+    if (dashboardPort !== null) {
+        console.log(`\n📊 Dashboard: http://localhost:${dashboardPort}`);
     }
     console.log('\n✅ SpecLang Daemon Started');
-    console.log('   Press Ctrl+C to stop\n');
+    console.log('   Press Ctrl+C to stop');
+    // DF-SPECLANG-022: `start` runs the watcher (+ dashboard); it does not start
+    // the MCP server, which is `speclang mcp start`. Say so instead of letting
+    // `mcp status` contradict the banner.
+    console.log('   MCP: not started — run `speclang mcp start` for the MCP server\n');
     // Keep process alive
     return new Promise(() => { }); // Never resolves, keeps process running
 }

@@ -171,7 +171,7 @@ exports.TestSpecParser = TestSpecParser;
  * Parse a test spec from a file
  */
 async function parseTestSpecFile(filepath) {
-    const fs = await Promise.resolve().then(() => __importStar(require('fs/promises')));
+    const fs = await import('fs/promises');
     const content = await fs.readFile(filepath, 'utf-8');
     const parser = new TestSpecParser();
     return parser.parse(content);

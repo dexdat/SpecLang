@@ -94,8 +94,8 @@ class TestRunner {
         const results = [];
         try {
             // Run bun test and capture JSON output
-            const { exec } = await Promise.resolve().then(() => __importStar(require('child_process')));
-            const { promisify } = await Promise.resolve().then(() => __importStar(require('util')));
+            const { exec } = await import('child_process');
+            const { promisify } = await import('util');
             const execAsync = promisify(exec);
             try {
                 const { stdout } = await execAsync(`bun test ${testPath} --reporter=json 2>&1`, {

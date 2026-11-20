@@ -43,6 +43,17 @@ export declare class Watcher extends EventEmitter {
      */
     private shouldWatch;
     /**
+     * Convert a glob pattern (with **, *, brace expansion {a,b}, .ext) into a RegExp.
+     *
+     * ARCH-001 fix (2026-07-04): the prior implementation did ** → .* first,
+     * then * → [^/]* last — which meant the trailing * from **\/*.spec.md
+     * turned the .* (multi-segment) into .[^/]* (single-segment), causing the
+     * compiled regex to only match 2-segment paths. The new approach uses
+     * placeholders for **/ and: any; /** (multi-directory anchors) and handles
+    * brace expansion before escaping.
+    */
+    private globToRegex;
+    /**
      * Simple glob pattern matching
      */
     private matchPattern;

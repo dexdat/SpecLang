@@ -33,7 +33,10 @@
     "postinstall": "bash scripts/postinstall-lint-deps.sh && bash scripts/postinstall-ts-node.sh",
     "check:sqlite-binding": "bash scripts/postinstall-lint-deps.sh --sqlite-binding-only",
     "gen:migrations": "node scripts/gen-migrations.mjs",
-    "audit:evidence-runids": "sh scripts/audit-evidence-runids.sh"
+    "audit:evidence-runids": "sh scripts/audit-evidence-runids.sh",
+    "audit:specdir": "node scripts/audit-specdir-requires.mjs",
+    "check:specdir-parity": "node scripts/check-specdir-parity.mjs",
+    "regenerate:specdir": "node scripts/regenerate-specdir-layer.mjs"
   },
   "allowScripts": {
     "better-sqlite3": true

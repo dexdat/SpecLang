@@ -3,39 +3,6 @@
  * SPECLANG-GENERATED: Rule registry
  * Source: @speclang/validation/rules
  */
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.autonomousRule = exports.blocksRule = exports.refsRule = exports.idRule = exports.headerRule = exports.RuleRegistry = exports.BUILTIN_RULES = void 0;
 exports.getRegistry = getRegistry;
@@ -57,7 +24,7 @@ exports.BUILTIN_RULES = [
     id_1.idRule, // @validation/id
     refs_1.refsRule, // @validation/refs
     blocks_1.blocksRule, // @validation/blocks
-    autonomous_1.autonomousRule, // @validation/autonomous
+    autonomous_1.autonomousRule,
 ];
 /**
  * Rule Registry
@@ -167,7 +134,7 @@ class RuleRegistry {
         for (const path of paths) {
             try {
                 // Dynamic import of custom rule module
-                const module = await Promise.resolve(`${path}`).then(s => __importStar(require(s)));
+                const module = await import(path);
                 const customRule = module.default || module.rule;
                 if (customRule && customRule.id) {
                     this.register(customRule);

@@ -13,6 +13,7 @@ export declare class RecoveryExecutor {
         success: boolean;
         error?: string;
     }>;
+    private executeAction;
     executeAll(actions: RecoveryAction[], context: RecoveryContext): Promise<RecoveryResult>;
     private rollback;
     private notify;

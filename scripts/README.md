@@ -75,6 +75,21 @@ Scripts for integration testing and system validation.
 |--------|---------|-------|
 | `integration-test.py` | Run integration tests | `python3 integration-test.py` |
 
+### 8. Compiled spec-dir layer (Node)
+
+The tracked `specs/**/src/**/*.js` artifacts are a projection of the `.ts`
+sources beside them. These three gates/verbs keep that true — see
+[`docs/specdir-compiled-layer.md`](../docs/specdir-compiled-layer.md) for the
+decision record.
+
+| Script | Purpose | Usage |
+|--------|---------|-------|
+| `audit-specdir-requires.mjs` | Every relative `require()` in the layer resolves, or is a recorded exception | `npm run audit:specdir` (`--json`, `--root DIR`) |
+| `check-specdir-parity.mjs` | Guard-bearing modules export the same value symbols as their source (blocking); whole-layer freshness is reported alongside (`--strict-freshness` gates it) | `npm run check:specdir-parity` |
+| `regenerate-specdir-layer.mjs` | Recompile artifacts from their source (the only sanctioned writer) | `npm run regenerate:specdir [-- --module <src.ts>] [-- --all-stale] [-- --check]` |
+
+Shared analysis lives in `scripts/lib/specdir-compiled-layer.mjs`.
+
 ## Usage Notes
 
 - Most scripts accept `--help` flag for usage information.

@@ -1,0 +1,39 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 6a63c10e..55d8bcc9 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -104,6 +104,34 @@ jobs:
+       - name: Build TypeScript
+         run: npm run build
+ 
++      - name: Audit the compiled spec-dir layer (QA-SPECLANG-010)
++        # `specs/**/src/**/*.js` is a TRACKED compiled projection of the `.ts`
++        # sources beside it, and it is not inert — `tests/workflow/conversation.test.ts`
++        # loads one of those artifacts at runtime. Two independent gates keep it
++        # honest, and both block:
++        #
++        #   1. audit:specdir — every relative `require()` in the layer must
++        #      resolve to a module that exists in the tree. A stale artifact that
++        #      still requires a path its source moved away from fails here.
++        #      Unresolvable requires are allowed ONLY through
++        #      `scripts/specdir-requires-baseline.json`, where each entry records
++        #      a reason and a machine-verified proof class; an entry that stops
++        #      reproducing fails the run, so the list cannot rot into a blanket
++        #      exception.
++        #   2. check:specdir-parity — every guard-bearing module (one whose
++        #      source exports a state-DB opener or corruption diagnostic) must
++        #      export the same value symbols from its compiled copy. The same run
++        #      REPORTS whole-layer freshness (how many tracked artifacts differ
++        #      from a fresh compile); that number is not gated, because the
++        #      committed artifacts are the older working compile of sources that
++        #      have since drifted — see docs/specdir-compiled-layer.md §3.
++        #
++        # Recovery is always `npm run regenerate:specdir`, never hand-editing the
++        # compiled `.js`. Decision record: docs/specdir-compiled-layer.md.
++        run: |
++          npm run audit:specdir
++          npm run check:specdir-parity
++
+       - name: Run tests
+         run: npm test
+         env:

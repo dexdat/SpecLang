@@ -23,6 +23,7 @@ node;
  */
 const commander_1 = require("commander");
 const index_js_1 = require("./daemon/index.js");
+const index_js_2 = require("cascade.spec.dir/src/coordinator/index.js");
 const program = new commander_1.Command();
 program
     .name('speclangd')
@@ -33,6 +34,7 @@ program
     .description('Start the daemon')
     .option('-d, --daemon', 'Run in background')
     .option('-c, --config <path>', 'Config file path', '.speclangrc')
+    .option('-v, --verbose', 'Verbose coordinator logging')
     .action(async (options) => {
     const daemon = new index_js_1.Daemon(options.config);
     daemon.on('started', () => {
@@ -44,6 +46,15 @@ program
     daemon.on('task', (task) => {
         console.log('[CLI] Task generated:', task.kind, task.trigger);
     });
+    // DF-SPECLANG-015: without a consumer the routed AgentTasks above were
+    // logged and dropped — no agent session ran, so reactive expansion
+    // produced nothing. watchDaemon invokes the matching agent (dedup'd by
+    // in-flight + TTL) and writes its stdout to the task target.
+    const coordinator = new index_js_2.CascadeCoordinator(undefined, {
+        verbose: options.verbose ?? false,
+    });
+    coordinator.watchDaemon(daemon, { verbose: options.verbose ?? false });
+    console.log('[CLI] Agent dispatch: daemon tasks → cascade coordinator ✅');
     await daemon.start();
     if (!options.daemon) {
         // Keep running in foreground

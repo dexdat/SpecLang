@@ -47,6 +47,7 @@ const child_process_1 = require("child_process");
 const config_1 = require("./config");
 const stages_1 = require("./stages");
 const recovery_1 = require("./recovery");
+const metrics_ledger_1 = require("./metrics-ledger");
 class PipelineExecutor extends events_1.EventEmitter {
     configManager;
     stageExecutor;
@@ -66,6 +67,13 @@ class PipelineExecutor extends events_1.EventEmitter {
      */
     async execute(convergence) {
         const startTime = Date.now();
+        // OBS-2: the convergence outcome that triggered this run is computed by the
+        // daemon and then only carried on the PipelineResult — i.e. discarded by
+        // every caller. Record it here, where the executor consumes it, so the
+        // /metrics ledger can count converged vs not_converged runs.
+        if (convergence) {
+            (0, metrics_ledger_1.recordConvergenceOutcome)(convergence.converged === false ? 'not_converged' : 'converged');
+        }
         const config = await this.configManager.load();
         // Validate config
         const validation = this.configManager.validate();
@@ -81,6 +89,20 @@ class PipelineExecutor extends events_1.EventEmitter {
             };
         }
         const stages = config.pipeline.on_converge;
+        // DF-SPECLANG-014: an empty pipeline used to "succeed" with 0 stages —
+        // a silent no-op that read as a completed cascade. Fail loud instead.
+        if (!stages || stages.length === 0) {
+            console.error('[PipelineExecutor] No pipeline stages configured (build.yaml missing or empty on_converge) — nothing to run.');
+            return {
+                success: false,
+                stages: [],
+                duration: Date.now() - startTime,
+                startTime,
+                endTime: Date.now(),
+                error: 'No pipeline stages configured: add a build.yaml with pipeline.on_converge stages to this project.',
+                recoveryAttempts: 0,
+            };
+        }
         const orderedStages = (0, stages_1.orderStages)(stages);
         const stageResults = [];
         const completedStages = new Set();
@@ -128,6 +150,7 @@ class PipelineExecutor extends events_1.EventEmitter {
                             duration: 0,
                         };
                         stageResults.push(skippedResult);
+                        (0, metrics_ledger_1.recordStageOutcome)(skippedResult.name, 'skipped', skippedResult.duration);
                         completedStages.add(stage.name);
                         continue;
                     }
@@ -144,6 +167,9 @@ class PipelineExecutor extends events_1.EventEmitter {
                 };
                 const result = await this.stageExecutor.execute(stage, context, this.options.dryRun);
                 stageResults.push(result);
+                // OBS-2: every completed StageResult is otherwise dropped once the
+                // pipeline returns; count it (+ its duration) for the /metrics ledger.
+                (0, metrics_ledger_1.recordStageOutcome)(result.name, result.success ? 'success' : 'failure', result.duration);
                 if (result.success) {
                     this.stageStates.set(stage.name, 'completed');
                     completedStages.add(stage.name);

@@ -3,7 +3,7 @@
 // Source: @speclang/stdlib/types
 // DO NOT EDIT MANUALLY
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.OneOf = exports.OptionalOps = exports.SetOps = exports.Map = exports.ListOps = void 0;
+exports.RecordOps = exports.TupleOps = exports.OneOf = exports.OptionalOps = exports.SetOps = exports.Map = exports.ListOps = void 0;
 /**
  * List (Array) operations
  */
@@ -105,5 +105,54 @@ exports.OptionalOps = {
  */
 exports.OneOf = {
     validate: (options) => (value) => options.includes(value)
+};
+/**
+ * Tuple operations
+ */
+exports.TupleOps = {
+    of: (...validators) => ({
+        validate: (value) => {
+            if (!Array.isArray(value))
+                return false;
+            if (value.length !== validators.length)
+                return false;
+            return value.every((item, index) => validators[index].validate(item));
+        },
+        default: [], // @ts-ignore
+        examples: [[]]
+    }),
+    get: (tuple, index) => tuple[index],
+    set: (tuple, index, value) => {
+        const newTuple = [...tuple];
+        newTuple[index] = value;
+        return newTuple;
+    },
+    length: (tuple) => tuple.length
+};
+/**
+ * Record operations
+ */
+exports.RecordOps = {
+    of: (valueValidator) => ({
+        validate: (value) => {
+            if (typeof value !== 'object' || value === null)
+                return false;
+            return Object.values(value).every(v => valueValidator.validate(v));
+        },
+        default: {},
+        examples: [{}]
+    }),
+    get: (record, key) => record[key],
+    set: (record, key, value) => ({ ...record, [key]: value }),
+    has: (record, key) => key in record,
+    keys: (record) => Object.keys(record),
+    values: (record) => Object.values(record),
+    entries: (record) => Object.entries(record),
+    size: (record) => Object.keys(record).length,
+    delete: (record, key) => {
+        const newRecord = { ...record };
+        delete newRecord[key];
+        return newRecord;
+    }
 };
 //# sourceMappingURL=composites.js.map

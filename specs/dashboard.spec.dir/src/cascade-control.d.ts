@@ -21,13 +21,13 @@ export interface CascadeControlOptions {
  * - finalize: Complete cascade and commit changes
  */
 export declare function useCascadeControl(options?: CascadeControlOptions): {
-    state: any;
-    triggerCascade: any;
-    pauseResume: any;
-    stepMode: any;
-    abortCascade: any;
-    finalize: any;
-    setCurrentFile: any;
+    state: CascadeControlState;
+    triggerCascade: () => Promise<void>;
+    pauseResume: () => Promise<void>;
+    stepMode: () => Promise<void>;
+    abortCascade: () => Promise<void>;
+    finalize: () => Promise<void>;
+    setCurrentFile: (file: string | null) => void;
 };
 export default useCascadeControl;
 //# sourceMappingURL=cascade-control.d.ts.map

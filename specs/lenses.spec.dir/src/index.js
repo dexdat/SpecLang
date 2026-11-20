@@ -7,7 +7,7 @@
  * that convert between structured Block objects and various content formats.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.decisionLens = exports.questionLens = exports.policyLens = exports.tableLens = exports.detectDiagramType = exports.diagramLens = exports.acceptanceLens = exports.mathLens = exports.operationLens = exports.entityLens = exports.codeLens = exports.proseLens = exports.defaultConverter = exports.defaultRegistry = exports.LensConverter = exports.LensRegistry = void 0;
+exports.decisionLens = exports.questionLens = exports.policyLens = exports.tableLens = exports.classLens = exports.sequenceLens = exports.flowchartLens = exports.detectDiagramType = exports.diagramLens = exports.acceptanceLens = exports.mathLens = exports.operationLens = exports.entityLens = exports.codeLens = exports.proseLens = exports.defaultConverter = exports.defaultRegistry = exports.LensConverter = exports.LensRegistry = void 0;
 exports.initializeLenses = initializeLenses;
 const registry_1 = require("./registry");
 Object.defineProperty(exports, "LensRegistry", { enumerable: true, get: function () { return registry_1.LensRegistry; } });
@@ -20,6 +20,7 @@ const operation_lens_1 = require("./operation-lens");
 const math_lens_1 = require("./math-lens");
 const acceptance_lens_1 = require("./acceptance-lens");
 const diagram_lens_1 = require("./diagram-lens");
+const mermaid_1 = require("./mermaid");
 const table_lens_1 = require("./table-lens");
 const policy_lens_1 = require("./policy-lens");
 const question_lens_1 = require("./question-lens");
@@ -30,6 +31,9 @@ function initializeLenses() {
     registry.register(diagram_lens_1.diagramLens); // 70
     registry.register(acceptance_lens_1.acceptanceLens); // 65
     registry.register(entity_lens_1.entityLens); // 60
+    registry.register(mermaid_1.flowchartLens); // 61
+    registry.register(mermaid_1.sequenceLens); // 60
+    registry.register(mermaid_1.classLens); // 59
     registry.register(operation_lens_1.operationLens); // 55
     registry.register(code_lens_1.codeLens); // 50
     registry.register(math_lens_1.mathLens); // 45
@@ -61,6 +65,10 @@ Object.defineProperty(exports, "acceptanceLens", { enumerable: true, get: functi
 var diagram_lens_2 = require("./diagram-lens");
 Object.defineProperty(exports, "diagramLens", { enumerable: true, get: function () { return diagram_lens_2.diagramLens; } });
 Object.defineProperty(exports, "detectDiagramType", { enumerable: true, get: function () { return diagram_lens_2.detectDiagramType; } });
+var mermaid_2 = require("./mermaid");
+Object.defineProperty(exports, "flowchartLens", { enumerable: true, get: function () { return mermaid_2.flowchartLens; } });
+Object.defineProperty(exports, "sequenceLens", { enumerable: true, get: function () { return mermaid_2.sequenceLens; } });
+Object.defineProperty(exports, "classLens", { enumerable: true, get: function () { return mermaid_2.classLens; } });
 var table_lens_2 = require("./table-lens");
 Object.defineProperty(exports, "tableLens", { enumerable: true, get: function () { return table_lens_2.tableLens; } });
 var policy_lens_2 = require("./policy-lens");

@@ -1,0 +1,319 @@
+{
+  "//": [
+    "QA-SPECLANG-010 accepted relative requires in the tracked compiled spec-dir layer.",
+    "Every entry is re-verified by scripts/audit-specdir-requires.mjs: the require must",
+    "still reproduce, and the recorded proof class must still match the tree. See",
+    "docs/specdir-compiled-layer.md for the decision these exceptions belong to."
+  ],
+  "accepted": [
+    {
+      "module": "specs/cli.spec.dir/src/autonomous.js",
+      "require": "../../../autonomous.spec.dir/src/index",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../../../autonomous.spec.dir/src/index from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/cli.spec.dir/src/cascade.js",
+      "require": "../utils.js",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../utils.js from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/cli.spec.dir/src/generate.js",
+      "require": "../utils.js",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../utils.js from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/cli.spec.dir/src/get.js",
+      "require": "../utils.js",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../utils.js from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/cli.spec.dir/src/guard.js",
+      "require": "../../../guard.spec.dir/src",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../../../guard.spec.dir/src from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/cli.spec.dir/src/index.js",
+      "require": "../../../src/daemon/index.js",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source src/daemon/index.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/cli.spec.dir/src/index.js",
+      "require": "./commands/maturity.js",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source specs/cli.spec.dir/src/commands/maturity.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/cli.spec.dir/src/init.js",
+      "require": "../../../project-layout.spec.dir/src/init.ts",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../../../project-layout.spec.dir/src/init.ts from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/cli.spec.dir/src/list.js",
+      "require": "../utils.js",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../utils.js from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/cli.spec.dir/src/mcp.js",
+      "require": "../../../mcp.spec.dir/src/server.js",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../../../mcp.spec.dir/src/server.js from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/cli.spec.dir/src/mcp.js",
+      "require": "../utils.js",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../utils.js from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/cli.spec.dir/src/meta.js",
+      "require": "../../meta/index.js",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../../meta/index.js from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/cli.spec.dir/src/search.js",
+      "require": "../utils.js",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../utils.js from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/cli.spec.dir/src/server.js",
+      "require": "../../../mcp.spec.dir/src/server.js",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../../../mcp.spec.dir/src/server.js from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/cli.spec.dir/src/server.js",
+      "require": "../utils.js",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../utils.js from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/cli.spec.dir/src/validate.js",
+      "require": "../../../indexer.spec.dir/src/index.js",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../../../indexer.spec.dir/src/index.js from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/cli.spec.dir/src/validate.js",
+      "require": "../../../parser.spec.dir/src/validator.js",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../../../parser.spec.dir/src/validator.js from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/cli.spec.dir/src/validate.js",
+      "require": "../utils.js",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../utils.js from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/daemon.spec.dir/src/daemon.js",
+      "require": "./daemon-prom",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source specs/daemon.spec.dir/src/daemon-prom.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/daemon.spec.dir/src/daemon.js",
+      "require": "./outputs",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source specs/daemon.spec.dir/src/outputs.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/daemon.spec.dir/src/index.js",
+      "require": "./daemon-cli",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source specs/daemon.spec.dir/src/daemon-cli.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/daemon.spec.dir/src/index.js",
+      "require": "./dashboard",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source specs/daemon.spec.dir/src/dashboard.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/daemon.spec.dir/src/index.js",
+      "require": "./dashboard",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source specs/daemon.spec.dir/src/dashboard.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/daemon.spec.dir/src/speclangd.js",
+      "require": "./daemon/index.js",
+      "line": 25,
+      "proof": "missing",
+      "reason": "This tracked artifact is a copy of specs/daemon.spec.dir/src/speclangd.ts, which imports './daemon/index.js' although that directory does not exist in the spec-dir tree; the same source also has no src/ symlink, so nothing compiles or loads it. Recorded rather than fixed because the require is wrong in the source itself and choosing its intended target ('./daemon.js'? the daemon package entry?) is a source decision outside a layer-integrity task."
+    },
+    {
+      "module": "specs/dashboard.spec.dir/src/useCascadeControl.js",
+      "require": "../interactions/real-time-updates",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../interactions/real-time-updates from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/implementation.spec.dir/src/ralph-loop.js",
+      "require": "../../../src/db/index.js",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source src/db/index.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/implementation.spec.dir/src/ralph-loop.js",
+      "require": "../../../src/db/migrations.js",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source src/db/migrations.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/implementation.spec.dir/src/speclang-mcp.js",
+      "require": "../../../src/db/index.js",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source src/db/index.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/implementation.spec.dir/src/validation-system.js",
+      "require": "../../../src/db/index.js",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source src/db/index.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/lenses.spec.dir/src/index.js",
+      "require": "./mermaid",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source specs/lenses.spec.dir/src/mermaid.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/lenses.spec.dir/src/index.js",
+      "require": "./mermaid",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source specs/lenses.spec.dir/src/mermaid.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/mcp.spec.dir/src/server.js",
+      "require": "./metrics.js",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source specs/mcp.spec.dir/src/metrics.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/mcp.spec.dir/src/tools/specs.js",
+      "require": "../../indexer/index.js",
+      "line": 271,
+      "proof": "runtime-projection",
+      "runtimeModule": "src/indexer/index.ts",
+      "reason": "This source is projected into the compiled tree at its src/ coordinate, where the require resolves to src/indexer/index.ts (tracked symlink, compiled by `npm run build`); from the spec-dir coordinate the same specifier points at a directory that only exists in that projection. Rewriting it to a spec-dir path would make the source fail to compile where it actually lives."
+    },
+    {
+      "module": "specs/parser.spec.dir/src/block-parser.js",
+      "require": "../../src/types/poc",
+      "line": 14,
+      "proof": "runtime-projection",
+      "runtimeModule": "src/types/poc.ts",
+      "reason": "This source is projected into the compiled tree at its src/ coordinate, where the require resolves to src/types/poc.ts (tracked symlink, compiled by `npm run build`); from the spec-dir coordinate the same specifier points at a directory that only exists in that projection. Rewriting it to a spec-dir path would make the source fail to compile where it actually lives."
+    },
+    {
+      "module": "specs/pipeline.spec.dir/src/executor.js",
+      "require": "./metrics-ledger",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source specs/pipeline.spec.dir/src/metrics-ledger.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/pipeline.spec.dir/src/index.js",
+      "require": "./metrics-ledger",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source specs/pipeline.spec.dir/src/metrics-ledger.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/pipeline.spec.dir/src/recovery.js",
+      "require": "./metrics-ledger",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source specs/pipeline.spec.dir/src/metrics-ledger.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/speclangd.ts.spec.dir/src/speclangd.js",
+      "require": "./daemon/index.js",
+      "line": 18,
+      "proof": "runtime-projection",
+      "runtimeModule": "src/daemon/index.ts",
+      "reason": "This source is projected into the compiled tree at its src/ coordinate, where the require resolves to src/daemon/index.ts (tracked symlink, compiled by `npm run build`); from the spec-dir coordinate the same specifier points at a directory that only exists in that projection. Rewriting it to a spec-dir path would make the source fail to compile where it actually lives."
+    },
+    {
+      "module": "specs/stdlib.spec.dir/src/index.js",
+      "require": "./collections",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source specs/stdlib.spec.dir/src/collections.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/stdlib.spec.dir/src/index.js",
+      "require": "./compose",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source specs/stdlib.spec.dir/src/compose.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/stdlib.spec.dir/src/index.js",
+      "require": "./math",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source specs/stdlib.spec.dir/src/math.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/stdlib.spec.dir/src/index.js",
+      "require": "./objects",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source specs/stdlib.spec.dir/src/objects.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/stdlib.spec.dir/src/index.js",
+      "require": "./strings",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source specs/stdlib.spec.dir/src/strings.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/stdlib.spec.dir/src/index.js",
+      "require": "./utils",
+      "proof": "source-only",
+      "reason": "source-only projection: only the source specs/stdlib.spec.dir/src/utils.ts exists \u2014 the layer has no compiled sibling for it"
+    },
+    {
+      "module": "specs/validation.spec.dir/src/autonomous.js",
+      "require": "../types",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../types from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/validation.spec.dir/src/blocks.js",
+      "require": "../types",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../types from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/validation.spec.dir/src/cli.js",
+      "require": "../parser/header",
+      "line": 44,
+      "proof": "runtime-projection",
+      "runtimeModule": "src/parser/header.ts",
+      "reason": "This source is projected into the compiled tree at its src/ coordinate, where the require resolves to src/parser/header.ts (tracked symlink, compiled by `npm run build`); from the spec-dir coordinate the same specifier points at a directory that only exists in that projection. Rewriting it to a spec-dir path would make the source fail to compile where it actually lives."
+    },
+    {
+      "module": "specs/validation.spec.dir/src/header.js",
+      "require": "../types",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../types from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/validation.spec.dir/src/id.js",
+      "require": "../types",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../types from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    },
+    {
+      "module": "specs/validation.spec.dir/src/refs.js",
+      "require": "../types",
+      "proof": "missing",
+      "reason": "dead require inside an unimported artifact: the spec-dir source imports ../types from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
+    }
+  ]
+}

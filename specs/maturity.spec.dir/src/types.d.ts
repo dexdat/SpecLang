@@ -23,6 +23,8 @@ export interface AgentBehavior {
     humanOversight: HumanOversight;
     cascadeDepth: number;
     autoDeploy: boolean;
+    generationEnabled?: boolean;
+    reviewRequired?: boolean;
 }
 export interface LevelDefinition {
     name: MaturityLevel;
@@ -32,6 +34,11 @@ export interface LevelDefinition {
     agentBehavior: AgentBehavior;
     requiredFields: string[];
     recommendedTests: string[];
+    displayName?: string;
+    recommendedFields?: string[];
+    optionalFields?: string[];
+    allowedTargets?: string[];
+    constraints?: Record<string, any>;
 }
 export interface CriteriaResult {
     meetsCriteria: boolean;
@@ -87,6 +94,7 @@ export interface ParsedSpec {
         depends_on?: string[];
         [key: string]: unknown;
     };
+    content?: string;
     blocks?: Array<{
         id?: string;
         content?: string;
@@ -94,4 +102,12 @@ export interface ParsedSpec {
     }>;
     testCoverage?: Record<string, boolean>;
 }
+export interface MaturityResult {
+    valid: boolean;
+    level: MaturityLevel;
+    criteriaResults: CriteriaResult[];
+    violations: string[];
+    suggestions: string[];
+}
+export type ParsedSpecMetadata = ParsedSpec['metadata'];
 //# sourceMappingURL=types.d.ts.map

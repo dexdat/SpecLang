@@ -1,26 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Sidebar = void 0;
 const jsx_runtime_1 = require("react/jsx-runtime");
-#;
-speclang - header;
-lines: 5;
-#;
-id: 
-/ui-dashboard;
-#;
-version: 1.0;
-.0;
-#;
-layer: 5;
-/**
- * Sidebar component for navigation
- * Generated from: @implementation/ui-dashboard
- */
-const react_1 = __importDefault(require("react"));
 const defaultNavItems = [
     { id: 'overview', label: 'Overview', icon: '◉' },
     { id: 'cascade', label: 'Cascade', icon: '⟳', badge: 0 },

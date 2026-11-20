@@ -58,6 +58,75 @@ class ValidationReporter {
         return lines.join('\n');
     }
     /**
+     * Format a compact, grouped breakdown of the warnings across many reports.
+     *
+     * DF-SPECLANG-5-R4: `speclang validate` on a real spec tree produced 535
+     * warnings over 452 files. Printing a block per file (and every warning)
+     * buries the actionable signal — a warning says nothing about whether the
+     * project is valid, and no new user reads 535 lines. The default text
+     * output therefore shows the COUNT plus a compact breakdown (by rule, then
+     * by the most frequent messages) and leaves the per-warning detail to
+     * `--verbose` (or `--format json`).
+     *
+     * Returns an empty string when there is nothing to summarize, so callers can
+     * append it unconditionally.
+     */
+    formatWarningSummary(reports, options = {}) {
+        const { topMessages = 5, maxMessageWidth = 80, indent = '  ' } = options;
+        const warnings = reports.flatMap(r => r.warnings);
+        if (warnings.length === 0) {
+            return '';
+        }
+        const filesWithWarnings = reports.filter(r => r.warnings.length > 0).length;
+        const byRule = new Map();
+        const byMessage = new Map();
+        for (const warning of warnings) {
+            byRule.set(warning.rule, (byRule.get(warning.rule) ?? 0) + 1);
+            const key = `${warning.rule}\u0000${warning.message}`;
+            const entry = byMessage.get(key);
+            if (entry) {
+                entry.count++;
+            }
+            else {
+                byMessage.set(key, { rule: warning.rule, message: warning.message, count: 1 });
+            }
+        }
+        const ruleRows = [...byRule.entries()].sort((a, b) => b[1] - a[1]);
+        const ruleWidth = Math.max(...ruleRows.map(([rule]) => rule.length));
+        const countWidth = String(warnings.length).length;
+        const lines = [];
+        lines.push(`${indent}Warnings by rule (${filesWithWarnings} of ${reports.length} files):`);
+        for (const [rule, count] of ruleRows) {
+            lines.push(`${indent}  ${rule.padEnd(ruleWidth)}  ${String(count).padStart(countWidth)}`);
+        }
+        const messageRows = [...byMessage.values()].sort((a, b) => b.count - a.count || a.message.localeCompare(b.message));
+        if (topMessages > 0 && messageRows.length > 0) {
+            lines.push(`${indent}Most frequent warnings:`);
+            for (const row of messageRows.slice(0, topMessages)) {
+                const message = this.truncate(row.message, maxMessageWidth);
+                lines.push(`${indent}  ${String(row.count).padStart(countWidth)}  ${row.rule.padEnd(ruleWidth)}  ${message}`);
+            }
+            const hidden = messageRows.length - topMessages;
+            if (hidden > 0) {
+                lines.push(`${indent}  … ${hidden} more distinct warning(s)`);
+            }
+        }
+        if (!this.verbose) {
+            lines.push(`${indent}Run the same command with --verbose to list every warning, ` +
+                `or --format json for machine-readable output.`);
+        }
+        return lines.join('\n');
+    }
+    /**
+     * Truncate a message to `max` characters with an ellipsis.
+     */
+    truncate(message, max) {
+        if (message.length <= max) {
+            return message;
+        }
+        return `${message.slice(0, Math.max(0, max - 1))}…`;
+    }
+    /**
      * Format a single validation result
      */
     formatResult(result) {

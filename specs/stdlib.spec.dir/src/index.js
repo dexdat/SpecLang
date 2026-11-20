@@ -31,8 +31,14 @@ __exportStar(require("./primitives"), exports);
 __exportStar(require("./composites"), exports);
 __exportStar(require("./results"), exports);
 __exportStar(require("./functions"), exports);
+__exportStar(require("./strings"), exports);
+__exportStar(require("./collections"), exports);
+__exportStar(require("./math"), exports);
+__exportStar(require("./objects"), exports);
+__exportStar(require("./compose"), exports);
 __exportStar(require("./assertions"), exports);
 __exportStar(require("./validators"), exports);
+__exportStar(require("./utils"), exports);
 __exportStar(require("./mapping"), exports);
 __exportStar(require("./types"), exports);
 // Version info

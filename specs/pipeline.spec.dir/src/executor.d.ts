@@ -6,7 +6,7 @@
  */
 import { EventEmitter } from 'events';
 import { PipelineConfig, PipelineResult, StageResult, ExecutorOptions } from './types';
-import { ConvergenceResult } from '../daemon/types';
+import { ConvergenceResult } from 'daemon.spec.dir/src/types.js';
 export declare class PipelineExecutor extends EventEmitter {
     private configManager;
     private stageExecutor;
