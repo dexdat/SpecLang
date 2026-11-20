@@ -33,6 +33,10 @@ Steps:
   - create directory structure
   - write .speclangrc
   - write initial spec
+  - write package.json
+  - write build.yaml (pipeline stages the daemon runs on convergence)
+  - write scripts/speclang.cjs (local CLI shim)
+  - write README.md
   - init git if not in repo
 
 Example:
