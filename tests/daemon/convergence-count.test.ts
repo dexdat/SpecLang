@@ -386,7 +386,7 @@ describe("DF-SPECLANG-024: daemon wiring", () => {
       path.join(REPO_ROOT, "specs", "daemon.spec.dir", "src", "daemon.ts"),
       "utf-8",
     );
-    const snapshotIndex = source.indexOf("snapshotProjectFiles(process.cwd())");
+    const snapshotIndex = source.indexOf("snapshotProjectFiles(process.cwd(),");
     const executeIndex = source.indexOf("await executor.execute(convergenceResult)");
     const reportIndex = source.indexOf("this.reportPipelineOutputs(");
 
