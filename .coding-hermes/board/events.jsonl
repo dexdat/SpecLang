@@ -528,3 +528,7 @@
 {"id":527,"timestamp":"2026-11-20 15:11:46.413898","event_type":"task_completed","task_id":"DF-SPECLANG-024","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":528,"timestamp":"2026-11-20 16:04:27.853707","event_type":"task_completed","task_id":"DF-SPECLANG-026","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":529,"timestamp":"2026-11-20 20:41:14.343653","event_type":"task_created","task_id":"INT-CI-3","actor":"foreman","detail":"{\"id\":\"INT-CI-3\",\"status\":\"pending\"}","tick_number":null}
+{"id":530,"timestamp":"2026-11-20 20:49:34.457786","event_type":"task_created","task_id":"DOC-11","actor":"foreman","detail":"{\"id\":\"DOC-11\",\"status\":\"pending\"}","tick_number":null}
+{"id":531,"timestamp":"2026-11-20 20:49:34.516651","event_type":"task_created","task_id":"DOC-12","actor":"foreman","detail":"{\"id\":\"DOC-12\",\"status\":\"pending\"}","tick_number":null}
+{"id":532,"timestamp":"2026-11-20 20:49:34.663118","event_type":"task_updated","task_id":"INT-CI-3","actor":"foreman","detail":"{\"status\":\"pending\"}","tick_number":null}
+{"id":533,"timestamp":"2026-11-20 20:50:16.908634","event_type":"task_updated","task_id":"QA-SPECLANG-010","actor":"foreman","detail":"{\"status\":\"pending\"}","tick_number":null}
