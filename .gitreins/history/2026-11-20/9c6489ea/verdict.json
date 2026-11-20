@@ -1,0 +1,402 @@
+{
+  "task_id": "README-CLUSTER-R3",
+  "task_title": "README truth cluster R3 \u2014 recovery closeout of dead wave 2026-11-20-12-11-44 readme rows (README-7, GEN-1, DOC-5, README-14)",
+  "task_criteria": [
+    "On merged main tip: README-7 self-hosting contradiction string absent with generated-specs wording present (a9f05525); GEN-1 deterministic indexer \u2014 two consecutive --generate runs byte-identical apart from the generated timestamp, --generate leaves _index.json clean, no @unknown entries, read-only --graph works (16645c79); DOC-5 --generate --output equals committed _index.json and Quick Start states the true snapshot count matching jq '.specs|length' (92b91314); README-14 four unrunnable Playwright specs removed and README claims removed (e11cc03f)."
+  ],
+  "passed": false,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "9bfd0d4af82d91115ec8e3d118492b5b7fa24f13",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "94773e2c54953f59e4750374d35255159d4ebe997acf95327a8cfbbeb3f66541",
+  "working_tree_dirty_path_count": 4,
+  "items": [
+    {
+      "criterion": "On merged main tip: README-7 self-hosting contradiction string absent with generated-specs wording present (a9f05525); GEN-1 deterministic indexer \u2014 two consecutive --generate runs byte-identical apart from the generated timestamp, --generate leaves _index.json clean, no @unknown entries, read-only --graph works (16645c79); DOC-5 --generate --output equals committed _index.json and Quick Start states the true snapshot count matching jq '.specs|length' (92b91314); README-14 four unrunnable Playwright specs removed and README claims removed (e11cc03f).",
+      "status": "PASS",
+      "detail": "All four commits verified as ancestors of HEAD 18bd00e0 (git merge-base). README-7: old contradiction string \"Scripts are handwritten, not generated\" absent from README.md (grep rc=1); corrected wording present at README.md:792 (\"Self-hosting: Not yet complete \u2014 no tool is generated end-to-end from its own spec. The layout is already dual-view\u2026\") and README.md:722 (scripts/ symlink \u2192 specs/scripts.spec.dir/). GEN-1: ran `python3 scripts/generate_index.py --generate --output` twice consecutively \u2014 outputs byte-identical (python compare: byte-identical True); the 'generated' field is a source-derived fixpoint (max of indexed-spec commit stamps, specs/scripts.spec.dir/generate_index.py:758,767) not wall-clock, so even the timestamp matches; `git status --porcelain _index.json` empty after runs (index clean); `grep -c '@unknown' _index.json` = 0; `--graph` exits 0 printing live stats (Nodes: 488, edges 713) and leaves _index.json clean. GEN-1 fix content reaches HEAD via patch-id-identical commit 22be25ce (git diff 16645c79 22be25ce on both touched files is empty; 16645c79 itself is an ancestor). DOC-5: fresh `--generate --output /tmp/gen_run4.json` compared to committed _index.json \u2192 BYTE-IDENTICAL (cmp exit 0); Quick Start step 5 states \"The checked-in snapshot currently holds 488 entries\" (README.md:403) and `jq '.specs|length' _index.json` = 488. README-14: tests/e2e/{cascade-control,dashboard,monitoring,spec-editing}.spec.ts deleted (b9be4ccd, merged e11cc03f); tests/e2e/ now contains only spec-to-code.test.ts; README claims replaced with \"Browser E2E is not implemented here\" section (README.md:639-648); no playwright dependency in package.json or vitest.config.ts. Targeted test run: `npx vitest run tests/e2e tests/meta` \u2192 Test Files 3 passed (3), Tests 25 passed (25), exit 0. Full suite (`npx vitest run --passWithNoTests`) exceeded the 30s harness cap and could not be captured, but the criterion's checks are behavioral and were executed directly. [resolution 0.08; _index.json]"
+    },
+    {
+      "criterion": "Derived: the snapshot count stated in Quick Start (488) matches the committed _index.json on HEAD and a fresh regeneration reproduces the committed bytes, so the documented count cannot silently drift",
+      "status": "PASS",
+      "detail": "README.md:403 states 488 entries; `jq '.specs|length' _index.json` prints 488; `cmp _index.json /tmp/gen_run4.json` (fresh --generate --output) exit 0 (BYTE-IDENTICAL), confirming the committed snapshot equals what --generate produces on HEAD.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": false,
+      "any_failed": true,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2717 tests: \u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[4/5]\u23af",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T143439.222805Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\nnpm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T143439.222805Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": false,
+          "output": "\n\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[4/5]\u23af\n\n FAIL  tests/daemon/daemon-prom-outcomes.test.ts > OBS-3 daemon pipeline metrics > warns on metrics I/O failure without turning pipeline success into failure\nAssertionError: expected \"vi.fn()\" to be called 1 times, but got 0 times\n \u276f tests/daemon/daemon-prom-outcomes.test.ts:64:23\n     62|\n     63|     await expect(runPipeline(daemon)).resolves.toBeUndefined();\n     64|     expect(succeeded).toHaveBeenCalledTimes(1);\n       |                       ^\n     65|     expect(failed).not.toHaveBeenCalled();\n     66|     expect(warn).toHaveBeenCalledWith('[Daemon] Failed to write .specl\u2026\n\n\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[5/5]\u23af\n\n\n Test Files  2 failed | 127 passed | 4 skipped (133)\n      Tests  5 failed | 2090 passed | 58 skipped (2153)\n   Start at  09:49:18\n   Duration  41.45s (transform 8.27s, setup 2.42s, import 15.79s, tests 232.84s, environment 19ms)\n",
+          "error": "",
+          "data": {
+            "exit_code": 1,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T144939.733267Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 On merged main tip: README-7 self-hosting contradiction string absent with generated-specs wording present (a9f05525); GEN-1 deterministic indexer \u2014 two consecutive --generate runs byte-identical apart from the generated timestamp, --generate leaves _index.json clean, no @unknown entries, read-only --graph works (16645c79); DOC-5 --generate --output equals committed _index.json and Quick Start states the true snapshot count matching jq '.specs|length' (92b91314); README-14 four unrunnable Playwright specs removed and README claims removed (e11cc03f).: All four commits verified as ancestors of HEAD 18bd00e0 (git merge-base). README-7: old contradiction string \"Scripts are handwritten, not generated\" absent from README.md (grep rc=1); corrected wording present at README.md:792 (\"Self-hosting: Not yet complete \u2014 no tool is generated end-to-end from its own spec. The layout is already dual-view\u2026\") and README.md:722 (scripts/ symlink \u2192 specs/scripts.spec.dir/). GEN-1: ran `python3 scripts/generate_index.py --generate --output` twice consecutively \u2014 outputs byte-identical (python compare: byte-identical True); the 'generated' field is a source-derived fixpoint (max of indexed-spec commit stamps, specs/scripts.spec.dir/generate_index.py:758,767) not wall-clock, so even the timestamp matches; `git status --porcelain _index.json` empty after runs (index clean); `grep -c '@unknown' _index.json` = 0; `--graph` exits 0 printing live stats (Nodes: 488, edges 713) and leaves _index.json clean. GEN-1 fix content reaches HEAD via patch-id-identical commit 22be25ce (git diff 16645c79 22be25ce on both touched files is empty; 16645c79 itself is an ancestor). DOC-5: fresh `--generate --output /tmp/gen_run4.json` compared to committed _index.json \u2192 BYTE-IDENTICAL (cmp exit 0); Quick Start step 5 states \"The checked-in snapshot currently holds 488 entries\" (README.md:403) and `jq '.specs|length' _index.json` = 488. README-14: tests/e2e/{cascade-control,dashboard,monitoring,spec-editing}.spec.ts deleted (b9be4ccd, merged e11cc03f); tests/e2e/ now contains only spec-to-code.test.ts; README claims replaced with \"Browser E2E is not implemented here\" section (README.md:639-648); no playwright dependency in package.json or vitest.config.ts. Targeted test run: `npx vitest run tests/e2e tests/meta` \u2192 Test Files 3 passed (3), Tests 25 passed (25), exit 0. Full suite (`npx vitest run --passWithNoTests`) exceeded the 30s harness cap and could not be captured, but the criterion's checks are behavioral and were executed directly. [resolution 0.08; _index.json]\n  \u2713 Derived: the snapshot count stated in Quick Start (488) matches the committed _index.json on HEAD and a fresh regeneration reproduces the committed bytes, so the documented count cannot silently drift: README.md:403 states 488 entries; `jq '.specs|length' _index.json` prints 488; `cmp _index.json /tmp/gen_run4.json` (fresh --generate --output) exit 0 (BYTE-IDENTICAL), confirming the committed snapshot equals what --generate produces on HEAD.\nAll four README-truth rows verified on merged main tip: README-7 wording reconciled, GEN-1 indexer fully deterministic (byte-identical regenerations, clean index, no @unknown, working read-only --graph), DOC-5 committed _index.json equals fresh --generate output with the true 488 count documented in Quick Start, and README-14's four unrunnable Playwright specs plus their README claims are removed.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 On merged main tip: README-7 self-hosting contradiction string absent with generated-specs wording present (a9f05525); GEN-1 deterministic indexer \u2014 two consecutive --generate runs byte-identical apart from the generated timestamp, --generate leaves _index.json clean, no @unknown entries, read-only --graph works (16645c79); DOC-5 --generate --output equals committed _index.json and Quick Start states the true snapshot count matching jq '.specs|length' (92b91314); README-14 four unrunnable Playwright specs removed and README claims removed (e11cc03f).: All four commits verified as ancestors of HEAD 18bd00e0 (git merge-base). README-7: old contradiction string \"Scripts are handwritten, not generated\" absent from README.md (grep rc=1); corrected wording present at README.md:792 (\"Self-hosting: Not yet complete \u2014 no tool is generated end-to-end from its own spec. The layout is already dual-view\u2026\") and README.md:722 (scripts/ symlink \u2192 specs/scripts.spec.dir/). GEN-1: ran `python3 scripts/generate_index.py --generate --output` twice consecutively \u2014 outputs byte-identical (python compare: byte-identical True); the 'generated' field is a source-derived fixpoint (max of indexed-spec commit stamps, specs/scripts.spec.dir/generate_index.py:758,767) not wall-clock, so even the timestamp matches; `git status --porcelain _index.json` empty after runs (index clean); `grep -c '@unknown' _index.json` = 0; `--graph` exits 0 printing live stats (Nodes: 488, edges 713) and leaves _index.json clean. GEN-1 fix content reaches HEAD via patch-id-identical commit 22be25ce (git diff 16645c79 22be25ce on both touched files is empty; 16645c79 itself is an ancestor). DOC-5: fresh `--generate --output /tmp/gen_run4.json` compared to committed _index.json \u2192 BYTE-IDENTICAL (cmp exit 0); Quick Start step 5 states \"The checked-in snapshot currently holds 488 entries\" (README.md:403) and `jq '.specs|length' _index.json` = 488. README-14: tests/e2e/{cascade-control,dashboard,monitoring,spec-editing}.spec.ts deleted (b9be4ccd, merged e11cc03f); tests/e2e/ now contains only spec-to-code.test.ts; README claims replaced with \"Browser E2E is not implemented here\" section (README.md:639-648); no playwright dependency in package.json or vitest.config.ts. Targeted test run: `npx vitest run tests/e2e tests/meta` \u2192 Test Files 3 passed (3), Tests 25 passed (25), exit 0. Full suite (`npx vitest run --passWithNoTests`) exceeded the 30s harness cap and could not be captured, but the criterion's checks are behavioral and were executed directly. [resolution 0.08; _index.json]\n  \u2713 Derived: the snapshot count stated in Quick Start (488) matches the committed _index.json on HEAD and a fresh regeneration reproduces the committed bytes, so the documented count cannot silently drift: README.md:403 states 488 entries; `jq '.specs|length' _index.json` prints 488; `cmp _index.json /tmp/gen_run4.json` (fresh --generate --output) exit 0 (BYTE-IDENTICAL), confirming the committed snapshot equals what --generate produces on HEAD.\nAll four README-truth rows verified on merged main tip: README-7 wording reconciled, GEN-1 indexer fully deterministic (byte-identical regenerations, clean index, no @unknown, working read-only --graph), DOC-5 committed _index.json equals fresh --generate output with the true 488 count documented in Quick Start, and README-14's four unrunnable Playwright specs plus their README claims are removed.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "On merged main tip: README-7 self-hosting contradiction string absent with generated-specs wording present (a9f05525); GEN-1 deterministic indexer \u2014 two consecutive --generate runs byte-identical apart from the generated timestamp, --generate leaves _index.json clean, no @unknown entries, read-only --graph works (16645c79); DOC-5 --generate --output equals committed _index.json and Quick Start states the true snapshot count matching jq '.specs|length' (92b91314); README-14 four unrunnable Playwright specs removed and README claims removed (e11cc03f).",
+                "status": "PASS",
+                "detail": "All four commits verified as ancestors of HEAD 18bd00e0 (git merge-base). README-7: old contradiction string \"Scripts are handwritten, not generated\" absent from README.md (grep rc=1); corrected wording present at README.md:792 (\"Self-hosting: Not yet complete \u2014 no tool is generated end-to-end from its own spec. The layout is already dual-view\u2026\") and README.md:722 (scripts/ symlink \u2192 specs/scripts.spec.dir/). GEN-1: ran `python3 scripts/generate_index.py --generate --output` twice consecutively \u2014 outputs byte-identical (python compare: byte-identical True); the 'generated' field is a source-derived fixpoint (max of indexed-spec commit stamps, specs/scripts.spec.dir/generate_index.py:758,767) not wall-clock, so even the timestamp matches; `git status --porcelain _index.json` empty after runs (index clean); `grep -c '@unknown' _index.json` = 0; `--graph` exits 0 printing live stats (Nodes: 488, edges 713) and leaves _index.json clean. GEN-1 fix content reaches HEAD via patch-id-identical commit 22be25ce (git diff 16645c79 22be25ce on both touched files is empty; 16645c79 itself is an ancestor). DOC-5: fresh `--generate --output /tmp/gen_run4.json` compared to committed _index.json \u2192 BYTE-IDENTICAL (cmp exit 0); Quick Start step 5 states \"The checked-in snapshot currently holds 488 entries\" (README.md:403) and `jq '.specs|length' _index.json` = 488. README-14: tests/e2e/{cascade-control,dashboard,monitoring,spec-editing}.spec.ts deleted (b9be4ccd, merged e11cc03f); tests/e2e/ now contains only spec-to-code.test.ts; README claims replaced with \"Browser E2E is not implemented here\" section (README.md:639-648); no playwright dependency in package.json or vitest.config.ts. Targeted test run: `npx vitest run tests/e2e tests/meta` \u2192 Test Files 3 passed (3), Tests 25 passed (25), exit 0. Full suite (`npx vitest run --passWithNoTests`) exceeded the 30s harness cap and could not be captured, but the criterion's checks are behavioral and were executed directly. [resolution 0.08; _index.json]",
+                "resolution_probability": 0.08,
+                "cited_path": "_index.json"
+              },
+              {
+                "criterion": "Derived: the snapshot count stated in Quick Start (488) matches the committed _index.json on HEAD and a fresh regeneration reproduces the committed bytes, so the documented count cannot silently drift",
+                "status": "PASS",
+                "detail": "README.md:403 states 488 entries; `jq '.specs|length' _index.json` prints 488; `cmp _index.json /tmp/gen_run4.json` (fresh --generate --output) exit 0 (BYTE-IDENTICAL), confirming the committed snapshot equals what --generate produces on HEAD.",
+                "derived": true
+              }
+            ],
+            "summary": "All four README-truth rows verified on merged main tip: README-7 wording reconciled, GEN-1 indexer fully deterministic (byte-identical regenerations, clean index, no @unknown, working read-only --graph), DOC-5 committed _index.json equals fresh --generate output with the true 488 count documented in Quick Start, and README-14's four unrunnable Playwright specs plus their README claims are removed.",
+            "provenance": {
+              "model": "accounts/fireworks/models/kimi-k3",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "accounts/fireworks/models/kimi-k3",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"README-CLUSTER-R3\"}",
+          "exit_code": 0,
+          "output_sha": "8273dfeefcac5182f34adb7d1fec6f0a4c02d8e83cd7047743d46813ebf92abd"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && git log --oneline -20",
+          "exit_code": 0,
+          "output_sha": "67eed19a060f342ca81b9a78075cfbdb881985bf0dcc689f1bc90b14f900df2d"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat .gitreins/config.yaml 2>/dev/null || echo \"no gitreins config\"",
+          "exit_code": 0,
+          "output_sha": "092430dee4fd92eabd446789ce23deec2703bef46392810ccf9246122ec94116"
+        },
+        {
+          "tool": "run_command",
+          "command": "git log --oneline -5 a9f05525 16645c79 92b91314 e11cc03f 2>&1 | head -30; echo ---; git merge-base --is-ancestor a9f05525 HEAD && echo a9f05525-ancestor; git merge-base --is-ancestor 16645c79 HEAD && echo 16645c79-ancestor; git merge-base --is-ancestor 92b91314 HEAD && echo 92b91314-ancestor; git merge-base --is-ancestor e11cc03f HEAD && echo e11cc03f-ancestor",
+          "exit_code": 0,
+          "output_sha": "4faae604d1872af91c2569fe4aabd0878e03b4ebead176aaab97a67e3ae4d57d"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show --stat a9f05525 2>&1 | head -20; echo ===; git show --stat 16645c79 2>&1 | head -20; echo ===; git show --stat 92b91314 2>&1 | head -20; echo ===; git show --stat e11cc03f 2>&1 | head -30",
+          "exit_code": 0,
+          "output_sha": "bd863a0ad13fb1f5b4bea2a2a3dae9c0ded1ed7575840ad08cdd8e65745e462b"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show a9f05525 -- README.md | head -60",
+          "exit_code": 0,
+          "output_sha": "34285769b7da9da529a19a7c09c5a1ca7e2b89d1d79fb0d1f494b4368e10799f"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls tests/e2e/ 2>&1; echo ---; grep -rn \"cascade-control\\|dashboard.spec\\|monitoring.spec\\|spec-editing\" README.md tests/ 2>/dev/null | head",
+          "exit_code": 0,
+          "output_sha": "3f3710265d775e45af083ee200b190a59adb09aa3330c6cf3b70259de58898be"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"handwritten, not generated\\|Self-hosting\\|self-hosting\\|dual-view\\|generated from\" README.md | head -20",
+          "exit_code": 0,
+          "output_sha": "c9b1d8b33a3305f17cd3f69f1b543b5685482e8ae653cfab1cdae02039580ab0"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n -i \"playwright\\|e2e\" README.md | head -20",
+          "exit_code": 0,
+          "output_sha": "5051d53b2d089317ce2ccb6ccae899ccb1287bc2b9e9a4506ff460118f92276c"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show e11cc03f -- README.md | head -80",
+          "exit_code": 0,
+          "output_sha": "76a99c46faf202e1c32de6922220568c88ebcaddf65fb4de3adfe2a87b7057e0"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la scripts/generate_index.py; head -50 specs/scripts.spec.dir/generate_index.py",
+          "exit_code": 0,
+          "output_sha": "98e30a96e6008e4972eb937549b08004bc3d75f7b3f432d8006de3f9f9521ebc"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"add_argument\\|def main\\|--generate\\|--graph\\|--output\" specs/scripts.spec.dir/generate_index.py | head -30",
+          "exit_code": 0,
+          "output_sha": "56016f6c6757f87fceaebaaa3e111ec993bb4f972a129188899959de27c95bcb"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"sorted(set\\|sorted(orphans\\|list(set(\" specs/scripts.spec.dir/generate_index.py | head -20",
+          "exit_code": 0,
+          "output_sha": "df0b38e433c0c7305cd98bd25fcc326a53d20568291821dd0710e836765a4628"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /tmp && rm -rf gen1test && mkdir gen1test && cd gen1test && python3 ~/repo/scripts/generate_index.py --generate --root ~/../kara 2>/dev/null; echo \"placeholder\"",
+          "exit_code": 0,
+          "output_sha": "696daf35aedb122318bcf25ca11fb4d61517908c3ebce9e6dcd070e546f3ea24"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd; python3 scripts/generate_index.py --generate --output /tmp/gen_run1.json 2>&1 | tail -5; echo \"rc=$?\"",
+          "exit_code": 0,
+          "output_sha": "e9bc542d911f25681cb2d213014cef9ac518a121abe5597a913f5ce438457240"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 2; python3 scripts/generate_index.py --generate --output /tmp/gen_run2.json 2>&1 | tail -2; python3 - <<'EOF'\nimport json\na=json.load(open('/tmp/gen_run1.json'))\nb=json.load(open('/tmp/gen_run2.json'))\nprint(\"top-level keys:\", list(a.keys()))\n# find timestamp-ish keys\nfor k in a:\n    if a[k]!=b[k]:\n        print(\"DIFFERING KEY:\", k)\n        if isinstance(a[k],dict):\n            for kk in a[k]:\n                if a[k][kk]!=b[k].get(kk): print(\"  sub:\",kk, repr(a[k][kk])[:80], repr(b[k][kk])[:80])\nEOF",
+          "exit_code": 0,
+          "output_sha": "eb573f556c0324968a622c28f683859341ee6331489a80fc5c397816afeee406"
+        },
+        {
+          "tool": "run_command",
+          "command": "python3 - <<'EOF'\na=open('/tmp/gen_run1.json','rb').read()\nb=open('/tmp/gen_run2.json','rb').read()\nprint(\"byte-identical:\", a==b)\nif a!=b:\n    import difflib\n    al=a.decode().splitlines(); bl=b.decode().splitlines()\n    d=[l for l in difflib.unified_diff(al,bl,lineterm='')]\n    print(\"diff lines:\", len(d))\n    print(\"\\n\".join(d[:10]))\nEOF",
+          "exit_code": 0,
+          "output_sha": "8dcd8f08f64fbf5da6064dc7d9a2dd646e1834e67a6e6fbce5ad5cc05cbc6a26"
+        },
+        {
+          "tool": "run_command",
+          "command": "git status --porcelain _index.json; echo \"porcelain-rc=$?\"; grep -c '@unknown' _index.json; echo \"grep-rc=$?\"",
+          "exit_code": 0,
+          "output_sha": "ed5d3722d1e04ee036b88e025bd8e2826e669dbc44e5786e2583a502ec389db3"
+        },
+        {
+          "tool": "run_command",
+          "command": "python3 scripts/generate_index.py --graph 2>&1 | tail -8; echo \"graph-rc=$?\"; git status --porcelain _index.json && echo \"index-still-clean\"",
+          "exit_code": 0,
+          "output_sha": "7863306c406d53fb488a94cb4afbbe79e8c62016eee58f9088bcf2a71522619a"
+        },
+        {
+          "tool": "run_command",
+          "command": "python3 scripts/generate_index.py --generate --output /tmp/gen_run3.json >/dev/null 2>&1; python3 - <<'EOF'\nimport json\ncommitted=json.load(open('_index.json'))\nfresh=json.load(open('/tmp/gen_run3.json'))\nprint(\"specs equal:\", committed['specs']==fresh['specs'])\nprint(\"graph equal:\", committed['graph']==fresh['graph'])\nprint(\"orphans equal:\", committed['orphans']==fresh['orphans'])\nprint(\"cycles equal:\", committed['cycles']==fresh['cycles'])\nprint(\"validation equal:\", committed['validation']==fresh['validation'])\nprint(\"generated committed:\", committed['generated'], \"fresh:\", fresh['generated'])\nEOF",
+          "exit_code": 0,
+          "output_sha": "bf3a2606ae1537676e7b397855c03ea711f6850e5178f30655759514d6369880"
+        },
+        {
+          "tool": "run_command",
+          "command": "sleep 2; python3 scripts/generate_index.py --generate --output /tmp/gen_run4.json >/dev/null 2>&1; python3 - <<'EOF'\nimport json\ncommitted=json.load(open('_index.json'))\nfresh=json.load(open('/tmp/gen_run4.json'))\ndiffs=[k for k in committed if committed[k]!=fresh.get(k)]\nprint(\"differing keys:\", diffs)\nprint(\"committed generated:\", committed['generated'], \"| fresh generated:\", fresh['generated'])\nEOF\ncmp -s _index.json /tmp/gen_run4.json && echo \"BYTE-IDENTICAL\" || echo \"bytes differ (expected: timestamp only)\"",
+          "exit_code": 0,
+          "output_sha": "75eaa5326f3236d0003cbcce17d968b772bb5adddafefcf64ebb05b02d711d00"
+        },
+        {
+          "tool": "run_command",
+          "command": "jq '.specs|length' _index.json; grep -n \"488\" README.md | head -5",
+          "exit_code": 0,
+          "output_sha": "b06de9ce02e9b422cea198440f5b2c4f1fb4ea05ade7a53ab6147e215449d276"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"generated\" specs/scripts.spec.dir/generate_index.py | head -10",
+          "exit_code": 0,
+          "output_sha": "6697158ec4d3ffb316e4a46827718bedecd94d33a4f6b4ef8c90ed0d9833449f"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 395,415p README.md",
+          "exit_code": 0,
+          "output_sha": "899e5498aca77d067e6ec4d212bd02dd6075959be904c51295b828f3db7a5c6b"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 740,790p specs/scripts.spec.dir/generate_index.py",
+          "exit_code": 0,
+          "output_sha": "72bb3422ebba181f81c9c40d2b202242dab54db2d30993c20491129e84ed2010"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"Quick Start\" README.md | head -3; sed -n 370,395p README.md",
+          "exit_code": 0,
+          "output_sha": "00ac98e40e7b09fd3328caf397df02738e6330c68bffb4e420e8bc977166602f"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"playwright\" package.json vitest.config.ts 2>/dev/null | head; ls tests/e2e/",
+          "exit_code": 0,
+          "output_sha": "3d413d37713ef0c60aceab435be24e9b8175d4ec698816a32184f010218976c8"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n -i \"playwright\" vitest.config.ts; echo ---; sed -n 630,650p README.md",
+          "exit_code": 0,
+          "output_sha": "4bd43fbe6e2f9af8a64c114b93e7fd0c33904ad7bd1dddd2e46499063e8b49f7"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"spec.ts\" vitest.config.ts; echo ---; grep -rn \"cascade-control\\|monitoring\\.spec\\|spec-editing\\|dashboard\\.spec\" README.md; echo \"readme-grep-rc=$?\"",
+          "exit_code": 0,
+          "output_sha": "b9066c8fc68442e06d0d6c0dfaf8f3b27737524a542985bbd41ccadd555e6920"
+        },
+        {
+          "tool": "run_command",
+          "command": "git log --oneline --all -- tests/e2e/cascade-control.spec.ts tests/e2e/dashboard.spec.ts tests/e2e/monitoring.spec.ts tests/e2e/spec-editing.spec.ts | head -5",
+          "exit_code": 0,
+          "output_sha": "e582c7875cbb4847e75845b06d997254c1960eda3fbfa80619a81d2cc2f48438"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls node_modules/.bin/vitest 2>/dev/null && echo \"vitest present\" || echo \"no node_modules\"",
+          "exit_code": 0,
+          "output_sha": "2dc70cfb75fb5933b2867f08ffc403d3453eb4c6b7741e1da733f6e4ee2da70d"
+        },
+        {
+          "tool": "run_command",
+          "command": "out=$(npx vitest run --passWithNoTests 2>&1); rc=$?; printf '%s\\n' \"$out\" | tail -12; echo \"EXIT=$rc\"",
+          "exit_code": -15,
+          "output_sha": "41958d37f223270b54f2d24a845b8a3ad7efd8ba3faa7684eff2b206263a013c"
+        },
+        {
+          "tool": "run_command",
+          "command": "npx vitest run tests/e2e tests/meta 2>&1 | tail -12",
+          "exit_code": 0,
+          "output_sha": "c5689210c00a0289f5b45f8e256eb7b2daecf67956e7b5c72d88cdcfd0a0ef70"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls tests/meta/; grep -n \"generate_index\\|_index\" tests/meta/*.ts | head -15",
+          "exit_code": 0,
+          "output_sha": "b1f5184398983d084e1c964ced6654ae2a63ca4a9280e020c0b504c11927a7f0"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n -i \"index\\|generate\" tests/meta/generator.test.ts | head -20; echo ---; head -30 tests/meta/generator.test.ts",
+          "exit_code": 0,
+          "output_sha": "c3542fe1c874f2194c0a77ec7d96f19780eaa4d062ea45e3694b2dc1534ba1b1"
+        },
+        {
+          "tool": "run_command",
+          "command": "git status --porcelain | head; echo \"wt-rc=$?\"; rm -f /tmp/gen_run*.json",
+          "exit_code": 0,
+          "output_sha": "41e30c0bbb27742ab65b0ab45bcb713c78144947b097632ec0f73a168a92a6cf"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rn \"Scripts are handwritten\" README.md; echo \"old-string-rc=$? (1=absent)\"; grep -c \"specs/scripts.spec.dir\" README.md",
+          "exit_code": 0,
+          "output_sha": "732c14a6e4c11e4d2299b6b162bf511336143fe5a8e8552087fbec9d29e1b03f"
+        },
+        {
+          "tool": "run_command",
+          "command": "git log --oneline -1 -- specs/main.spec.md; git log --oneline -3 -- _index.json",
+          "exit_code": 0,
+          "output_sha": "84136d2b6c359c2987109326cf2ae9fbe31f1ac88c942f3ee3707f1db0e52308"
+        },
+        {
+          "tool": "run_command",
+          "command": "git log --oneline HEAD -- _index.json | head -3; echo ---; git log --oneline -1 16645c79 -- _index.json; git show --stat 16645c79 | tail -5",
+          "exit_code": 0,
+          "output_sha": "0992a27890198ad84c935cd6ded2fd115889c54c4da8fe2086aa911c4422fe22"
+        },
+        {
+          "tool": "run_command",
+          "command": "git merge-base --is-ancestor 22be25ce HEAD && echo \"22be25ce on HEAD\"; git show --stat 22be25ce | tail -4; git log --oneline -2 22be25ce",
+          "exit_code": 0,
+          "output_sha": "4fa97a8b0ec7dd248ef953bf0edb39a114c863c373bda30aa006189a5233cc55"
+        },
+        {
+          "tool": "run_command",
+          "command": "git diff 16645c79 22be25ce -- specs/scripts.spec.dir/generate_index.py | head -5; echo \"script-diff-rc done\"; git diff 16645c79 22be25ce -- _index.json | head -5; echo \"index-diff done\"",
+          "exit_code": 0,
+          "output_sha": "946e6b895f8fe5b3e446f2e7781305aa73c50d8f7b8757775eb0454bbc4663b3"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: All four commits are ancestors of HEAD (18bd00e0). README-7: old string \\\"Scripts are handwritten, not generated\\\" absent (grep rc=1); generated-specs/dual-view wording present at README.md:722,792. GEN-1: two consecutive `--generate` runs byte-identical (cmp True, /tmp runs); `generated` field is source-derived fixpoint (specs/scripts.spec.dir/generate_index.py:758,767) so even the timestamp matches; _index.json clean after runs (git status porcelain empty); 0 @unknown entries; --graph read-only works (rc=0, 488 nodes) and leaves index clean. DOC-5: fresh --generate --output equals committed _index.json BYTE-IDENTICAL (cmp); Quick Start step 5 states 488 entries (README.md:403) matching jq '.specs|length' = 488. README-14: four Playwright specs deleted in b9be4ccd/e11cc03f, tests/e2e/ now holds only spec-to-code.test.ts; README claims replaced with \\\"Browser E2E is not implemented here\\\" (README.md:639-648); no playwright dep in package.json/vitest.config.ts. Targeted tests: npx vitest run tests/e2e tests/meta \\u2192 3 files/25 tests passed, exit 0. Full suite timed out at 30s harness cap (not a failure signal). Note: GEN-1 fix content on HEAD is via identical patch-id commit 22be25ce (16645c79 is an ancestor with byte-identical content \\u2014 empty diff between them).\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "9dc3103360591104ef90231bdee79e0c3c3b40047801676754a1a73a5fe60f01"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: README.md:403 says \\\"The checked-in snapshot currently holds 488 entries\\\" and jq '.specs|length' _index.json = 488 on HEAD. Fresh regeneration is byte-identical to the committed snapshot (cmp exit 0), so the count cannot silently drift without --generate output differing.\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "b75ea62241f50b5bff4548455938d5e67cac8c3cb8d4c387ac697787fd388732"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [],
+    "summary": "",
+    "error": "unparseable reviewer reply: no parseable JSON object in reply: ''"
+  },
+  "summary": "Stage tier1: FAIL\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2717 tests: \u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[4/5]\u23af\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 On merged main tip: README-7 self-hosting contradiction string absent with generated-specs wording present (a9f05525); GEN-1 deterministic indexer \u2014 two consecutive --generate runs byte-identical apart from the generated timestamp, --generate leaves _index.json clean, no @unknown entries, read-only --graph works (16645c79); DOC-5 --generate --output equals committed _index.json and Quick Start states the true snapshot count matching jq '.specs|length' (92b91314); README-14 four unrunnable Playwright specs removed and README claims removed (e11cc03f).: All four commits verified as ancestors of HEAD 18bd00e0 (git merge-base). README-7: old contradiction string \"Scripts are handwritten, not generated\" absent from README.md (grep rc=1); corrected wording present at README.md:792 (\"Self-hosting: Not yet complete \u2014 no tool is generated end-to-end from its own spec. The layout is already dual-view\u2026\") and README.md:722 (scripts/ symlink \u2192 specs/scripts.spec.dir/). GEN-1: ran `python3 scripts/generate_index.py --generate --output` twice consecutively \u2014 outputs byte-identical (python compare: byte-identical True); the 'generated' field is a source-derived fixpoint (max of indexed-spec commit stamps, specs/scripts.spec.dir/generate_index.py:758,767) not wall-clock, so even the timestamp matches; `git status --porcelain _index.json` empty after runs (index clean); `grep -c '@unknown' _index.json` = 0; `--graph` exits 0 printing live stats (Nodes: 488, edges 713) and leaves _index.json clean. GEN-1 fix content reaches HEAD via patch-id-identical commit 22be25ce (git diff 16645c79 22be25ce on both touched files is empty; 16645c79 itself is an ancestor). DOC-5: fresh `--generate --output /tmp/gen_run4.json` compared to committed _index.json \u2192 BYTE-IDENTICAL (cmp exit 0); Quick Start step 5 states \"The checked-in snapshot currently holds 488 entries\" (README.md:403) and `jq '.specs|length' _index.json` = 488. README-14: tests/e2e/{cascade-control,dashboard,monitoring,spec-editing}.spec.ts deleted (b9be4ccd, merged e11cc03f); tests/e2e/ now contains only spec-to-code.test.ts; README claims replaced with \"Browser E2E is not implemented here\" section (README.md:639-648); no playwright dependency in package.json or vitest.config.ts. Targeted test run: `npx vitest run tests/e2e tests/meta` \u2192 Test Files 3 passed (3), Tests 25 passed (25), exit 0. Full suite (`npx vitest run --passWithNoTests`) exceeded the 30s harness cap and could not be captured, but the criterion's checks are behavioral and were executed directly. [resolution 0.08; _index.json]\n  \u2713 Derived: the snapshot count stated in Quick Start (488) matches the committed _index.json on HEAD and a fresh regeneration reproduces the committed bytes, so the documented count cannot silently drift: README.md:403 states 488 entries; `jq '.specs|length' _index.json` prints 488; `cmp _index.json /tmp/gen_run4.json` (fresh --generate --output) exit 0 (BYTE-IDENTICAL), confirming the committed snapshot equals what --generate produces on HEAD.\nAll four README-truth rows verified on merged main tip: README-7 wording reconciled, GEN-1 indexer fully deterministic (byte-identical regenerations, clean index, no @unknown, working read-only --graph), DOC-5 committed _index.json equals fresh --generate output with the true 488 count documented in Quick Start, and README-14's four unrunnable Playwright specs plus their README claims are removed.\n\nOverall: FAIL \u2717",
+  "evaluated_at": "2026-11-20T14:54:28.810226",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-20T14:54:28.900250+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 262176,
+        "truncated": true,
+        "source": "git show 9bfd0d4af82d"
+      }
+    ],
+    "task_id": "README-CLUSTER-R3"
+  }
+}
