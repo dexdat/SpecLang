@@ -1,0 +1,459 @@
+{
+  "task_id": "EVID-1",
+  "task_title": "Board evidence run_id refs resolvable from landed checkout (63/63) + committed audit script",
+  "task_criteria": [
+    "After a fresh fetch of origin, every run_id cited in board rows detail.evidence resolves to .gitreins/history/<date>/<run_id>/verdict.json in refs/gitreins/history or the working tree, measured by scripts/audit-evidence-runids.sh committed to the repo; the script flags non-run-id shaped values."
+  ],
+  "passed": false,
+  "worktree": "/home/kara/worktrees/speclang-integr-obs6",
+  "branch": "",
+  "commit": "5224b9382b534dec1923818f3571e0d9c15a3a9c",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "15d2e1fb6fe490f600cd6191b18991a365ac0327962b176642cea0368ac50016",
+  "working_tree_dirty_path_count": 1,
+  "items": [
+    {
+      "criterion": "After a fresh fetch of origin, every run_id cited in board rows detail.evidence resolves to .gitreins/history/<date>/<run_id>/verdict.json in refs/gitreins/history or the working tree, measured by scripts/audit-evidence-runids.sh committed to the repo; the script flags non-run-id shaped values.",
+      "status": "FAIL",
+      "detail": "Partially delivered. Script IS committed (scripts/audit-evidence-runids.sh, commit 5b7a1e00; npm run audit:evidence-runids at package.json:36) and DOES flag non-run-id values \u2014 live run at HEAD 5224b938 (= origin/main) printed 'NOT-A-RUN-ID 43855424821 (all-decimal integer)', 'DF-SPECLANG-014', 'DF-SPECLANG-1-R4', 'UX-001', 'speclang-docs-2026-11-16-05-02-33-refire2', and a synthetic-board test confirmed MISSING/NOT-A-RUN-ID/exit-1 vs clean-board exit-0 behaviour. All 66 run-id-shaped cited values resolve in refs/gitreins/history (0 unresolvable). BUT the resolution goal is not met: the script exits 1 with 'total distinct values: 71 / not-a-run-id: 5 / resolvable 66/71' \u2014 the 5 non-run-id values still sit in board rows RELEASE-001, UX-001, DOC-9, DF-SPECLANG-014, DF-SPECLANG-1-R4, DF-SPECLANG-3 (verified via jq extraction), and the board's own documented audit command (EVID-1 detail.text) shows the same 5 cited values unresolvable in both the local ref (2fb9462a) and origin's ref (071ed739): comm -23 runids refids = exactly those 5. The claimed '63/63' matches no reproducible measurement (script: 66/71; documented command: 5 of 71 missing). Additionally the 'fresh fetch of origin' precondition is broken: 'git fetch origin refs/gitreins/history:refs/gitreins/history' is rejected non-fast-forward \u2014 origin carries 071ed739 (117 runs) while the local ref has diverged to 2fb9462a (122 runs, 5 newer verdict commits), so a fresh fetch never obtains the state under which the audit was measured. Finally the board row EVID-1 itself is still status=pending (.coding-hermes/board/tasks.jsonl:180)."
+    },
+    {
+      "criterion": "Derived: the committed audit script must exit 0 against the landed board per its own success contract (exit 0 = every cited value resolves AND no non-run-id-shaped values remain)",
+      "status": "FAIL",
+      "detail": "sh scripts/audit-evidence-runids.sh at HEAD 5224b938 exits 1: 'unresolvable run-ids: 0 / not-a-run-id: 5 / resolvable 66/71', EXIT=1. Commit 5b7a1e00's own message states 'Exit 0 therefore still requires the board rows to be repaired' \u2014 that repair never landed; the 5 bad values are still cited by rows RELEASE-001, UX-001, DOC-9, DF-SPECLANG-014, DF-SPECLANG-1-R4, DF-SPECLANG-3.",
+      "derived": true
+    },
+    {
+      "criterion": "Derived: refs/gitreins/history on origin must contain the unioned history so a fresh fetch resolves cited run_ids (the criterion's explicit 'After a fresh fetch of origin' precondition)",
+      "status": "FAIL",
+      "detail": "git ls-remote origin shows refs/gitreins/history = 071ed739 (117 runs); local ref = 2fb9462a (122 runs) with 5 newer verdict commits (52adea98..2fb9462a). 'git fetch origin refs/gitreins/history:refs/gitreins/history' \u2192 '! [rejected] (non-fast-forward)'. Even origin's ref lacks the 5 non-run-id cited values (comm -23 vs 071ed739 listing = same 5), so the audit cannot pass from a fresh fetch.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "changes_required",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": false,
+      "any_failed": true,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  ~ tests: Command timed out after 120s (step budget)",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\nnpm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": false,
+          "output": "",
+          "error": "Command timed out after 120s (step budget)",
+          "data": {
+            "timed_out": true,
+            "timeout_s": 120
+          }
+        }
+      ],
+      "degraded": true,
+      "skipped_steps": [
+        "tests"
+      ],
+      "degradation_reason": "skipped at runtime \u2014 tests: timed out after 120s (step budget)"
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": false,
+      "any_failed": true,
+      "summary": "INCOMPLETE\n  \u2717 After a fresh fetch of origin, every run_id cited in board rows detail.evidence resolves to .gitreins/history/<date>/<run_id>/verdict.json in refs/gitreins/history or the working tree, measured by scripts/audit-evidence-runids.sh committed to the repo; the script flags non-run-id shaped values.: Partially delivered. Script IS committed (scripts/audit-evidence-runids.sh, commit 5b7a1e00; npm run audit:evidence-runids at package.json:36) and DOES flag non-run-id values \u2014 live run at HEAD 5224b938 (= origin/main) printed 'NOT-A-RUN-ID 43855424821 (all-decimal integer)', 'DF-SPECLANG-014', 'DF-SPECLANG-1-R4', 'UX-001', 'speclang-docs-2026-11-16-05-02-33-refire2', and a synthetic-board test confirmed MISSING/NOT-A-RUN-ID/exit-1 vs clean-board exit-0 behaviour. All 66 run-id-shaped cited values resolve in refs/gitreins/history (0 unresolvable). BUT the resolution goal is not met: the script exits 1 with 'total distinct values: 71 / not-a-run-id: 5 / resolvable 66/71' \u2014 the 5 non-run-id values still sit in board rows RELEASE-001, UX-001, DOC-9, DF-SPECLANG-014, DF-SPECLANG-1-R4, DF-SPECLANG-3 (verified via jq extraction), and the board's own documented audit command (EVID-1 detail.text) shows the same 5 cited values unresolvable in both the local ref (2fb9462a) and origin's ref (071ed739): comm -23 runids refids = exactly those 5. The claimed '63/63' matches no reproducible measurement (script: 66/71; documented command: 5 of 71 missing). Additionally the 'fresh fetch of origin' precondition is broken: 'git fetch origin refs/gitreins/history:refs/gitreins/history' is rejected non-fast-forward \u2014 origin carries 071ed739 (117 runs) while the local ref has diverged to 2fb9462a (122 runs, 5 newer verdict commits), so a fresh fetch never obtains the state under which the audit was measured. Finally the board row EVID-1 itself is still status=pending (.coding-hermes/board/tasks.jsonl:180).\n  \u2717 Derived: the committed audit script must exit 0 against the landed board per its own success contract (exit 0 = every cited value resolves AND no non-run-id-shaped values remain): sh scripts/audit-evidence-runids.sh at HEAD 5224b938 exits 1: 'unresolvable run-ids: 0 / not-a-run-id: 5 / resolvable 66/71', EXIT=1. Commit 5b7a1e00's own message states 'Exit 0 therefore still requires the board rows to be repaired' \u2014 that repair never landed; the 5 bad values are still cited by rows RELEASE-001, UX-001, DOC-9, DF-SPECLANG-014, DF-SPECLANG-1-R4, DF-SPECLANG-3.\n  \u2717 Derived: refs/gitreins/history on origin must contain the unioned history so a fresh fetch resolves cited run_ids (the criterion's explicit 'After a fresh fetch of origin' precondition): git ls-remote origin shows refs/gitreins/history = 071ed739 (117 runs); local ref = 2fb9462a (122 runs) with 5 newer verdict commits (52adea98..2fb9462a). 'git fetch origin refs/gitreins/history:refs/gitreins/history' \u2192 '! [rejected] (non-fast-forward)'. Even origin's ref lacks the 5 non-run-id cited values (comm -23 vs 071ed739 listing = same 5), so the audit cannot pass from a fresh fetch.\n  \u2717 Coverage FAILED \u2014 not passing: After a fresh fetch of origin, every run_id cited in board rows detail.evidence resolves to .gitreins/history/<date>/<run_id>/verdict.json in refs/gitreins/history or the working tree, measured by scripts/audit-evidence-runids.sh committed to the repo; the script flags non-run-id shaped values.\nThe audit script is committed and correctly flags non-run-id values, and all 66 run-id-shaped citations resolve locally \u2014 but the task's success state is not delivered: the script exits 1 (66/71, 5 non-run-id values still unrepaired in board rows), the claimed 63/63 matches no reproducible measurement, origin's history ref is a diverged non-fast-forward behind the local one so a fresh fetch cannot reproduce the audit, and the EVID-1 board row itself remains status=pending.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": false,
+          "output": "INCOMPLETE\n  \u2717 After a fresh fetch of origin, every run_id cited in board rows detail.evidence resolves to .gitreins/history/<date>/<run_id>/verdict.json in refs/gitreins/history or the working tree, measured by scripts/audit-evidence-runids.sh committed to the repo; the script flags non-run-id shaped values.: Partially delivered. Script IS committed (scripts/audit-evidence-runids.sh, commit 5b7a1e00; npm run audit:evidence-runids at package.json:36) and DOES flag non-run-id values \u2014 live run at HEAD 5224b938 (= origin/main) printed 'NOT-A-RUN-ID 43855424821 (all-decimal integer)', 'DF-SPECLANG-014', 'DF-SPECLANG-1-R4', 'UX-001', 'speclang-docs-2026-11-16-05-02-33-refire2', and a synthetic-board test confirmed MISSING/NOT-A-RUN-ID/exit-1 vs clean-board exit-0 behaviour. All 66 run-id-shaped cited values resolve in refs/gitreins/history (0 unresolvable). BUT the resolution goal is not met: the script exits 1 with 'total distinct values: 71 / not-a-run-id: 5 / resolvable 66/71' \u2014 the 5 non-run-id values still sit in board rows RELEASE-001, UX-001, DOC-9, DF-SPECLANG-014, DF-SPECLANG-1-R4, DF-SPECLANG-3 (verified via jq extraction), and the board's own documented audit command (EVID-1 detail.text) shows the same 5 cited values unresolvable in both the local ref (2fb9462a) and origin's ref (071ed739): comm -23 runids refids = exactly those 5. The claimed '63/63' matches no reproducible measurement (script: 66/71; documented command: 5 of 71 missing). Additionally the 'fresh fetch of origin' precondition is broken: 'git fetch origin refs/gitreins/history:refs/gitreins/history' is rejected non-fast-forward \u2014 origin carries 071ed739 (117 runs) while the local ref has diverged to 2fb9462a (122 runs, 5 newer verdict commits), so a fresh fetch never obtains the state under which the audit was measured. Finally the board row EVID-1 itself is still status=pending (.coding-hermes/board/tasks.jsonl:180).\n  \u2717 Derived: the committed audit script must exit 0 against the landed board per its own success contract (exit 0 = every cited value resolves AND no non-run-id-shaped values remain): sh scripts/audit-evidence-runids.sh at HEAD 5224b938 exits 1: 'unresolvable run-ids: 0 / not-a-run-id: 5 / resolvable 66/71', EXIT=1. Commit 5b7a1e00's own message states 'Exit 0 therefore still requires the board rows to be repaired' \u2014 that repair never landed; the 5 bad values are still cited by rows RELEASE-001, UX-001, DOC-9, DF-SPECLANG-014, DF-SPECLANG-1-R4, DF-SPECLANG-3.\n  \u2717 Derived: refs/gitreins/history on origin must contain the unioned history so a fresh fetch resolves cited run_ids (the criterion's explicit 'After a fresh fetch of origin' precondition): git ls-remote origin shows refs/gitreins/history = 071ed739 (117 runs); local ref = 2fb9462a (122 runs) with 5 newer verdict commits (52adea98..2fb9462a). 'git fetch origin refs/gitreins/history:refs/gitreins/history' \u2192 '! [rejected] (non-fast-forward)'. Even origin's ref lacks the 5 non-run-id cited values (comm -23 vs 071ed739 listing = same 5), so the audit cannot pass from a fresh fetch.\n  \u2717 Coverage FAILED \u2014 not passing: After a fresh fetch of origin, every run_id cited in board rows detail.evidence resolves to .gitreins/history/<date>/<run_id>/verdict.json in refs/gitreins/history or the working tree, measured by scripts/audit-evidence-runids.sh committed to the repo; the script flags non-run-id shaped values.\nThe audit script is committed and correctly flags non-run-id values, and all 66 run-id-shaped citations resolve locally \u2014 but the task's success state is not delivered: the script exits 1 (66/71, 5 non-run-id values still unrepaired in board rows), the claimed 63/63 matches no reproducible measurement, origin's history ref is a diverged non-fast-forward behind the local one so a fresh fetch cannot reproduce the audit, and the EVID-1 board row itself remains status=pending.",
+          "error": "",
+          "data": {
+            "verdict": "INCOMPLETE",
+            "items": [
+              {
+                "criterion": "After a fresh fetch of origin, every run_id cited in board rows detail.evidence resolves to .gitreins/history/<date>/<run_id>/verdict.json in refs/gitreins/history or the working tree, measured by scripts/audit-evidence-runids.sh committed to the repo; the script flags non-run-id shaped values.",
+                "status": "FAIL",
+                "detail": "Partially delivered. Script IS committed (scripts/audit-evidence-runids.sh, commit 5b7a1e00; npm run audit:evidence-runids at package.json:36) and DOES flag non-run-id values \u2014 live run at HEAD 5224b938 (= origin/main) printed 'NOT-A-RUN-ID 43855424821 (all-decimal integer)', 'DF-SPECLANG-014', 'DF-SPECLANG-1-R4', 'UX-001', 'speclang-docs-2026-11-16-05-02-33-refire2', and a synthetic-board test confirmed MISSING/NOT-A-RUN-ID/exit-1 vs clean-board exit-0 behaviour. All 66 run-id-shaped cited values resolve in refs/gitreins/history (0 unresolvable). BUT the resolution goal is not met: the script exits 1 with 'total distinct values: 71 / not-a-run-id: 5 / resolvable 66/71' \u2014 the 5 non-run-id values still sit in board rows RELEASE-001, UX-001, DOC-9, DF-SPECLANG-014, DF-SPECLANG-1-R4, DF-SPECLANG-3 (verified via jq extraction), and the board's own documented audit command (EVID-1 detail.text) shows the same 5 cited values unresolvable in both the local ref (2fb9462a) and origin's ref (071ed739): comm -23 runids refids = exactly those 5. The claimed '63/63' matches no reproducible measurement (script: 66/71; documented command: 5 of 71 missing). Additionally the 'fresh fetch of origin' precondition is broken: 'git fetch origin refs/gitreins/history:refs/gitreins/history' is rejected non-fast-forward \u2014 origin carries 071ed739 (117 runs) while the local ref has diverged to 2fb9462a (122 runs, 5 newer verdict commits), so a fresh fetch never obtains the state under which the audit was measured. Finally the board row EVID-1 itself is still status=pending (.coding-hermes/board/tasks.jsonl:180)."
+              },
+              {
+                "criterion": "Derived: the committed audit script must exit 0 against the landed board per its own success contract (exit 0 = every cited value resolves AND no non-run-id-shaped values remain)",
+                "status": "FAIL",
+                "detail": "sh scripts/audit-evidence-runids.sh at HEAD 5224b938 exits 1: 'unresolvable run-ids: 0 / not-a-run-id: 5 / resolvable 66/71', EXIT=1. Commit 5b7a1e00's own message states 'Exit 0 therefore still requires the board rows to be repaired' \u2014 that repair never landed; the 5 bad values are still cited by rows RELEASE-001, UX-001, DOC-9, DF-SPECLANG-014, DF-SPECLANG-1-R4, DF-SPECLANG-3.",
+                "derived": true
+              },
+              {
+                "criterion": "Derived: refs/gitreins/history on origin must contain the unioned history so a fresh fetch resolves cited run_ids (the criterion's explicit 'After a fresh fetch of origin' precondition)",
+                "status": "FAIL",
+                "detail": "git ls-remote origin shows refs/gitreins/history = 071ed739 (117 runs); local ref = 2fb9462a (122 runs) with 5 newer verdict commits (52adea98..2fb9462a). 'git fetch origin refs/gitreins/history:refs/gitreins/history' \u2192 '! [rejected] (non-fast-forward)'. Even origin's ref lacks the 5 non-run-id cited values (comm -23 vs 071ed739 listing = same 5), so the audit cannot pass from a fresh fetch.",
+                "derived": true
+              }
+            ],
+            "summary": "The audit script is committed and correctly flags non-run-id values, and all 66 run-id-shaped citations resolve locally \u2014 but the task's success state is not delivered: the script exits 1 (66/71, 5 non-run-id values still unrepaired in board rows), the claimed 63/63 matches no reproducible measurement, origin's history ref is a diverged non-fast-forward behind the local one so a fresh fetch cannot reproduce the audit, and the EVID-1 board row itself remains status=pending.",
+            "provenance": {
+              "model": "accounts/fireworks/models/kimi-k3",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "accounts/fireworks/models/kimi-k3",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"EVID-1\"}",
+          "exit_code": 0,
+          "output_sha": "0011905430b2720172b529f3aa88ee2fbfc538efa65d12ac2070f130548da10c"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la && git log --oneline -5 && git status",
+          "exit_code": 0,
+          "output_sha": "af93b629fa75f33268af2412b3793448d7614dd6f46778c4d130f1bc0863cb19"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"scripts/audit-evidence-runids.sh\"}",
+          "exit_code": 0,
+          "output_sha": "be02f80d42fed2773eb752ab02a7beeb2d5c330e22e48b370c0ecf6a8d48fd5b"
+        },
+        {
+          "tool": "run_command",
+          "command": "git ls-files scripts/audit-evidence-runids.sh && git log --oneline -3 -- scripts/audit-evidence-runids.sh",
+          "exit_code": 0,
+          "output_sha": "3c61aa034309e89bf05ace2bc0aa877b8f40648a26ddbec5ac6c6029b1d69408"
+        },
+        {
+          "tool": "run_command",
+          "command": "git rev-parse --verify refs/gitreins/history 2>&1; git ls-tree -r --name-only refs/gitreins/history 2>/dev/null | head -20; echo \"---count---\"; git ls-tree -r --name-only refs/gitreins/history 2>/dev/null | wc -l",
+          "exit_code": 0,
+          "output_sha": "5e466e35db50f2eaa2fb7a3bd3d69c89f6594467b77314c21066d4770be26903"
+        },
+        {
+          "tool": "run_command",
+          "command": "sh scripts/audit-evidence-runids.sh; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "327cb7f63845f20b89bfc09a96e74b7057ee4811ebff46b020415693dc4c3820"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls .gitreins/history/ 2>/dev/null; find .gitreins/history -name verdict.json 2>/dev/null | wc -l; wc -l .coding-hermes/board/tasks.jsonl",
+          "exit_code": 0,
+          "output_sha": "992880aef63ff2148e9fc81a649a5c65871b4b40f8ade91b31385b486a6536b2"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n '43855424821\\|DF-SPECLANG-014\\|DF-SPECLANG-1-R4\\|UX-001\\|refire2' .coding-hermes/board/tasks.jsonl | head -20",
+          "exit_code": 0,
+          "output_sha": "34f6ba85af6befd4b58311e9946c425f090b8cfe9dbfbeebb4ca56cfdd9f5ffc"
+        },
+        {
+          "tool": "run_command",
+          "command": "jq -r 'select(.detail|type==\"object\") | .id as $id | (.detail.evidence // []) | if type==\"array\" then (.[] | if type==\"object\" then (if .run_id == null then empty else \"\\($id)\\t\\(.run_id)\" end) else empty end) else empty end' .coding-hermes/board/tasks.jsonl | grep -P '\\t(43855424821|DF-SPECLANG-014|DF-SPECLANG-1-R4|UX-001|speclang-docs-2026-11-16-05-02-33-refire2)$'",
+          "exit_code": 0,
+          "output_sha": "6a681b9eda66fc3bba30782feaa5926a76d84688239be900f578dd6249c2a969"
+        },
+        {
+          "tool": "run_command",
+          "command": "jq -r 'select(.id==\"EVID-1\") | {status, title, reasoning, acceptance, review_notes, completion_note, evidence: .detail.evidence}' .coding-hermes/board/tasks.jsonl",
+          "exit_code": 0,
+          "output_sha": "90f5dfd483b10ba4176b96212146aec262431630cf705f6758687b514ab672f3"
+        },
+        {
+          "tool": "run_command",
+          "command": "jq -r 'select(.id==\"EVID-1\") | keys' .coding-hermes/board/tasks.jsonl; echo ---; jq -r 'select(.id==\"EVID-1\") | .detail | keys' .coding-hermes/board/tasks.jsonl; echo ---; jq -rj 'select(.id==\"EVID-1\") | .detail.text' .coding-hermes/board/tasks.jsonl",
+          "exit_code": 0,
+          "output_sha": "8d631a494b55b983d2b5c2bc52f33feed4bc001c2dfad4e84a4179bc171e1674"
+        },
+        {
+          "tool": "run_command",
+          "command": "jq -rj 'select(.id==\"EVID-1\") | .acceptance_criteria' .coding-hermes/board/tasks.jsonl; echo; echo ---; jq -r 'select(.id==\"EVID-1\") | .status, .updated_at' .coding-hermes/board/tasks.jsonl",
+          "exit_code": 0,
+          "output_sha": "45e82aaef7b398e81ea45f1396d54b23a06509023cc28f91c8ccc2eddeeec805"
+        },
+        {
+          "tool": "run_command",
+          "command": "git fetch origin 2>&1 | tail -3; git rev-parse HEAD origin/main 2>&1; git log --oneline -1 origin/main 2>&1",
+          "exit_code": 0,
+          "output_sha": "7e3de548164167ccaa8d21447b47e7ae855750a8ab2b6c95d1bd1a727c37ba57"
+        },
+        {
+          "tool": "run_command",
+          "command": "jq -r 'select(.id==\"RELEASE-001\") | .detail.evidence' .coding-hermes/board/tasks.jsonl; echo ===; jq -r 'select(.id==\"UX-001\") | .detail.evidence' .coding-hermes/board/tasks.jsonl; echo ===; jq -r 'select(.id==\"DOC-9\") | .detail.evidence' .coding-hermes/board/tasks.jsonl; echo ===; jq -r 'select(.id==\"DF-SPECLANG-014\") | .detail.evidence' .coding-hermes/board/tasks.jsonl",
+          "exit_code": 0,
+          "output_sha": "8e08d4bc6961c90d7f1ce286ef64e00ad59dffffa1c7c105fbde60c682604a34"
+        },
+        {
+          "tool": "run_command",
+          "command": "jq -r 'select(.id==\"DF-SPECLANG-1-R4\") | .detail.evidence' .coding-hermes/board/tasks.jsonl; echo ===; jq -r 'select(.id==\"DF-SPECLANG-3\") | .detail.evidence' .coding-hermes/board/tasks.jsonl",
+          "exit_code": 0,
+          "output_sha": "070d1f375e1e56d2bdcfd062bd192f7fd3c7d50147fe8813c6b6d9da00cbbeb8"
+        },
+        {
+          "tool": "run_command",
+          "command": "git ls-tree -r --name-only refs/gitreins/history | grep -cE 'history/[0-9]{4}-[0-9]{2}-[0-9]{2}/[0-9a-f]{8}/verdict\\.json$'; echo ---; git ls-tree -r --name-only refs/gitreins/history | grep -E 'verdict\\.json$' | grep -vE 'history/[0-9]{4}-[0-9]{2}-[0-9]{2}/[0-9a-f]{8}/verdict\\.json$' | head",
+          "exit_code": 0,
+          "output_sha": "418e08c8b334ec1f0cf8c9c76d71384f8b53fb1b8ca500cf2d05a310f7b6ff97"
+        },
+        {
+          "tool": "run_command",
+          "command": "jq -r 'select(.id==\"EVID-1\") | .detail.text' .coding-hermes/board/tasks.jsonl | grep -o \"jq -r '[^']*'\"; echo ===; jq -r '((.detail.evidence//[])[]|.run_id//empty)' .coding-hermes/board/tasks.jsonl 2>/dev/null | sort -u | wc -l",
+          "exit_code": 0,
+          "output_sha": "00522c9c84efdeaddb7af561d5c04a8bfba36180e0f46bcb273651ea56e3aea2"
+        },
+        {
+          "tool": "run_command",
+          "command": "jq -r '((.detail.evidence//[])[]|.run_id//empty)' .coding-hermes/board/tasks.jsonl 2>/dev/null | sort -u > /tmp/runids.txt; wc -l /tmp/runids.txt; git ls-tree -r --name-only refs/gitreins/history | grep -oE 'history/[0-9]{4}-[0-9]{2}-[0-9]{2}/[0-9a-f]{8}' | cut -d/ -f3 | sort -u > /tmp/refids.txt; wc -l /tmp/refids.txt; echo \"=== cited but NOT in ref ===\"; comm -23 /tmp/runids.txt /tmp/refids.txt",
+          "exit_code": 1,
+          "output_sha": "758cfc4e230276ba9177781e2fb0c7957177cdae339c7d291e1dd907adc3e1be"
+        },
+        {
+          "tool": "run_command",
+          "command": "LC_ALL=C sort -u /tmp/runids.txt > /tmp/runids.s.txt; LC_ALL=C sort -u /tmp/refids.txt > /tmp/refids.s.txt; echo \"=== cited but NOT in ref ===\"; LC_ALL=C comm -23 /tmp/runids.s.txt /tmp/refids.s.txt; echo \"=== count ===\"; LC_ALL=C comm -23 /tmp/runids.s.txt /tmp/refids.s.txt | wc -l",
+          "exit_code": 0,
+          "output_sha": "3605e04e1efd4d1487c19136882da95185bef63bbfbedc4971779a5fd057326d"
+        },
+        {
+          "tool": "run_command",
+          "command": "jq -r 'select(.id==\"EVID-1\") | .status' .coding-hermes/board/tasks.jsonl; echo ===; grep -c '\"id\":\"EVID-1\"' .coding-hermes/board/tasks.jsonl; grep -n 'EVID-1' .coding-hermes/board/tasks.jsonl | cut -c1-120",
+          "exit_code": 0,
+          "output_sha": "503d41cae0a208dcccd2daf9a91183a9fa037716043cf33db9f0eae903cdbb21"
+        },
+        {
+          "tool": "run_command",
+          "command": "git log --all --oneline --grep='EVID-1' | head; echo ===; git log --oneline e7839567..HEAD -- .coding-hermes/board/tasks.jsonl | head; echo ===; git show e7839567 --stat | head -20",
+          "exit_code": 0,
+          "output_sha": "a98bb7c05207189e11ff56bc1320cbe70b93ede38b68cc4736a1019e3151a240"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show 071ed739 --stat | head -10; echo ===; git show 071ed739 | head -60",
+          "exit_code": 0,
+          "output_sha": "8d041e6428dc974e62926cd9bce3571ca065f12f56fa639376adc6a342a1a287"
+        },
+        {
+          "tool": "run_command",
+          "command": "git ls-tree -r --name-only refs/gitreins/history | grep -E 'history/[^/]+/[^/]+/verdict\\.json$' | awk -F/ '{print $3}' | grep -vE '^[0-9a-f]{8}$'; echo \"---non-8hex-dir-count-above---\"; git ls-tree -r --name-only refs/gitreins/history | grep -oE 'history/[0-9]{4}-[0-9]{2}-[0-9]{2}/[^/]+/verdict\\.json$' | wc -l",
+          "exit_code": 0,
+          "output_sha": "a5e44c67fa7eb6692fb6914d2824625b5109b57d95314d90c1a85005213558bf"
+        },
+        {
+          "tool": "run_command",
+          "command": "git ls-remote origin 2>/dev/null | grep -i gitreins; echo ===; git for-each-ref refs/gitreins/ 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "6125ce7f511f24098c6f6f695b2455bf46440fb44da264a4f536b112598aaff8"
+        },
+        {
+          "tool": "run_command",
+          "command": "git ls-tree -r --name-only refs/gitreins/history | grep -E 'verdict\\.json$' | awk -F/ '{print $4}' | grep -vE '^[0-9a-f]{8}$'; echo \"---non-8hex-runid-dirs-above---\"; git ls-tree -r --name-only refs/gitreins/history | grep -E 'verdict\\.json$' | awk -F/ '{print $4}' | sort -u | wc -l",
+          "exit_code": 0,
+          "output_sha": "b473943a81d611e655ea1ab644c2d4ffa993908190cb8523a845b8e6d9bd01c3"
+        },
+        {
+          "tool": "run_command",
+          "command": "git log --oneline 071ed739..refs/gitreins/history 2>/dev/null; echo ===; git show --stat refs/gitreins/history | head -15",
+          "exit_code": 0,
+          "output_sha": "ecb10022c15f54ed07e82e4100a8ff16a473a1e8e802e6dd57d584ed705d2df5"
+        },
+        {
+          "tool": "run_command",
+          "command": "git fetch origin refs/gitreins/history:refs/gitreins/history 2>&1; git rev-parse refs/gitreins/history; sh scripts/audit-evidence-runids.sh > /tmp/audit2.txt 2>&1; echo \"EXIT=$?\"; tail -8 /tmp/audit2.txt",
+          "exit_code": 0,
+          "output_sha": "3c486c00e4fb2ff80d659095d9c0c0ad8b392f9a41f766cbcd6f4f46d9f9d379"
+        },
+        {
+          "tool": "run_command",
+          "command": "git ls-tree -r --name-only 071ed739 | grep -E 'verdict\\.json$' | awk -F/ '{print $4}' | sort -u > /tmp/origin_refids.txt; wc -l /tmp/origin_refids.txt; echo \"=== cited but NOT in origin ref ===\"; LC_ALL=C comm -23 /tmp/runids.s.txt /tmp/origin_refids.txt",
+          "exit_code": 0,
+          "output_sha": "eb10e50947f6614e1d655d701e7d0da2b6dd32a91e84efa4736dfed6e84f0154"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls .gitreins/history/2026-11-20/; echo ===; for d in .gitreins/history/2026-11-20/*/; do echo \"$d\"; done",
+          "exit_code": 0,
+          "output_sha": "ac91ae9dfb0b072f0baa0a946f19f3b90fc4edc900af99ef4ff5718c70d92242"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -c '9559f941' /tmp/runids.s.txt; grep '9559f941' /tmp/audit2.txt",
+          "exit_code": 1,
+          "output_sha": "c8608f422fc0a5e013af298c6be8d01f02f9be317d135cee0b16e0751c9dbbfa"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show 4c97462c --stat | head -12; echo ===; git show 4c97462c:.coding-hermes/board/tasks.jsonl 2>/dev/null | jq -r 'select(.id==\"EVID-1\") | .status' 2>/dev/null; echo ===; git show 5b7a1e00:.coding-hermes/board/tasks.jsonl 2>/dev/null | jq -r 'select(.id==\"EVID-1\") | .status' 2>/dev/null",
+          "exit_code": 0,
+          "output_sha": "734582d28f0a0188b549d946600d53b8d809ad9437acde6d2a5ef48bed9c7b70"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show 5b7a1e00 --stat | tail -8; echo ===; git show 5b7a1e00 -- scripts/evidence_audit.sh | head -20; echo ===; ls -la scripts/ | grep -i evidence",
+          "exit_code": 0,
+          "output_sha": "5b220d516232090c884b167fbecccae9ed27b9a71b01d1d2d94987a3cde10028"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show 5b7a1e00 -- package.json | head -30; echo ===; grep -n 'audit' package.json",
+          "exit_code": 0,
+          "output_sha": "143b36d5c551cb845ea6da4d9fc566d6a1e14dab5aac33aa51834d28f22b7951"
+        },
+        {
+          "tool": "run_command",
+          "command": "git show 5b7a1e00 | sed -n '30,80p'",
+          "exit_code": 0,
+          "output_sha": "658ff55ef763779042c34b65c3dff58cc32b6857dbb3b74cfd73784cd5e036b1"
+        },
+        {
+          "tool": "run_command",
+          "command": "jq -r 'select(.id==\"EVID-1\") | .title' .coding-hermes/board/tasks.jsonl; echo ===; jq -r 'select(.id==\"EVID-1\") | .status, .updated_at, .sessions' .coding-hermes/board/tasks.jsonl",
+          "exit_code": 0,
+          "output_sha": "799f9bef02486e0533f458983058ecea82961b556630005ce67bbb254364fa9b"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n 'gitreins' .gitignore; echo ===; git check-ignore -v .gitreins/history/2026-11-20/9559f941/verdict.json 2>&1; echo ===; git ls-files .gitreins/ | head",
+          "exit_code": 0,
+          "output_sha": "8c95450662cb88253365c71dae94a5eed72a05c9c428b4ccaa093ea9e0e4d157"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -A3 'guards' .gitreins/config.yaml | head -20; echo ===; grep -n 'test_command' .gitreins/config.yaml",
+          "exit_code": 0,
+          "output_sha": "e05182847adcb9147e13abd5269ea4b9d94f4105afb75eaa532ec84b7c82ffb1"
+        },
+        {
+          "tool": "run_command",
+          "command": "sh scripts/audit-evidence-runids.sh --help; echo \"HELP_EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "d24e3fc4598fa8600491711cdc8346e2cfcae2ce28bd1da6ccf23ad48ad4b322"
+        },
+        {
+          "tool": "run_command",
+          "command": "sh scripts/audit-evidence-runids.sh /nonexistent.jsonl; echo \"MISSING_BOARD_EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "d7c3cbe4a88f595b2beb8fad27c9c10f2b7804792425e65aaac0e6d66a9f8880"
+        },
+        {
+          "tool": "run_command",
+          "command": "mkdir -p /tmp/audit-test && cat > /tmp/audit-test/board.jsonl <<'EOF'\n{\"id\":\"T1\",\"detail\":{\"evidence\":[{\"run_id\":\"0cb6f62e\"}]}}\n{\"id\":\"T2\",\"detail\":{\"evidence\":[{\"run_id\":\"deadbeef\"}]}}\n{\"id\":\"T3\",\"detail\":{\"evidence\":[{\"run_id\":\"NOT-A-HEX-ID\"}]}}\n{\"id\":\"T4\",\"detail\":{\"evidence\":[{\"run_id\":\"123456789\"}]}}\n{\"id\":\"T5\",\"detail\":{\"evidence\":[{\"run_id\":\"19624790\"}]}}\nEOF\nsh scripts/audit-evidence-runids.sh /tmp/audit-test/board.jsonl; echo \"SYNTH_EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "7dd75fb76073a5ee62a4c557e433c8ab15ea2eded3e9ebb02ba281b538236d5c"
+        },
+        {
+          "tool": "run_command",
+          "command": "cat > /tmp/audit-test/board-clean.jsonl <<'EOF'\n{\"id\":\"T1\",\"detail\":{\"evidence\":[{\"run_id\":\"0cb6f62e\"}]}}\n{\"id\":\"T5\",\"detail\":{\"evidence\":[{\"run_id\":\"19624790\"}]}}\nEOF\nsh scripts/audit-evidence-runids.sh /tmp/audit-test/board-clean.jsonl; echo \"CLEAN_EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "7124c7710c27e834a694006336f66397f8664d0e65ec27598c9fe67572631617"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FAIL (partial): (a) Script committed: scripts/audit-evidence-runids.sh tracked (commit 5b7a1e00), executable, npm script audit:evidence-runids at package.json:36. (b) Script flags non-run-id values: verified live \\u2014 real board run flags 5 values (43855424821, DF-SPECLANG-014, DF-SPECLANG-1-R4, UX-001, speclang-docs-2026-11-16-05-02-33-refire2) and synthetic-board test confirmed MISSING/NOT-A-RUN-ID/exit-1 vs clean-board exit-0 behaviour. (c) Resolution: all 66 run-id-shaped cited values resolve in refs/gitreins/history (0 unresolvable). (d) BUT the criterion's headline claim '63/63' is not met by any measurement: the script reports 66/71 resolvable and EXITS 1 against the landed board; the board's own documented audit command (EVID-1 detail.text) shows 5 of 71 cited values unresolvable in both local ref 2fb9462a and origin's ref 071ed739; the 5 non-run-id values remain in board rows (RELEASE-001, UX-001, DOC-9, DF-SPECLANG-014, DF-SPECLANG-1-R4, DF-SPECLANG-3). (e) 'After a fresh fetch of origin': origin's refs/gitreins/history (071ed739, 117 runs) is BEHIND the local ref (2fb9462a, 122 runs) and a fetch is rejected as non-fast-forward \\u2014 the published ref the criterion names does not contain the 5 newest verdicts. (f) Board row EVID-1 itself is still status=pending at line 180 of .coding-hermes/board/tasks.jsonl.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "d2db183783140257731a36a5ffad3b9ea073ba39d2c7c2fb8a392b690a61dc88"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FAIL: scripts/audit-evidence-runids.sh exits 1 on the landed board (run at HEAD 5224b938 = origin/main): 'total distinct values: 71 / unresolvable run-ids: 0 / not-a-run-id: 5 / resolvable 66/71', EXIT=1. The script's own success contract (header: exit 0 = every value resolves AND no value has a non-run-id shape) is not met; commit 5b7a1e00 message admits 'Exit 0 therefore still requires the board rows to be repaired' \\u2014 the repair never landed.\", \"key\": \"derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "e0d162c8689fedee38f5e5617e80be9746f7ad7aca04cd1e528c0a0fa430971b"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Derived criterion: the committed audit script must exit 0 against the landed board (its own success contract: every cited value resolves AND no non-run-id-shaped values remain).\", \"key\": \"derived_0_text\"}",
+          "exit_code": 0,
+          "output_sha": "d64715e5517c5a2c2ad37d918c8ed25b17e9d679fb3a74f1b286d9b8b112609f"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"FAIL: git fetch origin refs/gitreins/history:refs/gitreins/history \\u2192 '! [rejected] refs/gitreins/history (non-fast-forward)': origin has 071ed739 (117 runs), local has diverged 2fb9462a (122 runs, 5 newer verdict commits 52adea98..2fb9462a). A fresh fetch of origin therefore cannot obtain the history ref state under which the audit was measured, and even origin's ref lacks the 5 non-run-id values (comm -23 vs 071ed739 listing = same 5). The 'fresh fetch of origin' precondition of the criterion is broken.\", \"key\": \"verified_derived_1\"}",
+          "exit_code": 0,
+          "output_sha": "592e34139e2dc891b6b04f18aba33c78db3c319346492b3b41ced12e3d7dc93e"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"Derived criterion: refs/gitreins/history on origin must contain the unioned history so a fresh fetch resolves cited run_ids (the criterion's explicit precondition 'After a fresh fetch of origin').\", \"key\": \"derived_1_text\"}",
+          "exit_code": 0,
+          "output_sha": "caa779a3143ddab943b3b2469206ada5edc1af2be77f735fc700094ff1dc3b81"
+        },
+        {
+          "tool": "run_command",
+          "command": "jq -r 'select(.id==\"EVID-1\") | .status' .coding-hermes/board/tasks.jsonl",
+          "exit_code": 0,
+          "output_sha": "a44996d30c60be231da3fb4f0a6faea9c113e334311755b8dae6d0bc1c9c600c"
+        },
+        {
+          "tool": "run_command",
+          "command": "jq -r 'select(.id==\"EVID-1\") | .status' .coding-hermes/board/tasks.jsonl; echo ===; grep -n '43855424821' /tmp/audit2.txt",
+          "exit_code": 0,
+          "output_sha": "17981821c22b5537b75f385d693a0ab57cfabfd421cbc4d614bbba8ac5892e92"
+        },
+        {
+          "tool": "run_command",
+          "command": "jq -r 'select(.id==\"EVID-1\") | .status' .coding-hermes/board/tasks.jsonl",
+          "exit_code": 0,
+          "output_sha": "7fd6d17f6396f02c41ef75b4aa1dc58dacfba6d6eb7eb90f5a435d609f7e6efc"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [],
+    "summary": "",
+    "error": "unparseable reviewer reply: no parseable JSON object in reply: ''"
+  },
+  "summary": "Stage tier1: FAIL (DEGRADED - skipped checks)\n  WARNING: coverage is unknown \u2014 tests did not run (skipped at runtime \u2014 tests: timed out after 120s (step budget)); run `gitreins guard` for the full gate\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  ~ tests: Command timed out after 120s (step budget)\n\nStage tier2: FAIL\n  INCOMPLETE\n  \u2717 After a fresh fetch of origin, every run_id cited in board rows detail.evidence resolves to .gitreins/history/<date>/<run_id>/verdict.json in refs/gitreins/history or the working tree, measured by scripts/audit-evidence-runids.sh committed to the repo; the script flags non-run-id shaped values.: Partially delivered. Script IS committed (scripts/audit-evidence-runids.sh, commit 5b7a1e00; npm run audit:evidence-runids at package.json:36) and DOES flag non-run-id values \u2014 live run at HEAD 5224b938 (= origin/main) printed 'NOT-A-RUN-ID 43855424821 (all-decimal integer)', 'DF-SPECLANG-014', 'DF-SPECLANG-1-R4', 'UX-001', 'speclang-docs-2026-11-16-05-02-33-refire2', and a synthetic-board test confirmed MISSING/NOT-A-RUN-ID/exit-1 vs clean-board exit-0 behaviour. All 66 run-id-shaped cited values resolve in refs/gitreins/history (0 unresolvable). BUT the resolution goal is not met: the script exits 1 with 'total distinct values: 71 / not-a-run-id: 5 / resolvable 66/71' \u2014 the 5 non-run-id values still sit in board rows RELEASE-001, UX-001, DOC-9, DF-SPECLANG-014, DF-SPECLANG-1-R4, DF-SPECLANG-3 (verified via jq extraction), and the board's own documented audit command (EVID-1 detail.text) shows the same 5 cited values unresolvable in both the local ref (2fb9462a) and origin's ref (071ed739): comm -23 runids refids = exactly those 5. The claimed '63/63' matches no reproducible measurement (script: 66/71; documented command: 5 of 71 missing). Additionally the 'fresh fetch of origin' precondition is broken: 'git fetch origin refs/gitreins/history:refs/gitreins/history' is rejected non-fast-forward \u2014 origin carries 071ed739 (117 runs) while the local ref has diverged to 2fb9462a (122 runs, 5 newer verdict commits), so a fresh fetch never obtains the state under which the audit was measured. Finally the board row EVID-1 itself is still status=pending (.coding-hermes/board/tasks.jsonl:180).\n  \u2717 Derived: the committed audit script must exit 0 against the landed board per its own success contract (exit 0 = every cited value resolves AND no non-run-id-shaped values remain): sh scripts/audit-evidence-runids.sh at HEAD 5224b938 exits 1: 'unresolvable run-ids: 0 / not-a-run-id: 5 / resolvable 66/71', EXIT=1. Commit 5b7a1e00's own message states 'Exit 0 therefore still requires the board rows to be repaired' \u2014 that repair never landed; the 5 bad values are still cited by rows RELEASE-001, UX-001, DOC-9, DF-SPECLANG-014, DF-SPECLANG-1-R4, DF-SPECLANG-3.\n  \u2717 Derived: refs/gitreins/history on origin must contain the unioned history so a fresh fetch resolves cited run_ids (the criterion's explicit 'After a fresh fetch of origin' precondition): git ls-remote origin shows refs/gitreins/history = 071ed739 (117 runs); local ref = 2fb9462a (122 runs) with 5 newer verdict commits (52adea98..2fb9462a). 'git fetch origin refs/gitreins/history:refs/gitreins/history' \u2192 '! [rejected] (non-fast-forward)'. Even origin's ref lacks the 5 non-run-id cited values (comm -23 vs 071ed739 listing = same 5), so the audit cannot pass from a fresh fetch.\n  \u2717 Coverage FAILED \u2014 not passing: After a fresh fetch of origin, every run_id cited in board rows detail.evidence resolves to .gitreins/history/<date>/<run_id>/verdict.json in refs/gitreins/history or the working tree, measured by scripts/audit-evidence-runids.sh committed to the repo; the script flags non-run-id shaped values.\nThe audit script is committed and correctly flags non-run-id values, and all 66 run-id-shaped citations resolve locally \u2014 but the task's success state is not delivered: the script exits 1 (66/71, 5 non-run-id values still unrepaired in board rows), the claimed 63/63 matches no reproducible measurement, origin's history ref is a diverged non-fast-forward behind the local one so a fresh fetch cannot reproduce the audit, and the EVID-1 board row itself remains status=pending.\n\nOverall: FAIL \u2717 [DEGRADED \u2014 skipped: tier1(tests)=skipped at runtime \u2014 tests: timed out after 120s (step budget)]",
+  "evaluated_at": "2026-11-20T15:43:01.370273",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-20T15:43:01.417771+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 36417,
+        "truncated": false,
+        "source": "git show 5224b9382b53"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 262176,
+        "truncated": true,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "EVID-1"
+  }
+}
