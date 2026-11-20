@@ -400,6 +400,8 @@ npm test
 # 5. Inspect the checked-in index or compute the live graph without rewriting it
 jq '.specs | length' _index.json
 # Run `jq '.specs | length' _index.json` for the authoritative number of saved entries.
+# The checked-in snapshot currently holds 488 entries; regenerate with
+# `--generate` if it drifts (the generator is deterministic since the indexer fix).
 # This is a snapshot, not a live file count. The generator's read-only modes
 # compute the live graph in memory; run `python3 scripts/generate_index.py --graph`
 # for the authoritative number of graph nodes and edges.
