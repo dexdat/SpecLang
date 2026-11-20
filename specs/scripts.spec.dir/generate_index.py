@@ -14,8 +14,9 @@ import os
 import json
 import yaml
 import re
+import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from collections import defaultdict
 from typing import Dict, List, Set, Optional, Tuple
 
@@ -200,19 +201,81 @@ def _is_excluded_dir(name: str) -> bool:
     return name in EXCLUDED_DIRS or name.startswith('test-temp')
 
 
+def _git_commit_times(root_dir: str) -> Dict[str, str]:
+    """Map ``root_dir``-relative path -> ISO-8601 UTC time of its newest commit.
+
+    ``modified`` has to be a function of the COMMITTED tree, not of file
+    mtimes: a checkout, a merge or a ``git clone`` rewrites mtimes, so a
+    stat()-derived stamp makes two runs on the same commit disagree on ~every
+    entry and the tracked ``_index.json`` can never be regenerated cleanly.
+    One ``git log`` walk yields the newest commit time per path (git log is
+    newest-first, so the first hit wins).
+
+    Returns ``{}`` when ``root_dir`` is not a git checkout or git is
+    unavailable; callers then emit ``null`` rather than falling back to
+    nondeterministic mtimes.
+    """
+    def _run(args: List[str]):
+        return subprocess.run(['git', '-C', root_dir] + args,
+                              capture_output=True, text=True, timeout=180)
+
+    try:
+        prefix = _run(['rev-parse', '--show-prefix'])
+        if prefix.returncode != 0:
+            return {}
+        # Empty at the toplevel; 'specs/' etc. when indexing a subdirectory.
+        prefix = prefix.stdout.strip()
+
+        log = _run(['log', '-z', '--pretty=format:%ct', '--name-only'])
+        if log.returncode != 0:
+            return {}
+    except (OSError, subprocess.SubprocessError):
+        return {}
+
+    times: Dict[str, str] = {}
+    current: Optional[int] = None
+    for token in log.stdout.split('\0'):
+        if not token:
+            continue
+        head, sep, rest = token.partition('\n')
+        if sep and head.isdigit():
+            # Commit header: '<epoch>\n<first path>'.
+            current = int(head)
+            token = rest
+            if not token:
+                continue
+        elif not sep and token.isdigit():
+            continue
+        if current is None:
+            continue
+        path = token[len(prefix):] if prefix and token.startswith(prefix) else token
+        if path in times:
+            # Newest commit already recorded for this path.
+            continue
+        times[path] = datetime.fromtimestamp(
+            current, tz=timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+    return times
+
+
 def get_spec_files(root_dir: str) -> List[Tuple[str, str]]:
-    """Find all spec files."""
+    """Find all spec files, in a deterministic order.
+
+    ``os.walk`` yields directories and files in filesystem order (inode/hash
+    order), which differs between checkouts, machines and filesystems. Both
+    walk levels and the final list are sorted on the repo-relative path so two
+    runs — and two clones of the same commit — produce the identical list.
+    """
     spec_extensions = ['.scl', '.spec.md', '.spec.yaml', '.spec']
     code_spec_pattern = re.compile(r'\.[a-z]+\.spec$')
     
     files = []
     for dirpath, dirnames, filenames in os.walk(root_dir):
-        dirnames[:] = [d for d in dirnames if not _is_excluded_dir(d)]
+        dirnames[:] = sorted(d for d in dirnames if not _is_excluded_dir(d))
         
         if '.backup_spec_files' in dirpath:
             continue
         
-        for filename in filenames:
+        for filename in sorted(filenames):
             filepath = os.path.join(dirpath, filename)
             relpath = os.path.relpath(filepath, root_dir)
             
@@ -231,6 +294,7 @@ def get_spec_files(root_dir: str) -> List[Tuple[str, str]]:
             if is_spec:
                 files.append((relpath, filepath))
     
+    files.sort(key=lambda item: item[0])
     return files
 
 
@@ -293,9 +357,9 @@ def build_dependency_graph(entries: List[dict], include_content_refs: bool = Tru
     
     # Remove duplicates
     for k in dependencies:
-        dependencies[k] = list(set(dependencies[k]))
+        dependencies[k] = sorted(set(dependencies[k]))
     for k in dependents:
-        dependents[k] = list(set(dependents[k]))
+        dependents[k] = sorted(set(dependents[k]))
     
     return dict(dependencies), dict(dependents)
 
@@ -316,7 +380,7 @@ def get_transitive_dependencies(spec_id: str, dependencies: Dict[str, List[str]]
         result.append(dep)
         result.extend(get_transitive_dependencies(dep, dependencies, visited))
     
-    return list(set(result))
+    return sorted(set(result))
 
 
 def get_transitive_dependents(spec_id: str, dependents: Dict[str, List[str]], 
@@ -335,7 +399,7 @@ def get_transitive_dependents(spec_id: str, dependents: Dict[str, List[str]],
         result.append(dep)
         result.extend(get_transitive_dependents(dep, dependents, visited))
     
-    return list(set(result))
+    return sorted(set(result))
 
 
 def detect_cycles(dependencies: Dict[str, List[str]]) -> List[List[str]]:
@@ -384,7 +448,7 @@ def find_orphans(dependencies: Dict[str, List[str]], dependents: Dict[str, List[
         if not deps and not dens:
             orphans.append(spec_id)
     
-    return orphans
+    return sorted(orphans)
 
 
 def find_path(from_id: str, to_id: str, dependencies: Dict[str, List[str]]) -> Optional[List[str]]:
@@ -602,12 +666,12 @@ def generate_index(root_dir: str = '.', output_file: str = '_index.json', write:
     
     entries = []
     all_ids = set()
+    skipped = []
+    commit_times = _git_commit_times(root_dir)
     
     # First pass: collect basic metadata
     for relpath, filepath in spec_files:
         try:
-            stat = os.stat(filepath)
-            
             with open(filepath, 'r') as f:
                 lines = sum(1 for _ in f)
             
@@ -622,7 +686,19 @@ def generate_index(root_dir: str = '.', output_file: str = '_index.json', write:
                 layer = layer_raw if isinstance(layer_raw, int) else 0
             layer = max(0, min(layer, 10))
             
-            spec_id = metadata.get('id', f'@unknown/{os.path.basename(relpath)}')
+            # Only files that declare a speclang id are spec sources. The old
+            # '@unknown/<basename>' fallback turned every stray *.spec.md in
+            # the tree (untracked scratch files, test leftovers) into an index
+            # row that matches no real spec and can never be validated. Skip
+            # them and report the skip instead of inventing an id.
+            spec_id = metadata.get('id')
+            if isinstance(spec_id, (int, float)):
+                spec_id = str(spec_id)
+            if not isinstance(spec_id, str) or not spec_id.strip():
+                skipped.append(relpath)
+                print(f"Skipping {relpath}: no speclang id in header")
+                continue
+            spec_id = spec_id.strip()
             all_ids.add(spec_id)
             
             entry = {
@@ -641,7 +717,7 @@ def generate_index(root_dir: str = '.', output_file: str = '_index.json', write:
                 'content_refs': content_refs,
                 'blocks': blocks,
                 'lines': lines,
-                'modified': datetime.fromtimestamp(stat.st_mtime).isoformat() + 'Z',
+                'modified': commit_times.get(relpath),
                 'header_lines': header_lines,
                 'status': metadata.get('status', 'draft'),
                 'target': metadata.get('target'),
@@ -652,6 +728,12 @@ def generate_index(root_dir: str = '.', output_file: str = '_index.json', write:
         except Exception as e:
             print(f"Error processing {relpath}: {e}")
     
+    # Deterministic entry order: repo-relative path. Everything downstream
+    # ('specs' insertion order, graph keys, adjacency lists) inherits it.
+    entries.sort(key=lambda entry: entry['file'])
+    if skipped:
+        print(f"Skipped {len(skipped)} file(s) without a speclang id header")
+
     # Build graphs
     dependencies, dependents = build_dependency_graph(entries)
     
@@ -670,10 +752,19 @@ def generate_index(root_dir: str = '.', output_file: str = '_index.json', write:
     # Build specs dictionary
     specs_dict = {entry['id']: entry for entry in entries}
     
+    # Newest indexed-spec commit time (ISO-8601 UTC, so lexicographic max is
+    # chronological max). None when the tree is not a git checkout.
+    stamps = [entry['modified'] for entry in entries if entry['modified']]
+    generated = max(stamps) if stamps else None
+
     # Build index
     index = {
         'version': '0.2.0',
-        'generated': datetime.now().isoformat() + 'Z',
+        # Source-derived stamp, not wall clock. A datetime.now() value made the
+        # tracked _index.json differ on EVERY run, so the artifact could never
+        # be regenerated cleanly (`git status` was always dirty). This value is
+        # a fixpoint: regenerating the same tree reproduces the same bytes.
+        'generated': generated,
         'specs': specs_dict,
         'graph': {
             'dependencies': dependencies,
