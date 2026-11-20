@@ -1,0 +1,295 @@
+{
+  "task_id": "OBS-6",
+  "task_title": "Index baseline observability report: entry count vs tracked specs, delta, agent-path token accounting",
+  "task_criteria": [
+    "A committed docs/observability/ report states the index entry count from node bin/speclang index over the repo's own specs, the count from git ls-files specs/**/*.spec.md, their signed delta, an explicit measured-or-unmeasured token accounting finding with evidence, and the exact commands; counts re-verified live."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/worktrees/speclang-integr-obs6",
+  "branch": "",
+  "commit": "94e2b92170a8c81ab6a8c2d3e763a3a01bc5e162",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "2f2a3d1822d4e18d9fb8d3c24ad25f92a780238f55b133fd95f69b2d871014f6",
+  "working_tree_dirty_path_count": 0,
+  "items": [
+    {
+      "criterion": "A committed docs/observability/ report states the index entry count from node bin/speclang index over the repo's own specs, the count from git ls-files specs/**/*.spec.md, their signed delta, an explicit measured-or-unmeasured token accounting finding with evidence, and the exact commands; counts re-verified live.",
+      "status": "PASS",
+      "detail": "docs/observability/index-baseline-2026-11-20.md is committed (git ls-files lists it; merge 94e2b921 adds only this file). All counts re-verified live in this checkout: `node bin/speclang index` \u2192 \"error: unknown command 'index'\" EXIT=1, exactly as the report documents in \u00a74.1 (the index command is registered only in src/cli/index.ts:163, which tsconfig.json:61 excludes from the build \u2014 both verified); the report's documented working entry point `node specs/cli.spec.dir/src/index.js index` printed \"Found 493 spec files\" / \"Total specs: 485\" EXIT=0, matching the report's 493/485; `jq '.specs|length' _index.json` = 485. `git ls-files 'specs/**/*.spec.md' | wc -l` = 346 live, matching the report, which also explains the glob misses 122 top-level specs (468 via 'specs/*.spec.md', verified live). Signed deltas +139 (485\u2212346) and +147 (493\u2212346) stated and arithmetically correct. Token finding is explicit UNMEASURED with 6 evidence points (\u00a73), each spot-verified: grep -ci token on the compiled index command = 0, no token matches in indexer/CLI sources or sqlite migrations.ts, live _index.json entry keys match the 15 listed (no token field), cascade collateMetrics (specs/cascade.spec.dir/src/coordinator/index.ts:616-645) only sums tokens for --metrics, docs/observability-spec.md:71 confirms 'printed, never stored'. Exact commands with verbatim output in \u00a74 and \u00a77. The report's duplicate-id claim (7 ids, 8 collapses) was independently reproduced by reimplementing the indexer's header parse (specs/indexer.spec.dir/src/index.ts:40-115): 493 files \u2192 485 unique ids, same 7 duplicated ids."
+    },
+    {
+      "criterion": "Derived: the report is committed, internally consistent, and leaves the tree clean (its documented side effects are restorable)",
+      "status": "PASS",
+      "detail": "git ls-files docs/observability/ shows the report tracked; commit 94e2b921 diff is docs-only (252 insertions, 1 file). The report's reconciliation '+17 = 2 .scl + 23 .spec \u2212 8 duplicate ids' is consistent with the verified counts (468/493/485). The run's side effect on tracked _index.json (documented in report \u00a76) was restored with `git checkout -- _index.json`; git status is clean.",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: npm notice run speclang@1.0.0 npx",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\nnpm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "npm notice run speclang@1.0.0 npx\nnpm notice run 'vitest' run --passWithNoTests\n\n RUN  v4.1.11 /home/kara/worktrees/speclang-integr-obs6\n\nspeclang shim: $SPECLANG_CLI points at a path that does not exist:\n  /home/kara/worktrees/speclang-integr-obs6/.tmp/speclang-new-runnable-qssyXS/does-not-exist\n\u274c No specs directory found. Run from a speclang project.\n\u274c Block not found: nonexistent-block-that-does-not-exist\nError: --to <level> is required\n\u274c Unknown target level: INVALID_LEVEL\nerror: missing required argument 'block-id'\n\u274c Downgrade must go to a lower level\n\u274c Spec file not found: /home/kara/worktrees/speclang-integr-obs6/.tmp/speclang-test-downgrade/specs/nonexistent-file.spec.md\n\n Test Files  129 passed | 4 skipped (133)\n      Tests  2084 passed | 58 skipped (2142)\n   Start at  09:52:24\n   Duration  38.38s (transform 14.47s, setup 3.50s, import 23.79s, tests 241.32s, environment 19ms)\n",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 A committed docs/observability/ report states the index entry count from node bin/speclang index over the repo's own specs, the count from git ls-files specs/**/*.spec.md, their signed delta, an explicit measured-or-unmeasured token accounting finding with evidence, and the exact commands; counts re-verified live.: docs/observability/index-baseline-2026-11-20.md is committed (git ls-files lists it; merge 94e2b921 adds only this file). All counts re-verified live in this checkout: `node bin/speclang index` \u2192 \"error: unknown command 'index'\" EXIT=1, exactly as the report documents in \u00a74.1 (the index command is registered only in src/cli/index.ts:163, which tsconfig.json:61 excludes from the build \u2014 both verified); the report's documented working entry point `node specs/cli.spec.dir/src/index.js index` printed \"Found 493 spec files\" / \"Total specs: 485\" EXIT=0, matching the report's 493/485; `jq '.specs|length' _index.json` = 485. `git ls-files 'specs/**/*.spec.md' | wc -l` = 346 live, matching the report, which also explains the glob misses 122 top-level specs (468 via 'specs/*.spec.md', verified live). Signed deltas +139 (485\u2212346) and +147 (493\u2212346) stated and arithmetically correct. Token finding is explicit UNMEASURED with 6 evidence points (\u00a73), each spot-verified: grep -ci token on the compiled index command = 0, no token matches in indexer/CLI sources or sqlite migrations.ts, live _index.json entry keys match the 15 listed (no token field), cascade collateMetrics (specs/cascade.spec.dir/src/coordinator/index.ts:616-645) only sums tokens for --metrics, docs/observability-spec.md:71 confirms 'printed, never stored'. Exact commands with verbatim output in \u00a74 and \u00a77. The report's duplicate-id claim (7 ids, 8 collapses) was independently reproduced by reimplementing the indexer's header parse (specs/indexer.spec.dir/src/index.ts:40-115): 493 files \u2192 485 unique ids, same 7 duplicated ids.\n  \u2713 Derived: the report is committed, internally consistent, and leaves the tree clean (its documented side effects are restorable): git ls-files docs/observability/ shows the report tracked; commit 94e2b921 diff is docs-only (252 insertions, 1 file). The report's reconciliation '+17 = 2 .scl + 23 .spec \u2212 8 duplicate ids' is consistent with the verified counts (468/493/485). The run's side effect on tracked _index.json (documented in report \u00a76) was restored with `git checkout -- _index.json`; git status is clean.\nThe OBS-6 baseline report is committed, every stated count (493/485/346/468, deltas +139/+147) re-verified live in this checkout, the literal `node bin/speclang index` failure is honestly documented with a working equivalent entry point, and the token-accounting finding is an explicit, evidence-backed UNMEASURED.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 A committed docs/observability/ report states the index entry count from node bin/speclang index over the repo's own specs, the count from git ls-files specs/**/*.spec.md, their signed delta, an explicit measured-or-unmeasured token accounting finding with evidence, and the exact commands; counts re-verified live.: docs/observability/index-baseline-2026-11-20.md is committed (git ls-files lists it; merge 94e2b921 adds only this file). All counts re-verified live in this checkout: `node bin/speclang index` \u2192 \"error: unknown command 'index'\" EXIT=1, exactly as the report documents in \u00a74.1 (the index command is registered only in src/cli/index.ts:163, which tsconfig.json:61 excludes from the build \u2014 both verified); the report's documented working entry point `node specs/cli.spec.dir/src/index.js index` printed \"Found 493 spec files\" / \"Total specs: 485\" EXIT=0, matching the report's 493/485; `jq '.specs|length' _index.json` = 485. `git ls-files 'specs/**/*.spec.md' | wc -l` = 346 live, matching the report, which also explains the glob misses 122 top-level specs (468 via 'specs/*.spec.md', verified live). Signed deltas +139 (485\u2212346) and +147 (493\u2212346) stated and arithmetically correct. Token finding is explicit UNMEASURED with 6 evidence points (\u00a73), each spot-verified: grep -ci token on the compiled index command = 0, no token matches in indexer/CLI sources or sqlite migrations.ts, live _index.json entry keys match the 15 listed (no token field), cascade collateMetrics (specs/cascade.spec.dir/src/coordinator/index.ts:616-645) only sums tokens for --metrics, docs/observability-spec.md:71 confirms 'printed, never stored'. Exact commands with verbatim output in \u00a74 and \u00a77. The report's duplicate-id claim (7 ids, 8 collapses) was independently reproduced by reimplementing the indexer's header parse (specs/indexer.spec.dir/src/index.ts:40-115): 493 files \u2192 485 unique ids, same 7 duplicated ids.\n  \u2713 Derived: the report is committed, internally consistent, and leaves the tree clean (its documented side effects are restorable): git ls-files docs/observability/ shows the report tracked; commit 94e2b921 diff is docs-only (252 insertions, 1 file). The report's reconciliation '+17 = 2 .scl + 23 .spec \u2212 8 duplicate ids' is consistent with the verified counts (468/493/485). The run's side effect on tracked _index.json (documented in report \u00a76) was restored with `git checkout -- _index.json`; git status is clean.\nThe OBS-6 baseline report is committed, every stated count (493/485/346/468, deltas +139/+147) re-verified live in this checkout, the literal `node bin/speclang index` failure is honestly documented with a working equivalent entry point, and the token-accounting finding is an explicit, evidence-backed UNMEASURED.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "A committed docs/observability/ report states the index entry count from node bin/speclang index over the repo's own specs, the count from git ls-files specs/**/*.spec.md, their signed delta, an explicit measured-or-unmeasured token accounting finding with evidence, and the exact commands; counts re-verified live.",
+                "status": "PASS",
+                "detail": "docs/observability/index-baseline-2026-11-20.md is committed (git ls-files lists it; merge 94e2b921 adds only this file). All counts re-verified live in this checkout: `node bin/speclang index` \u2192 \"error: unknown command 'index'\" EXIT=1, exactly as the report documents in \u00a74.1 (the index command is registered only in src/cli/index.ts:163, which tsconfig.json:61 excludes from the build \u2014 both verified); the report's documented working entry point `node specs/cli.spec.dir/src/index.js index` printed \"Found 493 spec files\" / \"Total specs: 485\" EXIT=0, matching the report's 493/485; `jq '.specs|length' _index.json` = 485. `git ls-files 'specs/**/*.spec.md' | wc -l` = 346 live, matching the report, which also explains the glob misses 122 top-level specs (468 via 'specs/*.spec.md', verified live). Signed deltas +139 (485\u2212346) and +147 (493\u2212346) stated and arithmetically correct. Token finding is explicit UNMEASURED with 6 evidence points (\u00a73), each spot-verified: grep -ci token on the compiled index command = 0, no token matches in indexer/CLI sources or sqlite migrations.ts, live _index.json entry keys match the 15 listed (no token field), cascade collateMetrics (specs/cascade.spec.dir/src/coordinator/index.ts:616-645) only sums tokens for --metrics, docs/observability-spec.md:71 confirms 'printed, never stored'. Exact commands with verbatim output in \u00a74 and \u00a77. The report's duplicate-id claim (7 ids, 8 collapses) was independently reproduced by reimplementing the indexer's header parse (specs/indexer.spec.dir/src/index.ts:40-115): 493 files \u2192 485 unique ids, same 7 duplicated ids."
+              },
+              {
+                "criterion": "Derived: the report is committed, internally consistent, and leaves the tree clean (its documented side effects are restorable)",
+                "status": "PASS",
+                "detail": "git ls-files docs/observability/ shows the report tracked; commit 94e2b921 diff is docs-only (252 insertions, 1 file). The report's reconciliation '+17 = 2 .scl + 23 .spec \u2212 8 duplicate ids' is consistent with the verified counts (468/493/485). The run's side effect on tracked _index.json (documented in report \u00a76) was restored with `git checkout -- _index.json`; git status is clean.",
+                "derived": true
+              }
+            ],
+            "summary": "The OBS-6 baseline report is committed, every stated count (493/485/346/468, deltas +139/+147) re-verified live in this checkout, the literal `node bin/speclang index` failure is honestly documented with a working equivalent entry point, and the token-accounting finding is an explicit, evidence-backed UNMEASURED.",
+            "provenance": {
+              "model": "accounts/fireworks/models/kimi-k3",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "accounts/fireworks/models/kimi-k3",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"OBS-6\"}",
+          "exit_code": 0,
+          "output_sha": "53ed94096a6f297edb170702bcde9ace90f7bde45815451f0d82f8490d4d410f"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"docs/observability/index-baseline-2026-11-20.md\"}",
+          "exit_code": 0,
+          "output_sha": "33094337d15585fc4e45dbe7dd41b2a8fae0cead41dd804264d856fcc00338f1"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls; echo ---; git log --oneline -3; echo ---; git status --short | head",
+          "exit_code": 0,
+          "output_sha": "5d43566ce28771b2fb5b9c91f86da81a7a2b6babc3d7e77048ea3ee35fe87000"
+        },
+        {
+          "tool": "run_command",
+          "command": "git ls-files 'specs/**/*.spec.md' | wc -l; git ls-files 'specs/*.spec.md' | wc -l; git ls-files specs | grep -c '\\.spec\\.md$'",
+          "exit_code": 0,
+          "output_sha": "a18d173efabf1084fa1b4398e9854a17ce53202c71893fe03bdf9ca15317c7a1"
+        },
+        {
+          "tool": "run_command",
+          "command": "node bin/speclang index; echo EXIT=$?",
+          "exit_code": 0,
+          "output_sha": "3f833d47fa32f29f20ee1a36fa1fd72cef81a356256a60ff69d38ffb21f2c8de"
+        },
+        {
+          "tool": "run_command",
+          "command": "node specs/cli.spec.dir/src/index.js index; echo EXIT=$?",
+          "exit_code": 0,
+          "output_sha": "7fcd1c9d98044057a8c1ebd98325e439185ae43f08ba495029eccee3f7d18cf6"
+        },
+        {
+          "tool": "run_command",
+          "command": "jq '.specs|length' _index.json; jq '.specs[0] | keys' _index.json 2>/dev/null || jq '.specs | keys[0:3]' _index.json",
+          "exit_code": 0,
+          "output_sha": "7e8fb68a6a2266c8fa40cb44df7591db84f2a6e7ef6a6a6558ea4b78bd2ccc7a"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -ci token specs/cli.spec.dir/src/commands/index.js; grep -rni token specs/indexer.spec.dir/src src/cli/commands/index.ts | head; echo ---; grep -rni token specs/sqlite.spec.dir/src/migrations.ts | head; echo ---; grep -n 'index' src/cli/index.ts | head -5; grep -n 'exclude' tsconfig.json",
+          "exit_code": 0,
+          "output_sha": "15ab3ddfe9a0243fe3d79f94859de292766d3be2d2144925b6e0f00887d0d24d"
+        },
+        {
+          "tool": "run_command",
+          "command": "git ls-files docs/observability/; echo ---; sed -n 40,55p tsconfig.json; echo ---; jq '.specs[\"@bugs/cascade-generates-zero-files\"] | keys' _index.json; echo ---; grep -rhoP '^id: \".*?\"' specs --include='*.spec.md' --include='*.scl' --include='*.spec' | sort | uniq -d | head -10",
+          "exit_code": 0,
+          "output_sha": "87b01d457b084fbeebe6809ed5d7ca4a4ffe6c45e0443dea70faf295623edb78"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n 'src/cli' tsconfig.json; echo ---; grep -rhoP '^id: \".*?\"' specs --include='*.spec.md' --include='*.scl' --include='*.spec' | sort | uniq -d | wc -l; grep -rhoP '^id: \".*?\"' specs --include='*.spec.md' --include='*.scl' --include='*.spec' | sort -u | wc -l; echo ---; grep -n 'collateMetrics\\|input_tokens' specs/cascade.spec.dir/src/coordinator/index.ts | head -6; grep -n 'token' docs/observability-spec.md | sed -n 1,4p",
+          "exit_code": 0,
+          "output_sha": "6495aceaafa278b5ed13cc44388d73934d4f6cb2c6f103ac7722cbc76412df86"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rhoP '^id: \".*?\"' specs --include='*.spec.md' --include='*.scl' --include='*.spec' | sort | uniq -d",
+          "exit_code": 0,
+          "output_sha": "b23ce823e618bd7a71ad70a97623ba8556391ee923ac555646999eda5b4d9b26"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rhoP '^\\s*id: \".*?\"' specs --include='*.spec.md' --include='*.scl' --include='*.spec' | sort | uniq -d | wc -l; grep -rhoP '^\\s*id: \".*?\"' specs --include='*.spec.md' --include='*.scl' --include='*.spec' | sort -u | wc -l; grep -rhoP '^\\s*id: \".*?\"' specs --include='*.spec.md' --include='*.scl' --include='*.spec' | wc -l",
+          "exit_code": 0,
+          "output_sha": "81181c66a41cc9c9194cd87d3412504ee5cb269a6fd65da67de46844f3545fbc"
+        },
+        {
+          "tool": "run_command",
+          "command": "jq -r '.specs | keys[]' _index.json | sort > /tmp/idx-ids.txt; wc -l /tmp/idx-ids.txt; grep -rhoP '^id: \".*?\"' specs --include='*.spec.md' --include='*.scl' --include='*.spec' | sed 's/^id: //; s/\"//g' | sort | uniq -d > /tmp/dup-ids.txt; cat /tmp/dup-ids.txt; echo ---; while read -r id; do grep -c \"^$id\\$\" /tmp/idx-ids.txt >/dev/null && echo \"$id in-index\"; done < /tmp/dup-ids.txt | wc -l",
+          "exit_code": 0,
+          "output_sha": "64a135ffee560060976778f179c2c781fa4ce74f7c46dd03f21b4a3d78b1a6b1"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rhoP '^id: \".*?\"' specs --include='*.spec.md' --include='*.scl' --include='*.spec' | sed 's/^id: //; s/\"//g' | sort | uniq -c | awk '$1>1 {s+=$1-1} END {print \"excess:\",s}'; echo ---; for id in '@demo/badcount' '@demo/hello' '@examples/greeting' '@myapp/auth' '@speclang/agent-behavior-matrix' '@specs/auth' '@specs/auth/login' '@specs/example' '@specs/test' '@test/hello' '@tests/auth'; do grep -qF \"\\\"$id\\\"\" /tmp/idx-ids.txt || echo \"NOT in index: $id\"; done; echo ---; grep -rlP '^id: \"@demo/badcount\"' specs | head",
+          "exit_code": 0,
+          "output_sha": "c679ea70bbb55d2d4f41e2ae7df6793a43595eb6af8685bfa7e7f98a5fa55a2e"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rlP '^id: \"@demo/badcount\"' specs; echo ---; grep -rlP '^id: \"@speclang/index\"' specs; echo ---; grep -rlP '^id: \"@specs/guard\"' specs; echo ---; grep -rlP '^id: \"@specs/auth\"' specs",
+          "exit_code": 0,
+          "output_sha": "70448bef6c39247210d68198d7e09fe4111d5d465899a8ec7b505c0da1dd5c54"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rhoP '^id: \".*?\"' specs --include='*.spec.md' --include='*.scl' --include='*.spec' | sed 's/^id: //; s/\"//g' | sort | uniq -c | awk '$1>1' | sort -rn",
+          "exit_code": 0,
+          "output_sha": "12cd520fb5eec3548d723f02f0c9112e429fafff733c7b1c295da6d00f3cdf58"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rlP '^id: \"@demo/hello\"' specs; echo ---; grep -rlP '^id: \"@test/hello\"' specs; echo ---; grep -rlP '^id: \"@myapp/auth\"' specs",
+          "exit_code": 0,
+          "output_sha": "f30b9b45f6f7adf870259153af586d46f49ce8109c26754312534bcd56564b5a"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -rnP '^id: \"@demo/hello\"' specs/roadmap.spec.dir/poc.spec.dir/*.spec.md; echo ---; grep -rnP '^id: \"@test/hello\"' specs/roadmap.spec.dir/poc.spec.dir/tests.spec.md; echo ---; grep -rnP '^id: \"@myapp/auth\"' specs/spec-format.spec.dir/structure.spec.md; echo ---; grep -rnP '^id: \"@specs/auth\"' specs/speclang.spec.md specs/file-naming.spec.md specs/tutorial.spec.md specs/file-naming.spec.dir/extensions.spec.md specs/cascade-protocol.spec.dir/flow.spec.md",
+          "exit_code": 0,
+          "output_sha": "0593087da770ecd12ed51929684775d284c15cd172fd700452cb4abecd0ee5b9"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 160,220p specs/indexer.spec.dir/src/index.ts",
+          "exit_code": 0,
+          "output_sha": "009d7699140ef2d6b290d5fa813c31077226c9597589855dc276eb0662009552"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n 'id' specs/indexer.spec.dir/src/index.ts | grep -in 'header\\|parse\\|match\\|regex\\|extract' | head; echo ---; grep -n 'parseSpecFile\\|extractHeader\\|headerPattern\\|idMatch' specs/indexer.spec.dir/src/index.ts | head",
+          "exit_code": 0,
+          "output_sha": "19dfe12b79d75da5b42d18cbdb66b90208a8b804d149894346c259204f3c7dd7"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 85,160p specs/indexer.spec.dir/src/index.ts",
+          "exit_code": 0,
+          "output_sha": "92f80f654bb15df6a04c8b94c5887b4a0686e15f0af2ddb102a5acb8f886d95f"
+        },
+        {
+          "tool": "run_command",
+          "command": "sed -n 40,85p specs/indexer.spec.dir/src/index.ts",
+          "exit_code": 0,
+          "output_sha": "88301fadf027fa8de5671936f539b0e6c21b69a90c19f90533974c798d890a6a"
+        },
+        {
+          "tool": "run_command",
+          "command": "node -e '\nconst fs=require(\"fs\"),path=require(\"path\"),yaml=require(\"yaml\");\nconst exts=[\".scl\",\".spec.md\",\".spec.yaml\",\".spec\"];const codeSpec=/\\.[a-z]+\\.spec$/;\nconst files=[];(function walk(d){for(const e of fs.readdirSync(d,{withFileTypes:true})){if([\".git\",\".opencode\",\".backup_spec_files\"].includes(e.name))continue;const p=path.join(d,e.name);if(e.isDirectory())walk(p);else if(e.isFile()){const r=path.relative(\"specs\",p);if(r.includes(\".backup_spec_files\"))continue;if(exts.some(x=>e.name.endsWith(x))||codeSpec.test(e.name))files.push(p);}}})(\"specs\");\nconsole.log(\"files:\",files.length);\nconst ids=[];\nfor(const f of files){\n  const content=fs.readFileSync(f,\"utf-8\");const lines=content.split(\"\\n\");\n  let metadata={};\n  for(let i=0;i<lines.length;i++){\n    if(lines[i].includes(\"speclang-header\")){\n      const m=lines[i].match(/lines:\\s*(\\d+)/);const hl=m?parseInt(m[1],10):0;\n      const yl=[];let j=i+1;const end=hl>0?Math.min(j+hl-1,lines.length):lines.length;\n      for(let k=j;k<end;k++){if(lines[k].trim()===\"---\")break;yl.push(lines[k]);}\n      if(yl.length>0){try{metadata=yaml.parse(yl.join(\"\\n\"))||{};}catch(e){const im=yl.join(\"\\n\").match(/id:\\s*(@[^\\s]+)/);if(im)metadata.id=im[1];}}\n      break;\n    }\n  }\n  ids.push({f,id:metadata.id??null});\n}\nconst noId=ids.filter(x=>!x.id);console.log(\"no id:\",noId.length);noId.slice(0,10).forEach(x=>console.log(\"  \",x.f));\nconst counts={};ids.forEach(x=>{if(x.id)counts[x.id]=(counts[x.id]||0)+1;});\nconst dups=Object.entries(counts).filter(([k,v])=>v>1);\nconsole.log(\"unique ids:\",Object.keys(counts).length,\"dup ids:\",dups.length,\"excess:\",dups.reduce((s,[k,v])=>s+v-1,0));\ndups.forEach(([k,v])=>console.log(\"  dup\",v,k));\n' 2>&1 | head -40",
+          "exit_code": 0,
+          "output_sha": "b717404b3c712089930418526866128ebe3026eaaed0dae044fc318c5a4fc42a"
+        },
+        {
+          "tool": "run_command",
+          "command": "git checkout -- _index.json && git status --short; echo ---; grep -n 'refreshIndex\\|generateIndex\\|populateDatabase' specs/cli.spec.dir/src/utils.ts | head -8; echo ---; grep -n 'outputPath' specs/indexer.spec.dir/src/types.ts | head -3; sed -n 305,312p specs/indexer.spec.dir/src/index.ts",
+          "exit_code": 0,
+          "output_sha": "808b0367fcd89ef3a8129241f722b106d10d3224b4df56d7c28f38ddbb89a10a"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: docs/observability/index-baseline-2026-11-20.md (committed, git ls-files confirms) states all required elements and every number re-verified live in this checkout:\\n- Report states index entry counts: 493 generator entries / 485 stored ids (report lines 15-17). Live run `node specs/cli.spec.dir/src/index.js index` printed exactly \\\"Found 493 spec files\\\" / \\\"Total specs: 485\\\" (EXIT=0); `jq '.specs|length' _index.json` = 485.\\n- Report states git ls-files count: 346 for `git ls-files 'specs/**/*.spec.md' | wc -l` (report line 18, section 4.4). Live re-run: 346. Also 468 for `specs/*.spec.md` \\u2014 live re-run: 468.\\n- Signed deltas stated: +139 (485-346) and +147 (493-346), plus +17/+25 vs complete tracked set (report section 1-2). Arithmetic checks out.\\n- Token accounting finding: explicit UNMEASURED with 6-point evidence (report section 3). Verified: `grep -ci token specs/cli.spec.dir/src/commands/index.js` = 0; `grep -rni token specs/indexer.spec.dir/src src/cli/commands/index.ts` = no matches; `grep -rni token specs/sqlite.spec.dir/src/migrations.ts` = nothing; entry keys from live _index.json match the 15 keys listed (no token field); cascade collateMetrics at specs/cascade.spec.dir/src/coordinator/index.ts:616-645 sums input/output tokens only for --metrics; docs/observability-spec.md:71 confirms \\\"printed, never stored\\\".\\n- Exact commands: report section 4 and 7 give verbatim commands+output. `node bin/speclang index` live \\u2192 \\\"error: unknown command 'index'\\\" EXIT=1 exactly as report section 4.1 documents; the report documents the workaround entry point (specs/cli.spec.dir/src/index.js) with the reason (src/cli/index.ts:163 registers index but tsconfig.json:61 excludes src/cli/** \\u2014 both verified).\\n- Duplicate-id claim verified by faithful reimplementation of the indexer header parse (specs/indexer.spec.dir/src/index.ts:40-115): 493 files, 485 unique ids, 7 duplicated ids with excess 8 \\u2014 exactly the report's list of 7 ids and \\\"8 ids duplicated across files\\\" (excess count). Report's uniq -d list matches.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "c78a884da4005e49ba5369999335e832424905b5b7cb7a38339db518028f428e"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: Report is committed and self-consistent: `git ls-files docs/observability/` lists docs/observability/index-baseline-2026-11-20.md; commit 94e2b921 is a merge of 8cfd7648 adding only this file (252 insertions). Working tree clean after `git checkout -- _index.json` restored the side-effect file the report itself documents (section 6). Internal reconciliation \\\"+17 = 2 .scl + 23 .spec \\u2212 8 duplicate ids\\\" is arithmetically consistent with the verified counts (468 tracked .spec.md, 493 generator inputs, 485 unique ids).\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "fbaa03913a21dd1d206475dc626214da9026a815d8f2f39dfa670a401f4e2b56"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [],
+    "summary": "",
+    "error": "no diff to review (clean tree, no commit anchor)"
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: npm notice run speclang@1.0.0 npx\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 A committed docs/observability/ report states the index entry count from node bin/speclang index over the repo's own specs, the count from git ls-files specs/**/*.spec.md, their signed delta, an explicit measured-or-unmeasured token accounting finding with evidence, and the exact commands; counts re-verified live.: docs/observability/index-baseline-2026-11-20.md is committed (git ls-files lists it; merge 94e2b921 adds only this file). All counts re-verified live in this checkout: `node bin/speclang index` \u2192 \"error: unknown command 'index'\" EXIT=1, exactly as the report documents in \u00a74.1 (the index command is registered only in src/cli/index.ts:163, which tsconfig.json:61 excludes from the build \u2014 both verified); the report's documented working entry point `node specs/cli.spec.dir/src/index.js index` printed \"Found 493 spec files\" / \"Total specs: 485\" EXIT=0, matching the report's 493/485; `jq '.specs|length' _index.json` = 485. `git ls-files 'specs/**/*.spec.md' | wc -l` = 346 live, matching the report, which also explains the glob misses 122 top-level specs (468 via 'specs/*.spec.md', verified live). Signed deltas +139 (485\u2212346) and +147 (493\u2212346) stated and arithmetically correct. Token finding is explicit UNMEASURED with 6 evidence points (\u00a73), each spot-verified: grep -ci token on the compiled index command = 0, no token matches in indexer/CLI sources or sqlite migrations.ts, live _index.json entry keys match the 15 listed (no token field), cascade collateMetrics (specs/cascade.spec.dir/src/coordinator/index.ts:616-645) only sums tokens for --metrics, docs/observability-spec.md:71 confirms 'printed, never stored'. Exact commands with verbatim output in \u00a74 and \u00a77. The report's duplicate-id claim (7 ids, 8 collapses) was independently reproduced by reimplementing the indexer's header parse (specs/indexer.spec.dir/src/index.ts:40-115): 493 files \u2192 485 unique ids, same 7 duplicated ids.\n  \u2713 Derived: the report is committed, internally consistent, and leaves the tree clean (its documented side effects are restorable): git ls-files docs/observability/ shows the report tracked; commit 94e2b921 diff is docs-only (252 insertions, 1 file). The report's reconciliation '+17 = 2 .scl + 23 .spec \u2212 8 duplicate ids' is consistent with the verified counts (468/493/485). The run's side effect on tracked _index.json (documented in report \u00a76) was restored with `git checkout -- _index.json`; git status is clean.\nThe OBS-6 baseline report is committed, every stated count (493/485/346/468, deltas +139/+147) re-verified live in this checkout, the literal `node bin/speclang index` failure is honestly documented with a working equivalent entry point, and the token-accounting finding is an explicit, evidence-backed UNMEASURED.\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-20T14:54:59.813675",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-20T14:54:59.829024+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 608,
+        "truncated": false,
+        "source": "git show 94e2b92170a8"
+      }
+    ],
+    "task_id": "OBS-6"
+  }
+}

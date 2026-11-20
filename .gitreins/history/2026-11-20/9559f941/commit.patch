@@ -1,0 +1,13 @@
+commit 94e2b92170a8c81ab6a8c2d3e763a3a01bc5e162
+Merge: e9dfe0be 8cfd7648
+Author:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+AuthorDate: Fri Nov 20 09:45:42 2026 -0500
+Commit:     totalwindupflightsystems <totalwindupflightsystems@gmail.com>
+CommitDate: Fri Nov 20 09:45:42 2026 -0500
+
+    merge wt/OBS-6: docs(observability) index baseline report (Addresses OBS-6; wave SpecLang-dogfood-2026-11-20-14-19-33)
+    
+    Co-authored-by: Alexis Okuwa <wojonstech@gmail.com>
+
+ docs/observability/index-baseline-2026-11-20.md | 252 ++++++++++++++++++++++++
+ 1 file changed, 252 insertions(+)
