@@ -21,11 +21,24 @@ export declare function parseHeader(content: string): {
  */
 export declare function extractBlocks(content: string, sourceFile: string): Block[];
 /**
- * Extract all @ref: references from content
+ * Extract all @ref: references from content.
+ *
+ * Fenced code blocks (``` and ~~~) are tracked using a stack so that nested
+ * fences are handled correctly per CommonMark semantics: a closing fence must
+ * match the most recently opened fence (same character, length ≥ opening).
+ * Mismatched characters / longer fences are treated as nested openers, so an
+ * inner ```` ```yaml ```` inside an outer ```` ```speclang ```` no longer
+ * terminates the outer block early (the previous behaviour produced spurious
+ * `@ref:auth%';` style extracts from SQL/code inside code blocks).
  */
 export declare function extractReferences(content: string, sourceFile: string): Reference[];
+export declare function normalizeMetadataRef(raw: string | unknown): string | null;
 /**
- * Extract references from metadata (depends_on, refs, children, parent)
+ * Extract references from metadata (depends_on, refs, children, parent).
+ *
+ * Each raw metadata entry is run through `normalizeMetadataRef` so the
+ * resulting reference list contains only entries that will pass the strict
+ * format validator in `src/validation/rules/refs.ts`.
  */
 export declare function extractMetadataReferences(metadata: SpecMetadata, sourceFile: string, baseLine?: number): Reference[];
 /**

@@ -590,13 +590,13 @@ export declare const POC_CONSTANTS: {
     /** Max task duration (ms) */
     readonly MAX_TASK_DURATION_MS: 30000;
     /** Watch directory */
-    readonly WATCH_DIR: "./specs";
+    readonly WATCH_DIR: './specs';
     /** Output directory */
-    readonly OUTPUT_DIR: "./src";
+    readonly OUTPUT_DIR: './src';
     /** Ignore patterns */
-    readonly IGNORE_PATTERNS: readonly ["*.tmp", "*~", ".git/**", "node_modules/**", ".speclang/**"];
+    readonly IGNORE_PATTERNS: readonly ['*.tmp', '*~', '.git/**', 'node_modules/**', '.speclang/**'];
     /** Header marker in generated files */
-    readonly GENERATED_HEADER: "// SPECLANG-GENERATED";
+    readonly GENERATED_HEADER: '// SPECLANG-GENERATED';
     /** Block pattern regex */
     readonly BLOCK_PATTERN: RegExp;
     /** Parameter pattern regex */

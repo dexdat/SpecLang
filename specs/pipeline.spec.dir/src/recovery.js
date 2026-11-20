@@ -43,6 +43,7 @@ exports.RecoveryActions = exports.RecoveryExecutor = void 0;
 const fs = __importStar(require("fs-extra"));
 const path = __importStar(require("path"));
 const child_process_1 = require("child_process");
+const metrics_ledger_1 = require("./metrics-ledger");
 class RecoveryExecutor {
     errorLogDir;
     verbose;
@@ -51,6 +52,14 @@ class RecoveryExecutor {
         this.verbose = verbose;
     }
     async execute(action, context) {
+        const result = await this.executeAction(action, context);
+        // OBS-2: recovery outcomes are computed here and then only carried in the
+        // RecoveryResult — count them for the /metrics ledger. Best effort only:
+        // recordRecoveryOutcome never throws and never changes the return value.
+        (0, metrics_ledger_1.recordRecoveryOutcome)(result.success ? 'succeeded' : 'failed');
+        return result;
+    }
+    async executeAction(action, context) {
         if (this.verbose) {
             console.log(`[RecoveryExecutor] Executing recovery action: ${action.type}`);
         }

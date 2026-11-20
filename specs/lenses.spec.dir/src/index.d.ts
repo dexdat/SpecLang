@@ -21,6 +21,7 @@ export { operationLens } from './operation-lens';
 export { mathLens } from './math-lens';
 export { acceptanceLens } from './acceptance-lens';
 export { diagramLens, detectDiagramType } from './diagram-lens';
+export { flowchartLens, sequenceLens, classLens } from './mermaid';
 export { tableLens } from './table-lens';
 export { policyLens } from './policy-lens';
 export { questionLens } from './question-lens';

@@ -71,4 +71,25 @@ export declare function assertContains<T>(array: T[], item: T, message?: string)
  * Assert has property - throw if object doesn't have property
  */
 export declare function assertHasProperty(obj: Record<string, unknown>, prop: string, message?: string): void;
+/**
+ * Assert deep equality - throw if values are not deeply equal
+ */
+export declare function assertDeepEqual<T>(actual: T, expected: T, message?: string): void;
+/**
+ * Assert rejects - throw if promise does not reject
+ */
+export declare function assertRejects(promise: Promise<unknown>, message?: string): Promise<void>;
+/**
+ * Assert equal (alias for assertEquals)
+ */
+export declare const assertEqual: typeof assertEquals;
+/**
+ * Custom matcher factory
+ */
+export declare function expect<T>(actual: T): {
+    toBe(expected: T): void;
+    toEqual(expected: T): void;
+    toThrow(message?: string): void;
+    toReject(message?: string): Promise<void>;
+};
 //# sourceMappingURL=assertions.d.ts.map

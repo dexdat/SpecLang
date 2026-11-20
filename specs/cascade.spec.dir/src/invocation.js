@@ -1,37 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgentInvoker = void 0;
 exports.getAgentForTrigger = getAgentForTrigger;
@@ -47,13 +14,14 @@ class AgentInvoker {
             console.log(`[AgentInvoker] Invoking agent: ${options.agent} for trigger: ${options.trigger}`);
         }
         try {
-            const result = await this.executeAgent(options.agent, options.trigger, options.params);
+            const result = await this.executeAgent(options.agent, options.trigger, options.params, options.thinking);
             files_modified.push(...result.files);
             return {
                 success: result.success,
                 agent: options.agent,
                 timestamp,
-                files_modified
+                files_modified,
+                thinking: options.thinking
             };
         }
         catch (error) {
@@ -62,14 +30,15 @@ class AgentInvoker {
                 agent: options.agent,
                 timestamp,
                 files_modified,
-                error: error instanceof Error ? error.message : String(error)
+                error: error instanceof Error ? error.message : String(error),
+                thinking: options.thinking
             };
         }
     }
-    async executeAgent(agent, trigger, params) {
-        const { execSync } = await Promise.resolve().then(() => __importStar(require('child_process')));
+    async executeAgent(agent, trigger, params, thinking) {
+        const { execSync } = await import('child_process');
         try {
-            const command = this.buildCommand(agent, trigger, params);
+            const command = this.buildCommand(agent, trigger, params, thinking);
             const output = execSync(command, { encoding: 'utf-8' });
             return {
                 success: true,
@@ -80,9 +49,11 @@ class AgentInvoker {
             return { success: false, files: [] };
         }
     }
-    buildCommand(agent, trigger, params) {
+    buildCommand(agent, trigger, params, thinking) {
         const paramsStr = params ? ` ${JSON.stringify(params)}` : '';
-        return `speclang agent ${agent} --trigger ${trigger}${paramsStr}`;
+        // THINK-002: forward the reasoning-depth gate to the agent CLI.
+        const thinkingStr = thinking ? ` --thinking ${thinking}` : '';
+        return `speclang agent ${agent} --trigger ${trigger}${paramsStr}${thinkingStr}`;
     }
     parseOutputFiles(output) {
         const files = [];

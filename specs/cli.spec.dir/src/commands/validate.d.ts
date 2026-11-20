@@ -6,6 +6,7 @@ export interface ValidateOptions {
     fix?: boolean;
     json?: boolean;
     verbose?: boolean;
+    type?: 'basic' | 'language-blocks' | 'autonomous';
 }
 /**
  * Validate command implementation

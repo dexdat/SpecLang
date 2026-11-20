@@ -3,6 +3,7 @@
 // Source: @speclang/stdlib/mapping
 // DO NOT EDIT MANUALLY
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.assertEqual = void 0;
 exports.assert = assert;
 exports.assertEquals = assertEquals;
 exports.assertNotEquals = assertNotEquals;
@@ -20,6 +21,9 @@ exports.assertThrows = assertThrows;
 exports.assertNotThrows = assertNotThrows;
 exports.assertContains = assertContains;
 exports.assertHasProperty = assertHasProperty;
+exports.assertDeepEqual = assertDeepEqual;
+exports.assertRejects = assertRejects;
+exports.expect = expect;
 /**
  * Assertion functions
  */
@@ -168,5 +172,84 @@ function assertHasProperty(obj, prop, message) {
     if (!(prop in obj)) {
         throw new Error(message || `Expected object to have property ${prop}`);
     }
+}
+/**
+ * Deep equality check
+ */
+function deepEqual(a, b) {
+    if (a === b)
+        return true;
+    if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null)
+        return false;
+    if (Array.isArray(a) && Array.isArray(b)) {
+        if (a.length !== b.length)
+            return false;
+        for (let i = 0; i < a.length; i++) {
+            if (!deepEqual(a[i], b[i]))
+                return false;
+        }
+        return true;
+    }
+    const keysA = Object.keys(a);
+    const keysB = Object.keys(b);
+    if (keysA.length !== keysB.length)
+        return false;
+    for (const key of keysA) {
+        if (!keysB.includes(key))
+            return false;
+        if (!deepEqual(a[key], b[key]))
+            return false;
+    }
+    return true;
+}
+/**
+ * Assert deep equality - throw if values are not deeply equal
+ */
+function assertDeepEqual(actual, expected, message) {
+    if (!deepEqual(actual, expected)) {
+        throw new Error(message || `Expected deep equality but got ${actual}`);
+    }
+}
+/**
+ * Assert rejects - throw if promise does not reject
+ */
+async function assertRejects(promise, message) {
+    try {
+        await promise;
+        throw new Error(message || 'Expected promise to reject but it resolved');
+    }
+    catch (e) {
+        // Expected to reject
+    }
+}
+/**
+ * Assert equal (alias for assertEquals)
+ */
+exports.assertEqual = assertEquals;
+/**
+ * Custom matcher factory
+ */
+function expect(actual) {
+    return {
+        toBe(expected) {
+            assertEquals(actual, expected);
+        },
+        toEqual(expected) {
+            assertDeepEqual(actual, expected);
+        },
+        toThrow(message) {
+            if (typeof actual !== 'function') {
+                throw new Error('Expected a function');
+            }
+            assertThrows(actual, message);
+        },
+        toReject(message) {
+            if (typeof actual !== 'function' && !(actual instanceof Promise)) {
+                throw new Error('Expected a function or promise');
+            }
+            const promise = typeof actual === 'function' ? actual() : actual;
+            return assertRejects(promise, message);
+        }
+    };
 }
 //# sourceMappingURL=assertions.js.map

@@ -1,26 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MainContent = void 0;
 const jsx_runtime_1 = require("react/jsx-runtime");
-#;
-speclang - header;
-lines: 5;
-#;
-id: 
-/ui-dashboard;
-#;
-version: 1.0;
-.0;
-#;
-layer: 5;
-/**
- * MainContent component - displays dashboard content area
- * Generated from: @implementation/ui-dashboard
- */
-const react_1 = __importDefault(require("react"));
 const AgentCard = ({ agent }) => {
     const statusColor = {
         active: 'text-green-400',

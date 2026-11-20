@@ -1,14 +1,6 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.SpeclangMCPServer = void 0;
-#;
-speclang - header;
-lines: 3;
-#;
-target: src / speclang - mcp.ts;
+// speclang-header lines:3
+// target: src/speclang-mcp.ts
 // speclang-header lines:20
 // id: @generated/mcp-server
 // target: typescript
@@ -27,21 +19,35 @@ target: src / speclang - mcp.ts;
  *
  * Generated from @ref:specs/mcp
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SpeclangDatabase = exports.SpeclangMCPServer = void 0;
 const index_js_1 = require("@modelcontextprotocol/sdk/server/index.js");
 const stdio_js_1 = require("@modelcontextprotocol/sdk/server/stdio.js");
 const sse_js_1 = require("@modelcontextprotocol/sdk/server/sse.js");
 const types_js_1 = require("@modelcontextprotocol/sdk/types.js");
 const express_1 = __importDefault(require("express"));
 const crypto_1 = require("crypto");
-const better_sqlite3_1 = __importDefault(require("better-sqlite3"));
+// QA-SPECLANG-5-R2: the state DB is opened only through the guarded helper, so a
+// file that is not a SQLite database reports the actionable diagnostic instead
+// of a raw SqliteError from the schema bootstrap below.
+// Imported through the src/db projection on purpose: this spec dir also carries
+// a stale compiled index.js (2026-03-03) that a .js-preferring resolver would
+// load instead of the guarded TypeScript source.
+const index_js_2 = require("../../../src/db/index.js");
 // ============================================================================
 // Database Setup
 // ============================================================================
 class SpeclangDatabase {
     db;
     constructor(dbPath = '.speclang/speclang.db') {
-        this.db = new better_sqlite3_1.default(dbPath);
-        this.setupTables();
+        // QA-SPECLANG-5-R2: guarded open. A corrupt `.speclang/speclang.db` used to
+        // reach setupTables() and die there with `SqliteError: file is not a
+        // database` — no path, no remedy.
+        this.db = (0, index_js_2.openStateDatabase)(dbPath);
+        (0, index_js_2.withStateDatabase)(this.db, dbPath, () => this.setupTables());
     }
     setupTables() {
         // Create tables if they don't exist
@@ -178,6 +184,7 @@ class SpeclangDatabase {
         return this.db.prepare(sql);
     }
 }
+exports.SpeclangDatabase = SpeclangDatabase;
 // ============================================================================
 // Tool Handlers
 // ============================================================================
@@ -562,11 +569,20 @@ exports.SpeclangMCPServer = SpeclangMCPServer;
 // ============================================================================
 async function main() {
     const args = process.argv.slice(2);
-    const server = new SpeclangMCPServer();
     try {
+        // QA-SPECLANG-5-R2: the constructor opens the state DB, so it runs inside the
+        // guard — a corrupt DB must stop the server with the diagnostic, not with an
+        // uncaught SqliteError before the transport is even created.
+        const server = new SpeclangMCPServer();
         await server.start(args);
     }
     catch (error) {
+        // A corrupt state DB is an operator problem with a written remedy: print the
+        // diagnostic alone so it is not buried under a stack trace.
+        if (error?.code === index_js_2.STATE_DB_CORRUPT_CODE) {
+            console.error(error.message);
+            process.exit(1);
+        }
         console.error('Failed to start MCP server:', error);
         process.exit(1);
     }

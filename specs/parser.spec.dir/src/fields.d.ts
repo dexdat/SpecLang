@@ -4,7 +4,7 @@
  * DO NOT EDIT MANUALLY
  */
 import type { FieldDefinition, FieldCategory } from './field-types';
-import type { ProjectLevel, AgentSupport, SpecStatus } from './types';
+import type { ProjectLevel, AgentSupport, SpecStatus, ThinkingLevel } from './types';
 /** Pattern for spec IDs: @domain/path or @domain/path#block */
 export declare const ID_PATTERN: RegExp;
 /** Pattern for semantic versioning */
@@ -22,6 +22,7 @@ export declare const CASCADE_PATTERN: RegExp;
 export declare const PROJECT_LEVELS: readonly ProjectLevel[];
 export declare const AGENT_SUPPORTS: readonly AgentSupport[];
 export declare const SPEC_STATUSES: readonly SpecStatus[];
+export declare const THINKING_LEVELS: readonly ThinkingLevel[];
 /**
  * Complete registry of all known header fields.
  * Keyed by field name for O(1) lookup.

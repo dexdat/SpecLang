@@ -8,10 +8,13 @@
  * 4. Running tests
  * 5. Detecting convergence
  */
+import type { CoordinatorOptions } from './coordinator/index.js';
 export interface CascadeOptions {
     verbose?: boolean;
     maxDepth?: number;
     convergenceTimeout?: number;
+    /** THINK-003: provider-neutral per-agent reasoning overrides. */
+    thinking?: CoordinatorOptions['thinking'];
 }
 export interface CascadeResult {
     success: boolean;

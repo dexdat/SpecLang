@@ -30,15 +30,15 @@ export interface DragDropOptions {
  * Provides drag and drop functionality.
  */
 export declare function useDragDrop(options?: DragDropOptions): {
-    isDragging: any;
-    draggedItem: any;
-    dropTarget: any;
-    startDrag: any;
-    endDrag: any;
-    setDropTarget: any;
-    canDrop: any;
-    handleDrop: any;
-    handleDragOver: any;
+    isDragging: boolean;
+    draggedItem: DragItem;
+    dropTarget: DropTarget;
+    startDrag: (item: DragItem) => void;
+    endDrag: (success?: boolean) => void;
+    setDropTarget: (target: DropTarget | null) => void;
+    canDrop: (target: DropTarget) => boolean;
+    handleDrop: (target: DropTarget) => boolean;
+    handleDragOver: (target: DropTarget) => boolean;
 };
 /**
  * useDraggable hook
@@ -46,10 +46,10 @@ export declare function useDragDrop(options?: DragDropOptions): {
  * Makes an element draggable.
  */
 export declare function useDraggable<T extends HTMLElement>(item: DragItem, dragDrop: ReturnType<typeof useDragDrop>): {
-    ref: any;
+    ref: import("react").RefObject<T>;
     draggable: boolean;
-    onDragStart: any;
-    onDragEnd: any;
+    onDragStart: (e: React.DragEvent) => void;
+    onDragEnd: () => void;
 };
 /**
  * useDroppable hook
@@ -57,23 +57,23 @@ export declare function useDraggable<T extends HTMLElement>(item: DragItem, drag
  * Makes an element a drop target.
  */
 export declare function useDroppable<T extends HTMLElement>(target: DropTarget, dragDrop: ReturnType<typeof useDragDrop>): {
-    ref: any;
-    onDragEnter: any;
-    onDragOver: any;
-    onDragLeave: any;
-    onDrop: any;
+    ref: import("react").RefObject<T>;
+    onDragEnter: (e: React.DragEvent) => void;
+    onDragOver: (e: React.DragEvent) => void;
+    onDragLeave: (e: React.DragEvent) => void;
+    onDrop: (e: React.DragEvent) => void;
     isOver: boolean;
 };
 /**
  * File drop zone for importing files
  */
 export declare function useFileDrop(onFiles: (files: File[]) => void): {
-    isDragging: any;
+    isDragging: boolean;
     dragProps: {
-        onDragEnter: any;
-        onDragLeave: any;
-        onDragOver: any;
-        onDrop: any;
+        onDragEnter: (e: React.DragEvent) => void;
+        onDragLeave: (e: React.DragEvent) => void;
+        onDragOver: (e: React.DragEvent) => void;
+        onDrop: (e: React.DragEvent) => void;
     };
 };
 export default useDragDrop;

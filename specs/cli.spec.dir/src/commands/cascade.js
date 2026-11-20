@@ -110,7 +110,9 @@ async function cascadeTrigger(specId, options) {
         active: true,
         currentSpec: specId,
         triggeredAt: Date.now(),
-        specs: dependents
+        specs: dependents,
+        thinking: options.thinking,
+        metrics: options.metrics,
     };
     saveCascadeState(state);
     if (options.json) {

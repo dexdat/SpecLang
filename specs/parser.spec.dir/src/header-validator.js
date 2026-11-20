@@ -338,6 +338,7 @@ function validateUnknownFields(metadata) {
         'tags', 'short', 'target', 'status', 'depends_on', 'refs',
         'children', 'parent', 'part', 'owned_by', 'session_id', 'lines',
         'siblings', 'generated', 'caused_by', 'change_id', 'part_of',
+        'thinking',
     ]);
     for (const key of Object.keys(metadata)) {
         if (!knownFields.has(key)) {

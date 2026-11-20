@@ -5,7 +5,7 @@
  * DO NOT EDIT MANUALLY
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FIELD_DEFINITIONS = exports.SPEC_STATUSES = exports.AGENT_SUPPORTS = exports.PROJECT_LEVELS = exports.CASCADE_PATTERN = exports.COMMIT_PATTERN = exports.UUID_PATTERN = exports.PART_PATTERN = exports.REF_PATTERN = exports.SEMVER_PATTERN = exports.ID_PATTERN = void 0;
+exports.FIELD_DEFINITIONS = exports.THINKING_LEVELS = exports.SPEC_STATUSES = exports.AGENT_SUPPORTS = exports.PROJECT_LEVELS = exports.CASCADE_PATTERN = exports.COMMIT_PATTERN = exports.UUID_PATTERN = exports.PART_PATTERN = exports.REF_PATTERN = exports.SEMVER_PATTERN = exports.ID_PATTERN = void 0;
 exports.getRequiredFieldNames = getRequiredFieldNames;
 exports.getFieldsByCategory = getFieldsByCategory;
 exports.isKnownField = isKnownField;
@@ -53,6 +53,12 @@ exports.SPEC_STATUSES = [
     'deprecated',
     'active',
     'generated',
+];
+exports.THINKING_LEVELS = [
+    'none',
+    'low',
+    'medium',
+    'high',
 ];
 // ============================================================================
 // FIELD DEFINITIONS
@@ -186,6 +192,15 @@ exports.FIELD_DEFINITIONS = {
         description: 'Part number for split specs',
         example: '2/5',
         pattern: exports.PART_PATTERN,
+        category: 'metadata',
+    },
+    thinking: {
+        name: 'thinking',
+        type: 'enum',
+        required: false,
+        description: 'LLM reasoning depth for this spec (none/low/medium/high)',
+        example: 'medium',
+        enumValues: exports.THINKING_LEVELS,
         category: 'metadata',
     },
     // --- Ownership fields ---

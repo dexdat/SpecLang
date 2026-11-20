@@ -339,7 +339,7 @@ async function mcpGenerateOpenapiCommand(options) {
         try {
             let specContent;
             if (specPath.startsWith('http://') || specPath.startsWith('https://')) {
-                const https = await Promise.resolve().then(() => __importStar(require('https')));
+                const https = await import('https');
                 specContent = await new Promise((resolve, reject) => {
                     https.get(specPath, (res) => {
                         let data = '';

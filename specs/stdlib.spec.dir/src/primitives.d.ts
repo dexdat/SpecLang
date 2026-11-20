@@ -40,12 +40,12 @@ export declare const Primitives: {
     Null: {
         validate: (value: unknown) => value is null;
         default: null;
-        examples: any[];
+        examples: null[];
     };
     Undefined: {
         validate: (value: unknown) => value is undefined;
         default: undefined;
-        examples: any[];
+        examples: undefined[];
     };
     UUID: {
         validate: (value: unknown) => value is UUID;

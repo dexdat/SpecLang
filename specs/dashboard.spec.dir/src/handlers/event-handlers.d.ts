@@ -24,9 +24,9 @@ export interface ClickEvent {
  * Provides centralized event handling for the UI.
  */
 export declare function useEventHandlers(): {
-    registerHandler: any;
-    emit: any;
-    clearHandlers: any;
+    registerHandler: (event: string, handler: (data?: unknown) => void) => () => void;
+    emit: (event: string, data?: unknown) => void;
+    clearHandlers: (event?: string) => void;
 };
 /**
  * Create a debounced handler

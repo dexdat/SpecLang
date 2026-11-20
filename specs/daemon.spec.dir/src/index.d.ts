@@ -16,7 +16,10 @@ export * from './ipc';
 export * from './locks';
 export * from './deadlock';
 export * from './lock_client';
+export * from './session-store';
+export { configureDaemonCommand } from './daemon-cli';
 export { Daemon, createDaemon, getDaemon } from './daemon';
+export { listenDashboard, probeDashboard, type DashboardBinding, type DashboardProbeResult, } from './dashboard';
 /**
  * Start the daemon with the given options
  * This is the main entry point for the CLI

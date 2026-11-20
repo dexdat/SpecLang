@@ -1,4 +1,8 @@
 "use strict";
+// speclang-header lines:3
+// target: src/validation-system.ts
+// Generated from validation system implementation spec
+// DO NOT EDIT MANUALLY
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -32,21 +36,13 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ValidationGuard = exports.ValidationEngine = void 0;
 exports.validateCommand = validateCommand;
-#;
-speclang - header;
-lines: 3;
-#;
-target: src / validation - system.ts;
-// Generated from validation system implementation spec
-// DO NOT EDIT MANUALLY
-// Block: implementation/validation/engine
-const better_sqlite3_1 = __importDefault(require("better-sqlite3"));
+// QA-SPECLANG-5-R2: every state-DB open goes through the guarded helper.
+// (Through the src/db projection: the compiled index.js beside this spec dir is
+// stale and would shadow the TypeScript source.)
+const index_js_1 = require("../../../src/db/index.js");
 const promises_1 = require("fs/promises");
 const yaml_1 = require("yaml");
 const path = __importStar(require("path"));
@@ -366,7 +362,9 @@ class ValidationEngine {
 exports.ValidationEngine = ValidationEngine;
 // Block: implementation/validation/cli
 async function validateCommand(args) {
-    const db = new better_sqlite3_1.default('.speclang/speclang.db');
+    // QA-SPECLANG-5-R2: guarded open — a corrupt state DB must report the
+    // actionable diagnostic here too, not a raw SqliteError from ValidationEngine.
+    const db = (0, index_js_1.openStateDatabase)('.speclang/speclang.db');
     const engine = new ValidationEngine(db);
     const patterns = args.length > 0 ? args : ['specs/**/*.spec.md'];
     // @ts-ignore - glob types mismatch

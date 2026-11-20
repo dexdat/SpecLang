@@ -45,17 +45,17 @@ export interface EventHandlers {
  * - Offline queue with sync on reconnect
  */
 export declare function useRealTimeUpdates(options?: RealTimeUpdatesOptions): {
-    events: any;
-    isOnline: any;
-    isUpdating: any;
-    actionQueue: any;
-    connect: any;
-    setHandlers: any;
-    optimisticUpdate: any;
-    queueAction: any;
-    flushQueue: any;
-    clearEvents: any;
-    scheduleUpdate: any;
+    events: SSEEvent[];
+    isOnline: boolean;
+    isUpdating: boolean;
+    actionQueue: Action[];
+    connect: () => void;
+    setHandlers: (handlers: Partial<EventHandlers>) => void;
+    optimisticUpdate: <T>(action: () => Promise<T>, optimistic: () => void, rollback: () => void) => Promise<void>;
+    queueAction: (action: Action) => void;
+    flushQueue: () => Promise<void>;
+    clearEvents: () => void;
+    scheduleUpdate: (update: () => void) => void;
 };
 export default useRealTimeUpdates;
 //# sourceMappingURL=real-time-updates.d.ts.map

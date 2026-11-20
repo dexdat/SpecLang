@@ -1,7 +1,3 @@
-/**
- * DashboardHeader component
- * Generated from: @implementation/ui-dashboard
- */
 import React from 'react';
 interface DashboardHeaderProps {
     queueDepth?: number;

@@ -141,8 +141,8 @@ function parseSpec(content) {
             headerLines--;
             continue;
         }
-        // Detect blocks: ### @block:name @kind:type
-        const blockMatch = line.match(/###\s+@block:(\S+)\s+@kind:(\S+)/);
+        // Detect blocks: ### @block::name @kind:type
+        const blockMatch = line.match(/###\s+@block::(\S+)\s+@kind:(\S+)/);
         if (blockMatch) {
             // Save previous block
             if (currentBlock) {
@@ -152,6 +152,7 @@ function parseSpec(content) {
                 blocks.push(currentBlock);
             }
             currentBlock = {
+                id: '@block::' + blockMatch[1],
                 name: blockMatch[1],
                 kind: blockMatch[2],
                 code: ''
@@ -254,7 +255,7 @@ async function generateCode(spec, outputDir, verbose) {
  * Run tests using vitest
  */
 async function runTests(testFiles, verbose) {
-    const { execSync } = await Promise.resolve().then(() => __importStar(require('child_process')));
+    const { execSync } = await import('child_process');
     const result = { total: 0, passed: 0, failed: 0 };
     try {
         // Run vitest on the test files

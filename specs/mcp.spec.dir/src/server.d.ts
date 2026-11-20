@@ -34,5 +34,13 @@ export declare class MCPServer {
      * Stop server
      */
     stop(): Promise<void>;
+    /**
+     * Call an MCP tool by name with arguments
+     */
+    callTool(toolName: string, args: Record<string, unknown>): Promise<Record<string, unknown>>;
+    /**
+     * Handle dashboard/tool queries
+     */
+    private handleDashboardTool;
 }
 //# sourceMappingURL=server.d.ts.map

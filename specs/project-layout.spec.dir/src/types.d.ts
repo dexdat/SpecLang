@@ -182,17 +182,17 @@ export interface SpeclangRcTemplateVars {
 /**
  * Supported language targets
  */
-export declare const SUPPORTED_LANGUAGES: readonly ["typescript", "python", "go", "rust", "java", "javascript"];
+export declare const SUPPORTED_LANGUAGES: readonly ['typescript', 'python', 'go', 'rust', 'java', 'javascript'];
 /**
  * Standard subdirectories for generated code
  */
-export declare const GENERATED_SUBDIRS: readonly ["ts", "go", "py", "rs", "java", "js"];
+export declare const GENERATED_SUBDIRS: readonly ['ts', 'go', 'py', 'rs', 'java', 'js'];
 /**
  * .speclang internal directories
  */
-export declare const SPECLANG_SUBDIRS: readonly ["locks", "cache", "daemon.pid"];
+export declare const SPECLANG_SUBDIRS: readonly ['locks', 'cache', 'daemon.pid'];
 /**
  * Required files for valid project
  */
-export declare const REQUIRED_FILES: readonly ["project.scl", "specs", "tests", "generated", ".speclang", ".speclangrc", ".gitignore"];
+export declare const REQUIRED_FILES: readonly ['project.scl', 'specs', 'tests', 'generated', '.speclang', '.speclangrc', '.gitignore'];
 //# sourceMappingURL=types.d.ts.map

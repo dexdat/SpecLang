@@ -46,6 +46,12 @@ export declare const Duration: {
 export type Version = string & {
     __brand: 'Version';
 };
+export type SpecRef = string & {
+    __brand: 'SpecRef';
+};
+export type Layer = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+export type MaturityLevel = 'POC' | 'MVP' | 'Alpha' | 'Beta' | 'Production' | 'Startup' | 'SMB' | 'MSB' | 'Enterprise';
+export type AgentRole = 'NorthStar' | 'SpecWriter' | 'CodeGen' | 'TestWriter' | 'Orchestrator' | 'BackSync';
 export declare const Version: {
     parse: (version: string) => Version | null;
     compare: (a: Version, b: Version) => number;

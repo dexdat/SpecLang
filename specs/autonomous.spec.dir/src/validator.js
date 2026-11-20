@@ -43,7 +43,17 @@ exports.formatValidationReport = formatValidationReport;
 const fs = __importStar(require("fs-extra"));
 const path = __importStar(require("path"));
 const yaml = __importStar(require("yaml"));
-const utils_1 = require("../../cli.spec.dir/src/utils");
+/**
+ * Load spec index from .speclang/_index.json
+ */
+function loadIndex() {
+    const indexPath = '.speclang/_index.json';
+    if (fs.existsSync(indexPath)) {
+        const content = fs.readFileSync(indexPath, 'utf-8');
+        return JSON.parse(content);
+    }
+    return {};
+}
 /**
  * Parse spec header from file
  */
@@ -212,7 +222,7 @@ class AutonomousValidator {
      */
     async checkReferenceResolution() {
         try {
-            const index = (0, utils_1.loadIndex)();
+            const index = loadIndex();
             const validation = index.validation;
             if (!validation) {
                 return {

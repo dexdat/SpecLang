@@ -67,4 +67,27 @@ export declare const OptionalOps: {
 export declare const OneOf: {
     validate: <T extends readonly unknown[]>(options: T) => (value: unknown) => value is T[number];
 };
+/**
+ * Tuple operations
+ */
+export declare const TupleOps: {
+    of: <T extends any[]>(...validators: { [K in keyof T]: TypeValidator<T[K]>; }) => TypeValidator<T>;
+    get: <T extends any[], K extends number>(tuple: T, index: K) => T[K];
+    set: <T extends any[], K extends number, V>(tuple: T, index: K, value: V) => [...T];
+    length: <T extends any[]>(tuple: T) => number;
+};
+/**
+ * Record operations
+ */
+export declare const RecordOps: {
+    of: <V>(valueValidator: TypeValidator<V>) => TypeValidator<Record<string, V>>;
+    get: <V>(record: Record<string, V>, key: string) => V | undefined;
+    set: <V>(record: Record<string, V>, key: string, value: V) => Record<string, V>;
+    has: (record: Record<string, unknown>, key: string) => boolean;
+    keys: <V>(record: Record<string, V>) => string[];
+    values: <V>(record: Record<string, V>) => V[];
+    entries: <V>(record: Record<string, V>) => [string, V][];
+    size: <V>(record: Record<string, V>) => number;
+    delete: <V>(record: Record<string, V>, key: string) => Record<string, V>;
+};
 //# sourceMappingURL=composites.d.ts.map
