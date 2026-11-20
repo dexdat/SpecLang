@@ -1,0 +1,205 @@
+{
+  "task_id": "LAND-001",
+  "task_title": "LAND-001: land the twin checkout's 4 rebased commits (OBS-3/OBS-4/OBS-7/CLN-002/DOC-10) on origin/main",
+  "task_criteria": [
+    "FAILIF: any of the four landed commits is not reachable from origin/main, or any of the six named files is absent from the origin/main tree. PROOF: run git fetch origin, then git merge-base --is-ancestor for 70eda8c6 ba65d500 33c33ce4 180d2b55 against origin/main (each must exit 0), and git ls-tree -r --name-only origin/main listing specs/daemon.spec.dir/src/daemon-prom.ts, src/daemon/daemon-prom.ts, tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon-executor-OBS-7.test.ts, tests/cli/completion.test.ts.",
+    "FAILIF: the focused vitest run exits non-zero or reports any failed test or fewer than 37 passed tests. PROOF: from /home/kara/speclang run npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts tests/daemon-executor-OBS-7.test.ts tests/cli/completion.test.ts and paste the final summary counts."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "5cd4ca7126ded9bb82b0cde9bca394fcb948180d",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "45b24c76a046bce98a58f81d9d95ab5032bf584c79cd64c3f49b0433668c2c80",
+  "working_tree_dirty_path_count": 6,
+  "items": [
+    {
+      "criterion": "FAILIF: any of the four landed commits is not reachable from origin/main, or any of the six named files is absent from the origin/main tree. PROOF: run git fetch origin, then git merge-base --is-ancestor for 70eda8c6 ba65d500 33c33ce4 180d2b55 against origin/main (each must exit 0), and git ls-tree -r --name-only origin/main listing specs/daemon.spec.dir/src/daemon-prom.ts, src/daemon/daemon-prom.ts, tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon-executor-OBS-7.test.ts, tests/cli/completion.test.ts.",
+      "status": "PASS",
+      "detail": "git fetch origin exited 0. git merge-base --is-ancestor vs origin/main: 70eda8c6 -> exit 0, ba65d500 -> exit 0, 33c33ce4 -> exit 0, 180d2b55 -> exit 0. git ls-tree -r --name-only origin/main listed all six files: specs/daemon.spec.dir/src/daemon-prom.ts, src/daemon/daemon-prom.ts, tests/cli/completion.test.ts, tests/daemon-executor-OBS-7.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon/daemon-prom.test.ts. [resolution 0.00; specs/daemon.spec.dir/src/daemon-prom.ts, src/daemon/daemon-prom.ts, tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon-executor-OBS-7.test.ts]"
+    },
+    {
+      "criterion": "FAILIF: the focused vitest run exits non-zero or reports any failed test or fewer than 37 passed tests. PROOF: from /home/kara/speclang run npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts tests/daemon-executor-OBS-7.test.ts tests/cli/completion.test.ts and paste the final summary counts.",
+      "status": "PASS",
+      "detail": "Ran from /home/kara/speclang: npx vitest run on the four named files exited 0 (EXIT: 0) with summary 'Test Files  4 passed (4)' and 'Tests  39 passed (39)' \u2014 zero failures and 39 >= 37 passed. [resolution 0.00; tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon-executor-OBS-7.test.ts, tests/cli/completion.test.ts]"
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  01:40:28",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T062200.397773Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\nnpm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T062200.397773Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  01:40:28\n   Duration  61.75s (transform 19.88s, setup 6.03s, import 37.47s, tests 268.00s, environment 34ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T062200.397773Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 FAILIF: any of the four landed commits is not reachable from origin/main, or any of the six named files is absent from the origin/main tree. PROOF: run git fetch origin, then git merge-base --is-ancestor for 70eda8c6 ba65d500 33c33ce4 180d2b55 against origin/main (each must exit 0), and git ls-tree -r --name-only origin/main listing specs/daemon.spec.dir/src/daemon-prom.ts, src/daemon/daemon-prom.ts, tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon-executor-OBS-7.test.ts, tests/cli/completion.test.ts.: git fetch origin exited 0. git merge-base --is-ancestor vs origin/main: 70eda8c6 -> exit 0, ba65d500 -> exit 0, 33c33ce4 -> exit 0, 180d2b55 -> exit 0. git ls-tree -r --name-only origin/main listed all six files: specs/daemon.spec.dir/src/daemon-prom.ts, src/daemon/daemon-prom.ts, tests/cli/completion.test.ts, tests/daemon-executor-OBS-7.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon/daemon-prom.test.ts. [resolution 0.00; specs/daemon.spec.dir/src/daemon-prom.ts, src/daemon/daemon-prom.ts, tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon-executor-OBS-7.test.ts]\n  \u2713 FAILIF: the focused vitest run exits non-zero or reports any failed test or fewer than 37 passed tests. PROOF: from /home/kara/speclang run npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts tests/daemon-executor-OBS-7.test.ts tests/cli/completion.test.ts and paste the final summary counts.: Ran from /home/kara/speclang: npx vitest run on the four named files exited 0 (EXIT: 0) with summary 'Test Files  4 passed (4)' and 'Tests  39 passed (39)' \u2014 zero failures and 39 >= 37 passed. [resolution 0.00; tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon-executor-OBS-7.test.ts, tests/cli/completion.test.ts]\nAll four rebased commits are ancestors of origin/main, all six named files exist in the origin/main tree, and the focused vitest run passes 39/39 tests with exit 0.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 FAILIF: any of the four landed commits is not reachable from origin/main, or any of the six named files is absent from the origin/main tree. PROOF: run git fetch origin, then git merge-base --is-ancestor for 70eda8c6 ba65d500 33c33ce4 180d2b55 against origin/main (each must exit 0), and git ls-tree -r --name-only origin/main listing specs/daemon.spec.dir/src/daemon-prom.ts, src/daemon/daemon-prom.ts, tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon-executor-OBS-7.test.ts, tests/cli/completion.test.ts.: git fetch origin exited 0. git merge-base --is-ancestor vs origin/main: 70eda8c6 -> exit 0, ba65d500 -> exit 0, 33c33ce4 -> exit 0, 180d2b55 -> exit 0. git ls-tree -r --name-only origin/main listed all six files: specs/daemon.spec.dir/src/daemon-prom.ts, src/daemon/daemon-prom.ts, tests/cli/completion.test.ts, tests/daemon-executor-OBS-7.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon/daemon-prom.test.ts. [resolution 0.00; specs/daemon.spec.dir/src/daemon-prom.ts, src/daemon/daemon-prom.ts, tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon-executor-OBS-7.test.ts]\n  \u2713 FAILIF: the focused vitest run exits non-zero or reports any failed test or fewer than 37 passed tests. PROOF: from /home/kara/speclang run npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts tests/daemon-executor-OBS-7.test.ts tests/cli/completion.test.ts and paste the final summary counts.: Ran from /home/kara/speclang: npx vitest run on the four named files exited 0 (EXIT: 0) with summary 'Test Files  4 passed (4)' and 'Tests  39 passed (39)' \u2014 zero failures and 39 >= 37 passed. [resolution 0.00; tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon-executor-OBS-7.test.ts, tests/cli/completion.test.ts]\nAll four rebased commits are ancestors of origin/main, all six named files exist in the origin/main tree, and the focused vitest run passes 39/39 tests with exit 0.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "FAILIF: any of the four landed commits is not reachable from origin/main, or any of the six named files is absent from the origin/main tree. PROOF: run git fetch origin, then git merge-base --is-ancestor for 70eda8c6 ba65d500 33c33ce4 180d2b55 against origin/main (each must exit 0), and git ls-tree -r --name-only origin/main listing specs/daemon.spec.dir/src/daemon-prom.ts, src/daemon/daemon-prom.ts, tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon-executor-OBS-7.test.ts, tests/cli/completion.test.ts.",
+                "status": "PASS",
+                "detail": "git fetch origin exited 0. git merge-base --is-ancestor vs origin/main: 70eda8c6 -> exit 0, ba65d500 -> exit 0, 33c33ce4 -> exit 0, 180d2b55 -> exit 0. git ls-tree -r --name-only origin/main listed all six files: specs/daemon.spec.dir/src/daemon-prom.ts, src/daemon/daemon-prom.ts, tests/cli/completion.test.ts, tests/daemon-executor-OBS-7.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon/daemon-prom.test.ts. [resolution 0.00; specs/daemon.spec.dir/src/daemon-prom.ts, src/daemon/daemon-prom.ts, tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon-executor-OBS-7.test.ts]",
+                "resolution_probability": 0.0,
+                "cited_path": "specs/daemon.spec.dir/src/daemon-prom.ts, src/daemon/daemon-prom.ts, tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon-executor-OBS-7.test.ts"
+              },
+              {
+                "criterion": "FAILIF: the focused vitest run exits non-zero or reports any failed test or fewer than 37 passed tests. PROOF: from /home/kara/speclang run npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts tests/daemon-executor-OBS-7.test.ts tests/cli/completion.test.ts and paste the final summary counts.",
+                "status": "PASS",
+                "detail": "Ran from /home/kara/speclang: npx vitest run on the four named files exited 0 (EXIT: 0) with summary 'Test Files  4 passed (4)' and 'Tests  39 passed (39)' \u2014 zero failures and 39 >= 37 passed. [resolution 0.00; tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon-executor-OBS-7.test.ts, tests/cli/completion.test.ts]",
+                "resolution_probability": 0.0,
+                "cited_path": "tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon-executor-OBS-7.test.ts, tests/cli/completion.test.ts"
+              }
+            ],
+            "summary": "All four rebased commits are ancestors of origin/main, all six named files exist in the origin/main tree, and the focused vitest run passes 39/39 tests with exit 0.",
+            "provenance": {
+              "model": "accounts/fireworks/models/kimi-k3",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "accounts/fireworks/models/kimi-k3",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"LAND-001\"}",
+          "exit_code": 0,
+          "output_sha": "44f59521f31ea277fd22a0114e15cfa4e390cb8abae35ccfe9ea20cd664f03da"
+        },
+        {
+          "tool": "run_command",
+          "command": "pwd && git log --oneline -5 && git remote -v",
+          "exit_code": 0,
+          "output_sha": "7f7767d14d3761f5d8423b41a97ddef9df891b04003058b8d53b33856b892ce7"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls",
+          "exit_code": 0,
+          "output_sha": "3d2ccf3723d982e5719b5431f50cf3ea675c0abc53ed7e68fa519af2c1821b2b"
+        },
+        {
+          "tool": "run_command",
+          "command": "git fetch origin 2>&1 | tail -5; echo \"fetch exit: $?\"",
+          "exit_code": 0,
+          "output_sha": "f8c5c0fc329b0ec8fed6f5df2f2b009c10dfc6085057bd0bca53786916bf3763"
+        },
+        {
+          "tool": "run_command",
+          "command": "for c in 70eda8c6 ba65d500 33c33ce4 180d2b55; do git merge-base --is-ancestor $c origin/main; echo \"$c -> exit $?\"; done",
+          "exit_code": 0,
+          "output_sha": "f59efd6a2a5ec35b8f21e2a7fb084c140a0645e47c54caa8a50ccc94d44d05fc"
+        },
+        {
+          "tool": "run_command",
+          "command": "git ls-tree -r --name-only origin/main | grep -E '^(specs/daemon.spec.dir/src/daemon-prom.ts|src/daemon/daemon-prom.ts|tests/daemon/daemon-prom.test.ts|tests/daemon/daemon-prom-outcomes.test.ts|tests/daemon-executor-OBS-7.test.ts|tests/cli/completion.test.ts)$'",
+          "exit_code": 0,
+          "output_sha": "faed9968f3a609bc6fd5ef9fcb45d91450f411d7448a051ebe781e1903d87384"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: git fetch origin exit 0; git merge-base --is-ancestor for 70eda8c6, ba65d500, 33c33ce4, 180d2b55 vs origin/main each exit 0; git ls-tree -r --name-only origin/main lists all six files: specs/daemon.spec.dir/src/daemon-prom.ts, src/daemon/daemon-prom.ts, tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon-executor-OBS-7.test.ts, tests/cli/completion.test.ts\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "67033e8ca4583d1f42f88280fa283d6ec7e51ab57c0f97655a3a04fe267cbf63"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts tests/daemon-executor-OBS-7.test.ts tests/cli/completion.test.ts 2>&1 | tail -30; echo \"EXIT: ${PIPESTATUS[0]}\"",
+          "exit_code": 2,
+          "output_sha": "27d377c4b15bd2ddb712b2f8d0a75434b6804fd8ddfbddfe32cfd45151abd761"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd /home/kara/speclang && npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts tests/daemon-executor-OBS-7.test.ts tests/cli/completion.test.ts > /tmp/vitest-out.txt 2>&1; echo \"EXIT: $?\"; grep -E \"Test Files|Tests \" /tmp/vitest-out.txt",
+          "exit_code": 0,
+          "output_sha": "35f9a0d1c7fb402d68230d897b48b78805c17c9d3bc441bf48411f900cb39411"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: npx vitest run on the 4 named test files exited 0 with \\\"Test Files 4 passed (4)\\\" and \\\"Tests 39 passed (39)\\\" \\u2014 0 failed, 39 >= 37 passed.\", \"key\": \"verified_1\"}",
+          "exit_code": 0,
+          "output_sha": "2b97659c5b818066c1bd2988d6510f25771a6b3a9cdf116c566c04166876b858"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [],
+    "summary": "",
+    "error": "unparseable reviewer reply: no parseable JSON object in reply: ''"
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  01:40:28\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 FAILIF: any of the four landed commits is not reachable from origin/main, or any of the six named files is absent from the origin/main tree. PROOF: run git fetch origin, then git merge-base --is-ancestor for 70eda8c6 ba65d500 33c33ce4 180d2b55 against origin/main (each must exit 0), and git ls-tree -r --name-only origin/main listing specs/daemon.spec.dir/src/daemon-prom.ts, src/daemon/daemon-prom.ts, tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon-executor-OBS-7.test.ts, tests/cli/completion.test.ts.: git fetch origin exited 0. git merge-base --is-ancestor vs origin/main: 70eda8c6 -> exit 0, ba65d500 -> exit 0, 33c33ce4 -> exit 0, 180d2b55 -> exit 0. git ls-tree -r --name-only origin/main listed all six files: specs/daemon.spec.dir/src/daemon-prom.ts, src/daemon/daemon-prom.ts, tests/cli/completion.test.ts, tests/daemon-executor-OBS-7.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon/daemon-prom.test.ts. [resolution 0.00; specs/daemon.spec.dir/src/daemon-prom.ts, src/daemon/daemon-prom.ts, tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon-executor-OBS-7.test.ts]\n  \u2713 FAILIF: the focused vitest run exits non-zero or reports any failed test or fewer than 37 passed tests. PROOF: from /home/kara/speclang run npx vitest run tests/daemon/daemon-prom.test.ts tests/daemon/daemon-prom-outcomes.test.ts tests/daemon-executor-OBS-7.test.ts tests/cli/completion.test.ts and paste the final summary counts.: Ran from /home/kara/speclang: npx vitest run on the four named files exited 0 (EXIT: 0) with summary 'Test Files  4 passed (4)' and 'Tests  39 passed (39)' \u2014 zero failures and 39 >= 37 passed. [resolution 0.00; tests/daemon/daemon-prom.test.ts, tests/daemon/daemon-prom-outcomes.test.ts, tests/daemon-executor-OBS-7.test.ts, tests/cli/completion.test.ts]\nAll four rebased commits are ancestors of origin/main, all six named files exist in the origin/main tree, and the focused vitest run passes 39/39 tests with exit 0.\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-20T06:44:10.612846",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-20T06:44:10.662431+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 180067,
+        "truncated": false,
+        "source": "git show 5cd4ca7126de"
+      }
+    ],
+    "task_id": "LAND-001"
+  }
+}
