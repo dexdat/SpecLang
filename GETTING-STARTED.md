@@ -22,9 +22,10 @@ SpecLang is designed as a **reactive multi-agent system** where:
 The reactive vision above is the **design goal**, not the current
 implementation. Per README's Current Status:
 
-- **Daemon is opt-in** - `speclang start` runs the file watcher + MCP
-  server + dashboard (and `daemon`/`stop` manage it); without it,
-  everything runs in the foreground as explicit commands
+- **Daemon is opt-in** - `speclang start` runs the file watcher +
+  dashboard (and `daemon`/`stop` manage it); the MCP server is started
+  separately with `speclang mcp start`; without the daemon, everything
+  runs in the foreground as explicit commands
 - **Explicit invocation by default** - Cascade must be invoked
   explicitly (e.g. `@speclang-coordinator start-cascade <spec>` or
   `./bin/speclang cascade <spec>`); automatic reactions require the

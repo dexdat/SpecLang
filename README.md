@@ -118,7 +118,7 @@ Full command surface (from `./bin/speclang --help`):
 
 | Command | Description |
 |---|---|
-| `start` | Start the SpecLang daemon (file watcher + MCP server) |
+| `start` | Start the SpecLang daemon (file watcher + dashboard; MCP is a separate `mcp start`) |
 | `cascade <spec>` | Run a cascade on a spec file |
 | `agent [agent]` | Run a cascade agent for a trigger using a provider-aware thinking level |
 | `status` | Show current system status |
@@ -166,7 +166,7 @@ For programmatic access, see:
 - Test execution: run `npm test` for the authoritative number of passing, failing and skipped tests/files; it builds first and reports the result for your checkout. A dated, commit-attributed verification run is recorded in [README-25 evidence](evidence/readme-25-2026-11-18/transcript.md).
 
 **⚠️ Current Limitations:**
-- **Daemon is opt-in** - `speclang start` runs the file watcher + MCP server + dashboard (and `daemon`/`stop` manage it); without it, everything runs in the foreground as explicit commands
+- **Daemon is opt-in** - `speclang start` runs the file watcher + dashboard (and `daemon`/`stop` manage it); the MCP server is started separately with `speclang mcp start`; without the daemon, everything runs in the foreground as explicit commands
 - **Explicit invocation by default** - Cascade must be invoked explicitly; automatic reactions require the daemon to be running
 - **Sequential execution** - Agents invoked one at a time via Task tool
 - **User-controlled** - You decide when to continue the cascade
@@ -786,7 +786,7 @@ These measurements describe that commit, not a promise about later checkouts.)*
 
 ### ❌ Not Working (Yet)
 
-- **Automatic cascade**: File watching requires the opt-in daemon — `speclang start` runs the file watcher + MCP server (see Current Limitations above); without the daemon, cascades are triggered manually
+- **Automatic cascade**: File watching requires the opt-in daemon — `speclang start` runs the file watcher (see Current Limitations above); the MCP server is started separately with `speclang mcp start`; without the daemon, cascades are triggered manually
 - **Self-hosting**: Scripts are handwritten, not generated
 - **Full tree traversal**: Coordinator doesn't automate multi-tree yet
 - **Error recovery**: Basic, needs improvement

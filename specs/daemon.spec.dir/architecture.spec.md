@@ -223,6 +223,35 @@ Options:
 
 ---
 
+## Dashboard Bind Contract
+
+### @daemon/dashboard-bind
+
+```speclang
+# @block:daemon/dashboard-bind @kind:entity
+speclang start (dashboard enabled):
+  bind       await the dashboard socket's 'listening' event
+             before announcing anything (an EADDRINUSE 'error' event
+             must reach the caller — no fire-and-forget listen)
+  verify     GET http://localhost:<bound port>/health on the ANNOUNCED
+             host must answer HTTP 200 carrying THIS process PID; a
+             stranger (e.g. 401 from another listener) is not ours
+  announce   print "Dashboard: http://localhost:<port>" only after
+             bind + verify succeed
+
+  on bind or verify failure:
+    exit non-zero naming the port and EADDRINUSE
+    print no dashboard URL and no "Daemon Started" banner
+    stop the daemon and remove .speclang/daemon.pid
+
+MCP:
+  speclang start does NOT start the MCP server (that is
+  `speclang mcp start`); the start banner says so and
+  `speclang mcp status` reports "Not running" until it is started.
+```
+
+---
+
 ## Configuration
 
 ### @daemon/config

@@ -3,7 +3,7 @@
  * SpecLang CLI - Invisible infrastructure for AI-assisted development
  * 
  * Usage:
- *   speclang start     - Start the daemon (file watcher + MCP server)
+ *   speclang start     - Start the daemon (file watcher + dashboard)
  *   speclang cascade   - Run a single cascade on a spec file
  *   speclang status    - Show current system status
  *   speclang stop      - Stop the daemon
@@ -328,7 +328,11 @@ program
 // Start command
 program
   .command('start')
-  .description('Start the SpecLang daemon (file watcher + MCP server)')
+  // DF-SPECLANG-022: `start` runs the watcher and (optionally) the dashboard HTTP
+  // server. The MCP server is a separate process (`speclang mcp start`), so the
+  // description must not promise it — `mcp status` reports "not running" after a
+  // start, and that contradiction was the reported defect.
+  .description('Start the SpecLang daemon (file watcher + dashboard)')
   .option('-p, --port <port>', 'Dashboard port', '3000')
   .option('-d, --dir <directory>', 'Project directory', '.')
   .option('--no-dashboard', 'Disable web dashboard')
@@ -339,7 +343,12 @@ program
     console.log('🚀 Starting SpecLang...');
     console.log(`   Directory: ${path.resolve(options.dir)}`);
     if (dashboardEnabled) {
-      console.log(`   Dashboard: http://localhost:${options.port}`);
+      // DF-SPECLANG-022: do NOT print the dashboard URL here. It used to be
+      // announced before the socket was bound, so a port owned by another
+      // process still got a URL (which answered 401 from the stranger). The
+      // daemon announces the URL only after binding AND verifying the endpoint
+      // answers as this process.
+      console.log(`   Dashboard: binding port ${options.port}...`);
     } else {
       console.log('   Dashboard: disabled (--no-dashboard)');
     }

@@ -7,6 +7,8 @@
  * Generated from: @speclang/daemon
  */
 
+import { listenDashboard, probeDashboard, type DashboardBinding } from './dashboard';
+
 export * from './types';
 export * from './config';
 export * from './watcher';
@@ -20,6 +22,12 @@ export * from './lock_client';
 export * from './session-store';
 export { configureDaemonCommand } from './daemon-cli';
 export { Daemon, createDaemon, getDaemon } from './daemon';
+export {
+  listenDashboard,
+  probeDashboard,
+  type DashboardBinding,
+  type DashboardProbeResult,
+} from './dashboard';
 
 /**
  * Start the daemon with the given options
@@ -76,10 +84,34 @@ export async function startDaemon(options: {
   
   process.on('SIGINT', shutdown);
   process.on('SIGTERM', shutdown);
-  
-  // Start daemon
-  await daemon.start();
-  
+
+  // DF-SPECLANG-022: every early-exit path must release the daemon and the PID
+  // file, otherwise `status` keeps reporting a daemon that is already gone.
+  // The dashboard is bound before `daemon.start()`, so most aborts happen with
+  // the daemon not running at all — stop() must only be called once it has.
+  let daemonStarted = false;
+  const abortStart = async () => {
+    if (daemonStarted) {
+      try {
+        await daemon.stop();
+      } catch (err) {
+        console.error('[Daemon] stop during abort failed:', err);
+      }
+      daemonStarted = false;
+    }
+    try {
+      fs.unlinkSync(pidFile);
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
+    }
+  };
+
+  // DF-SPECLANG-022: bind and verify the dashboard BEFORE the watcher starts, so
+  // an occupied port fails fast and never leaves a half-started daemon (or a
+  // banner) behind. `dashboardPort` is only set once the announced endpoint is
+  // proven to be this process.
+  let dashboardPort: number | null = null;
+
   // Start dashboard if enabled
   if (dashboard) {
     const express = (await import('express')).default;
@@ -130,13 +162,63 @@ export async function startDaemon(options: {
       `);
     });
     
-    app.listen(port, () => {
-      console.log(`\n📊 Dashboard: http://localhost:${port}\n`);
-    });
+    // DF-SPECLANG-022: await the bind. `app.listen(port, cb)` used to swallow
+    // EADDRINUSE, so the daemon printed "Started" and a dashboard URL while the
+    // port belonged to somebody else.
+    let binding: DashboardBinding;
+    try {
+      binding = await listenDashboard(app, port);
+    } catch (err) {
+      const code = (err as NodeJS.ErrnoException).code;
+      await abortStart();
+      console.error(
+        `\n❌ Dashboard port ${port} could not be bound (${code || 'error'}: ${(err as Error).message})`,
+      );
+      if (code === 'EADDRINUSE') {
+        console.error(`   Port ${port} is already in use by another process (EADDRINUSE).`);
+      }
+      console.error('   Refusing to announce a dashboard this process does not serve.');
+      process.exit(1);
+    }
+
+    // A successful bind is not proof the ANNOUNCED url reaches us: on Linux a
+    // wildcard bind can succeed while another process holds 127.0.0.1:<port>,
+    // so ask the announced endpoint who it is before printing anything.
+    const announcePort = binding.port;
+    const probe = await probeDashboard(announcePort);
+    if (!probe.ok) {
+      await abortStart();
+      console.error(
+        `\n❌ Dashboard port ${announcePort} is already in use by another process (EADDRINUSE)`,
+      );
+      console.error(`   ${probe.detail}`);
+      console.error('   Refusing to announce a dashboard this process does not serve.');
+      process.exit(1);
+    }
+
+    dashboardPort = announcePort;
   }
-  
+
+  // Start daemon
+  try {
+    await daemon.start();
+  } catch (err) {
+    await abortStart();
+    console.error(`\n❌ Daemon failed to start: ${(err as Error).message}`);
+    process.exit(1);
+  }
+  daemonStarted = true;
+
+  if (dashboardPort !== null) {
+    console.log(`\n📊 Dashboard: http://localhost:${dashboardPort}`);
+  }
+
   console.log('\n✅ SpecLang Daemon Started');
-  console.log('   Press Ctrl+C to stop\n');
+  console.log('   Press Ctrl+C to stop');
+  // DF-SPECLANG-022: `start` runs the watcher (+ dashboard); it does not start
+  // the MCP server, which is `speclang mcp start`. Say so instead of letting
+  // `mcp status` contradict the banner.
+  console.log('   MCP: not started — run `speclang mcp start` for the MCP server\n');
   
   // Keep process alive
   return new Promise(() => {}); // Never resolves, keeps process running
