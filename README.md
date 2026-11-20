@@ -611,8 +611,7 @@ match on the file path, not a strict scope — so `tests/db` also picks up the r
 `vitest.config.ts` collects `tests/**/*.test.ts` and `tests/**/*.test.tsx`, with
 `tests/global-setup.ts` and `tests/setup-tmpdir.ts` redirecting `TMPDIR` to the gitignored `.tmp/`.
 Run `npx vitest list --filesOnly` for the collected file inventory and run `npm test` for the
-authoritative number of passing, failing and skipped files/tests. The Playwright `*.spec.ts`
-files under `tests/e2e/` are excluded from this collection (see below).
+authoritative number of passing, failing and skipped files/tests.
 Root-level files include `tests/parser.test.ts` and `tests/config.test.ts`; directories cover:
 
 | directory | what it covers |
@@ -633,18 +632,20 @@ Root-level files include `tests/parser.test.ts` and `tests/config.test.ts`; dire
 | `tests/stdlib/` | standard-library spec functions and types |
 | `tests/agent-driver/` | `scripts/agent-driver/drive.mjs` fail-closed contract and happy path |
 | `tests/agents/`, `tests/examples/`, `tests/transition/`, `tests/workflow/` | agent communication, hello-world example, spec transitions, conversation workflow |
-| `tests/e2e/` | end-to-end cascade run (`spec-to-code.test.ts` — see below) |
+| `tests/e2e/` | cascade run driven in-process (`spec-to-code.test.ts`) — no browser E2E, see below |
 
 `tests/mocks/` holds shared fixtures (`fixtures.ts`, `mcp-server.ts`, …) and no test files of its own.
 
-### `tests/e2e` is not a Playwright entry point here
+### Browser E2E is not implemented here
 
-The Playwright specs in `tests/e2e/` (`@playwright/test`: `dashboard.spec.ts`,
-`monitoring.spec.ts`, `cascade-control.spec.ts`, `spec-editing.spec.ts`) **cannot run in this
-repo as cloned**: `@playwright/test` is not a dependency (absent from `package.json` and from
-`node_modules`) and `vitest.config.ts` excludes `tests/e2e/**/*.spec.ts`. The vitest-native
-`tests/e2e/spec-to-code.test.ts` is collected; run `npm test -- tests/e2e` for the authoritative
-number of files/tests and their results.
+There is **no browser end-to-end suite in this repo**. Nothing in the tree opens a browser: there
+are no browser-driver specs, no browser-automation package is a dependency (absent from
+`package.json` and from `node_modules`), and no script launches a browser. `tests/e2e/` exists for
+a single vitest-native file, `tests/e2e/spec-to-code.test.ts`, which drives the cascade in-process
+— `npx vitest run tests/e2e` reports `1 passed (1)`.
+
+`vitest.config.ts` still carries `exclude: ['tests/e2e/**/*.spec.ts']`. That entry is the path a
+browser suite would use, so it is reserved rather than load-bearing: no such file is tracked.
 
 ### Test-run side effects
 
