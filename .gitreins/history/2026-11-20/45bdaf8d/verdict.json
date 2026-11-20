@@ -1,0 +1,204 @@
+{
+  "task_id": "OBS-7",
+  "task_title": "daemon pipeline executor import path resolution",
+  "task_criteria": [
+    "getPipelineExecutorCandidates in src/daemon/daemon.ts resolves the pipeline executor for src/, specs/daemon.spec.dir/ and dist/ layouts; npx vitest run tests/daemon-executor-OBS-7.test.ts exits 0 with every test passing."
+  ],
+  "passed": true,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "5cd4ca7126ded9bb82b0cde9bca394fcb948180d",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "45b24c76a046bce98a58f81d9d95ab5032bf584c79cd64c3f49b0433668c2c80",
+  "working_tree_dirty_path_count": 6,
+  "items": [
+    {
+      "criterion": "getPipelineExecutorCandidates in src/daemon/daemon.ts resolves the pipeline executor for src/, specs/daemon.spec.dir/ and dist/ layouts; npx vitest run tests/daemon-executor-OBS-7.test.ts exits 0 with every test passing.",
+      "status": "PASS",
+      "detail": "src/daemon/daemon.ts:32-40 defines getPipelineExecutorCandidates anchored to the module URL (default pathToFileURL(__filename)), choosing ts/js extension from the module pathname and returning ../pipeline/executor.<ext> plus ../../pipeline.spec.dir/src/executor.<ext>. All three layouts verified on disk: src/pipeline/executor.ts is a symlink to specs/pipeline.spec.dir/src/executor.ts (so both src/ and specs/daemon.spec.dir/ layouts resolve to it), and dist/src/daemon/daemon.js:28 carries the compiled equivalent resolving to dist/src/pipeline/executor.js. Test run: `npx vitest run tests/daemon-executor-OBS-7.test.ts` exit_code=0, output 'Test Files  1 passed (1)' / 'Tests  9 passed (9)', including per-layout runtime resolution tests, scratch-project stage execution through each layout, and a compiled-CLI watcher cascade test. [resolution 0.02; src/daemon/daemon.ts, tests/daemon-executor-OBS-7.test.ts]"
+    },
+    {
+      "criterion": "Derived: executePipeline consumes getPipelineExecutorCandidates and fails loudly when no candidate resolves",
+      "status": "PASS",
+      "detail": "src/daemon/daemon.ts:395-412 iterates the candidates, skips missing files via existsSync(new URL(spec)), dynamic-imports the first existing one, and throws an error naming every candidate when none load; the path is reachable from the 'converged' handler at daemon.ts:113-118. The 9/9 passing tests in tests/daemon-executor-OBS-7.test.ts exercise this end-to-end (stage execution through all three layouts and the compiled CLI cascade asserting no 'Cannot find module|Pipeline execution error').",
+      "derived": true
+    }
+  ],
+  "merge_recommendation": "no_concerns_found",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  01:27:06",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T062200.397773Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\n\n> speclang@1.0.0 build\n> tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T062200.397773Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  01:27:06\n   Duration  41.64s (transform 12.04s, setup 3.43s, import 20.09s, tests 215.46s, environment 16ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T062200.397773Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": true,
+      "any_failed": false,
+      "summary": "COMPLETE\n  \u2713 getPipelineExecutorCandidates in src/daemon/daemon.ts resolves the pipeline executor for src/, specs/daemon.spec.dir/ and dist/ layouts; npx vitest run tests/daemon-executor-OBS-7.test.ts exits 0 with every test passing.: src/daemon/daemon.ts:32-40 defines getPipelineExecutorCandidates anchored to the module URL (default pathToFileURL(__filename)), choosing ts/js extension from the module pathname and returning ../pipeline/executor.<ext> plus ../../pipeline.spec.dir/src/executor.<ext>. All three layouts verified on disk: src/pipeline/executor.ts is a symlink to specs/pipeline.spec.dir/src/executor.ts (so both src/ and specs/daemon.spec.dir/ layouts resolve to it), and dist/src/daemon/daemon.js:28 carries the compiled equivalent resolving to dist/src/pipeline/executor.js. Test run: `npx vitest run tests/daemon-executor-OBS-7.test.ts` exit_code=0, output 'Test Files  1 passed (1)' / 'Tests  9 passed (9)', including per-layout runtime resolution tests, scratch-project stage execution through each layout, and a compiled-CLI watcher cascade test. [resolution 0.02; src/daemon/daemon.ts, tests/daemon-executor-OBS-7.test.ts]\n  \u2713 Derived: executePipeline consumes getPipelineExecutorCandidates and fails loudly when no candidate resolves: src/daemon/daemon.ts:395-412 iterates the candidates, skips missing files via existsSync(new URL(spec)), dynamic-imports the first existing one, and throws an error naming every candidate when none load; the path is reachable from the 'converged' handler at daemon.ts:113-118. The 9/9 passing tests in tests/daemon-executor-OBS-7.test.ts exercise this end-to-end (stage execution through all three layouts and the compiled CLI cascade asserting no 'Cannot find module|Pipeline execution error').\ngetPipelineExecutorCandidates correctly resolves the executor across src/, specs/daemon.spec.dir/ and dist/ layouts, and the mandated vitest file passes 9/9 with exit code 0.",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": true,
+          "output": "COMPLETE\n  \u2713 getPipelineExecutorCandidates in src/daemon/daemon.ts resolves the pipeline executor for src/, specs/daemon.spec.dir/ and dist/ layouts; npx vitest run tests/daemon-executor-OBS-7.test.ts exits 0 with every test passing.: src/daemon/daemon.ts:32-40 defines getPipelineExecutorCandidates anchored to the module URL (default pathToFileURL(__filename)), choosing ts/js extension from the module pathname and returning ../pipeline/executor.<ext> plus ../../pipeline.spec.dir/src/executor.<ext>. All three layouts verified on disk: src/pipeline/executor.ts is a symlink to specs/pipeline.spec.dir/src/executor.ts (so both src/ and specs/daemon.spec.dir/ layouts resolve to it), and dist/src/daemon/daemon.js:28 carries the compiled equivalent resolving to dist/src/pipeline/executor.js. Test run: `npx vitest run tests/daemon-executor-OBS-7.test.ts` exit_code=0, output 'Test Files  1 passed (1)' / 'Tests  9 passed (9)', including per-layout runtime resolution tests, scratch-project stage execution through each layout, and a compiled-CLI watcher cascade test. [resolution 0.02; src/daemon/daemon.ts, tests/daemon-executor-OBS-7.test.ts]\n  \u2713 Derived: executePipeline consumes getPipelineExecutorCandidates and fails loudly when no candidate resolves: src/daemon/daemon.ts:395-412 iterates the candidates, skips missing files via existsSync(new URL(spec)), dynamic-imports the first existing one, and throws an error naming every candidate when none load; the path is reachable from the 'converged' handler at daemon.ts:113-118. The 9/9 passing tests in tests/daemon-executor-OBS-7.test.ts exercise this end-to-end (stage execution through all three layouts and the compiled CLI cascade asserting no 'Cannot find module|Pipeline execution error').\ngetPipelineExecutorCandidates correctly resolves the executor across src/, specs/daemon.spec.dir/ and dist/ layouts, and the mandated vitest file passes 9/9 with exit code 0.",
+          "error": "",
+          "data": {
+            "verdict": "COMPLETE",
+            "items": [
+              {
+                "criterion": "getPipelineExecutorCandidates in src/daemon/daemon.ts resolves the pipeline executor for src/, specs/daemon.spec.dir/ and dist/ layouts; npx vitest run tests/daemon-executor-OBS-7.test.ts exits 0 with every test passing.",
+                "status": "PASS",
+                "detail": "src/daemon/daemon.ts:32-40 defines getPipelineExecutorCandidates anchored to the module URL (default pathToFileURL(__filename)), choosing ts/js extension from the module pathname and returning ../pipeline/executor.<ext> plus ../../pipeline.spec.dir/src/executor.<ext>. All three layouts verified on disk: src/pipeline/executor.ts is a symlink to specs/pipeline.spec.dir/src/executor.ts (so both src/ and specs/daemon.spec.dir/ layouts resolve to it), and dist/src/daemon/daemon.js:28 carries the compiled equivalent resolving to dist/src/pipeline/executor.js. Test run: `npx vitest run tests/daemon-executor-OBS-7.test.ts` exit_code=0, output 'Test Files  1 passed (1)' / 'Tests  9 passed (9)', including per-layout runtime resolution tests, scratch-project stage execution through each layout, and a compiled-CLI watcher cascade test. [resolution 0.02; src/daemon/daemon.ts, tests/daemon-executor-OBS-7.test.ts]",
+                "resolution_probability": 0.02,
+                "cited_path": "src/daemon/daemon.ts, tests/daemon-executor-OBS-7.test.ts"
+              },
+              {
+                "criterion": "Derived: executePipeline consumes getPipelineExecutorCandidates and fails loudly when no candidate resolves",
+                "status": "PASS",
+                "detail": "src/daemon/daemon.ts:395-412 iterates the candidates, skips missing files via existsSync(new URL(spec)), dynamic-imports the first existing one, and throws an error naming every candidate when none load; the path is reachable from the 'converged' handler at daemon.ts:113-118. The 9/9 passing tests in tests/daemon-executor-OBS-7.test.ts exercise this end-to-end (stage execution through all three layouts and the compiled CLI cascade asserting no 'Cannot find module|Pipeline execution error').",
+                "derived": true
+              }
+            ],
+            "summary": "getPipelineExecutorCandidates correctly resolves the executor across src/, specs/daemon.spec.dir/ and dist/ layouts, and the mandated vitest file passes 9/9 with exit code 0.",
+            "provenance": {
+              "model": "accounts/fireworks/models/kimi-k3",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "accounts/fireworks/models/kimi-k3",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "tool_calls": [
+        {
+          "tool": "get_task_item",
+          "command": "get_task_item {\"id\": \"OBS-7\"}",
+          "exit_code": 0,
+          "output_sha": "e603702a717df3defcd5e2e19f6997a55bcc345a58607aacdf7cb4c0181b8c6b"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"src/daemon/daemon.ts\"}",
+          "exit_code": 0,
+          "output_sha": "87cbc0d440712cbe726748470a20295d04615bba571626e7aaf26ba42602db57"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"offset\": 400, \"path\": \"src/daemon/daemon.ts\"}",
+          "exit_code": 0,
+          "output_sha": "c3206df30af2401b5843110d9d59d22dc4a5f6a9f3fd5dbf96830ba896a57650"
+        },
+        {
+          "tool": "read_file",
+          "command": "read_file {\"path\": \"tests/daemon-executor-OBS-7.test.ts\"}",
+          "exit_code": 0,
+          "output_sha": "0042457c7febad2f9733865afa0d6334656f67aa565ac992c98c8282a07152d2"
+        },
+        {
+          "tool": "run_command",
+          "command": "ls -la specs/daemon.spec.dir/src/daemon.ts dist/src/daemon/daemon.js src/pipeline/executor.ts dist/src/pipeline/executor.js specs/pipeline.spec.dir/src/executor.ts 2>&1; echo ---; cat .gitreins/config.yaml 2>/dev/null | head -30",
+          "exit_code": 0,
+          "output_sha": "2a80e8b4d78cdf79f23d423020f8fe15e1ff796c62a34d43502c7da21867d7fb"
+        },
+        {
+          "tool": "run_command",
+          "command": "cd \"$(pwd)\" && npx vitest run tests/daemon-executor-OBS-7.test.ts 2>&1 | tail -40; echo \"EXIT=$?\"",
+          "exit_code": 0,
+          "output_sha": "165388136a2ef3efe406745f2f515aca63501385d5956eb7f945dd1409f8a132"
+        },
+        {
+          "tool": "search_pattern",
+          "command": "search_pattern {\"regex\": \"getPipelineExecutorCandidates\"}",
+          "exit_code": 0,
+          "output_sha": "4279cd4c730506de445c4ce5a1f4b6e3fcdd4a0b1bf868e5f93397e1d7498cf8"
+        },
+        {
+          "tool": "run_command",
+          "command": "grep -n \"getPipelineExecutorCandidates\" dist/src/daemon/daemon.js | head; echo ---; sed -n '25,45p' dist/src/daemon/daemon.js",
+          "exit_code": 0,
+          "output_sha": "a73ab5f7cf72831f804896cffeda9677a97ce4b11e5e98730bcea6a8ad54dc8d"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: getPipelineExecutorCandidates at src/daemon/daemon.ts:32-40 anchors to module URL (default pathToFileURL(__filename)), picks ts/js extension by module pathname, returns ../pipeline/executor.<ext> and ../../pipeline.spec.dir/src/executor.<ext>. Layouts verified on disk: src/pipeline/executor.ts is a symlink to specs/pipeline.spec.dir/src/executor.ts; specs/daemon.spec.dir/src/daemon.ts:32 has identical function; dist/src/daemon/daemon.js:28 compiled equivalent resolving to dist/src/pipeline/executor.js. executePipeline consumes candidates at daemon.ts:395-412 with existsSync check and error listing all candidates. Test run: `npx vitest run tests/daemon-executor-OBS-7.test.ts` exit_code=0, 'Test Files 1 passed (1)', 'Tests 9 passed (9)'.\", \"key\": \"verified_0\"}",
+          "exit_code": 0,
+          "output_sha": "94630aea10ffb4be02a016084b78e15e48457746f4974175ac3573038ae5a5ca"
+        },
+        {
+          "tool": "sandbox_write",
+          "command": "sandbox_write {\"content\": \"PASS: executePipeline (src/daemon/daemon.ts:395-412) iterates getPipelineExecutorCandidates(), skips non-existent files via existsSync(new URL(spec)), dynamic-imports the first existing candidate, and throws an error naming all candidates when none load. Reachable from the 'converged' handler (daemon.ts:113-118). Covered by the 9 passing tests including runtime execution through all three layouts and the compiled CLI watcher cascade.\", \"key\": \"verified_derived_0\"}",
+          "exit_code": 0,
+          "output_sha": "bf5fb5a97626e5d2c20611a8aa48f2fd39a3d6629af4233420bd166188246571"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [],
+    "summary": "",
+    "error": "unparseable reviewer reply: no parseable JSON object in reply: ''"
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  01:27:06\n\nStage tier2: PASS\n  COMPLETE\n  \u2713 getPipelineExecutorCandidates in src/daemon/daemon.ts resolves the pipeline executor for src/, specs/daemon.spec.dir/ and dist/ layouts; npx vitest run tests/daemon-executor-OBS-7.test.ts exits 0 with every test passing.: src/daemon/daemon.ts:32-40 defines getPipelineExecutorCandidates anchored to the module URL (default pathToFileURL(__filename)), choosing ts/js extension from the module pathname and returning ../pipeline/executor.<ext> plus ../../pipeline.spec.dir/src/executor.<ext>. All three layouts verified on disk: src/pipeline/executor.ts is a symlink to specs/pipeline.spec.dir/src/executor.ts (so both src/ and specs/daemon.spec.dir/ layouts resolve to it), and dist/src/daemon/daemon.js:28 carries the compiled equivalent resolving to dist/src/pipeline/executor.js. Test run: `npx vitest run tests/daemon-executor-OBS-7.test.ts` exit_code=0, output 'Test Files  1 passed (1)' / 'Tests  9 passed (9)', including per-layout runtime resolution tests, scratch-project stage execution through each layout, and a compiled-CLI watcher cascade test. [resolution 0.02; src/daemon/daemon.ts, tests/daemon-executor-OBS-7.test.ts]\n  \u2713 Derived: executePipeline consumes getPipelineExecutorCandidates and fails loudly when no candidate resolves: src/daemon/daemon.ts:395-412 iterates the candidates, skips missing files via existsSync(new URL(spec)), dynamic-imports the first existing one, and throws an error naming every candidate when none load; the path is reachable from the 'converged' handler at daemon.ts:113-118. The 9/9 passing tests in tests/daemon-executor-OBS-7.test.ts exercise this end-to-end (stage execution through all three layouts and the compiled CLI cascade asserting no 'Cannot find module|Pipeline execution error').\ngetPipelineExecutorCandidates correctly resolves the executor across src/, specs/daemon.spec.dir/ and dist/ layouts, and the mandated vitest file passes 9/9 with exit code 0.\n\nOverall: PASS \u2713",
+  "evaluated_at": "2026-11-20T06:30:17.732855",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-20T06:30:17.784727+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 180067,
+        "truncated": false,
+        "source": "git show 5cd4ca7126de"
+      }
+    ],
+    "task_id": "OBS-7"
+  }
+}
