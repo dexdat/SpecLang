@@ -507,4 +507,13 @@
 {"id":506,"timestamp":"2026-11-20 07:57:39.458742","event_type":"task_completed","task_id":"README-4","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":507,"timestamp":"2026-11-20 07:57:39.635419","event_type":"task_completed","task_id":"README-25","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":508,"timestamp":"2026-11-20 08:00:54.092665","event_type":"task_completed","task_id":"README-5","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+<<<<<<< HEAD
 {"id":509,"timestamp":"2026-11-20 09:29:39.696087","event_type":"task_updated","task_id":"QA-SPECLANG-3","actor":"pm","detail":"{\"status\":\"pending\",\"deferred\":true,\"defer_review_by\":\"2026-11-27\",\"note\":\"PM-VERIFY items 1-2 PASS at 15f827cd: rm -rf dist && npm test exit 0 (2071/58); build+test exit 0. Item 3 AGENTS.md:58 owner-gated, defer extended\"}","tick_number":null}
+=======
+{"id":509,"timestamp":"2026-11-20 09:31:13.011788","event_type":"task_updated","task_id":"DF-SPECLANG-020","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
+{"id":510,"timestamp":"2026-11-20 09:32:51.996258","event_type":"task_updated","task_id":"QA-SPECLANG-010","actor":"foreman","detail":"{\"status\":\"pending\"}","tick_number":null}
+{"id":511,"timestamp":"2026-11-20 09:33:47.257029","event_type":"task_completed","task_id":"README-2","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":512,"timestamp":"2026-11-20 09:33:47.397634","event_type":"task_completed","task_id":"README-21","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":513,"timestamp":"2026-11-20 10:01:18.45168","event_type":"task_completed","task_id":"DF-SPECLANG-020","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":514,"timestamp":"2026-11-20 10:01:44.081662","event_type":"task_created","task_id":"FULLGUARD-1","actor":"foreman","detail":"{\"id\":\"FULLGUARD-1\",\"status\":\"pending\"}","tick_number":null}
+>>>>>>> be141f3c (board: close DF-SPECLANG-020 (judge ca17a6a7 PASS, commit ef301d55); file FULLGUARD-1)
