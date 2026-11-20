@@ -117,8 +117,11 @@ curl -s localhost:3000/mcp/message -H 'content-type: application/json' \
 ```
 
 Startup diagnostics go to stderr on purpose — in stdio mode stdout carries the
-JSON-RPC stream. Note that `mcp status` / `mcp stop` read `.speclang/mcp.pid`,
-which `mcp start` does not write today; stop the server with SIGTERM or Ctrl-C.
+JSON-RPC stream. `mcp start` writes the server pid to `.speclang/mcp.pid` (plus
+`.speclang/mcp.port` in `--remote` mode), so `mcp status` reports
+`Status: Running (PID …)` while that process lives and `mcp stop` signals it.
+The files are removed when the server exits; a pid file left by a killed
+process is reported as `Not running` and dropped rather than trusted.
 
 ## Core Principle
 

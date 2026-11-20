@@ -199,6 +199,52 @@ function removeDaemonPidFile(pidFile) {
   }
 }
 
+// DF-SPECLANG-026: `.speclang/mcp.pid` is the same kind of shared state as
+// `.speclang/daemon.pid` (the two helpers above are generic pid-file
+// read/unlink, named for their first caller). A pid file only means a live
+// server if that pid still exists: after a SIGKILL, a crash before the unlink,
+// or on a recycled pid the file outlives the process it names, and reporting
+// "Running" from it would be the same silent lie `status` stopped telling about
+// corrupt state. EPERM means the process exists under another uid — alive.
+function pidIsAlive(pid) {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (err) {
+    return err.code === 'EPERM';
+  }
+}
+
+// DF-SPECLANG-026: `mcp start` is the writer of `.speclang/mcp.pid` (and, in
+// HTTP mode, `.speclang/mcp.port`) — `mcp status` and `mcp stop` are only ever
+// readers. Publishing the pid of THIS process, the one `mcp stop` signals, is
+// what lets `status` answer for a real server instead of reporting the file
+// nobody wrote. Returns an idempotent release that every exit path calls, so a
+// start failure, a signal or a crash cannot leave a pid file behind.
+function publishMcpStateFiles(projectDir, { remote, port }) {
+  const stateDir = path.join(projectDir, '.speclang');
+  fs.mkdirSync(stateDir, { recursive: true });
+
+  const pidFile = path.join(stateDir, 'mcp.pid');
+  const portFile = path.join(stateDir, 'mcp.port');
+  fs.writeFileSync(pidFile, String(process.pid));
+  if (remote) {
+    fs.writeFileSync(portFile, String(port));
+  } else {
+    // A stdio server binds no port: drop a port left by a previous HTTP run so
+    // `status` cannot print it next to this process's pid.
+    removeDaemonPidFile(portFile);
+  }
+
+  let released = false;
+  return function releaseMcpStateFiles() {
+    if (released) return;
+    released = true;
+    removeDaemonPidFile(pidFile);
+    removeDaemonPidFile(portFile);
+  };
+}
+
 // QA-SPECLANG-5: `speclang status` is a report about the project's REAL state, so
 // it has to open the state database. It used to never touch the DB at all, which
 // meant a corrupt `.speclang/speclang.db` produced a cheerful "Daemon: Not
@@ -1544,6 +1590,10 @@ mcp
       console.error(`   Port: ${options.port}`);
     }
     
+    // Declared outside the try so the failure path can undo the claim; a start
+    // that never reached the claim is a no-op release.
+    let releaseMcpStateFiles = () => {};
+
     try {
       const { MCPServer } = require('../dist/specs/mcp.spec.dir/src/index.js');
       const config = {
@@ -1560,6 +1610,25 @@ mcp
       };
       
       const server = new MCPServer(config);
+
+      // DF-SPECLANG-026: `mcp status`/`mcp stop` read `.speclang/mcp.pid`
+      // relative to the project dir, but nothing ever wrote it, so a live
+      // server was always reported as "Not running". Claim the file for this
+      // process before it starts serving — the same contract `daemon.pid`
+      // follows (specs/daemon.spec.dir/src/index.ts) — and release it on every
+      // exit path so a failed start cannot leave a pid claiming a server that
+      // never came up.
+      releaseMcpStateFiles = publishMcpStateFiles(projectDir, {
+        remote: Boolean(options.remote),
+        port: parseInt(options.port)
+      });
+      const shutdown = () => {
+        releaseMcpStateFiles();
+        process.exit(0);
+      };
+      process.once('exit', releaseMcpStateFiles);
+      process.once('SIGINT', shutdown);
+      process.once('SIGTERM', shutdown);
       
       if (options.remote) {
         await server.startHTTP(parseInt(options.port));
@@ -1567,6 +1636,7 @@ mcp
         await server.startStdio();
       }
     } catch (err) {
+      releaseMcpStateFiles();
       if (err.code === 'MODULE_NOT_FOUND') {
         console.error('\n❌ SpecLang not built. Run: npm run build');
         process.exit(1);
@@ -1602,16 +1672,29 @@ mcp
     console.log('📊 SpecLang MCP Status');
     console.log(`   Project: ${projectDir}`);
     
-    if (fs.existsSync(pidFile)) {
-      const pid = fs.readFileSync(pidFile, 'utf-8').trim();
-      console.log(`   Status: Running (PID ${pid})`);
-      
-      if (fs.existsSync(portFile)) {
-        const port = fs.readFileSync(portFile, 'utf-8').trim();
-        console.log(`   Port: ${port}`);
-      }
-    } else {
+    // DF-SPECLANG-026: a pid file is a claim, not proof of a live server. It
+    // outlives the process after a SIGKILL, a crash before the unlink, or a
+    // recycled pid, so consult the process table before answering "Running";
+    // stale state is reported as not running and dropped, never repeated.
+    if (!fs.existsSync(pidFile)) {
       console.log('   Status: Not running');
+    } else {
+      const pid = readDaemonPid(pidFile);
+      if (pid !== null && pidIsAlive(pid)) {
+        console.log(`   Status: Running (PID ${pid})`);
+
+        if (fs.existsSync(portFile)) {
+          const port = fs.readFileSync(portFile, 'utf-8').trim();
+          console.log(`   Port: ${port}`);
+        }
+      } else {
+        removeDaemonPidFile(pidFile);
+        console.log(
+          pid !== null
+            ? `   Status: Not running (stale PID ${pid} — process is gone)`
+            : '   Status: Not running (unreadable PID file removed)'
+        );
+      }
     }
   });
 
@@ -1623,22 +1706,35 @@ mcp
   .action(async (options) => {
     const projectDir = path.resolve(options.dir);
     const pidFile = path.join(projectDir, '.speclang', 'mcp.pid');
+    const portFile = path.join(projectDir, '.speclang', 'mcp.port');
     
     if (!fs.existsSync(pidFile)) {
       console.log('MCP server not running');
       return;
     }
     
-    const pid = parseInt(fs.readFileSync(pidFile, 'utf-8').trim());
+    const pid = readDaemonPid(pidFile);
+
+    // DF-SPECLANG-026: the server's own SIGTERM/exit path removes these files,
+    // so whichever side is second must treat "already gone" as benign — the
+    // same idempotent contract DF-SPECLANG-6 established for daemon.pid.
+    if (pid === null) {
+      removeDaemonPidFile(pidFile);
+      removeDaemonPidFile(portFile);
+      console.log('MCP server not running (unreadable PID file removed)');
+      return;
+    }
     
     try {
       process.kill(pid, 'SIGTERM');
-      fs.unlinkSync(pidFile);
+      removeDaemonPidFile(pidFile);
+      removeDaemonPidFile(portFile);
       console.log('✅ MCP server stopped');
     } catch (err) {
       if (err.code === 'ESRCH') {
+        removeDaemonPidFile(pidFile);
+        removeDaemonPidFile(portFile);
         console.log('MCP server not running (stale PID file removed)');
-        fs.unlinkSync(pidFile);
       } else {
         throw err;
       }

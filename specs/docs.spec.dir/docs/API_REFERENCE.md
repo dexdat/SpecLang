@@ -190,7 +190,7 @@ The module also has its own entrypoint: `node dist/specs/mcp.spec.dir/src/server
 
 `speclang start` is **not** an MCP server — it launches the daemon (spec file watcher plus the dashboard HTTP API on `--port`). Use `speclang mcp start` for MCP.
 
-`speclang mcp status` / `speclang mcp stop` read `.speclang/mcp.pid`; the server never writes that file and runs in the foreground, so `status` reports "not running" unless a pid file is created by hand.
+`speclang mcp start` writes the server's own pid to `.speclang/mcp.pid` (and `.speclang/mcp.port` in `--remote` mode), which `speclang mcp status` / `speclang mcp stop` read: `status` reports `Status: Running (PID …)` only while that pid exists, and `stop` sends it SIGTERM. Both files are removed on server exit; a pid file whose process is gone is reported as not running and dropped, never treated as a live server.
 
 ### Transport and configuration
 
