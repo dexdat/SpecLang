@@ -712,14 +712,15 @@ examples/                # Runnable example outputs (symlinks → specs/examples
 ├── auth/index.ts        # → specs/examples.spec.dir/auth/src/auth.ts
 └── crud-app/index.ts    # → specs/examples.spec.dir/crud-app/src/crud-app.ts
 
-src/                     # Generated code (selected paths; build evidence below)
+src/                     # Handwritten TypeScript application source (compiled to dist/ by tsc)
 ├── examples/
 │   ├── auth.ts          # Auth example (not a src/auth/ directory)
 │   └── hello-world.ts   # Hello World example
 ├── db/                  # Existing source directory
 └── ...                  # Other source paths omitted
 
-scripts/                 # Tools
+scripts/                 # Tools (dual-view: symlinks → specs/scripts.spec.dir/, which holds the
+│                        # canonical implementations next to their specs)
 ├── validate_refs.py     # ✅ Works
 ├── validate_autonomous.py # ✅ Works
 └── generate_*.py        # ⚠️ Have extraction bugs
@@ -788,7 +789,7 @@ These measurements describe that commit, not a promise about later checkouts.)*
 ### ❌ Not Working (Yet)
 
 - **Automatic cascade**: File watching requires the opt-in daemon — `speclang start` runs the file watcher (see Current Limitations above); the MCP server is started separately with `speclang mcp start`; without the daemon, cascades are triggered manually
-- **Self-hosting**: Scripts are handwritten, not generated
+- **Self-hosting**: Not yet complete — no tool is generated end-to-end from its own spec. The layout is already dual-view, though: each tool's implementation lives canonically under `specs/scripts.spec.dir/` next to its own spec (`generate_index.py` beside `_index.md` / `generate-index.spec.md`), and `scripts/` surfaces those implementations as symlinks (`scripts/generate_index.py` → `../specs/scripts.spec.dir/generate_index.py`; 32 symlinks plus 8 repo-level shell/node harnesses such as `guard-build.sh` and `gen-migrations.mjs`). Script bodies, and the TypeScript application source under `src/`, are hand-authored; only what `speclang generate` / `cascade` emits (`src/generated/`, `specs/generated/`) is machine-generated, and both of those paths are gitignored
 - **Full tree traversal**: Coordinator doesn't automate multi-tree yet
 - **Error recovery**: Basic, needs improvement
 
