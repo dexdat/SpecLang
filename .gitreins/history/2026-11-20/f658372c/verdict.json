@@ -1,0 +1,125 @@
+{
+  "task_id": "DOCS-RECHECK-1120",
+  "task_title": "Re-verify the README doc-audit findings against the shipped README",
+  "task_criteria": [
+    "AC-1: README-4's three named gaps are each re-checked with a command whose output is recorded: npm run lint is documented, no 449-specs aggregate line exists, Last Updated is not stale. AC-2: README-25's stale pinned counts are shown to be gone (no absolute test/spec/graph counts remain) and the README defers each count to the command that produces it. AC-3: the evidence file .coding-hermes/evidence/speclang-dogfood-2026-11-20-07-03-30.md is committed and its claims match what the commands printed."
+  ],
+  "passed": false,
+  "worktree": "/home/kara/speclang",
+  "branch": "main",
+  "commit": "96b781367e34f6218e53030631e89f1f35f3cacd",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "458163ef0d86a0fe52a40e80dfaf6a7b513c61d957414d1d334d4d8a4cc8f22c",
+  "working_tree_dirty_path_count": 4,
+  "items": [],
+  "merge_recommendation": "needs_review",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: RUN  v4.1.11 /home/kara/speclang",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T072305.085456Z.log"
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\n\n> speclang@1.0.0 build\n> tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T072305.085456Z.log"
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "\n RUN  v4.1.11 /home/kara/speclang\n\n\u274c No specs directory found. Run from a speclang project.\n\u274c Block not found: nonexistent-block-that-does-not-exist\nerror: missing required argument 'block-id'\nspeclang shim: $SPECLANG_CLI points at a path that does not exist:\n  /home/kara/speclang/.tmp/speclang-new-runnable-AYJwdI/does-not-exist\nError: --to <level> is required\n\u274c Unknown target level: INVALID_LEVEL\n\u274c Downgrade must go to a lower level\n\u274c Spec file not found: /home/kara/speclang/.tmp/speclang-test-downgrade/specs/nonexistent-file.spec.md\nSourcemap for \"/home/kara/speclang/specs/project-layout.spec.dir/src/templates.js\" points to missing source files\n\n Test Files  126 passed | 4 skipped (130)\n      Tests  2064 passed | 58 skipped (2122)\n   Start at  02:47:26\n   Duration  65.23s (transform 24.96s, setup 5.48s, import 42.33s, tests 296.26s, environment 17ms)\n",
+          "error": "",
+          "data": {
+            "exit_code": 0,
+            "guard_log": "/home/kara/speclang/.gitreins/logs/guard-20261120T072305.085456Z.log"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": false,
+      "any_failed": true,
+      "summary": "INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: AC-1: README-4's three named gaps are each re-checked with a command whose output is recorded: npm run lint is documented, no 449-specs aggregate line exists, Last Updated is not stale. AC-2: README-25's stale pinned counts are shown to be gone (no absolute test/spec/graph counts remain) and the README defers each count to the command that produces it. AC-3: the evidence file .coding-hermes/evidence/speclang-dogfood-2026-11-20-07-03-30.md is committed and its claims match what the commands printed.\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": false,
+          "output": "INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: AC-1: README-4's three named gaps are each re-checked with a command whose output is recorded: npm run lint is documented, no 449-specs aggregate line exists, Last Updated is not stale. AC-2: README-25's stale pinned counts are shown to be gone (no absolute test/spec/graph counts remain) and the README defers each count to the command that produces it. AC-3: the evidence file .coding-hermes/evidence/speclang-dogfood-2026-11-20-07-03-30.md is committed and its claims match what the commands printed.\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+          "error": "",
+          "data": {
+            "verdict": "INCOMPLETE",
+            "items": [],
+            "summary": "Evaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+            "ungraded_criteria": [
+              "AC-1: README-4's three named gaps are each re-checked with a command whose output is recorded: npm run lint is documented, no 449-specs aggregate line exists, Last Updated is not stale. AC-2: README-25's stale pinned counts are shown to be gone (no absolute test/spec/graph counts remain) and the README defers each count to the command that produces it. AC-3: the evidence file .coding-hermes/evidence/speclang-dogfood-2026-11-20-07-03-30.md is committed and its claims match what the commands printed."
+            ],
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "ungraded_criteria": [
+        "AC-1: README-4's three named gaps are each re-checked with a command whose output is recorded: npm run lint is documented, no 449-specs aggregate line exists, Last Updated is not stale. AC-2: README-25's stale pinned counts are shown to be gone (no absolute test/spec/graph counts remain) and the README defers each count to the command that produces it. AC-3: the evidence file .coding-hermes/evidence/speclang-dogfood-2026-11-20-07-03-30.md is committed and its claims match what the commands printed."
+      ]
+    }
+  },
+  "ungraded_criteria": [
+    "AC-1: README-4's three named gaps are each re-checked with a command whose output is recorded: npm run lint is documented, no 449-specs aggregate line exists, Last Updated is not stale. AC-2: README-25's stale pinned counts are shown to be gone (no absolute test/spec/graph counts remain) and the README defers each count to the command that produces it. AC-3: the evidence file .coding-hermes/evidence/speclang-dogfood-2026-11-20-07-03-30.md is committed and its claims match what the commands printed."
+  ],
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [],
+    "summary": "",
+    "error": "LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)"
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: RUN  v4.1.11 /home/kara/speclang\n\nStage tier2: FAIL\n  INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: AC-1: README-4's three named gaps are each re-checked with a command whose output is recorded: npm run lint is documented, no 449-specs aggregate line exists, Last Updated is not stale. AC-2: README-25's stale pinned counts are shown to be gone (no absolute test/spec/graph counts remain) and the README defers each count to the command that produces it. AC-3: the evidence file .coding-hermes/evidence/speclang-dogfood-2026-11-20-07-03-30.md is committed and its claims match what the commands printed.\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)\n\nOverall: FAIL \u2717",
+  "evaluated_at": "2026-11-20T07:48:51.842472",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-20T07:48:51.887070+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 99439,
+        "truncated": false,
+        "source": "git show 96b781367e34"
+      }
+    ],
+    "task_id": "DOCS-RECHECK-1120"
+  }
+}
