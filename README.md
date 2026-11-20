@@ -130,7 +130,7 @@ Full command surface (from `./bin/speclang --help`):
 | `build` / `compile [files...]` | Build code from specs |
 | `bootstrap` | Bootstrap SpecLang: verify specs, run cascade, validate build |
 | `mcp` | MCP server management (start / status / stop) |
-| `new <name>` | Create a new speclang project (starter spec, package.json, local CLI shim, and a `build.yaml` pipeline the daemon can run) |
+| `new <name>` | Create a new speclang project |
 | `expand <block-id>` | Expand a block ID into detailed specs |
 | `search <query>` | Search across all specs |
 | `maturity [spec]` | Show maturity level info or validate a spec |
