@@ -1,0 +1,130 @@
+{
+  "task_id": "DOC-4",
+  "task_title": "README Agent Roles table names a nonexistent agent and omits two shipped ones",
+  "task_criteria": [
+    "Proof: (1) `awk '/^### Agent Roles/{f=1} /^### File Structure/{f=0} f' README.md | grep -oE '@speclang-[a-z-]+' | tr -d '@' | sort -u | while read -r a; do test -f \".opencode/agents/$a.md\" || echo \"MISSING $a\"; done` prints no MISSING lines; (2) `grep -ci 'speclang-test-writer' README.md` prints 0; (3) `grep -c '@speclang-simulator-verify' README.md` prints at least 1 and the Agent Roles table has a row naming @speclang-simulator; (4) the file-structure tree's \"Agent definitions\" line reads 6 definitions (excluding the agents README.md), matching `ls .opencode/agents/ | grep -c '\\.md$'` minus the README. failure_condition: any agent named in the Agent Roles table resolves to no file under .opencode/agents/, either simulator agent is missing from the table, the nonexistent @speclang-test-writer agent is still named, or the roles count still reads 5."
+  ],
+  "passed": false,
+  "worktree": "/home/kara/worktrees/speclang-DOC-4",
+  "branch": "wt/DOC-4",
+  "commit": "5cd4ca7126ded9bb82b0cde9bca394fcb948180d",
+  "pass_class": "judged",
+  "tier2_skipped": false,
+  "working_tree_content_fingerprint": "1bc0504bdb024e160261277af26f11435ad3889b1473aebfef770e16cc7ceb80",
+  "working_tree_dirty_path_count": 1,
+  "items": [],
+  "merge_recommendation": "needs_review",
+  "stages": {
+    "tier1": {
+      "id": "tier1",
+      "passed": true,
+      "any_failed": false,
+      "summary": "  \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  01:30:50",
+      "steps": [
+        {
+          "id": "secrets",
+          "type": "script",
+          "passed": true,
+          "output": "",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        },
+        {
+          "id": "build",
+          "type": "script",
+          "passed": true,
+          "output": "build ok \u2014 npm run build exited 0\nnpm notice run speclang@1.0.0 build\nnpm notice run tsc\n",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        },
+        {
+          "id": "tests",
+          "type": "script",
+          "passed": true,
+          "output": "   Start at  01:30:50\n   Duration  60.32s (transform 17.74s, setup 4.16s, import 30.80s, tests 262.41s, environment 27ms)\n\n",
+          "error": "",
+          "data": {
+            "exit_code": 0
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "id": "tier2",
+      "passed": false,
+      "any_failed": true,
+      "summary": "INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: Proof: (1) `awk '/^### Agent Roles/{f=1} /^### File Structure/{f=0} f' README.md | grep -oE '@speclang-[a-z-]+' | tr -d '@' | sort -u | while read -r a; do test -f \".opencode/agents/$a.md\" || echo \"MISSING $a\"; done` prints no MISSING lines; (2) `grep -ci 'speclang-test-writer' README.md` prints 0; (3) `grep -c '@speclang-simulator-verify' README.md` prints at least 1 and the Agent Roles table has a row naming @speclang-simulator; (4) the file-structure tree's \"Agent definitions\" line reads 6 definitions (excluding the agents README.md), matching `ls .opencode/agents/ | grep -c '\\.md$'` minus the README. failure_condition: any agent named in the Agent Roles table resolves to no file under .opencode/agents/, either simulator agent is missing from the table, the nonexistent @speclang-test-writer agent is still named, or the roles count still reads 5.\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+      "steps": [
+        {
+          "id": "tier2",
+          "type": "ai_eval",
+          "passed": false,
+          "output": "INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: Proof: (1) `awk '/^### Agent Roles/{f=1} /^### File Structure/{f=0} f' README.md | grep -oE '@speclang-[a-z-]+' | tr -d '@' | sort -u | while read -r a; do test -f \".opencode/agents/$a.md\" || echo \"MISSING $a\"; done` prints no MISSING lines; (2) `grep -ci 'speclang-test-writer' README.md` prints 0; (3) `grep -c '@speclang-simulator-verify' README.md` prints at least 1 and the Agent Roles table has a row naming @speclang-simulator; (4) the file-structure tree's \"Agent definitions\" line reads 6 definitions (excluding the agents README.md), matching `ls .opencode/agents/ | grep -c '\\.md$'` minus the README. failure_condition: any agent named in the Agent Roles table resolves to no file under .opencode/agents/, either simulator agent is missing from the table, the nonexistent @speclang-test-writer agent is still named, or the roles count still reads 5.\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+          "error": "",
+          "data": {
+            "verdict": "INCOMPLETE",
+            "items": [],
+            "summary": "Evaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)",
+            "ungraded_criteria": [
+              "Proof: (1) `awk '/^### Agent Roles/{f=1} /^### File Structure/{f=0} f' README.md | grep -oE '@speclang-[a-z-]+' | tr -d '@' | sort -u | while read -r a; do test -f \".opencode/agents/$a.md\" || echo \"MISSING $a\"; done` prints no MISSING lines; (2) `grep -ci 'speclang-test-writer' README.md` prints 0; (3) `grep -c '@speclang-simulator-verify' README.md` prints at least 1 and the Agent Roles table has a row naming @speclang-simulator; (4) the file-structure tree's \"Agent definitions\" line reads 6 definitions (excluding the agents README.md), matching `ls .opencode/agents/ | grep -c '\\.md$'` minus the README. failure_condition: any agent named in the Agent Roles table resolves to no file under .opencode/agents/, either simulator agent is missing from the table, the nonexistent @speclang-test-writer agent is still named, or the roles count still reads 5."
+            ],
+            "provenance": {
+              "model": "deepseek-v4-flash",
+              "base_url_source": "GITREINS_LLM_BASE_URL",
+              "api_key_source": "GITREINS_LLM_API_KEY"
+            }
+          }
+        }
+      ],
+      "model": "deepseek-v4-flash",
+      "base_url_source": "GITREINS_LLM_BASE_URL",
+      "api_key_source": "GITREINS_LLM_API_KEY",
+      "ungraded_criteria": [
+        "Proof: (1) `awk '/^### Agent Roles/{f=1} /^### File Structure/{f=0} f' README.md | grep -oE '@speclang-[a-z-]+' | tr -d '@' | sort -u | while read -r a; do test -f \".opencode/agents/$a.md\" || echo \"MISSING $a\"; done` prints no MISSING lines; (2) `grep -ci 'speclang-test-writer' README.md` prints 0; (3) `grep -c '@speclang-simulator-verify' README.md` prints at least 1 and the Agent Roles table has a row naming @speclang-simulator; (4) the file-structure tree's \"Agent definitions\" line reads 6 definitions (excluding the agents README.md), matching `ls .opencode/agents/ | grep -c '\\.md$'` minus the README. failure_condition: any agent named in the Agent Roles table resolves to no file under .opencode/agents/, either simulator agent is missing from the table, the nonexistent @speclang-test-writer agent is still named, or the roles count still reads 5."
+      ]
+    }
+  },
+  "ungraded_criteria": [
+    "Proof: (1) `awk '/^### Agent Roles/{f=1} /^### File Structure/{f=0} f' README.md | grep -oE '@speclang-[a-z-]+' | tr -d '@' | sort -u | while read -r a; do test -f \".opencode/agents/$a.md\" || echo \"MISSING $a\"; done` prints no MISSING lines; (2) `grep -ci 'speclang-test-writer' README.md` prints 0; (3) `grep -c '@speclang-simulator-verify' README.md` prints at least 1 and the Agent Roles table has a row naming @speclang-simulator; (4) the file-structure tree's \"Agent definitions\" line reads 6 definitions (excluding the agents README.md), matching `ls .opencode/agents/ | grep -c '\\.md$'` minus the README. failure_condition: any agent named in the Agent Roles table resolves to no file under .opencode/agents/, either simulator agent is missing from the table, the nonexistent @speclang-test-writer agent is still named, or the roles count still reads 5."
+  ],
+  "review": {
+    "reviewer_email": "totalwindupflightsystems@gmail.com",
+    "reviewer_name": "totalwindupflightsystems",
+    "commit_author_email": "totalwindupflightsystems@gmail.com",
+    "commit_author_name": "totalwindupflightsystems",
+    "self_review": true,
+    "findings": [],
+    "summary": "",
+    "error": "LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)"
+  },
+  "summary": "Stage tier1: PASS\n    \u2713 secrets: ok (no output)\n  \u2713 build: build ok \u2014 npm run build exited 0\n  \u2713 tests: Start at  01:30:50\n\nStage tier2: FAIL\n  INCOMPLETE\n  \u2717 Coverage FAILED \u2014 ungraded: Proof: (1) `awk '/^### Agent Roles/{f=1} /^### File Structure/{f=0} f' README.md | grep -oE '@speclang-[a-z-]+' | tr -d '@' | sort -u | while read -r a; do test -f \".opencode/agents/$a.md\" || echo \"MISSING $a\"; done` prints no MISSING lines; (2) `grep -ci 'speclang-test-writer' README.md` prints 0; (3) `grep -c '@speclang-simulator-verify' README.md` prints at least 1 and the Agent Roles table has a row naming @speclang-simulator; (4) the file-structure tree's \"Agent definitions\" line reads 6 definitions (excluding the agents README.md), matching `ls .opencode/agents/ | grep -c '\\.md$'` minus the README. failure_condition: any agent named in the Agent Roles table resolves to no file under .opencode/agents/, either simulator agent is missing from the table, the nonexistent @speclang-test-writer agent is still named, or the roles count still reads 5.\nEvaluator error: LLM call failed: 402 Client Error: Payment Required for url: https://api.deepseek.com/v1/chat/completions (provider=openai model=deepseek-v4-flash url=https://api.deepseek.com/v1/chat/completions key=<GITREINS_LLM_API_KEY>)\n\nOverall: FAIL \u2717",
+  "evaluated_at": "2026-11-20T06:31:56.041108",
+  "supersedes": null,
+  "superseded_by": null,
+  "evidence": {
+    "collected_at": "2026-11-20T06:31:56.103257+00:00",
+    "items": [
+      {
+        "name": "patch",
+        "label": "Landed commit patch",
+        "file": "commit.patch",
+        "bytes": 180067,
+        "truncated": false,
+        "source": "git show 5cd4ca7126de"
+      },
+      {
+        "name": "worktree",
+        "label": "Working-tree diff (graded)",
+        "file": "worktree.patch",
+        "bytes": 235751,
+        "truncated": false,
+        "source": "git diff HEAD (working tree)"
+      }
+    ],
+    "task_id": "DOC-4"
+  }
+}
