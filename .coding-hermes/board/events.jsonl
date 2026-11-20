@@ -498,3 +498,4 @@
 {"id":497,"timestamp":"2026-11-20 06:51:34.050531","event_type":"task_completed","task_id":"DOC-10","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":498,"timestamp":"2026-11-20 06:51:34.099101","event_type":"task_completed","task_id":"LAND-001","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":499,"timestamp":"2026-11-20 06:54:11.881962","event_type":"task_created","task_id":"JUDGE-1","actor":"foreman","detail":"{\"id\":\"JUDGE-1\",\"status\":\"pending\"}","tick_number":null}
+{"id":500,"timestamp":"2026-11-20 07:26:35.843811","event_type":"task_updated","task_id":"PERF-2","actor":"foreman","detail":"{\"status\":\"pending\"}","tick_number":null}
