@@ -514,3 +514,5 @@
 {"id": 513, "timestamp": "2026-11-20 09:33:47.397634", "event_type": "task_completed", "task_id": "README-21", "actor": "foreman", "detail": "{\"status\":\"complete\"}", "tick_number": null}
 {"id": 514, "timestamp": "2026-11-20 10:01:18.45168", "event_type": "task_completed", "task_id": "DF-SPECLANG-020", "actor": "foreman", "detail": "{\"status\":\"complete\"}", "tick_number": null}
 {"id": 515, "timestamp": "2026-11-20 10:01:44.081662", "event_type": "task_created", "task_id": "FULLGUARD-1", "actor": "foreman", "detail": "{\"id\":\"FULLGUARD-1\",\"status\":\"pending\"}", "tick_number": null}
+{"id": 516, "timestamp": "2026-11-20 10:40:57.408326", "event_type": "task_completed", "task_id": "DF-SPECLANG-022", "actor": "foreman", "detail": "{\"status\":\"complete\"}", "tick_number": null}
+{"id": 517, "timestamp": "2026-11-20 10:41:29.139594", "event_type": "task_created", "task_id": "DF-SPECLANG-026", "actor": "foreman", "detail": "{\"id\":\"DF-SPECLANG-026\",\"status\":\"pending\"}", "tick_number": null}
