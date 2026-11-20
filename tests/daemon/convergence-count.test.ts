@@ -126,6 +126,23 @@ describe("DF-SPECLANG-024: convergence reports OUTPUTS, not input events", () =>
     ).toBe(true);
   });
 
+  it("the settle line claims no output count: the pipeline has not run yet", () => {
+    const spec = touch("specs/main.spec.md", "# main\n");
+    const log = vi.spyOn(console, "log").mockImplementation(() => {});
+
+    detector.onEvent(event(FileEventKind.Modify, spec));
+    settle(detector);
+
+    const settled = logLines(log).filter((line) => line.startsWith("[Convergence] Cascade settled"));
+    expect(settled).toHaveLength(1);
+    // The one thing settle knows is how many inputs woke it.
+    expect(settled[0]).toContain("inputs: 1");
+    // It cannot name outputs — nothing has been written — so it must not print
+    // a number that a user would read as "files this save produced".
+    expect(settled[0]).not.toMatch(/outputs: \d/);
+    expect(settled[0]).not.toMatch(/Files: \d/);
+  });
+
   it("reports 3 and names the paths when the pass writes three files", () => {
     const spec = touch("specs/main.spec.md", "# main\n");
     const log = vi.spyOn(console, "log").mockImplementation(() => {});
@@ -381,26 +398,41 @@ describe("DF-SPECLANG-024: daemon output accounting from the project tree", () =
 describe("DF-SPECLANG-024: daemon wiring", () => {
   const REPO_ROOT = path.resolve(__dirname, "..", "..");
 
-  it("executePipeline snapshots before running the pipeline and reports after it", () => {
-    const source = fs.readFileSync(
-      path.join(REPO_ROOT, "specs", "daemon.spec.dir", "src", "daemon.ts"),
-      "utf-8",
-    );
-    const snapshotIndex = source.indexOf("snapshotProjectFiles(process.cwd())");
-    const executeIndex = source.indexOf("await executor.execute(convergenceResult)");
-    const reportIndex = source.indexOf("this.reportPipelineOutputs(");
+  function specSource(relative: string): string {
+    return fs.readFileSync(path.join(REPO_ROOT, "specs", "daemon.spec.dir", "src", relative), "utf-8");
+  }
 
-    expect(snapshotIndex).toBeGreaterThan(-1);
-    expect(executeIndex).toBeGreaterThan(snapshotIndex);
-    expect(reportIndex).toBeGreaterThan(executeIndex);
+  it("executePipeline snapshots the tree before the pipeline runs and reports after it", () => {
+    const source = specSource("daemon.ts");
+
+    // Match the CALL SHAPES, not whole literal lines: the previous version
+    // indexed on an exact argument list, so it went red the moment an argument
+    // was added while the ordering it exists to prove was still correct.
+    const snapshot = /const\s+beforeOutputs\s*=\s*snapshotProjectFiles\(\s*([^,;]+)/.exec(source);
+    const execute = /await\s+executor\.execute\(convergenceResult\)/.exec(source);
+    const report = /this\.reportPipelineOutputs\(\s*beforeOutputs/.exec(source);
+
+    expect(snapshot).not.toBeNull();
+    expect(execute).not.toBeNull();
+    expect(report).not.toBeNull();
+
+    // The snapshot root is the daemon's project directory — the same cwd the
+    // rest of the daemon resolves its state and paths against.
+    expect(snapshot![1]).toContain("process.cwd()");
+    expect(execute!.index).toBeGreaterThan(snapshot!.index);
+    expect(report!.index).toBeGreaterThan(execute!.index);
     expect(source).toMatch(/convergence\.recordOutputs\(/);
   });
 
-  it("convergence.ts owns the accounting symbol the board greps for", () => {
-    const source = fs.readFileSync(
-      path.join(REPO_ROOT, "specs", "daemon.spec.dir", "src", "convergence.ts"),
-      "utf-8",
-    );
+  it("convergence.ts accounts outputs through filesChangedCount, never watcher paths", () => {
+    const source = specSource("convergence.ts");
+    // AC-2: the accounting symbol exists ...
     expect(source).toMatch(/filesChangedCount/);
+    // ... and the thing it replaced is gone: a `filesChangedPaths` set filled
+    // from watcher events is the defect this row exists to remove.
+    expect(source).not.toMatch(/filesChangedPaths/);
+    // Inputs are still tracked, under a name that cannot be mistaken for the
+    // user-visible changed-file count.
+    expect(source).toMatch(/inputPaths/);
   });
 });
