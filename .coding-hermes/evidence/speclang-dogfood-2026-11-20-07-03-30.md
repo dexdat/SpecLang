@@ -64,8 +64,20 @@ read-only modes unaffected.
 
   Dispatched as the third wave worker (README.md only, disjoint from the code seams).
 
-## 6. Wave
+## 6. Wave outcome
 
-See .coding-hermes/waves/SpecLang-dogfood-2026-11-20-07-03-30.json. Two of four slots used because
-DF-SPECLANG-020 and DF-SPECLANG-022 share bin/speclang with PERF-2; the README cluster shares
-README.md, so at most one docs row can run at a time.
+| Row | Worker commit | Merged as | Gate I ran myself | Verdict |
+|---|---|---|---|---|
+| PERF-2 | ec44897b | 6c4feb5d | AC-1 repro 60235ms -> 936ms, 21/21 completion tests | tier1 PASS, run 58fda9b6 |
+| DF-SPECLANG-021 | 3e00a7cf | cc7d28a8 | tsc rc=0, tests/daemon 14 files 134 passed 2 skipped | tier1 PASS, run 322d3d4f |
+| README-5 | 40c54e45 | 69abf2ab | both documented npx tsx -e commands re-run, real output | tier1 PASS, run 1c6c1fad |
+| DOCS-RECHECK-1120 | — | — | doc evidence verified | tier1 PASS, run b554ae00 |
+
+Two workers died at launch with "Gateway did not answer session.create" (PERF-2, README-5) and were
+re-dispatched; the retries ran to completion. Tier 2 judged nothing on every run — the deepseek
+endpoint answers 402 (JUDGE-1 is the row that tracks that outage), so every verdict above is tier 1
+only and the FAIL/INCOMPLETE lines in those verdicts are infrastructure, not code.
+
+See .coding-hermes/waves/SpecLang-dogfood-2026-11-20-07-03-30.json (local, gitignored). Two of four
+slots used because DF-SPECLANG-020 and DF-SPECLANG-022 share bin/speclang with PERF-2 and the README
+cluster shares README.md, so at most one row per seam can run at a time.

@@ -503,3 +503,7 @@
 {"id":502,"timestamp":"2026-11-20 07:34:07.004546","event_type":"task_dispatched","task_id":"DF-SPECLANG-021","actor":"foreman","detail":"wave wt/DF-SPECLANG-021 dispatched to /home/kara/worktrees/speclang-DF-SPECLANG-021 (proc proc_3e196e37cf0f, openai/gpt-6.1-terra via xkiro) from base 1d86d2db","tick_number":null}
 {"id":503,"timestamp":"2026-11-20 07:44:24.434059","event_type":"task_created","task_id":"GEN-1","actor":"foreman","detail":"{\"id\":\"GEN-1\",\"status\":\"pending\"}","tick_number":null}
 {"id":504,"timestamp":"2026-11-20 07:53:10.083352","event_type":"task_completed","task_id":"DF-SPECLANG-021","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":505,"timestamp":"2026-11-20 07:57:39.351597","event_type":"task_completed","task_id":"PERF-2","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":506,"timestamp":"2026-11-20 07:57:39.458742","event_type":"task_completed","task_id":"README-4","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":507,"timestamp":"2026-11-20 07:57:39.635419","event_type":"task_completed","task_id":"README-25","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":508,"timestamp":"2026-11-20 08:00:54.092665","event_type":"task_completed","task_id":"README-5","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
