@@ -536,6 +536,25 @@ npx tsx specs/examples.spec.dir/hello-world/src/hello-world.ts
 # Output: Hello, World!
 ```
 
+**Only `hello-world/` is a standalone script. `auth/` and `crud-app/` are importable modules, not standalone scripts** — they export classes and helpers (`AuthService`, `authMiddleware`; `TodoRepository`, `TodoController`) and have no top-level demo, so running them directly exits 0 and prints nothing. That silence is expected, not a failure; to see them work, import the module and call its exports.
+
+`npx tsx -e` evaluates a snippet with the repo root as its working directory, so both commands below copy-paste directly:
+
+```bash
+# auth: register a user, log in, and reject a bad password
+npx tsx -e "import { AuthService } from './examples/auth/index.ts'; void (async () => { const auth = new AuthService('demo-secret'); await auth.register('ada','ada@example.com','hunter2'); const ok = await auth.login('ada','hunter2'); const bad = await auth.login('ada','wrong-password'); console.log('auth: login =', ok.success, '| token issued =', typeof ok.token === 'string', '| wrong password ->', bad.success ? 'ACCEPTED' : bad.error); })();"
+# Output: auth: login = true | token issued = true | wrong password -> Invalid credentials
+```
+
+```bash
+# crud-app: create, update, list and delete a todo through TodoRepository
+npx tsx -e "import { TodoRepository } from './examples/crud-app/index.ts'; void (async () => { const repo = new TodoRepository(); const t = await repo.create({ title: 'Ship README', description: 'prove the example runs' }); console.log('crud: created', JSON.stringify(t.title), '| completed =', t.completed); const u = await repo.update(t.id, { completed: true }); console.log('crud: updated completed =', u?.completed, '| rows =', (await repo.findAll()).length, '| deleted =', await repo.delete(t.id), '| rows =', (await repo.findAll()).length); })();"
+# Output: crud: created "Ship README" | completed = false
+#         crud: updated completed = true | rows = 1 | deleted = true | rows = 0
+```
+
+`tsx -e` compiles to CommonJS, where top-level `await` is rejected — keep the body inside `void (async () => { ... })()` as above, or save the snippet to a `.ts` file and run it with `npx tsx <file>`.
+
 ---
 
 ## Testing
