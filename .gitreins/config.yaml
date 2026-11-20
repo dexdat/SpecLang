@@ -3,8 +3,10 @@ guards:
   lint: false
   allow_skips: true
   tests: true
-  test_command: npx vitest run --passWithNoTests 2>&1 | grep -q 'Tests.*passed' &&
-    exit 0 || exit 1
+  # Honest arm (2026-11-20): `grep -q 'Tests.*passed'` matched
+  # "Tests  20 failed | 60 passed", so failing runs passed this guard. Use
+  # vitest's own exit status.
+  test_command: npx vitest run --passWithNoTests
   dead_code: false
   skylos: false
   lsp: true
@@ -75,7 +77,13 @@ pipeline:
       run: bash scripts/guard-build.sh
     - id: tests
       type: script
-      run: npx vitest run --passWithNoTests 2>&1 | tail -3
+      # Honest gate (2026-11-20): the old `... | tail -3` reported the exit code
+      # of `tail`, so tier1 graded a suite with 20 failing tests as PASS. Keep
+      # the log tail for triage but propagate vitest's own status.
+      run: |
+        out=$(npx vitest run --passWithNoTests 2>&1); rc=$?
+        printf '%s\n' "$out" | tail -20
+        exit $rc
   - id: tier2
     type: ai_eval
     "on":
