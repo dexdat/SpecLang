@@ -4,6 +4,11 @@ generated/
 # Test scratch dirs (tests/meta/*.test.ts create these at repo root)
 test-temp-*/
 
+# QA-SPECLANG-011: e2e output dir written by tests/e2e/spec-to-code.test.ts
+# (no trailing slash so `git check-ignore test-spec-to-code-output` exits 0
+# even before the dir is ever created)
+test-spec-to-code-output
+
 # Dependencies
 node_modules/
 
