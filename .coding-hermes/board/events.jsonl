@@ -555,3 +555,6 @@
 {"id":554,"timestamp":"2026-11-23T13:55:48Z","event_type":"task_created","task_id":"DOC-15","actor":"foreman","detail":"{\"id\":\"DOC-15\",\"status\":\"pending\"}","tick_number":null}
 {"id":555,"timestamp":"2026-11-23T14:50:09Z","event_type":"task_created","task_id":"DF-SPECLANG-027","actor":"foreman","detail":"{\"id\":\"DF-SPECLANG-027\",\"status\":\"pending\"}","tick_number":null}
 {"id":556,"timestamp":"2026-11-23T14:53:28Z","event_type":"task_created","task_id":"DF-SPECLANG-028","actor":"foreman","detail":"{\"id\":\"DF-SPECLANG-028\",\"status\":\"pending\"}","tick_number":null}
+{"id":557,"timestamp":"2026-11-23T18:46:30Z","event_type":"task_dispatched","task_id":"OPS-SPECLANG-001","actor":"foreman","detail":"{\"worktree\": \"/home/kara/worktrees/SpecLang-OPS-SPECLANG-001-r2\", \"branch\": \"wt/OPS-SPECLANG-001-r2\", \"base_sha\": \"48cf26c9\", \"status\": \"in_progress\", \"tick\": \"Speclang-qa-2026-11-23-13-30-00\"}","tick_number":null}
+{"id":558,"timestamp":"2026-11-23T14:10:00Z","event_type":"task_completed","task_id":"QA-SPECLANG-012","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":559,"timestamp":"2026-11-23T14:10:47Z","event_type":"task_created","task_id":"QA-SPECLANG-012-R2","actor":"foreman","detail":"{\"id\":\"QA-SPECLANG-012-R2\",\"status\":\"pending\"}","tick_number":null}
