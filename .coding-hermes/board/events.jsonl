@@ -560,3 +560,5 @@
 {"id": 559, "timestamp": "2026-11-23T14:10:47Z", "event_type": "task_created", "task_id": "QA-SPECLANG-012-R2", "actor": "foreman", "detail": "{\"id\":\"QA-SPECLANG-012-R2\",\"status\":\"pending\"}", "tick_number": null}
 {"id": 560, "timestamp": "2026-11-23T15:56:15Z", "event_type": "task_created", "task_id": "DOC-17", "actor": "foreman", "detail": "{\"id\": \"DOC-17\", \"status\": \"pending\"}", "tick_number": null}
 {"id": 561, "timestamp": "2026-11-23T15:56:15Z", "event_type": "task_created", "task_id": "DOC-18", "actor": "foreman", "detail": "{\"id\": \"DOC-18\", \"status\": \"pending\"}", "tick_number": null}
+{"id": 562, "timestamp": "2026-11-23T17:33:10Z", "event_type": "task_created", "task_id": "INT-CI-004", "actor": "foreman", "detail": "{\"id\":\"INT-CI-004\",\"status\":\"pending\"}", "tick_number": null}
+{"id": 563, "timestamp": "2026-11-23T17:59:16Z", "event_type": "task_completed", "task_id": "DF-SPECLANG-027", "actor": "foreman", "detail": "{\"status\":\"complete\"}", "tick_number": null}
