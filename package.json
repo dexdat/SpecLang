@@ -22,6 +22,8 @@
     "start": "node bin/speclang start",
     "pretest": "npm run build",
     "test": "TMPDIR=$PWD/.tmp vitest run",
+    "posttest": "node scripts/reap-test-tmp.mjs",
+    "reap:tmp": "node scripts/reap-test-tmp.mjs",
     "test:watch": "TMPDIR=$PWD/.tmp vitest",
     "test:coverage": "mkdir -p coverage/.tmp && TMPDIR=$PWD/.tmp vitest run --coverage --maxWorkers 1",
     "cascade": "node bin/speclang cascade",
