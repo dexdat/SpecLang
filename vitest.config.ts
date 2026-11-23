@@ -66,9 +66,13 @@ export default defineConfig({
       'tests/**/*.test.ts',
       'tests/**/*.test.tsx'
     ],
-    exclude: [
-      'tests/e2e/**/*.spec.ts'
-    ],
+    // QA-SPECLANG-011: tests/e2e/spec-to-code.test.ts is intentionally
+    // INCLUDED with npm test (include glob 'tests/**/*.test.ts' picks it up,
+    // and the full suite is green with it since the pretest build hook
+    // landed). The former exclude pattern 'tests/e2e/**/*.spec.ts' was a
+    // no-op: no file under tests/e2e/ matches *.spec.ts. The key is omitted
+    // entirely so vitest's DEFAULT excludes (node_modules, dist, .git, ...)
+    // stay in force instead of being wiped by an empty array.
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
