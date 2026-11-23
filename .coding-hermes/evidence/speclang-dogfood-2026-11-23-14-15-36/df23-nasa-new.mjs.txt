@@ -1,0 +1,24 @@
+// df23: NASA spec headline re-proof + speclang new first-user journey in a scratch project
+import { execFileSync, execSync } from 'node:child_process';
+const ROOT = '/home/kara/.hermes/cache/scratch/speclang-df20261123';
+const BIN = `${ROOT}/bin/speclang`;
+function run(cwd, ...argv) {
+  const t0 = Date.now();
+  let rc = 0, out = '', err = '';
+  try { out = execFileSync(argv[0], argv.slice(1), { encoding: 'utf8', timeout: 90000, cwd }); }
+  catch (e) { rc = e.status ?? 'signal'; out = e.stdout ?? ''; err = e.stderr ?? String(e.message).slice(0, 300); }
+  return { ms: Date.now() - t0, rc, out, err };
+}
+const nasa = run(ROOT, BIN, 'validate', 'specs/docs.spec.dir/playbook/NASA-SE-PLAYBOOK.md.spec.md');
+console.log(`NASA validate rc=${nasa.rc} ${nasa.ms}ms :: ${nasa.err.trim().split('\n')[0].slice(0, 120)}`);
+
+const proj = '/home/kara/.hermes/cache/scratch/df23-newproj-' + process.pid;
+const help = run(ROOT, BIN, 'new', '--help');
+console.log(`new --help rc=${help.rc} :: ${help.out.split('\n').slice(0, 6).join(' / ').slice(0, 300)}`);
+const mk = run(ROOT, BIN, 'new', 'hello-world', '-d', proj);
+console.log(`new rc=${mk.rc} ${mk.ms}ms :: ${mk.out.split('\n')[0].slice(0, 120)} ${mk.err.trim().split('\n')[0].slice(0, 200)}`);
+const ls = execSync(`ls -la ${proj} 2>/dev/null || echo NO-DIR`).toString();
+console.log('scaffold:', ls.split('\n').slice(0, 10).join(' | '));
+const v = run(proj, BIN, 'validate', 'specs/hello-world.spec.md');
+console.log(`validate(new) rc=${v.rc} ${v.ms}ms :: ${v.out.split('\n').slice(0, 8).join(' ').replace(/\s+/g, ' ').slice(0, 200)} ${v.err.trim().slice(0, 150)}`);
+console.log('loadavg', execSync('cat /proc/loadavg').toString().trim());

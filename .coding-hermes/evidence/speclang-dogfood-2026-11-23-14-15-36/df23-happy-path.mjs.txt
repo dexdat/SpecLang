@@ -1,0 +1,25 @@
+// df23 CLI happy path as documented in GETTING-STARTED, each step timed, stdout/stderr captured
+import { execFileSync, execSync } from 'node:child_process';
+const BIN = '/home/kara/.hermes/cache/scratch/speclang-df20261123/bin/speclang';
+const steps = [
+  ['version', [BIN, '--version']],
+  ['help-head', [BIN, '--help']],
+  ['generate-dry', [BIN, 'generate', 'specs/examples.spec.dir/hello-world.spec.md', '--dry-run']],
+  ['validate-hello', [BIN, 'validate', 'specs/examples.spec.dir/hello-world.spec.md']],
+  ['cascade', [BIN, 'cascade', 'specs/examples.spec.dir/hello-world.spec.md']],
+];
+for (const [name, argv] of steps) {
+  const t0 = Date.now();
+  let rc = 0, out = '', err = '';
+  try {
+    out = execFileSync(argv[0], argv.slice(1), { encoding: 'utf8', timeout: 90000, cwd: '/home/kara/.hermes/cache/scratch/speclang-df20261123' });
+  } catch (e) {
+    rc = e.status ?? 'signal'; out = e.stdout ?? ''; err = e.stderr ?? String(e.message).slice(0, 400);
+  }
+  console.log(`STEP ${name} rc=${rc} ${((Date.now() - t0) / 1000).toFixed(2)}s`);
+  const lines = out.split('\\n');
+  console.log('  stdout lines:', lines.length, ':: first:', lines[0]?.slice(0, 150));
+  if (err.trim()) console.log('  stderr:', err.trim().split('\\n')[0].slice(0, 200));
+}
+console.log('post-cascade generated:', execSync('find /home/kara/.hermes/cache/scratch/speclang-df20261123/specs/generated -type f 2>/dev/null').toString().trim());
+console.log('loadavg', execSync('cat /proc/loadavg').toString().trim());

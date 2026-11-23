@@ -1,0 +1,26 @@
+// PERF-2 AC-1 repro at tip 2c2ae93f: fresh young EMPTY lock must be reclaimed fast
+import { execFileSync, execSync } from 'node:child_process';
+import { statSync, writeFileSync, readFileSync } from 'node:fs';
+const ROOT = '/home/kara/.hermes/cache/scratch/speclang-df20261123';
+const BIN = `${ROOT}/bin/speclang`;
+const lockPath = `${ROOT}/.speclang/cli-completion.json.lock`;
+const lockBefore = statSync(lockPath);
+writeFileSync(`${ROOT}/.speclang/lock-before.txt`, `size=${lockBefore.size} mtime=${lockBefore.mtime.toISOString()}\n`);
+const runs = [];
+for (let i = 0; i < 3; i++) {
+  const t0 = Date.now();
+  let rc = 0, stderrTail = '';
+  try {
+    execFileSync(BIN, ['validate', 'specs/examples.spec.dir/hello-world.spec.md'],
+      { encoding: 'utf8', timeout: 90000, cwd: ROOT, stdio: ['ignore', 'pipe', 'pipe'] });
+  } catch (e) {
+    rc = e.status ?? 'signal'; stderrTail = String(e.stderr || '').trim().split('\n')[0];
+  }
+  runs.push({ i, ms: Date.now() - t0, rc, stderrTail });
+}
+for (const r of runs) console.log(`RUN ${r.i} ms=${r.ms} rc=${r.rc} stderr='${r.stderrTail.slice(0, 120)}'`);
+let lockAfter = 'present';
+try { const s = statSync(lockPath); lockAfter = `size=${s.size}`; } catch { lockAfter = 'absent (reclaimed)'; }
+console.log('lock after runs:', lockAfter);
+console.log('validate summary line:', readFileSync('/dev/null', 'utf8') || '(n/a)');
+console.log('loadavg', execSync('cat /proc/loadavg').toString().trim());

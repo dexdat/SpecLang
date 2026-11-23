@@ -1,0 +1,36 @@
+// df23 daemon reactive arm v2: --no-dashboard, save a spec, watch recascade
+import { execSync, execFile, spawn } from 'node:child_process';
+import { readFileSync, appendFileSync, statSync, existsSync } from 'node:fs';
+const PROJ = '/home/kara/.hermes/cache/scratch/df23-newproj-3465577';
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+const runP = (cwd, args, timeout = 60000) => new Promise(res => {
+  const t0 = Date.now();
+  execFile('node', args, { encoding: 'utf8', timeout, cwd }, (err, stdout, stderr) => {
+    res({ ms: Date.now() - t0, rc: err ? (err.code ?? 'sig') : 0, stdout: String(stdout), stderr: String(stderr) });
+  });
+});
+const daemon = spawn('node', ['scripts/speclang.cjs', 'start', '--no-dashboard'], { cwd: PROJ, stdio: ['ignore', 'pipe', 'pipe'], detached: true });
+let out = '';
+daemon.stdout.on('data', d => out += d);
+daemon.stderr.on('data', d => out += d);
+await sleep(6000);
+let alive = false; try { process.kill(daemon.pid, 0); alive = true; } catch {}
+console.log('daemon pid', daemon.pid, 'alive:', alive);
+console.log('banner:', out.split('\n').filter(Boolean).slice(0, 8).join(' | ').slice(0, 400));
+const gen = `${PROJ}/src/generated/main.spec-main.ts`;
+const before = readFileSync(gen, 'utf8');
+appendFileSync(`${PROJ}/specs/main.spec.md`, '\n### @block::extra @kind:code\n```speclang\n// extra block saved by dogfood 2026-11-23\n```\n');
+await sleep(45000); // known 30s quiet period + margin
+const st = await runP(PROJ, ['scripts/speclang.cjs', 'status'], 30000);
+console.log('status rc=' + st.rc, st.stdout.split('\n').filter(Boolean).slice(0, 12).join(' | ').slice(0, 500));
+let after = 'GONE';
+try { after = readFileSync(gen, 'utf8'); } catch {}
+console.log('main generated changed:', before !== after, '| len:', before.length, after === 'GONE' ? 'GONE' : after.length);
+console.log('all generated:', execSync(`find ${PROJ}/src/generated -type f -newer ${PROJ}/specs/main.spec.md 2>/dev/null; echo ---; ls -la ${PROJ}/src/generated/ | tail -3`).toString().trim().replace(/\n/g, ' ; ').slice(0, 400));
+console.log('daemon out tail:', out.split('\n').filter(Boolean).slice(-6).join(' | ').slice(0, 400));
+const stop = await runP(PROJ, ['scripts/speclang.cjs', 'stop'], 30000);
+console.log('stop rc=' + stop.rc, (stop.stdout + stop.stderr).split('\n').filter(Boolean).slice(0, 4).join(' | ').slice(0, 250));
+await sleep(2000);
+let alive2 = 'gone'; try { process.kill(daemon.pid, 0); alive2 = 'STILL ALIVE'; } catch {}
+console.log('daemon pid after stop:', alive2);
+console.log('loadavg', execSync('cat /proc/loadavg').toString().trim());

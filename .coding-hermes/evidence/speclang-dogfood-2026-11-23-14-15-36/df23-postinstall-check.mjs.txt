@@ -1,0 +1,19 @@
+// df23 post-install surface check: sqlite binding, esbuild, npm run build
+import { execSync } from 'node:child_process';
+const steps = [
+  ['sqlite-binding', 'npm run check:sqlite-binding'],
+  ['esbuild-version', 'node_modules/esbuild/bin/esbuild --version'],
+  ['tsc-build', 'npm run build'],
+];
+for (const [name, cmd] of steps) {
+  const t0 = Date.now();
+  try {
+    const out = execSync(cmd, { encoding: 'utf8', timeout: 120000, stdio: ['ignore', 'pipe', 'pipe'] });
+    const tail = out.trim().split('\n').slice(-3).join(' | ');
+    console.log(`STEP ${name} rc=0 ${((Date.now() - t0) / 1000).toFixed(1)}s :: ${tail}`);
+  } catch (e) {
+    const tail = String(e.stdout || '').trim().split('\n').slice(-2).concat(String(e.stderr || '').trim().split('\n').slice(-4)).join(' | ').slice(0, 500);
+    console.log(`STEP ${name} rc=${e.status} ${((Date.now() - t0) / 1000).toFixed(1)}s :: ${tail}`);
+  }
+}
+console.log('loadavg', execSync('cat /proc/loadavg').toString().trim());
