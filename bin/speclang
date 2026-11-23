@@ -589,8 +589,12 @@ program
       }
     }
     
-    // Check generated code
-    const generatedDir = path.join(projectDir, 'generated');
+    // Generation defaults to src/generated; retain the legacy generated/ path
+    // as a fallback for projects that still use it.
+    const sourceGeneratedDir = path.join(projectDir, 'src', 'generated');
+    const generatedDir = fs.existsSync(sourceGeneratedDir)
+      ? sourceGeneratedDir
+      : path.join(projectDir, 'generated');
     if (fs.existsSync(generatedDir)) {
       const files = fs.readdirSync(generatedDir, { recursive: true });
       console.log(`   Generated files: ${files.length}`);
