@@ -168,9 +168,17 @@ export function extractBlocks(content: string, sourceFile: string): Block[] {
         }
       }
       
-      // Create new block
+      // Create new block. BLOCK_PATTERN matches both the canonical
+      // `@block:domain/name` spelling (capture `domain/name`) and the
+      // `@block::<name>` shorthand used by generated seeds and `speclang`
+      // templates (capture `:name`). In the shorthand the literal `@block:`
+      // swallowed the first colon, so the capture keeps a stray one: strip it
+      // and store the `@block:`-prefixed canonical ID the validation rules
+      // require (`@validation/blocks` errors on any ID not starting with
+      // `@block:`), otherwise every shipped seed fails `speclang validate`
+      // (INT-CI-005). Single-colon captures keep the bare `domain/name` ID.
       currentBlock = {
-        id: blockMatch[1],
+        id: blockMatch[1].startsWith(':') ? '@block' + blockMatch[1] : blockMatch[1],
         kind: blockMatch[2] as BlockKind,
         content: '',
         line: lineNumber,
