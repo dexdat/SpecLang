@@ -3,7 +3,7 @@
  * Source: @speclang/sqlite @block:sqlite/schema
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, afterAll } from "vitest";
 import Database, { type Database as DatabaseType } from "better-sqlite3";
 import { SpecLangDB } from "../src/db/index.js";
 import { migrate, getCurrentVersion, migrations } from "../src/db/migrations.js";
@@ -14,8 +14,12 @@ import type {
   CommandRecord,
 } from "../src/db/types.js";
 import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
 
-const TEST_DB_PATH = ".speclang/test.db";
+const TEST_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "speclang-db-test-"));
+const TEST_DB_PATH = path.join(TEST_DIR, "test.db");
+afterAll(() => fs.rmSync(TEST_DIR, { recursive: true, force: true }));
 const LATEST_VERSION = Math.max(...migrations.map((m) => m.version));
 
 describe("Database", () => {
