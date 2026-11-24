@@ -14,30 +14,35 @@ cat docs/NORTH_STAR.md
 # 2. Start the bootstrap
 cat PROMPT.md  # Point your AI here
 
-# 3. Or run automated loop
-./.ralph/ralph.sh 100
+# 3. Or run the automated loop (note: .ralph/ralph.sh is disabled)
+python3 .ralph/ralph_loop.py loop --commit
 ```
 
 ---
 
 ## Complete Phase Overview
 
-| Phase | Name | Stories | Status |
-|-------|------|---------|--------|
-| 0 | Foundation | 25 | ⬜ |
-| 1 | Core Runtime | 11 | ⬜ |
-| 2 | MCP Interface | 12 | ⬜ |
-| 3 | Code Generation | 6 | ⬜ |
-| 4 | Pipeline & Guard | 7 | ⬜ |
-| 5 | Meta-Circular | 5 | ⬜ |
-| 6 | UI Dashboard | 3 | ⬜ |
-| 7 | Examples & Documentation | 2 | ⬜ |
-| 8 | Tooling Scripts | 1 | ⬜ |
-| **Total** | | **72** | |
+> Live story inventory is `.ralph/prd.json`: 10 phases (P0–P9), 50 tracked stories, all with `passes: true` as of this refresh. The Phase Details tables below are the **original 72-story plan** kept as a prompt map (the 72 plan stories expanded into 129 prompt files under `docs/prompts/`). Consult `.ralph/prd.json` for what the loop actually tracks.
+
+| Phase | Stories (prd.json) | Status |
+|-------|--------|--------|
+| P0 | 14 | ✅ |
+| P1 | 0 | — |
+| P2 | 1 | ✅ |
+| P3 | 1 | ✅ |
+| P4 | 14 | ✅ |
+| P5 | 6 | ✅ |
+| P6 | 10 | ✅ |
+| P7 | 1 | ✅ |
+| P8 | 1 | ✅ |
+| P9 | 2 | ✅ |
+| **Total** | **50** | |
 
 ---
 
 ## Phase Details
+
+> Historical plan tables below (original 72-story plan, phases 0–8), useful as a prompt→output map. Live story tracking lives in `.ralph/prd.json`.
 
 ### Phase 0: Foundation (25 stories)
 | # | Story | Prompt | Outputs |
@@ -149,7 +154,9 @@ cat PROMPT.md  # Point your AI here
 
 ---
 
-## SIP Skills (65 total)
+## SIP Skills (124 total)
+
+> Live count: 124 SIP skill files under `.opencode/skills/sip-*` (SIP-000 through SIP-128, numbering has gaps). The table below covers the first 65 (SIP-000–064); run `ls .opencode/skills/sip-* | wc -l` for the live total.
 
 SpecLang Implementation Proposals (SIPs) define core behaviors for agents:
 
@@ -229,7 +236,6 @@ SpecLang Implementation Proposals (SIPs) define core behaviors for agents:
 ```
 PROMPT.md           → Builder agent (point AI here first)
 PROMPT-VERIFY.md    → Adversary agent (verification)
-BOOTSTRAP.md        → Master orchestration
 TODO.md             → Task tracking
 ```
 
@@ -239,17 +245,18 @@ docs/
 ├── NORTH_STAR.md       → Vision and principles
 ├── BOOTSTRAP_PLAN.md   → Detailed bootstrap plan
 ├── MASTER_GUIDE.md     → This file
-└── prompts/            → Phase-by-phase prompts (67 files)
+└── prompts/            → Phase-by-phase prompts (129 files)
 ```
 
 ### Ralph Loop (Automated Execution)
 ```
 .ralph/
-├── prd.json        → Stories across phases (72 stories)
-├── prompt.md       → Loop prompt
-├── progress.md     → Progress tracking
-├── ralph.sh        → Automated loop script
-└── README.md       → Documentation
+├── prd.json            → Stories across phases (50 tracked stories, all passes == true)
+├── PROMPT.md           → Loop prompt
+├── progress.md         → Progress tracking
+├── ralph_loop.py       → Active automated loop runner
+├── ralph.sh.disabled   → Legacy shell loop (disabled; use ralph_loop.py instead)
+└── README.md           → Documentation
 ```
 
 ### SIP Skills (Agent Instructions)
@@ -258,7 +265,7 @@ docs/
 ├── sip-000-what-is-speclang-v0.md
 ├── sip-001-how-to-write-sip-speclang-v0.md
 ├── ...
-└── sip-064-*.md    (65 files total)
+└── sip-128-*.md    (124 files total)
 ```
 
 ### Agent Definitions
@@ -288,7 +295,7 @@ specs/
 ├── pipeline.spec.md     → Build pipeline
 ├── recovery.spec.md     → Self-healing
 ├── ui.spec.md           → Dashboard UI
-└── ...                  → 275 total specs
+└── ...                  → 470 total spec files (468 *.spec.md + 2 *.scl)
 ```
 
 ---
@@ -340,12 +347,12 @@ specs/
 
 | Category | Count |
 |----------|-------|
-| Phase prompts | 67 |
-| SIP skills | 65 |
+| Phase prompts | 129 |
+| SIP skills | 124 |
 | Agent definitions | 6 |
-| Spec files | 275 |
-| Total bootstrap stories | 72 |
-| Phases | 9 |
+| Spec files | 470 |
+| Total bootstrap stories | 50 |
+| Phases | 10 (prd.json P0–P9) |
 
 ---
 
@@ -355,14 +362,14 @@ specs/
 # Check progress
 cat .ralph/prd.json | jq '[.phases[].stories[] | select(.passes == false)] | length'
 
-# Run tests
-bun test
+# Run tests (vitest; the pretest step runs `tsc` first)
+npm test
 
 # TypeScript check
-bun run tsc --noEmit
+npm run build
 
-# Validate specs
-speclang validate
+# Validate specs (requires a prior build — run `npm run build` first if dist/ is missing)
+./bin/speclang validate
 
 # Check commits
 git log --oneline --grep="speclang:" | wc -l
@@ -374,7 +381,7 @@ git log --oneline --grep="speclang:" | wc -l
 
 Bootstrap is COMPLETE when:
 
-1. ✅ All 72 stories have `passes: true`
+1. ✅ All 50 tracked stories in `.ralph/prd.json` have `passes: true`
 2. ✅ All code in `src/` compiles
 3. ✅ All tests pass
 4. ✅ All commits have `speclang:` prefix
@@ -432,6 +439,6 @@ Bootstrap is COMPLETE when:
 # Point your AI to:
 cat PROMPT.md
 
-# Or run the automated loop:
-./.ralph/ralph.sh 100
+# Or run the automated loop (note: .ralph/ralph.sh is disabled):
+python3 .ralph/ralph_loop.py loop --commit
 ```
