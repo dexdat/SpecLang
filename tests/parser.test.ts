@@ -79,6 +79,21 @@ login operation
 Some note
 `;
 
+const SPEC_WITH_SHORTHAND_BLOCKS = `---
+# speclang-header
+id: "@specs/blocks-shorthand"
+version: 1.0.0
+---
+
+# Test
+
+## @block::entity/User @kind:entity
+User entity
+
+## @block::note/info @kind:note
+Some note
+`;
+
 const SPEC_WITH_REFS = `---
 # speclang-header
 id: "@specs/refs"
@@ -215,6 +230,18 @@ describe("extractBlocks", () => {
 
     expect(result.blocks[0].content).toContain("User entity");
     expect(result.blocks[1].content).toContain("login operation");
+  });
+
+  it("should keep the @block: prefix on @block:: shorthand IDs (INT-CI-005)", () => {
+    // The `@block::<name>` shorthand capture retains the extra colon; leaving
+    // it bare (`:name`) failed @validation/blocks, so every shipped seed
+    // failed `speclang validate`. The ID must come back `@block:`-prefixed.
+    const result = parseSpecContent(SPEC_WITH_SHORTHAND_BLOCKS);
+
+    expect(result.blocks).toHaveLength(2);
+    expect(result.blocks[0].id).toBe("@block:entity/User");
+    expect(result.blocks[0].kind).toBe("entity");
+    expect(result.blocks[1].id).toBe("@block:note/info");
   });
 });
 
