@@ -16,18 +16,18 @@ pipeline:
   on_converge:
     # Install dependencies
     - name: install
-      run: "bun install"
+      run: "npm ci"
       # Only run if package.json changed
       condition: "package.json changed"
 
     # TypeScript type checking
     - name: typecheck
-      run: "bun run tsc --noEmit"
+      run: "npx tsc --noEmit"
       depends_on: [install]
 
     # Run tests
     - name: test
-      run: "bun test"
+      run: "npm test"
       depends_on: [typecheck]
       hooks:
         pre: "echo 'Running tests...'"
@@ -35,7 +35,7 @@ pipeline:
 
     # Lint code
     - name: lint
-      run: "bun run lint"
+      run: "npm run lint"
       depends_on: [typecheck]
 
   # Actions to run on pipeline success

@@ -45,22 +45,22 @@ convergence:
 pipeline:
   on_converge:
     - name: install
-      run: "bun install"
+      run: "npm ci"
       condition: "package.json changed"
       
     - name: typecheck
-      run: "bun run tsc --noEmit"
+      run: "npx tsc --noEmit"
       depends_on: [install]
       
     - name: test
-      run: "bun test"
+      run: "npm test"
       depends_on: [typecheck]
       hooks:
         pre: "echo 'Running tests...'"
         post_fail: "speclang recover --last"
         
     - name: lint
-      run: "bun run lint"
+      run: "npm run lint"
       depends_on: [typecheck]
       
   on_success:
@@ -358,7 +358,7 @@ speclang pipeline show <run-id>
 
 ## Validation
 ```bash
-bun test tests/pipeline.test.ts
+npx vitest run tests/pipeline.test.ts
 speclang pipeline run --dry-run
 ```
 
