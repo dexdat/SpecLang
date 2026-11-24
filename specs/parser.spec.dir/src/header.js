@@ -54,7 +54,7 @@ const yaml_1 = require("yaml");
 const HEADER_LINE_PATTERN = /^# speclang-header(?:\s+lines:(\d+))?/i;
 const FRONTMATTER_START = /^---$/;
 const FRONTMATTER_END = /^---$/;
-const BLOCK_PATTERN = /^#+\s+@block::(\S+)\s+@kind:(\S+)(.*)$/;
+const BLOCK_PATTERN = /^#+\s+@block:(\S+)\s+@kind:(\S+)(.*)$/;
 /**
  * Reference pattern. Matches `@ref:` followed by:
  * - path: one or more valid identifier chars (`[a-zA-Z0-9_\-\/.]+`)
@@ -186,7 +186,7 @@ function extractBlocks(content, sourceFile) {
             }
             // Create new block
             currentBlock = {
-                id: '@block::' + blockMatch[1],
+                id: blockMatch[1],
                 kind: blockMatch[2],
                 content: '',
                 line: lineNumber,

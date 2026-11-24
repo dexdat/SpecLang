@@ -434,7 +434,8 @@ recovery:
 
     const result = await executor.execute();
 
-    expect(result.success).toBe(true);
+    expect(result.success).toBe(false);
     expect(result.stages).toHaveLength(0);
+    expect(result.error).toContain("No pipeline stages configured");
   });
 });

@@ -16,7 +16,7 @@ import type { SpecMetadata, Reference, Block, BlockKind } from './types';
 const HEADER_LINE_PATTERN = /^# speclang-header(?:\s+lines:(\d+))?/i;
 const FRONTMATTER_START = /^---$/;
 const FRONTMATTER_END = /^---$/;
-const BLOCK_PATTERN = /^#+\s+@block::(\S+)\s+@kind:(\S+)(.*)$/;
+const BLOCK_PATTERN = /^#+\s+@block:(\S+)\s+@kind:(\S+)(.*)$/;
 
 /**
  * Reference pattern. Matches `@ref:` followed by:
@@ -170,7 +170,7 @@ export function extractBlocks(content: string, sourceFile: string): Block[] {
       
       // Create new block
       currentBlock = {
-        id: '@block::' + blockMatch[1],
+        id: blockMatch[1],
         kind: blockMatch[2] as BlockKind,
         content: '',
         line: lineNumber,

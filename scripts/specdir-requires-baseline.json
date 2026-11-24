@@ -115,36 +115,6 @@
       "reason": "dead require inside an unimported artifact: the spec-dir source imports ../utils.js from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact"
     },
     {
-      "module": "specs/daemon.spec.dir/src/daemon.js",
-      "require": "./daemon-prom",
-      "proof": "source-only",
-      "reason": "source-only projection: only the source specs/daemon.spec.dir/src/daemon-prom.ts exists \u2014 the layer has no compiled sibling for it"
-    },
-    {
-      "module": "specs/daemon.spec.dir/src/daemon.js",
-      "require": "./outputs",
-      "proof": "source-only",
-      "reason": "source-only projection: only the source specs/daemon.spec.dir/src/outputs.ts exists \u2014 the layer has no compiled sibling for it"
-    },
-    {
-      "module": "specs/daemon.spec.dir/src/index.js",
-      "require": "./daemon-cli",
-      "proof": "source-only",
-      "reason": "source-only projection: only the source specs/daemon.spec.dir/src/daemon-cli.ts exists \u2014 the layer has no compiled sibling for it"
-    },
-    {
-      "module": "specs/daemon.spec.dir/src/index.js",
-      "require": "./dashboard",
-      "proof": "source-only",
-      "reason": "source-only projection: only the source specs/daemon.spec.dir/src/dashboard.ts exists \u2014 the layer has no compiled sibling for it"
-    },
-    {
-      "module": "specs/daemon.spec.dir/src/index.js",
-      "require": "./dashboard",
-      "proof": "source-only",
-      "reason": "source-only projection: only the source specs/daemon.spec.dir/src/dashboard.ts exists \u2014 the layer has no compiled sibling for it"
-    },
-    {
       "module": "specs/daemon.spec.dir/src/speclangd.js",
       "require": "./daemon/index.js",
       "line": 25,

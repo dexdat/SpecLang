@@ -63,10 +63,8 @@ async function waitFor(
 /**
  * Build a minimal Daemon with a short quiet period + autoRecascade override.
  * Uses `.speclangrc` in the project root so the daemon's config.load()
- * picks up the override values. The pipeline execution will fail in
- * tests (dynamic import to ../pipeline/executor doesn't resolve here)
- * — that's expected and harmless; the daemon's converged handler
- * still emits `armed` after executePipeline settles.
+ * picks up the override values. Stub the pipeline boundary so convergence
+ * tests never execute the repository's real install and test commands.
  */
 async function makeDaemon(
   autoRecascade: boolean,
@@ -89,6 +87,7 @@ async function makeDaemon(
   );
 
   const daemon = new Daemon(rcPath);
+  vi.spyOn(daemon as any, "executePipeline").mockResolvedValue(undefined);
   return daemon;
 }
 

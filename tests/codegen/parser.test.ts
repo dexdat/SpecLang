@@ -77,6 +77,7 @@ const b = 2;
       const spec = parseCodeSpecContent(content, "test.spec");
 
       expect(spec.blocks.length).toBe(2);
+      expect(spec.blocks.map((block) => block.id)).toEqual(["test/first", "test/second"]);
     });
 
     it("should default to typescript target", () => {
