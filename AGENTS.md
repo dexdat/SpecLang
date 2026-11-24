@@ -203,7 +203,7 @@ config/                         # ⚙️ Configuration
 ```
 
 **Compliance Status:**
-- ✅ `src/` - 431 dual-view symlinks working, 0 broken (auto-managed by pre-commit hook)
+- ✅ `src/` - 435 dual-view symlinks working, 0 broken (auto-managed by pre-commit hook)
 - ✅ `scripts/` - dual-view pattern (live audit 2026-08-31: 598 compliant / 603 non-exempt, 99.2%; 5 non-compliant — all legacy `scripts/archive/` scripts lack spec sources; 178 exempt files include the 2 `docs/dogfood/` field-test reports, see `scripts/check_compliance.py --report`)
 - ✅ `.opencode/skills/` - ~148/148 symlinked (100% compliant)
 - ✅ `docs/` - dual-view pattern (same live audit: 178 files exempt — see `scripts/check_compliance.py --report`)
@@ -239,11 +239,7 @@ npm run build && npm test
 # After each atomic change:
 npm run build && npm test          # Validate
 git add src/feature/index.ts       # Stage one file
-git commit -m "speclang: baby-step: <description>  # Commit
-
-Source: specs/feature.spec.md#block-name
-Change: What changed
-Validation: build + tests pass"
+git commit -m "speclang: baby-step: <description>  # Commit" -m $'Source: specs/feature.spec.md#block-name\nChange: What changed\nValidation: build + tests pass'
 ```
 
 ### Marking Story Complete
@@ -270,8 +266,8 @@ grep -r "speclang-header" specs/ --include="*.md" | wc -l
 # Count remaining stories
 cat .ralph/prd.json | jq '[.phases[].stories[] | select(.passes == false)] | length'
 
-# Run Ralph Loop dry test
-./.ralph/ralph-baby-steps.sh --dry-run 1
+# Run Ralph Loop dry test (baby-steps runner disabled; live loop entry point)
+python3 .ralph/ralph_loop.py status
 
 # Check symlinks (they're part of our dual-view pattern)
 find src -type l -name "*.ts"
