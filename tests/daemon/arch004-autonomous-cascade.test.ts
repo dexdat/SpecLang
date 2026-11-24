@@ -46,6 +46,13 @@ import {
 // Vite/vitest transforms .ts files on the fly.
 
 const TEST_DIR = "tests/daemon/fixtures/arch004-project";
+const activeDaemons = new Set<Daemon>();
+
+/** Assertion failures must not leave a watcher alive until the worker exits. */
+async function stopDaemon(daemon: Daemon): Promise<void> {
+  await daemon.stop();
+  activeDaemons.delete(daemon);
+}
 
 async function waitFor(
   predicate: () => boolean,
@@ -88,11 +95,16 @@ async function makeDaemon(
 
   const daemon = new Daemon(rcPath);
   vi.spyOn(daemon as any, "executePipeline").mockResolvedValue(undefined);
+  activeDaemons.add(daemon);
   return daemon;
 }
 
 describe("ARCH-004: Autonomous cascade", () => {
   afterEach(async () => {
+    for (const daemon of activeDaemons) {
+      await daemon.stop().catch(() => {});
+    }
+    activeDaemons.clear();
     await fs.remove(TEST_DIR).catch(() => {});
     await fs.remove(".speclangrc.arch004").catch(() => {});
     // Safety net for stale `_arch004_*` files in specs/ left by pre-quarantine
@@ -157,7 +169,7 @@ describe("ARCH-004: Autonomous cascade", () => {
     // Daemon should remain in Converged status (not auto-reset to Idle)
     expect(daemon.getStatus().status).toBe("converged");
 
-    await daemon.stop();
+    await stopDaemon(daemon);
     await fs.remove(specPath).catch(() => {});
   });
 
@@ -199,7 +211,7 @@ describe("ARCH-004: Autonomous cascade", () => {
     expect(status.status).toBe("converged");
     expect(status.cascadeDepth).toBe(0);
 
-    await daemon.stop();
+    await stopDaemon(daemon);
     await fs.remove(specPath).catch(() => {});
   });
 
@@ -248,7 +260,7 @@ describe("ARCH-004: Autonomous cascade", () => {
       expect(armedAfterSecond).toBeGreaterThan(armedAfterFirst);
       expect(convergedAfterSecond).toBeGreaterThan(convergedAfterFirst);
 
-      await daemon.stop();
+      await stopDaemon(daemon);
       await fs.remove(spec1).catch(() => {});
       await fs.remove(spec2).catch(() => {});
     },
@@ -411,7 +423,7 @@ describe("ARCH-004: Autonomous cascade", () => {
         await waitFor(() => armedAt.length >= 2, 15000, "second arm event");
         expect(daemon.getStatus().status).toBe("converged");
 
-        await daemon.stop();
+        await stopDaemon(daemon);
         await fs.remove(specPath).catch(() => {});
       },
     );

@@ -33,9 +33,15 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { spawn, execFile, type ChildProcess } from "child_process";
+import { execFile } from "child_process";
 import * as fs from "fs-extra";
 import * as path from "path";
+import {
+  daemonTestEnv,
+  registerDaemonPid,
+  registerSpawnedDaemon,
+  stopRegisteredDaemons,
+} from "./proc-registry";
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
 const SPEclangD = path.join(REPO_ROOT, "bin", "speclangd");
@@ -81,16 +87,21 @@ function isAlive(pid: number): boolean {
 function runCli(
   args: string[],
   cwd: string,
+  extraEnv: NodeJS.ProcessEnv = {},
 ): Promise<{ stdout: string; stderr: string; exitCode: number }> {
   return new Promise((resolve, reject) => {
-    execFile(
+    const child = execFile(
       "node",
       [SPEclangD, ...args],
-      { cwd, env: { ...process.env, NODE_OPTIONS: "" } },
+      { cwd, env: { ...daemonTestEnv(cwd), ...extraEnv } },
       (err, stdout, stderr) => {
         // execFile returns null on success (exit 0) — capture both shapes.
         const exitCode =
           err && typeof (err as any).code === "number" ? (err as any).code : 0;
+        if (args[0] === "start" && exitCode === 0) {
+          const reported = /PID (\d+)/.exec(stdout);
+          if (reported) registerDaemonPid(Number(reported[1]), cwd);
+        }
         resolve({
           stdout: stdout?.toString() ?? "",
           stderr: stderr?.toString() ?? "",
@@ -98,6 +109,7 @@ function runCli(
         });
       },
     );
+    registerSpawnedDaemon(child, cwd);
   });
 }
 
@@ -180,13 +192,15 @@ async function waitForPidFile(
   deadlineMs = READINESS_DEADLINE_MS,
 ): Promise<number> {
   const pidPath = speclangPath(cwd, "speclangd.pid");
-  return pollUntil(
+  const pid = await pollUntil(
     `the daemon PID file ${pidPath}`,
     () => readPid(pidPath),
     deadlineMs,
     FS_POLL_INTERVAL_MS,
     () => daemonDiagnostics(cwd),
   );
+  registerDaemonPid(pid, cwd);
+  return pid;
 }
 
 /**
@@ -256,25 +270,11 @@ describe("ARCH-002 — background daemon mode", () => {
   });
 
   afterEach(async () => {
-    // Always clean up any leftover daemon process before removing the dir.
-    if (await fs.pathExists(PID_FILE)) {
-      const pid = parseInt(await fs.readFile(PID_FILE, "utf-8"), 10);
-      if (Number.isFinite(pid) && isAlive(pid)) {
-        try {
-          process.kill(pid, "SIGTERM");
-        } catch {}
-        // Give it up to 2s to die.
-        const deadline = Date.now() + 2000;
-        while (Date.now() < deadline && isAlive(pid)) {
-          await new Promise((r) => setTimeout(r, 50));
-        }
-        if (isAlive(pid)) {
-          try {
-            process.kill(pid, "SIGKILL");
-          } catch {}
-        }
-      }
-    }
+    // Register even a partially-started daemon, then kill its complete tree
+    // before deleting the fixture cwd that identifies it in /proc.
+    const pid = await readPid(PID_FILE);
+    if (pid !== null) registerDaemonPid(pid, TEST_PROJECT);
+    await stopRegisteredDaemons();
     await fs.remove(TEST_PROJECT);
   });
 
@@ -293,6 +293,51 @@ describe("ARCH-002 — background daemon mode", () => {
 
     // The PID should correspond to a live node process.
     expect(isAlive(pid)).toBe(true);
+  }, 30000);
+
+  it("teardown kills a daemon's detached children, not only its pidfile PID", async () => {
+    const preload = path.join(TEST_PROJECT, "spawn-test-descendant.cjs");
+    await fs.writeFile(
+      preload,
+      [
+        'const { spawn } = require("child_process");',
+        'const fs = require("fs");',
+        'if (process.env.SPECLANGD_CHILD === "1") {',
+        "  const child = spawn(process.execPath,",
+        '    ["-e", "setInterval(() => {}, 1000)"],',
+        "    { detached: true, stdio: \"ignore\", cwd: process.cwd(),",
+        '      env: { ...process.env, NODE_OPTIONS: "" } });',
+        "  child.unref();",
+        '  fs.writeFileSync(".speclang/test-descendant.pid", String(child.pid));',
+        "}",
+        "",
+      ].join("\n"),
+    );
+    await runCli(["start", "-d"], TEST_PROJECT, {
+      NODE_OPTIONS: `--require ${preload}`,
+    });
+    const daemonPid = await waitForPidFile(TEST_PROJECT);
+    const descendantPath = speclangPath(TEST_PROJECT, "test-descendant.pid");
+    const descendantPid = await pollUntil(
+      `the detached descendant PID file ${descendantPath}`,
+      () => readPid(descendantPath),
+      READINESS_DEADLINE_MS,
+      FS_POLL_INTERVAL_MS,
+      () => daemonDiagnostics(TEST_PROJECT),
+    );
+    expect(isAlive(daemonPid)).toBe(true);
+    expect(isAlive(descendantPid)).toBe(true);
+
+    await stopRegisteredDaemons();
+    await pollUntil(
+      "the daemon and detached descendant to exit",
+      async () => (!isAlive(daemonPid) && !isAlive(descendantPid) ? true : null),
+      5_000,
+      FS_POLL_INTERVAL_MS,
+      () => daemonDiagnostics(TEST_PROJECT),
+    );
+    expect(isAlive(daemonPid)).toBe(false);
+    expect(isAlive(descendantPid)).toBe(false);
   }, 30000);
 
   it("status reports the running daemon without instantiating a new one", async () => {
