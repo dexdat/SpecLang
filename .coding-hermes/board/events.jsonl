@@ -648,3 +648,4 @@
 {"id":650,"timestamp":"2026-11-25 18:49:14.413681","event_type":"task_completed","task_id":"INT-CI-5","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":651,"timestamp":"2026-11-25 21:47:53.305713","event_type":"task_created","task_id":"DOC-029","actor":"foreman","detail":"{\"id\":\"DOC-029\",\"status\":\"pending\"}","tick_number":null}
 {"id":652,"timestamp":"2026-11-25 21:48:49.85384","event_type":"task_updated","task_id":"DOC-029","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
+{"id":653,"timestamp":"2026-11-25 22:15:40.730733","event_type":"task_completed","task_id":"DOC-029","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
