@@ -167,7 +167,7 @@ const valid = validateLayerDependency(Layer.CODE_MAPPING, Layer.BUSINESS_LOGIC);
 
 ## See Also
 
-- [SpecLang Headers](MASTER_GUIDE.md) – Layer field in universal headers
-- [Spec Format](MASTER_GUIDE.md) – Layer system in spec structure
-- [Cascade System](CASCADE_DEMO.md) – How layers trigger cascade
-- [Validation Rules](validation_report.txt) – Layer validation rules
+- [SpecLang Headers](docs/MASTER_GUIDE.md) – Layer field in universal headers
+- [Spec Format](docs/MASTER_GUIDE.md) – Layer system in spec structure
+- [Cascade System](docs/CASCADE_DEMO.md) – How layers trigger cascade
+- [Validation Rules](docs/validation_report.txt) – Layer validation rules
