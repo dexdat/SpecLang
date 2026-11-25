@@ -135,3 +135,10 @@ _tmp/
 # transient board lock + wave dispatch manifests
 .coding-hermes/board/.lock
 .coding-hermes/waves/
+# local DAGger pipeline store; never a source of truth
+dagger.db*
+# gitreins review runtime state/lock; verdicts live under .gitreins/history/
+.gitreins/review-state.json
+.gitreins/review-state.lock
+# npm is the managed dependency tree; bun is not used by CI or build.yaml
+bun.lock
