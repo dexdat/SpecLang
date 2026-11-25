@@ -21,7 +21,7 @@ suite assertion above keeps the protection in place until it can be.
 The `.ts` files under `specs/*.spec.dir/src/` are SpecLang's real source: `src/**`
 holds tracked symlinks into them, and `tsconfig.json` maps the
 `*.spec.dir/src/*` aliases onto them. Next to those sources the repository also
-tracks **440 compiled `.js` files**, produced by compiling the spec-dir modules in
+tracks **446 compiled `.js` files**, produced by compiling the spec-dir modules in
 place at some point and committed since.
 
 That layer had drifted, and it is not inert:
@@ -37,7 +37,7 @@ That layer had drifted, and it is not inert:
   `specs/sqlite.spec.dir/src/index.js` predated that guard entirely — it still
   reached `new Database()` directly. Any consumer following the artifact
   inherited a silent bypass of the guard the source installs.
-- 29 relative `require()` calls in the layer point at nothing: paths written for
+- 41 relative `require()` calls in the layer point at nothing: paths written for
   the `src/` projection but off by one level for the `specs/` tree, plus
   requires into modules that were never compiled into the layer.
 
@@ -66,14 +66,16 @@ regeneration is applied to the modules whose divergence changes behaviour
 3. **Whole-layer freshness is reported, not gated.** The parity script also
    compares every tracked artifact against a fresh compile, but that number is a
    report (a `--strict-freshness` flag turns it into a gate once the layer is
-   clean). Reason, measured: compiling the whole tree at this revision emits
+   clean). Reason, measured at the decision revision (`f1df9435`, 2026-11-20):
+   compiling the whole tree at this revision emits
    behavioural changes that the committed artifacts do not have — e.g.
    `specs/parser.spec.dir/src/header.ts` matches `@block::` (double colon) and
    prefixes block ids with `@block::`, while the artifact and the suite use
    `@block:`; regenerating 286 artifacts for a trial run turned 4 pre-existing
    failures into 34 failures across 14 files (parser, codegen, mcp, db, workflow).
    Freshness drift is therefore visible on every CI run but does not decide the
-   build; closing it is the follow-up work of fixing the sources first.
+   build; closing it is the follow-up work of fixing the sources first. At
+   `c046692b` the parity script reads `freshness (report only): in sync`.
 4. **A require that cannot resolve is a recorded decision, not silence.**
    `npm run audit:specdir` resolves every relative `require()` in the layer against
    the tree. Exceptions live in `scripts/specdir-requires-baseline.json`; each
@@ -96,7 +98,8 @@ the artifacts are emitted onto tracked paths, not into `dist/`.
 
 ## Alternatives rejected
 
-- **Regenerate the whole layer.** Trial-run: 286 artifacts rewritten, suite went
+- **Regenerate the whole layer.** Trial-run at the decision revision
+  (`f1df9435`): 286 artifacts rewritten, suite went
   from 4 to 34 failures. The layer's artifacts are the *older, working* compile of
   sources that have since acquired latent bugs; regenerating them wholesale ships
   those bugs. Regeneration stays scoped to guard-bearing modules until the sources
@@ -110,10 +113,13 @@ the artifacts are emitted onto tracked paths, not into `dist/`.
 
 ## What the decision explicitly does not do
 
-- **It does not complete the layer's membership.** 1015 spec-dir sources exist,
-  440 have a compiled sibling. A require into a source that was never compiled is
+- **It does not complete the layer's membership.** Re-censused at `c046692b`
+  (2026-11-25): `find specs -path '*.spec.dir/src/*' -name '*.js' ! -type l |
+  wc -l` → 446 have a compiled sibling, while the same `find` over `*.ts` and
+  `*.tsx` sources returns 1012 + 6 = 1018 — a delta of 572 never-compiled
+  sources. A require into a source that was never compiled is
   recorded as `source-only` rather than papered over by inventing a compiled file:
-  adding ~570 artifacts is a separate decision with its own review cost. The audit
+  adding ~572 artifacts is a separate decision with its own review cost. The audit
   keeps that count visible on every run.
 - **It does not fix the source-level mistakes it surfaced** (a spec-dir
   `speclangd.ts` importing a `./daemon/` directory that does not exist,
@@ -142,12 +148,16 @@ regenerate.
 
 ## Evidence at the time of this decision
 
-- `npm run audit:specdir` — 440 compiled modules, 571 relative requires, 542
-  resolve in the tree, 29 recorded exceptions with re-verified proofs, 0 failing,
-  0 stale baseline entries.
-- `npm run check:specdir-parity` — 1 guard-bearing module
-  (`specs/sqlite.spec.dir/src/index.ts`), value exports match, freshness reported
-  as stale for the remaining artifacts (see §3).
+The decision's evidence was first captured at `f1df9435` (2026-11-20). The
+counts below were re-measured at `c046692b` (2026-11-25, the last refresh of
+this document), because the layer-touching commits after the decision —
+`a77fd8e6` (two missing layer modules + the `@block:` prefix correction),
+`0a2fa214` (QA-SPECLANG-010 regenerate pass), `62a69bc2` (INT-CI-3 repair:
+daemon layer modules, baseline restructure) — moved them.
+
+- `npm run audit:specdir` — `audit-specdir-requires: 446 compiled spec-dir modules, 600 relative requires`; `ok: 559 resolve in the spec-dir tree, 41 accepted in scripts/specdir-requires-baseline.json, 0 failing, 0 stale baseline entries`.
+- Membership census at this revision: `find specs -path '*.spec.dir/src/*' -name '*.js' ! -type l | wc -l` → 446 compiled `.js` artifacts (443 `.d.ts` siblings track alongside); the same `find` over the `*.ts`/`*.tsx` sources returns 1012 + 6 = 1018; delta = 572 never-compiled sources.
+- `npm run check:specdir-parity` — `check-specdir-parity: 1 guard-bearing module(s) (state-DB opener / corruption diagnostic)`, value exports match (`specs/sqlite.spec.dir/src/index.ts`); `freshness (report only): in sync` at `c046692b` — at the decision revision the freshness report read stale for the remaining artifacts (see §3).
 - Drift removed: `specs/sqlite.spec.dir/src/index.js`, `.d.ts` and both maps were
   regenerated from source, so the artifact now carries the corruption guard it
   lacked (`openStateDatabase`, `withStateDatabase`, `CorruptStateDatabaseError`,
