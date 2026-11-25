@@ -583,3 +583,14 @@
 {"id": 585, "timestamp": "2026-11-24T23:45:15Z", "event_type": "task_updated", "task_id": "DOC-19", "actor": "foreman", "detail": "{\"status\":\"in_progress\"}", "tick_number": null}
 {"id": 586, "timestamp": "2026-11-24T23:45:15Z", "event_type": "task_updated", "task_id": "DOC-15", "actor": "foreman", "detail": "{\"status\":\"in_progress\"}", "tick_number": null}
 {"id": 587, "timestamp": "2026-11-24T23:45:30Z", "event_type": "task_completed", "task_id": "INT-CI-005", "actor": "foreman", "detail": "{\"status\":\"complete\"}", "tick_number": null}
+{"id": 588, "timestamp": "2026-11-25T00:42:45Z", "event_type": "task_completed", "task_id": "DOC-13", "actor": "foreman", "detail": "{\"status\":\"complete\"}", "tick_number": null}
+{"id": 589, "timestamp": "2026-11-25T00:42:45Z", "event_type": "task_completed", "task_id": "DOC-17", "actor": "foreman", "detail": "{\"status\":\"complete\"}", "tick_number": null}
+{"id": 590, "timestamp": "2026-11-25T00:42:45Z", "event_type": "task_completed", "task_id": "DOC-19", "actor": "foreman", "detail": "{\"status\":\"complete\"}", "tick_number": null}
+{"id": 591, "timestamp": "2026-11-25T00:42:45Z", "event_type": "task_completed", "task_id": "DOC-18", "actor": "foreman", "detail": "{\"status\":\"complete\"}", "tick_number": null}
+{"id": 592, "timestamp": "2026-11-25T00:42:45Z", "event_type": "task_completed", "task_id": "QA-SPECLANG-014", "actor": "foreman", "detail": "{\"status\":\"complete\"}", "tick_number": null}
+{"id": 593, "timestamp": "2026-11-25T00:42:45Z", "event_type": "task_completed", "task_id": "QA-SPECLANG-010", "actor": "foreman", "detail": "{\"status\":\"complete\"}", "tick_number": null}
+{"id": 594, "timestamp": "2026-11-25T00:42:50Z", "event_type": "task_completed", "task_id": "DOC-15", "actor": "foreman", "detail": "{\"status\":\"complete\"}", "tick_number": null}
+{"id": 595, "timestamp": "2026-11-25T00:42:50Z", "event_type": "task_completed", "task_id": "CLN-004", "actor": "foreman", "detail": "{\"status\":\"complete\"}", "tick_number": null}
+{"id": 596, "timestamp": "2026-11-25T00:47:03Z", "event_type": "task_updated", "task_id": "DOC-20", "actor": "foreman", "detail": "{\"status\":\"in_progress\"}", "tick_number": null}
+{"id":597,"timestamp":"2026-11-25T00:47:43Z","event_type":"task_dispatched","task_id":"DOC-20","actor":"foreman","detail":"{\"branch\":\"wt/DOC-20\",\"model\":\"deepseek-v4.1-flash\",\"pid\":1327204,\"provider\":\"opencode-go\",\"status\":\"in_progress\",\"tick\":\"SpecLang-readme-2026-11-25-00-44-16\",\"worktree\":\"/home/kara/worktrees/SpecLang-DOC-20\"}","tick_number":null}
+{"id":598,"timestamp":"2026-11-25T01:02:22Z","event_type":"task_completed","task_id":"DOC-20","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
