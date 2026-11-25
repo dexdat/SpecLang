@@ -172,7 +172,7 @@ Say hello.
 SPEC
 
 # Or copy example
-$ cp examples/hello.spec.md specs/
+$ cp specs/examples.spec.dir/hello-world/hello-world.spec.md specs/
 ```
 
 ---
