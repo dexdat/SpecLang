@@ -601,3 +601,5 @@
 {"id":603,"timestamp":"2026-11-25T01:17:38Z","event_type":"task_created","task_id":"DOC-16-R2","actor":"foreman","detail":"{\"id\":\"DOC-16-R2\",\"status\":\"pending\"}","tick_number":null}
 {"id":604,"timestamp":"2026-11-25T01:18:08Z","event_type":"task_updated","task_id":"DOC-16","actor":"foreman","detail":"{\"status\":\"pending\"}","tick_number":null}
 {"id":605,"timestamp":"2026-11-25T01:26:00Z","event_type":"task_completed","task_id":"DOC-9-R2","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":606,"timestamp":"2026-11-25T01:39:44Z","event_type":"task_completed","task_id":"DOC-14","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":607,"timestamp":"2026-11-25T01:52:20Z","event_type":"task_updated","task_id":"INT-CI-3","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
