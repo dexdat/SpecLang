@@ -151,6 +151,28 @@ async function main() {
       coordinator.watchDaemon(d, { verbose });
       console.log('[CLI] Agent dispatch: daemon tasks → cascade coordinator ✅');
 
+      // Test runners may be SIGKILLed, in which case none of their JS exit
+      // handlers can run. An explicit owner opt-in lets the detached daemon
+      // reap itself: normal `start -d` use has no owner and is unaffected.
+      // The test passes SPECLANGD_OWNER_PID through both the short-lived CLI
+      // and this detached child; console status commands do not arm a watchdog.
+      const ownerPid = Number(process.env.SPECLANGD_OWNER_PID);
+      if (isSpawnedChild && Number.isInteger(ownerPid) && ownerPid > 1) {
+        let reaping = false;
+        const ownerWatchdog = setInterval(() => {
+          if (reaping || isProcessAlive(ownerPid)) return;
+          reaping = true;
+          clearInterval(ownerWatchdog);
+          console.error(`[CLI] Owner PID ${ownerPid} exited; stopping orphaned daemon`);
+          removePidFile();
+          // Do not let a stuck watcher or coordinator keep the orphan alive.
+          const forceExit = setTimeout(() => process.exit(0), 1000);
+          forceExit.unref();
+          void d.stop().finally(() => process.exit(0));
+        }, 1000);
+        ownerWatchdog.unref();
+      }
+
       await d.start();
 
       console.log('[CLI] Running in foreground. Press Ctrl+C to stop.');
