@@ -7,7 +7,7 @@ This file is the contract. It is written against artifacts that already exist in
 this repository — the board, the wave manifests, the GitReins verdict store, the
 spec tree — and it names the exact paths and key names of each. Nothing here
 invents a parallel scheme; where the repository's practice is thinner than the
-contract, the gap is stated in [What this contract does not guarantee](#what-this-contract-does-not-guarantee).
+contract, the gap is stated in [What this contract does not guarantee](#5-what-this-contract-does-not-guarantee).
 
 Audience: developer (what to write when you land work), operator (what to check
 when a trace is incomplete), integrator (what is guaranteed vs best-effort).
