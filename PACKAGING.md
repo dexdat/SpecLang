@@ -2,9 +2,9 @@
 
 ## Overview
 
-This document outlines how SpecLang will be distributed to users. All numbers
-and commands below were verified live on 2026-08-19 (CLI output, test suite,
-and scripts).
+This document outlines how SpecLang will be distributed to users. Unless
+otherwise noted, the numbers and commands below were verified live on
+2026-08-19 (CLI output, test suite, and scripts).
 
 ## Recommended Approach: NPM Package + Binary
 
@@ -22,22 +22,20 @@ npm install -g speclang
 - Cross-platform (Windows, macOS, Linux)
 
 **Package Structure** (matches `files` whitelist in package.json v1.0.0):
-```
-speclang/
-├── bin/
-│   ├── speclang          # Main CLI entry (Node shebang)
-│   ├── speclangd         # Daemon entry point
-│   └── speclangd-poc     # Daemon POC entry point
-│   (speclang.cmd — Windows shim is planned, not yet shipped)
-├── dist/                 # Compiled TypeScript (+ bundled default specs/templates)
-├── README.md
-├── CHANGELOG.md
-├── LICENSE
-└── package.json
-```
+The exact whitelist (`jq -c '.files' package.json`) contains:
+- `dist`
+- `bin`
+- `scripts/postinstall-lint-deps.sh`
+- `scripts/postinstall-ts-node.sh`
+- `README.md`
+- `CHANGELOG.md`
+- `LICENSE`
 
-`npm pack --dry-run` succeeds against the current package: `speclang-1.0.0.tgz`,
-1747 files, 991.9 kB packed / 5.2 MB unpacked.
+npm also includes `package.json` automatically; it is not a whitelist entry.
+
+After a successful `npm run build`, run `npm pack --dry-run` to inspect the
+current tarball's file count, packed size, and unpacked size. These values
+vary with the contents of `dist/` and the checkout.
 
 ### Secondary: Standalone Binary (Optional)
 
@@ -64,7 +62,7 @@ speclang --version
 
 1. **Prepare package.json** — DONE (v1.0.0)
    - ✅ `bin` field present (`"speclang": "./bin/speclang"`)
-   - ✅ `files` whitelist present (`dist`, `bin`, `README.md`, `CHANGELOG.md`, `LICENSE`)
+   - ✅ `files` whitelist present (see Package Structure above)
    - ✅ Version set (1.0.0) and tagged in git (`v1.0.0`)
 
 2. **Build process**
@@ -98,7 +96,7 @@ speclang --version
 - ✅ TypeScript builds successfully (`npx tsc --noEmit` clean, exit 0)
 - ✅ 1826 tests pass (58 skipped) — `npm test` / vitest steady state
 - ✅ CLI has 20 functional commands (per `./bin/speclang --help`; hard-checks counts 17 distinct)
-- ✅ 449 specs in system (447 `.spec.md` + 2 `.scl`) — `./bin/speclang status`
+- ✅ 470 tracked spec files (468 `.spec.md` + 2 `.scl`; verified 2026-11-25 with `git ls-files specs | grep -c '\.spec\.md$'` and `git ls-files specs | grep -c '\.scl$'`)
 - ✅ 649 symlinks (dual-view pattern)
 - ✅ Reference validation clean — `scripts/validate_refs.py`: "All references valid" (0 broken)
 - ✅ Database schema complete — 8 migrations: initial, events, cascades, sessions, ralph, locks, commands, index
