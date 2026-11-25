@@ -142,3 +142,8 @@ dagger.db*
 .gitreins/review-state.lock
 # npm is the managed dependency tree; bun is not used by CI or build.yaml
 bun.lock
+
+# unblock-agent settle 2026-11-25: root-level aborted gitreins judge runs (18x 0-byte
+# debris; verdicts belong under .gitreins/history/) and 0-byte sqlite connect artifacts
+/20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]/
+.coding-hermes/scheduler.db
