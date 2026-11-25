@@ -9,6 +9,7 @@
   },
   "files": [
     "dist",
+    "!dist/tsconfig.tsbuildinfo",
     "bin",
     "scripts/postinstall-lint-deps.sh",
     "scripts/postinstall-ts-node.sh",
@@ -17,7 +18,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --incremental",
     "dev": "tsc --watch",
     "start": "node bin/speclang start",
     "pretest": "npm run build",
