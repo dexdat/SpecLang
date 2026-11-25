@@ -24,7 +24,7 @@
 /** Environment override for the ledger path (absolute or cwd-relative). */
 export declare const LEDGER_ENV_VAR = "SPECLANG_METRICS_LEDGER";
 /** Default ledger location, relative to the process working directory. */
-export declare const DEFAULT_LEDGER_RELATIVE_PATH: any;
+export declare const DEFAULT_LEDGER_RELATIVE_PATH: string;
 /** Ledger schema version written into every snapshot. */
 export declare const LEDGER_VERSION = 1;
 /** Family names the renderer knows how to expose. */
