@@ -188,34 +188,18 @@ git commit --only <file> -m "speclang: <role> <summary> [parent:<hash>]"
 - [ ] Run hello-world-cascade example manually to verify understanding
 - [ ] Create test fixtures for agent testing
 - [ ] Build the MVP and verify success criteria
-- [ ] Fix remaining `*.dir` directories to `*.spec.dir` (20 directories)
+- [x] Fix remaining `*.dir` directories to `*.spec.dir` — completed in f62b7c33 (2026-02-23)
 - [ ] Update all spec IDs to include `.spec`
 - [ ] Run full validation on all specs
 - [ ] Generate actual openapi.yaml from openapi.spec.md
 
-## Directories Needing Rename
+## Directory Rename Completion (f62b7c33)
 
-Currently these directories use old `*.dir` naming:
-- `specs/ui.dir`
-- `specs/opencode.dir`
-- `specs/executor.dir`
-- `specs/ipc.dir`
-- `specs/ralph-loop.dir`
-- `specs/safety-nets.dir`
-- `specs/cascade-protocol.dir`
-- `specs/validation.dir`
-- `specs/file-naming.dir`
-- `specs/workflow.dir`
-- `specs/skills.dir`
-- `specs/directory-structure.dir`
-- `specs/sqlite.dir`
-- `specs/compiler.dir`
-- `specs/core.dir`
-- `specs/deployment.dir`
-- `specs/mcp-ui-tools.dir`
-- `specs/validation-tool.dir`
-- `specs/mcp.dir`
-- `specs/cascade.dir`
+The `*.dir` → `*.spec.dir` rename is COMPLETE. Commit f62b7c33 (2026-02-23) renamed
+all 20 directories (ui, opencode, executor, ipc, ralph-loop, safety-nets,
+cascade-protocol, validation, file-naming, workflow, skills, directory-structure,
+sqlite, compiler, core, deployment, mcp-ui-tools, validation-tool, mcp, cascade) to
+`*.spec.dir`. No `*.dir` directories remain — use `foo.spec.dir/` naming everywhere.
 
 ---
 
