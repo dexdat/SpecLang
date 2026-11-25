@@ -3063,7 +3063,7 @@ program
   .option('--stat', 'Show diff statistics')
   .option('--blame', 'Show line-level attribution')
   .action(async (spec, options) => {
-    const git = require('simple-git')();
+    const git = require('simple-git').simpleGit();
 
     // DF-SPECLANG-5-R5: "no history at all" is decided BEFORE any git plumbing
     // call, so every mode below (log, diff, blame, stat) reports it instead of
