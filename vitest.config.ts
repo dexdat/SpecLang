@@ -85,17 +85,28 @@ export default defineConfig({
       include: [
         // Same file globs tsconfig.json includes for the build: only the
         // type-checked TypeScript surface is reported as project coverage.
-        // NOTE: these globs are unanchored in Istanbul's matcher, so
-        // 'src/**/*.ts' also matches specs/<x>.spec.dir/src/**/*.ts — the
-        // specs/** exclude below prunes all spec dirs except mcp.spec.dir,
-        // the only one tsconfig.json checks (its include line).
+        // NOTE: these globs are unanchored in Istanbul's matcher (contains:
+        // true), so 'src/**/*.ts' also matches specs/<x>.spec.dir/src/**/*.ts.
+        // Those spec-dir files therefore stay in the report; see the exclude
+        // comment below for why they cannot be pruned.
         'src/**/*.ts',
         'src/**/*.tsx'
       ],
-      // Mirror of tsconfig.json's exclude list restricted to src/, plus the
-      // spec-dir correction described above (tsconfig's root index.ts and its
-      // .py excludes are moot/unrepresentable for TS coverage globs and are
-      // left out of the reported surface).
+      // Mirror of tsconfig.json's exclude list, restricted to paths inside
+      // src/ (node_modules, dist, tests and non-TS artifacts are handled
+      // elsewhere; tsconfig's .py excludes are moot for TS coverage).
+      // KNOWN LIMITATION (QA-SPECLANG-016, measured): tsconfig.json checks
+      // only specs/mcp.spec.dir/src of the 86 spec dirs, so an exact mirror
+      // would exclude specs/**. With vitest 4.1.11 + @vitest/coverage-v8
+      // 4.1.10, ANY exclude pattern that actually matches on-disk spec-dir
+      // files ('specs/**', './specs/**', '!specs/mcp.spec.dir/src/**') makes
+      // the provider silently collect ZERO runtime coverage (0/15137 stmts,
+      // measured 3x) while the file census and thresholds still work. An
+      // inert pattern (matching nothing) does not trigger it. Until the
+      // provider is upgraded/fixed, the spec-dir files stay in the reported
+      // surface — a small over-report (9 mcp.spec.dir files ARE checked by
+      // tsc; the rest are un-checked spec-corpus sources) is the honest
+      // trade-off against reporting an all-zero report.
       exclude: [
         'src/dashboard/**',
         'src/codegen.ts',
@@ -111,14 +122,6 @@ export default defineConfig({
         'src/codegen/**',
         'src/generated/**',
         'src/lsp/**',
-        // Spec-dir corpus: none of specs/*.spec.dir/src is part of the
-        // vitest-reported surface. tsconfig.json checks only mcp.spec.dir
-        // (of 86 spec dirs) plus root src/**; picomatch's `ignore` in the
-        // coverage matcher does not support '!specs/mcp...' negation (proven:
-        // any negated ignore pattern silences ALL instrumentation), so the
-        // spec dirs are excluded wholesale — 9 mcp.spec.dir files drop from
-        // the report, keeping it a strict subset of the tsc-checked tree.
-        './specs/**',
         '**/*.spec.ts',
         '**/*.test.ts'
       ],
