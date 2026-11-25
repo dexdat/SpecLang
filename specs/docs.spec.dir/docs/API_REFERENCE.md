@@ -196,8 +196,8 @@ The module also has its own entrypoint: `node dist/specs/mcp.spec.dir/src/server
 
 **Transports actually implemented** (`src/mcp/server.ts`): exactly two.
 
-- **stdio** — `startStdio()` (`server.ts:62`), `StdioServerTransport` (`server.ts:68`). Default; nothing may be printed to stdout except protocol frames.
-- **HTTP + SSE** — `startHTTP(port)` (`server.ts:77`), express app with `GET /mcp` → `SSEServerTransport('/mcp/message', res)` (`server.ts:93-104`), `POST /mcp/message` → a hand-rolled JSON-RPC 2.0 dispatcher (`server.ts:107`, methods `initialize`, `tools/list`, `tools/call`, `resources/list`, `prompts/list`), `GET /events` → SSE event feed (`server.ts:205`), `GET /health` (`server.ts:216`), `GET /metrics` → Prometheus/OpenMetrics exposition (`server.ts:225`, `Content-Type: text/plain; version=0.0.4; charset=utf-8`, no auth; see `docs/observability-spec.md` §9.1 for metric families). `app.listen(httpPort)` binds all interfaces (`server.ts:233`).
+- **stdio** — `startStdio()` (`server.ts:63`), `StdioServerTransport` (`server.ts:69`). Default; nothing may be printed to stdout except protocol frames.
+- **HTTP + SSE** — `startHTTP(port)` (`server.ts:78`), express app with `GET /mcp` → `SSEServerTransport('/mcp/message', res)` (`server.ts:94-105`), `POST /mcp/message` → a hand-rolled JSON-RPC 2.0 dispatcher (`server.ts:108`, methods `initialize`, `tools/list`, `tools/call`, `resources/list`, `prompts/list`), `GET /events` → SSE event feed (`server.ts:205`), `GET /health` (`server.ts:216`), `GET /metrics` → Prometheus/OpenMetrics exposition (`server.ts:225`, `Content-Type: text/plain; version=0.0.4; charset=utf-8`, no auth; see `docs/observability-spec.md` §9.1 for metric families). `app.listen(httpPort)` binds all interfaces (`server.ts:233`).
 
 `'socket'` appears in the config type (`types.ts`, `config.ts:83`) but **no socket transport exists** — do not plan around it. The transport is chosen by argv (`--http` / `--remote`), not by `MCP_SERVER_MODE`.
 
@@ -208,26 +208,26 @@ The module also has its own entrypoint: `node dist/specs/mcp.spec.dir/src/server
 | Variable | Default | Effect (source) |
 |---|---|---|
 | `MCP_PORT` | `3000` | HTTP listen port (`config.ts:42`) |
-| `MCP_HOST` | `0.0.0.0` | stored as `config.host`; read only by `speclang_subscribe_events` when it builds the endpoint URL — it does **not** change the listener bind address (`config.ts:45`, `server.ts:219`) |
-| `MCP_DATABASE` | `.speclang/speclang.db` | SQLite file path; the parent directory is created at startup (`config.ts:48`, `server.ts:50`) |
+| `MCP_HOST` | `0.0.0.0` | stored as `config.host`; read only by `speclang_subscribe_events` when it builds the endpoint URL — it does **not** change the listener bind address (`config.ts:45`, `tools/dashboard.ts:350`) |
+| `MCP_DATABASE` | `.speclang/speclang.db` | SQLite file path; the parent directory is created at startup (`config.ts:48`, `server.ts:52`) |
 | `MCP_SPECS_DIR` | `specs` | specs root handed to the spec and index handlers (`config.ts:51`) |
 | `MCP_AUTH_ENABLED` | unset (`false`) | only the literal string `true` enables auth (`config.ts:54`) |
 | `MCP_AUTH_TYPE` | `token` | auth type when enabled; only read on the `MCP_AUTH_ENABLED=true` branch (`config.ts:56`) |
 | `MCP_API_KEYS` | – | comma-separated bearer keys accepted by token auth (`config.ts:58`) |
-| `MCP_SSE_ENABLED` | `true` | only the literal string `false` disables the `/events` feed (`config.ts:61`, `server.ts:202`) |
+| `MCP_SSE_ENABLED` | `true` | only the literal string `false` disables the `/events` feed (`config.ts:61`, `server.ts:203`) |
 | `MCP_LOG_LEVEL` | `info` | parsed into `config.logging.level`; **not consumed** by the server (`config.ts:64`) |
 | `MCP_LOG_FILE` | – | parsed into `config.logging.file`; **not consumed** (`config.ts:67`) |
 | `MCP_MAX_CONNECTIONS` | `100` | parsed into `config.limits`; **not enforced** (`config.ts:70`) |
 | `MCP_QUERY_TIMEOUT_MS` | `5000` | parsed into `config.limits`; **not enforced** (`config.ts:73`) |
 | `MCP_MAX_RESULTS` | `1000` | parsed into `config.limits`; **not enforced** (`config.ts:76`) |
-| `MCP_WAL_MODE` | `true` | parsed into `databaseWalMode`; the server always opens the DB with `wal: true` (`config.ts:79`, `server.ts:52`) |
+| `MCP_WAL_MODE` | `true` | parsed into `databaseWalMode`; the server always opens the DB with `wal: true` (`config.ts:79`, `server.ts:55`) |
 | `MCP_SERVER_MODE` | `http` | parsed into `serverMode` (`stdio`/`http`/`socket`); the transport is selected by argv instead (`config.ts:82`) |
 
 > **Unwired module — do not configure against it:** `src/mcp/config/loader.ts` (`ConfigLoader`, reads `.speclang/mcp.json|yaml`) is imported by no entrypoint and reads a *conflicting* key set (`MCP_DB_PATH`, `MCP_SERVER_MODE`, `MCP_SERVER_PORT`, `MCP_SERVER_HOST`, `MCP_AUTH_TOKEN`) with a different config shape. The live contract is `src/mcp/config.ts` above; `loader.ts` is future/unused surface.
 
 ### Tools
 
-All 34 registered tools, exactly as declared by `getToolDefinitions` in `src/mcp/tools/index.ts`. No tool is registered anywhere else — `getToolDefinitions()` is the only source for `tools/list` (`server.ts:250`) and the registry switch (`server.ts:70`).
+All 34 registered tools, exactly as declared by `getToolDefinitions` in `src/mcp/tools/index.ts`. No tool is registered anywhere else — `getToolDefinitions()` is the only source for `tools/list` (`server.ts:265`) and the registry switch (`server.ts:258-260`).
 
 #### Search and spec CRUD
 
@@ -298,10 +298,10 @@ All 34 registered tools, exactly as declared by `getToolDefinitions` in `src/mcp
 | `speclang_clear_completed` | Clear completed/failed commands older than a cutoff | none (optional: `olderThan` Unix timestamp) |
 | `speclang_batch_insert` | Insert several commands in one call | `commands` (array of `{cascade_id, action, target_file?, priority?}`) |
 
-**stdio response envelope.** In stdio mode every tool returns JSON text content via the standard MCP `CallTool` protocol: the success payload is `JSON.stringify(result)` in `content[0].text` (`tools/index.ts:195-197`), and a thrown handler becomes `content[0].text = {"error": "<message>"}` with `isError: true` (`tools/index.ts:198-203`). This envelope is produced by the `CallToolRequestSchema` handler registered by `MCPToolRegistry.registerTools` (`tools/index.ts:64`), which serves requests only on the SDK transport path — i.e. stdio (`StdioServerTransport`, `server.ts:68`) and nothing else.
+**stdio response envelope.** In stdio mode every tool returns JSON text content via the standard MCP `CallTool` protocol: the success payload is `JSON.stringify(result)` in `content[0].text` (`tools/index.ts:195-197`), and a thrown handler becomes `content[0].text = {"error": "<message>"}` with `isError: true` (`tools/index.ts:198-203`). This envelope is produced by the `CallToolRequestSchema` handler registered by `MCPToolRegistry.registerTools` (`tools/index.ts:64`), which serves requests only on the SDK transport path — i.e. stdio (`StdioServerTransport`, `server.ts:69`) and nothing else.
 
 **HTTP response shape.** In HTTP mode `POST /mcp/message` does **not** produce that envelope. The hand-rolled JSON-RPC 2.0 dispatcher handles `tools/call` by returning the raw handler object directly as the JSON-RPC `result` (`server.ts:150-158` → `return res.json({ jsonrpc: '2.0', result, id })`, `server.ts:180-184`), and a thrown handler surfaces as HTTP 500 carrying a JSON-RPC `-32603` error (`server.ts:186-199`: `code: -32603, message: 'Internal error', data: "<message>"`) — `isError` never appears on the HTTP path. A missing tool name or arguments yields an in-band `{ "error": "Tool not found or arguments missing" }` (`server.ts:156`).
 
-**stdio vs HTTP caveat:** in stdio mode every tool above is handled by `MCPToolRegistry.registerTools`. In HTTP mode `tools/call` is served by a legacy prefix dispatcher (`MCPServer.callTool`, `server.ts:276`): search/specs/locks/cascade/index and the dashboard statistics tools execute for real, while `speclang_get_dependencies`, `speclang_get_dependents`, `speclang_impact_analysis`, `speclang_get_status` and all seven command-queue tools return a placeholder payload (`{"message":"Tool <name> not fully implemented"}`) or an unknown-dashboard-tool error instead of running. Until those two dispatchers are unified, prefer stdio for agent integration.
+**stdio vs HTTP caveat:** in stdio mode every tool above is handled by `MCPToolRegistry.registerTools`. In HTTP mode `tools/call` is served by a legacy prefix dispatcher (`MCPServer.callTool`, `server.ts:291`): search/specs/locks/cascade/index and the dashboard statistics tools execute for real, while `speclang_get_dependencies`, `speclang_get_dependents`, `speclang_impact_analysis`, `speclang_get_status` and all seven command-queue tools return a placeholder payload (`{"message":"Tool <name> not fully implemented"}`) or an unknown-dashboard-tool error instead of running. Until those two dispatchers are unified, prefer stdio for agent integration.
 
 The internal specification for this subsystem is `specs/mcp.spec.md`.
