@@ -49,6 +49,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify better-sqlite3 native binding
+        # npm >= 12 blocks dependency install scripts that are not covered by
+        # the project's package.json "allowScripts" field (RFC npm/rfcs#868).
+        # better-sqlite3 compiles or downloads its native binding from exactly
+        # that install script, so a blocked script leaves a package that
+        # installs cleanly and only fails later at runtime — for every
+        # SQLite-backed command (DB layer, MCP server, cascade daemon).
+        # Costs one `require` + one in-memory query (no build) and turns that
+        # silent binding loss into a red run. Remedy: README "Troubleshooting".
+        run: npm run check:sqlite-binding
+
       - name: Install pre-commit hook
         # CI-005's acceptance tests (`tests/ci/ci005-precommit-hook.test.ts`)
         # read the project's pre-commit hook from `.git/hooks/pre-commit`
@@ -103,6 +114,34 @@ jobs:
 
       - name: Build TypeScript
         run: npm run build
+
+      - name: Audit the compiled spec-dir layer (QA-SPECLANG-010)
+        # `specs/**/src/**/*.js` is a TRACKED compiled projection of the `.ts`
+        # sources beside it, and it is not inert — `tests/workflow/conversation.test.ts`
+        # loads one of those artifacts at runtime. Two independent gates keep it
+        # honest, and both block:
+        #
+        #   1. audit:specdir — every relative `require()` in the layer must
+        #      resolve to a module that exists in the tree. A stale artifact that
+        #      still requires a path its source moved away from fails here.
+        #      Unresolvable requires are allowed ONLY through
+        #      `scripts/specdir-requires-baseline.json`, where each entry records
+        #      a reason and a machine-verified proof class; an entry that stops
+        #      reproducing fails the run, so the list cannot rot into a blanket
+        #      exception.
+        #   2. check:specdir-parity — every guard-bearing module (one whose
+        #      source exports a state-DB opener or corruption diagnostic) must
+        #      export the same value symbols from its compiled copy. The same run
+        #      REPORTS whole-layer freshness (how many tracked artifacts differ
+        #      from a fresh compile); that number is not gated, because the
+        #      committed artifacts are the older working compile of sources that
+        #      have since drifted — see docs/specdir-compiled-layer.md §3.
+        #
+        # Recovery is always `npm run regenerate:specdir`, never hand-editing the
+        # compiled `.js`. Decision record: docs/specdir-compiled-layer.md.
+        run: |
+          npm run audit:specdir
+          npm run check:specdir-parity
 
       - name: Run tests
         run: npm test
