@@ -96,6 +96,62 @@ regeneration is applied to the modules whose divergence changes behaviour
 `tsconfig.json` does not include the layer (except `specs/mcp.spec.dir/src`), so
 the artifacts are emitted onto tracked paths, not into `dist/`.
 
+## Markdown relative links in dual-view pages
+
+The spec-dir projection has a second face the compiled layer does not: most
+user-facing pages exist twice — as the **real file** under `specs/*.spec.dir/`,
+and as a tracked **symlinked view** at `docs/<page>.md` or
+`examples/<page>.md` (`docs/layers.md` -> `../specs/docs.spec.dir/layers.md`
+is the pattern; 17 such pages at `e168022a`). Both views render the same
+bytes, but a relative link resolves from only one directory at a time, so the
+two views cannot both be right for the same link text.
+
+**A relative link in a dual-view page is written relative to the page's REAL
+location, one `../` per real directory level. The symlinked view consequently
+serves dead links for any link that crosses directory depth, and that is the
+accepted trade-off — a broken link on the `docs/`-view read of such a page is
+this rule working as decided, not a defect.** The convention is named for the
+rows that established it: DOC-9 measured the geometry
+(`specs/examples.spec.dir/hello-world/README.md` is three levels below the
+root, so its cross-references need `../../../`; commit `4455371a`) and
+DOC-9-R2 (`ccc4ec3d`) applied the same arithmetic to the parent
+`specs/examples.spec.dir/README.md` (`../` -> `../../`); DOC-16-R2
+(`65a022f4`) repointed the See Also links of `specs/docs.spec.dir/layers.md`
+to `docs/...` forms that resolve from the real location. Note DOC-9's own
+fix note first called the parent README "correct at its reachable path"
+(view-relative) — DOC-9-R2 explicitly superseded that judgement in favour of
+the real-location rule, so the earlier note is history, not guidance.
+
+The two known instances of the accepted trade-off, named so nobody re-files
+them as dead-link bugs (DOC-8 and DOC-16 did, correctly, before the rule
+existed):
+
+- `docs/layers.md` (real file `specs/docs.spec.dir/layers.md`): its See Also
+  links (`docs/MASTER_GUIDE.md`, `docs/CASCADE_DEMO.md`,
+  `docs/validation_report.txt`) resolve only from the real location; from the
+  `docs/` view they would need `docs/docs/...`, which does not exist.
+- `examples/README.md` (real file `specs/examples.spec.dir/README.md`): its
+  More Information links (`../../docs/NORTH_STAR.md`, `../../specs/*.spec.md`)
+  resolve only from the real location; from the `examples/` view the `../../`
+  climbs above the repository root.
+
+Enforcement: `npm run audit:dual-view-links`
+(`scripts/audit-dual-view-links.mjs`) walks every twinned page and resolves
+every relative link against BOTH bases. It FAILS on a link that resolves only
+from the symlinked view (the DOC-9-R2 class — rewrite it real-relative) and on
+a link that resolves from neither (the DOC-8/DOC-16-R2 class — the target does
+not exist in the tree at all); links that resolve from the real location only
+are reported as the accepted class, and links resolving from both bases as
+`both`. Like the other spec-dir audits it is a local and operator entry point;
+it is not yet wired into the CI suite (the same INT-CI-1 constraint that keeps
+`audit:specdir`'s dedicated job staged in `.coding-hermes/pending/`), so
+`tests/specdir-compiled-parity.test.ts` does not carry it.
+
+Repair path: edit the link in the TARGET file (the `specs/*.spec.dir/` one —
+never through the symlink), keeping one `../` per real directory level, and
+re-run the audit. Do not "fix" a real-only link to please the view: that
+reverts DOC-9-R2 and trades a correct read for a broken one.
+
 ## Alternatives rejected
 
 - **Regenerate the whole layer.** Trial-run at the decision revision

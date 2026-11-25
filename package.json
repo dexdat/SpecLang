@@ -39,6 +39,7 @@
     "gen:migrations": "node scripts/gen-migrations.mjs",
     "audit:evidence-runids": "sh scripts/audit-evidence-runids.sh",
     "audit:specdir": "node scripts/audit-specdir-requires.mjs",
+    "audit:dual-view-links": "node scripts/audit-dual-view-links.mjs",
     "check:specdir-parity": "node scripts/check-specdir-parity.mjs",
     "regenerate:specdir": "node scripts/regenerate-specdir-layer.mjs"
   },
