@@ -80,7 +80,7 @@ Consequences an operator needs to know:
 |---|---|---|
 | Project directory | `-d/--dir`, default `.` (`.` = your shell's cwd) | `speclang start --help`, `speclang status --help` |
 | Dashboard port | `-p/--port`, default `3000` | `speclang start --help`; `src/daemon/daemon-cli.ts:40` (`const port = options.port || 3000;`) |
-| PID file | `.speclang/daemon.pid` (the raw PID, no newline) | `src/daemon/index.ts:50`, `bin/speclang` (`readDaemonPid`) |
+| PID file | `.speclang/daemon.pid` (the raw PID, no newline) | written by `fs.writeFileSync(pidFile, process.pid.toString())` in `src/daemon/index.ts`; read by `bin/speclang` (`readDaemonPid`) |
 | Daemon state | `.speclang/daemon-state.json` | written by the daemon on start; read by `speclang daemon status` |
 | State database | `.speclang/speclang.db` (override with `$SPECLANG_DB`) | `bin/speclang` `status` action |
 | Locks | `.speclang/locks/` | created on start |
@@ -242,9 +242,12 @@ Decode the results:
   second daemon on the same project dir and its shutdown removed the shared pid file.
 - **Pid file with a dead PID** → stale pid file (§6.1). `speclang status` will still claim
   `Running`; trust `kill -0`, not the banner.
-- **Pid file with a live PID, nothing listening on the port** → the daemon is alive but its
-  dashboard never bound. That is what a port collision looks like from the inside (§6.2):
-  the log still prints `📊 Dashboard: http://localhost:3000` even though the bind failed.
+- **Pid file with a live PID, nothing listening on the port** → an older build (pre
+  DF-SPECLANG-022) started its watcher even when the dashboard bind failed, so this used
+  to mean a port collision (§6.2). On a post-fix build a held port **fails the start
+  outright** (exit 1, EADDRINUSE message, pid file already cleaned up), so this state
+  now means the dashboard process died after writing the pid file: check the process's
+  stdout/stderr from wherever you detached it, and restart (§3).
 - **`/health` answers with a different PID than the pid file** → two processes, one of them
   an orphan. Compare `ps -o pid,etime,cmd -p <pid>` for both before killing either.
 
@@ -267,14 +270,46 @@ rm -f .speclang/daemon.pid
 
 ### 6.2 Port already in use
 
-Verified behaviour: `speclang start` does **not** fail. The daemon starts, the watcher runs,
-the banner prints `📊 Dashboard: http://localhost:<port>`, and the process stays alive — but
-it holds no socket, and the port keeps answering from whichever process got there first.
+Verified behaviour (live probe 2026-11-24, dashboard port held by a dummy listener):
+`speclang start` now **fails fast and exits 1 before the watcher starts**. Nothing
+half-started is left behind, and the pid file written moments earlier is removed by the
+abort path, so `.speclang/` ends up empty:
 
-The mechanism: Express 5's `app.listen(port, cb)` registers the callback as the server's
-`once('error', …)` handler (`node_modules/express/lib/application.js`), and the daemon's
-callback ignores its argument (`src/daemon/index.ts:133`), so `EADDRINUSE` is never printed,
-never thrown, and never changes the exit code.
+```
+🚀 Starting SpecLang...
+   Directory: /home/kara/.hermes/cache/scratch/doc18-sandbox
+   Dashboard: binding port 39871...
+
+🚀 SpecLang Daemon Starting...
+
+   Project: /home/kara/.hermes/cache/scratch/doc18-sandbox
+   Port: 39871
+
+❌ Dashboard port 39871 could not be bound (EADDRINUSE: listen EADDRINUSE: address already in use :::39871)
+   Port 39871 is already in use by another process (EADDRINUSE).
+   Refusing to announce a dashboard this process does not serve.
+EXIT=1
+```
+
+A free port starts normally: the same command with `-p 39872` printed `Dashboard:
+binding port 39872...`, ran the watcher, and announced
+`📊 Dashboard: http://localhost:39872`.
+
+The mechanism (post DF-SPECLANG-022, two gates, both before the watcher starts):
+
+1. `listenDashboard()` (`src/daemon/dashboard.ts`) awaits the bind and **rejects** with
+   the underlying socket error instead of swallowing it — the pre-fix code registered the
+   `app.listen(port, cb)` callback, ignored its error argument, printed `Started` and a
+   dashboard URL on a port that belonged to somebody else, and exited 0. That silent
+   behaviour is historical (before 2026-11-20) and no longer reachable on a current build.
+2. `probeDashboard()` asks the ANNOUNCED endpoint `/health` and requires this process's
+   own PID back: on Linux a wildcard bind can *succeed* while another process already
+   holds `127.0.0.1:<port>`, and a bind-only check would then print a dashboard URL that
+   a stranger answers. A failed probe exits 1 with the same EADDRINUSE wording.
+
+`--no-dashboard` bypasses both gates entirely (nothing binds anything): with the same
+port still held, `start -p 39871 --no-dashboard` started the daemon normally and ran
+until it was killed. The port only matters when the dashboard is served.
 
 Diagnose:
 
@@ -289,8 +324,8 @@ Then pick one:
 - **Another SpecLang daemon owns the port** → stop that one (`speclang stop -d <its project
   dir>`) or, if it is an orphan, `kill -TERM <pid>`, then restart on the port.
 - **A foreign service owns the port** → do not kill what you cannot identify. Start SpecLang
-  somewhere else: `speclang start -p 3001`, and note that the dashboard is now
-  `http://localhost:3001` — the banner tells you which.
+  somewhere else: `speclang start -p 3001` — the failed bind above already names the port,
+  and the success banner prints only after the bind and the `/health` probe both pass.
 - **Nothing owns the port but the bind still failed** → check you are not in a container
   with a conflicting network, then re-run and read the *first* lines of output (the banner
   echoes the port it was given).
@@ -410,8 +445,11 @@ shows more than one listener line, you have two daemons. If `/health` answers wh
 
 - `.speclang/daemon.log` has no writer (§2). Any log you rely on is the one you redirected.
 - `speclang status` reports an alive-looking daemon from a dead PID (§4, §6.4).
-- `speclang start` prints a dashboard URL even when the bind failed (§6.2); no
-  `EADDRINUSE` message and no non-zero exit.
+- **A held dashboard port makes `speclang start` exit 1 with an EADDRINUSE message before
+  the watcher starts** (§6.2; fixed by DF-SPECLANG-022, 2026-11-20). The historical
+  behaviour — the daemon printing `📊 Dashboard: http://localhost:<port>` for a bind that
+  never succeeded, with no error and exit 0 — is gone on a current build and described
+  there only as history.
 - There is no "already running" guard: a second `speclang start` in the same project
   directory hijacks the pid file (§6.3).
 - `speclang daemon stop` / `speclang daemon status` have no `-d`; they only work from the
