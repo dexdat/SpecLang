@@ -23,9 +23,9 @@
  * Task: .coding-hermes/tasks.md#CI-006
  */
 
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { describe, it, expect } from "vitest";
 import { execSync, execFile } from "child_process";
-import { mkdtempSync, existsSync, rmSync, readFileSync, mkdirSync } from "fs";
+import { existsSync, rmSync, readFileSync, mkdirSync } from "fs";
 import { join } from "path";
 
 const REPO_ROOT = execSync("git rev-parse --show-toplevel", {
@@ -68,31 +68,11 @@ function readPackageJson(): PackageJson {
 }
 
 describe("CI-006: test coverage reporting", () => {
-  let prevCoverage: string | null = null;
-
-  beforeAll(() => {
-    // Move the project-root `coverage/` (if any) aside so we don't
-    // accidentally assert against a stale report from a previous run.
-    // Coverage artefacts are gitignored, so this is purely local cleanup.
-    if (existsSync(join(REPO_ROOT, "coverage"))) {
-      prevCoverage = mkdtempSync(
-        join(REPO_ROOT, ".tmp", "ci006-coverage-prev-"),
-      );
-      rmSync(prevCoverage, { recursive: true, force: true });
-      execSync(`mv "${join(REPO_ROOT, "coverage")}" "${prevCoverage}"`, {
-        encoding: "utf8",
-      });
-    }
-  });
-
-  afterAll(() => {
-    if (prevCoverage) {
-      execSync(`rm -rf "${join(REPO_ROOT, "coverage")}"`, { encoding: "utf8" });
-      execSync(`mv "${prevCoverage}" "${join(REPO_ROOT, "coverage")}"`, {
-        encoding: "utf8",
-      });
-    }
-  });
+  // QA-SPECLANG-016: this suite runs INSIDE the outer covered run
+  // (`npm run test:coverage`). Root `coverage/` belongs to the OUTER v8
+  // provider while the run is live — moving/removing it here tore down the
+  // whole run. Every assertion in AC4 therefore targets SCRATCH_COVERAGE, a
+  // reports directory outside the outer provider's ownership.
 
   it("AC1: package.json declares the test:coverage script using --coverage", () => {
     const pkg = readPackageJson();
@@ -141,15 +121,18 @@ describe("CI-006: test coverage reporting", () => {
     expect(config).toMatch(/['"]html['"]/);
   });
 
-  it("AC4: npm run test:coverage --coverage writes coverage/coverage-final.json AND coverage/index.html", async () => {
+  it("AC4: vitest --coverage writes coverage-final.json AND index.html to the reports directory", async () => {
     // We deliberately invoke vitest on a single small suite rather than
     // the full 1700+ test corpus. The v8 provider races when a large
     // worker pool opens coverage/.tmp/coverage-N.json before the dir
     // is created (known upstream flake with @vitest/coverage-v8). A
     // single-file invocation is reproducible and still proves the spec
     // contract: `--coverage` produces both `coverage-final.json` and
-    // `index.html` for the configured dashboard include.
-    mkdirSync(join(REPO_ROOT, "coverage"), { recursive: true });
+    // `index.html`.
+    // QA-SPECLANG-016: reports go to SCRATCH_COVERAGE — NOT root coverage/,
+    // which the outer covered run's v8 provider owns while this suite runs.
+    rmSync(SCRATCH_COVERAGE, { recursive: true, force: true });
+    mkdirSync(SCRATCH_COVERAGE, { recursive: true });
 
     const result = await run(
       "npx",
@@ -161,8 +144,16 @@ describe("CI-006: test coverage reporting", () => {
         "--coverage.reporter=text",
         "--coverage.reporter=json",
         "--coverage.reporter=html",
-        "--coverage.include=src/dashboard/**",
-        "--coverage.reportsDirectory=coverage",
+        `--coverage.reportsDirectory=${SCRATCH_COVERAGE}`,
+        // QA-SPECLANG-016: the child run exercises a single suite file, so its
+        // global coverage is ~1.4% — the config's global thresholds (19/15/19/19,
+        // sized for the FULL suite) fail it. Thresholds are asserted by the actual
+        // `npm run test:coverage` gate in CI; this scratch invocation only proves
+        // the provider contract (reports written), so we zero them out here.
+        "--coverage.thresholds.statements=0",
+        "--coverage.thresholds.branches=0",
+        "--coverage.thresholds.functions=0",
+        "--coverage.thresholds.lines=0",
       ],
       REPO_ROOT,
     );
@@ -171,14 +162,13 @@ describe("CI-006: test coverage reporting", () => {
         `vitest --coverage exited ${result.status}\n--- stdout ---\n${result.stdout.slice(-1500)}\n--- stderr ---\n${result.stderr.slice(-1500)}`,
       );
     }
-    const covDir = join(REPO_ROOT, "coverage");
     expect(
-      existsSync(join(covDir, "coverage-final.json")),
-      "coverage/coverage-final.json must exist",
+      existsSync(join(SCRATCH_COVERAGE, "coverage-final.json")),
+      "reports dir must contain coverage-final.json",
     ).toBe(true);
     expect(
-      existsSync(join(covDir, "index.html")),
-      "coverage/index.html must exist",
+      existsSync(join(SCRATCH_COVERAGE, "index.html")),
+      "reports dir must contain index.html",
     ).toBe(true);
 
     // Sanity-check the JSON parses as v8 coverage output — proves the
@@ -187,7 +177,7 @@ describe("CI-006: test coverage reporting", () => {
     // include glob matched source files) or an empty object (when no
     // files matched). Both prove the provider executed.
     const json = JSON.parse(
-      readFileSync(join(covDir, "coverage-final.json"), "utf8"),
+      readFileSync(join(SCRATCH_COVERAGE, "coverage-final.json"), "utf8"),
     ) as unknown;
     expect(json, "coverage-final.json must be valid JSON").toBeDefined();
     expect(typeof json).toBe("object");

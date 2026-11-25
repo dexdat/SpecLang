@@ -73,12 +73,67 @@ export default defineConfig({
     // no-op: no file under tests/e2e/ matches *.spec.ts. The key is omitted
     // entirely so vitest's DEFAULT excludes (node_modules, dist, .git, ...)
     // stay in force instead of being wiped by an empty array.
+    // QA-SPECLANG-016: the coverage surface must match the tsc-build surface.
+    // tsconfig.json type-checks src/** minus a set of excludes, so coverage
+    // mirrors exactly that set: include 'src/**' and exclude every path that
+    // tsconfig.json excludes from the build. The previous include
+    // ['src/dashboard/**'] presented the ONE subtree tsc never type-checks as
+    // the project's coverage — inverted, and misleading in CI.
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       include: [
-        'src/dashboard/**'
-      ]
+        // Same file globs tsconfig.json includes for the build: only the
+        // type-checked TypeScript surface is reported as project coverage.
+        // NOTE: these globs are unanchored in Istanbul's matcher, so
+        // 'src/**/*.ts' also matches specs/<x>.spec.dir/src/**/*.ts — the
+        // specs/** exclude below prunes all spec dirs except mcp.spec.dir,
+        // the only one tsconfig.json checks (its include line).
+        'src/**/*.ts',
+        'src/**/*.tsx'
+      ],
+      // Mirror of tsconfig.json's exclude list restricted to src/, plus the
+      // spec-dir correction described above (tsconfig's root index.ts and its
+      // .py excludes are moot/unrepresentable for TS coverage globs and are
+      // left out of the reported surface).
+      exclude: [
+        'src/dashboard/**',
+        'src/codegen.ts',
+        'src/ralph-loop.ts',
+        'src/ralph-loop/**',
+        'src/speclang-mcp.ts',
+        'src/validation-system.ts',
+        'src/validation.ts',
+        'src/cli/**',
+        'src/mcp/**',
+        'src/indexer/**',
+        'src/parser/**',
+        'src/codegen/**',
+        'src/generated/**',
+        'src/lsp/**',
+        // Spec-dir corpus: none of specs/*.spec.dir/src is part of the
+        // vitest-reported surface. tsconfig.json checks only mcp.spec.dir
+        // (of 86 spec dirs) plus root src/**; picomatch's `ignore` in the
+        // coverage matcher does not support '!specs/mcp...' negation (proven:
+        // any negated ignore pattern silences ALL instrumentation), so the
+        // spec dirs are excluded wholesale — 9 mcp.spec.dir files drop from
+        // the report, keeping it a strict subset of the tsc-checked tree.
+        './specs/**',
+        '**/*.spec.ts',
+        '**/*.test.ts'
+      ],
+      // QA-SPECLANG-016: measured-floor thresholds. Measured floor on the new
+      // surface at commit time (full `vitest run --coverage`, 2123 tests,
+      // exit 0): statements 23.68, branches 19.83, functions 24.21,
+      // lines 23.81. Thresholds sit ~4-5 points below that floor so the gate
+      // is stable under day-to-day drift but still fails a substantive
+      // regression.
+      thresholds: {
+        statements: 19,
+        branches: 15,
+        functions: 19,
+        lines: 19
+      }
     }
   }
 });

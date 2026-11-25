@@ -276,7 +276,12 @@ describe("Ralph Loop exit paths (GAP-004)", () => {
     }
   });
 
-  it("does not stack signal listeners when the loop is started twice", async () => {
+  // QA-SPECLANG-016: measured 34.2s under ANY `vitest --coverage` run (the
+  // per-DB SQLite migration chain is ~5x slower with the v8 provider's
+  // NODE_V8_COVERAGE child writes), vs ~seconds without coverage. The global
+  // 30s testTimeout starved it; this per-test declaration (the documented
+  // pattern, cf. CI-006's 120s coverage run) gives ~3.5x headroom.
+  it("does not stack signal listeners when the loop is started twice", { timeout: 120_000 }, async () => {
     const before = new Map(RALPH_LOOP_STOP_SIGNALS.map((s) => [s, process.listenerCount(s)]));
 
     for (let run = 0; run < 2; run += 1) {
@@ -329,10 +334,15 @@ describe("Ralph Loop exit paths (GAP-004)", () => {
       // Readiness, not a fixed sleep: the loop is a daemon, so "state DB ready"
       // is the signal that it reached the poll loop. Its launcher (this process)
       // is alive, so the launcher-liveness arm must not fire here.
+      // QA-SPECLANG-016: measured 30.76s under ANY `vitest --coverage` run
+      // (`tsx` bootstraps ~5x slower with the v8 provider's NODE_V8_COVERAGE
+      // child writes; ~1s without coverage). The 30_000 wait starved by
+      // ~0.8s; give the same 3.5x headroom as this test's 120s per-test
+      // timeout.
       await waitFor(
         () => stderr.includes("Ralph Loop state database ready at") || exitCode !== undefined,
         "the CLI entry to bootstrap its state DB",
-        30_000
+        120_000
       );
       expect(exitCode).toBeUndefined();
       expect(existsSync(join(projectDir, ".speclang", "speclang.db"))).toBe(true);
