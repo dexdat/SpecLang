@@ -30,6 +30,15 @@ check_sqlite_binding() {
   local pkg_dir="$PKG_ROOT/node_modules/better-sqlite3"
 
   if [ ! -d "$pkg_dir" ]; then
+    if grep -q '"better-sqlite3"' "$PKG_ROOT/package.json" 2>/dev/null; then
+      echo "FAIL: package.json declares better-sqlite3 but it is absent from node_modules."
+      echo "      A declared dependency that does not install is a dependency-resolution"
+      echo "      regression (dropped from package-lock.json, pruned, or the install was"
+      echo "      interrupted). Every SQLite-backed feature (DB layer, MCP server,"
+      echo "      cascade daemon) is dead without it. Remedy: npm install (or npm ci) and"
+      echo "      re-run npm run check:sqlite-binding."
+      return 1
+    fi
     echo "better-sqlite3 is not installed under node_modules — skipping the native binding check"
     return 0
   fi
