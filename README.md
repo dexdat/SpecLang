@@ -400,8 +400,10 @@ npm test
 # 5. Inspect the checked-in index or compute the live graph without rewriting it
 jq '.specs | length' _index.json
 # Run `jq '.specs | length' _index.json` for the authoritative number of saved entries.
-# The checked-in snapshot currently holds 488 entries; regenerate with
-# `--generate` if it drifts (the generator is deterministic since the indexer fix).
+# The checked-in snapshot held 485 entries at the 2026-11-25 README count fix —
+# do not trust that bare number here; the `jq` above is authoritative.
+# Regenerate with `--generate` if it drifts (the generator is deterministic
+# since the indexer fix).
 # This is a snapshot, not a live file count. The generator's read-only modes
 # compute the live graph in memory; run `python3 scripts/generate_index.py --graph`
 # for the authoritative number of graph nodes and edges.
@@ -791,7 +793,7 @@ These measurements describe that commit, not a promise about later checkouts.)*
 ### ❌ Not Working (Yet)
 
 - **Automatic cascade**: File watching requires the opt-in daemon — `speclang start` runs the file watcher (see Current Limitations above); the MCP server is started separately with `speclang mcp start`; without the daemon, cascades are triggered manually
-- **Self-hosting**: Not yet complete — no tool is generated end-to-end from its own spec. The layout is already dual-view, though: each tool's implementation lives canonically under `specs/scripts.spec.dir/` next to its own spec (`generate_index.py` beside `_index.md` / `generate-index.spec.md`), and `scripts/` surfaces those implementations as symlinks (`scripts/generate_index.py` → `../specs/scripts.spec.dir/generate_index.py`; 32 symlinks plus 8 repo-level shell/node harnesses such as `guard-build.sh` and `gen-migrations.mjs`). Script bodies, and the TypeScript application source under `src/`, are hand-authored; only what `speclang generate` / `cascade` emits (`src/generated/`, `specs/generated/`) is machine-generated, and both of those paths are gitignored
+- **Self-hosting**: Not yet complete — no tool is generated end-to-end from its own spec. The layout is already dual-view, though: each tool's implementation lives canonically under `specs/scripts.spec.dir/` next to its own spec (`generate_index.py` beside `_index.md` / `generate-index.spec.md`), and `scripts/` surfaces those implementations as symlinks (`scripts/generate_index.py` → `../specs/scripts.spec.dir/generate_index.py`; the file census is counted live, same as the test/index numbers elsewhere in this file: `find scripts -maxdepth 1 -type l | wc -l` symlinks plus `find scripts -maxdepth 1 -type f \( -name '*.sh' -o -name '*.mjs' \) | wc -l` repo-level shell/node harnesses such as `guard-build.sh` and `gen-migrations.mjs` — 33 symlinks and 10 harnesses at the 2026-11-25 census). Script bodies, and the TypeScript application source under `src/`, are hand-authored; only what `speclang generate` / `cascade` emits (`src/generated/`, `specs/generated/`) is machine-generated, and both of those paths are gitignored
 - **Full tree traversal**: Coordinator doesn't automate multi-tree yet
 - **Error recovery**: Basic, needs improvement
 
