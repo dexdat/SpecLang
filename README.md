@@ -415,18 +415,37 @@ python3 scripts/generate_index.py --impact speclang/core   # what depends on it
 python3 scripts/generate_index.py --graph                  # live graph stats
 # Strict reference/cycle gate (unlike validate_refs.py):
 python3 scripts/generate_index.py --validate
-# The recorded README-25 run exits 1 for missing reference targets; see evidence.
+# The recorded README-25 run (2026-11-18) exited 1 for missing reference targets; see evidence.
 # It exits non-zero when missing refs exceed --max-missing (default 0) or cycles exist.
 # There is no `speclang index` command registered in bin/speclang yet.
 ```
 
-**Measured 2026-11-18 at `1a2134ac7d82395c22594c0d9a104cbc65ca06dc`:**
+**Dated history — measured 2026-11-18 at `1a2134ac7d82395c22594c0d9a104cbc65ca06dc`**
+(these measurements describe that commit, not a promise about later checkouts):
 `validate_refs.py`, `validate_autonomous.py --project` and `npx tsc --noEmit` each exited `0`.
 `npm test` exited `1` with database test/hook timeouts; the separate `tests/db` filter also
 failed with SQLite disk-I/O/readonly errors. The strict `python3 scripts/generate_index.py --validate`
-check exited `1` for missing reference targets. This was **not an all-green verification run**;
+check exited `1` for missing reference targets. That was **not an all-green verification run**;
 full output, totals and host-load observations are in the [transcript](evidence/readme-25-2026-11-18/transcript.md).
 No implementation, tests or validator behavior was changed by this README fixup.
+
+**Re-measured at the current tip (2026-11-25) — both reference checks are green.** The 2026-11-18
+failures above are history; on a later checkout run the two commands yourself:
+
+```bash
+$ python3 scripts/validate_refs.py
+All references valid.                                   # exit 0
+
+$ python3 scripts/generate_index.py --validate
+Missing refs: 0 (tolerance: 0)
+✅ All references valid
+✅ No circular dependencies                              # exit 0
+```
+
+The strict gate therefore reports `Missing refs: 0 (tolerance: 0)` and `Cycles: 0` and exits `0`
+at this tip (497 spec files, 488 indexed specs, 1385 references, 182 orphan warnings that are not
+errors). `npm test` and the node-based gates are not re-measured here — run them on your own
+checkout for the authoritative result.
 
 ### Run a Mini Cascade
 
