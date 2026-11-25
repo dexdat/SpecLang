@@ -626,3 +626,12 @@
 {"id":628,"timestamp":"2026-11-25T09:58:44Z","event_type":"task_completed","task_id":"DOC-25","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":629,"timestamp":"2026-11-25T10:30:04Z","event_type":"task_created","task_id":"RELEASE-004","actor":"foreman","detail":"{\"id\":\"RELEASE-004\",\"status\":\"pending\"}","tick_number":null}
 {"id":630,"timestamp":"2026-11-25T11:02:27Z","event_type":"task_completed","task_id":"RELEASE-004","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":631,"timestamp":"2026-11-25T11:59:02Z","event_type":"task_created","task_id":"DOC-027","actor":"foreman","detail":"{\"id\":\"DOC-027\",\"status\":\"pending\"}","tick_number":null}
+{"id":632,"timestamp":"2026-11-25T11:59:13Z","event_type":"task_created","task_id":"DOC-028","actor":"foreman","detail":"{\"id\":\"DOC-028\",\"status\":\"pending\"}","tick_number":null}
+{"id":633,"timestamp":"2026-11-25T11:59:53Z","event_type":"task_updated","task_id":"INT-CI-1","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
+{"id":634,"timestamp":"2026-11-25T11:59:53Z","event_type":"task_updated","task_id":"DOC-16","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
+{"id":635,"timestamp":"2026-11-25T12:01:13Z","event_type":"task_updated","task_id":"DOC-027","actor":"foreman","detail":"{\"status\":\"pending\"}","tick_number":null}
+{"id":636,"timestamp":"2026-11-25T12:01:13Z","event_type":"task_updated","task_id":"DOC-028","actor":"foreman","detail":"{\"status\":\"pending\"}","tick_number":null}
+{"id":637,"timestamp":"2026-11-25T12:11:54Z","event_type":"task_updated","task_id":"DOC-16","actor":"foreman","detail":"{\"status\":\"pending\"}","tick_number":null}
+{"id":638,"timestamp":"2026-11-25T12:11:54Z","event_type":"task_updated","task_id":"INT-CI-1","actor":"foreman","detail":"{\"status\":\"pending\"}","tick_number":null}
+{"id":639,"timestamp":"2026-11-25T12:29:45Z","event_type":"task_completed","task_id":"DOC-16","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
