@@ -7,6 +7,8 @@
 
 **Goal**: Build SpecLang using SpecLang itself (meta-circular)
 
+> **Status (2026-11-25, DOC-24):** This document is a **historical bootstrap snapshot** written before implementation began (assessment claims date to commit `0419167d`). Most components listed as "NOT STARTED" below are now implemented. The Current State Assessment tables have been reconciled with shipped reality; the Build Order and phase tables are kept as the original plan/prompt map. For the live state, see `docs/MASTER_GUIDE.md` (live-refreshed by DOC-17) and `.ralph/prd.json`.
+
 ## Current State Assessment
 
 ### Specs vs NORTH_STAR Alignment
@@ -14,26 +16,26 @@
 | NORTH_STAR Principle | Spec Coverage | Gap |
 |---------------------|---------------|-----|
 | Specs are source code | ✅ Well defined | - |
-| Universal headers | ✅ `headers.spec.md` complete | Implementation needed |
-| Agent ownership | ✅ `agent-protocol.spec.md` defined | No guard system yet |
-| The Cascade | ✅ `cascade.spec.md` detailed | No daemon implementation |
-| Context never lost | ⚠️ SQLite spec exists | No FTS/vector implementation |
-| Git is memory | ⚠️ `git-history.spec.md` exists | No automation |
-| Autonomous depth | ⚠️ Specs lack `agent_support: agent_autonomous` | Need depth review |
+| Universal headers | ✅ `headers.spec.md` complete | ✅ Implemented — `src/parser/` (header-parser, field-validator, header-validator) |
+| Agent ownership | ✅ `agent-protocol.spec.md` defined | ✅ Implemented — `src/guard/`, `src/agents/ownership/` |
+| The Cascade | ✅ `cascade.spec.md` detailed | ✅ Implemented — `src/daemon/` (Rust `speclangd` + TS event router) |
+| Context never lost | ⚠️ SQLite spec exists | ✅ Implemented — `src/db/` (better-sqlite3, FTS5 + vector search in `src/db/search.ts`) |
+| Git is memory | ⚠️ `git-history.spec.md` exists | ✅ Automation present — `src/ralph-loop/`, `src/ralph/` |
+| Autonomous depth | ⚠️ Specs lack `agent_support: agent_autonomous` | ✅ Resolved — 368 spec files carry `agent_support: agent_autonomous` |
 
 ### Implementation Status
 
 | Component | Spec Exists | Code Exists | Status |
 |-----------|-------------|-------------|--------|
-| speclangd (daemon) | ✅ `daemon.spec.md` | ❌ | **NOT STARTED** |
-| MCP Server | ✅ `mcp.spec.md` | ⚠️ Partial | Needs completion |
-| SQLite/DB | ✅ `sqlite.spec.md` | ⚠️ Schema only | Needs implementation |
-| Validation System | ⚠️ Scattered | ⚠️ `validation.ts` | Needs consolidation |
-| Code Generator | ⚠️ `compiler.spec.md` | ❌ | **NOT STARTED** |
-| Agent Protocol | ✅ `agent-protocol.spec.md` | ❌ | **NOT STARTED** |
-| Pipeline | ✅ `pipeline.spec.md` | ❌ | **NOT STARTED** |
-| Guard System | ⚠️ Mentioned | ❌ | **NOT STARTED** |
-| OpenCode Plugin | ✅ `opencode-plugin.spec.md` | ⚠️ Partial | Needs completion |
+| speclangd (daemon) | ✅ `daemon.spec.md` | ✅ | Implemented — `src/daemon/` (Rust `speclangd` crate + TS daemon) |
+| MCP Server | ✅ `mcp.spec.md` | ✅ | Implemented — `src/mcp/` |
+| SQLite/DB | ✅ `sqlite.spec.md` | ✅ | Implemented — `src/db/` (better-sqlite3, migrations, FTS5/vector search) |
+| Validation System | ✅ | ✅ | Implemented — `src/validation/` + `src/parser/field-validator.ts` |
+| Code Generator | ✅ `compiler.spec.md` | ✅ | Implemented — `src/codegen/`, `src/compiler/` |
+| Agent Protocol | ✅ `agent-protocol.spec.md` | ✅ | Implemented — `src/agents/` |
+| Pipeline | ✅ `pipeline.spec.md` | ✅ | Implemented — `src/pipeline/` |
+| Guard System | ✅ | ✅ | Implemented — `src/guard/` |
+| OpenCode Plugin | ✅ `opencode-plugin.spec.md` | ✅ | Implemented — `.opencode/skills/`, `src/opencode/` |
 
 short: "id: @specs/docs"
 layer: 5
