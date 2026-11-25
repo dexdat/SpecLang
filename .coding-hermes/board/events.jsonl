@@ -595,3 +595,9 @@
 {"id":597,"timestamp":"2026-11-25T00:47:43Z","event_type":"task_dispatched","task_id":"DOC-20","actor":"foreman","detail":"{\"branch\":\"wt/DOC-20\",\"model\":\"deepseek-v4.1-flash\",\"pid\":1327204,\"provider\":\"opencode-go\",\"status\":\"in_progress\",\"tick\":\"SpecLang-readme-2026-11-25-00-44-16\",\"worktree\":\"/home/kara/worktrees/SpecLang-DOC-20\"}","tick_number":null}
 {"id":598,"timestamp":"2026-11-25T01:02:22Z","event_type":"task_completed","task_id":"DOC-20","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":599,"timestamp":"2026-11-25T01:10:33Z","event_type":"task_completed","task_id":"QA-SPECLANG-016","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":600,"timestamp":"2026-11-25T01:12:06Z","event_type":"task_updated","task_id":"DOC-9-R2","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
+{"id":601,"timestamp":"2026-11-25T01:12:06Z","event_type":"task_updated","task_id":"DOC-16","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
+{"id":602,"timestamp":"2026-11-25T01:12:06Z","event_type":"task_updated","task_id":"DOC-14","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
+{"id":603,"timestamp":"2026-11-25T01:17:38Z","event_type":"task_created","task_id":"DOC-16-R2","actor":"foreman","detail":"{\"id\":\"DOC-16-R2\",\"status\":\"pending\"}","tick_number":null}
+{"id":604,"timestamp":"2026-11-25T01:18:08Z","event_type":"task_updated","task_id":"DOC-16","actor":"foreman","detail":"{\"status\":\"pending\"}","tick_number":null}
+{"id":605,"timestamp":"2026-11-25T01:26:00Z","event_type":"task_completed","task_id":"DOC-9-R2","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
