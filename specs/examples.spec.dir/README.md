@@ -112,7 +112,7 @@ repo.create({ title: 'Learn SpecLang', description: 'Read the docs' }).then(t =>
 
 ## More Information
 
-- [docs/NORTH_STAR.md](../docs/NORTH_STAR.md) - Vision and principles
-- [specs/core.spec.md](../specs/core.spec.md) - Core architecture
-- [specs/speclang.spec.md](../specs/speclang.spec.md) - Spec format reference
-- [specs/headers.spec.md](../specs/headers.spec.md) - Header format
+- [docs/NORTH_STAR.md](../../docs/NORTH_STAR.md) - Vision and principles
+- [specs/core.spec.md](../../specs/core.spec.md) - Core architecture
+- [specs/speclang.spec.md](../../specs/speclang.spec.md) - Spec format reference
+- [specs/headers.spec.md](../../specs/headers.spec.md) - Header format
