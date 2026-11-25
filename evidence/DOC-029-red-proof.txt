@@ -1,0 +1,243 @@
+
+===========================================================================
+DOC-029 red-proof: docs gates can fail (plant -> non-zero, remove -> zero)
+===========================================================================
+date (UTC):  2026-11-25T21:50:54Z
+repo:        /home/kara/worktrees/SpecLang-DOC-029
+HEAD:        35c2adbe84110035d142024f44ccd5ae21845ab0   branch wt/DOC-029
+node:        v22.22.3
+
+NOTE: this worktree ships no node_modules, and gate B shells out to
+      bin/speclang --help (which requires 'commander'). NODE_PATH points at
+      the read-only main-clone module tree for these runs; CI runs 'npm ci'
+      first, so the committed ci.yml step needs no NODE_PATH.
+      No docs/ content is modified: every plant lives in $SCRATCH.
+
+===========================================================================
+0. THE GAP (before this change): CI invoked neither gate
+===========================================================================
+$ git show HEAD:.github/workflows/ci.yml | grep -c "dual-view"
+0
+$ git show HEAD:.github/workflows/ci.yml | grep -c "check_docs_vs_cli_help"
+0
+
+===========================================================================
+1. BASELINE: both gates green on the clean tree at the tip
+===========================================================================
+$ node scripts/audit-dual-view-links.mjs
+audit-dual-view-links: 17 twinned pages, 8 relative links checked (6 skipped: URL/absolute/anchor)
+  ok real-only         specs/docs.spec.dir/layers.md:156  docs/MASTER_GUIDE.md
+      resolves from the real location (specs/docs.spec.dir/) only — dead from the docs/ view (accepted trade-off)
+  ok real-only         specs/docs.spec.dir/layers.md:158  docs/MASTER_GUIDE.md
+      resolves from the real location (specs/docs.spec.dir/) only — dead from the docs/ view (accepted trade-off)
+  ok real-only         specs/docs.spec.dir/layers.md:159  docs/CASCADE_DEMO.md
+      resolves from the real location (specs/docs.spec.dir/) only — dead from the docs/ view (accepted trade-off)
+  ok real-only         specs/docs.spec.dir/layers.md:162  docs/validation_report.txt
+      resolves from the real location (specs/docs.spec.dir/) only — dead from the docs/ view (accepted trade-off)
+  ok real-only         specs/examples.spec.dir/README.md:77  ../../docs/NORTH_STAR.md
+      resolves from the real location (specs/examples.spec.dir/) only — dead from the examples/ view (accepted trade-off)
+  ok real-only         specs/examples.spec.dir/README.md:81  ../../specs/core.spec.md
+      resolves from the real location (specs/examples.spec.dir/) only — dead from the examples/ view (accepted trade-off)
+  ok real-only         specs/examples.spec.dir/README.md:84  ../../specs/speclang.spec.md
+      resolves from the real location (specs/examples.spec.dir/) only — dead from the examples/ view (accepted trade-off)
+  ok real-only         specs/examples.spec.dir/README.md:90  ../../specs/headers.spec.md
+      resolves from the real location (specs/examples.spec.dir/) only — dead from the examples/ view (accepted trade-off)
+ok: 8 real-only (accepted trade-off), 0 both, 0 view-only violations, 0 dead-everywhere
+EXIT=0
+
+$ NODE_PATH=... node scripts/check_docs_vs_cli_help.js
+docs/CLI parity check
+  cli:          bin/speclang --help
+  docs table:   docs/API_REFERENCE.md (§2. CLI)
+  commands:     20 from --help, 21 names in the table
+  skipped:      help (framework built-in)
+  note:         alias compile (documented via build)
+OK: every command from --help is documented in docs/API_REFERENCE.md
+EXIT=0
+
+===========================================================================
+A. GATE A RED PROOF — scripts/audit-dual-view-links.mjs
+===========================================================================
+Scratch tree: /home/kara/.hermes/cache/scratch/doc029/red-a
+
+A twinned page: REAL file under specs/foo.spec.dir/page.md plus the
+symlinked docs/ view of it. The page carries a relative link that
+resolves ONLY from the view (the DOC-9-R2 violation class).
+
+$ ls -l <scratch>/docs/page.md
+lrwxrwxrwx 1 kara kara 29 Nov 25 16:50 /home/kara/.hermes/cache/scratch/doc029/red-a/docs/page.md -> ../specs/foo.spec.dir/page.md
+
+The planted link [sibling](sibling.md) resolves differently per base:
+  real base  specs/foo.spec.dir/sibling.md -> MISSING
+  view base  docs/sibling.md               -> EXISTS
+
+$ node scripts/audit-dual-view-links.mjs --root /home/kara/.hermes/cache/scratch/doc029/red-a
+audit-dual-view-links: 1 twinned pages, 2 relative links checked (0 skipped: URL/absolute/anchor)
+  ok both              specs/foo.spec.dir/page.md:5  ./page.md
+      resolves from both bases (specs/foo.spec.dir/ and docs/)
+  VIOLATION view-only  specs/foo.spec.dir/page.md:6  sibling.md
+      resolves only from the docs/ view — dead at the real location (specs/foo.spec.dir/); write the link relative to the real location
+FAILED: 0 real-only (accepted trade-off), 1 both, 1 view-only violations, 0 dead-everywhere
+EXIT=1
+
+--- remove the plant (drop the view-only target and its link) ---
+$ node scripts/audit-dual-view-links.mjs --root /home/kara/.hermes/cache/scratch/doc029/red-a
+audit-dual-view-links: 1 twinned pages, 1 relative links checked (0 skipped: URL/absolute/anchor)
+  ok both              specs/foo.spec.dir/page.md:5  ./page.md
+      resolves from both bases (specs/foo.spec.dir/ and docs/)
+ok: 0 real-only (accepted trade-off), 1 both, 0 view-only violations, 0 dead-everywhere
+EXIT=0
+
+===========================================================================
+B. GATE B RED PROOF — scripts/check_docs_vs_cli_help.js
+===========================================================================
+Source: docs/API_REFERENCE.md (a symlink to specs/docs.spec.dir/docs/API_REFERENCE.md,
+copied with -L so the fixture is a real file).
+
+$ grep -cF "`speclang maturity [spec]`" docs/API_REFERENCE.md
+1
+
+--- plant: delete the maturity row from the §2 CLI table, nothing else ---
+$ diff -u docs/API_REFERENCE.md <planted fixture>
+--- docs/API_REFERENCE.md	2026-11-25 16:48:22.553718563 -0500
++++ /home/kara/.hermes/cache/scratch/doc029/red-b/API_REFERENCE.md	2026-11-25 16:50:54.433539704 -0500
+@@ -148,7 +148,6 @@
+ | `speclang init <name>` | Create spec scaffolding in the current project (name = spec name → `specs/<name>/<name>.spec.md`, `--tiers` for 4-tier meta/plan/ts/test) |
+ | `speclang expand <block-id>` | Expand a block |
+ | `speclang search <query>` | Search across all specs (`--kind <type>` filter by block kind, `--tag <tag>` filter by tag, `--limit <n>` max results — default 20, `--verbose`; short flags `-k`, `-t`, `-l`, `-v`) |
+-| `speclang maturity [spec]` | Show maturity level info, or validate `[spec]` against a level (`--level <level>` show one level, `--json` JSON output, `--verbose` show detailed criteria) |
+ | `speclang upgrade <spec>` | Upgrade a spec to a higher maturity level (`--to <level>` target, e.g. Beta or Production; `--json` JSON output; `--plan` show the plan without executing) |
+ | `speclang downgrade <spec>` | Downgrade a spec to a lower maturity level (`--to <level>` target; `--json` JSON output; `--plan` show the plan without executing) |
+ | `speclang history\|log [spec]` | Git-backed spec change history (`--all` include non-spec changes, `--block <id>` filter by block ID, `--author <name>`, `--since <date>`, `--until <date>`, `--compare v1..v2`, `--format text\|json\|timeline` — default `text`, `--follow` follow renames, `--stat` diff statistics, `--blame` line-level attribution; short flags `-a`, `-b`, `-f`) |
+diff EXIT=1 (1 = the fixture differs by exactly the planted deletion)
+$ grep -cF "`speclang maturity [spec]`" <planted fixture>
+0
+
+$ NODE_PATH=... node scripts/check_docs_vs_cli_help.js --docs /home/kara/.hermes/cache/scratch/doc029/red-b/API_REFERENCE.md
+docs/CLI parity check
+  cli:          bin/speclang --help
+  docs table:   ../../.hermes/cache/scratch/doc029/red-b/API_REFERENCE.md (§2. CLI)
+  commands:     20 from --help, 20 names in the table
+  skipped:      help (framework built-in)
+  note:         alias compile (documented via build)
+FAIL: 1 CLI command(s) missing from the table: maturity
+EXIT=1
+
+--- restore the fixture and re-run the SAME command ---
+$ cmp docs/API_REFERENCE.md <restored fixture>
+cmp EXIT=0 (0 = byte-identical to the repo doc)
+
+$ NODE_PATH=... node scripts/check_docs_vs_cli_help.js --docs /home/kara/.hermes/cache/scratch/doc029/red-b/API_REFERENCE.md
+docs/CLI parity check
+  cli:          bin/speclang --help
+  docs table:   ../../.hermes/cache/scratch/doc029/red-b/API_REFERENCE.md (§2. CLI)
+  commands:     20 from --help, 21 names in the table
+  skipped:      help (framework built-in)
+  note:         alias compile (documented via build)
+OK: every command from --help is documented in ../../.hermes/cache/scratch/doc029/red-b/API_REFERENCE.md
+EXIT=0
+
+===========================================================================
+C. CLEAN TREE: both gates via the one command CI now runs
+===========================================================================
+$ NODE_PATH=... npm run audit:docs
+npm notice run speclang@1.0.0 audit:docs
+npm notice run npm run audit:dual-view-links && node scripts/check_docs_vs_cli_help.js
+npm notice run speclang@1.0.0 audit:dual-view-links
+npm notice run node scripts/audit-dual-view-links.mjs
+audit-dual-view-links: 17 twinned pages, 8 relative links checked (6 skipped: URL/absolute/anchor)
+  ok real-only         specs/docs.spec.dir/layers.md:156  docs/MASTER_GUIDE.md
+      resolves from the real location (specs/docs.spec.dir/) only — dead from the docs/ view (accepted trade-off)
+  ok real-only         specs/docs.spec.dir/layers.md:158  docs/MASTER_GUIDE.md
+      resolves from the real location (specs/docs.spec.dir/) only — dead from the docs/ view (accepted trade-off)
+  ok real-only         specs/docs.spec.dir/layers.md:159  docs/CASCADE_DEMO.md
+      resolves from the real location (specs/docs.spec.dir/) only — dead from the docs/ view (accepted trade-off)
+  ok real-only         specs/docs.spec.dir/layers.md:162  docs/validation_report.txt
+      resolves from the real location (specs/docs.spec.dir/) only — dead from the docs/ view (accepted trade-off)
+  ok real-only         specs/examples.spec.dir/README.md:77  ../../docs/NORTH_STAR.md
+      resolves from the real location (specs/examples.spec.dir/) only — dead from the examples/ view (accepted trade-off)
+  ok real-only         specs/examples.spec.dir/README.md:81  ../../specs/core.spec.md
+      resolves from the real location (specs/examples.spec.dir/) only — dead from the examples/ view (accepted trade-off)
+  ok real-only         specs/examples.spec.dir/README.md:84  ../../specs/speclang.spec.md
+      resolves from the real location (specs/examples.spec.dir/) only — dead from the examples/ view (accepted trade-off)
+  ok real-only         specs/examples.spec.dir/README.md:90  ../../specs/headers.spec.md
+      resolves from the real location (specs/examples.spec.dir/) only — dead from the examples/ view (accepted trade-off)
+ok: 8 real-only (accepted trade-off), 0 both, 0 view-only violations, 0 dead-everywhere
+docs/CLI parity check
+  cli:          bin/speclang --help
+  docs table:   docs/API_REFERENCE.md (§2. CLI)
+  commands:     20 from --help, 21 names in the table
+  skipped:      help (framework built-in)
+  note:         alias compile (documented via build)
+OK: every command from --help is documented in docs/API_REFERENCE.md
+EXIT=0
+
+===========================================================================
+D. WIRING + STATIC SANITY
+===========================================================================
+$ grep -n -B2 -A1 "run: npm run audit:docs" .github/workflows/ci.yml
+166-        # gate that failed in its own output. Both scripts are dependency-free
+167-        # beyond node_modules (already installed above) and read-only.
+168:        run: npm run audit:docs
+169-
+
+$ grep -n "audit:docs" package.json
+43:    "audit:docs": "npm run audit:dual-view-links && node scripts/check_docs_vs_cli_help.js",
+
+Step position (specdir audit -> docs gates -> Run tests):
+118:      - name: Audit the compiled spec-dir layer (QA-SPECLANG-010)
+146:      - name: "Docs gates: dual-view links + CLI table parity"
+170:      - name: Run tests
+
+$ python3 -c "import yaml; d=yaml.safe_load(open(...)); print(\"jobs:\", list(d[\"jobs\"]))"
+jobs: ['build', 'review']
+$ python3 -c "import json; json.load(open(\"package.json\")); print(\"package.json ok\")"
+package.json ok
+$ git status --short
+ M .github/workflows/ci.yml
+ M package.json
+?? evidence/DOC-029-red-proof.txt
+
+===========================================================================
+E. STRUCTURE PROOF: the step is a STEP of job "build", not a new job
+===========================================================================
+$ git show HEAD:.github/workflows/ci.yml > $SCRATCH/ci-before.yml
+job list BEFORE the edit:
+  ['build', 'review']
+job list AFTER the edit:
+  ['build', 'review']
+
+build-job step names AFTER the edit, in order (index: name):
+   0: Checkout source
+   1: Setup Node.js 20
+   2: Install dependencies
+   3: Verify better-sqlite3 native binding
+   4: Install pre-commit hook
+   5: Install gitleaks
+   6: Build TypeScript
+   7: Audit the compiled spec-dir layer (QA-SPECLANG-010)
+   8: Docs gates: dual-view links + CLI table parity
+   9: Run tests
+  10: Generate coverage report (CI-006)
+  11: Upload coverage artifact (CI-006)
+  12: Write coverage summary
+  13: Lint (graceful when no config)
+  14: Install GitReins
+  15: Run GitReins Tier 1 guard
+  16: Upload test artifacts
+
+run block of the new step:
+  name: Docs gates: dual-view links + CLI table parity
+  run:  'npm run audit:docs'
+
+Total steps before / after:
+  before: 16
+  after:  17
+
+$ npx --no-install yamllint -h (skip if absent; repo has no yamllint gate)
+yamllint absent - skipped, as instructed
+
+Gates NOT added to npm test / pretest / posttest (unchanged):
+  pretest: npm run build
+  test: TMPDIR=$PWD/.tmp vitest run
+  posttest: node scripts/reap-test-tmp.mjs

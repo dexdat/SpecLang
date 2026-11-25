@@ -143,6 +143,30 @@ jobs:
           npm run audit:specdir
           npm run check:specdir-parity
 
+      - name: "Docs gates: dual-view links + CLI table parity"
+        # Two repo-owned documentation gates, both already green at HEAD and
+        # both blocking — before this step existed CI simply never ran them,
+        # so documentation rot could ship green.
+        #
+        #   1. scripts/audit-dual-view-links.mjs (npm run audit:dual-view-links)
+        #      ratifies the DOC-16-R2 / DOC-25 accepted trade-off: a twinned
+        #      page (real file under specs/*.spec.dir/, symlinked view under
+        #      docs/ or examples/) must write its relative links against the
+        #      page's REAL location. A link that resolves only from the view
+        #      (the DOC-9-R2 class) or from neither base (DOC-8) exits 1.
+        #      Decision record: docs/specdir-compiled-layer.md.
+        #
+        #   2. scripts/check_docs_vs_cli_help.js keeps docs/API_REFERENCE.md
+        #      §2 (CLI) honest against `bin/speclang --help` — the DOC-7 CLI
+        #      table gate. A command that ships but is absent from the table
+        #      exits 1. It shells out to the CLI, so it must stay after
+        #      "Build TypeScript".
+        #
+        # `npm run audit:docs` runs both in order, so a red step names the
+        # gate that failed in its own output. Both scripts are dependency-free
+        # beyond node_modules (already installed above) and read-only.
+        run: npm run audit:docs
+
       - name: Run tests
         run: npm test
         env:

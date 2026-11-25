@@ -40,6 +40,7 @@
     "audit:evidence-runids": "sh scripts/audit-evidence-runids.sh",
     "audit:specdir": "node scripts/audit-specdir-requires.mjs",
     "audit:dual-view-links": "node scripts/audit-dual-view-links.mjs",
+    "audit:docs": "npm run audit:dual-view-links && node scripts/check_docs_vs_cli_help.js",
     "check:specdir-parity": "node scripts/check-specdir-parity.mjs",
     "regenerate:specdir": "node scripts/regenerate-specdir-layer.mjs"
   },
