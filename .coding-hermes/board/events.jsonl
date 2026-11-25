@@ -623,3 +623,4 @@
 {"id":625,"timestamp":"2026-11-25T07:07:35Z","event_type":"task_completed","task_id":"DOC-24","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":626,"timestamp":"2026-11-25T07:16:03Z","event_type":"task_updated","task_id":"DOC-25","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
 {"id":627,"timestamp":"2026-11-25T09:28:43Z","event_type":"task_created","task_id":"DOC-026","actor":"foreman","detail":"{\"id\":\"DOC-026\",\"status\":\"pending\"}","tick_number":null}
+{"id":628,"timestamp":"2026-11-25T09:58:44Z","event_type":"task_completed","task_id":"DOC-25","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
