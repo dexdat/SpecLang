@@ -16,10 +16,10 @@ It has four runtime shapes, and each has a different health question:
 
 | Shape | Entry point | Long-lived? | Health question |
 |---|---|---|---|
-| `speclangd` watcher daemon | `bin/speclangd` → `dist/src/daemon/daemon.js` (`src/daemon/daemon.ts:28`) | yes (background, pid + log in `.speclang/`) | is it watching, and did the last cascade + pipeline converge? |
-| `speclang start` dashboard/MCP daemon | `bin/speclang:40` → `dist/src/daemon/index.js` | yes (HTTP) | is the dashboard up, is the watcher armed |
-| MCP HTTP server | `src/cli/commands/server.ts:36` → `MCPServer.startHTTP` (`src/mcp/server.ts:77`) | yes (HTTP, `app.listen` at `src/mcp/server.ts:219`) | serving MCP + SSE clients on the port |
-| CLI lanes (`validate`, `cascade`, `generate`, `guard`, `index`, `meta`, `autonomous`) | `src/cli/index.ts:34+` | **no** — process exits | did the run succeed, how long did it take, what did it produce |
+| `speclangd` watcher daemon | `bin/speclangd` → `dist/src/daemon/daemon.js` (`src/daemon/daemon.ts:47`) | yes (background, pid + log in `.speclang/`) | is it watching, and did the last cascade + pipeline converge? |
+| `speclang start` dashboard/MCP daemon | `bin/speclang:404` → `dist/src/daemon/index.js` | yes (HTTP) | is the dashboard up, is the watcher armed |
+| MCP HTTP server | `src/cli/commands/server.ts:42` → `MCPServer.startHTTP` (`src/mcp/server.ts:78`) | yes (HTTP, `app.listen` at `src/mcp/server.ts:233`) | serving MCP + SSE clients on the port |
+| CLI lanes (`validate`, `cascade`, `generate`) | `bin/speclang` (the four lanes `guard`, `index`, `meta`, `autonomous` are declared only in the unshipped `src/cli/index.ts` twin) | **no** — process exits | did the run succeed, how long did it take, what did it produce |
 
 **Healthy** means:
 
@@ -48,10 +48,10 @@ It has four runtime shapes, and each has a different health question:
   `// Reset depth counter` in `specs/implementation.spec.dir/src/opencode-plugin/index.ts:58`.
   There is no `counter`/`gauge`/`histogram` metric object in the codebase.
 - What *does* exist is a real HTTP surface: `MCPServer.startHTTP` builds an Express app
-  (`src/mcp/server.ts:77`) and already serves an unauthenticated health route —
+  (`src/mcp/server.ts:78`) and already serves an unauthenticated health route —
   `app.get('/health', … res.json({ status: 'ok', mode: 'http' }))` at
-  **`src/mcp/server.ts:215-217`** — then listens at `src/mcp/server.ts:219`
-  (same code at `specs/mcp.spec.dir/src/server.ts:215-219`). This is the natural host for
+  **`src/mcp/server.ts:215-217`** — then listens at `src/mcp/server.ts:233`
+  (same code at `specs/mcp.spec.dir/src/server.ts:216-233`). This is the natural host for
   `/metrics`; nothing else needs to be invented.
 
 ### The signals that exist today, and where they die
@@ -61,15 +61,15 @@ stdout, a JSON file, or a return value nobody reads**:
 
 | State that exists in code | Where it lives | Where it is lost today |
 |---|---|---|
-| daemon status, cascade depth, files-changed count, active agent count, start/last-event timestamps | `State.getStatus()` — `src/daemon/state.ts:152-166` | written to `.speclang/daemon-state.json` (`src/daemon/state.ts:23`, write at `:71`) — never scraped; the file on this host has read `"status": "cascading"` since 2026-10-27 while `cascadeDepth` is 0 |
-| convergence status: files changed, current depth, time remaining in the quiet period | `ConvergenceDetector.getStatus()` — `src/daemon/convergence.ts:88-104` | not exposed outside the daemon; checked on a 1 s timer (`:149`) and thrown to `console.log` |
-| per-cascade duration + files changed | `ConvergenceDetector.getConvergenceResult()` — `src/daemon/convergence.ts:107-125` | one `console.log` line (`[Convergence] Cascade complete! …`) going to `.speclang/speclangd.log`, which does not exist on this host |
-| pipeline result: `success`, `duration`, per-stage `StageResult[]`, `recoveryAttempts` | `PipelineExecutor.execute()` — `src/pipeline/executor.ts:37`, result built at `:184-193` (success) and `:227-237` (failure) | consumed at `src/daemon/daemon.ts:309-330`, which only `console.log`s `[Daemon] Pipeline succeeded!` / `console.error`s the failure |
-| stage failures with timings | `emitEvent('stage_fail', …)` (`src/pipeline/executor.ts:130-131`) | emitted into an `EventEmitter` with no metrics listener |
-| per-recovery-attempt failure records (`stage`, `attempt`, error name/message/stack) | `RecoveryExecutor.logError()` — `src/pipeline/recovery.ts:242-270`, dir `.speclang/errors` (`src/pipeline/executor.ts:30`) | one JSON file per failure, never read back. **680 files / 2.8 MB** on this host, oldest `error-2026-07-12T13-49-48-715Z.json` |
-| per-agent invocation duration + success | `AgentInvoker.invoke()` returns `duration_ms` (`src/cascade/coordinator/invocation.ts:118`, `:128`) | return value only |
-| per-cascade token totals + per-phase token breakdown | `CascadeCoordinator.collateMetrics()` — `src/cascade/coordinator/index.ts:475-506` | only surfaced when `--metrics` is passed *and* verbose (`src/cascade/index.ts:118-134`) — printed, never stored |
-| generated file paths per cascade | `CascadeResult.filesGenerated` (`src/cascade/index.ts:26`) and `fs.writeFileSync` at `src/cascade/index.ts:404`, `:438` | return value |
+| daemon status, cascade depth, files-changed count, active agent count, start/last-event timestamps | `State.getStatus()` — `src/daemon/state.ts:154-164` | written to `.speclang/daemon-state.json` (`src/daemon/state.ts:23`, write at `:71`) — never scraped; the file on this host has read `"status": "cascading"` since 2026-10-27 while `cascadeDepth` is 0 |
+| convergence status: files changed, current depth, time remaining in the quiet period | `ConvergenceDetector.getStatus()` — `src/daemon/convergence.ts:242-263` | not exposed outside the daemon; checked on a 1 s timer (`:334`) and thrown to `console.log` |
+| per-cascade duration + files changed | `ConvergenceDetector.getConvergenceResult()` — `src/daemon/convergence.ts:278-304` | one `console.log` line (`[Convergence] Cascade complete! …`) going to `.speclang/speclangd.log`, which does not exist on this host |
+| pipeline result: `success`, `duration`, per-stage `StageResult[]`, `recoveryAttempts` | `PipelineExecutor.execute()` — `src/pipeline/executor.ts:38`, result built at `:213-221` (success) and `:257-266` (failure) | consumed at `src/daemon/daemon.ts:451-467`, which only `console.log`s `[Daemon] Pipeline succeeded!` / `console.error`s the failure |
+| stage failures with timings | `emitEvent('stage_fail', …)` (`src/pipeline/executor.ts:163`) | emitted into an `EventEmitter` with no metrics listener |
+| per-recovery-attempt failure records (`stage`, `attempt`, error name/message/stack) | `RecoveryExecutor.logError()` — `src/pipeline/recovery.ts:254-284`, dir `.speclang/errors` (`src/pipeline/executor.ts:31`) | one JSON file per failure, never read back. **680 files / 2.8 MB** on this host, oldest `error-2026-07-12T13-49-48-715Z.json` |
+| per-agent invocation duration + success | `AgentInvoker.invoke()` returns `duration_ms` (`src/cascade/coordinator/invocation.ts:143`, `:163`) | return value only |
+| per-cascade token totals + per-phase token breakdown | `CascadeCoordinator.collateMetrics()` — `src/cascade/coordinator/index.ts:616-656` | only surfaced when `--metrics` is passed *and* verbose (`src/cascade/index.ts:121-140`) — printed, never stored |
+| generated file paths per cascade | `CascadeResult.filesGenerated` (`src/cascade/index.ts:29`) and `fs.writeFileSync` at `src/cascade/index.ts:420`, `:454` | return value |
 | validation pass/fail counts by rule and level | `ValidationResult { rule, level: 'error' | 'warning', location }` — `src/validation/types.ts:28-41`; summary in `src/validation/reporter.ts:91-99` | printed to stdout of an exiting CLI |
 | guard blocks/violations per agent role | `WriteInterceptor.stats` (`src/guard/interceptor.ts:47-59`, `:99-108`), exported by `getGuardStats()` (`src/guard/index.ts:116-118`) | in-memory only, lost when the process exits |
 | lock contention / deadlocks | `src/daemon/locks.ts` (300 lines), `src/daemon/deadlock.ts` (195 lines) | `console.*` only |
@@ -79,11 +79,12 @@ stdout, a JSON file, or a return value nobody reads**:
 1. *Is the daemon alive and armed?* The only witness is a JSON file that can say
    `"status": "cascading"` forever (proven above); no timestamp an alert can compare to
    now, no metric.
-2. *Is work happening?* Cascades-started vs cascades-converged exist as in-memory
-   counters (`convergence.ts:39-45`), reset on every `reset()` (`:135-141`) — the ratio
-   that shows a wedged convergence loop is never exported.
+2. *Is work happening?* Cascade-started vs cascade-settled exist only as in-memory
+   per-cascade state — start timestamp, depth counter, converged/pending flags
+   (`convergence.ts:39-75`), reset on every `reset()` (`:315-328`) — the ratio that
+   shows a wedged convergence loop is never exported.
 3. *How long does a compile take?* `PipelineResult.duration` is computed
-   (`executor.ts:37`, `:183-190`) and thrown away.
+   (`executor.ts:38`, `:216`) and thrown away.
 4. *Why did it fail?* Failures become one JSON file per event with no aggregate; nobody
    can answer "which stage failed 40 times this week" without `grep`-ing 680 files.
 5. *Did the compiler actually produce anything?* Generated files are counted nowhere.
@@ -169,9 +170,9 @@ that matches the fleet convention for Node services). Do **not** hand-roll a tex
    ```
 
    Register it **before** the auth middleware if auth is enabled for `/mcp` only — the
-   existing middleware is scoped to `/mcp` (`src/mcp/server.ts:87-89`), so `/metrics` is
+   existing middleware is scoped to `/mcp` (`src/mcp/server.ts:89-91`), so `/metrics` is
    unauthenticated by default; keep it that way but bind the listener to loopback (the
-   `app.listen(httpPort, …)` call at `src/mcp/server.ts:219` takes no host today) **and**
+   `app.listen(httpPort, …)` call at `src/mcp/server.ts:233` takes no host today) **and**
    add a CIDR allow-list or a bearer token check if the port is ever exposed off-host.
    A metrics endpoint that leaks nothing but volumes is still an attack surface: it is a
    free reconnaissance oracle.
@@ -182,11 +183,13 @@ that matches the fleet convention for Node services). Do **not** hand-roll a tex
    cascade/pipeline outcomes to the same **textfile collector** path described in (3), and
    (b) expose `speclang_daemon_up` / `…_status` / `…_last_event_timestamp_seconds` by
    writing a `daemon.prom` textfile on every state change (`State.save()`,
-   `src/daemon/state.ts:66-76`). A scrape target on a second port is the *later*,
+   `src/daemon/state.ts:68-78`). A scrape target on a second port is the *later*,
    optional upgrade — it must not block Tier 1.
 
-3. **CLI lanes (`validate`, `cascade`, `generate`, `guard`, `index`, `meta`,
-   `autonomous`) exit.** A scrape can never see them. The correct mechanism is a
+3. **CLI lanes (`validate`, `cascade`, `generate`) exit.** The shipped entry is
+   `bin/speclang`; `guard`, `index`, `meta` and `autonomous` are declared only in
+   the unshipped `src/cli/index.ts` twin, which nothing imports. A scrape can
+   never see them. The correct mechanism is a
    **completion record**: on exit, the CLI writes
    `/var/lib/node_exporter/textfile/speclang-cli-<lane>.prom` with
    `speclang_validation_runs_total{lane="ci"} N` style lines (counters accumulate by
@@ -194,7 +197,7 @@ that matches the fleet convention for Node services). Do **not** hand-roll a tex
    Prefer the textfile if node_exporter textfile collector is already on `fleet-monitor`;
    prefer pushgateway if not.
 
-4. **Dashboard daemon** (`specs/daemon.spec.dir/src/index.ts:76`, `:100`) already has
+4. **Dashboard daemon** (`specs/daemon.spec.dir/src/index.ts:121`, `:126`) already has
    `/health` and `/api/status`; add `/metrics` on the same app, reusing the same registry
    factory so the metric definitions have exactly one home.
 
@@ -281,7 +284,7 @@ scrape interval.
 - **No token cost in the metric namespace until the tokens are actually produced** —
   `collateMetrics()` is only populated on the agent path, so `agent_tokens_total` is
   Tier 2, gated on the agent path being live (today the template cascade path reports
-  zeros by design, `src/cascade/index.ts:121-124`).
+  zeros by design, `src/cascade/index.ts:128-130`).
 - **No metrics from the `poc-*` daemon files** (`src/daemon/poc-*.ts`) — proof-of-concept
   code, not the shipped path (`bin/speclangd` loads `dist/src/daemon/daemon.js`).
 
@@ -297,7 +300,7 @@ scrape interval.
   and is **not** in `tsconfig.json` `include` (only `specs/mcp.spec.dir/src/**` is),
   so the freshness of that build artifact is unverified.
 - The MCP HTTP server's default port collides with the documented dashboard default
-  (3000 in both `src/mcp/server.ts` config and `bin/speclang:31`); whichever listener
+  (3000 in both `src/mcp/server.ts` config and `bin/speclang:382`); whichever listener
   wins decides which service `/metrics` belongs to. A worker must pick the port
   deliberately.
 
