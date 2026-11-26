@@ -2,6 +2,8 @@
 
 Field-test records for SpecLang. Each entry: date, verdict, promise, top findings, time-to-first-success.
 
+2026-11-26 | tick speclang-dogfood-2026-11-26-18-28-56 | tested origin/main 0df67095 | local clean clone: npm ci, npm run build, hello-world validate and cascade succeeded; generated TypeScript executed and printed Hello, SpecLang! | node bin/speclang validate specs/examples.spec.dir/hello-world.spec.md: first-observed 0.16s, warm 0.10s and 0.10s, loadavg 10.46/8.75/8.35; cold cache not established; no user-noticeable slowdown on this small input, no PERF row | bunker install ATTEMPTED, NOT VERIFIED: mvp preflight 98% and las-03 95% exceeded 94% limit; las-02 agent a2250ce2 synced source but qa-run.sh terminated before cells because it cd-s into qa-SpecLang while sync created qa-speclang, same existing pending DF-SPECLANG-028; 15 cells not collected, no install PASS; agent destroyed, info says not found and fresh list excludes it | no board or product code changes; DuckBrain read failed due to lost MCP subprocess.
+
 ---
 
 ## 2026-08-13 — 🟡 PROMISING-BUT-ROUGH
