@@ -660,3 +660,4 @@
 {"id":662,"timestamp":"2026-11-26 14:49:58.390863","event_type":"task_completed","task_id":"JUDGE-1","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":663,"timestamp":"2026-11-26 15:19:27.374832","event_type":"task_completed","task_id":"REV-001","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":664,"timestamp":"2026-11-26 22:30:36.716035","event_type":"task_created","task_id":"CLN-005","actor":"foreman","detail":"{\"id\":\"CLN-005\",\"status\":\"pending\"}","tick_number":null}
+{"id":665,"timestamp":"2026-11-26 22:33:46.651489","event_type":"task_updated","task_id":"CLN-005","actor":"foreman","detail":"{\"title\":\"Investigate SpecLang worktree residue and reproducibility before safe cleanup\"}","tick_number":null}
