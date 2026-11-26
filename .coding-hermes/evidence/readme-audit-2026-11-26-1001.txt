@@ -1,0 +1,144 @@
+SpecLang README-lane audit transcript
+tick: SpecLang-readme-2026-11-26-10-01-03
+date: 2026-11-26 05:11 -05
+
+ARM: git identity
+HEAD 12d2ccc8 ; origin/main 12d2ccc8 ; remote https://github.com/dexdat/SpecLang.git
+probe_tip: 12d2ccc834af194328507540a73f2be37ec4470f
+
+ARM: README-moved check (blob equality vs last full sweep 221036af)
+README blob UNCHANGED (103e311a84fb19b23818a4cd13baecb6def08840) — prior battery transcript still describes the document
+
+ARM: boardctl validate (baseline)
+[warn] tasks.jsonl line 188 (task QA-SPECLANG-011): key(s) {worker_seat} outside the declared canon
+[warn] tasks.jsonl line 205 (task INT-CI-004): key(s) {worker_seat} outside the declared canon
+RESULT: OK (164 warning(s))
+
+ARM: boardctl ready (selection census)
+total_ready=0; blocked=CLN-1,QA-SPECLANG-5-R4,QA-SPECLANG-3-R5,QA-SPECLANG-4-R5,DF-SPECLANG-10,QA-SPECLANG-007,QA-SPECLANG-008,RELEASE-003,RELEASE-001,CFG-SPECLANG-1,OBS-5,JUDGE-1,DF-SPECLANG-023,DF-SPECLANG-025,DF-SPECLANG-028,QA-SPECLANG-012-R2,DOC-026
+
+ARM: python3 scripts/validate_refs.py
+rc=0
+All references valid.
+
+ARM: python3 scripts/generate_index.py --validate
+rc=0
+  - @demo/hello
+  - @demo/hello-dir
+  - @examples/greeting
+  - @examples/greeting-dir
+
+ARM: npm run audit:docs
+rc=0
+  commands:     20 from --help, 21 names in the table
+  skipped:      help (framework built-in)
+  note:         alias compile (documented via build)
+OK: every command from --help is documented in docs/API_REFERENCE.md
+
+ARM: npm run audit:specdir
+rc=0
+  accepted specs/validation.spec.dir/src/refs.js:9  ../types
+      no module of that name in either form
+      why: dead require inside an unimported artifact: the spec-dir source imports ../types from a directory where nothing of that name exists (the siblings live in src/), the compiled layer only mirrors that dead edge, and no tracked file imports this artifact
+  ok: 559 resolve in the spec-dir tree, 41 accepted in scripts/specdir-requires-baseline.json, 0 failing, 0 stale baseline entries
+
+ARM: npm run check:specdir-parity
+rc=0
+npm notice run node scripts/check-specdir-parity.mjs
+check-specdir-parity: 1 guard-bearing module(s) (state-DB opener / corruption diagnostic)
+  freshness (report only): in sync
+  ok: 1/1 guard modules match their source's value exports; freshness clean
+
+ARM: npx tsc --noEmit
+rc=0
+npm notice run speclang@1.0.0 npx
+npm notice run 'tsc' --noEmit
+
+ARM: python3 scripts/check_compliance.py --report
+rc=0
+
+## Compliant Files (Working)
+✅ 606 files following dual-view pattern
+
+
+ARM: python3 /home/<uid>/.hermes/skills/coding-hermes/coding-hermes-readme/scripts/check-md-anchors.py README.md
+rc=0
+anchors_checked=5 broken=0
+
+ARM: python3 /home/<uid>/.hermes/skills/coding-hermes/coding-hermes-readme/scripts/readme-link-check.py /home/<uid>/SpecLang
+rc=0
+line 809 OK      evidence/readme-25-2026-11-18/transcript.md
+line 893 OK      evidence/readme-25-2026-11-18/transcript.md
+line 42 200 https://github.com/WiseLibs/better-sqlite3  <- https://github.com/WiseLibs/better-sqlite3
+local_missing=0 external_non_200=0
+
+ARM: python3 /home/<uid>/.hermes/skills/coding-hermes/coding-hermes-readme/scripts/readme-structure-census.py README.md --cli-name speclang
+rc=0
+
+== documented commands ==
+table_rows=49 distinct=49
+documented_more_than_once={}
+
+ARM: README command table vs node bin/speclang --help
+help rc=0
+help commands: 27; missing from README: bootstrap
+build
+check
+daemon
+dashboard
+directory
+downgrade
+expand
+help
+init
+integration
+maturity
+new
+provider-aware
+search
+spec
+specs
+status
+stop
+upgrade
+
+ARM: npm test
+rc=0
+ Test Files  134 passed | 4 skipped (138)
+      Tests  2126 passed | 58 skipped (2184)
+
+ARM: freshness boundary
+README last commit 8a66aab8 2026-11-25 07:28:24 -0500
+package.json version: 1.0.0
+newest tag: v1.0.0
+CHANGELOG top: ## [Unreleased]
+GitHub releases: 0
+
+ARM: public-posture scan (whole tracked tree)
+origin/main:.agents/skills/completeness-validator/references/anti-patterns.md:246:grep -r "/Users/\|/home/\|C:\\" --include="*.js" --include="*.ts" --include="*.py" .
+origin/main:.github/ISSUE_TEMPLATE/bug_report.yml:41:        /home/you/projects/my-specs
+origin/main:.memory-bank/work-items/WI-SL-012.md:123:cd /home/<uid>/SpecLang && npx vitest run tests/cli.test.ts 2>&1 | tail -5
+origin/main:.memory-bank/work-items/WI-SL-015.md:58:cd /home/<uid>/SpecLang && npx vitest run tests/upgrade.test.ts tests/transition/upgrade.test.ts tests/transition-registry.test.ts
+origin/main:docs/dogfood/2026-08-13-integration.md:12:cd /home/<uid>/speclang
+home-path hits (excl .coding-hermes): 26
+origin/main:.gitleaks.toml:3:# CI-005: explicit rules for sk-/ghp_ prefixed secrets.
+origin/main:.gitleaks.toml:16:description = "Catch ghp_ prefixed GitHub tokens"
+origin/main:.gitleaks.toml:17:regex = '''\bghp_[a-zA-Z0-9]{30,}'''
+secret-pattern hits: 6
+
+ARM: CI health (mandatory)
+success 2026-11-26T06:11:55Z board: speclang-qa-2026-11-26-05-00-43 annotate DF-SPECLANG-
+success 2026-11-26T01:23:26Z chore(board): readme-lane audit event SpecLang-readme-2026-1
+success 2026-11-25T22:18:00Z board: DOC-029 repoint to graded tip 5c462716 + gitreins tas
+
+AUDIT COMPLETE
+
+ARM (rerun, corrected): README command table vs --help — first-token extraction, 21 command names, zero missing from README table. The earlier "20 missing" line in this transcript was a probe artifact of a crude prose-mention regex (speclang X), not a finding; corrected in-place during the same sweep.
+
+ARM: public-posture classification and filing
+Real /home/<uid> paths (12 files outside evidence/): docs/OPERATIONS.md x6 lines + compiled mirror specs/docs.spec.dir/docs/OPERATIONS.md x6, docs/dogfood/2026-08-13-integration.md x2, docs/npm12-allowscripts-probe.md x1, docs/observability-spec.md x1, docs/observability/index-baseline-2026-11-20.md x4, docs/traceability-doctrine.md x3, .memory-bank/work-items/WI-SL-012.md x1 + WI-SL-015.md x1, scripts/archive/fix-yaml-headers.py x1.
+Legitimate placeholders left alone: bug_report.yml /home/you/..., CONFIGURATION.md HOME=/home/<your-user>, anti-patterns.md grep example, /home/runner CI paths, .gitleaks.toml comments.
+FILED: DOC-030 (P4 chore) — sanitize the 12 correctable files + add a fail-closed path gate; evidence/** and commit messages out of scope (no history rewrite).
+This artifact was itself sanitized (/home/<uid> substitution) before commit so the sweep does not re-leak what it reports.
+
+RESULT: all executed arms green; ONE new finding filed (DOC-030); no worker dispatched (audit lane, 0 ready code rows).
