@@ -3,7 +3,7 @@
 Baseline measurement for `speclang index` over this repository's own `specs/` tree,
 plus what the same run records for agent-path token accounting.
 
-Worktree: `/home/kara/worktrees/speclang-OBS-6`, branch `wt/OBS-6`, base commit
+Worktree: `/home/<user>/worktrees/speclang-OBS-6`, branch `wt/OBS-6`, base commit
 `e6e6806e` (= `origin/main` at run time). Node deps installed with
 `npm ci --no-audit --no-fund`, build via `npm run build` (`tsc`, exit 0).
 
@@ -121,7 +121,7 @@ number to compare against.
 ### 4.1 The row's literal command — fails
 
 ```
-$ cd /home/kara/worktrees/speclang-OBS-6
+$ cd /home/<user>/worktrees/speclang-OBS-6
 $ node bin/speclang index
 error: unknown command 'index'
 EXIT=1
@@ -141,7 +141,7 @@ CLI entry point (`src/cli/index.ts:163`), which is excluded from `tsc`
 $ npx ts-node src/cli/index.ts index
 Error: Cannot find module './commands/maturity.js'
 Require stack:
-- /home/kara/worktrees/speclang-OBS-6/specs/cli.spec.dir/src/index.ts
+- /home/<user>/worktrees/speclang-OBS-6/specs/cli.spec.dir/src/index.ts
 EXIT=1
 ```
 
@@ -242,7 +242,7 @@ $ find specs -type f \( -name '*.scl' -o -name '*.spec.md' -o -name '*.spec.yaml
 ## 7. How to reproduce
 
 ```
-cd /home/kara/worktrees/speclang-OBS-6
+cd /home/<user>/worktrees/speclang-OBS-6
 npm ci --no-audit --no-fund          # better-sqlite3 native binding required
 npm run build                         # tsc, exit 0
 node specs/cli.spec.dir/src/index.js index --json

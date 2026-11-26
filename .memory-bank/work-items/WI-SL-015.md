@@ -55,7 +55,7 @@ The implementation in `specs/transition-workflows.spec.dir/src/upgrade/` uses a 
 ## Verification
 
 ```bash
-cd /home/kara/SpecLang && npx vitest run tests/upgrade.test.ts tests/transition/upgrade.test.ts tests/transition-registry.test.ts
+cd /home/<user>/SpecLang && npx vitest run tests/upgrade.test.ts tests/transition/upgrade.test.ts tests/transition-registry.test.ts
 # All 62+ tests must pass
 ```
 

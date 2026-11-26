@@ -120,7 +120,7 @@ program
 
 ## Verification
 ```bash
-cd /home/kara/SpecLang && npx vitest run tests/cli.test.ts 2>&1 | tail -5
+cd /home/<user>/SpecLang && npx vitest run tests/cli.test.ts 2>&1 | tail -5
 # Expected: 40 passed | 0 skipped (40) — ALL 6 previously skipped tests passing
 ```
 
