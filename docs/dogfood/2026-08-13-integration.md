@@ -9,7 +9,7 @@ SpecLang is a spec-driven code-generation toolchain. You write markdown specs wi
 The hello-world example that works end-to-end:
 
 ```bash
-cd /home/kara/speclang
+cd /home/<user>/speclang
 ./bin/speclang cascade specs/examples.spec.dir/hello-world.spec.md
 # ✅ Cascade complete — Generated: 1 files — Converged: Yes
 # → specs/generated/hello/function.ts (gitignored, correct TS with provenance header)
@@ -32,7 +32,7 @@ cd /home/kara/speclang
 
 ## 3. Library Integration (the "aha" once it works)
 
-Real consumer created at `/tmp/dogfood-lib-consumer` (`npm install speclang@file:/home/kara/speclang`). Working recipe:
+Real consumer created at `/tmp/dogfood-lib-consumer` (`npm install speclang@file:/home/<user>/speclang`). Working recipe:
 
 ```js
 import { parseSpec, validate, runCascade, createDatabase } from 'speclang';

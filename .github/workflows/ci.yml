@@ -143,6 +143,16 @@ jobs:
           npm run audit:specdir
           npm run check:specdir-parity
 
+      - name: "Posture gate: no real host home paths in tracked files"
+        # DOC-030: shipped docs/scripts must not leak the machine they were
+        # written on (a real host home path such as the author's own
+        # /home/<name>/…). scripts/check_home_paths.mjs scans
+        # the index (fail-closed) for /home/<component>/ paths outside the
+        # preserved evidence/ corpus and allowlists only explicit placeholders
+        # (/home/<user>, /home/you) and the CI path (/home/runner). Exit 1
+        # lists the offending file:line; exit 2 (git error) also blocks.
+        run: npm run audit:home-paths
+
       - name: "Docs gates: dual-view links + CLI table parity"
         # Two repo-owned documentation gates, both already green at HEAD and
         # both blocking — before this step existed CI simply never ran them,

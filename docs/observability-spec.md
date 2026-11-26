@@ -37,7 +37,7 @@ It has four runtime shapes, and each has a different health question:
 - No Prometheus/OpenMetrics client library anywhere in shipped source.
   `grep -rIn -E "prom-client|prometheus_client|prometheus-fastapi|promhttp|client_golang" src specs scripts bin index.ts`
   (excluding `node_modules`) returns **zero** hits — run 2026-11-03, probe script
-  `/home/kara/.hermes/cache/scratch/obs-speclang-probe.sh` section 1.
+  `/home/<user>/.hermes/cache/scratch/obs-speclang-probe.sh` section 1.
   `package.json` dependencies list `express`, `commander`, `better-sqlite3`, `chokidar`,
   `glob`, `simple-git`, `yaml`, `@modelcontextprotocol/sdk`, `fs-extra` — no metrics client.
 - No `/metrics` route. The only literal match in the tree is a *dashboard mock*,

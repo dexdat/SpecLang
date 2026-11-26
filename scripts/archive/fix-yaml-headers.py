@@ -15,7 +15,7 @@ import re
 import sys
 from pathlib import Path
 
-SPECS_DIR = Path("/home/kara/SpecLang/specs")
+SPECS_DIR = Path(os.environ.get("SPECLANG_ROOT", os.getcwd())) / "specs"
 DRY_RUN = "--dry-run" in sys.argv
 
 # Fields that can have YAML list values

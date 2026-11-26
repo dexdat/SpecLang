@@ -91,7 +91,7 @@ Each field is defined once, with the artifact that holds it in this repository.
   forms live under `.coding-hermes/evidence/`: a flat per-row artifact
   (`DF-SPECLANG-7-closeout-2026-11-17.json`) and a per-tick directory
   (`speclang-releng-2026-11-16-11-07-39/`); lane artifacts may also sit outside
-  the repository (`/home/kara/.hermes/stand-in/…/audit-….transcript.log`). On
+  the repository (`/home/<user>/.hermes/stand-in/…/audit-….transcript.log`). On
   the row, bound runs live in `detail.evidence[]` as
   `{ "run_id": "<8 hex>", "ts": "<ISO-8601>" }`; audit events may additionally
   carry `artifact_sha256`.
@@ -135,7 +135,7 @@ and closed by a board commit.
 The marker as written at open (`foreman_note`):
 
 ```
-ch:trace row=DOC-7 spec=none:repository-contract-absent wave=none:serial-audit test=none:open-finding doc=docs/API_REFERENCE.md prompt=/home/kara/.hermes/skills/documentation/documentation-auditing/SKILL.md evidence=/home/kara/.hermes/stand-in/docs/speclang/docs-audit-2026-11-16-05-02-33.transcript.log witness=none:static-source-versus-doc-audit verdict=none:open-finding commit=none:open memory=none:exact-key-not-found
+ch:trace row=DOC-7 spec=none:repository-contract-absent wave=none:serial-audit test=none:open-finding doc=docs/API_REFERENCE.md prompt=/home/<user>/.hermes/skills/documentation/documentation-auditing/SKILL.md evidence=/home/<user>/.hermes/stand-in/docs/speclang/docs-audit-2026-11-16-05-02-33.transcript.log witness=none:static-source-versus-doc-audit verdict=none:open-finding commit=none:open memory=none:exact-key-not-found
 ```
 
 The same trace resolved at close 2026-11-17 (each value verified below):
@@ -245,7 +245,7 @@ gitreins report -n 20                # recent verdicts, disk + ref
 Read the numbers as of 2026-11-17 at `33912948`: `boardctl doctor` reports
 `verified_complete_share: 0.2911 (23/79)` — 56 complete rows carry no evidence
 run — and `gitreins report -n 3` reports
-`Storage: git (/home/kara/worktrees/SpecLang-DOC-6/.gitreins/history)` /
+`Storage: git (/home/<user>/worktrees/SpecLang-DOC-6/.gitreins/history)` /
 `Total entries: 21`. Those two numbers are the real state of traceability here;
 anything rosier is prose. Note that `.gitreins/history/` does not exist in a
 fresh worktree at all (it is gitignored): the ref, not the directory, is the

@@ -16,7 +16,7 @@ Two notes about how the evidence was produced:
 
 - The worktree used for verification has no `node_modules/` or `dist/` (a git worktree
   never does), so the live probes ran the *same* sources through the built checkout at
-  `/home/kara/speclang`: `bin/speclang`, `src/daemon/index.ts`,
+  `/home/<user>/speclang`: `bin/speclang`, `src/daemon/index.ts`,
   `src/daemon/daemon-cli.ts`, `src/daemon/config.ts` and `package.json` were checksum-
   identical to this tree before the probes ran.
 - Port `3000` was already held by an unrelated Node process on the verifying host, so the
@@ -116,12 +116,12 @@ speclang start -p 18777
 
 ```
 🚀 Starting SpecLang...
-   Directory: /home/kara/.hermes/cache/scratch/doc3-sandbox
+   Directory: /home/<user>/.hermes/cache/scratch/doc3-sandbox
    Dashboard: http://localhost:18777
 
 🚀 SpecLang Daemon Starting...
 
-   Project: /home/kara/.hermes/cache/scratch/doc3-sandbox
+   Project: /home/<user>/.hermes/cache/scratch/doc3-sandbox
    Port: 18777
 [Daemon] Starting speclangd...
 [Watcher] Started watching: specs/, tests/, generated/
@@ -166,7 +166,7 @@ Full `speclang status` when down:
 ```
 $ speclang status -d .
 📊 SpecLang Status
-   Project: /home/kara/.hermes/cache/scratch/doc3-sandbox
+   Project: /home/<user>/.hermes/cache/scratch/doc3-sandbox
    Daemon: Not running
    Specs: 0 (0 .spec.md + 0 .scl)
    Generated files: 0
@@ -277,12 +277,12 @@ abort path, so `.speclang/` ends up empty:
 
 ```
 🚀 Starting SpecLang...
-   Directory: /home/kara/.hermes/cache/scratch/doc18-sandbox
+   Directory: /home/<user>/.hermes/cache/scratch/doc18-sandbox
    Dashboard: binding port 39871...
 
 🚀 SpecLang Daemon Starting...
 
-   Project: /home/kara/.hermes/cache/scratch/doc18-sandbox
+   Project: /home/<user>/.hermes/cache/scratch/doc18-sandbox
    Port: 39871
 
 ❌ Dashboard port 39871 could not be bound (EADDRINUSE: listen EADDRINUSE: address already in use :::39871)

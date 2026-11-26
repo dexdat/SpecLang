@@ -7,7 +7,7 @@ the README now spells out.
 
 | Item | Value |
 | --- | --- |
-| npm | 12.2.2 (`/home/kara/.local/share/vite-plus/package_manager/npm/12.2.2/npm/bin/npm-cli.js`) |
+| npm | 12.2.2 (`/home/<user>/.local/share/vite-plus/package_manager/npm/12.2.2/npm/bin/npm-cli.js`) |
 | node | v22.22.3 |
 | better-sqlite3 | 12.11.1 (same major as this repo's `^12.11.1` pin) |
 | OS | Linux x64 |
