@@ -655,3 +655,4 @@
 {"id":657,"timestamp":"2026-11-26 10:24:45.739020","event_type":"task_completed","task_id":"CLN-1","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
 {"id":658,"timestamp":"2026-11-26 10:41:53.378364","event_type":"task_updated","task_id":"DOC-030","actor":"foreman","detail":"{\"status\":\"in_progress\"}","tick_number":null}
 {"id":659,"timestamp":"2026-11-26 11:40:02.020886","event_type":"task_completed","task_id":"DOC-030","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":660,"timestamp":"2026-11-26 14:15:29.529775","event_type":"task_created","task_id":"REV-001","actor":"foreman","detail":"{\"id\":\"REV-001\",\"status\":\"pending\"}","tick_number":null}
