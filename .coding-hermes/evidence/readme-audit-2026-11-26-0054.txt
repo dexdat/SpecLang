@@ -1,0 +1,40 @@
+SpecLang README-lane audit transcript
+tick: SpecLang-readme-2026-11-26-00-54-44
+probe_tip: 221036af91328b151a6a992826338c1003763835 (HEAD == origin/main, verified labelled)
+workdir: /home/kara/SpecLang
+date: 2026-11-26 (UTC-05)
+result: all executed arms green; zero new findings; filed_rows: 0
+This artifact is deliberately free of trace-marker tokens (census-safe).
+
+ARM: git identity
+HEAD 221036af ; origin/main 221036af ; remote origin https://github.com/dexdat/SpecLang.git ; default branch main (ls-remote --symref)
+
+ARM: boardctl validate (baseline)
+RESULT: OK (164 warning(s)) — pre-existing classes: priority "high" off-vocabulary (OBS-8, EVID-1 et al), worker_seat outside canon; matches PM tick SpecLang-pm-2026-11-26-00-54-44 reading.
+
+ARM: boardctl ready (selection census)
+total_ready=0; 17 remaining rows all deferred (16) or deps-blocked (DF-SPECLANG-025 on deferred DF-SPECLANG-023); NEVER-DONE pending by design. Nothing dispatchable; WAVE_BUDGET=1 moot.
+
+ARM: python3 scripts/validate_refs.py  -> rc=0 ("All references valid.")
+ARM: python3 scripts/generate_index.py --validate  -> rc=0 (fail-closed live-graph check; the README re-measured block's claim re-verified at this tip)
+ARM: npm run audit:docs  -> rc=0 (dual-view link gate + CLI table parity: "20 from --help, 21 names in the table; OK: every command from --help is documented in docs/API_REFERENCE.md")
+ARM: npm run audit:specdir  -> rc=0 ("ok: 559 resolve in the spec-dir tree, 41 accepted in scripts/specdir-requires-baseline.json, 0 failing, 0 stale baseline entries")
+ARM: npm run check:specdir-parity  -> rc=0 ("ok: 1/1 guard modules match their source's value exports; freshness clean")
+ARM: npx tsc --noEmit  -> rc=0
+ARM: python3 scripts/check_compliance.py --report  -> rc=0 (documented authoritative invocation). Counts: 606 compliant / 0 partial / 13 non-compliant / 210 exempt / 619 non-exempt total. The 13: scripts/archive/{test_compliance,convert_to_symlinks,debug_symlink,fix-yaml-headers,test_symlink}.py + docs/{npm12-allowscripts-probe,AGENT_DRIVER,traceability-doctrine,specdir-compiled-layer,observability-spec,gitreins-verdicts,RELEASE-TAGS}.md + docs/observability/index-baseline-2026-11-20.md. Standing set; README makes no numeric compliance claim (defers to --report), so no drift.
+  NOTE: bare `check_compliance.py` (no --report) exits 1 over the same standing 13 — not the documented invocation; not a defect.
+ARM: check-md-anchors.py README.md  -> rc=0 (anchors_checked=5 broken=0)
+ARM: readme-link-check.py /home/kara/SpecLang  -> rc=0 (local_missing=0 external_non_200=0)
+ARM: readme-structure-census.py README.md --cli-name speclang  -> rc=0 (43432 bytes/893 lines; 49 distinct documented commands, zero duplicated; H2-vs-TOC "every heading NO-TOC" is the script's own declared parser artifact — README has no contents block by design)
+ARM: README command table vs `node bin/speclang --help` (help rc=0, 21 command lines): zero commands in --help missing from the README table (comm -23 empty). Reverse set = prose mentions (agent/provider/test-dir tokens), probe artifact of crude extraction, not a finding.
+ARM: npm test  -> rc=0 : Test Files 134 passed | 4 skipped (138); Tests 2126 passed | 58 skipped (2184). (pretest build included; posttest tmp reap ran.)
+ARM: freshness boundary: README last commit 8a66aab8 2026-11-25; package.json version 1.0.0 == newest tag v1.0.0; CHANGELOG top = [Unreleased] (honest); zero GitHub Release objects (tags only) — README install section teaches source install and warns against the unrelated npm package, so no reader-facing release-asset defect.
+ARM: install-leg delta analysis: 151254c9..HEAD changed package.json/package-lock.json/scripts/postinstall-lint-deps.sh/bin/speclang (RELEASE-004 npm-audit work). Local scratch stranger-install (clone+npm ci+build+help) was BLOCKED by the unattended lifecycle guard (scan budget exhausted) — per doctrine not re-attempted this fire: UNVERIFIED locally. Independent witness at the EXACT tip: CI job "Build, test, and guard" on a clean runner runs npm ci -> check:sqlite-binding -> npm run build -> audit:docs -> npm test; run at 2026-11-25T22:18:00Z on 221036af concluded SUCCESS.
+
+ARM: CI health (mandatory): gh run list --repo dexdat/SpecLang --limit 3 -> 3/3 conclusion=success on main (22:18:00Z, 22:08:39Z, 21:48:18Z 2026-11-25). Nothing to flag.
+
+CARRY-OVERS FROM PRIOR README TICK (2026-11-25T10:24:51Z handoff), both discharged:
+C1 (README:423-429 stale failure-only block) -> already filed and closed as DOC-027; README now carries "Re-measured at the current tip (2026-11-25) — both reference checks are green" and this sweep re-verified both commands rc=0.
+C2 (dispose DOC-16 as refuted) -> DOC-16 and DOC-16-R2 both complete on the board.
+
+UNVERIFIED: local scratch stranger-install leg (lifecycle-guard block; CI at exact tip covers the class).
