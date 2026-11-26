@@ -364,6 +364,17 @@ function emptyHistoryMessage(reason) {
   return 'No history found.';
 }
 
+// REV-001: explicit spec-file inputs must never be silently dropped. Split an
+// explicitly named file list into existing/missing paths so each consuming
+// command can fail loudly naming every missing input instead of proceeding
+// with zero specs and reporting success.
+function splitExplicitSpecFiles(files, dir) {
+  const resolved = files.map(f => path.resolve(dir, f));
+  const existing = resolved.filter(f => fs.existsSync(f));
+  const missing = resolved.filter(f => !fs.existsSync(f));
+  return { existing, missing };
+}
+
 const program = new Command();
 
 program
@@ -924,8 +935,16 @@ program
       let specFiles = [];
       
       if (files.length > 0) {
-        // Use specified files
-        specFiles = files.map(f => path.resolve(options.dir, f)).filter(f => fs.existsSync(f));
+        // Use specified files — fail loudly if any explicitly named input
+        // does not exist (REV-001: silently dropping them reported success
+        // with zero files generated).
+        const { existing, missing } = splitExplicitSpecFiles(files, options.dir);
+        if (missing.length > 0) {
+          console.error('\n❌ Generation failed: missing input spec file(s):');
+          missing.forEach(m => console.error(`   - ${m}`));
+          process.exit(1);
+        }
+        specFiles = existing;
       } else {
         // Find all spec files in specs directory
         const { execSync } = require('child_process');
@@ -1109,7 +1128,15 @@ program
       try {
         let specFiles = [];
         if (files.length > 0) {
-          specFiles = files.map(f => path.resolve(options.dir, f)).filter(f => fs.existsSync(f));
+          const { existing, missing } = splitExplicitSpecFiles(files, options.dir);
+          if (missing.length > 0) {
+            result.success = false;
+            result.errors = missing.length;
+            result.errorDetails.push({ file: 'inputs', error: `Missing spec file(s): ${missing.join(', ')}` });
+            console.log(JSON.stringify(result, null, 2));
+            return;
+          }
+          specFiles = existing;
         } else {
           const { execSync } = require('child_process');
           try {
@@ -1234,7 +1261,13 @@ program
     try {
       let specFiles = [];
       if (files.length > 0) {
-        specFiles = files.map(f => path.resolve(options.dir, f)).filter(f => fs.existsSync(f));
+        const { existing, missing } = splitExplicitSpecFiles(files, options.dir);
+        if (missing.length > 0) {
+          console.error('\n❌ Build failed: missing input spec file(s):');
+          missing.forEach(m => console.error(`   - ${m}`));
+          process.exit(1);
+        }
+        specFiles = existing;
       } else {
         const { execSync } = require('child_process');
         try {
