@@ -1,10 +1,19 @@
 # Configuration
 
 This page is the canonical list of every environment variable SpecLang reads from
-`src/**/*.ts`: 26 of them. Each row gives the subsystem, the value the code falls back to
+`src/**/*.ts`: 28 of them. Each row gives the subsystem, the value the code falls back to
 when the variable is unset, a `file:line` anchor for the read, and what actually changes at
 runtime when you set it. The list is derived from source, not from intent — if a variable is
-not on this page, nothing under `src/` reads it.
+not on this page, nothing under `src/` reads it. Re-derive the number rather than trusting it:
+
+```bash
+grep -RhoE 'process\.env\.[A-Za-z_][A-Za-z0-9_]*' --include='*.ts' --exclude-dir=generated src/ \
+  | sed 's/process\.env\.//' | sort -u | wc -l
+```
+
+That prints `28` at this tip, and the three tables below hold 28 variable rows. `-R` matters:
+the files under `src/` are mode-120000 symlinks into `specs/<area>.spec.dir/`, and plain
+`grep -r` returns nothing for them.
 
 Two things this page is careful about, because they are easy to document wrongly:
 
