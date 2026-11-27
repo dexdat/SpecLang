@@ -255,8 +255,10 @@ $ ./bin/speclangd status
 🔴 Daemon: Stopped
 ```
 
-After a clean `stop`, `.speclang/` keeps `daemon-state.json`, `daemon.prom` and `locks/`; the
-pid file and the background log are removed.
+After a clean `stop`, `.speclang/` keeps `daemon-state.json`, `daemon.prom`, `locks/` and the
+background log `speclangd.log`; only the pid file is removed (`bin/speclangd:105` opens the log
+for append and the stop path at `bin/speclangd:216` removes the pid file alone). Read that
+log to see why the daemon exited.
 
 **Scenario 4: Starting a second background daemon**
 
