@@ -669,3 +669,5 @@
 {"id":671,"timestamp":"2026-11-27 00:21:18.65687","event_type":"task_created","task_id":"DOC-032","actor":"foreman","detail":"{\"id\":\"DOC-032\",\"status\":\"pending\"}","tick_number":null}
 {"id":672,"timestamp":"2026-11-27 00:22:08.582084","event_type":"task_updated","task_id":"DOC-031","actor":"foreman","detail":"{\"status\":\"pending\"}","tick_number":null}
 {"id":673,"timestamp":"2026-11-27 00:22:08.622419","event_type":"task_updated","task_id":"DOC-032","actor":"foreman","detail":"{\"status\":\"pending\"}","tick_number":null}
+{"id":674,"timestamp":"2026-11-27 00:40:27.879695","event_type":"task_completed","task_id":"DOC-031","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
+{"id":675,"timestamp":"2026-11-27 00:53:06.391791","event_type":"task_completed","task_id":"DOC-032","actor":"foreman","detail":"{\"status\":\"complete\"}","tick_number":null}
