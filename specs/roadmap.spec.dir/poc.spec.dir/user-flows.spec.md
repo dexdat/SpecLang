@@ -9,25 +9,47 @@ tags: [poc, ux, user-flows, interactions]
 
 # POC: User Interaction Flows
 
-Complete user journey and interaction flows.
+Complete user journey and interaction flows for the shipped SpecLang daemon.
+
+## Which binary this page documents
+
+The runnable daemon is **`bin/speclangd`** — the reactive watcher CLI that ships in this
+repository. Every transcript below was captured from `bin/speclangd` itself at commit
+a0688b19, in a throw-away directory, with the command shown beside it. A line of output
+appears here only if that binary printed it; nothing is illustrative.
+
+Three entry points look similar and are not interchangeable:
+
+| Entry point | What it is |
+|---|---|
+| `bin/speclangd` | The shipped daemon CLI: `start`, `stop`, `status`, `pause`, `resume`, `abort`, `trigger <file>`, `converge` |
+| `bin/speclangd-poc` | The legacy POC entry point, kept for the POC design record. This is the one that accepts `--watch <dir>` |
+| `bin/speclang` | The umbrella CLI (`speclang start`, `speclang status`, and the spec/cascade commands) |
+
+Operational detail — ports, the dashboard, pid files, the status matrix across the three
+status commands, and known failure modes — belongs to `docs/OPERATIONS.md`. This page is the
+guided tour of what a user does and sees.
 
 ## Primary User Flow
 
 ### @poc/flows/primary
 
-**The Happy Path: Create → Edit → Generate → Use**
+**The Happy Path: Create → Edit → Watch → Use**
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  1. USER INSTALLS SPECLANG                                  │
-│     $ git clone ... && npm install                          │
+│  1. USER INSTALLS AND BUILDS SPECLANG                       │
+│     $ git clone <repo> && npm install && npm run build      │
+│     The daemon loads dist/. Unbuilt, it exits 1 with:       │
+│       "SpecLang not built. Run: npm run build"              │
 └─────────────────────────────────────────────────────────────┘
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  2. USER STARTS DAEMON                                      │
 │     $ ./bin/speclangd                                       │
-│     [speclangd] ✅ Ready. Watching specs/                   │
+│     [Watcher] Started watching: specs/, tests/, generated/  │
+│     [CLI] Running in foreground. Press Ctrl+C to stop.      │
 └─────────────────────────────────────────────────────────────┘
                             │
                             ▼
@@ -39,27 +61,30 @@ Complete user journey and interaction flows.
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  4. SYSTEM DETECTS CHANGE                                   │
-│     [speclangd] Change detected: specs/feature.spec.md      │
-│     [speclangd] Processing...                               │
+│  4. WATCHER SEES THE CHANGE                                 │
+│     The change is inside a watched root, so the daemon      │
+│     dispatches a cascade task for the file.                 │
 └─────────────────────────────────────────────────────────────┘
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  5. CODE GENERATES                                          │
-│     [speclangd] Generated: src/feature/index.ts             │
-│     [speclangd] ✅ Done (1 file, 45ms)                      │
+│  5. CASCADE RUNS                                            │
+│     Routed target: specs/<file> becomes generated/<file>    │
+│     Agents do the work (docs/OPERATIONS.md, cascade docs).  │
 └─────────────────────────────────────────────────────────────┘
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  6. USER USES GENERATED CODE                                │
-│     $ cat src/feature/index.ts                              │
-│     $ npm run build  # Compiles successfully!               │
+│  6. USER USES THE RESULT                                    │
+│     $ ./bin/speclangd status                                │
+│     Cascade Depth: 0                                        │
+│     $ ls generated/                                         │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Time: < 5 seconds from save to working code**
+Code generation is the cascade's job and is documented in `docs/OPERATIONS.md` and the
+cascade docs. This page deliberately stops at the route: a change under a watched root
+becomes a task, and a spec path is routed to its `generated/` counterpart.
 
 ## User Personas
 
@@ -72,12 +97,12 @@ Complete user journey and interaction flows.
 - Wants to see immediate results
 
 **Goals:**
-1. Install in < 5 minutes
-2. Generate first code in < 2 minutes
+1. Install and build in < 5 minutes
+2. Start the daemon and see it watching in < 2 minutes
 3. Understand the workflow intuitively
 
 **Pain Points:**
-- Confused by dual-view (specs vs src/)
+- Confused by dual-view (specs vs generated/)
 - Doesn't know what to edit
 - Scared of "generated code"
 
@@ -85,10 +110,11 @@ Complete user journey and interaction flows.
 ```
 1. Reads README
 2. Runs quick start commands
-3. Creates first spec (copy-paste example)
-4. Watches code appear
-5. Edits spec, sees update
-6. "Aha!" moment ✨
+3. Starts the daemon, sees the watch roots
+4. Creates first spec (copy-paste example)
+5. Watches the cascade pick it up
+6. Edits spec, sees the route update
+7. "Aha!" moment ✨
 ```
 
 **Persona 2: Experienced Dev (Bob)**
@@ -104,9 +130,9 @@ Complete user journey and interaction flows.
 4. CI/CD integration
 
 **Flow for Bob:**
-```
+```text
 1. Installs as dev dependency
-2. Configures watch directory
+2. Points the daemon at a project directory
 3. Integrates into build pipeline
 4. Sets up team conventions
 5. Writes custom templates (future)
@@ -116,139 +142,190 @@ Complete user journey and interaction flows.
 
 ### @poc/flows/interactions
 
-**Scenario 1: First Time User**
+**Scenario 1: First start, in an empty directory**
+
+An empty directory is a supported starting point: the watcher names the three roots it
+watches and starts even though none of them exists on disk yet. There is no "watch directory
+missing" failure path in `bin/speclangd`.
 
 ```bash
-# Terminal state
-$
-
-# User types
-$ ./bin/speclangd
-
-# System responds
-[speclangd] Starting SpecLang POC daemon v0.1.0
-[speclangd] Watching: ./specs
-[speclangd] Output: ./src
-[speclangd] 
-[speclangd] ⚠️  Watch directory not found: ./specs
-[speclangd] 
-[speclangd] Create it with: mkdir specs
-[speclangd] Or specify different: ./bin/speclangd --watch ./my-specs
-
-# User fixes
-$ mkdir specs
-$ ./bin/speclangd
-
-# System responds
-[speclangd] Starting SpecLang POC daemon v0.1.0
-[speclangd] Watching: ./specs
-[speclangd] Output: ./src
-[speclangd] 
-[speclangd] ⚠️  No spec files found
-[speclangd] 
-[speclangd] Create your first spec:
-[speclangd]   echo '# speclang-header lines:5' > specs/hello.spec.md
-[speclangd]   echo 'id: "@demo/hello"' >> specs/hello.spec.md
-[speclangd]   echo '---' >> specs/hello.spec.md
-[speclangd]   echo '' >> specs/hello.spec.md
-[speclangd]   echo '### @block::greet @kind:function' >> specs/hello.spec.md
-[speclangd]   echo 'Say hello.' >> specs/hello.spec.md
-[speclangd] 
-[speclangd] ✅ Ready. Watching for changes...
-
-# User creates spec in another terminal
-$ vim specs/hello.spec.md
-# (writes spec content and saves)
-
-# System responds (in daemon terminal)
-[speclangd] [14:32:05] Change detected: specs/hello.spec.md
-[speclangd] [14:32:05] Parsing spec...
-[speclangd] [14:32:05] Found 1 block: greet
-[speclangd] [14:32:05] Generating code...
-[speclangd] [14:32:05] Writing: specs/hello.spec.dir/src/greet.ts
-[speclangd] [14:32:05] Creating symlink: src/hello
-[speclangd] [14:32:05] ✅ Generated 1 file in 45ms
-[speclangd] [14:32:10] ✅ Convergence detected
-
-# User checks result
-$ ls -la src/
-# lrwxr-xr-x hello -> ../specs/hello.spec.dir/src
-
-$ cat src/hello/greet.ts
-# // SPECLANG-GENERATED: function
-# // Source: specs/hello.spec.md#greet
-# export function greet(): void {
-#   throw new Error('Not implemented');
-# }
-
-# User builds
-$ npm run build
-# ✅ Build successful
-
-# User celebrates! 🎉
+$ cd /tmp/my-project          # empty: no specs/, no .speclang/
+$ /path/to/SpecLang/bin/speclangd
 ```
 
-**Scenario 2: Editing Existing Spec**
+```
+🚀 Starting Speclangd (foreground)...
+[CLI] Agent dispatch: daemon tasks → cascade coordinator ✅
+[Daemon] Starting speclangd...
+[Watcher] Started watching: specs/, tests/, generated/
+[Daemon] Started successfully
+[CLI] Daemon started
+[CLI] Running in foreground. Press Ctrl+C to stop.
+```
+
+`bin/speclangd` with no argument runs the `start` subcommand in the foreground; the process
+blocks until it is signalled.
+
+**Scenario 2: Second start in the same project**
+
+The first start leaves `.speclang/daemon-state.json` behind, and the next start reports that
+it loaded it. That is the only line the second start adds:
 
 ```bash
-# User edits spec
-$ vim specs/hello.spec.md
-# (changes description, adds parameter, saves)
-
-# System responds
-[speclangd] [14:35:22] Change detected: specs/hello.spec.md
-[speclangd] [14:35:22] Parsing spec...
-[speclangd] [14:35:22] Found 1 block: greet
-[speclangd] [14:35:22] Generating code...
-[speclangd] [14:35:22] ✅ Updated: src/hello/greet.ts
-[speclangd] [14:35:27] ✅ Convergence detected
-
-# User sees updated code
-$ cat src/hello/greet.ts
-# (shows updated version)
+$ /path/to/SpecLang/bin/speclangd
 ```
 
-**Scenario 3: Error Recovery**
+```
+🚀 Starting Speclangd (foreground)...
+[CLI] Agent dispatch: daemon tasks → cascade coordinator ✅
+[Daemon] Starting speclangd...
+[Watcher] Started watching: specs/, tests/, generated/
+[State] Loaded state from .speclang/daemon-state.json
+[Daemon] Started successfully
+[CLI] Daemon started
+[CLI] Running in foreground. Press Ctrl+C to stop.
+```
+
+**Scenario 3: Background start, status, stop**
+
+`start -d` detaches and returns immediately; `status` reads the pid file and state file
+without starting a second daemon; `stop` signals the detached process. PIDs and uptime below
+come from one real run.
 
 ```bash
-# User makes mistake
-$ vim specs/hello.spec.md
-# (accidentally deletes header, saves)
-
-# System responds
-[speclangd] [14:40:10] Change detected: specs/hello.spec.md
-[speclangd] [14:40:10] ⚠️  Parse error in spec
-[speclangd] [14:40:10]   File: specs/hello.spec.md
-[speclangd] [14:40:10]   Error: Missing speclang-header
-[speclangd] [14:40:10]   
-[speclangd] [14:40:10] Fix: Add header to first line
-[speclangd] [14:40:10]   # speclang-header lines:5
-[speclangd] [14:40:10]   
-[speclangd] [14:40:10] Continuing to watch other files...
-
-# User fixes
-$ vim specs/hello.spec.md
-# (adds header back, saves)
-
-# System responds
-[speclangd] [14:41:05] Change detected: specs/hello.spec.md
-[speclangd] [14:41:05] ✅ Generated: src/hello/greet.ts
+$ ./bin/speclangd start -d
 ```
 
-**Scenario 4: Multiple Files**
+```
+🚀 Speclangd daemon started in background (PID 2968837)
+   Log: .speclang/speclangd.log
+   PID: .speclang/speclangd.pid
+   Check status: speclangd status
+```
 
 ```bash
-# User creates multiple specs quickly
-$ touch specs/auth.spec.md specs/user.spec.md specs/api.spec.md
-
-# System responds
-[speclangd] [14:45:01] Change detected: 3 files
-[speclangd] [14:45:01] Processing specs/auth.spec.md...
-[speclangd] [14:45:01] Processing specs/user.spec.md...
-[speclangd] [14:45:01] Processing specs/api.spec.md...
-[speclangd] [14:45:02] ✅ Generated 8 files
-[speclangd] [14:45:07] ✅ Convergence detected
+$ ./bin/speclangd status
 ```
+
+```
+🟢 Daemon: Running
+   PID: 2968837
+   Status: idle
+   Cascade Depth: 0
+   Files Changed: 0
+   Active Agents: 0
+   Uptime: 3s
+```
+
+`status --json` prints the same numbers as JSON:
+
+```bash
+$ ./bin/speclangd status --json
+```
+
+```
+{
+  "running": true,
+  "pid": 2968837,
+  "status": "idle",
+  "cascadeDepth": 0,
+  "filesChanged": 0,
+  "lastEventAt": null,
+  "startedAt": 1795739047446,
+  "activeAgents": 0
+}
+```
+
+This is how you actually stop a background daemon:
+
+```bash
+$ ./bin/speclangd stop
+```
+
+```
+✅ Sent SIGTERM to daemon (PID 2968837)
+✅ Daemon stopped
+```
+
+```bash
+$ ./bin/speclangd status
+```
+
+```
+🔴 Daemon: Stopped
+```
+
+After a clean `stop`, `.speclang/` keeps `daemon-state.json`, `daemon.prom` and `locks/`; the
+pid file and the background log are removed.
+
+**Scenario 4: Starting a second background daemon**
+
+`start -d` refuses when a live daemon already owns the pid file, and exits 1:
+
+```bash
+$ ./bin/speclangd start -d
+```
+
+```
+❌ Daemon already running (PID 2981582). Run 'speclangd stop' first.
+```
+
+A pid file left behind by a crashed process does not block the next start: `status` reports
+`🔴 Daemon: Stopped` and leaves the file in place, while `start -d` clears the stale file and
+starts a new daemon. Both were probed with a pid file containing `999999`.
+
+**Scenario 5: Stopping a foreground daemon**
+
+Ctrl+C (SIGINT) shuts the daemon down in order — the CLI line, then the daemon, watcher and
+shutdown lines:
+
+```
+^C
+[CLI] Shutting down...
+[Daemon] Stopping...
+[Watcher] Stopped
+[Daemon] Stopped
+```
+
+SIGTERM produces the same three daemon lines without the `[CLI] Shutting down...` line. In a
+probe wrapped in `timeout -s INT`, the exit code reported is 124 — that is `timeout`'s code
+for "I sent the signal", not the daemon's.
+
+**Scenario 6: An option the daemon does not have**
+
+`bin/speclangd` does not validate its first argument: anything that is not a subcommand falls
+through to the usage block, and the process **exits 0**. Handing the daemon the POC entry
+point's watch flag therefore looks like success — no daemon starts, yet the exit status says
+nothing went wrong. The probe was `./bin/speclangd` invoked with the POC's `--watch` flag
+followed by a directory path, reported `rc=0`. This is the usage block it printed:
+
+```
+speclangd v1.0.0
+
+Usage:
+  speclangd start           Start daemon in foreground
+  speclangd start -d        Start daemon in background (detached)
+  speclangd stop            Stop background daemon
+  speclangd status          Check daemon status
+  speclangd pause           Pause cascade
+  speclangd resume          Resume cascade
+  speclangd abort           Abort current cascade
+  speclangd trigger <file>  Manually trigger event
+  speclangd converge        Wait for convergence
+```
+
+`--watch` is not an option of `bin/speclangd`. It belongs to the POC entry point
+`bin/speclangd-poc`, whose own help lists `-w, --watch <dir>` and
+`speclangd-poc --watch ./my-specs`. To check the version, use `./bin/speclangd --version`,
+which prints `speclangd 1.0.0`.
+
+### Legacy POC entry point
+
+`bin/speclangd-poc` is the POC-era watcher; its own help describes it as "A reactive file
+watcher that generates code from specs". It is still shipped for the design record, and its
+`--watch <dir>` option, `--verbose`, `--silent` and `--help` are real. It is a separate
+program from `bin/speclangd`: none of the subcommands in the scenarios above apply to it, and
+none of its flags apply to `bin/speclangd`.
 
 ## State Diagram
 
@@ -260,99 +337,119 @@ stateDiagram-v2
     NotInstalled --> Installed: npm install
     Installed --> Configured: npm run build
     Configured --> Running: ./bin/speclangd
-    Running --> Watching: Directory ready
-    Watching --> Processing: File changed
-    Processing --> Success: Parse OK
-    Processing --> Error: Parse fail
-    Error --> Watching: Continue
-    Success --> Converging: Wait for quiet
+    Running --> Watching: [Watcher] Started watching
+    Watching --> Processing: Change in specs/, tests/, generated/
+    Processing --> Success: Cascade task dispatched
+    Processing --> Error: Task failed
+    Error --> Watching: Daemon keeps watching
+    Success --> Converging: Wait for the quiet period
     Converging --> Watching: Convergence
     Converging --> Processing: More changes
-    Watching --> Stopped: Ctrl+C
+    Watching --> Stopped: Ctrl+C, or speclangd stop
     Stopped --> [*]
 ```
+
+The quiet period before convergence is `quietPeriod: 30` seconds in the daemon's default
+config (`src/daemon/config.ts`), with `maxDepth: 100` and `autoRecascade: true`, so the
+daemon stays armed for the next cascade.
 
 ## Decision Trees
 
 ### @poc/flows/decisions
 
-**Should I edit specs/ or src/?**
+**Should I edit a spec or the generated output?**
 ```
 User wants to make change
     │
-    ├── Is it in specs/?
+    ├── Is it a spec under specs/?
     │   ├── YES → Edit it ✓
-    │   └── NO → Check if in src/
-    │       ├── YES → Don't edit! Edit specs/ instead
+    │   └── NO → Check if it is generated output
+    │       ├── YES → Don't edit! Edit the spec instead
     │       └── NO → Create new spec
     │
-    └── Rule: NEVER edit src/ directly
+    └── Rule: NEVER edit generated output directly
 ```
 
 **System detects file change**
 ```
 File changed
     │
-    ├── Is it a .spec.md file?
+    ├── Is it under a watched root (specs/, tests/, generated/)?
     │   ├── NO → Ignore
-    │   └── YES → Parse header
+    │   └── YES → Build a cascade task for the file
     │       │
-    │       ├── Parse succeeds?
-    │       │   ├── NO → Log error, skip
-    │       │   └── YES → Extract blocks
+    │       ├── Task accepted?
+    │       │   ├── NO → Log it, keep watching
+    │       │   └── YES → Dispatch the task
     │       │       │
-    │       │       ├── Generate code for each block
-    │       │       ├── Write to .spec.dir/src/
-    │       │       ├── Update symlink in src/
-    │       │       └── Log success
+    │       │       ├── Route the target under generated/
+    │       │       ├── Run the cascade
+    │       │       └── Log the task
     │       │
     │       └── Wait for convergence
     │           ├── More changes? → Process more
-    │           └── Quiet for 5s? → Converged ✓
+    │           └── Quiet period reached? → Converged ✓
 ```
 
 ## Error Recovery Flows
 
 ### @poc/flows/errors
 
-**Parse Error Recovery:**
+**Task Error Recovery:**
 ```
 User edits spec
     ↓
 System detects change
     ↓
-Parse fails
+Task fails or is rejected
     ↓
-System shows clear error message
+System logs the failure
     ↓
 System continues watching (doesn't crash)
     ↓
-User fixes error
+User fixes the spec
     ↓
-System detects fix
+System detects the fix
     ↓
-System generates code
+System dispatches the task again
     ↓
 ✅ Recovered
 ```
 
 **Build Error Recovery:**
 ```
-Code generates
+Code is produced under generated/
     ↓
-User runs npm run build
+User runs the project build
     ↓
 Build fails
     ↓
-User sees TypeScript errors
+User reads the errors
     ↓
-User fixes spec (not generated code!)
+User fixes the spec (not the generated output!)
     ↓
-Code regenerates
+The route refreshes
     ↓
 Build succeeds
     ↓
 ✅ Fixed
+```
+
+**Wrong-flag Recovery:**
+```
+User passes an option the daemon does not have
+    ↓
+Daemon prints its usage block
+    ↓
+... and exits 0, so it looks successful
+    ↓
+User notices no daemon is running
+    ↓
+User runs ./bin/speclangd status  →  🔴 Daemon: Stopped
+    ↓
+User re-runs with a supported subcommand
+    ↓
+✅ Recovered
 ```
 
 ## User Feedback Loop
@@ -360,19 +457,23 @@ Build succeeds
 ### @poc/loops/feedback
 
 **Immediate Feedback (< 1s):**
-- File change detected
-- Parsing started
+- `[Watcher] Started watching: specs/, tests/, generated/` on start
+- File-change detection inside a watched root (100ms debounce in the default config)
 
 **Short Feedback (< 5s):**
-- Code generated
-- Files written
-- Symlinks created
+- A cascade task is logged for the changed file
+- The routed target path is derived (`specs/<file>` → `generated/<file>`)
 
-**Confirmation Feedback (< 10s):**
-- Convergence detected
-- Summary stats
+**Confirmation Feedback (quiet period, 30s by default):**
+- The daemon's cascade listener reports convergence
+- `./bin/speclangd converge` waits for it explicitly
 
-**Delayed Feedback (on demand):**
+**On-Demand Feedback:**
+- `./bin/speclangd status` — pid, status, cascade depth, files changed, active agents, uptime
+- `./bin/speclangd status --json` — the same numbers, machine-readable
+- `.speclang/speclangd.log` — the background daemon's own log
+
+**Delayed Feedback:**
 - Build results
 - Test results
 
@@ -380,11 +481,12 @@ Build succeeds
 
 ### @poc/flows/success
 
-**Visual Indicators:**
-- ✅ Green checkmarks for success
-- ⚠️ Yellow warnings for issues
-- ❌ Red errors for failures
-- ⏳ Spinner during processing
+**Visual Indicators (as emitted by `bin/speclangd`):**
+- 🚀 start banner and background-start confirmation
+- ✅ a completed operation (dispatch wiring, stop)
+- 🟢 / 🔴 daemon running / stopped in `status`
+- ❌ a refusal or error (already running, unbuilt tree)
+- ⚠ only for a stop that did not complete within five seconds
 
 **Sound (optional future):**
 - Success: Pleasant chime
